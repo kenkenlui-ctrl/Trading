@@ -149,6 +149,11 @@ def _fetch_yfinance(code: str) -> Optional[dict]:
             logger.warning(f"YFinance: not enough valid close bars for {code}")
             return None
 
+        # Track actual history bars fetched — so LLM can distinguish "new listing"
+        # (YFinance has full history but ticker is fresh) from "data source limitation"
+        # (YFinance returns 1 row because foreign-listed Chinese stock has incomplete data)
+        history_bars = len(all_closes)
+
         last_price = all_closes[-1]
         prev_close = all_closes[-2] if len(all_closes) >= 2 else last_price
         change_pct = (last_price - prev_close) / prev_close * 100 if prev_close else 0.0
@@ -226,6 +231,8 @@ def _fetch_yfinance(code: str) -> Optional[dict]:
             "kline_30d": kline_30d,
             "sector": info.get("sector") or info.get("industry") or "",
             "source": "yfinance",
+            "history_bars": history_bars,
+            "history_note": "" if history_bars >= 100 else f"WARNING: only {history_bars} daily bars available from YFinance (need 200+ for MA200). Data source limitation — likely a newer/foreign-listed HK ticker. DO NOT infer this is a newly-listed stock based on missing MAs.",
         }
         # Round float fields
         for k in ("last_price", "prev_close", "day_high", "day_low", "ma20", "ma50", "ma100", "ma200",
@@ -353,6 +360,8 @@ def _fetch_futu(code: str) -> Optional[dict]:
             "kline_30d": kline_30d,
             "sector": "",
             "source": "futu",
+            "history_bars": len(klines),
+            "history_note": "" if len(klines) >= 100 else f"WARNING: only {len(klines)} daily bars available from Futu (need 200+ for MA200).",
         }
         # Round
         for k in ("last_price", "prev_close", "day_high", "day_low", "52w_high", "52w_low",
@@ -372,7 +381,174 @@ def _fetch_futu(code: str) -> Optional[dict]:
                 pass
 
 
-# ============ Name guess (for YFinance fallback where Chinese name missing) ============
+# ============ Sina / Tencent live quote overlay ============
+# YFinance 對 HK stock 經常有 1-day delay — 今日 close 往往係 yesterday。
+# Sina hq.sinajs.cn 同 Tencent qt.gtimg.cn 係實時（< 1 min delay），免費，無 API key。
+# 用佢哋做 live price overlay 確保 LLM 攞到嘅係 today's price 而非 stale yesterday。
+
+import urllib.request
+
+# Sina:  "var hq_str_hk02513="KNOWLEDGE ATLAS,智譜,2334,2350,2360,1933,2046,-304,-12.94,..."
+#       columns: name_en,name_zh,open,prev_close,high,low,current,change_amt,change_pct,
+#                bid,ask,turnover_hkd,volume,...
+def _parse_sina_hk(raw: str) -> Optional[dict]:
+    try:
+        # raw like:  var hq_str_hk02513="KNOWLEDGE ATLAS,...,2026/06/26,16:08";
+        i1 = raw.find('"')
+        i2 = raw.rfind('"')
+        if i1 < 0 or i2 <= i1:
+            return None
+        body = raw[i1+1:i2]
+        fields = body.split(',')
+        if len(fields) < 13:
+            return None
+        return {
+            "name_en": fields[0],
+            "name_zh": fields[1],
+            "open": _safe_float(fields[2]),
+            "prev_close": _safe_float(fields[3]),
+            "high": _safe_float(fields[4]),
+            "low": _safe_float(fields[5]),
+            "current": _safe_float(fields[6]),
+            "change_amt": _safe_float(fields[7]),
+            "change_pct": _safe_float(fields[8]),
+            "turnover_hkd": _safe_float(fields[10]),
+            "volume": _safe_float(fields[11]),
+            "datetime": f"{fields[fields.index('2026') if '2026' in fields else len(fields)-2]} {fields[fields.index('16:08') if '16:08' in fields else len(fields)-1]}" if '2026' in fields else "",
+        }
+    except Exception:
+        return None
+
+
+def _fetch_sina_live(code: str) -> Optional[dict]:
+    """Fetch live HK quote from Sina hq.sinajs.cn. Returns None on failure."""
+    try:
+        # 0700.HK -> hk00700
+        digits = code.split(".")[0].zfill(5)
+        url = f"https://hq.sinajs.cn/list=hk{digits}"
+        req = urllib.request.Request(url, headers={
+            "User-Agent": "Mozilla/5.0",
+            "Referer": "https://finance.sina.com.cn",
+        })
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            raw = resp.read().decode("gbk", errors="replace")
+        parsed = _parse_sina_hk(raw)
+        if not parsed or parsed.get("current") is None or parsed.get("current") == 0:
+            logger.debug(f"Sina live: no data for {code}")
+            return None
+        return parsed
+    except Exception as e:
+        logger.debug(f"Sina live failed for {code}: {e}")
+        return None
+
+
+# Tencent:  v_hk02513="100~智譜~02513~2046.000~2350.000~2334.000~2124287.0~...~KNOWLEDGE ATLAS~..."
+# Verified field indices from raw dump:
+#   [3]  current    [4]  prev_close   [5]  open       [6]  volume
+#   [30] datetime   [31] change_amt  [32] change_pct [33] high     [34] low
+#   [37] turnover_yuan (in HK$, NOT 億)              [43] pe_ttm
+#   [44] pb        [45] market_cap (億)              [46] name_en
+#   [48] 52w_high  [49] 52w_low
+def _parse_tencent_hk(raw: str) -> Optional[dict]:
+    try:
+        i1 = raw.find('"')
+        i2 = raw.rfind('"')
+        if i1 < 0 or i2 <= i1:
+            return None
+        body = raw[i1+1:i2]
+        fields = body.split('~')
+        if len(fields) < 50:
+            return None
+        return {
+            "name_zh": fields[1],
+            "code": fields[2],
+            "current": _safe_float(fields[3]),
+            "prev_close": _safe_float(fields[4]),
+            "open": _safe_float(fields[5]),
+            "volume": _safe_float(fields[6]),
+            "datetime": fields[30],
+            "change_amt": _safe_float(fields[31]),
+            "change_pct": _safe_float(fields[32]),
+            "high": _safe_float(fields[33]),
+            "low": _safe_float(fields[34]),
+            "turnover": _safe_float(fields[37]) if fields[37] else None,  # in 元 (HK$)
+            "pe_ttm": _safe_float(fields[43]),
+            "pb": _safe_float(fields[44]),
+            "market_cap": _safe_float(fields[45]),  # in 億
+            "name_en": fields[46] if len(fields) > 46 else "",
+            "52w_high": _safe_float(fields[48]) if len(fields) > 48 else None,
+            "52w_low": _safe_float(fields[49]) if len(fields) > 49 else None,
+        }
+    except Exception:
+        return None
+
+
+def _fetch_tencent_live(code: str) -> Optional[dict]:
+    """Fetch live HK quote from Tencent qt.gtimg.cn. Returns comprehensive fields incl PE/PB/market_cap."""
+    try:
+        digits = code.split(".")[0].zfill(5)
+        url = f"https://qt.gtimg.cn/q=hk{digits}"
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            raw = resp.read().decode("gbk", errors="replace")
+        parsed = _parse_tencent_hk(raw)
+        if not parsed or parsed.get("current") is None or parsed.get("current") == 0:
+            logger.debug(f"Tencent live: no data for {code}")
+            return None
+        return parsed
+    except Exception as e:
+        logger.debug(f"Tencent live failed for {code}: {e}")
+        return None
+
+
+def _overlay_live_price(snapshot: dict, code: str) -> dict:
+    """Overlay Sina/Tencent live price onto YFinance historical snapshot.
+
+    YFinance last_price is often yesterday's close for HK stocks (15-min delayed or stale).
+    We fetch live price from Tencent (primary) or Sina (fallback) and OVERLAY only:
+    - last_price, prev_close, change_pct (definitely correct)
+    - day_high, day_low, open (today's intraday)
+    - volume, turnover (live cumulative)
+    - name_zh / name_en (Tencent is more reliable than YFinance guess table)
+    - data_as_of timestamp (so LLM knows data freshness)
+
+    We KEEP YFinance values for:
+    - pe_ttm, pb, market_cap (Tencent field indices unreliable for large caps — e.g.
+      [44] for 0700.HK returns 37507 which is market_cap in 億, not PB)
+    - ma20/50/100/200, rsi14, kline_30d (YFinance historical bars)
+    - ytd_change_pct
+    """
+    live = _fetch_tencent_live(code) or _fetch_sina_live(code)
+    if not live:
+        return snapshot
+
+    live_price = live.get("current")
+    prev_close = live.get("prev_close") or snapshot.get("prev_close")
+
+    if live_price and live_price > 0:
+        snapshot["last_price"] = live_price
+        if prev_close and prev_close > 0:
+            snapshot["prev_close"] = prev_close
+            snapshot["change_pct"] = round((live_price - prev_close) / prev_close * 100, 2)
+        if live.get("high"):
+            snapshot["day_high"] = live["high"]
+        if live.get("low"):
+            snapshot["day_low"] = live["low"]
+        if live.get("volume"):
+            snapshot["volume"] = live["volume"]
+        if live.get("turnover"):
+            snapshot["turnover_hkd"] = live["turnover"]
+        elif live.get("turnover_hkd"):
+            snapshot["turnover_hkd"] = live["turnover_hkd"]
+        # Name from live source (more reliable than YFinance guess table)
+        if live.get("name_zh"):
+            snapshot["name_zh"] = live["name_zh"]
+        elif live.get("name_en"):
+            snapshot["name_en"] = live["name_en"]
+
+        snapshot["data_as_of"] = live.get("datetime") or datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        snapshot["live_source"] = "tencent" if live.get("volume") else "sina"
+    return snapshot
 
 # Lightweight built-in table for common HK tickers — extended over time.
 _HK_NAMES_ZH = {
@@ -462,10 +638,49 @@ def _try_load_intraday_15m(code: str) -> list[dict]:
 
 def fetch_snapshot(code: str, include_intraday: bool = True) -> Optional[dict]:
     """
-    Fetch snapshot for a HK ticker. Tries Futu first, falls back to YFinance.
-    Returns dict or None if both fail.
+    Fetch snapshot for a HK ticker. Try Futu first (full HKEX history); fall back to
+    YFinance for history; then overlay live price from Tencent/Sina (YFinance HK is
+    15-min delayed, often shows yesterday's close as "last_price").
+    Returns dict or None if all sources fail.
     """
     snapshot = _fetch_futu(code) or _fetch_yfinance(code)
+    if not snapshot:
+        # No YFinance history at all (rare — e.g. 0100.HK only has 1 row).
+        # Try Tencent/Sina for a snapshot from live source alone.
+        live = _fetch_tencent_live(code) or _fetch_sina_live(code)
+        if live and live.get("current"):
+            snapshot = {
+                "code": code,
+                "name_zh": live.get("name_zh", ""),
+                "name_en": live.get("name_en", ""),
+                "last_price": live["current"],
+                "prev_close": live.get("prev_close"),
+                "change_pct": live.get("change_pct"),
+                "day_high": live.get("high"),
+                "day_low": live.get("low"),
+                "volume": live.get("volume"),
+                "turnover_hkd": live.get("turnover") or live.get("turnover_hkd"),
+                "day_range_pct": round(((live["high"] - live["low"]) / live["current"] * 100), 2) if (live.get("high") and live.get("low") and live["current"]) else 0.0,
+                "vol_ratio": 0.0,
+                "pe_ttm": live.get("pe_ttm"),
+                "pb": live.get("pb"),
+                "dividend_yield": None,
+                "market_cap_hkd": live.get("market_cap"),
+                "ma20": None, "ma50": None, "ma100": None, "ma200": None,
+                "rsi14": None,
+                "52w_high": live.get("52w_high"),
+                "52w_low": live.get("52w_low"),
+                "ytd_change_pct": None,
+                "kline_30d": [],
+                "sector": "",
+                "source": "tencent" if live.get("pe_ttm") else "sina",
+                "history_bars": 0,
+                "history_note": "NO historical bars available. Live price/turnover from Tencent/Sina only. Cannot compute MAs/RSI — treat current snapshot as real-time quote, not technical setup.",
+                "data_as_of": live.get("datetime"),
+            }
+    else:
+        # Got history (Futu or YFinance). Overlay live price to fix HK delay.
+        snapshot = _overlay_live_price(snapshot, code)
     if not snapshot:
         return None
     if include_intraday:

@@ -29,6 +29,8 @@ CREATE TABLE IF NOT EXISTS daily_report (
     sentiment TEXT,           -- 樂觀 / 中性 / 悲觀
     trend TEXT,                -- 看多 / 震盪 / 看空
     operation_advice TEXT,     -- 買入 / 觀望 / 賣出
+    score_breakdown_json TEXT, -- {"value_score":N,"quality_score":N,"momentum_score":N}
+    trade_direction TEXT,      -- long / short / both
     summary_md TEXT,
     full_md TEXT,
     news_json TEXT,
@@ -206,6 +208,8 @@ def save_report(
     news: list[dict],
     data_snapshot: dict,
     llm_model: Optional[str],
+    score_breakdown_json: Optional[str] = None,
+    trade_direction: Optional[str] = None,
 ) -> int:
     """Insert or replace today's report for code. Returns row id."""
     conn = get_db()
@@ -215,10 +219,12 @@ def save_report(
         conn.execute(
             """INSERT OR REPLACE INTO daily_report
                (code, report_date, score, sentiment, trend, operation_advice,
+                score_breakdown_json, trade_direction,
                 summary_md, full_md, news_json, data_snapshot_json, llm_model, generated_at)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 code, report_date, score, sentiment, trend, operation_advice,
+                score_breakdown_json, trade_direction,
                 summary_md, full_md, json.dumps(news, ensure_ascii=False),
                 json.dumps(data_snapshot, ensure_ascii=False), llm_model, now,
             ),
@@ -444,11 +450,25 @@ def update_run_progress(run_id: int, tickers_done: int, tickers_failed: int) -> 
 
 
 def get_running_run() -> Optional[dict]:
-    """Return the most recent running analysis run, or None."""
+    """Return the most recent ACTIVE analysis run, or None.
+
+    An "active" run is one that:
+      - has status='running' AND
+      - was started within the last 4 hours AND
+      - has progress (tickers_done > 0 or < 60s old — avoid zombies)
+    """
     conn = get_db()
     try:
+        # First try: fresh + making progress
         row = conn.execute(
-            "SELECT * FROM run_log WHERE status='running' ORDER BY id DESC LIMIT 1"
+            """SELECT * FROM run_log
+               WHERE status='running'
+                 AND started_at >= datetime('now', '-4 hours')
+                 AND (
+                   started_at >= datetime('now', '-60 seconds')
+                   OR tickers_done > 0
+                 )
+               ORDER BY id DESC LIMIT 1"""
         ).fetchone()
         return dict(row) if row else None
     finally:

@@ -1,4 +1,4 @@
-"""Streamlit web UI. Runs on http://localhost:8200."""
+"""Streamlit web UI. Bloomberg-terminal aesthetic for day-trade dashboard."""
 
 from __future__ import annotations
 
@@ -12,6 +12,169 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 import streamlit as st  # noqa: E402
+
+# ===== Page config (browser tab title + favicon) =====
+st.set_page_config(
+    page_title="DSA Terminal · HK+US Day-Trade AI",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={
+        "Get Help": "https://github.com/kenkenlui-ctrl/Trading",
+        "Report a bug": "https://github.com/kenkenlui-ctrl/Trading/issues",
+        "About": "DSA Terminal — AI-powered HK+US day-trade decision support. 376 tickers analyzed daily with multi-dim scoring (Value/Quality/Momentum) + trade direction signals. Not investment advice.",
+    },
+)
+
+# ===== SEO meta tags + Bloomberg-terminal CSS =====
+# SEO via st.html (allowed raw HTML injection)
+st.html("""
+<meta name="description" content="Real-time HK + US stock AI scoring for day-trade. 200 tickers × 4-dim score × live news. Powered by MiniMax-M3 + Futu OpenD.">
+<meta name="keywords" content="HK stock analysis, day trade, AI trading, momentum, MA, RSI, 騰訊, 阿里, M3, MiniMax">
+<meta property="og:title" content="DSA Terminal · HK+US Day-Trade AI">
+<meta property="og:description" content="Bloomberg-style AI terminal for HK + US day-trade. 200 tickers, 4-dim scoring, live news.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.win9you.com">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://www.win9you.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+""")
+
+# Bloomberg-terminal CSS via st.markdown (so <style> gets injected)
+st.markdown("""
+<style>
+    :root {
+        --bg: #0a0e14;
+        --panel: #131820;
+        --panel-2: #1a212b;
+        --border: #2a323e;
+        --text: #d4d4d4;
+        --text-dim: #888;
+        --amber: #ffb000;
+        --green: #00d084;
+        --red: #ff3860;
+        --blue: #00b4ff;
+    }
+
+    html, body, .stApp, [data-testid="stAppViewContainer"], .main {
+        background-color: var(--bg) !important;
+        color: var(--text) !important;
+        font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace !important;
+    }
+
+    h1, h2, h3, h4 {
+        font-family: 'JetBrains Mono', monospace !important;
+        font-weight: 600 !important;
+        color: var(--text) !important;
+    }
+    h1 {
+        font-size: 1.5rem !important;
+        color: var(--amber) !important;
+        border-bottom: 2px solid var(--amber);
+        padding-bottom: 0.5rem;
+    }
+    h2 { font-size: 1.1rem !important; color: var(--blue) !important; }
+    h3 { font-size: 0.95rem !important; color: var(--text-dim) !important;
+         text-transform: uppercase; letter-spacing: 0.1em; }
+
+    section[data-testid="stSidebar"] {
+        background-color: var(--panel) !important;
+        border-right: 1px solid var(--border);
+    }
+    section[data-testid="stSidebar"] h1 {
+        color: var(--amber) !important;
+        font-size: 1.2rem !important;
+    }
+
+    .stTabs [data-baseweb="tab-list"] {
+        background: transparent !important;
+        border-bottom: 1px solid var(--border);
+        gap: 0;
+    }
+    .stTabs [data-baseweb="tab"] {
+        background: transparent !important;
+        color: var(--text-dim) !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        padding: 0.75rem 1.25rem !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        text-transform: uppercase;
+        font-size: 0.8rem !important;
+        letter-spacing: 0.1em;
+    }
+    .stTabs [aria-selected="true"] {
+        color: var(--amber) !important;
+        border-bottom: 2px solid var(--amber) !important;
+    }
+
+    .stButton > button {
+        background-color: var(--panel-2) !important;
+        color: var(--text) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 2px !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        text-transform: uppercase;
+        font-size: 0.75rem !important;
+    }
+    .stButton > button:hover {
+        background-color: var(--amber) !important;
+        color: var(--bg) !important;
+        border-color: var(--amber) !important;
+    }
+
+    [data-testid="stRadio"] label {
+        font-family: 'JetBrains Mono', monospace !important;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+    }
+
+    .stDataFrame {
+        background-color: var(--panel) !important;
+        border: 1px solid var(--border);
+    }
+
+    code, pre {
+        background-color: var(--panel-2) !important;
+        color: var(--green) !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        border: 1px solid var(--border);
+        border-radius: 2px;
+    }
+
+    [data-testid="stMetricValue"] {
+        font-family: 'JetBrains Mono', monospace !important;
+        color: var(--amber) !important;
+        font-size: 1.5rem !important;
+    }
+    [data-testid="stMetricLabel"] {
+        color: var(--text-dim) !important;
+        text-transform: uppercase;
+        font-size: 0.7rem !important;
+        letter-spacing: 0.1em;
+    }
+
+    .stProgress > div > div > div > div {
+        background-color: var(--amber) !important;
+    }
+
+    .stCaption, small {
+        color: var(--text-dim) !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-size: 0.75rem !important;
+    }
+
+    .bull { color: var(--green) !important; }
+    .bear { color: var(--red) !important; }
+    .amber { color: var(--amber) !important; }
+    .dim { color: var(--text-dim) !important; }
+
+    #MainMenu, footer {visibility: hidden;}
+    header[data-testid="stHeader"] {background-color: transparent !important;}
+</style>
+""", unsafe_allow_html=True)
 
 from src.config import get_config  # noqa: E402
 from src.db import (  # noqa: E402
@@ -37,28 +200,27 @@ if "detail_ticker" not in st.session_state:
     st.session_state.detail_ticker = ""
 
 st.set_page_config(
-    page_title="DSA · HK+US AI分析",
-    page_icon="📈",
+    page_title="DSA · HK+US Terminal",
+    page_icon="◆",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 # ===== Sidebar =====
 with st.sidebar:
-    st.title("📈 DSA · HK+US")
-    st.caption("港股+美股 AI 智能分析系統")
+    st.markdown("### ◆ DSA TERMINAL")
+    st.caption("> HK+US · day-trade AI")
     st.markdown("---")
 
     # Status
-    st.subheader("⚙️ 系統狀態")
-    llm_status = "✅ " + ", ".join(cfg.available_llm_providers()) if cfg.has_llm_key() else "❌ 未配置"
-    news_status = "✅ " + ", ".join(cfg.available_news_sources()) if cfg.has_news_key() else "⚠️ 未配置"
-    tg_status = "✅ 已連接" if cfg.has_telegram() else "⚠️ 未配置"
-    st.markdown(f"**LLM**: {llm_status}")
-    st.markdown(f"**新聞源**: {news_status}")
-    st.markdown(f"**Telegram**: {tg_status}")
-    st.markdown(f"**語言**: {cfg.report_language}")
-    st.markdown(f"**模型**: `{cfg.litellm_model}`")
+    st.markdown("**STATUS**")
+    llm_status = "● " + ", ".join(cfg.available_llm_providers()) if cfg.has_llm_key() else "○ n/a"
+    news_status = "● " + ", ".join(cfg.available_news_sources()) if cfg.has_news_key() else "○ n/a"
+    tg_status = "● live" if cfg.has_telegram() else "○ n/a"
+    st.markdown(f":green[{llm_status}] llm")
+    st.markdown(f":green[{news_status}] news")
+    st.markdown(f":green[{tg_status}] tg")
+    st.markdown(f"`{cfg.litellm_model}`")
 
     st.markdown("---")
     st.subheader("🚀 操作")
@@ -90,17 +252,35 @@ with st.sidebar:
     _live_progress()
 
     st.markdown("---")
-    st.subheader("📊 最近運行")
+    st.markdown("**RUN LOG**")
     runs = list_recent_runs(limit=10)
     for r in runs[:5]:
-        status_icon = {"success": "✅", "partial": "🟡", "failed": "❌", "running": "⏳"}.get(r["status"], "·")
+        status = r["status"]
+        # Streamlit-native markdown colors (no raw HTML)
+        if status == "success":
+            badge = ":green[● ok]"
+        elif status == "partial":
+            badge = ":orange[● ~]"
+        elif status == "failed":
+            badge = ":red[● !!]"
+        elif status == "running":
+            badge = ":orange[● ...]"
+        else:
+            badge = f":gray[○ {status}]"
         st.markdown(
-            f"{status_icon} {r['started_at'][:16]} · "
-            f"{r['tickers_done']}/{r['tickers_total']} · {r['trigger']}"
+            f"{badge} `{r['started_at'][:16]}` · "
+            f"**{r['tickers_done']}**/{r['tickers_total']} · "
+            f"`{r['trigger']}`"
         )
 
 # ===== Main =====
-st.title("🎯 HK+US AI 決策儀表板")
+now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+st.markdown(f"""
+<div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom: 1rem;">
+    <h1 style="margin:0;">◆ HK+US AI · DECISION TERMINAL</h1>
+    <span class="dim" style="font-size: 0.85rem;">{now_str} HKT</span>
+</div>
+""", unsafe_allow_html=True)
 
 # Date selector
 available_dates = list_report_dates(limit=30)
@@ -121,18 +301,58 @@ tab_dashboard, tab_detail, tab_history, tab_market, tab_runlog = st.tabs([
 
 # --- Tab 1: Dashboard ---
 with tab_dashboard:
-    st.markdown(build_dashboard_md(selected_date, language=cfg.report_language))
+    # YMYL compliance: financial content MUST show disclaimer (EEAT T08)
+    st.markdown(
+        "<div style='background:#1a1d23;border:1px solid #b88a00;border-radius:6px;"
+        "padding:8px 12px;margin-bottom:12px;font-size:12px;color:#d4b864;'>"
+        "⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。"
+        "Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。"
+        "<a href='/disclaimer' style='color:#d4b864;text-decoration:underline;margin-left:8px;'>完整免責聲明 →</a>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
+
+# Trend filter toggle (long / short / both)
+    trend_filter = st.radio(
+        "🎯 交易方向 FILTER",
+        options=["全部", "只做多 LONG", "只做空 SHORT", "雙向"],
+        index=0,
+        horizontal=True,
+        help="根據 LLM 評估嘅 trade_direction 過濾。LONG = 適合做多，SHORT = 弱勢反彈做空，雙向 = 兩個方向都有 setup",
+    )
+    # Map filter → DB value
+    filter_map_dash = {
+        "全部": None,
+        "只做多 LONG": "long",
+        "只做空 SHORT": "short",
+        "雙向": "both",
+    }
+    target_dir = filter_map_dash[trend_filter]
+    st.markdown(build_dashboard_md(selected_date, language=cfg.report_language, trade_direction=target_dir))
 
     # Detail table
     reports = list_reports(report_date=selected_date, limit=200)
     if reports:
         st.markdown("---")
         st.subheader("詳細表格")
+        # Filter already applied in build_dashboard_md() — reports here are the same set
+        st.caption(f"詳細表格：{len(reports)} 隻（{trend_filter}）")
+
         rows = []
         for r in sorted(reports, key=lambda x: x["score"] or 0, reverse=True):
+            breakdown = r.get("score_breakdown") or {}
+            if isinstance(breakdown, str):
+                import json as _json
+                try: breakdown = _json.loads(breakdown)
+                except: breakdown = {}
+            v = breakdown.get("value_score", "—")
+            q = breakdown.get("quality_score", "—")
+            m = breakdown.get("momentum_score", "—")
             rows.append({
                 "代碼": r["code"],
                 "評分": r["score"],
+                "方向": r.get("trade_direction") or "—",
+                "估值/質素/動能": f"{v}/{q}/{m}",
                 "建議": r["operation_advice"],
                 "情緒": r["sentiment"],
                 "趨勢": r["trend"],

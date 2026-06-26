@@ -140,18 +140,8 @@ class Config:
         return kwargs
 
     def available_news_sources(self) -> list[str]:
-        """List news sources with keys configured."""
-        sources = []
-        # Key-based sources (preferred)
-        if self.bocha_api_key:
-            sources.append("bocha")
-        if self.tavily_api_key:
-            sources.append("tavily")
-        if self.brave_api_key:
-            sources.append("brave")
-        # DuckDuckGo is always available (no key)
-        sources.append("duckduckgo")
-        return sources
+        """List news sources available. Futu cloud is the primary, no key needed."""
+        return ["futu"]  # Futu cloud news API is always available (no key)
 
     def warnings(self) -> list[str]:
         """Return non-fatal config warnings."""

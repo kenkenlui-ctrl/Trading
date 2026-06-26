@@ -25,6 +25,8 @@ class AnalysisResult:
     operation_advice: str
     confidence: str
     summary: str
+    score_breakdown: dict = None
+    trade_direction: str = "both"
     entry_zone: Optional[str] = None
     stop_loss: Optional[str] = None
     target_price: Optional[str] = None
@@ -50,6 +52,8 @@ class AnalysisResult:
             "operation_advice": self.operation_advice,
             "confidence": self.confidence,
             "summary": self.summary,
+            "score_breakdown": self.score_breakdown,
+            "trade_direction": self.trade_direction,
             "entry_zone": self.entry_zone,
             "stop_loss": self.stop_loss,
             "target_price": self.target_price,
@@ -137,6 +141,8 @@ def analyze(
                 operation_advice=str(data.get("operation_advice", "觀望")),
                 confidence=str(data.get("confidence", "中")),
                 summary=str(data.get("summary", "")),
+                score_breakdown=data.get("score_breakdown", {}),
+                trade_direction=str(data.get("trade_direction", "both")),
                 entry_zone=data.get("entry_zone"),
                 stop_loss=data.get("stop_loss"),
                 target_price=data.get("target_price"),

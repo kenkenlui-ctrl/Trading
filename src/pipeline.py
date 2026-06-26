@@ -86,6 +86,8 @@ def analyze_ticker(code: str, save: bool = True, language: Optional[str] = None)
             news=news,
             data_snapshot=snap,
             llm_model=result.llm_model,
+            score_breakdown_json=json.dumps(result.score_breakdown or {}, ensure_ascii=False),
+            trade_direction=result.trade_direction,
         )
         # Also save to reports/ dir as a markdown file (for archive)
         try:
@@ -187,9 +189,15 @@ def run_full_analysis(
     return summary
 
 
-def build_dashboard_md(report_date: Optional[str] = None, language: Optional[str] = None) -> str:
+def build_dashboard_md(report_date: Optional[str] = None, language: Optional[str] = None, trade_direction: Optional[str] = None) -> str:
     """
     Build the daily decision dashboard markdown. Aggregates all reports for a date.
+
+    trade_direction filter:
+      - None / "" / "all" → no filter (show all)
+      - "long" → only trade_direction='long'
+      - "short" → only trade_direction='short'
+      - "both" → only trade_direction='both'
     """
     cfg = get_config()
     language = language or cfg.report_language
@@ -198,15 +206,28 @@ def build_dashboard_md(report_date: Optional[str] = None, language: Optional[str
     report_date = report_date or datetime.now().strftime("%Y-%m-%d")
     reports = list_reports(report_date=report_date, limit=500)
 
+    # Apply trade_direction filter (None/all = show everything)
+    filter_label = "全部"
+    if trade_direction and trade_direction not in ("", "all", "全部"):
+        before = len(reports)
+        reports = [r for r in reports if (r.get("trade_direction") or "both") == trade_direction]
+        after = len(reports)
+        filter_label = {
+            "long": "只做多 LONG",
+            "short": "只做空 SHORT",
+            "both": "雙向",
+        }.get(trade_direction, trade_direction)
+        logger.info(f"Dashboard filter trade_direction={trade_direction}: {before} → {after} reports")
+
     if not reports:
         return (
             f"# 📊 HK+US 決策儀表板\n\n"
-            f"日期: {report_date}\n\n"
-            f"_今日尚無分析報告。請執行 `python -m src.main analyze` 開始。_\n"
+            f"日期: {report_date} · 篩選: {filter_label}\n\n"
+            f"_此條件下無報告。_"
             if is_zh else
             f"# 📊 HK+US Decision Dashboard\n\n"
-            f"Date: {report_date}\n\n"
-            f"_No reports for today yet. Run `python -m src.main analyze` to start._\n"
+            f"Date: {report_date} · Filter: {filter_label}\n\n"
+            f"_No reports under this filter._"
         )
 
     # Stats

@@ -66,7 +66,13 @@ USER_PROMPT_TEMPLATE_ZH = """請基於以下數據分析 {code} {name}：
 請按以下格式輸出 JSON（不要 Markdown 代碼塊標記，直接 JSON）：
 
 {{
-  "score": <0-100 整數，分數越高越看好>,
+  "score": <0-100 整數，總分，看多強度>,
+  "score_breakdown": {{
+    "value_score": <0-100，估值維度: PE/PB/deviation from fair value，越低越便宜分越高>,
+    "quality_score": <0-100，質量維度: ROE/margin/financial health/dividend 穩定性>,
+    "momentum_score": <0-100，動能維度: 今日方向/MA trend/RSI/deviation/量比>
+  }},
+  "trade_direction": "<long | short | both>",
   "sentiment": "<樂觀 | 中性 | 悲觀>",
   "trend": "<看多 | 震盪 | 看空>",
   "operation_advice": "<買入 | 觀望 | 賣出>",
@@ -81,6 +87,13 @@ USER_PROMPT_TEMPLATE_ZH = """請基於以下數據分析 {code} {name}：
   "strategy_tags": ["<策略標籤，如 MA多頭排列 / 量比放大 / 突破壓力位>"],
   "reasoning": "<100-200 字分析推理，繁體中文>"
 }}
+
+【多維評分指引】
+- value_score: 越平越高分。PE < 10 加分；PE > 30 減分。PB < 1 加分；PB > 5 減分。股價低於 MA200 越多越加分（前提係有基本面支持）。
+- quality_score: 越高越好。ROE > 15% 加分；負債率低加分；股息率 > 5% 加分（成熟股）；負面消息減分。
+- momentum_score: 趨勢同動能。MA20 > MA50 > MA100 +10；RSI 50-70 健康；今日 +2% 以上加分；量比 > 1.5 確認；MA200 以下但短炒 setup 都俾分（因為 day-trade）。
+- 總分 score = value × 0.25 + quality × 0.25 + momentum × 0.50（day-trade 偏重 momentum）
+- trade_direction: long = 適合做多，short = 適合做空（弱勢反彈），both = 兩個方向都有 setup
 
 不要寫多餘文字，只輸出 JSON。"""
 
@@ -148,7 +161,13 @@ USER_PROMPT_TEMPLATE_EN = """Please analyze {code} {name} based on the following
 Output ONLY a JSON object (no markdown):
 
 {{
-  "score": <0-100 integer, higher = more bullish>,
+  "score": <0-100 integer, total score, higher = more bullish>,
+  "score_breakdown": {{
+    "value_score": <0-100, valuation: PE/PB/deviation from fair value>,
+    "quality_score": <0-100, quality: ROE/margin/financial health/dividend>,
+    "momentum_score": <0-100, momentum: today direction/MA trend/RSI/deviation/vol ratio>
+  }},
+  "trade_direction": "<long | short | both>",
   "sentiment": "<bullish | neutral | bearish>",
   "trend": "<uptrend | range-bound | downtrend>",
   "operation_advice": "<buy | hold | sell>",
@@ -163,6 +182,13 @@ Output ONLY a JSON object (no markdown):
   "strategy_tags": ["<e.g. MA bull alignment / volume breakout / range break>"],
   "reasoning": "<100-200 word analysis>"
 }}
+
+[Multi-dimensional scoring guide]
+- value_score: cheaper is better. PE < 10 = boost; PE > 30 = penalty. PB < 1 = boost; PB > 5 = penalty. Below MA200 with fundamentals support = boost.
+- quality_score: higher is better. ROE > 15% = boost; low debt = boost; div yield > 5% = boost; negative news = penalty.
+- momentum_score: trend + energy. MA20 > MA50 > MA100 +10; RSI 50-70 healthy; today > +2% = boost; vol ratio > 1.5 confirmation; below MA200 still gets points for short setups.
+- Total score = value × 0.25 + quality × 0.25 + momentum × 0.50 (day-trade weighted)
+- trade_direction: long = good long setup, short = weak bounce short setup, both = both directions viable
 
 Output only JSON, no other text."""
 

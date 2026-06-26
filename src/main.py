@@ -98,17 +98,20 @@ def cmd_webui() -> int:
     print(f"Starting Streamlit web UI on http://localhost:{cfg.webui_port}")
     env = os.environ.copy()
     subprocess.run(
-        [
-            sys.executable, "-m", "streamlit", "run",
-            str(PROJECT_ROOT / "src" / "web_ui.py"),
-            "--server.port", str(cfg.webui_port),
-            "--server.address", "0.0.0.0",
-            "--server.headless", "true",
-            "--browser.gatherUsageStats", "false",
-        ],
-        cwd=str(PROJECT_ROOT),
-        env=env,
-    )
+            [
+                sys.executable, "-m", "streamlit", "run",
+                str(PROJECT_ROOT / "src" / "web_ui.py"),
+                "--server.port", str(cfg.webui_port),
+                "--server.address", "0.0.0.0",
+                "--server.headless", "true",
+                "--browser.gatherUsageStats", "false",
+                "--server.enableCORS", "false",
+                "--server.enableXsrfProtection", "false",
+                "--server.maxUploadSize", "50",
+            ],
+            cwd=str(PROJECT_ROOT),
+            env=env,
+        )
     return 0
 
 
