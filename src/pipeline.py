@@ -225,7 +225,7 @@ def build_dashboard_md(report_date: Optional[str] = None, language: Optional[str
             f"日期: {report_date} · 篩選: {filter_label}\n\n"
             f"_此條件下無報告。_"
             if is_zh else
-            f"# 📊 HK+US Decision Dashboard\n\n"
+            f"# 📊 Leeks Terminal HK+US Decision Dashboard\n\n"
             f"Date: {report_date} · Filter: {filter_label}\n\n"
             f"_No reports under this filter._"
         )
@@ -241,7 +241,7 @@ def build_dashboard_md(report_date: Optional[str] = None, language: Optional[str
         title = f"# 🎯 {report_date} HK+US 決策儀表板"
         stats_line = f"共分析 {n} 隻股票 | 🟢買入: {n_buy} 🟡觀望: {n_hold} 🔴賣出: {n_sell}"
     else:
-        title = f"# 🎯 {report_date} HK+US Decision Dashboard"
+        title = f"# 🎯 {report_date} Leeks Terminal HK+US Decision Dashboard"
         stats_line = f"Analyzed {n} stocks | 🟢Buy: {n_buy} 🟡Hold: {n_hold} 🔴Sell: {n_sell}"
 
     md = f"{title}\n\n{stats_line}\n\n"

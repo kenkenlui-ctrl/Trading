@@ -12,8 +12,8 @@
  */
 
 const SITE_URL = "https://www.win9you.com";
-const SITE_NAME = "DSA Terminal";
-const SITE_TITLE = "DSA Terminal · HK+US Day-Trade AI | win9you.com";
+const SITE_NAME = "Leeks Terminal";
+const SITE_TITLE = "Leeks Terminal · HK+US Day-Trade AI | win9you.com";
 const SITE_DESC =
   "Real-time HK + US day-trade AI terminal. 376 tickers scored daily on Value / Quality / Momentum dimensions with long/short/both direction signals. Powered by MiniMax-M3 + Futu OpenD live data.";
 const SITE_KEYWORDS =
@@ -125,7 +125,7 @@ ${JSON.stringify(jsonLd, null, 2)}
 </head>
 <body>
   <nav class="nav">
-    <span class="nav-brand">◆ DSA Terminal</span>
+    <span class="nav-brand">◆ Leeks Terminal</span>
     <a href="/">Home</a>
     <a href="/dashboard">Dashboard</a>
     <a href="/faq">FAQ</a>
@@ -148,9 +148,9 @@ ${JSON.stringify(jsonLd, null, 2)}
 
 const PAGES = {
   "/about": {
-    title: "About DSA Terminal · HK+US Day-Trade AI",
+    title: "About Leeks Terminal · HK+US Day-Trade AI",
     description:
-      "DSA Terminal is built by a Hong Kong day trader using LLMs to score 376 tickers daily across Value, Quality, and Momentum dimensions. Learn about the data sources, scoring methodology, and the author's trading background.",
+      "Leeks Terminal is built by a Hong Kong day trader using LLMs to score 376 tickers daily across Value, Quality, and Momentum dimensions. Learn about the data sources, scoring methodology, and the author's trading background.",
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "AboutPage",
@@ -169,15 +169,15 @@ const PAGES = {
       },
     },
     body: `
-<h1>About DSA Terminal</h1>
-<p>DSA Terminal is a daily decision-support tool for Hong Kong and US day traders. It combines real-time market data, multi-dimensional fundamental and technical scoring, and AI-generated trade setups across 376 actively-traded tickers.</p>
+<h1>About Leeks Terminal</h1>
+<p>Leeks Terminal is a daily decision-support tool for Hong Kong and US day traders. It combines real-time market data, multi-dimensional fundamental and technical scoring, and AI-generated trade setups across 376 actively-traded tickers.</p>
 
 <h2>Who Built This</h2>
-<p>I'm <b>Kenneth Lui</b>, a Hong Kong-based day trader with a quantitative lean. I built DSA Terminal for my own daily workflow after getting tired of bouncing between Bloomberg, Yahoo Finance, Telegram groups, and broker terminals. Everything on this site is the dashboard I actually use.</p>
+<p>I'm a Hong Kong-based day trader with a quantitative lean. I built Leeks Terminal for my own daily workflow after getting tired of bouncing between Bloomberg, Yahoo Finance, Telegram groups, and broker terminals. Everything on this site is the dashboard I actually use.</p>
 <p>I'm not a licensed investment advisor. Nothing here is investment advice — it's a research tool. Always do your own diligence.</p>
 
 <h2>Why It Exists</h2>
-<p>Most "AI stock pickers" either (a) hallucinate numbers, (b) only cover US mega-caps, or (c) hide behind a paywall. DSA Terminal is:</p>
+<p>Most "AI stock pickers" either (a) hallucinate numbers, (b) only cover US mega-caps, or (c) hide behind a paywall. Leeks Terminal is:</p>
 <ul>
   <li><b>Free</b> — no paywall, no signup</li>
   <li><b>Real-time</b> — HK quotes pulled via Tencent API (sub-minute delay), US via YFinance</li>
@@ -206,20 +206,20 @@ const PAGES = {
   },
 
   "/faq": {
-    title: "FAQ · DSA Terminal · HK+US Day-Trade AI",
+    title: "FAQ · Leeks Terminal · HK+US Day-Trade AI",
     description:
-      "Frequently asked questions about DSA Terminal: how scores work, what trade direction means, what data sources are used, and how to interpret the signals. Answers are concise and citation-friendly.",
+      "Frequently asked questions about Leeks Terminal: how scores work, what trade direction means, what data sources are used, and how to interpret the signals. Answers are concise and citation-friendly.",
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "FAQPage",
       mainEntity: [
         {
           "@type": "Question",
-          name: "What is DSA Terminal?",
+          name: "What is Leeks Terminal?",
           acceptedAnswer: {
             "@type": "Answer",
             text:
-              "DSA Terminal is a daily decision-support tool for Hong Kong and US day traders. It analyzes 376 actively-traded tickers each morning with multi-dimensional scoring (Value, Quality, Momentum), real-time price data, and AI-generated trade setups including long/short/both direction signals.",
+              "Leeks Terminal is a daily decision-support tool for Hong Kong and US day traders. It analyzes 376 actively-traded tickers each morning with multi-dimensional scoring (Value, Quality, Momentum), real-time price data, and AI-generated trade setups including long/short/both direction signals.",
           },
         },
         {
@@ -255,7 +255,7 @@ const PAGES = {
           acceptedAnswer: {
             "@type": "Answer",
             text:
-              "No. DSA Terminal is a research tool, not investment advice. The author is not a licensed investment advisor. Day trading involves substantial risk of loss. Always do your own diligence and consult a licensed professional before making investment decisions. See full disclaimer.",
+              "No. Leeks Terminal is a research tool, not investment advice. The author is not a licensed investment advisor. Day trading involves substantial risk of loss. Always do your own diligence and consult a licensed professional before making investment decisions. See full disclaimer.",
           },
         },
         {
@@ -289,11 +289,11 @@ const PAGES = {
     },
     body: `
 <h1>Frequently Asked Questions</h1>
-<p>Answers to common questions about how DSA Terminal works, what the signals mean, and how to interpret the dashboard.</p>
+<p>Answers to common questions about how Leeks Terminal works, what the signals mean, and how to interpret the dashboard.</p>
 
 <h2>About the tool</h2>
-<h3>What is DSA Terminal?</h3>
-<p>DSA Terminal is a daily decision-support tool for Hong Kong and US day traders. It analyzes 376 actively-traded tickers each morning with multi-dimensional scoring (Value, Quality, Momentum), real-time price data, and AI-generated trade setups including long/short/both direction signals.</p>
+<h3>What is Leeks Terminal?</h3>
+<p>Leeks Terminal is a daily decision-support tool for Hong Kong and US day traders. It analyzes 376 actively-traded tickers each morning with multi-dimensional scoring (Value, Quality, Momentum), real-time price data, and AI-generated trade setups including long/short/both direction signals.</p>
 
 <h3>How is the score calculated?</h3>
 <p>Total score = <code>Value × 0.25 + Quality × 0.25 + Momentum × 0.50</code>. Day-trade weighting means Momentum dominates. See <a href="/methodology">Methodology</a> for the full breakdown.</p>
@@ -313,7 +313,7 @@ const PAGES = {
 
 <h2>About using it</h2>
 <h3>Is this investment advice?</h3>
-<p><b>No.</b> DSA Terminal is a research tool. The author is not a licensed investment advisor. Day trading involves substantial risk of loss. Always do your own diligence and consult a licensed professional. See <a href="/disclaimer">Disclaimer</a>.</p>
+<p><b>No.</b> Leeks Terminal is a research tool. The author is not a licensed investment advisor. Day trading involves substantial risk of loss. Always do your own diligence and consult a licensed professional. See <a href="/disclaimer">Disclaimer</a>.</p>
 
 <h3>Can I use this for swing trading?</h3>
 <p>The methodology is day-trade oriented — closes every position at market close. Swing traders can use the MA200 trend and 52-week range data, but the scoring weights momentum heavily which favors short-term setups.</p>
@@ -324,19 +324,19 @@ const PAGES = {
   },
 
   "/methodology": {
-    title: "Methodology · DSA Terminal Scoring",
+    title: "Methodology · Leeks Terminal Scoring",
     description:
-      "Detailed breakdown of how DSA Terminal calculates Value, Quality, Momentum scores and trade-direction signals. Includes MA20/50/100/200 trend alignment rules and the day-trade weighting rationale.",
+      "Detailed breakdown of how Leeks Terminal calculates Value, Quality, Momentum scores and trade-direction signals. Includes MA20/50/100/200 trend alignment rules and the day-trade weighting rationale.",
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "TechArticle",
-      headline: "DSA Terminal Scoring Methodology",
+      headline: "Leeks Terminal Scoring Methodology",
       about: ["Stock scoring", "Technical analysis", "Fundamental analysis", "Day trading"],
       author: { "@type": "Person", name: "Kenneth Lui" },
     },
     body: `
 <h1>Methodology</h1>
-<p>How DSA Terminal turns raw market data into a single day-trade signal. The full breakdown of every dimension, every weight, and every rule the LLM follows.</p>
+<p>How Leeks Terminal turns raw market data into a single day-trade signal. The full breakdown of every dimension, every weight, and every rule the LLM follows.</p>
 
 <div class="disclaimer">
   <b>⚠️ Not investment advice.</b> This page describes the algorithm. Past performance does not guarantee future results. Always do your own diligence.
@@ -398,14 +398,14 @@ const PAGES = {
 <h2>Why This Approach</h2>
 <p>Backtesting on a curated radar of 94 tickers (44 HK + 50 US) showed that pure momentum strategies (Donchian-78 breakout) under-perform buy-and-hold 5-10× on trending stocks. The multi-dim approach sacrifices some trend-capture in exchange for avoiding the worst drawdowns in choppy markets.</p>
 
-<p>For longer-hold strategies, we'd recommend a separate Donchian-30+ system on daily bars with multi-week holds. DSA Terminal's day-trade methodology is intentionally different.</p>
+<p>For longer-hold strategies, we'd recommend a separate Donchian-30+ system on daily bars with multi-week holds. Leeks Terminal's day-trade methodology is intentionally different.</p>
 `,
   },
 
   "/disclaimer": {
-    title: "Disclaimer · DSA Terminal · Not Investment Advice",
+    title: "Disclaimer · Leeks Terminal · Not Investment Advice",
     description:
-      "DSA Terminal is a research and educational tool. It is not investment advice. The author is not a licensed investment advisor. Day trading involves substantial risk of loss. Past performance does not guarantee future results.",
+      "Leeks Terminal is a research and educational tool. It is not investment advice. The author is not a licensed investment advisor. Day trading involves substantial risk of loss. Past performance does not guarantee future results.",
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "WebPage",
@@ -417,7 +417,7 @@ const PAGES = {
 <p><b>Effective date:</b> 2026-06-27</p>
 
 <div class="disclaimer">
-  <b>⚠️ CRITICAL:</b> DSA Terminal is a research and educational tool. Nothing on this site constitutes investment advice. The author is not a licensed investment advisor, broker, or dealer.
+  <b>⚠️ CRITICAL:</b> Leeks Terminal is a research and educational tool. Nothing on this site constitutes investment advice. The author is not a licensed investment advisor, broker, or dealer.
 </div>
 
 <h2>1. No Investment Advice</h2>
@@ -437,7 +437,7 @@ const PAGES = {
 <p>While we strive for accuracy, market data may be delayed, incomplete, or contain errors. The HK live quote overlay uses Tencent's public API with sub-minute delay. US data via YFinance has 15-minute delay. Historical data may have gaps. <b>Do not rely on this data for time-sensitive trading decisions.</b></p>
 
 <h2>4. No Liability</h2>
-<p>The author of DSA Terminal, the contributors, and any affiliated parties shall <b>not be liable for any losses, damages, or claims</b> arising from your use of this site or any information contained herein. Your use of this site is at your sole risk.</p>
+<p>The author of Leeks Terminal, the contributors, and any affiliated parties shall <b>not be liable for any losses, damages, or claims</b> arising from your use of this site or any information contained herein. Your use of this site is at your sole risk.</p>
 
 <h2>5. Regulatory Status</h2>
 <p>The author is not registered with the Securities and Futures Commission (SFC) of Hong Kong, the U.S. Securities and Exchange Commission (SEC), the Financial Industry Regulatory Authority (FINRA), or any other financial regulatory body. This site does not offer securities or investment services to the public.</p>
@@ -454,16 +454,16 @@ const PAGES = {
   },
 
   "/privacy": {
-    title: "Privacy Policy · DSA Terminal",
+    title: "Privacy Policy · Leeks Terminal",
     description:
-      "Privacy policy for DSA Terminal: no personal data is collected, no analytics, no cookies, no tracking. The dashboard runs entirely in your browser. Read the full policy.",
+      "Privacy policy for Leeks Terminal: no personal data is collected, no analytics, no cookies, no tracking. The dashboard runs entirely in your browser. Read the full policy.",
     jsonLd: { "@context": "https://schema.org", "@type": "PrivacyPolicy" },
     body: `
 <h1>Privacy Policy</h1>
 <p><b>Effective date:</b> 2026-06-27</p>
 
 <h2>Summary</h2>
-<p>DSA Terminal collects <b>no personal data</b>. No accounts, no analytics, no cookies, no tracking, no email collection. The dashboard reads market data from public APIs (Tencent, YFinance, Futu Cloud) and displays it in your browser. That's it.</p>
+<p>Leeks Terminal collects <b>no personal data</b>. No accounts, no analytics, no cookies, no tracking, no email collection. The dashboard reads market data from public APIs (Tencent, YFinance, Futu Cloud) and displays it in your browser. That's it.</p>
 
 <h2>What Data We Collect</h2>
 <p><b>None.</b> We do not collect:</p>

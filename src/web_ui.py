@@ -15,14 +15,14 @@ import streamlit as st  # noqa: E402
 
 # ===== Page config (browser tab title + favicon) =====
 st.set_page_config(
-    page_title="DSA Terminal · HK+US Day-Trade AI",
+    page_title="Leeks Terminal · HK+US Day-Trade AI",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded",
     menu_items={
         "Get Help": "https://github.com/kenkenlui-ctrl/Trading",
         "Report a bug": "https://github.com/kenkenlui-ctrl/Trading/issues",
-        "About": "DSA Terminal — AI-powered HK+US day-trade decision support. 376 tickers analyzed daily with multi-dim scoring (Value/Quality/Momentum) + trade direction signals. Not investment advice.",
+        "About": "Leeks Terminal — AI-powered HK+US day-trade decision support. 376 tickers analyzed daily with multi-dim scoring (Value/Quality/Momentum) + trade direction signals. Not investment advice.",
     },
 )
 
@@ -31,7 +31,7 @@ st.set_page_config(
 st.html("""
 <meta name="description" content="Real-time HK + US stock AI scoring for day-trade. 200 tickers × 4-dim score × live news. Powered by MiniMax-M3 + Futu OpenD.">
 <meta name="keywords" content="HK stock analysis, day trade, AI trading, momentum, MA, RSI, 騰訊, 阿里, M3, MiniMax">
-<meta property="og:title" content="DSA Terminal · HK+US Day-Trade AI">
+<meta property="og:title" content="Leeks Terminal · HK+US Day-Trade AI">
 <meta property="og:description" content="Bloomberg-style AI terminal for HK + US day-trade. 200 tickers, 4-dim scoring, live news.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.win9you.com">
@@ -199,16 +199,9 @@ cfg = get_config()
 if "detail_ticker" not in st.session_state:
     st.session_state.detail_ticker = ""
 
-st.set_page_config(
-    page_title="DSA · HK+US Terminal",
-    page_icon="◆",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
-
 # ===== Sidebar =====
 with st.sidebar:
-    st.markdown("### ◆ DSA TERMINAL")
+    st.markdown("### ◆ LEEKS TERMINAL")
     st.caption("> HK+US · day-trade AI")
     st.markdown("---")
 
@@ -277,7 +270,7 @@ with st.sidebar:
 now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 st.markdown(f"""
 <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom: 1rem;">
-    <h1 style="margin:0;">◆ HK+US AI · DECISION TERMINAL</h1>
+    <h1 style="margin:0;">◆ Leeks Terminal · HK+US Day-Trade AI</h1>
     <span class="dim" style="font-size: 0.85rem;">{now_str} HKT</span>
 </div>
 """, unsafe_allow_html=True)
