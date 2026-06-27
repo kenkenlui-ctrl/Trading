@@ -227,6 +227,66 @@ st.markdown("""
         font-size: 0.75rem !important;
     }
 
+    /* ===== Force WHITE backgrounds on all form widgets =====
+       Streamlit's default light-theme form inputs (selectbox / text_input /
+       number_input / date_input / dropdown popover / tab panel) ship with
+       dark navy backgrounds + white text. Override to match our white theme. */
+    [data-baseweb="select"] > div,
+    [data-baseweb="select"] [data-baseweb="select"],
+    [data-baseweb="input"] > div,
+    [data-baseweb="input"] input,
+    [data-baseweb="base-input"] > div,
+    [data-baseweb="base-input"] input {
+        background-color: #ffffff !important;
+        color: var(--fg) !important;
+        -webkit-text-fill-color: var(--fg) !important;
+        border-color: var(--border) !important;
+    }
+    [data-baseweb="select"] svg,
+    [data-baseweb="input"] svg {
+        fill: var(--fg) !important;
+        color: var(--fg) !important;
+    }
+    input[type="text"], input[type="search"], input[type="number"],
+    textarea, [contenteditable="true"] {
+        background-color: #ffffff !important;
+        color: var(--fg) !important;
+        -webkit-text-fill-color: var(--fg) !important;
+    }
+    /* Dropdown popover list (BaseWeb listbox) */
+    [data-baseweb="popover"] > div,
+    [data-baseweb="popover"] ul,
+    [data-baseweb="menu"] {
+        background-color: #ffffff !important;
+    }
+    [role="option"] {
+        background-color: #ffffff !important;
+        color: var(--fg) !important;
+    }
+    [role="option"]:hover,
+    [role="option"][aria-selected="true"],
+    [role="option"][data-highlighted="true"] {
+        background-color: #eff6ff !important;        /* light-blue tint on hover/selected */
+        color: var(--accent) !important;
+    }
+    /* Tab content panel */
+    [data-baseweb="tab-panel"], [role="tabpanel"] {
+        background-color: #ffffff !important;
+    }
+    /* Streamlit button (primary action) — was navy. Make it accent blue w/ white text */
+    .stButton > button[kind="primary"] {
+        background-color: var(--accent) !important;
+        color: #ffffff !important;
+        border-color: var(--accent) !important;
+    }
+    /* Disabled button (e.g. "✅ 股票清單已更新") */
+    .stButton > button:disabled {
+        background-color: #ffffff !important;
+        color: var(--dim) !important;
+        border-color: var(--border) !important;
+        opacity: 1 !important;
+    }
+
     /* ===== Aggressive padding kill ===== */
     /* Owner complaint 2026-06-27: ~80px dead space above header. Kill the
        Streamlit toolbar height + collapse block-container top padding to 0. */
