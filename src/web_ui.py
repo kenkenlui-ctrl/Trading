@@ -174,6 +174,24 @@ st.markdown("""
         color: var(--fg) !important;          /* Force visible text — Streamlit default has white-on-white bug after sidebar expansion */
     }
 
+    /* Radio dot (BaseWeb): white background + grey border for unselected,
+       blue border + blue inner dot for selected. Without this Streamlit
+       renders the dot with its default red theme tint that clashes with
+       our light theme. */
+    [data-testid="stRadio"] [data-baseweb="radio"] > div:first-child {
+        background-color: #ffffff !important;
+        border-color: #9ca3af !important;
+        border-width: 1.5px !important;
+    }
+    [data-testid="stRadio"] [data-baseweb="radio"] input:checked ~ div,
+    [data-testid="stRadio"] [data-baseweb="radio"] [aria-checked="true"] > div:first-child {
+        background-color: #ffffff !important;
+        border-color: #2563eb !important;
+    }
+    [data-testid="stRadio"] [data-baseweb="radio"] [aria-checked="true"]::after {
+        background-color: #2563eb !important;
+    }
+
     .stDataFrame {
         background-color: var(--panel) !important;
         border: 1px solid var(--border);
