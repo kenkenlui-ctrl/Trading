@@ -545,7 +545,12 @@ with tab_dashboard:
         "雙向": "both",
     }
     target_dir = filter_map_dash[trend_filter]
-    st.markdown(build_dashboard_md(selected_date, language=cfg.report_language, trade_direction=target_dir))
+    # Build dashboard as HTML cards (border + padding + margin) so 1 row = 1 card.
+    # unsafe_allow_html required because build_dashboard_md now emits raw HTML <div>s.
+    st.markdown(
+        build_dashboard_md(selected_date, language=cfg.report_language, trade_direction=target_dir),
+        unsafe_allow_html=True,
+    )
 
     # Detail table
     reports = list_reports(report_date=selected_date, limit=200)

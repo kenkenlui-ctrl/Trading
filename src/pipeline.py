@@ -245,23 +245,40 @@ def build_dashboard_md(report_date: Optional[str] = None, language: Optional[str
     else:
         stats_line = f"**{report_date}** · Analyzed **{n}** stocks · 🟢Buy:{n_buy} · 🟡Hold:{n_hold} · 🔴Sell:{n_sell}"
 
-    md = f"{stats_line}\n\n"
-
     # Sort by score desc
     sorted_reports = sorted(reports, key=lambda r: r["score"] or 0, reverse=True)
 
-    # Single newline between cards to avoid big gaps (was \n\n — adds 16px per row × 376 = wasted ~6K px)
+    # Render each card as a styled HTML <div> with explicit border + padding
+    # so cards are visually distinct (1 per row). Markdown soft-breaks were
+    # collapsing cards into one paragraph — owner complaint 2026-06-27.
+    # Also normalize summary_md text — escape HTML chars in case LLM emitted raw HTML.
+    import html as _html
     if is_zh:
-        md += "## 📊 分析結果摘要\n"
-        for r in sorted_reports:
-            md += f"{r.get('summary_md', '')}\n"
+        section_label = "## 📊 分析結果摘要"
     else:
-        md += "## 📊 Analysis Summary\n"
-        for r in sorted_reports:
-            md += f"{r.get('summary_md', '')}\n"
+        section_label = "## 📊 Analysis Summary"
 
-    # Footer
-    md += f"\n---\n*生成時間: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} · LLM: {cfg.litellm_model}*\n"
+    cards_html = []
+    for r in sorted_reports:
+        raw = r.get("summary_md", "") or ""
+        # Escape any < > & in LLM output so they render as text not markup
+        safe = _html.escape(raw).replace("\n", "<br>")
+        card = (
+            f'<div style="border:1px solid var(--border);border-left:3px solid var(--accent);'
+            f'background:var(--panel);border-radius:4px;padding:10px 14px;'
+            f'margin:8px 0;font-size:0.85rem;line-height:1.5;'
+            f'font-family:JetBrains Mono, monospace;">'
+            f'{safe}'
+            f'</div>'
+        )
+        cards_html.append(card)
+
+    md = (
+        f"{stats_line}\n\n"
+        f"{section_label}\n\n"
+        + "\n".join(cards_html)
+        + f"\n\n---\n*生成時間: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} · LLM: {cfg.litellm_model}*\n"
+    )
     return md
 
 
