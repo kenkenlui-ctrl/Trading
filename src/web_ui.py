@@ -204,6 +204,28 @@ st.markdown("""
         font-size: 0.75rem !important;
     }
 
+    /* ===== Aggressive padding kill ===== */
+    /* Owner complaint 2026-06-27: ~80px dead space above header. Kill the
+       Streamlit toolbar height + collapse block-container top padding to 0. */
+    header[data-testid="stHeader"] {
+        display: none !important;  /* removes >> sidebar toggle + tool bar */
+    }
+    .block-container {
+        padding-top: 1rem !important;  /* was 2rem — saved 16px */
+        padding-bottom: 1rem !important;
+        max-width: 100% !important;
+    }
+    section.main > div.block-container {
+        padding-top: 0.5rem !important;  /* was 1.5rem — saved 16px */
+    }
+    /* Streamlit adds default body padding even with embed; kill it */
+    body { padding: 0 !important; margin: 0 !important; }
+    div[data-testid="stAppViewContainer"] {
+        padding: 0 !important;
+    }
+    /* Header flex row: remove its margin-bottom too */
+    div[style*="display:flex"] { margin-bottom: 0.25rem !important; }
+
     .bull { color: var(--bull) !important; }
     .bear { color: var(--bear) !important; }
     .amber { color: var(--amber) !important; }
@@ -458,6 +480,59 @@ with st.sidebar:
                 )
 
     _live_progress()
+
+    # ===== HK universe refresh button (lazy: once per calendar day) =====
+    # Owner request 2026-06-27: don't auto-regen via launchd — instead, fire on
+    # first click of "🔄 更新股票清單 (HK)" each calendar day, then no-op
+    # for the rest of the day. Subsequent analysis runs pick up the fresh list.
+    import json as _json
+    from datetime import date as _date
+    _refresh_cache = Path("/tmp/hk_universe_last_refresh.json")
+    _today_str = _date.today().isoformat()
+    _last_refresh_date = None
+    try:
+        if _refresh_cache.exists():
+            _last_refresh_date = _json.loads(_refresh_cache.read_text()).get("date")
+    except Exception:
+        pass
+
+    _already_refreshed = (_last_refresh_date == _today_str)
+
+    if _already_refreshed:
+        # Show locked state — button disabled, show today's timestamp
+        st.button(
+            f"✅ 股票清單已更新 (今日)",
+            use_container_width=True,
+            key="regen_universe_done",
+            disabled=True,
+            help=f"上次刷新: {_today_str} · 翌日 0:00 HKT 後再可刷新",
+        )
+    else:
+        if st.button(
+            "🔄 更新股票清單 (HK) — 第一次點擊每日",
+            use_container_width=True,
+            key="regen_universe",
+            help="按 20d 平均成交額重新排序 top 200 HK 股票 (~7s)",
+        ):
+            import subprocess as _sp
+            _regen_log = "/tmp/dsa-hk-regen-universe.log"
+            with st.spinner("刷新 HK 股票清單中..."):
+                _result = _sp.run(
+                    [sys.executable, str(PROJECT_ROOT / "scripts" / "regen_hk_universe.py")],
+                    cwd=str(PROJECT_ROOT),
+                    capture_output=True,
+                    text=True,
+                    timeout=60,
+                )
+                if _result.returncode == 0:
+                    _refresh_cache.write_text(_json.dumps({"date": _today_str}))
+                    # Extract last meaningful line from output
+                    _out_lines = [l for l in _result.stdout.splitlines() if l.strip() and not l.startswith("HTTP") and not l.startswith("$")]
+                    _last = _out_lines[-1] if _out_lines else "refresh OK"
+                    st.success(f"✅ HK 清單已刷新 · {_last}")
+                else:
+                    st.error(f"❌ Regen failed: {_result.stderr[:300]}")
+            st.rerun()
 
     st.markdown("---")
     # RUN LOG wrapped in an expander to save vertical sidebar space
