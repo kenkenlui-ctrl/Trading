@@ -20,6 +20,13 @@ CANDIDATE_FILE = Path("/tmp/hk_candidate_pool.txt")
 MIN_TURNOVER_M_HKD = 50.0
 TOP_N = 200
 
+# Hardcoded deny-list for codes with low / unreliable turnover that should
+# NEVER be on the day-trade radar (Owner complaint 2026-06-27: 0732.HK 信利國際
+# has 2.4M HKD daily turnover — too thin for entry/exit; not even worth scoring).
+DENY_LIST: set[str] = {
+    "0732.HK",  # 信利國際 — 2.4M HKD/day (近月 avg)，day-trade 入唔到場
+}
+
 
 def build_candidate_pool() -> list[str]:
     """Build HK candidate pool from HSI/HSCEI constituents + current universe + DB."""
@@ -99,7 +106,8 @@ def main() -> int:
 
     print(f"  Fetching 20d turnover via yfinance...")
     results = fetch_turnover(pool)
-    filtered = [(c, t) for c, t in results if t >= MIN_TURNOVER_M_HKD]
+    filtered = [(c, t) for c, t in results if t >= MIN_TURNOVER_M_HKD and c not in DENY_LIST]
+    dropped_deny = sorted(DENY_LIST & set(c for c, _ in results))
     filtered.sort(key=lambda x: -x[1])
     top = [c for c, _ in filtered[:TOP_N]]
 
@@ -112,6 +120,8 @@ def main() -> int:
     elapsed = time.time() - t0
     print(f"  Wrote {len(top)} codes to {UNIVERSE_FILE.name}")
     print(f"  Dropped {len(results) - len(filtered)} codes below threshold")
+    if dropped_deny:
+        print(f"  Deny-list dropped: {dropped_deny}")
     print(f"  Top 5 by turnover: {[(c, f'{t:.0f}M') for c, t in filtered[:5]]}")
     print(f"  Bottom 5 in top 200: {[(c, f'{t:.0f}M') for c, t in filtered[195:200]]}")
     print(f"  Elapsed: {elapsed:.1f}s")
