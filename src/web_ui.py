@@ -612,18 +612,53 @@ with tab_dashboard:
         horizontal=True,
         help="根據 LLM 評估嘅 trade_direction 過濾。LONG = 適合做多，SHORT = 弱勢反彈做空，雙向 = 兩個方向都有 setup",
     )
+    # Market filter (HK / US / all)
+    market_filter = st.radio(
+        "🌏 市場 FILTER",
+        options=["全部", "港股 HK", "美股 US"],
+        index=0,
+        horizontal=True,
+        help="港股 = .HK 結尾，美股 = 唔係 .HK 結尾",
+    )
+    # Operation filter (BUY / HOLD / SELL) — owner request 2026-06-27
+    operation_filter = st.radio(
+        "💡 操作 FILTER",
+        options=["全部", "🟢買入 BUY", "🟡觀望 HOLD", "🔴賣出 SELL"],
+        index=0,
+        horizontal=True,
+        help="只顯示 LLM 評為指定操作嘅股票",
+    )
     # Map filter → DB value
-    filter_map_dash = {
+    filter_map_dir = {
         "全部": None,
         "只做多 LONG": "long",
         "只做空 SHORT": "short",
         "雙向": "both",
     }
-    target_dir = filter_map_dash[trend_filter]
+    filter_map_market = {
+        "全部": None,
+        "港股 HK": "HK",
+        "美股 US": "US",
+    }
+    filter_map_op = {
+        "全部": None,
+        "🟢買入 BUY": "buy",
+        "🟡觀望 HOLD": "hold",
+        "🔴賣出 SELL": "sell",
+    }
+    target_dir = filter_map_dir[trend_filter]
+    target_market = filter_map_market[market_filter]
+    target_op = filter_map_op[operation_filter]
     # Build dashboard as HTML cards (border + padding + margin) so 1 row = 1 card.
     # unsafe_allow_html required because build_dashboard_md now emits raw HTML <div>s.
     st.markdown(
-        build_dashboard_md(selected_date, language=cfg.report_language, trade_direction=target_dir),
+        build_dashboard_md(
+            selected_date,
+            language=cfg.report_language,
+            trade_direction=target_dir,
+            market=target_market,
+            operation=target_op,
+        ),
         unsafe_allow_html=True,
     )
 

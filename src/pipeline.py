@@ -192,15 +192,25 @@ def run_full_analysis(
     return summary
 
 
-def build_dashboard_md(report_date: Optional[str] = None, language: Optional[str] = None, trade_direction: Optional[str] = None) -> str:
+def build_dashboard_md(
+    report_date: Optional[str] = None,
+    language: Optional[str] = None,
+    trade_direction: Optional[str] = None,
+    market: Optional[str] = None,
+    operation: Optional[str] = None,
+) -> str:
     """
     Build the daily decision dashboard markdown. Aggregates all reports for a date.
 
-    trade_direction filter:
-      - None / "" / "all" → no filter (show all)
-      - "long" → only trade_direction='long'
-      - "short" → only trade_direction='short'
-      - "both" → only trade_direction='both'
+    Filters (all optional):
+      trade_direction: None / "" / "all" → no filter
+                      "long" / "short" / "both" → only matching trade_direction
+      market:          None / "" / "all" → no filter
+                      "HK" → only codes ending .HK
+                      "US" → codes without .HK suffix
+      operation:       None / "" / "all" → no filter
+                      "buy" / "hold" / "sell" → only matching operation_advice
+                      (also accepts zh-Hant: "買入" / "觀望" / "賣出")
     """
     cfg = get_config()
     language = language or cfg.report_language
@@ -209,18 +219,48 @@ def build_dashboard_md(report_date: Optional[str] = None, language: Optional[str
     report_date = report_date or datetime.now().strftime("%Y-%m-%d")
     reports = list_reports(report_date=report_date, limit=500)
 
-    # Apply trade_direction filter (None/all = show everything)
-    filter_label = "全部"
+    # Apply filters — chain them so the stats line shows final filtered counts.
+    filter_parts = []
+
     if trade_direction and trade_direction not in ("", "all", "全部"):
         before = len(reports)
         reports = [r for r in reports if (r.get("trade_direction") or "both") == trade_direction]
-        after = len(reports)
-        filter_label = {
-            "long": "只做多 LONG",
-            "short": "只做空 SHORT",
-            "both": "雙向",
-        }.get(trade_direction, trade_direction)
-        logger.info(f"Dashboard filter trade_direction={trade_direction}: {before} → {after} reports")
+        filter_parts.append({
+            "long": "只做多 LONG", "short": "只做空 SHORT", "both": "雙向"
+        }.get(trade_direction, trade_direction))
+        logger.info(f"Dashboard filter trade_direction={trade_direction}: {before} → {len(reports)}")
+
+    if market and market not in ("", "all", "全部"):
+        before = len(reports)
+        if market == "HK":
+            reports = [r for r in reports if r["code"].endswith(".HK")]
+        elif market == "US":
+            reports = [r for r in reports if not r["code"].endswith(".HK")]
+        else:
+            reports = [r for r in reports if r["code"].endswith(f".{market}")]
+        filter_parts.append({"HK": "港股 HK", "US": "美股 US"}.get(market, market))
+        logger.info(f"Dashboard filter market={market}: {before} → {len(reports)}")
+
+    if operation and operation not in ("", "all", "全部"):
+        before = len(reports)
+        # Map zh-Hant + en aliases
+        op_aliases = {
+            "buy":  ("買入", "buy"),
+            "hold": ("觀望", "hold"),
+            "sell": ("賣出", "sell"),
+            "買入": ("買入", "buy"),
+            "觀望": ("觀望", "hold"),
+            "賣出": ("賣出", "sell"),
+        }
+        wanted = op_aliases.get(operation, (operation,))
+        reports = [r for r in reports if r.get("operation_advice") in wanted]
+        filter_parts.append({
+            "buy": "🟢買入 BUY", "hold": "🟡觀望 HOLD", "sell": "🔴賣出 SELL",
+            "買入": "🟢買入 BUY", "觀望": "🟡觀望 HOLD", "賣出": "🔴賣出 SELL",
+        }.get(operation, operation))
+        logger.info(f"Dashboard filter operation={operation}: {before} → {len(reports)}")
+
+    filter_label = " · ".join(filter_parts) if filter_parts else "全部"
 
     if not reports:
         return (
