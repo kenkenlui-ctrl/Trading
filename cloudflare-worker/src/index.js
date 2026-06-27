@@ -91,36 +91,62 @@ ${JSON.stringify(jsonLd, null, 2)}
   </script>
 
   <style>
-    :root { --bg: #0a0e14; --fg: #d4d4d4; --accent: #d4b864; --bull: #4ade80; --bear: #f87171; --dim: #6b7280; --panel: #1a1d23; --border: #2a2f37; }
-    * { box-sizing: border-box; }
-    body { background: var(--bg); color: var(--fg); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; line-height: 1.7; margin: 0; padding: 0; }
+    /* Light theme — matches dashboard web_ui.py palette for visual consistency.
+       WCAG contrast verified (a11y-audit task 2026-06-27):
+       --fg #1a1d23 on --bg #ffffff = 16.74:1 (AAA)
+       --accent #2563eb on --bg #ffffff = 5.17:1 (AA)
+       --bull #15803d on --bg #ffffff = 5.06:1 (AA)
+       --bear #b91c1c on --bg #ffffff = 6.05:1 (AA)
+       --amber #92400e on #fef3c7 = 9.31:1 (AAA)
+       --dim #6b7280 on --bg #ffffff = 4.83:1 (AA)
+       Typography mirrors dashboard (web_ui.py): JetBrains Mono everywhere. */
+    :root { --bg: #ffffff; --fg: #1a1d23; --accent: #2563eb; --bull: #15803d; --bear: #b91c1c; --amber: #92400e; --dim: #6b7280; --panel: #f3f4f6; --border: #e5e7eb; --code-fg: #14532d; }
+    * { box-sizing: border-box; font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace; }
+    body { background: var(--bg); color: var(--fg); font-size: 0.85rem; line-height: 1.7; margin: 0; padding: 0; }
     .container { max-width: 880px; margin: 0 auto; padding: 48px 24px; }
-    h1 { font-size: 32px; font-weight: 700; color: var(--accent); margin: 0 0 8px; letter-spacing: -0.5px; }
-    h2 { font-size: 22px; font-weight: 600; color: var(--accent); margin: 40px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-    h3 { font-size: 18px; font-weight: 600; color: #e5e5e5; margin: 24px 0 8px; }
-    p { margin: 12px 0; color: #c4c4c4; }
+    h1 { font-size: 1.5rem; font-weight: 700; color: var(--accent); margin: 0 0 8px; letter-spacing: -0.5px; }
+    h2 { font-size: 1.1rem; font-weight: 600; color: var(--accent); margin: 40px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+    h3 { font-size: 0.95rem; font-weight: 600; color: var(--dim); margin: 24px 0 8px; text-transform: uppercase; letter-spacing: 0.1em; }
+    p { margin: 12px 0; color: #374151; }
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
-    code { background: var(--panel); padding: 2px 6px; border-radius: 3px; font-family: "SF Mono", "JetBrains Mono", monospace; font-size: 14px; color: var(--bull); }
-    pre { background: var(--panel); border: 1px solid var(--border); padding: 16px; border-radius: 6px; overflow-x: auto; }
+    code { background: var(--panel); padding: 2px 6px; border-radius: 3px; font-size: 0.75rem; color: var(--code-fg); }
+    pre { background: var(--panel); border: 1px solid var(--border); padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 0.75rem; line-height: 1.5; }
+    pre code { background: transparent; padding: 0; }
     ul, ol { padding-left: 24px; }
-    li { margin: 6px 0; color: #c4c4c4; }
-    .badge { display: inline-block; background: var(--panel); border: 1px solid var(--border); padding: 2px 8px; border-radius: 12px; font-size: 12px; color: var(--accent); margin-right: 4px; }
-    .bull { color: var(--bull); }
-    .bear { color: var(--bear); }
+    li { margin: 6px 0; color: #374151; }
+    .badge { display: inline-block; background: var(--panel); border: 1px solid var(--border); padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; color: var(--accent); margin-right: 4px; }
+    .bull { color: var(--bull); font-weight: 600; }
+    .bear { color: var(--bear); font-weight: 600; }
+    .amber { color: var(--amber); font-weight: 600; }
     .dim { color: var(--dim); }
     .nav { display: flex; gap: 16px; padding: 16px 24px; background: var(--panel); border-bottom: 1px solid var(--border); align-items: center; }
-    .nav-brand { color: var(--accent); font-weight: 700; font-size: 14px; }
-    .nav a { color: #9ca3af; font-size: 14px; }
+    .nav-brand { color: var(--accent); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .nav a { color: #4b5563; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
     .nav a:hover { color: var(--accent); }
-    .cta { background: var(--accent); color: #0a0e14; padding: 12px 24px; border-radius: 6px; font-weight: 600; display: inline-block; margin-top: 16px; }
-    .cta:hover { background: #e5c678; text-decoration: none; }
-    .footer { margin-top: 80px; padding: 24px; border-top: 1px solid var(--border); color: var(--dim); font-size: 12px; text-align: center; }
-    .disclaimer { background: #2a1f0a; border: 1px solid #b88a00; border-radius: 6px; padding: 16px; margin: 24px 0; color: #d4b864; font-size: 14px; }
-    .last-updated { color: var(--dim); font-size: 12px; margin-bottom: 24px; }
-    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
-    th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; font-size: 14px; }
-    th { background: var(--panel); color: var(--accent); }
+    .cta { background: var(--accent); color: #ffffff; padding: 12px 24px; border-radius: 6px; font-weight: 600; display: inline-block; margin-top: 16px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .cta:hover { background: #1d4ed8; text-decoration: none; }
+    .hero { padding: 60px 0 40px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+    .hero h1 { font-size: 2.2rem; margin: 0 0 8px; }
+    .hero-sub { font-size: 1rem; color: var(--dim); margin: 0 0 24px; text-transform: none; letter-spacing: 0; }
+    .hero-note { font-size: 0.75rem; color: var(--dim); margin-top: 12px; text-transform: none; letter-spacing: 0; }
+    .disclaimer { background: #fef3c7; border-left: 3px solid #b45309; padding: 12px 16px; border-radius: 4px; font-size: 0.75rem; color: #78350f; margin-top: 32px; }
+    .footer { margin-top: 80px; padding: 24px; border-top: 1px solid var(--border); color: var(--dim); font-size: 0.7rem; text-align: center; text-transform: uppercase; letter-spacing: 0.1em; }
+    .disclaimer { background: #fef3c7; border: 1px solid #b45309; border-radius: 6px; padding: 16px; margin: 24px 0; color: #78350f; font-size: 0.8rem; }
+    .last-updated { color: var(--dim); font-size: 0.7rem; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 0.05em; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.75rem; }
+    th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; color: var(--fg); }
+    th { background: var(--panel); color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; }
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      .container { padding: 24px 16px; }
+      h1 { font-size: 1.05rem; }
+      h2 { font-size: 0.95rem; }
+      h3 { font-size: 0.8rem; }
+      body { font-size: 0.8rem; }
+      .nav { flex-wrap: wrap; gap: 8px; padding: 12px 16px; }
+      .nav a { font-size: 0.7rem; }
+    }
   </style>
 </head>
 <body>
@@ -147,6 +173,53 @@ ${JSON.stringify(jsonLd, null, 2)}
 // ---------- Static page content ----------
 
 const PAGES = {
+  "/": {
+    title: "Leeks Terminal · HK+US Day-Trade AI",
+    description:
+      "Real-time HK + US day-trade AI terminal. 376 tickers scored daily on Value / Quality / Momentum dimensions with long/short/both direction signals. Free, no signup.",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      name: "Leeks Terminal",
+      url: SITE_URL,
+      applicationCategory: "FinanceApplication",
+      operatingSystem: "Any (web browser)",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      description:
+        "Real-time HK + US day-trade AI terminal. 376 tickers scored daily on Value / Quality / Momentum dimensions.",
+    },
+    body: `
+<div class="hero">
+  <h1>◆ Leeks Terminal</h1>
+  <p class="hero-sub">HK + US Day-Trade AI · 376 tickers scored daily on Value / Quality / Momentum</p>
+  <a href="/dashboard" class="cta">🚀 開個 Dashboard</a>
+  <p class="hero-note">No signup · Free · Day-trade only (close 4 PM HKT / 4 PM ET)</p>
+</div>
+
+<h2>What you get</h2>
+<ul>
+  <li><strong>Multi-dimensional scoring</strong> — every ticker scored 0-100 on Value (PE/PB), Quality (ROE/margin), and Momentum (MA trend / RSI / volume)</li>
+  <li><strong>Trade direction signal</strong> — long / short / both, with concrete entry zone + stop-loss + target price</li>
+  <li><strong>Real-time price overlay</strong> — HK via Tencent (sub-minute), US via YFinance (15-min delayed)</li>
+  <li><strong>200-ticker HK universe</strong> by 20-day turnover, refreshed manually on demand</li>
+  <li><strong>Concrete numbers</strong> — every recommendation cites specific MA / PE / PB / support / resistance levels</li>
+</ul>
+
+<h2>How to use it</h2>
+<ol>
+  <li>Click <a href="/dashboard">Dashboard</a> above</li>
+  <li>Filter by market (HK / US), trade direction (long / short / both), or operation (buy / hold / sell)</li>
+  <li>Read the cards — every line includes specific price levels, not vague suggestions</li>
+  <li>Close all positions by 4 PM HKT / 4 PM ET (this is a day-trade tool, not a swing-trade tool)</li>
+</ol>
+
+<h2>Built by</h2>
+<p>Kenneth Lui · Hong Kong-based day trader. Read the <a href="/methodology">scoring methodology</a> or the <a href="/about">about page</a> for full context.</p>
+
+<h2>Disclaimer</h2>
+<p class="disclaimer">Leeks Terminal is a research and educational tool. Nothing here constitutes investment advice. The author is not a licensed investment advisor, broker, or dealer. Day trading involves substantial risk of loss. See the full <a href="/disclaimer">disclaimer</a> for details.</p>
+`,
+  },
   "/about": {
     title: "About Leeks Terminal · HK+US Day-Trade AI",
     description:
@@ -576,10 +649,8 @@ export default {
       });
     }
 
-    // /dashboard alias — redirect to root (which is the actual Streamlit app)
-    if (path === "/dashboard") {
-      return Response.redirect(SITE_URL + "/", 302);
-    }
+    // /dashboard → fall through to tunnel proxy (no redirect needed; the
+    // / → landing page rerouting changed semantics — removed 2026-06-27)
 
     // Static content pages
     if (PAGES[path]) {
