@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leeks Terminal · 2026-06-26 · 美股買入</title>
+  <meta name="description" content="Leeks Terminal 2026-06-26 AI dashboard — 美股買入">
+  <meta property="og:title" content="Leeks Terminal · 2026-06-26 · 美股買入">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.win9you.com">
+  <meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://www.win9you.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+    --bg: #ffffff;
+    --panel: #f3f4f6;
+    --panel-2: #e5e7eb;
+    --border: #e5e7eb;
+    --fg: #1a1d23;
+    --dim: #4b5563;
+    --bull: #15803d;
+    --bear: #b91c1c;
+    --amber: #92400e;
+    --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Top nav (matches Streamlit worker injection) */
+nav.leeks-site-nav {
+    position: sticky; top: 0; z-index: 999;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+nav.leeks-site-nav .brand {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+}
+nav.leeks-site-nav a {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    padding: 4px 0;
+}
+nav.leeks-site-nav a.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+}
+
+/* Layout */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+h1 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin: 0 0 1rem;
+}
+h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
+
+/* Date selector (top of dashboard) — looks like Streamlit selectbox */
+.date-picker {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+}
+.date-picker a {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--fg);
+    font-size: 0.8rem;
+}
+.date-picker a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Disclaimer */
+.disclaimer {
+    background: #fef3c7;
+    border: 1px solid #b45309;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #78350f;
+}
+
+/* Cards (mirror Streamlit dashboard) */
+.card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+.card.bull { border-left-color: var(--bull); }
+.card.bear { border-left-color: var(--bear); }
+.card.amber { border-left-color: var(--amber); }
+
+/* Stats line */
+.stats {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.stats .bull { color: var(--bull); font-weight: 600; }
+.stats .bear { color: var(--bear); font-weight: 600; }
+.stats .amber { color: var(--amber); font-weight: 600; }
+
+/* Detail table */
+table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+}
+table.detail th, table.detail td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+table.detail th {
+    background: var(--panel-2);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+
+/* Filter chips (alternative to filter dropdown) */
+.filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+}
+.filters span { color: var(--dim); margin-right: 4px; align-self: center; }
+.filters a {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--fg);
+}
+.filters a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    main { padding: 16px 12px 48px; }
+    h1 { font-size: 1.15rem; }
+    .card { padding: 8px 10px; font-size: 0.8rem; }
+    nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
+    nav.leeks-site-nav a { font-size: 0.7rem; }
+    table.detail { font-size: 0.7rem; }
+    table.detail th, table.detail td { padding: 4px 6px; }
+}
+</style>
+  
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<main>
+<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-06-26/all.html">全部</a><a href="/dashboard/2026-06-26/long-hk-buy.html">港股 LONG 買入</a><a href="/dashboard/2026-06-26/short-hk-sell.html">港股 SHORT 賣出</a><a href="/dashboard/2026-06-26/long-us-buy.html">美股 LONG 買入</a><a href="/dashboard/2026-06-26/short-us-sell.html">美股 SHORT 賣出</a><a href="/dashboard/2026-06-26/hk-buy.html">港股買入</a><a href="/dashboard/2026-06-26/hk-sell.html">港股賣出</a><a href="/dashboard/2026-06-26/us-buy.html" class="active">美股買入</a><a href="/dashboard/2026-06-26/us-sell.html">美股賣出</a></div><h1>📊 決策儀表板 — 2026-06-26 (美股買入)</h1><b>2026-06-26</b> · 共分析 <b>5</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:5 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:0 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:0
+
+<h2>📊 分析結果摘要</h2>
+
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>PRU</b> · 評分 67 · 買入 · PRU 近期呈現明顯反彈走勢，過去30日由約100水平升至108.40，累積升幅約8%。股價已站穩於 MA20（105.50）及 MA200（104.15）之上，短中期均線轉強（MA20 &gt; MA50 &gt; MA100），惟 MA100（100.31）仍低於 MA200，長線均線結構尚未完全修復。RSI14 處於 62.34 偏強但未超買，估值具吸引力（PE 11.16、PB 1.18、股息率 5.23%）。今日收近全日高位，買盤主動，但正臨近 109.16 近期阻力區，宜待回調低吸而非追高。</div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>EXC</b> · 評分 62 · 買入 · EXC 近期30日呈現穩步上行趨勢，從44.40升至47.13，現價站穩 MA20、MA50 及 MA200 之上。RSI14 為 61.73，動能偏強但未達超買。MA20 &lt; MA100 的排列反映中線尚未完全修復，需留意追高風險。建議等待小幅回調至均線附近分批入場，嚴守止損。</div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>HOOD</b> · 評分 62 · 買入 · HOOD 短中期均線呈多頭排列（MA20 93.55 &gt; MA50 85.16 &gt; MA100 80.25），RSI 63.87 未超買，今日升 2.49% 顯示買盤積極。股價自 108 高位回落後於 MA20 附近止跌回升，技術反彈結構完好。但現價 95.80 仍受制於 MA200（102.56）長線牛熊分界，估值 PE 46.49 偏高，向上空間受限。建議短線順勢做多，回調至 MA20 附近入場，嚴設止損。</div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>MET</b> · 評分 62 · 買入 · MET 短線均線呈多頭排列（MA20 &gt; MA50），股價站穩所有均線之上，RSI 處於中性偏強區域，動能良好。惟 MA100 仍低於 MA200，顯示中長線趨勢結構尚未完全轉牛，需留意 87.58–88.84 區間為 52 週高點附近之密集阻力。建議待回調至 MA20 附近低吸，不追高，控制短線止損。</div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>SAIC</b> · 評分 58 · 買入 · MA20（110.31）&gt; MA50（101.58）&gt; MA100（97.67）形成多頭排列，現價位於 MA20 下方約 0.8%，屬於健康回調範圍。股價自 116 高位回落至 102 附近後出現技術性反彈，今日收升 2.62%，短期跌勢有止穩跡象。RSI 41.7 處於中性區域，向上仍有空間。估值 PE 12.31 倍合理，但缺乏明確催化劑，須以技術反彈思路操作。</div>
+
+---
+<em>生成時間: 2026-06-28 00:20:02 · LLM: openai/MiniMax-M3</em>
+<h2>詳細表格</h2><table class="detail"><thead><tr><th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能</th><th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th><th>入場</th><th>止損</th><th>目標</th></tr></thead><tbody><tr><td>PRU</td><td>67</td><td>—</td><td>—/—/—</td><td>買入</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>EXC</td><td>62</td><td>—</td><td>—/—/—</td><td>買入</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>HOOD</td><td>62</td><td>—</td><td>—/—/—</td><td>買入</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>MET</td><td>62</td><td>—</td><td>—/—/—</td><td>買入</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>SAIC</td><td>58</td><td>—</td><td>—/—/—</td><td>買入</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr></tbody></table>
+</main>
+<footer>
+  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>

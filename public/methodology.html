@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leeks Terminal · 分析方法論</title>
+  <meta name="description" content="Leeks Terminal Methodology page">
+  <meta property="og:title" content="Leeks Terminal · 分析方法論">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.win9you.com">
+  <meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://www.win9you.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+    --bg: #ffffff;
+    --panel: #f3f4f6;
+    --panel-2: #e5e7eb;
+    --border: #e5e7eb;
+    --fg: #1a1d23;
+    --dim: #4b5563;
+    --bull: #15803d;
+    --bear: #b91c1c;
+    --amber: #92400e;
+    --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Top nav (matches Streamlit worker injection) */
+nav.leeks-site-nav {
+    position: sticky; top: 0; z-index: 999;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+nav.leeks-site-nav .brand {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+}
+nav.leeks-site-nav a {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    padding: 4px 0;
+}
+nav.leeks-site-nav a.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+}
+
+/* Layout */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+h1 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin: 0 0 1rem;
+}
+h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
+
+/* Date selector (top of dashboard) — looks like Streamlit selectbox */
+.date-picker {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+}
+.date-picker a {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--fg);
+    font-size: 0.8rem;
+}
+.date-picker a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Disclaimer */
+.disclaimer {
+    background: #fef3c7;
+    border: 1px solid #b45309;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #78350f;
+}
+
+/* Cards (mirror Streamlit dashboard) */
+.card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+.card.bull { border-left-color: var(--bull); }
+.card.bear { border-left-color: var(--bear); }
+.card.amber { border-left-color: var(--amber); }
+
+/* Stats line */
+.stats {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.stats .bull { color: var(--bull); font-weight: 600; }
+.stats .bear { color: var(--bear); font-weight: 600; }
+.stats .amber { color: var(--amber); font-weight: 600; }
+
+/* Detail table */
+table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+}
+table.detail th, table.detail td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+table.detail th {
+    background: var(--panel-2);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+
+/* Filter chips (alternative to filter dropdown) */
+.filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+}
+.filters span { color: var(--dim); margin-right: 4px; align-self: center; }
+.filters a {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--fg);
+}
+.filters a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    main { padding: 16px 12px 48px; }
+    h1 { font-size: 1.15rem; }
+    .card { padding: 8px 10px; font-size: 0.8rem; }
+    nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
+    nav.leeks-site-nav a { font-size: 0.7rem; }
+    table.detail { font-size: 0.7rem; }
+    table.detail th, table.detail td { padding: 4px 6px; }
+}
+</style>
+  
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/faq.html">FAQ</a><a href="/methodology.html" class="active">Methodology</a><a href="/about.html">About</a></nav>
+<main>
+<h1>分析方法論</h1>
+<h2>數據來源</h2>
+<ul>
+  <li><b>HK 即時報價</b>: Tencent qt.gtimg.cn (sub-1min delay，PE/PB/market_cap/52w 同時提供)</li>
+  <li><b>US 即時報價</b>: YFinance (15-min delay)</li>
+  <li><b>新聞</b>: Futu Cloud (free tier, 60 req/min)</li>
+  <li><b>歷史 bars</b>: YFinance (HK 覆蓋不平均，新 foreign-listed 會 warn)</li>
+</ul>
+
+<h2>LLM 分析流程</h2>
+<ol>
+  <li>Fetch 報價 + 技術指標 (MA20/50/100/200 + RSI + MACD + 成交量比)</li>
+  <li>Fetch 新聞 (last 5 條 + sentiment)</li>
+  <li>Prompt MiniMax-M3 輸出 20 個 fields (score, sentiment, trade_direction, entry_zone, stop_loss, target_price, support_zone, resistance_zone, summary_md, full_md)</li>
+  <li>寫入 SQLite + commit 入 git</li>
+  <li>Cloudflare Pages 自動 re-deploy static dashboard</li>
+</ol>
+
+<h2>評分模型</h2>
+<p>三維 weighted score：value × 0.25 + quality × 0.25 + momentum × 0.50。<br>
+day-trade 偏重動能，所以 score 高通常代表趨勢 + 動量 + 估值合理 嘅 combination。</p>
+
+<h2>操作建議</h2>
+<ul>
+  <li><b>🟢 買入</b>: score ≥ 70 + bullish trade_direction + positive sentiment</li>
+  <li><b>🔴 賣出</b>: score ≤ 40 + bearish trade_direction + negative news flow</li>
+  <li><b>🟡 觀望</b>: 其他 (default ~90% 股票)</li>
+</ul>
+
+</main>
+<footer>
+  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>

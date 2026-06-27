@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leeks Terminal · 2026-06-26 · 港股賣出</title>
+  <meta name="description" content="Leeks Terminal 2026-06-26 AI dashboard — 港股賣出">
+  <meta property="og:title" content="Leeks Terminal · 2026-06-26 · 港股賣出">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.win9you.com">
+  <meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://www.win9you.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+    --bg: #ffffff;
+    --panel: #f3f4f6;
+    --panel-2: #e5e7eb;
+    --border: #e5e7eb;
+    --fg: #1a1d23;
+    --dim: #4b5563;
+    --bull: #15803d;
+    --bear: #b91c1c;
+    --amber: #92400e;
+    --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Top nav (matches Streamlit worker injection) */
+nav.leeks-site-nav {
+    position: sticky; top: 0; z-index: 999;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+nav.leeks-site-nav .brand {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+}
+nav.leeks-site-nav a {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    padding: 4px 0;
+}
+nav.leeks-site-nav a.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+}
+
+/* Layout */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+h1 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin: 0 0 1rem;
+}
+h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
+
+/* Date selector (top of dashboard) — looks like Streamlit selectbox */
+.date-picker {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+}
+.date-picker a {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--fg);
+    font-size: 0.8rem;
+}
+.date-picker a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Disclaimer */
+.disclaimer {
+    background: #fef3c7;
+    border: 1px solid #b45309;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #78350f;
+}
+
+/* Cards (mirror Streamlit dashboard) */
+.card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+.card.bull { border-left-color: var(--bull); }
+.card.bear { border-left-color: var(--bear); }
+.card.amber { border-left-color: var(--amber); }
+
+/* Stats line */
+.stats {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.stats .bull { color: var(--bull); font-weight: 600; }
+.stats .bear { color: var(--bear); font-weight: 600; }
+.stats .amber { color: var(--amber); font-weight: 600; }
+
+/* Detail table */
+table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+}
+table.detail th, table.detail td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+table.detail th {
+    background: var(--panel-2);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+
+/* Filter chips (alternative to filter dropdown) */
+.filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+}
+.filters span { color: var(--dim); margin-right: 4px; align-self: center; }
+.filters a {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--fg);
+}
+.filters a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    main { padding: 16px 12px 48px; }
+    h1 { font-size: 1.15rem; }
+    .card { padding: 8px 10px; font-size: 0.8rem; }
+    nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
+    nav.leeks-site-nav a { font-size: 0.7rem; }
+    table.detail { font-size: 0.7rem; }
+    table.detail th, table.detail td { padding: 4px 6px; }
+}
+</style>
+  
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<main>
+<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-06-26/all.html">全部</a><a href="/dashboard/2026-06-26/long-hk-buy.html">港股 LONG 買入</a><a href="/dashboard/2026-06-26/short-hk-sell.html">港股 SHORT 賣出</a><a href="/dashboard/2026-06-26/long-us-buy.html">美股 LONG 買入</a><a href="/dashboard/2026-06-26/short-us-sell.html">美股 SHORT 賣出</a><a href="/dashboard/2026-06-26/hk-buy.html">港股買入</a><a href="/dashboard/2026-06-26/hk-sell.html" class="active">港股賣出</a><a href="/dashboard/2026-06-26/us-buy.html">美股買入</a><a href="/dashboard/2026-06-26/us-sell.html">美股賣出</a></div><h1>📊 決策儀表板 — 2026-06-26 (港股賣出)</h1><b>2026-06-26</b> · 共分析 <b>23</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:0 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:0 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:23
+
+<h2>📊 分析結果摘要</h2>
+
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>1093.HK</b> · 評分 35 · 賣出 · 石藥集團處於明確空頭排列，現價6.69已跌破所有均線（MA20/50/100/200），年初至今累跌逾20%。2026年首季業績顯示收入按年下跌7.8%，股東應佔溢利更大跌41.8%，基本面轉弱訊號明確。RSI 36接近超賣區，今日波幅3.74%提供短炒空間，但整體趨勢向下，宜反彈造空而非撈底。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>2202.HK</b> · 評分 35 · 賣出 · 萬科股價跌至 2.20 HKD，創52週新低區間（盤中低見 2.17），年初至今累跌 32.93%。技術上 MA20 &lt; MA50 &lt; MA100 &lt; MA200 形成完美空頭排列，股價大幅偏離 MA20 約 13.7%。RSI 20 嚴重超賣，但弱勢股可長期超賣。PE TTM 為負值反映虧損，PB 僅 0.21 屬極低估值但屬於價值陷阱訊號。當日波幅高達 8.64%、量比 1.62 倍，短炒燃料充足，但方向明確向下，宜順勢做空或觀望。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>0396.HK</b> · 評分 32 · 賣出 · Hing Lee股價今日下跌4.31%至0.24元，現低於所有均線形成空頭排列，技術面偏弱。RSI為37.84處於偏弱區域，但未達超賣水平。成交量僅37.6萬股創近期低量，交投極為清淡。股價距52週低位0.21元僅一步之遙，顯示下行壓力持續。高股息率9.8%反映市場對公司財務狀況存疑，基本面未見好轉跡象。建議避開此股，切勿盲目撈底。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>0434.HK</b> · 評分 32 · 賣出 · BOYAA 處於明確下行趨勢，MA20/MA50/MA100 全線向下排列，股價 2.10 全部位於均線下方，MA200 高達 3.90 顯示長線嚴重超跌。負市盈率反映業績虧損，PB 僅 0.66 雖屬低估值但持續下跌令估值修復遙遙無期。年初至今累跌 37.93%，股價逼近 52 週低位 1.95。雖然 RSI 36.73 略為超賣、今日波幅高達 11.9% 提供短炒空間，但趨勢向下環境下只宜反彈做空，不宜博底。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>0762.HK</b> · 評分 32 · 賣出 · 中國聯通處於明確下行趨勢，現價 6.34 已跌穿所有主要均線（MA20/50/100/200），並觸及 52 週新低 6.26，RSI14 僅 20.57 顯示嚴重超賣。短線結構極弱，今日跌幅 -1.86% 且波幅達 3.63%，具備做空燃料；惟超賣區域隨時出現技術反彈，宜反彈沽空而不追沽。估值上 PE 8.66、PB 0.47、股息率 7.33% 屬極低殘值，提供長線買盤支撐，但日內交易不應忽視技術弱勢。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>0863.HK</b> · 評分 32 · 賣出 · OSL GROUP 處於明顯空頭排列，MA20(11.28) &lt; MA50(12.04) &lt; MA100(13.38) &lt; MA200(15.01)，現價僅勉強站於 MA20 之上，但遠低於其餘長線均線。年初至今累跌逾 32%，弱勢格局未改。今日雖有 3.34% 高波幅提供短炒燃料，但成交量比僅 0.72 倍，量能未配合。日內操作建議以反彈做空為主軸，留意上方 MA20 嘅短暫支持轉壓力。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>9993.HK</b> · 評分 32 · 賣出 · 金輝控股 (9993.HK) 處於明確下行趨勢，現價 1.12 較 MA20 (1.26) 偏低 11.1%，偏離 MA200 (1.88) 更達 40%，完全不符合「嚴進」策略買入條件。MA20 &lt; MA50 &lt; MA100 &lt; MA200 為標準空頭排列，30日K線由 2.98 高位持續滑落至 1.12，跌幅逾 60%。雖然今日波幅達 14.29%、量比 1.63× 提供短炒燃料，但方向明確向下，日內交易者宜順勢造淡或觀望，不宜撈底持倉。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>0621.HK</b> · 評分 30 · 賣出 · 0621.HK 今日急跌 5.26%，收 0.54，RSI14 跌至 21 嚴重超賣區。股價已跌穿 MA20（0.67）及 MA50（0.56），MA20 下彎穿越 MA50 形成短期死亡交叉，中線趨勢明顯轉弱。雖然今日 H/L 波幅達 11.11% 提供短炒空間，但量比僅 0.77× 反映跌勢欠缺成交配合，存在技術性反彈可能。建議反彈至阻力區做空，不建議現價接刀博反彈。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>2628.HK</b> · 評分 30 · 賣出 · 中國人壽今日重挫5.48%，放量跌穿MA200長線牛熊分界(27.76)，技術走勢全面轉弱。MA20(28.72) &lt; MA50(28.76) &lt; MA100(29.47)形成空頭排列，價格已偏離MA20超過6%。估值雖便宜(PE 4.64、PB 1.12)，但弱勢格局下宜等反彈做空，不宜接刀抄底。日內波幅6.91%提供短炒空間，建議反彈至MA200附近沽出。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>1171.HK</b> · 評分 28 · 賣出 · 兗礦能源(1171.HK)近期跌勢加速，股價由15.82高位回落至11.47，跌幅近28%。技術面已跌破MA20、MA50、MA100所有主要均線，並失守MA200(12.35)長線牛熊分界，確認長線轉弱。RSI14僅14.66嚴重超賣，但量比僅0.79倍，買盤乏力，未見底訊號。日內策略宜順勢做空，不建議搶反彈，嚴守止損不過夜。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>9863.HK</b> · 評分 28 · 賣出 · 零跑汽車今日急跌5.73%，創近52週新低，技術面全面走淡。股價已跌破所有主要均線（MA20/50/100/200），呈空頭排列。RSI 23.04 嚴重超賣，雖有技術反彈可能，但在強勢下跌趨勢中應以反彈做空為主。今日波幅5.42%為短炒提供燃料，但量比僅1.24倍，未見恐慌拋售，後續仍有下行空間。建議等待反彈至阻力區再短炒做空，不建議抄底博反彈。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>9903.HK</b> · 評分 28 · 賣出 · 上海壁仞科技今日急跌13.75%，結束連續多日嘅拋物線式暴升。股價雖然仍站喺MA20（560.40）上方，但已嚴重偏離22%，技術性超買回調壓力巨大。市淨率高達50.79倍，估值極度泡沫化，YTD升幅336%顯示投機成分極重。短線不宜撈底，應等待反彈做空或確認進一步下跌趨勢。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>0017.HK</b> · 評分 25 · 賣出 · 0017.HK 處於明確下跌趨勢，現價 6.78 已跌破所有主要均線（MA20/50/100/200），MA20 &lt; MA50 &lt; MA100 呈空頭排列。股價距 52 週低位 6.56 僅 3.3%，年初至今累跌 6.61%。RSI 26 進入超賣區域，但無任何反轉訊號。負市盈率反映基本面承壓，PB 0.10 雖極低但非買入理由。日內交易者宜順勢做空或觀望，嚴禁抄底。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>0371.HK</b> · 評分 25 · 賣出 · 股價連跌30日，由2.86跌至2.26，跌幅逾20%，明確下行趨勢。MA20(2.45)&lt;MA50(2.61)&lt;MA100(2.66)，呈空頭排列，現價全部跌破均線。RSI 11.76極度超賣，雖存技術反彈可能，但趨勢未改前不宜撈底。建議順勢做空或觀望等待企穩訊號。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>1877.HK</b> · 評分 25 · 賣出 · 君實生物處於強烈下行趨勢，現價15.37已跌穿MA20（17.07）約10%，創52週新低15.25附近徘徊。30日內由24.48跌至15.37，累計跌幅近37%，所有均線呈空頭排列。雖然今日波幅高達7.48%具短炒燃料，惟量比僅0.98倍未見恐慌拋售配合，RSI 34.98接近超賣但未確認見底。建議觀望或反彈做空，不宜接刀。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>3696.HK</b> · 評分 25 · 賣出 · 3696.HK 今日暴瀉 16%，創近期最大單日跌幅，技術上呈現典型空頭排列（MA20 &lt; MA50 &lt; MA100）。股價由 58 區域加速下挫至 38 附近，已逼近 52 週低位 29.98。雖然波幅高達 27.94% 提供短炒空間，但跌勢未見明顯止跌訊號，不宜接刀。建議等待反彈至阻力區做空，或完全觀望。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>6618.HK</b> · 評分 25 · 賣出 · 京東健康 (6618.HK) 今日急跌 3.5%，收 31.98，距 52 週新低 31.84 僅一步之遙。技術面全面弱勢：股價遠低於 MA20 (36.42)、MA50 (41.65)、MA100 (47.82)、MA200 (55.52)，所有均線完美空頭排列。RSI14 跌至 18.51 嚴重超賣，年初至今累跌 43.2%。雖然日內波幅 4.07% 提供短炒空間，但嚴進策略下絕對禁止撈底，宜順勢做空博新低。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>9926.HK</b> · 評分 25 · 賣出 · 9926.HK 處於明顯下降趨勢，現價83.30已大幅跌穿所有主要均線(MA20 92.79、MA50 115.27)，距MA20負偏離約10%。RSI 35.33接近超賣區，股價貼近52週低位80.20。日內波幅6.84%提供短炒燃料，惟成交量量比僅0.81×未見資金配合。整體趨勢向下，操作上宜趁反彈做空，不宜接刀。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>1072.HK</b> · 評分 22 · 賣出 · 東方電氣今日急跌近5%，收21.50，創近期新低。技術上MA20(27.03) &gt; MA50(33.69) &gt; MA100(34.23)空頭排列明確，股價較MA20偏低超過20%，明顯超跌但趨勢極弱。RSI 16.73處於極度超賣區，短線有技術反彈需求，但順勢做空仍是主調。日內操作宜等待反彈至壓力區後再行做空，不建議抄底博反彈。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>6998.HK</b> · 評分 22 · 賣出 · EDDING GENOR (6998.HK) 處於明確下降通道，現價 1.67 顯著低於 MA20 (1.77)、MA50 (2.40)、MA100 (2.58) 及 MA200 (3.03)，MA20 &lt; MA50 &lt; MA100 &lt; MA200 呈典型空頭排列。年初至今累跌 43.77%，股價接近 52 週低位 1.54。雖然 PB 0.78 反映資產折讓、PE 7.52 估值偏低，但弱勢股低估值往往是價值陷阱。當日 H/L 區間達 4.19% 提供短炒波幅，但量比僅 0.56× 缺乏成交確認，宜順勢做空或觀望。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>9988.HK</b> · 評分 22 · 賣出 · 9988.HK 今日暴跌5.79%並創52週新低88.65，所有均線呈空頭排列且股價遠低於MA20達-19.4%，技術結構極度偏空。RSI僅8.47處於嚴重超賣，存在技術反彈需求，但弱勢不言底。短線操作應等待反彈做空而非接刀抄底，日內波幅4.30%提供短炒空間。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>1299.HK</b> · 評分 20 · 賣出 · 友邦保險1299.HK處於明顯下跌趨勢，股價已跌穿所有中長期均線（MA20/50/100/200），MA20 &lt; MA50 &lt; MA100形成死亡交叉。過去一個月由86.26急跌至70.80，跌幅近18%，技術面弱勢明確。雖然RSI 41.21接近超賣區域，今日成交量放大至1.59倍配合下跌，顯示沽壓未散。短線操作上宜順勢做空或觀望，嚴禁撈底博反彈。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>9660.HK</b> · 評分 20 · 賣出 · 地平線機器人今日大跌6.48%，收報3.61港元，創52週新低。股價遠低於所有均線（MA20=4.65、MA200=7.93），呈完美空頭排列。RSI僅11.54，嚴重超賣。雖然技術指標顯示超賣，但趨勢明確向下，未見止跌訊號。大和證券將目標價由12.40下調至10.60，仍遠高於現價，反映機構持續看淡。建議短線反彈做空，不接刀抄底。</div>
+
+---
+<em>生成時間: 2026-06-28 00:20:02 · LLM: openai/MiniMax-M3</em>
+<h2>詳細表格</h2><table class="detail"><thead><tr><th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能</th><th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th><th>入場</th><th>止損</th><th>目標</th></tr></thead><tbody><tr><td>1093.HK</td><td>35</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>2202.HK</td><td>35</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>0396.HK</td><td>32</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>0434.HK</td><td>32</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>0762.HK</td><td>32</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>0863.HK</td><td>32</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>9993.HK</td><td>32</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>0621.HK</td><td>30</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>2628.HK</td><td>30</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>1171.HK</td><td>28</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>9863.HK</td><td>28</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>9903.HK</td><td>28</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>0017.HK</td><td>25</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>0371.HK</td><td>25</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>1877.HK</td><td>25</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>3696.HK</td><td>25</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>6618.HK</td><td>25</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>9926.HK</td><td>25</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>1072.HK</td><td>22</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>6998.HK</td><td>22</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>9988.HK</td><td>22</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>1299.HK</td><td>20</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>9660.HK</td><td>20</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr></tbody></table>
+</main>
+<footer>
+  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>

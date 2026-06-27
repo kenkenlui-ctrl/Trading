@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leeks Terminal · 2026-06-27 · 美股 SHORT 賣出</title>
+  <meta name="description" content="Leeks Terminal 2026-06-27 AI dashboard — 美股 SHORT 賣出">
+  <meta property="og:title" content="Leeks Terminal · 2026-06-27 · 美股 SHORT 賣出">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.win9you.com">
+  <meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://www.win9you.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+    --bg: #ffffff;
+    --panel: #f3f4f6;
+    --panel-2: #e5e7eb;
+    --border: #e5e7eb;
+    --fg: #1a1d23;
+    --dim: #4b5563;
+    --bull: #15803d;
+    --bear: #b91c1c;
+    --amber: #92400e;
+    --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Top nav (matches Streamlit worker injection) */
+nav.leeks-site-nav {
+    position: sticky; top: 0; z-index: 999;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+nav.leeks-site-nav .brand {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+}
+nav.leeks-site-nav a {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    padding: 4px 0;
+}
+nav.leeks-site-nav a.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+}
+
+/* Layout */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+h1 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin: 0 0 1rem;
+}
+h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
+
+/* Date selector (top of dashboard) — looks like Streamlit selectbox */
+.date-picker {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+}
+.date-picker a {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--fg);
+    font-size: 0.8rem;
+}
+.date-picker a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Disclaimer */
+.disclaimer {
+    background: #fef3c7;
+    border: 1px solid #b45309;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #78350f;
+}
+
+/* Cards (mirror Streamlit dashboard) */
+.card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+.card.bull { border-left-color: var(--bull); }
+.card.bear { border-left-color: var(--bear); }
+.card.amber { border-left-color: var(--amber); }
+
+/* Stats line */
+.stats {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.stats .bull { color: var(--bull); font-weight: 600; }
+.stats .bear { color: var(--bear); font-weight: 600; }
+.stats .amber { color: var(--amber); font-weight: 600; }
+
+/* Detail table */
+table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+}
+table.detail th, table.detail td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+table.detail th {
+    background: var(--panel-2);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+
+/* Filter chips (alternative to filter dropdown) */
+.filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+}
+.filters span { color: var(--dim); margin-right: 4px; align-self: center; }
+.filters a {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--fg);
+}
+.filters a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    main { padding: 16px 12px 48px; }
+    h1 { font-size: 1.15rem; }
+    .card { padding: 8px 10px; font-size: 0.8rem; }
+    nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
+    nav.leeks-site-nav a { font-size: 0.7rem; }
+    table.detail { font-size: 0.7rem; }
+    table.detail th, table.detail td { padding: 4px 6px; }
+}
+</style>
+  
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<main>
+<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-06-27/all.html">全部</a><a href="/dashboard/2026-06-27/long-hk-buy.html">港股 LONG 買入</a><a href="/dashboard/2026-06-27/short-hk-sell.html">港股 SHORT 賣出</a><a href="/dashboard/2026-06-27/long-us-buy.html">美股 LONG 買入</a><a href="/dashboard/2026-06-27/short-us-sell.html" class="active">美股 SHORT 賣出</a><a href="/dashboard/2026-06-27/hk-buy.html">港股買入</a><a href="/dashboard/2026-06-27/hk-sell.html">港股賣出</a><a href="/dashboard/2026-06-27/us-buy.html">美股買入</a><a href="/dashboard/2026-06-27/us-sell.html">美股賣出</a></div><h1>📊 決策儀表板 — 2026-06-27 (美股 SHORT 賣出)</h1><b>2026-06-27</b> · 共分析 <b>7</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:0 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:0 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:7
+
+<h2>📊 分析結果摘要</h2>
+
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>DIS</b> · 評分 44 · 賣出 · DIS 收報 98.79（2026-06-26 為時間錨點），MA20 100.67、MA50 102.71、MA100 102.18、MA200 106.70 全線高於現價，MA20 &lt; MA50 形成短線空頭排列。RSI 14 報 47.49 中性偏弱，今日 +0.75% 但量比僅 0.56×，反彈乏力且量能未配合。PE TTM 15.81、PB 1.59 估值中等，YTD 累跌 19.25% 接近 52 週低位 92.42。CFRA 上調至買入、Q2 業績超預期屬正面催化，但遊戲延期及整體弱勢壓制股價。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>AVGO</b> · 評分 38 · 賣出 · AVGO 現價 $365.02 單日急跌 -3.67%，收近全日低位 $363.83，從 52週高位 $481.57 累積回調約 24%。短線結構已轉弱：MA20 $403.69 跌破 MA50 $411.97 確認短線死亡交叉，RSI14 43.77 中性偏弱。估值面 PE TTM 62.93、PB 19.81 仍屬昂貴，未能提供安全邊際。唯一長線保護為 MA200 $361.32 暫守住 +1.02%，但若失守則打開更大下行空間。建議 day-trade 沿反彈做空，不搶底。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>CSCO</b> · 評分 38 · 賣出 · CSCO 今日（2026-06-26）急跌 4.37% 收 113.77 HKD，單日 H/L 區間 3.80% 屬高波幅，且成交量量比 1.77× 確認為帶量下跌。股價已跌穿 MA20（121.29）達 6.20%，明顯偏離短線均線。RSI14 回落至 35.61，逼近超賣區。雖然 MA20 &gt; MA50 &gt; MA100 &gt; MA200 多頭排列仍未破壞、現價 113.77 仍遠高於 MA200（83.94），但短線結構轉弱。估值面 PE TTM 39.64、PB 9.17 明顯偏貴，限制反彈空間。建議趁反彈做空至 MA50（108.69）。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>LITE</b> · 評分 33 · 賣出 · LITE 2026-06-26 大跌 5.22% 收 $816.98，明顯跌穿 MA20 $885.67 同 MA50 $903.65 短中期均線，且 MA20 &lt; MA50 確認短線轉弱。今日 H/L 區間達 6.16% 屬高波幅，量比 1.46× 近放量閾值，短炒燃料充足。估值面 PE TTM 151.57、PB 19.70 極度昂貴，配合年初至今 +762.25% 嘅瘋狂升幅，回調壓力大。RSI14 為 45.65 略偏空，下方 MA100 $794.77 為關鍵支持。操作上以反彈做空為主，博再試 MA100 支持。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>KR</b> · 評分 32 · 賣出 · Kroger (KR) 現價 57.73 HKD，今日微跌 0.07%，處於明顯下行趨勢。股價 57.73 已跌穿全部均線 MA20 61.25、MA50 64.67、MA100 67.55、MA200 66.20，形成標準空頭排列。RSI14 31.28 進入超賣區但弱勢未改。PE TTM 33.76 偏高、PB 6.24 同樣昂貴，估值缺乏安全墊。股息率 2.49% 為成熟股合理水平。YTD -19.17% 反映弱勢持續。即時支持 55.76 (52週低) 至 57.56 (今日低)，上方阻力依次為 58.99 (今日高) → 61.25 (MA20) → 64.67 (MA50)。建議趁反彈至 60.00-61.00 做空。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>NKE</b> · 評分 31 · 賣出 · NKE 現價 $40.75 觸及 52週新低，年初至今累跌 -43.43%，MA20 $43.88、MA50 $44.14、MA100 $49.93、MA200 $57.94 全面呈空頭排列且股價遠低於全部均線。RSI14 為 40.81 偏弱，PE TTM 26.81 與 PB 4.28 估值未算便宜，疊加德意志銀行將目標價下調至 $43、Oppenheimer 下調至 $60 等連串負面消息，短線弱勢明確。建議逢反彈至 MA20 $43.88 附近做空博新低，止損設於 MA50 $44.14 之上。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>CVNA</b> · 評分 30 · 賣出 · CVNA 喺 2026-06-26 大跌 5.82% 收 62.35，明顯跌穿 MA20 67.03，與 MA50 71.63、MA200 73.31 形成大距離負乖離，長線處於明確下行結構。RSI 44.40 偏弱但未到超賣區，今日 H/L 區間 6.48% 屬高波幅，量比 2.39× 確認資金流出而非雜訊。估值 PE 38.25、PB 11.98 仍屬昂貴，唔構成吸納理由。短線以反彈做空為主軸，嚴進策略禁止追空亦禁止接刀博底。</div>
+
+---
+<em>生成時間: 2026-06-28 00:20:02 · LLM: openai/MiniMax-M3</em>
+<h2>詳細表格</h2><table class="detail"><thead><tr><th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能</th><th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th><th>入場</th><th>止損</th><th>目標</th></tr></thead><tbody><tr><td>DIS</td><td>44</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>AVGO</td><td>38</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>CSCO</td><td>38</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>LITE</td><td>33</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>KR</td><td>32</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>NKE</td><td>31</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>CVNA</td><td>30</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr></tbody></table>
+</main>
+<footer>
+  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leeks Terminal · 2026-06-26 · 美股賣出</title>
+  <meta name="description" content="Leeks Terminal 2026-06-26 AI dashboard — 美股賣出">
+  <meta property="og:title" content="Leeks Terminal · 2026-06-26 · 美股賣出">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.win9you.com">
+  <meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://www.win9you.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+    --bg: #ffffff;
+    --panel: #f3f4f6;
+    --panel-2: #e5e7eb;
+    --border: #e5e7eb;
+    --fg: #1a1d23;
+    --dim: #4b5563;
+    --bull: #15803d;
+    --bear: #b91c1c;
+    --amber: #92400e;
+    --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Top nav (matches Streamlit worker injection) */
+nav.leeks-site-nav {
+    position: sticky; top: 0; z-index: 999;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+nav.leeks-site-nav .brand {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+}
+nav.leeks-site-nav a {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    padding: 4px 0;
+}
+nav.leeks-site-nav a.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+}
+
+/* Layout */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+h1 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin: 0 0 1rem;
+}
+h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
+
+/* Date selector (top of dashboard) — looks like Streamlit selectbox */
+.date-picker {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+}
+.date-picker a {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--fg);
+    font-size: 0.8rem;
+}
+.date-picker a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Disclaimer */
+.disclaimer {
+    background: #fef3c7;
+    border: 1px solid #b45309;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #78350f;
+}
+
+/* Cards (mirror Streamlit dashboard) */
+.card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+.card.bull { border-left-color: var(--bull); }
+.card.bear { border-left-color: var(--bear); }
+.card.amber { border-left-color: var(--amber); }
+
+/* Stats line */
+.stats {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.stats .bull { color: var(--bull); font-weight: 600; }
+.stats .bear { color: var(--bear); font-weight: 600; }
+.stats .amber { color: var(--amber); font-weight: 600; }
+
+/* Detail table */
+table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+}
+table.detail th, table.detail td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+table.detail th {
+    background: var(--panel-2);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+
+/* Filter chips (alternative to filter dropdown) */
+.filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+}
+.filters span { color: var(--dim); margin-right: 4px; align-self: center; }
+.filters a {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--fg);
+}
+.filters a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    main { padding: 16px 12px 48px; }
+    h1 { font-size: 1.15rem; }
+    .card { padding: 8px 10px; font-size: 0.8rem; }
+    nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
+    nav.leeks-site-nav a { font-size: 0.7rem; }
+    table.detail { font-size: 0.7rem; }
+    table.detail th, table.detail td { padding: 4px 6px; }
+}
+</style>
+  
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<main>
+<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-06-26/all.html">全部</a><a href="/dashboard/2026-06-26/long-hk-buy.html">港股 LONG 買入</a><a href="/dashboard/2026-06-26/short-hk-sell.html">港股 SHORT 賣出</a><a href="/dashboard/2026-06-26/long-us-buy.html">美股 LONG 買入</a><a href="/dashboard/2026-06-26/short-us-sell.html">美股 SHORT 賣出</a><a href="/dashboard/2026-06-26/hk-buy.html">港股買入</a><a href="/dashboard/2026-06-26/hk-sell.html">港股賣出</a><a href="/dashboard/2026-06-26/us-buy.html">美股買入</a><a href="/dashboard/2026-06-26/us-sell.html" class="active">美股賣出</a></div><h1>📊 決策儀表板 — 2026-06-26 (美股賣出)</h1><b>2026-06-26</b> · 共分析 <b>13</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:0 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:0 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:13
+
+<h2>📊 分析結果摘要</h2>
+
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>CBRE</b> · 評分 38 · 賣出 · CBRE 現價 136.75 反彈至 MA50（137.17）關鍵阻力區附近，雖然短線 RSI 60.87 顯示動能尚可，但 MA20（131.65）&lt; MA50（137.17）&lt; MA100（140.16）&lt; MA200（150.15）呈典型空頭排列，價格亦遠低於 MA200，長線趨勢偏淡。建議於 MA50 阻力位附近短空，順趨勢操作。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>CRM</b> · 評分 38 · 賣出 · CRM 處於強烈下跌趨勢，現價 155.90 遠低於 MA20（171.16）、MA50（176.20）及 MA200（213.91），年初至今累跌 42.42%。今日反彈 3.80% 係典型超賣反彈，但成交量僅 0.29× 5日均量，量縮反彈動能存疑。RSI 18.86 極度超賣，股價貼近 52週低位 150.12。短線策略以做空反彈為主，4 PM 前必須平倉。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>NOW</b> · 評分 35 · 賣出 · NOW 今日急升 7.48%，但成交量比僅 0.43 倍，屬於無量反彈訊號弱。股價 96.22 仍大幅低於 MA20(106.73)、MA50(99.74)及 MA200(134.51)，長線處於明確下降通道。年初至今跌 52.44%，估值 PE 仍高達 57 倍，殺估值邏輯未完。RSI 31 雖接近超賣，但弱勢股超賣後可繼續超賣。建議趁反彈做空，不宜接刀抄底。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>ZS</b> · 評分 35 · 賣出 · ZS 處於明確下降通道，MA20 &lt; MA50 &lt; MA100 &lt; MA200 全線空頭排列，股價距 MA200 仍有約 37% 跌幅空間。年初至今累跌 58.57%，中長期趨勢極弱。雖然今日反彈 5.04%，但量比僅 0.36×，屬低量反彈，疑似死貓彈（dead cat bounce），並非趨勢反轉訊號。短線操作宜順勢做空，反彈遇 MA20 阻力為較佳沽空位置。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>ADBE</b> · 評分 30 · 賣出 · ADBE 處於強烈下降趨勢，股價遠低於全部均線（MA20 224.41、MA50 237.80、MA100 246.51、MA200 291.44），年初至今已跌 48%。今日 +3.51% 反彈看似強勁，但量比僅 0.38×，屬於低成交量反彈，缺乏資金確認，極可能為「死貓反彈」。RSI 14 僅 16.49 顯示極度超賣，但弱勢股可長期維持超賣。建議反彈至 MA20 附近（208-212）伺機做空，不建議追入做多。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>MCD</b> · 評分 30 · 賣出 · MCD 處於明確空頭排列，股價 270.36 跌穿 MA20、MA50、MA100 及 MA200，且貼近 52 週低位 264.54。今日反彈 2.20% 雖見技術性回升，但成交量僅 0.45×，量價背離明顯，反彈可信度低。RSI 40.32 尚未進入超賣，反彈空間存疑。短線宜順勢做空，於 MA20 阻力位附近沽出。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>ZTS</b> · 評分 28 · 賣出 · ZTS 處於明確下降通道，現價 76.84 跌穿所有主要均線（MA20/50/100/200），均線呈完美空頭排列。年初至今已重挫 50.67%，反映長線趨勢極度弱勢。短期股價從 52 週低位 74.22 反彈至 82.20 後再度回落，目前於 76-78 區間整固，缺乏明確見底信號。RSI14 為 42.71，未進入超賣區，日內交易應順勢做空，不宜抄底。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>AMP</b> · 評分 25 · 賣出 · AMP 股價報 448.58，處於全面空頭排列（MA20 &lt; MA50 &lt; MA100 &lt; MA200），且跌破 MA200 長線牛熊分界線約 5.2%，技術面弱勢明顯。年初至今累跌 14.63%，RSI14 為 44.94 偏弱，動能不足。短線宜順勢做空，反彈至 MA20 附近為較佳沽空位置。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>CME</b> · 評分 25 · 賣出 · CME 今日跌 1.11% 收 222.50，觸及 52 週新低，走勢極度疲弱。股價已大幅偏離 MA20（252.23）達 11.8%，且 MA20 &lt; MA50 &lt; MA100 空頭排列確立，長線趨勢明顯向下。RSI14 處於 26.14 嚴重超賣區域，但弱勢股超賣可更超賣。成交量萎縮至 5 日均量 31%，反映買盤乏力。日內交易者應順勢做空，切忌接刀博反彈。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>CRWV</b> · 評分 22 · 賣出 · CRWV 今日急跌 4.38%，收 94.43，跌破 MA100 (98.88) 及 MA200 (100.65) 雙重支撐。均線呈空頭排列：MA20 (106.68) &lt; MA50 (110.79)，且價格同時失守全部主要均線。年初至今已跌 40.26%，弱勢明顯。按嚴進策略，現價偏離 MA20 達 11.5%，絕對不建議追空或撈底。短線只可等待反彈至 MA100 附近再考慮做空。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>FNV</b> · 評分 22 · 賣出 · FNV 處於明確下跌趨勢，現價 213.52 跌破 MA20、MA50、MA100 及 MA200 所有主要均線，短中長線均線全數失守。近30日 K 線由 238 高點持續滑落，反彈高點逐級下移（230→220→213），空頭結構清晰。今日 +1.68% 反彈屬超跌技術性修復，未見明顯成交放量配合。估值偏高（PE 30、PB 5.08），股息率僅 0.84%，缺乏估值支撐。建議反彈至均線阻力區做空，或維持觀望不接刀。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>IREN</b> · 評分 22 · 賣出 · IREN 近期明顯走弱，現價 46.07 已跌穿 MA20、MA50、MA100 及 MA200 全部均線，且偏離 MA20 約 20%，完全不符合嚴進策略買入條件。RSI14 為 39.73 處弱勢區間但未到超賣。30 日 K線由 67.84 高位持續滑落至 46.07，跌幅近 32%，下降趨勢明確。短線宜避開該股，待止跌訊號出現再作部署。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>ON</b> · 評分 22 · 賣出 · ON Semi 今日暴瀉 21.23%，單日跌幅極為罕見，明顯受業績或前瞻指引重大利空打擊。股價已跌穿 MA20（119.47）及 MA50（110.08）兩條重要均線，短線趨勢明顯轉弱。雖然股價仍站於 MA100（87.23）與 MA200（70.18）之上，長線結構未完全破壞，但短線動能極弱。RSI 38.78 尚未完全超賣，後續仍有下行空間。建議日內交易者觀望為主，切勿接刀；待技術性反彈至阻力位再做部署。</div>
+
+---
+<em>生成時間: 2026-06-28 00:20:02 · LLM: openai/MiniMax-M3</em>
+<h2>詳細表格</h2><table class="detail"><thead><tr><th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能</th><th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th><th>入場</th><th>止損</th><th>目標</th></tr></thead><tbody><tr><td>CBRE</td><td>38</td><td>—</td><td>—/—/—</td><td>賣出</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>CRM</td><td>38</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>NOW</td><td>35</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>ZS</td><td>35</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>ADBE</td><td>30</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>MCD</td><td>30</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>ZTS</td><td>28</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>AMP</td><td>25</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>CME</td><td>25</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>CRWV</td><td>22</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>FNV</td><td>22</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>IREN</td><td>22</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>ON</td><td>22</td><td>—</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr></tbody></table>
+</main>
+<footer>
+  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>

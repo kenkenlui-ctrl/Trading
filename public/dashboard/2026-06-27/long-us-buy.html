@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leeks Terminal · 2026-06-27 · 美股 LONG 買入</title>
+  <meta name="description" content="Leeks Terminal 2026-06-27 AI dashboard — 美股 LONG 買入">
+  <meta property="og:title" content="Leeks Terminal · 2026-06-27 · 美股 LONG 買入">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.win9you.com">
+  <meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://www.win9you.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+    --bg: #ffffff;
+    --panel: #f3f4f6;
+    --panel-2: #e5e7eb;
+    --border: #e5e7eb;
+    --fg: #1a1d23;
+    --dim: #4b5563;
+    --bull: #15803d;
+    --bear: #b91c1c;
+    --amber: #92400e;
+    --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Top nav (matches Streamlit worker injection) */
+nav.leeks-site-nav {
+    position: sticky; top: 0; z-index: 999;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+nav.leeks-site-nav .brand {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+}
+nav.leeks-site-nav a {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    padding: 4px 0;
+}
+nav.leeks-site-nav a.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+}
+
+/* Layout */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+h1 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin: 0 0 1rem;
+}
+h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
+
+/* Date selector (top of dashboard) — looks like Streamlit selectbox */
+.date-picker {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+}
+.date-picker a {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--fg);
+    font-size: 0.8rem;
+}
+.date-picker a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Disclaimer */
+.disclaimer {
+    background: #fef3c7;
+    border: 1px solid #b45309;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #78350f;
+}
+
+/* Cards (mirror Streamlit dashboard) */
+.card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+.card.bull { border-left-color: var(--bull); }
+.card.bear { border-left-color: var(--bear); }
+.card.amber { border-left-color: var(--amber); }
+
+/* Stats line */
+.stats {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.stats .bull { color: var(--bull); font-weight: 600; }
+.stats .bear { color: var(--bear); font-weight: 600; }
+.stats .amber { color: var(--amber); font-weight: 600; }
+
+/* Detail table */
+table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+}
+table.detail th, table.detail td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+table.detail th {
+    background: var(--panel-2);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+
+/* Filter chips (alternative to filter dropdown) */
+.filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+}
+.filters span { color: var(--dim); margin-right: 4px; align-self: center; }
+.filters a {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--fg);
+}
+.filters a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    main { padding: 16px 12px 48px; }
+    h1 { font-size: 1.15rem; }
+    .card { padding: 8px 10px; font-size: 0.8rem; }
+    nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
+    nav.leeks-site-nav a { font-size: 0.7rem; }
+    table.detail { font-size: 0.7rem; }
+    table.detail th, table.detail td { padding: 4px 6px; }
+}
+</style>
+  
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<main>
+<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-06-27/all.html">全部</a><a href="/dashboard/2026-06-27/long-hk-buy.html">港股 LONG 買入</a><a href="/dashboard/2026-06-27/short-hk-sell.html">港股 SHORT 賣出</a><a href="/dashboard/2026-06-27/long-us-buy.html" class="active">美股 LONG 買入</a><a href="/dashboard/2026-06-27/short-us-sell.html">美股 SHORT 賣出</a><a href="/dashboard/2026-06-27/hk-buy.html">港股買入</a><a href="/dashboard/2026-06-27/hk-sell.html">港股賣出</a><a href="/dashboard/2026-06-27/us-buy.html">美股買入</a><a href="/dashboard/2026-06-27/us-sell.html">美股賣出</a></div><h1>📊 決策儀表板 — 2026-06-27 (美股 LONG 買入)</h1><b>2026-06-27</b> · 共分析 <b>6</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:6 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:0 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:0
+
+<h2>📊 分析結果摘要</h2>
+
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>KO</b> · 評分 68 · 買入 · KO 2026-06-26 收 82.63 港元，全日升 2.75%，成交量 5,184 萬股，量比 2.05× 確認買盤。MA20 80.24 &gt; MA50 79.32 &gt; MA100 78.47 &gt; MA200 74.02 多頭排列完整，股價站於 MA200 之上約 11.6%，長線牛勢穩固。今日高位 82.81 貼近 52 週高位 83.59，RSI 63.03 處健康區。但今日已升 2.75%，PE 25.35 與 PB 10.57 反映品牌溢價偏高，建議下個交易日回調至 80.50-81.20 區間（MA20 80.24 附近）才吸納做多，目標 83.59 (52週高位)，止損 79.50。新聞面未見 KO 重大催化劑，宜控倉短炒。</div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>VLO</b> · 評分 65 · 買入 · VLO 現價 259.37 收漲 1.69%，呈現 MA20 (251.39) &gt; MA50 (246.60) &gt; MA100 (234.72) 標準多頭排列，且價格站穩 MA200 (203.20) 之上約 27.6%，長線結構強勢。今日 H/L 區間 3.33% (252.00-260.64) 屬高波幅，量比 1.96× 確認資金積極參與。RSI 52.73 中性，未見超買。然而股價已較 MA20 高出約 3.17%，且逼近 52 週高位 262.62，短線追高風險上升。建議待回調至 MA20 251.39 附近低吸，博向上突破 262.62。</div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>URI</b> · 評分 62 · 買入 · URI 2026-06-26 收報 $1,121.66，全日下跌 1.57%，屬創 52週新高 $1,139.51 後嘅健康回調。技術上 MA20 $1,067.74 &gt; MA50 $983.63 &gt; MA100 $891.54 &gt; MA200 $888.46 完整多頭排列，RSI14 59.15 處於健康強勢區。量比 1.53× 配合回調確認換手而非趨勢反轉。估值 PE TTM 29.16、PB 7.85 偏高，且股價偏離 MA20 達 5.05% 已觸及「不追高」警戒線，故只建議回調至 $1,110-$1,118 區間分批吸納做多，目標突破 $1,139.51 上望 $1,148，止損 $1,098。</div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>ELV</b> · 評分 60 · 買入 · ELV 於 2026-06-26 收 395.18 HKD，當日升 2.03%，高低區間 384.44-395.58 (2.82%)，量比 1.54× 確認資金回流。MA20 399.37 &gt; MA50 382.35 &gt; MA100 346.31 &gt; MA200 343.14 維持多頭排列，股價略低於 MA20 (-1.05%)，回踩 MA20 區間具備短線吸納價值。PE TTM 16.75、PB 1.96、股息率 1.78%，估值中性。RSI14 37.81 仍偏弱，但今日實體陽燭從低位反彈，配合放量，屬反轉初期訊號。建議於 393.00-396.50 區間分注做多，跌破 383.00 止損，博反彈至 402-409 阻力區。</div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>SYK</b> · 評分 56 · 買入 · SYK 2026-06-26 大幅反彈 +5.25%，收 332.71 HKD，剛突破 MA100（332.27）並創 30 日新高。成交量比 1.79× 配合 4.83% 高波幅區間，短炒動能充足；RSI 65.79 處於健康區間，暫未超買。但股價仍處於 MA200（348.76）下方，年初至今跌 -15.46%，長線仍屬弱勢修復格局。基本面有暗湧：第一季 EPS $2.60 較 FactSet 預期 $2.98 低 15%，但 CFRA 維持買入、Piper Sandler 維持超配，分析師口徑未轉差。建議日內短炒做多博挑戰 MA200 348.76，不持倉過夜。</div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>ASML</b> · 評分 50 · 買入 · ASML 處於完美多頭排列（MA20 1784.83 &gt; MA50 1613.57 &gt; MA100 1504.89 &gt; MA200 1293.79），長線位於 MA200 之上約 38.7%，大趨勢強勁。as_of_date 當日從 1841.18 急跌 2.53% 至 1794.62，回調至 MA20 1784.83 附近尋找支持，當日 H/L 區間 2.30% 略低於 3% 高波幅門檻。RSI14 為 58.34 處健康區間，未見超買。估值方面 PE TTM 60.92 與 PB 1624.81 雙雙偏高，限制上行空間。短線策略為 MA20 附近博反彈，不持倉過夜。</div>
+
+---
+<em>生成時間: 2026-06-28 00:20:02 · LLM: openai/MiniMax-M3</em>
+<h2>詳細表格</h2><table class="detail"><thead><tr><th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能</th><th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th><th>入場</th><th>止損</th><th>目標</th></tr></thead><tbody><tr><td>KO</td><td>68</td><td>long</td><td>—/—/—</td><td>買入</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>VLO</td><td>65</td><td>long</td><td>—/—/—</td><td>買入</td><td>中性偏樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>URI</td><td>62</td><td>long</td><td>—/—/—</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>ELV</td><td>60</td><td>long</td><td>—/—/—</td><td>買入</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>SYK</td><td>56</td><td>long</td><td>—/—/—</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>ASML</td><td>50</td><td>long</td><td>—/—/—</td><td>買入</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr></tbody></table>
+</main>
+<footer>
+  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>

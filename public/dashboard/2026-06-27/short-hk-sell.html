@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leeks Terminal · 2026-06-27 · 港股 SHORT 賣出</title>
+  <meta name="description" content="Leeks Terminal 2026-06-27 AI dashboard — 港股 SHORT 賣出">
+  <meta property="og:title" content="Leeks Terminal · 2026-06-27 · 港股 SHORT 賣出">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.win9you.com">
+  <meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://www.win9you.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+    --bg: #ffffff;
+    --panel: #f3f4f6;
+    --panel-2: #e5e7eb;
+    --border: #e5e7eb;
+    --fg: #1a1d23;
+    --dim: #4b5563;
+    --bull: #15803d;
+    --bear: #b91c1c;
+    --amber: #92400e;
+    --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Top nav (matches Streamlit worker injection) */
+nav.leeks-site-nav {
+    position: sticky; top: 0; z-index: 999;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+nav.leeks-site-nav .brand {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+}
+nav.leeks-site-nav a {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    padding: 4px 0;
+}
+nav.leeks-site-nav a.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+}
+
+/* Layout */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+h1 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin: 0 0 1rem;
+}
+h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
+
+/* Date selector (top of dashboard) — looks like Streamlit selectbox */
+.date-picker {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+}
+.date-picker a {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--fg);
+    font-size: 0.8rem;
+}
+.date-picker a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Disclaimer */
+.disclaimer {
+    background: #fef3c7;
+    border: 1px solid #b45309;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #78350f;
+}
+
+/* Cards (mirror Streamlit dashboard) */
+.card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+.card.bull { border-left-color: var(--bull); }
+.card.bear { border-left-color: var(--bear); }
+.card.amber { border-left-color: var(--amber); }
+
+/* Stats line */
+.stats {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.stats .bull { color: var(--bull); font-weight: 600; }
+.stats .bear { color: var(--bear); font-weight: 600; }
+.stats .amber { color: var(--amber); font-weight: 600; }
+
+/* Detail table */
+table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+}
+table.detail th, table.detail td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+table.detail th {
+    background: var(--panel-2);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+
+/* Filter chips (alternative to filter dropdown) */
+.filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+}
+.filters span { color: var(--dim); margin-right: 4px; align-self: center; }
+.filters a {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--fg);
+}
+.filters a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    main { padding: 16px 12px 48px; }
+    h1 { font-size: 1.15rem; }
+    .card { padding: 8px 10px; font-size: 0.8rem; }
+    nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
+    nav.leeks-site-nav a { font-size: 0.7rem; }
+    table.detail { font-size: 0.7rem; }
+    table.detail th, table.detail td { padding: 4px 6px; }
+}
+</style>
+  
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<main>
+<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-06-27/all.html">全部</a><a href="/dashboard/2026-06-27/long-hk-buy.html">港股 LONG 買入</a><a href="/dashboard/2026-06-27/short-hk-sell.html" class="active">港股 SHORT 賣出</a><a href="/dashboard/2026-06-27/long-us-buy.html">美股 LONG 買入</a><a href="/dashboard/2026-06-27/short-us-sell.html">美股 SHORT 賣出</a><a href="/dashboard/2026-06-27/hk-buy.html">港股買入</a><a href="/dashboard/2026-06-27/hk-sell.html">港股賣出</a><a href="/dashboard/2026-06-27/us-buy.html">美股買入</a><a href="/dashboard/2026-06-27/us-sell.html">美股賣出</a></div><h1>📊 決策儀表板 — 2026-06-27 (港股 SHORT 賣出)</h1><b>2026-06-27</b> · 共分析 <b>9</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:0 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:0 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:9
+
+<h2>📊 分析結果摘要</h2>
+
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>2268.HK</b> · 評分 41 · 賣出 · 藥明合聯 (2268.HK) 於 2026/06/26 出現典型派發形態：盤中曾衝高至 $58.45 但遭拋售，收報 $55.00，單日跌 $1.85（-3.25%），全日 H/L 區間達 6.45% 屬高波幅。技術面確認弱勢：MA20 $49.86 &lt; MA50 $54.54 &lt; MA100 $57.42 為標準空頭排列，現價 $55.00 雖略高於 MA50 $54.54 但已失守 MA100 $57.42，並大幅低於 MA200 $63.39。估值偏高（PE 42.64、PB 5.57）且無股息率，配合量比 0.94× 未見承接，後市偏空運行機率大。短線博反彈至 $55.80-$56.50 區間（MA100 $57.42 之下）做空，目標回測 MA20 $49.86，止損 $58.50。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>3993.HK</b> · 評分 40 · 賣出 · 洛陽鉬業(3993.HK)處於明顯下跌趨勢，現價 $15.22 已跌穿所有短中期均線（MA20 $17.98、MA50 $18.52、MA100 $19.58、MA200 $18.21），MA20 &lt; MA50 &lt; MA100 形成空頭排列。K線由近期高位 $19.98 急跌至 $15.22，跌幅約 23.8%。今日 H/L 區間 $14.97-$15.74 達 5.06%，波幅充足但量比僅 0.60×，反映拋售未獲成交確認。RSI 38.04 接近超賣但未確認。PE 13.84 屬中等，PB 3.19 偏高，估值未算便宜。整體弱勢明顯，日內操作以反彈做空為主。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>9993.HK</b> · 評分 38 · 賣出 · 金輝控股(9993.HK)處於明顯下降通道，現價 $1.12 較 MA20 $1.26 偏低約 11.1%，較 MA200 $1.88 更低達 40.4%，完全偏離所有中長期均線。RSI14 為 36.00 處弱勢區，YTD 累跌 -63.99% 反映長期弱勢。PB 0.49 雖然賬面上便宜，但 PE TTM 為 N/A（可能虧損）、股息率亦為 N/A，反映盈利及派息能力存疑。雖然今日區間達 14.29%（高 1.25 / 低 1.09）、量比 1.63× 確認資金活躍，但收市 $1.12 接近今日低位 $1.09，顯示高位承接力不足。短炒策略宜順勢做空，反彈至 $1.20-$1.25 區間沽空，博回測 $1.05-$1.08 近期低位。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>1880.HK</b> · 評分 35 · 賣出 · 中國中免(1880.HK)週五急跌4.02%至47.74 HKD，創52週新低，今日H/L區間達6.28%屬高波幅日。均線呈完美空頭排列：MA20 54.02 &lt; MA50 57.76 &lt; MA100 68.37 &lt; MA200 69.54，股價(47.74)較MA20偏離-11.6%。RSI 26.79嚴重超賣，但跌勢中反彈日具短炒燃料。PE TTM 21.41、PB 1.48估值中等，有稅業務年降21%基本面承壓。建議反彈沽空為主，不接下跌刀。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>6181.HK</b> · 評分 35 · 賣出 · 老鋪黃金 (6181.HK) 現價 $371.00，今日區間 $356.60-$374.00 波幅達 4.69% 但收升僅 0.87%，呈現新低後反抽格局。股價 $371.00 遠低於 MA20 $461.99、MA50 $527.36、MA100 $610.35、MA200 $649.62，MA 完全空頭排列，年內累跌 57.28%。RSI14 22.69 嚴重超賣但僅反映弱勢動能。PE TTM 11.34 偏低，但 PB 5.11 仍貴，股息率 8.37% 異常。瑞銀力挺但市場憂慮競爭及出海成效，建議順勢做空反彈至 $374.00-$380.00 區間。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>9880.HK</b> · 評分 32 · 賣出 · 9880.HK 优必選 as_of_date 2026/06/26 收報 $90.05，大跌 -2.96%，呈典型下跌中繼形態。股價 $90.05 顯著低於 MA20 $106.69 (-15.6%)、MA50 $108.85、MA100 $112.26、MA200 $119.07，四條均線完全空頭排列，長期趨勢明確轉弱。RSI14 跌至 31.40 接近超賣區。PE TTM 為 N/A（仍虧損），PB 5.42 偏高，缺乏估值支撐。雖新聞面有萬台量產目標及 Cruzr Y1 新品發佈等催化劑，但股價走勢明顯 price-in 不利，技術面仍主導。短炒策略：趁反彈做空，避開接刀。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>9926.HK</b> · 評分 28 · 賣出 · 康方生物 9926.HK 收報 83.30 港元，當日跌 2.52%，盤中區間 80.80-86.50 達 6.84%（高波幅），並跌破 52 週低位 82.95 創新低 80.80。技術面 MA20 92.79、MA50 115.27、MA200 119.06 全數失守，呈標準空頭排列；股價偏離 MA20 約 -10.24%，遠超 5% 嚴進閾值。RSI14 35.33 趨近超賣但未確認底部。PE TTM N/A（生物科技未盈利），PB 7.35 偏高，估值不吸引。量比 0.81 偏低，跌勢未獲成交確認，潛在技術反彈風險存在。短線建議順勢做空反彈，不接刀做多。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>0017.HK</b> · 評分 26 · 賣出 · 0017.HK 新世界發展現價 6.78 HKD，跌穿所有中長線均線（MA20 7.45、MA50 8.22、MA100 8.93、MA200 8.32），MA20 &lt; MA50 &lt; MA100 空頭排列確認，且收市 6.78 接近今日低位 6.71，弱勢收盤。RSI14 報 26.01 處於超賣區，技術上有反彈需求但下行趨勢未改。PB 僅 0.10 屬極低估值，但 PE TTM 為 N/A（反映虧損或盈利不可持續），加上新聞面提及「焦頭爛額」與遞延永續證券分配，基本面質素極差，宜視為價值陷阱。52週低位 5.42 為下一個關鍵心理關口，日內交易者宜順勢做空，反彈見 7.10-7.40 區間沽空，目標先睇 6.71 再試 5.42。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>0931.HK</b> · 評分 26 · 賣出 · 中國港能 (0931.HK) 過去30日由 0.38 跌至 0.28，累跌約 26%。MA20 0.31、MA50 0.37、MA100 0.38、MA200 0.43 全部高於現價 0.28，呈典型空頭排列。as_of_date (週五) 反彈 +3.70% 至 0.28，但量比僅 0.73×，屬無量反彈，可信度低。RSI 26.92 嚴重超賣，技術上有反彈訴求。PE 因虧損 N/A，PB 高達 6.67 反映股東權益薄弱（22.84 億市值 ÷ 6.67 ≈ 3.42 億權益），配合盈警 2026 年度預虧 1.3-1.6 億港元及 7.22 億股新股資本化稀釋，估值與基本面雙弱。短炒策略以做空為主，等待反彈乏力。</div>
+
+---
+<em>生成時間: 2026-06-28 00:20:02 · LLM: openai/MiniMax-M3</em>
+<h2>詳細表格</h2><table class="detail"><thead><tr><th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能</th><th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th><th>入場</th><th>止損</th><th>目標</th></tr></thead><tbody><tr><td>2268.HK</td><td>41</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>3993.HK</td><td>40</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>9993.HK</td><td>38</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>1880.HK</td><td>35</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>6181.HK</td><td>35</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>9880.HK</td><td>32</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>9926.HK</td><td>28</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>0017.HK</td><td>26</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>0931.HK</td><td>26</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr></tbody></table>
+</main>
+<footer>
+  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>
