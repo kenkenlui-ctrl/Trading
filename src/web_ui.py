@@ -18,7 +18,7 @@ st.set_page_config(
     page_title="Leeks Terminal · HK+US Day-Trade AI",
     page_icon="📊",
     layout="wide",
-    initial_sidebar_state="collapsed",  # Mobile-first: collapsed by default. Desktop users can toggle.
+    initial_sidebar_state="expanded",  # Safari/Chrome parity: default visible. Mobile CSS caps width to 240px (Pass 2 fix).
     menu_items={
         "Get Help": "https://github.com/kenkenlui-ctrl/Trading",
         "Report a bug": "https://github.com/kenkenlui-ctrl/Trading/issues",
