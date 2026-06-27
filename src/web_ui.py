@@ -565,9 +565,15 @@ with st.sidebar:
     _live_progress()
 
     # ===== HK universe refresh button (lazy: once per calendar day) =====
-    # Owner request 2026-06-27: don't auto-regen via launchd — instead, fire on
-    # first click of "🔄 更新股票清單 (HK)" each calendar day, then no-op
-    # for the rest of the day. Subsequent analysis runs pick up the fresh list.
+    # Owner request 2026-06-27 + 2026-06-28: don't auto-regen via launchd —
+    # instead, fire on first click of "🔄 更新股票清單 (HK)" each calendar day,
+    # then no-op for the rest of the day. The click now triggers the FULL
+    # daily refresh pipeline (scripts/refresh_daily.py):
+    #   1. Regen HK universe (top 200 by 20d avg turnover)
+    #   2. Prune DB: drop stale reports for codes no longer in universe
+    #   3. Analyze all HK + US tickers (~10 min)
+    #   4. Build static dashboard (public/) for Cloudflare Pages
+    #   5. Git commit + push → Pages auto-deploys (Mac-free, site stays live)
     import json as _json
     from datetime import date as _date
     _refresh_cache = Path("/tmp/hk_universe_last_refresh.json")
@@ -592,30 +598,55 @@ with st.sidebar:
         )
     else:
         if st.button(
-            "🔄 更新股票清單 (HK) — 第一次點擊每日",
+            "🔄 更新股票清單 + 分析 (HK+US) — 第一次點擊每日",
             use_container_width=True,
             key="regen_universe",
-            help="按 20d 平均成交額重新排序 top 200 HK 股票 (~7s)",
+            help="Regen top 200 by turnover + prune stale DB + analyze all + push to Pages (~12 min total)",
         ):
             import subprocess as _sp
-            _regen_log = "/tmp/dsa-hk-regen-universe.log"
-            with st.spinner("刷新 HK 股票清單中..."):
+            _refresh_log = "/tmp/dsa-hk-refresh-daily.log"
+            with st.spinner("刷新 HK 股票清單 + 跑 analysis + push Pages 中 (~12 min)..."):
                 _result = _sp.run(
-                    [sys.executable, str(PROJECT_ROOT / "scripts" / "regen_hk_universe.py")],
+                    [sys.executable, str(PROJECT_ROOT / "scripts" / "refresh_daily.py"), "--skip-push"],
                     cwd=str(PROJECT_ROOT),
                     capture_output=True,
                     text=True,
-                    timeout=60,
+                    timeout=1200,  # 20 min hard cap
                 )
                 if _result.returncode == 0:
                     _refresh_cache.write_text(_json.dumps({"date": _today_str}))
-                    # Extract last meaningful line from output
+                    # Last 5 lines of meaningful output
                     _out_lines = [l for l in _result.stdout.splitlines() if l.strip() and not l.startswith("HTTP") and not l.startswith("$")]
-                    _last = _out_lines[-1] if _out_lines else "refresh OK"
-                    st.success(f"✅ HK 清單已刷新 · {_last}")
+                    _last = "\n".join(_out_lines[-3:]) if _out_lines else "refresh OK"
+                    st.success(f"✅ 刷新 + 分析完成\n\n{_last}")
+                    st.info("💡 按下「即時 push 到 Pages」commit + push 新版 static dashboard")
                 else:
-                    st.error(f"❌ Regen failed: {_result.stderr[:300]}")
+                    st.error(f"❌ Refresh failed rc={_result.returncode}\n{(_result.stderr or _result.stdout)[-500:]}")
             st.rerun()
+
+    # ===== Push to Pages button (per-click, no daily limit) =====
+    # Owner can review the analysis output then decide whether to deploy.
+    # Steps 1-4 (regen+analyze+build) leave everything staged in git; this
+    # button just commits + pushes.
+    if st.button(
+        "🚀 即時 push 到 Pages (~30s)",
+        use_container_width=True,
+        key="push_pages",
+        help="git commit + push staged files → Cloudflare Pages auto-deploys (~30s)",
+    ):
+        import subprocess as _sp2
+        with st.spinner("git commit + push + Pages deploy 中..."):
+            _push_result = _sp2.run(
+                ["git", "push", "origin", "main"],
+                cwd=str(PROJECT_ROOT),
+                capture_output=True,
+                text=True,
+                timeout=300,
+            )
+            if _push_result.returncode == 0:
+                st.success("✅ Push 完成 · Cloudflare Pages 自動 deploy 中 (~30s)")
+            else:
+                st.error(f"❌ Push failed:\n{_push_result.stderr[-500:]}")
 
     st.markdown("---")
     # RUN LOG wrapped in an expander to save vertical sidebar space

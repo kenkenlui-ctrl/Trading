@@ -1,0 +1,189 @@
+version: 1
+plan:
+  name: 'QA Pass 2 — Mobile + A11y + Performance'
+  max_concurrency: 3
+  max_consecutive_failures: 2
+  max_cycles: 6
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers: [verifier]
+    audit_sample_rate: 0.0
+tasks:
+  - id: 'mobile-responsive-fix'
+    title: 'Fix mobile responsive issues found in QA Pass 2'
+    prompt: |
+      Working directory: /Users/kenken/Documents/dsa-hk
+
+      Background: Owner already captured mobile screenshots at viewport 393x852 (iPhone 14 Pro). Issues observed:
+      - Sidebar (300px) covers ~76% of mobile screen — main content barely visible
+      - Dashboard header text "Leeks Terminal · HK+US Day-Trade AI" may wrap awkwardly
+      - Tables in detail view overflow horizontally
+      - Static pages (/about, /faq etc.) render fine on mobile (already verified by owner)
+
+      Note: Another plan is running in parallel (plan_8a9ee806 — 2291 fix touches prompts.py + data_fetcher.py). Do NOT touch those files. Stay in web_ui.py territory.
+
+      Tasks:
+      1. Read /Users/kenken/Documents/dsa-hk/src/web_ui.py and identify all CSS embedded in `st.markdown(f"""<style>...</style>""")` blocks.
+      2. Add a mobile breakpoint section that:
+         a. Hides / collapses the Streamlit sidebar by default on viewports < 768px (use CSS `@media (max-width: 768px)` to override Streamlit's `[data-testid=stSidebar]` visibility).
+         b. Reduces font sizes for the dashboard header on small screens (currently too large at 1.5rem+ for mobile).
+         c. Wraps table cells to allow horizontal scroll inside their container (`overflow-x: auto`).
+         d. Makes the disclaimer banner responsive (smaller padding, single-column).
+         e. Test the trend filter radio group stays usable (currently horizontal — on mobile may need vertical stacking).
+      3. Verify with Playwright at viewports 393x852, 768x1024 (iPad), 1440x900 (desktop). Take screenshots after each test.
+      4. If the sidebar collapse can't be done via CSS alone (Streamlit controls visibility via React state), document this as a known limitation and use `st.set_page_config(initial_sidebar_state="collapsed")` if appropriate.
+
+      Tools available: Playwright MCP (via mavis mcp call playwright ...). Live site is at https://www.win9you.com (Cloudflare Tunnel → Streamlit at localhost:8200).
+
+      Do NOT:
+      - Modify prompts.py, data_fetcher.py, or any cloudflare-worker files
+      - Run the full re-analysis pipeline (it's already running in parallel plan_8a9ee806)
+      - Push to git without owner's approval (commits are fine)
+
+      Report when done:
+      - Lines changed in web_ui.py
+      - 3 mobile screenshots saved to /tmp/qa-mobile-{viewport}.png
+      - List of remaining issues that need UI work beyond CSS (e.g., sidebar collapse limitation)
+    assigned_to: 'coder'
+    verified_by: 'verifier'
+    verify_prompt: |
+      Independently verify the mobile responsive fixes.
+
+      Checks:
+      1. Open https://www.win9you.com at viewport 393x852 via Playwright.
+      2. Verify sidebar is collapsed or hidden by default (use `document.querySelector("[data-testid=stSidebar]").getBoundingClientRect().width` — should be 0 or ≤ 50px).
+      3. Verify dashboard header text is fully visible without horizontal scroll (use `document.body.scrollWidth <= window.innerWidth`).
+      4. Verify the disclaimer banner fits within the viewport width.
+      5. Take a screenshot and save to /tmp/qa-verify-mobile.png.
+      6. Test at viewport 1440x900 (desktop) — sidebar should still be visible (regression check).
+
+      PASS / FAIL with concrete evidence (screenshot path, computed widths).
+    max_retries: 2
+
+  - id: 'a11y-audit'
+    title: 'Accessibility audit: ARIA, alt text, contrast, keyboard nav'
+    prompt: |
+      Working directory: /Users/kenken/Documents/dsa-hk
+
+      Goal: Audit the live dashboard and static pages for accessibility issues. Find all WCAG 2.1 AA violations and fix critical ones.
+
+      Note: Plan plan_8a9ee806 is running in parallel (2291 fix touches prompts.py + data_fetcher.py). Stay out of those files. Work in web_ui.py and static pages (which are in cloudflare-worker/src/index.js).
+
+      Tasks:
+      1. Use Playwright MCP to navigate https://www.win9you.com and run axe-core accessibility scan:
+         ```
+         mavis mcp call playwright browser_evaluate '{"function": "async () => { const script = document.createElement(\"script\"); script.src = \"https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.10.0/axe.min.js\"; document.head.appendChild(script); await new Promise(r => script.onload = r); const results = await axe.run(); return results.violations.map(v => ({id: v.id, impact: v.impact, help: v.help, nodes: v.nodes.length})); }"}'
+         ```
+         Document all violations found.
+      2. Test keyboard navigation:
+         - Tab through dashboard — does focus order make sense?
+         - Tab to filter radio group — can you change selection with arrow keys?
+         - Tab to date selector — can you open and pick a date with keyboard only?
+      3. Test screen reader compatibility:
+         - Check if interactive elements have `aria-label` or accessible text.
+         - Check if all images / icons have `aria-hidden` or descriptive text.
+         - Check if the live "● minimax llm" status badges have aria-live for screen reader announcements.
+      4. Fix critical issues (impact="critical" or impact="serious") found:
+         - Add missing aria-labels to interactive widgets
+         - Add proper heading hierarchy (h1 → h2 → h3, no skipping)
+         - Add `role` attributes to custom controls
+         - For static pages, ensure nav links have descriptive aria-labels and color contrast meets WCAG AA (4.5:1 for normal text, 3:1 for large text)
+      5. Save the full axe report to /Users/kenken/Documents/dsa-hk/.gstack/a11y-report.json.
+
+      Do NOT:
+      - Touch prompts.py or data_fetcher.py
+      - Skip the screen reader test (it requires inspecting ARIA attributes)
+      - Mark the task complete without a written list of remaining issues
+
+      Report:
+      - Number of violations by impact level (critical/serious/moderate/minor)
+      - Specific fixes applied (file + line)
+      - Top 3 issues deferred with rationale
+    assigned_to: 'coder'
+    verified_by: 'verifier'
+    verify_prompt: |
+      Independently verify a11y fixes in /Users/kenken/Documents/dsa-hk.
+
+      Checks:
+      1. Re-run axe-core via Playwright at https://www.win9you.com. Verify no "critical" violations remain (allow "serious" if documented as deferred).
+      2. Spot-check 3 random interactive elements (e.g., date selector, filter radio, tabs) — verify each has aria-label or accessible name.
+      3. Verify keyboard navigation works: tab through dashboard and confirm focus is visible (focus outline).
+      4. Read .gstack/a11y-report.json and verify it's valid JSON.
+
+      PASS / FAIL with axe-core output evidence.
+    max_retries: 2
+
+  - id: 'perf-benchmark'
+    title: 'Performance benchmark: FCP, LCP, TTI, page weight'
+    prompt: |
+      Working directory: /Users/kenken/Documents/dsa-hk
+
+      Goal: Measure current performance metrics and identify bottlenecks. Do not optimize aggressively — just measure and report.
+
+      Note: Plan plan_8a9ee806 is running in parallel. Don't touch prompts.py, data_fetcher.py, or pipeline.py (they're being modified). Stay in web_ui.py for any code changes.
+
+      Tasks:
+      1. Use Playwright to measure page load metrics on https://www.win9you.com:
+         - First Contentful Paint (FCP)
+         - Largest Contentful Paint (LCP)
+         - Time to Interactive (TTI) — approximation via `domInteractive` event
+         - Total page weight (HTML + CSS + JS)
+      2. Use `curl` to measure:
+         - HTML size for /, /about, /faq, /methodology
+         - Response time (TTFB) for each page
+         - HTTP/2 or HTTP/3 usage
+      3. Use Playwright's network log to identify the largest JS bundles downloaded by the dashboard.
+      4. Check if the Streamlit auto-reload polling keeps a websocket open (it does — measure its overhead).
+      5. Write findings to /Users/kenken/Documents/dsa-hk/.gstack/perf-report.md with:
+         - Current metrics (table)
+         - Top 3 bottlenecks (with measurement evidence)
+         - Suggested optimizations (do not apply — just list)
+
+      Do NOT:
+      - Modify prompts.py, data_fetcher.py, pipeline.py
+      - Apply optimizations without owner approval
+      - Run Lighthouse (heavyweight — just measure via Playwright)
+
+      Report:
+      - All metrics measured
+      - File path to perf-report.md
+      - Top 3 bottlenecks
+    assigned_to: 'coder'
+    verified_by: 'verifier'
+    verify_prompt: |
+      Independently verify perf benchmark.
+
+      Checks:
+      1. Re-run Playwright timing on https://www.win9you.com — verify FCP and LCP are measured (not zero or N/A).
+      2. Verify .gstack/perf-report.md exists and contains all required sections (metrics table, bottlenecks, suggestions).
+      3. Verify no optimizations were silently applied (compare web_ui.py mtime to git log — should be unchanged if perf task only measured).
+      4. Verify TTFB is reasonable for a Cloudflare-fronted site (should be < 200ms from HKT).
+
+      PASS / FAIL with metric values.
+    max_retries: 2
+
+  - id: 'final-qa-report'
+    title: 'Final QA Pass 2 report — aggregate all findings'
+    prompt: |
+      Working directory: /Users/kenken/Documents/dsa-hk
+
+      Both plan_8a9ee806 (2291 fix) and plan_8a9ee80x (this plan, QA Pass 2) are completing in parallel. Aggregate the results of all 3 QA Pass 2 tasks (mobile, a11y, perf) into a final ship-readiness report.
+
+      Tasks:
+      1. Read the deliverables from each task:
+         - Mobile: verify screenshot paths and remaining issues list
+         - A11y: read .gstack/a11y-report.json
+         - Perf: read .gstack/perf-report.md
+      2. Compose a final QA report at /Users/kenken/Documents/dsa-hk/.gstack/qa-pass2-report.md covering:
+         - Mobile responsive: PASS/FAIL with evidence
+         - A11y: violations count by severity, fixes applied
+         - Performance: metrics + top 3 bottlenecks
+         - Combined ship-readiness: SHIP / SHIP_WITH_CONCERNS / BLOCK
+         - Top 5 remaining issues sorted by user impact
+      3. Cross-reference with plan_8a9ee806 outcomes (the 2291 fix results) — the dashboard must be verified end-to-end with current data.
+
+      Report when done with the file path.
+    assigned_to: 'verifier'
+    role: 'verify-as-task'
+    depends_on: ['mobile-responsive-fix', 'a11y-audit', 'perf-benchmark']
+    max_retries: 1

@@ -1,0 +1,119 @@
+version: 1
+plan:
+  name: '2291.HK stale report fix + prevent recurrence'
+  max_concurrency: 2
+  max_consecutive_failures: 2
+  max_cycles: 6
+  auto_reject_retries: 1
+  verifier_config:
+    default_verifiers: [verifier]
+    audit_sample_rate: 0.0
+tasks:
+  - id: 'fix-data-freshness'
+    title: 'Fix data_fetcher + LLM prompt to use LIVE bar (not yesterday)'
+    prompt: |
+      Working directory: /Users/kenken/Documents/dsa-hk
+
+      Problem: User reported that the 2291.HK dashboard report stored under report_date=2026-06-27 (Saturday, market closed) describes "今日爆升20.06%" — but the actual live data (Tencent gtimg) shows last_price=9.96, prev_close=11.31, change_pct=-11.94%. The 2026-06-26 report correctly says "急跌11.94%". So 2026-06-27 stored report is stale (LLM hallucinated Thursday's rally data when given Friday's actual price).
+
+      Root cause analysis (already done by orchestrator):
+      - Live data IS correct in snapshot (last_price=9.96, prev_close=11.31, change=-11.94%, day_high=11.77, day_low=9.74, data_as_of=2026/06/26 16:08:13).
+      - LLM prompt has these fields (zh-Hant): "現價: {last_price}", "今日漲跌: {change_pct}%", "昨收: {prev_close}", plus kline_30d last 30 bars.
+      - The LLM confused "今日" by looking at kline_30d's last bar (which IS Friday's close=9.96) but mis-read "instraday move" as a 20% gain from open vs close of an EARLIER bar.
+      - Specifically: 2291.HK on Thursday 2026-06-25 had open=9.67 → close=11.31 = +16.96%. The LLM saw this rally narrative even though today's snapshot is clearly tanked.
+
+      Tasks:
+      1. Modify `src/prompts.py` to:
+         a. Add a clear "⚠️ IMPORTANT: 今日 = snapshot.last_price. Do not extrapolate from kline_30d intraday moves." instruction at the top of the user prompt.
+         b. Add a "today_date" / "as_of_date" field that explicitly tells the LLM which date the snapshot represents (use `snapshot.get('data_as_of', '未知')`).
+         c. In the system prompt, add: "If `data_as_of` is from a previous trading day (e.g., today is Saturday but data is from Friday), describe the actual move on `data_as_of`, NOT yesterday's move."
+      2. Modify `src/data_fetcher.py` to:
+         a. Add a new field `is_weekend_or_holiday` to the snapshot — True if today (HKT) is Sat/Sun OR HK market holiday.
+         b. Compute `expected_today_change_pct` from `last_price` and `prev_close` and verify it matches the snapshot's `change_pct` (sanity check).
+         c. If `change_pct` differs from expected by > 2%, log a warning that the data may be stale.
+      3. Write tests in a new `src/data_fetcher_test.py` (or add to existing test infrastructure) that:
+         a. Mock YFinance + Tencent responses and verify the snapshot includes the right `data_as_of`, `is_weekend_or_holiday`, and sanity-check fields.
+         b. Document the staleness detection in a comment.
+
+      Do NOT:
+      - Touch other ticker data
+      - Run the full pipeline (it's slow and tests aren't required to pass before the fix)
+      - Modify Cloudflare Worker
+
+      When done, report:
+      - Files changed
+      - Specific lines added/modified
+      - Whether the prompt's "as_of_date" instruction will work for the 2291.HK case (show by tracing what the LLM would receive for that ticker)
+    assigned_to: 'coder'
+    verified_by: 'verifier'
+    verify_prompt: |
+      Independently verify the data_freshness fix in /Users/kenken/Documents/dsa-hk.
+
+      Checks:
+      1. Run a Python script that imports `src.data_fetcher.fetch_snapshot("2291.HK")` and prints the new fields (`data_as_of`, `is_weekend_or_holiday`, sanity-check warning if any).
+      2. Read `src/prompts.py` and confirm:
+         - The "今日 = snapshot.last_price" warning is in BOTH zh-Hant and English prompt templates.
+         - `data_as_of` is injected into the prompt format placeholders.
+         - The system prompt includes the staleness handling instruction.
+      3. Confirm the fix would NOT change the data fed to LLM for 2291.HK — only the prompt instruction. So if you re-run analysis on 2291.HK after this fix, the LLM should now describe Friday's tank (close 9.96, -11.94%) not Thursday's rally.
+
+      PASS / FAIL with evidence.
+    max_retries: 2
+
+  - id: 'reanalyze-stale-reports'
+    title: 'Re-analyze stale reports for tickers with suspected stale data'
+    prompt: |
+      Working directory: /Users/kenken/Documents/dsa-hk
+
+      Background: User found that 2026-06-27 reports may be stale (e.g., 2291.HK stored as "today 爆升20%" but live Tencent shows -11.94% tank on Friday).
+
+      Tasks:
+      1. First run the data_freshness fix to apply changes (use `git pull` if needed to fetch latest from coder).
+      2. Build a Python script `src/qa_stale_check.py` that:
+         a. Iterates over all `daily_report` rows with `report_date = '2026-06-27'` and `code != ''`.
+         b. For each ticker, fetches the live Tencent quote (`https://qt.gtimg.cn/q=hk{code5digit}`) and parses `current`, `prev_close`, `change_pct`.
+         c. Compares stored `change_pct` (from `summary_md` text using regex) vs live `change_pct`. If absolute difference > 1.5%, marks as "stale".
+         d. Prints a table: code | stored_change | live_change | delta | action (re-run / ok).
+      3. Run the script and report findings (count stale vs ok).
+      4. For all stale tickers, run: `python -m src.main one <code>` to regenerate the report. Use `--force` if main.py supports it, otherwise delete the row first via sqlite3.
+      5. Verify the regenerated report now matches the live data (run the script again; should show 0 stale tickers).
+
+      Do NOT:
+      - Modify the data_fetcher (already done by another track)
+      - Touch Cloudflare Worker
+
+      Report:
+      - Number of stale reports found
+      - List of re-analyzed codes
+      - Confirmation that all 2291.HK-style stale cases are now correct
+    assigned_to: 'coder'
+    depends_on: ['fix-data-freshness']
+    verified_by: 'verifier'
+    verify_prompt: |
+      Independently verify the re-analysis in /Users/kenken/Documents/dsa-hk.
+
+      Checks:
+      1. Run `python -m src.main one 2291.HK` and verify the new summary_md in `daily_report` for code=2291.HK, report_date=2026-06-27 now mentions "9.96" or "-11.94%" or "急跌" (the Friday tank). If it still says "爆升" or "20.06", FAIL.
+      2. Check at least 5 other random stale tickers from the script output. For each, verify the new stored summary is consistent with current live Tencent data.
+      3. Verify the `qa_stale_check.py` script exists and runs without errors.
+
+      PASS / FAIL with evidence (show specific summary_md text).
+    max_retries: 2
+
+  - id: 'final-gate'
+    title: 'Final E2E check: dashboard reflects live data, no stale reports'
+    prompt: |
+      Working directory: /Users/kenken/Documents/dsa-hk
+
+      Final integration check. Do all of:
+
+      1. Verify `python -m src.main one 2291.HK` produces a report whose `summary_md` mentions the Friday close (~9.96) and the tank (-11.94%), not the Thursday rally.
+      2. Verify the dashboard at http://localhost:8200/ (Streamlit) renders this new report correctly. Use playwright if available, or curl + grep the rendered HTML.
+      3. Run `src/qa_stale_check.py` and confirm output shows 0 stale reports for 2026-06-27.
+      4. Spot-check 3 other recently-analyzed tickers via live Tencent quote vs DB-stored change_pct — should be consistent.
+
+      Report PASS / FAIL with concrete evidence (snippets, numbers, table).
+    assigned_to: 'verifier'
+    role: 'verify-as-task'
+    depends_on: ['fix-data-freshness', 'reanalyze-stale-reports']
+    max_retries: 1

@@ -1,0 +1,19 @@
+{
+  "last_cycle": [
+    {
+      "task_id": "reanalyze-stale-reports",
+      "verdict": "accept",
+      "reason": "376 rows, 375 OK, 0 stale. 0083.HK recovered by raising DSA_LLM_MAX_TOKENS=8000. All 6 spot-checks match live Tencent. Retry recipe saved to agent memory."
+    }
+  ],
+  "next_cycle": [
+    {
+      "task_id": "final-gate",
+      "title": "Final E2E check: dashboard reflects live data, no stale reports",
+      "prompt": "Run end-to-end verification that the Leeks Terminal dashboard at https://www.win9you.com/dashboard reflects fresh live data with zero stale reports.\n\nSpecifically:\n1. Run `python3 -m src.qa_stale_check` from /Users/kenken/Documents/dsa-hk — expect exit 0, Total 376, OK 375+, Stale 0.\n2. Open https://www.win9you.com/dashboard and verify:\n   - 2291.HK row shows '跌 11.94%' (NOT 爆升20.06%)\n   - DELL row shows concrete numbers: '$385.13-$392.00 區間止跌博反彈 MA20 $411.53' (NOT '回調至支持區吸納做多博反彈至 MA20')\n   - Light theme applied (white background, JetBrains Mono)\n   - Mobile viewport (393x852) renders cleanly\n3. Spot-check 3 random tickers via the new `support_zone` / `resistance_zone` / `key_levels` fields display in summary_md.\n4. Verify no MiniMax-M3 truncated JSON in any summary_md (all rows parse cleanly).\n5. Report PASS/FAIL with screenshot evidence from https://www.win9you.com/dashboard.",
+      "assigned_to": "verifier"
+    }
+  ],
+  "plan_complete": false,
+  "message_to_user": "Plan A reanalyze-stale-reports accepted (375/376 OK, 0 stale). Cycle 4: final-gate E2E verification of dashboard at https://www.win9you.com/dashboard."
+}
