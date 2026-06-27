@@ -162,11 +162,16 @@ st.markdown("""
         border-color: var(--accent) !important;
     }
 
-    [data-testid="stRadio"] label {
+    [data-testid="stRadio"] label,
+    [data-testid="stRadio"] label p,
+    [data-testid="stRadio"] label span,
+    [data-testid="stRadio"] > div label,
+    [data-testid="stRadio"] [data-testid="stMarkdownContainer"] p {
         font-family: 'JetBrains Mono', monospace !important;
         text-transform: uppercase;
         font-size: 0.75rem;
         letter-spacing: 0.05em;
+        color: var(--fg) !important;          /* Force visible text — Streamlit default has white-on-white bug after sidebar expansion */
     }
 
     .stDataFrame {
