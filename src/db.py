@@ -31,6 +31,9 @@ CREATE TABLE IF NOT EXISTS daily_report (
     operation_advice TEXT,     -- 買入 / 觀望 / 賣出
     score_breakdown_json TEXT, -- {"value_score":N,"quality_score":N,"momentum_score":N}
     trade_direction TEXT,      -- long / short / both
+    support_zone TEXT,         -- 支持區 e.g. "385.00-392.00"
+    resistance_zone TEXT,      -- 阻力區 e.g. "411.50 (MA20) / 425.00"
+    key_levels_json TEXT,      -- JSON: {ma20_value, ma50_value, day_low_value, day_high_value, support_floor, support_ceiling, resistance_target}
     summary_md TEXT,
     full_md TEXT,
     news_json TEXT,
@@ -110,6 +113,12 @@ ALTER TABLE chanlun_signal ADD COLUMN llm_score INTEGER;
 ALTER TABLE chanlun_signal ADD COLUMN llm_conviction TEXT;
 ALTER TABLE chanlun_signal ADD COLUMN llm_reasoning TEXT;
 ALTER TABLE chanlun_signal ADD COLUMN llm_risks_json TEXT;
+
+-- Idempotent migration for support_zone / resistance_zone / key_levels (2026-06-27).
+-- Forces prompt-engineering: concrete numbers in LLM summaries.
+ALTER TABLE daily_report ADD COLUMN support_zone TEXT;
+ALTER TABLE daily_report ADD COLUMN resistance_zone TEXT;
+ALTER TABLE daily_report ADD COLUMN key_levels_json TEXT;
 """
 
 
@@ -210,6 +219,9 @@ def save_report(
     llm_model: Optional[str],
     score_breakdown_json: Optional[str] = None,
     trade_direction: Optional[str] = None,
+    support_zone: Optional[str] = None,
+    resistance_zone: Optional[str] = None,
+    key_levels_json: Optional[str] = None,
 ) -> int:
     """Insert or replace today's report for code. Returns row id."""
     conn = get_db()
@@ -220,11 +232,13 @@ def save_report(
             """INSERT OR REPLACE INTO daily_report
                (code, report_date, score, sentiment, trend, operation_advice,
                 score_breakdown_json, trade_direction,
+                support_zone, resistance_zone, key_levels_json,
                 summary_md, full_md, news_json, data_snapshot_json, llm_model, generated_at)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 code, report_date, score, sentiment, trend, operation_advice,
                 score_breakdown_json, trade_direction,
+                support_zone, resistance_zone, key_levels_json,
                 summary_md, full_md, json.dumps(news, ensure_ascii=False),
                 json.dumps(data_snapshot, ensure_ascii=False), llm_model, now,
             ),

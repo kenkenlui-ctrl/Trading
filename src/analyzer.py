@@ -31,6 +31,9 @@ class AnalysisResult:
     stop_loss: Optional[str] = None
     target_price: Optional[str] = None
     risk_reward_ratio: Optional[str] = None
+    support_zone: Optional[str] = None
+    resistance_zone: Optional[str] = None
+    key_levels: Optional[dict] = None
     catalysts: list[str] = None
     risks: list[str] = None
     strategy_tags: list[str] = None
@@ -58,6 +61,9 @@ class AnalysisResult:
             "stop_loss": self.stop_loss,
             "target_price": self.target_price,
             "risk_reward_ratio": self.risk_reward_ratio,
+            "support_zone": self.support_zone,
+            "resistance_zone": self.resistance_zone,
+            "key_levels": self.key_levels,
             "catalysts": self.catalysts,
             "risks": self.risks,
             "strategy_tags": self.strategy_tags,
@@ -123,9 +129,15 @@ def analyze(
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt},
                 ],
-                temperature=0.3,
-                max_tokens=3000,
-                timeout=120,
+temperature=0.3,
+            # 8000 tokens = safer ceiling for verbose zh-Hant summaries with
+            # concrete-number fields (support_zone / resistance_zone / key_levels).
+            # MiniMax-M3 was truncating mid-JSON at 3000 (default for verbose
+            # prompts); 6000 worked for most cases; 8000 is the safe ceiling for
+            # stubborn tickers with long news + fundamentals. Override via
+            # env var DSA_LLM_MAX_TOKENS if needed.
+            max_tokens=int(os.environ.get("DSA_LLM_MAX_TOKENS", "8000")),
+            timeout=120,
                 **call_kwargs,
             )
             content = response.choices[0].message.content
@@ -147,6 +159,9 @@ def analyze(
                 stop_loss=data.get("stop_loss"),
                 target_price=data.get("target_price"),
                 risk_reward_ratio=data.get("risk_reward_ratio"),
+                support_zone=data.get("support_zone"),
+                resistance_zone=data.get("resistance_zone"),
+                key_levels=data.get("key_levels"),
                 catalysts=data.get("catalysts", []),
                 risks=data.get("risks", []),
                 strategy_tags=data.get("strategy_tags", []),
@@ -203,6 +218,15 @@ def render_report_md(result: AnalysisResult, snapshot: dict, language: str = "zh
             md += f"- **目標價**: {result.target_price}\n"
         if result.risk_reward_ratio:
             md += f"- **風險回報比**: {result.risk_reward_ratio}\n"
+        if result.support_zone:
+            md += f"- **支持區**: {result.support_zone}\n"
+        if result.resistance_zone:
+            md += f"- **阻力區**: {result.resistance_zone}\n"
+        if result.key_levels:
+            md += "\n### 關鍵價位（具體數值）\n\n"
+            md += "| 指標 | 數值 |\n|---|---|\n"
+            for k, v in result.key_levels.items():
+                md += f"| {k} | {v} |\n"
 
         if result.catalysts:
             md += "\n## ✨ 利好催化\n\n"

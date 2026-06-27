@@ -88,6 +88,9 @@ def analyze_ticker(code: str, save: bool = True, language: Optional[str] = None)
             llm_model=result.llm_model,
             score_breakdown_json=json.dumps(result.score_breakdown or {}, ensure_ascii=False),
             trade_direction=result.trade_direction,
+            support_zone=result.support_zone,
+            resistance_zone=result.resistance_zone,
+            key_levels_json=json.dumps(result.key_levels or {}, ensure_ascii=False),
         )
         # Also save to reports/ dir as a markdown file (for archive)
         try:
@@ -236,30 +239,29 @@ def build_dashboard_md(report_date: Optional[str] = None, language: Optional[str
     n_hold = sum(1 for r in reports if r["operation_advice"] in ("觀望", "hold"))
     n_sell = sum(1 for r in reports if r["operation_advice"] in ("賣出", "sell"))
 
-    # Title
+    # Title — compact, no H1 (tab already has 決策儀表板 label, double-heading wastes ~50px)
     if is_zh:
-        title = f"# 🎯 {report_date} HK+US 決策儀表板"
-        stats_line = f"共分析 {n} 隻股票 | 🟢買入: {n_buy} 🟡觀望: {n_hold} 🔴賣出: {n_sell}"
+        stats_line = f"**{report_date}** · 共分析 **{n}** 隻股票 · 🟢買入:{n_buy} · 🟡觀望:{n_hold} · 🔴賣出:{n_sell}"
     else:
-        title = f"# 🎯 {report_date} Leeks Terminal HK+US Decision Dashboard"
-        stats_line = f"Analyzed {n} stocks | 🟢Buy: {n_buy} 🟡Hold: {n_hold} 🔴Sell: {n_sell}"
+        stats_line = f"**{report_date}** · Analyzed **{n}** stocks · 🟢Buy:{n_buy} · 🟡Hold:{n_hold} · 🔴Sell:{n_sell}"
 
-    md = f"{title}\n\n{stats_line}\n\n"
+    md = f"{stats_line}\n\n"
 
     # Sort by score desc
     sorted_reports = sorted(reports, key=lambda r: r["score"] or 0, reverse=True)
 
+    # Single newline between cards to avoid big gaps (was \n\n — adds 16px per row × 376 = wasted ~6K px)
     if is_zh:
-        md += "## 📊 分析結果摘要\n\n"
+        md += "## 📊 分析結果摘要\n"
         for r in sorted_reports:
-            md += f"{r.get('summary_md', '')}\n\n"
+            md += f"{r.get('summary_md', '')}\n"
     else:
-        md += "## 📊 Analysis Summary\n\n"
+        md += "## 📊 Analysis Summary\n"
         for r in sorted_reports:
-            md += f"{r.get('summary_md', '')}\n\n"
+            md += f"{r.get('summary_md', '')}\n"
 
     # Footer
-    md += f"\n---\n\n*生成時間: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} · LLM: {cfg.litellm_model}*\n"
+    md += f"\n---\n*生成時間: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} · LLM: {cfg.litellm_model}*\n"
     return md
 
 
