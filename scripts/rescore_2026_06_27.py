@@ -23,7 +23,9 @@ import sqlite3
 from pathlib import Path
 
 DB = Path(__file__).parent.parent / "data" / "dsa_hk.db"
-DATE = "2026-06-27"
+
+import sys
+DATE = sys.argv[1] if len(sys.argv) > 1 else "2026-06-27"
 
 def rescore():
     conn = sqlite3.connect(DB)
@@ -42,8 +44,13 @@ def rescore():
         v = bd.get("value_score") or 0
         q = bd.get("quality_score") or 0
         m = bd.get("momentum_score") or 0
-        # New day-trade weights: 5/5/90
-        new_score = int(round(0.05 * v + 0.05 * q + 0.90 * m))
+        of = bd.get("order_flow_score") or 0
+        # Day-trade weights: 5/5/70/20 (4-dim).
+        # If order_flow not present (legacy data), fold it into momentum (5/5/90).
+        if of:
+            new_score = int(round(0.05 * v + 0.05 * q + 0.70 * m + 0.20 * of))
+        else:
+            new_score = int(round(0.05 * v + 0.05 * q + 0.90 * m))
         new_score = max(0, min(100, new_score))
         updates.append((new_score, json.dumps(bd, ensure_ascii=False), row_id))
     cur.executemany(

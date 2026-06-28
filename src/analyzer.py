@@ -145,15 +145,24 @@ temperature=0.3,
             data = _extract_json(content)
 
             actual_model = response.get("model", model) if hasattr(response, "get") else model
+            # Recompute total score deterministically using 4-dim weighting (5/5/70/20)
+            # so the score is consistent with the breakdown, not whatever the LLM emitted.
+            breakdown = data.get("score_breakdown", {}) or {}
+            v = int(breakdown.get("value_score") or 0)
+            q = int(breakdown.get("quality_score") or 0)
+            m = int(breakdown.get("momentum_score") or 0)
+            of = int(breakdown.get("order_flow_score") or 0)
+            total = int(round(0.05 * v + 0.05 * q + 0.70 * m + 0.20 * of))
+            total = max(0, min(100, total))
             result = AnalysisResult(
                 code=code,
-                score=int(data.get("score", 50)),
+                score=total,
                 sentiment=str(data.get("sentiment", "中性")),
                 trend=str(data.get("trend", "震盪")),
                 operation_advice=str(data.get("operation_advice", "觀望")),
                 confidence=str(data.get("confidence", "中")),
                 summary=str(data.get("summary", "")),
-                score_breakdown=data.get("score_breakdown", {}),
+                score_breakdown=breakdown,
                 trade_direction=str(data.get("trade_direction", "both")),
                 entry_zone=data.get("entry_zone"),
                 stop_loss=data.get("stop_loss"),

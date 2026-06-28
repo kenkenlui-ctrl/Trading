@@ -159,6 +159,30 @@ table.detail th {
     color: var(--dim);
 }
 
+/* Methodology dim table */
+table.dim-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+}
+table.dim-table th, table.dim-table td {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+table.dim-table th {
+    background: var(--panel-2);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+table.dim-table td:first-child { font-family: 'JetBrains Mono', monospace; }
+table.dim-table td:nth-child(2) { font-weight: 600; color: var(--accent); text-align: center; }
+
 /* Card-link: appended after each summary card so reader can dive into detail */
 p.card-link {
     margin: 6px 0 0;
@@ -309,12 +333,18 @@ footer {
 我哋只提供每日 2 次嘅 AI 評分 + 方向信號 + 入場/止損/目標 區間。</p>
 
 <h2>Q: 個 score 點樣計？</h2>
-<p>A: 三維評分 (0–100)：<b>估值</b> (PE/PB，25%) + <b>質素</b> (ROE/margin，25%) + <b>動能</b> (MA/RSI，50%)。
-day-trade bias 落動能，所以動能分高嘅 score 自然高。</p>
+<p>A: <b>四維</b>評分 (0–100)，Python-side 確定性加權 (非 LLM 自評)：
+<br>· <b>估值</b> (PE/PB，5%) · <b>質素</b> (ROE/margin，5%) · <b>動能</b> (MA/RSI/deviation，70%) · <b>資金流</b> (量比/大單/Relative Volume，20%)。
+<br>公式：<code>score = 0.05 × value + 0.05 × quality + 0.70 × momentum + 0.20 × order_flow</code>。
+<br>Day-trade 完全偏重 momentum + order flow；估值/質素只係 tiebreaker。</p>
 
 <h2>Q: trade_direction 點解有時「雙向」？</h2>
 <p>A: 「雙向」代表波動率足夠，long 同 short setup 都有，用戶自己揀邊個方向做。
 filter 可以 hide 其他方向。</p>
+
+<h2>Q: 點解 entry / stop / target 有時顯示「—」？</h2>
+<p>A: 個別 LLM output 唔齊全；我哋有 backfill script parse <code>full_md</code> 嘅 markdown bullets 拎返。
+如果仍然「—」表示該股真係冇明確 setup，建議觀望。</p>
 
 </main>
 <footer>

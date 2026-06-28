@@ -207,6 +207,30 @@ table.detail th {
     color: var(--dim);
 }
 
+/* Methodology dim table */
+table.dim-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+}
+table.dim-table th, table.dim-table td {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+table.dim-table th {
+    background: var(--panel-2);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+table.dim-table td:first-child { font-family: 'JetBrains Mono', monospace; }
+table.dim-table td:nth-child(2) { font-weight: 600; color: var(--accent); text-align: center; }
+
 /* Card-link: appended after each summary card so reader can dive into detail */
 p.card-link {
     margin: 6px 0 0;
@@ -461,7 +485,7 @@ def detail_table_html(reports: list[dict], date: str) -> str:
         return '<p><em>此條件下無報告。</em></p>'
     header = (
         "<thead><tr>"
-        "<th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能</th>"
+        "<th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能/資金流</th>"
         "<th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th>"
         "<th>入場</th><th>止損</th><th>目標</th>"
         "</tr></thead>"
@@ -501,15 +525,17 @@ def report_page_html(report: dict, date: str) -> str:
     # Back link to all.html
     back = f'<p><a href="/dashboard/{date}/all.html">← 返回 {date} 全部報告</a></p>'
 
-    # Score breakdown bar
+    # Score breakdown bar — 4 dims: value / quality / momentum / order_flow
     v = breakdown.get("value_score", 0) or 0
     q = breakdown.get("quality_score", 0) or 0
     m = breakdown.get("momentum_score", 0) or 0
+    of = breakdown.get("order_flow_score", 0) or 0
     breakdown_html = (
         '<div class="score-breakdown">'
-        f'<div class="dim"><span>估值</span><div class="bar"><div class="fill" style="width:{v}%;background:var(--blue);"></div></div><b>{v}</b></div>'
-        f'<div class="dim"><span>質素</span><div class="bar"><div class="fill" style="width:{q}%;background:var(--purple);"></div></div><b>{q}</b></div>'
-        f'<div class="dim"><span>動能</span><div class="bar"><div class="fill" style="width:{m}%;background:var(--amber);"></div></div><b>{m}</b></div>'
+        f'<div class="dim"><span>估值 5%</span><div class="bar"><div class="fill" style="width:{v}%;background:var(--blue);"></div></div><b>{v}</b></div>'
+        f'<div class="dim"><span>質素 5%</span><div class="bar"><div class="fill" style="width:{q}%;background:var(--purple);"></div></div><b>{q}</b></div>'
+        f'<div class="dim"><span>動能 70%</span><div class="bar"><div class="fill" style="width:{m}%;background:var(--amber);"></div></div><b>{m}</b></div>'
+        f'<div class="dim"><span>資金流 20%</span><div class="bar"><div class="fill" style="width:{of}%;background:var(--bull);"></div></div><b>{of}</b></div>'
         '</div>'
     )
 
@@ -827,17 +853,23 @@ def build_static_pages() -> list[str]:
 我哋只提供每日 2 次嘅 AI 評分 + 方向信號 + 入場/止損/目標 區間。</p>
 
 <h2>Q: 個 score 點樣計？</h2>
-<p>A: 三維評分 (0–100)：<b>估值</b> (PE/PB，25%) + <b>質素</b> (ROE/margin，25%) + <b>動能</b> (MA/RSI，50%)。
-day-trade bias 落動能，所以動能分高嘅 score 自然高。</p>
+<p>A: <b>四維</b>評分 (0–100)，Python-side 確定性加權 (非 LLM 自評)：
+<br>· <b>估值</b> (PE/PB，5%) · <b>質素</b> (ROE/margin，5%) · <b>動能</b> (MA/RSI/deviation，70%) · <b>資金流</b> (量比/大單/Relative Volume，20%)。
+<br>公式：<code>score = 0.05 × value + 0.05 × quality + 0.70 × momentum + 0.20 × order_flow</code>。
+<br>Day-trade 完全偏重 momentum + order flow；估值/質素只係 tiebreaker。</p>
 
 <h2>Q: trade_direction 點解有時「雙向」？</h2>
 <p>A: 「雙向」代表波動率足夠，long 同 short setup 都有，用戶自己揀邊個方向做。
 filter 可以 hide 其他方向。</p>
+
+<h2>Q: 點解 entry / stop / target 有時顯示「—」？</h2>
+<p>A: 個別 LLM output 唔齊全；我哋有 backfill script parse <code>full_md</code> 嘅 markdown bullets 拎返。
+如果仍然「—」表示該股真係冇明確 setup，建議觀望。</p>
 """
         elif slug == "about":
             body += """
 <p>Leeks Terminal 係我自己寫嚟用嘅 HK + US day-trade dashboard。香港散戶。</p>
-<p>200 隻港股 + 200 隻美股，每日 2 次 (HK 開市前 + US 開市前) 用 MiniMax-M3 評分，輸出 Value / Quality / Momentum 三維分數 + 入場區間 / 止損 / 目標。</p>
+<p>200 隻港股 + 200 隻美股，每日 2 次 (HK 開市前 + US 開市前) 用 MiniMax-M3 評分，輸出 Value / Quality / Momentum / Order-Flow 四維分數 + 入場區間 / 止損 / 目標。</p>
 <p>全部資料 free：Futu Cloud news (news)、Tencent gtimg (live HK 報價，sub-1min delay)、YFinance (US/EOD)。</p>
 <p>Built with Python · Streamlit · Cloudflare Pages. Code closed-source (個人 side project)。</p>
 """
@@ -855,21 +887,32 @@ filter 可以 hide 其他方向。</p>
 <ol>
   <li>Fetch 報價 + 技術指標 (MA20/50/100/200 + RSI + MACD + 成交量比)</li>
   <li>Fetch 新聞 (last 5 條 + sentiment)</li>
-  <li>Prompt MiniMax-M3 輸出 20 個 fields (score, sentiment, trade_direction, entry_zone, stop_loss, target_price, support_zone, resistance_zone, summary_md, full_md)</li>
-  <li>寫入 SQLite + commit 入 git</li>
-  <li>Cloudflare Pages 自動 re-deploy static dashboard</li>
+  <li>Prompt MiniMax-M3 輸出 score_breakdown 嘅 4 個 dim (value/quality/momentum/order_flow) + 操作建議欄位 (entry/stop/target/support/resistance/confidence/trade_direction/sentiment/trend/operation_advice)</li>
+  <li>Python <b>確定性加權</b>：<code>score = 0.05×value + 0.05×quality + 0.70×momentum + 0.20×order_flow</code>（唔靠 LLM 自評分）</li>
+  <li>寫入 SQLite</li>
+  <li>Rebuild static HTML + push 到 Cloudflare Pages</li>
 </ol>
 
-<h2>評分模型</h2>
-<p>三維 weighted score：value × 0.25 + quality × 0.25 + momentum × 0.50。<br>
-day-trade 偏重動能，所以 score 高通常代表趨勢 + 動量 + 估值合理 嘅 combination。</p>
+<h2>評分模型 — 為 day-trade 度身訂造</h2>
+<table class="dim-table">
+<thead><tr><th>維度</th><th>權重</th><th>睇咩</th></tr></thead>
+<tbody>
+<tr><td><b>估值</b> value_score</td><td>5%</td><td>PE / PB / deviation from fair value</td></tr>
+<tr><td><b>質素</b> quality_score</td><td>5%</td><td>ROE / margin / financial health / dividend stability</td></tr>
+<tr><td><b>動能</b> momentum_score</td><td>70%</td><td>今日方向 / MA trend / RSI / deviation（純價格動能，唔包成交量）</td></tr>
+<tr><td><b>資金流</b> order_flow_score</td><td>20%</td><td>量比 / 大單流入 / Relative Volume vs ADV / bid-ask imbalance / 北水</td></tr>
+</tbody>
+</table>
+<p><b>Day-trade 完全偏重 momentum + order flow</b>（合共 90%）。估值/質素只作 tiebreaker — 因為朝早 9:45 入場 11:30 出場，PE 30 定 60 對 intraday P&amp;L 零 impact。</p>
 
 <h2>操作建議</h2>
+<p>每日 dashboard 約 <b>~93% 觀望 / ~2% 買入 / ~5% 賣出</b>（取決於大市 regime）。LLM 綜合以下 4 個 signal 決定：</p>
 <ul>
-  <li><b>🟢 買入</b>: score ≥ 70 + bullish trade_direction + positive sentiment</li>
-  <li><b>🔴 賣出</b>: score ≤ 40 + bearish trade_direction + negative news flow</li>
-  <li><b>🟡 觀望</b>: 其他 (default ~90% 股票)</li>
+  <li><b>🟢 買入</b>: bullish trade_direction + score ≥ 60 + positive sentiment + 明確 setup（入場/止損/目標 齊全）</li>
+  <li><b>🔴 賣出</b>: bearish trade_direction + score ≤ 40 + negative sentiment + 跌穿關鍵支持位</li>
+  <li><b>🟡 觀望</b>: 其他（regime 唔清、setup 唔齊、score 40-60 模糊區間）</li>
 </ul>
+<p><b>⚠️</b> 操作建議 <b>唔等於單一 score threshold</b> — LLM 會 cross-check 4-dim + sentiment + news flow + technical setup。一個 score 80 但 setup 模糊嘅股票仍然可能係觀望。</p>
 """
         elif slug == "disclaimer":
             body += """
