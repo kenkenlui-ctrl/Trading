@@ -159,6 +159,28 @@ table.detail th {
     color: var(--dim);
 }
 
+/* Card-link: appended after each summary card so reader can dive into detail */
+p.card-link {
+    margin: 6px 0 0;
+    text-align: right;
+    font-size: 0.78rem;
+}
+p.card-link a {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+p.card-link a:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
 /* Filter chips (alternative to filter dropdown) */
 .filters {
     display: flex; flex-wrap: wrap; gap: 6px;
@@ -178,6 +200,82 @@ table.detail th {
     color: #fff;
     border-color: var(--accent);
 }
+
+/* Report detail page */
+.report-header h1 { margin: 0 0 0.5rem; }
+.report-header .meta {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 1rem;
+}
+.report-header .badge {
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    font-size: 0.75rem;
+    color: var(--fg);
+}
+.report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.conf { background: var(--panel-2); }
+
+.score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 1rem 0;
+}
+.score-breakdown .dim {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+}
+.score-breakdown .dim span {
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.score-breakdown .bar {
+    background: var(--border);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 6px 0;
+}
+.score-breakdown .bar .fill { height: 100%; }
+.score-breakdown .dim b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+}
+
+.levels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    margin: 1rem 0;
+}
+.levels > div {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+.levels span {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+.levels b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+}
+.levels b.bull { color: var(--bull); }
+.levels b.bear { color: var(--bear); }
 
 /* Footer */
 footer {
@@ -205,22 +303,22 @@ footer {
 <body>
 <nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
-<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-06-27/all.html">全部</a><a href="/dashboard/2026-06-27/hk-buy.html">港股買入</a><a href="/dashboard/2026-06-27/hk-sell.html" class="active">港股賣出</a><a href="/dashboard/2026-06-27/us-buy.html">美股買入</a><a href="/dashboard/2026-06-27/us-sell.html">美股賣出</a></div><h1>📊 決策儀表板 — 2026-06-27 (港股賣出)</h1><b>2026-06-27</b> · 共分析 <b>8</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:0 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:0 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:8
+<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-06-27/all.html">全部</a><a href="/dashboard/2026-06-27/hk-buy.html">港股買入</a><a href="/dashboard/2026-06-27/hk-sell.html" class="active">港股賣出</a><a href="/dashboard/2026-06-27/us-buy.html">美股買入</a><a href="/dashboard/2026-06-27/us-sell.html">美股賣出</a></div><h1>📊 決策儀表板 — 2026-06-27 (港股賣出)</h1><p>**2026-06-27** · 共分析 **8** 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:0 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:0 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:8</p>
 
 <h2>📊 分析結果摘要</h2>
 
-<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>01276.HK</b> · 評分 42 · 賣出 · 恒瑞醫藥（01276.HK）2026/06/26 大幅下挫 6.45%，收 52.95 HKD，全日波幅 8.69%（57.40-52.80），創近 52 週新低（52 週低 51.30）。早盤做空量大增 240%，弱勢明顯。PE TTM 8.13 估值便宜，但 PB 136.72 異常高，反映賬面淨資產極低，資產質量存疑。技術指標 MA20/MA50/MA100/MA200 全部 N/A，無從判斷中長線趨勢排列。短期操作上宜順勢做空，反彈至 55.00-55.80 區間為做空切入點。</div>
-<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>00522.HK</b> · 評分 33 · 賣出 · ASMPT (00522.HK) 2026/06/26 急跌4.74%至195.10 HKD，全日區間187.00-203.00，幅度達8.20%屬高波幅。技術面MACD出現死叉、空頭成交比例大增，疊加港股功率半導體板塊整體走弱，弱勢格局確認。估值PE TTM僅7.81看似吸引，但PB 818.27及市值818.27 HKD數據明顯異常（疑似單位錯誤），數據可信度低，技術指標MA20/MA50/MA100/MA200及RSI14全部缺失。短線宜順勢做空或離場觀望，不建議撈底。</div>
-<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>00425.HK</b> · 評分 32 · 賣出 · 敏實集團(00425.HK) 2026/06/26 收報 26.52 港元，大跌 4.12%，全日波幅 4.60%（高位 27.10 / 低位 25.88），屬高波幅交易日，短炒燃料充足但方向偏空。技術面確認 MA30 下穿 MA60 死亡交叉、股價跌穿 MA5，新聞面同樣顯示 MA 空頭排列。估值上 PE TTM 僅 4.41 極為便宜（惟 PB 310.66 明顯為數據異常，市值 310.66 欄位亦異常），52 週區間 21.25–46.76，現價 26.52 接近區間下沿。短線建議趁反彈做空博測試 25.88 今日低位，不建議現價接刀。</div>
-<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>06166.HK</b> · 評分 32 · 賣出 · 劍橋科技(06166.HK)今日單日急跌7.43%至148.30 HKD，全日區間143.00-159.10達10.86%屬極高波幅，為日內雙向交易提供燃料；惟量比0.00×數據異常，無法確認資金參與真實性。基本面上，控股股東連續公告減持疊加光通信板塊集體走弱（長飛光纖-9%、舜宇光學-8%、匯聚科技-7%），負面催化集中。PE TTM 10.05表面看似便宜，但PB 137.42極高反映股東權益極薄（以市值546.12億HKD計，賬面淨值僅約3.97億），資產質量存疑。MA20/MA50/MA100/MA200及RSI14全部N/A，技術面缺乏趨勢框架。短線宜順勢做空：若反彈至155.00-158.00區間（即今日高位159.10下方）遇阻做空，止損160.20（昨日收盤），目標143.00（今日低位）。</div>
-<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>06088.HK</b> · 評分 30 · 賣出 · 06088.HK 鴻騰精密 2026/06/26 急跌 -7.79%，收報 6.98 HKD，全日波幅 11.32%（7.45-6.66），屬極端高波動交易日。受蘋果漲價恐慌傳導及死亡交叉雙重利空打擊，盤中曾跌逾 10%，反映空頭動能極強。PE TTM 10.44 雖屬偏低估值，但 PB 509.80 反映賬面值異常（股東權益可能受壓），質素面存疑。MA20/50/100/200 數據缺失下無法確認中期趨勢結構，建議以日內弱勢反彈做空為主，今日低位 6.66 為首道支持，失守則下望 52週低位 2.30 上方更遠位置。</div>
-<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>00100.HK</b> · 評分 28 · 賣出 · MINIMAX-W 現價 427.00 港元，今日急跌 6.48%，盤中區間 403.00–450.00，振幅高達 11.01%，屬極高波動股份。新聞面持續偏負：7 月將迎來首批解禁（佔總股本 63%），疊加 AI 板塊集體回吐（智譜 -11%、天數 -13%），以及產品規則調整引發用戶爭議，沽壓沉重。估值端 PE TTM 僅 10.29，看似便宜，但 PB 高達 992.91，反映股東權益接近零或帳面結構異常，盈利質量存疑，質素極低。短線以沽空為主、博反彈為輔。</div>
-<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>01772.HK</b> · 評分 28 · 賣出 · 01772.HK 贛鋒鋰業 2026/06/26 大幅下挫 7.30%，收報 48.90 HKD，全日 H/L 區間 47.86-52.85，波幅高達 10.20%，短炒燃料充足。負面催化包括鋰礦遠期供給利空發酵、行業板塊齊跌（天齊鋰業 09696 跌近 6%）、公司為 Minera Exar 提供 5,000 萬美元擔保，主力資金淨賣出。PE TTM 9.46 看似便宜，但 PB 236.24 極高反映股東權益可能受壓或資產負債表結構異常，估值陷阱風險大。MA20/50/100/200 全部缺失，難以確認中長期趨勢。短線策略以做空為主，反彈只視為放空機會。</div>
-<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>09660.HK</b> · 評分 28 · 賣出 · 地平線機器人-W（09660.HK）2026/06/26 大幅下跌 6.48%，收報 3.61 HKD，全日區間 3.60-3.84，幅度達 6.65%（高波幅），成交額 8.29 億港元，但量比 0.00× 顯示成交量對比數據異常，需警惕假信號。股價貼近 52週低位 3.60，跌勢明確。PE TTM 僅 6.22 看似便宜，但 PB 高達 449.77（負權益警訊），質素面有重大瑕疵。短期弱勢未止，建議逢反彈造淡或觀望。</div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>01276.HK</b> · 評分 42 · 賣出 · 恒瑞醫藥（01276.HK）2026/06/26 大幅下挫 6.45%，收 52.95 HKD，全日波幅 8.69%（57.40-52.80），創近 52 週新低（52 週低 51.30）。早盤做空量大增 240%，弱勢明顯。PE TTM 8.13 估值便宜，但 PB 136.72 異常高，反映賬面淨資產極低，資產質量存疑。技術指標 MA20/MA50/MA100/MA200 全部 N/A，無從判斷中長線趨勢排列。短期操作上宜順勢做空，反彈至 55.00-55.80 區間為做空切入點。<p class="card-link"><a href="/dashboard/2026-06-27/reports/01276.HK.html">→ 完整 01276.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>00522.HK</b> · 評分 33 · 賣出 · ASMPT (00522.HK) 2026/06/26 急跌4.74%至195.10 HKD，全日區間187.00-203.00，幅度達8.20%屬高波幅。技術面MACD出現死叉、空頭成交比例大增，疊加港股功率半導體板塊整體走弱，弱勢格局確認。估值PE TTM僅7.81看似吸引，但PB 818.27及市值818.27 HKD數據明顯異常（疑似單位錯誤），數據可信度低，技術指標MA20/MA50/MA100/MA200及RSI14全部缺失。短線宜順勢做空或離場觀望，不建議撈底。<p class="card-link"><a href="/dashboard/2026-06-27/reports/00522.HK.html">→ 完整 00522.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>00425.HK</b> · 評分 32 · 賣出 · 敏實集團(00425.HK) 2026/06/26 收報 26.52 港元，大跌 4.12%，全日波幅 4.60%（高位 27.10 / 低位 25.88），屬高波幅交易日，短炒燃料充足但方向偏空。技術面確認 MA30 下穿 MA60 死亡交叉、股價跌穿 MA5，新聞面同樣顯示 MA 空頭排列。估值上 PE TTM 僅 4.41 極為便宜（惟 PB 310.66 明顯為數據異常，市值 310.66 欄位亦異常），52 週區間 21.25–46.76，現價 26.52 接近區間下沿。短線建議趁反彈做空博測試 25.88 今日低位，不建議現價接刀。<p class="card-link"><a href="/dashboard/2026-06-27/reports/00425.HK.html">→ 完整 00425.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>06166.HK</b> · 評分 32 · 賣出 · 劍橋科技(06166.HK)今日單日急跌7.43%至148.30 HKD，全日區間143.00-159.10達10.86%屬極高波幅，為日內雙向交易提供燃料；惟量比0.00×數據異常，無法確認資金參與真實性。基本面上，控股股東連續公告減持疊加光通信板塊集體走弱（長飛光纖-9%、舜宇光學-8%、匯聚科技-7%），負面催化集中。PE TTM 10.05表面看似便宜，但PB 137.42極高反映股東權益極薄（以市值546.12億HKD計，賬面淨值僅約3.97億），資產質量存疑。MA20/MA50/MA100/MA200及RSI14全部N/A，技術面缺乏趨勢框架。短線宜順勢做空：若反彈至155.00-158.00區間（即今日高位159.10下方）遇阻做空，止損160.20（昨日收盤），目標143.00（今日低位）。<p class="card-link"><a href="/dashboard/2026-06-27/reports/06166.HK.html">→ 完整 06166.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>06088.HK</b> · 評分 30 · 賣出 · 06088.HK 鴻騰精密 2026/06/26 急跌 -7.79%，收報 6.98 HKD，全日波幅 11.32%（7.45-6.66），屬極端高波動交易日。受蘋果漲價恐慌傳導及死亡交叉雙重利空打擊，盤中曾跌逾 10%，反映空頭動能極強。PE TTM 10.44 雖屬偏低估值，但 PB 509.80 反映賬面值異常（股東權益可能受壓），質素面存疑。MA20/50/100/200 數據缺失下無法確認中期趨勢結構，建議以日內弱勢反彈做空為主，今日低位 6.66 為首道支持，失守則下望 52週低位 2.30 上方更遠位置。<p class="card-link"><a href="/dashboard/2026-06-27/reports/06088.HK.html">→ 完整 06088.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>00100.HK</b> · 評分 28 · 賣出 · MINIMAX-W 現價 427.00 港元，今日急跌 6.48%，盤中區間 403.00–450.00，振幅高達 11.01%，屬極高波動股份。新聞面持續偏負：7 月將迎來首批解禁（佔總股本 63%），疊加 AI 板塊集體回吐（智譜 -11%、天數 -13%），以及產品規則調整引發用戶爭議，沽壓沉重。估值端 PE TTM 僅 10.29，看似便宜，但 PB 高達 992.91，反映股東權益接近零或帳面結構異常，盈利質量存疑，質素極低。短線以沽空為主、博反彈為輔。<p class="card-link"><a href="/dashboard/2026-06-27/reports/00100.HK.html">→ 完整 00100.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>01772.HK</b> · 評分 28 · 賣出 · 01772.HK 贛鋒鋰業 2026/06/26 大幅下挫 7.30%，收報 48.90 HKD，全日 H/L 區間 47.86-52.85，波幅高達 10.20%，短炒燃料充足。負面催化包括鋰礦遠期供給利空發酵、行業板塊齊跌（天齊鋰業 09696 跌近 6%）、公司為 Minera Exar 提供 5,000 萬美元擔保，主力資金淨賣出。PE TTM 9.46 看似便宜，但 PB 236.24 極高反映股東權益可能受壓或資產負債表結構異常，估值陷阱風險大。MA20/50/100/200 全部缺失，難以確認中長期趨勢。短線策略以做空為主，反彈只視為放空機會。<p class="card-link"><a href="/dashboard/2026-06-27/reports/01772.HK.html">→ 完整 01772.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>09660.HK</b> · 評分 28 · 賣出 · 地平線機器人-W（09660.HK）2026/06/26 大幅下跌 6.48%，收報 3.61 HKD，全日區間 3.60-3.84，幅度達 6.65%（高波幅），成交額 8.29 億港元，但量比 0.00× 顯示成交量對比數據異常，需警惕假信號。股價貼近 52週低位 3.60，跌勢明確。PE TTM 僅 6.22 看似便宜，但 PB 高達 449.77（負權益警訊），質素面有重大瑕疵。短期弱勢未止，建議逢反彈造淡或觀望。<p class="card-link"><a href="/dashboard/2026-06-27/reports/09660.HK.html">→ 完整 09660.HK 詳細報告</a></p></div>
 
 ---
-<em>生成時間: 2026-06-28 23:12:46 · LLM: openai/MiniMax-M3</em>
-<h2>詳細表格</h2><table class="detail"><thead><tr><th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能</th><th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th><th>入場</th><th>止損</th><th>目標</th></tr></thead><tbody><tr><td>01276.HK</td><td>42</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>00522.HK</td><td>33</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>00425.HK</td><td>32</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>06166.HK</td><td>32</td><td>both</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>06088.HK</td><td>30</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>00100.HK</td><td>28</td><td>both</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>01772.HK</td><td>28</td><td>both</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>09660.HK</td><td>28</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr></tbody></table>
+*生成時間: 2026-06-28 23:22:21 · LLM: openai/MiniMax-M3*
+<h2>詳細表格</h2><table class="detail"><thead><tr><th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能</th><th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th><th>入場</th><th>止損</th><th>目標</th></tr></thead><tbody><tr><td><a href="/dashboard/2026-06-27/reports/01276.HK.html">01276.HK</a></td><td>42</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/00522.HK.html">00522.HK</a></td><td>33</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/00425.HK.html">00425.HK</a></td><td>32</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/06166.HK.html">06166.HK</a></td><td>32</td><td>both</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/06088.HK.html">06088.HK</a></td><td>30</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/00100.HK.html">00100.HK</a></td><td>28</td><td>both</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/01772.HK.html">01772.HK</a></td><td>28</td><td>both</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/09660.HK.html">09660.HK</a></td><td>28</td><td>short</td><td>—/—/—</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr></tbody></table>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>

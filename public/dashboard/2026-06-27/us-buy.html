@@ -159,6 +159,28 @@ table.detail th {
     color: var(--dim);
 }
 
+/* Card-link: appended after each summary card so reader can dive into detail */
+p.card-link {
+    margin: 6px 0 0;
+    text-align: right;
+    font-size: 0.78rem;
+}
+p.card-link a {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+p.card-link a:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
 /* Filter chips (alternative to filter dropdown) */
 .filters {
     display: flex; flex-wrap: wrap; gap: 6px;
@@ -178,6 +200,82 @@ table.detail th {
     color: #fff;
     border-color: var(--accent);
 }
+
+/* Report detail page */
+.report-header h1 { margin: 0 0 0.5rem; }
+.report-header .meta {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 1rem;
+}
+.report-header .badge {
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    font-size: 0.75rem;
+    color: var(--fg);
+}
+.report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.conf { background: var(--panel-2); }
+
+.score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 1rem 0;
+}
+.score-breakdown .dim {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+}
+.score-breakdown .dim span {
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.score-breakdown .bar {
+    background: var(--border);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 6px 0;
+}
+.score-breakdown .bar .fill { height: 100%; }
+.score-breakdown .dim b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+}
+
+.levels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    margin: 1rem 0;
+}
+.levels > div {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+.levels span {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+.levels b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+}
+.levels b.bull { color: var(--bull); }
+.levels b.bear { color: var(--bear); }
 
 /* Footer */
 footer {
@@ -205,21 +303,21 @@ footer {
 <body>
 <nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
-<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-06-27/all.html">全部</a><a href="/dashboard/2026-06-27/hk-buy.html">港股買入</a><a href="/dashboard/2026-06-27/hk-sell.html">港股賣出</a><a href="/dashboard/2026-06-27/us-buy.html" class="active">美股買入</a><a href="/dashboard/2026-06-27/us-sell.html">美股賣出</a></div><h1>📊 決策儀表板 — 2026-06-27 (美股買入)</h1><b>2026-06-27</b> · 共分析 <b>7</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:7 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:0 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:0
+<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-06-27/all.html">全部</a><a href="/dashboard/2026-06-27/hk-buy.html">港股買入</a><a href="/dashboard/2026-06-27/hk-sell.html">港股賣出</a><a href="/dashboard/2026-06-27/us-buy.html" class="active">美股買入</a><a href="/dashboard/2026-06-27/us-sell.html">美股賣出</a></div><h1>📊 決策儀表板 — 2026-06-27 (美股買入)</h1><p>**2026-06-27** · 共分析 **7** 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:7 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:0 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:0</p>
 
 <h2>📊 分析結果摘要</h2>
 
-<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>KO</b> · 評分 73 · 買入 · KO 收報 82.63 港元，當日大升 2.75%，成交量比 2.08 倍確認資金積極流入。均線呈完美多頭排列（MA20 80.24 &gt; MA50 79.32 &gt; MA100 78.47 &gt; MA200 74.02），價格站穩 MA200 之上 11.6%，長線牛市格局完好。RSI 14 處於 63.03 嘅健康區間，未現超買訊號。短線面對 82.81（今日高位）及 83.59（52 週高位）雙重阻力，量比 2.08 倍配合 +2.75% 升幅有機會向上突破。建議回調至 MA20 $80.24-$81.00 區間分批吸納，目標 $83.59（52 週高位），止損 $79.50（MA50 下方）。</div>
-<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>MO</b> · 評分 70 · 買入 · Altria 股價現報 73.79 HKD，今日升 0.79%，呈現強勁上升趨勢。技術面顯示 MA20 70.90 &gt; MA50 70.38 &gt; MA100 68.47 &gt; MA200 64.75 完美多頭排列，RSI 55.71 處於健康區間。股價由近期 68.65 底部反彈至接近 52 週高位 74.55，量比 1.62× 確認資金流入。估值 PE 15.41 合理，5.75% 股息率具吸引力，但 PB -38.39 反映負股東權益（因持續大規模回購造成），屬結構性而非基本破壞。</div>
-<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>ELV</b> · 評分 65 · 買入 · ELV 現價 395.18 升 2.03%，收復昨日失地並站穩 MA50（382.35）之上，技術上確認中期上升趨勢未變（MA20 399.37 &gt; MA50 382.35 &gt; MA100 346.31 多頭排列）。RSI14 為 37.81 屬超賣回升初段，配合量比 1.57× 放量，今日呈現 MA50 附近嘅 bullish reversal 信號。PE 16.75、PB 1.96 估值合理，未有明顯泡沫。短線目標睇 MA20 399.37 同近期阻力區 402.66–404.56；跌穿今日低位 384.44 即撤。</div>
-<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>UNP</b> · 評分 63 · 買入 · UNP 現價 $267.73，今日強升 +2.99%，從近期低位 $256.88 反彈，技術上 MA20 ($265.00) &gt; MA50 ($264.67) &gt; MA100 ($258.05) 形成完整多頭排列，且股價站穩 MA200 ($242.94) 之上達 +10.2%，長線牛熊格局未變。RSI14 為 53.54 中性偏強，仍有上行空間。Q1 調整後 EPS $2.93 優於預期 $2.86，美銀上調目標價至 $297。基本面上 PE 22.07 合理，但 PB 8.20 偏高限制估值上行空間；今日量比僅 1.01× 未確認升幅，信心略為下調至中。短線建議等回調至 MA20 $265.00 附近吸納做多。</div>
-<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CRWD</b> · 評分 62 · 買入 · CRWD 現價 $701.09，今日升 3.31%，收市接近全日高位 $704.84，展現強勁當日動能。MA20 ($694.75) &gt; MA50 ($594.02) &gt; MA100 ($499.63) &gt; MA200 ($495.98) 形成完美多頭排列，價格站穩 MA200 ($495.98) 之上確認長線牛市格局。RSI14 為 59.33 處於健康中性偏多區間。今日 H/L 區間 4.45% 屬高波幅，提供短炒燃料。PB 38.51 估值極貴，PE TTM N/A 反映盈利能見度有限，整體質素中等。建議回調至 MA20 ($694.75) 附近吸納做多。</div>
-<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>HON</b> · 評分 62 · 買入 · HON 現價 232.21 HKD，今日升 0.42%，呈現溫和向上動能。技術面 MA20 (224.66) &gt; MA50 (221.37) &gt; MA200 (214.06) 形成中長期多頭排列，但 MA100 (228.20) 高於 MA20 顯示短中期仍有整固壓力。RSI14 為 65.93 屬健康偏強區，未見超買。今日 H/L 區間 3.17% 屬高波幅（226.29–233.66），量比 2.34× 確認資金明顯流入。估值 PE 18.52 合理但 PB 5.41 偏高，限制上行空間。建議回調至 228.00–230.00 區間分批做多，目標先看 238.00（即近月高位 237.86 上方），嚴守止損 224.00（MA20 224.66 之下）。</div>
-<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>HOOD</b> · 評分 55 · 買入 · HOOD 今日強勁反彈 +5.58%，收 98.69 港元，站穩 MA20 93.70 之上。短線 MA20 93.70 &gt; MA50 85.22 &gt; MA100 80.28 形成多頭排列，配合今日 H/L 區間 6.44% 高波幅，短炒燃料充足。RSI14 65.92 處於健康偏強區域。但股價仍受制於 MA200 102.58 長線分水嶺，且 PE TTM 47.91、PB 9.54 估值偏高，限制上行空間。建議回調至 95.00-96.50 區間吸納做多，博反彈至 MA200 102.58 阻力位，嚴守止損 92.00。</div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>KO</b> · 評分 73 · 買入 · KO 收報 82.63 港元，當日大升 2.75%，成交量比 2.08 倍確認資金積極流入。均線呈完美多頭排列（MA20 80.24 &gt; MA50 79.32 &gt; MA100 78.47 &gt; MA200 74.02），價格站穩 MA200 之上 11.6%，長線牛市格局完好。RSI 14 處於 63.03 嘅健康區間，未現超買訊號。短線面對 82.81（今日高位）及 83.59（52 週高位）雙重阻力，量比 2.08 倍配合 +2.75% 升幅有機會向上突破。建議回調至 MA20 $80.24-$81.00 區間分批吸納，目標 $83.59（52 週高位），止損 $79.50（MA50 下方）。<p class="card-link"><a href="/dashboard/2026-06-27/reports/KO.html">→ 完整 KO 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>MO</b> · 評分 70 · 買入 · Altria 股價現報 73.79 HKD，今日升 0.79%，呈現強勁上升趨勢。技術面顯示 MA20 70.90 &gt; MA50 70.38 &gt; MA100 68.47 &gt; MA200 64.75 完美多頭排列，RSI 55.71 處於健康區間。股價由近期 68.65 底部反彈至接近 52 週高位 74.55，量比 1.62× 確認資金流入。估值 PE 15.41 合理，5.75% 股息率具吸引力，但 PB -38.39 反映負股東權益（因持續大規模回購造成），屬結構性而非基本破壞。<p class="card-link"><a href="/dashboard/2026-06-27/reports/MO.html">→ 完整 MO 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>ELV</b> · 評分 65 · 買入 · ELV 現價 395.18 升 2.03%，收復昨日失地並站穩 MA50（382.35）之上，技術上確認中期上升趨勢未變（MA20 399.37 &gt; MA50 382.35 &gt; MA100 346.31 多頭排列）。RSI14 為 37.81 屬超賣回升初段，配合量比 1.57× 放量，今日呈現 MA50 附近嘅 bullish reversal 信號。PE 16.75、PB 1.96 估值合理，未有明顯泡沫。短線目標睇 MA20 399.37 同近期阻力區 402.66–404.56；跌穿今日低位 384.44 即撤。<p class="card-link"><a href="/dashboard/2026-06-27/reports/ELV.html">→ 完整 ELV 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>UNP</b> · 評分 63 · 買入 · UNP 現價 $267.73，今日強升 +2.99%，從近期低位 $256.88 反彈，技術上 MA20 ($265.00) &gt; MA50 ($264.67) &gt; MA100 ($258.05) 形成完整多頭排列，且股價站穩 MA200 ($242.94) 之上達 +10.2%，長線牛熊格局未變。RSI14 為 53.54 中性偏強，仍有上行空間。Q1 調整後 EPS $2.93 優於預期 $2.86，美銀上調目標價至 $297。基本面上 PE 22.07 合理，但 PB 8.20 偏高限制估值上行空間；今日量比僅 1.01× 未確認升幅，信心略為下調至中。短線建議等回調至 MA20 $265.00 附近吸納做多。<p class="card-link"><a href="/dashboard/2026-06-27/reports/UNP.html">→ 完整 UNP 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CRWD</b> · 評分 62 · 買入 · CRWD 現價 $701.09，今日升 3.31%，收市接近全日高位 $704.84，展現強勁當日動能。MA20 ($694.75) &gt; MA50 ($594.02) &gt; MA100 ($499.63) &gt; MA200 ($495.98) 形成完美多頭排列，價格站穩 MA200 ($495.98) 之上確認長線牛市格局。RSI14 為 59.33 處於健康中性偏多區間。今日 H/L 區間 4.45% 屬高波幅，提供短炒燃料。PB 38.51 估值極貴，PE TTM N/A 反映盈利能見度有限，整體質素中等。建議回調至 MA20 ($694.75) 附近吸納做多。<p class="card-link"><a href="/dashboard/2026-06-27/reports/CRWD.html">→ 完整 CRWD 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>HON</b> · 評分 62 · 買入 · HON 現價 232.21 HKD，今日升 0.42%，呈現溫和向上動能。技術面 MA20 (224.66) &gt; MA50 (221.37) &gt; MA200 (214.06) 形成中長期多頭排列，但 MA100 (228.20) 高於 MA20 顯示短中期仍有整固壓力。RSI14 為 65.93 屬健康偏強區，未見超買。今日 H/L 區間 3.17% 屬高波幅（226.29–233.66），量比 2.34× 確認資金明顯流入。估值 PE 18.52 合理但 PB 5.41 偏高，限制上行空間。建議回調至 228.00–230.00 區間分批做多，目標先看 238.00（即近月高位 237.86 上方），嚴守止損 224.00（MA20 224.66 之下）。<p class="card-link"><a href="/dashboard/2026-06-27/reports/HON.html">→ 完整 HON 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>HOOD</b> · 評分 55 · 買入 · HOOD 今日強勁反彈 +5.58%，收 98.69 港元，站穩 MA20 93.70 之上。短線 MA20 93.70 &gt; MA50 85.22 &gt; MA100 80.28 形成多頭排列，配合今日 H/L 區間 6.44% 高波幅，短炒燃料充足。RSI14 65.92 處於健康偏強區域。但股價仍受制於 MA200 102.58 長線分水嶺，且 PE TTM 47.91、PB 9.54 估值偏高，限制上行空間。建議回調至 95.00-96.50 區間吸納做多，博反彈至 MA200 102.58 阻力位，嚴守止損 92.00。<p class="card-link"><a href="/dashboard/2026-06-27/reports/HOOD.html">→ 完整 HOOD 詳細報告</a></p></div>
 
 ---
-<em>生成時間: 2026-06-28 23:12:46 · LLM: openai/MiniMax-M3</em>
-<h2>詳細表格</h2><table class="detail"><thead><tr><th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能</th><th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th><th>入場</th><th>止損</th><th>目標</th></tr></thead><tbody><tr><td>KO</td><td>73</td><td>long</td><td>—/—/—</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>MO</td><td>70</td><td>long</td><td>—/—/—</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>ELV</td><td>65</td><td>long</td><td>—/—/—</td><td>買入</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>UNP</td><td>63</td><td>long</td><td>—/—/—</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>CRWD</td><td>62</td><td>long</td><td>—/—/—</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>HON</td><td>62</td><td>long</td><td>—/—/—</td><td>買入</td><td>中性偏樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td>HOOD</td><td>55</td><td>long</td><td>—/—/—</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr></tbody></table>
+*生成時間: 2026-06-28 23:22:21 · LLM: openai/MiniMax-M3*
+<h2>詳細表格</h2><table class="detail"><thead><tr><th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能</th><th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th><th>入場</th><th>止損</th><th>目標</th></tr></thead><tbody><tr><td><a href="/dashboard/2026-06-27/reports/KO.html">KO</a></td><td>73</td><td>long</td><td>—/—/—</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/MO.html">MO</a></td><td>70</td><td>long</td><td>—/—/—</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/ELV.html">ELV</a></td><td>65</td><td>long</td><td>—/—/—</td><td>買入</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/UNP.html">UNP</a></td><td>63</td><td>long</td><td>—/—/—</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/CRWD.html">CRWD</a></td><td>62</td><td>long</td><td>—/—/—</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/HON.html">HON</a></td><td>62</td><td>long</td><td>—/—/—</td><td>買入</td><td>中性偏樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/HOOD.html">HOOD</a></td><td>55</td><td>long</td><td>—/—/—</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr></tbody></table>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>

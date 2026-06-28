@@ -207,6 +207,28 @@ table.detail th {
     color: var(--dim);
 }
 
+/* Card-link: appended after each summary card so reader can dive into detail */
+p.card-link {
+    margin: 6px 0 0;
+    text-align: right;
+    font-size: 0.78rem;
+}
+p.card-link a {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+p.card-link a:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
 /* Filter chips (alternative to filter dropdown) */
 .filters {
     display: flex; flex-wrap: wrap; gap: 6px;
@@ -226,6 +248,82 @@ table.detail th {
     color: #fff;
     border-color: var(--accent);
 }
+
+/* Report detail page */
+.report-header h1 { margin: 0 0 0.5rem; }
+.report-header .meta {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 1rem;
+}
+.report-header .badge {
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    font-size: 0.75rem;
+    color: var(--fg);
+}
+.report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.conf { background: var(--panel-2); }
+
+.score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 1rem 0;
+}
+.score-breakdown .dim {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+}
+.score-breakdown .dim span {
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.score-breakdown .bar {
+    background: var(--border);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 6px 0;
+}
+.score-breakdown .bar .fill { height: 100%; }
+.score-breakdown .dim b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+}
+
+.levels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    margin: 1rem 0;
+}
+.levels > div {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+.levels span {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+.levels b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+}
+.levels b.bull { color: var(--bull); }
+.levels b.bear { color: var(--bear); }
 
 /* Footer */
 footer {
@@ -332,7 +430,7 @@ def filter_chips_html(date: str, active_slug: str) -> str:
     return '<div class="filters">' + "".join(items) + "</div>"
 
 
-def detail_table_html(reports: list[dict]) -> str:
+def detail_table_html(reports: list[dict], date: str) -> str:
     """Build the '詳細表格' table for static output (was a Streamlit dataframe)."""
     rows = []
     for r in sorted(reports, key=lambda x: x["score"] or 0, reverse=True):
@@ -343,9 +441,10 @@ def detail_table_html(reports: list[dict]) -> str:
         v = breakdown.get("value_score", "—")
         q = breakdown.get("quality_score", "—")
         m = breakdown.get("momentum_score", "—")
+        code_link = f'<a href="/dashboard/{date}/reports/{r["code"]}.html">{_html.escape(r["code"])}</a>'
         rows.append(
             f"<tr>"
-            f"<td>{_html.escape(r['code'])}</td>"
+            f"<td>{code_link}</td>"
             f"<td>{r['score'] or '—'}</td>"
             f"<td>{_html.escape(r.get('trade_direction') or '—')}</td>"
             f"<td>{v}/{q}/{m}</td>"
@@ -368,6 +467,89 @@ def detail_table_html(reports: list[dict]) -> str:
         "</tr></thead>"
     )
     return f'<table class="detail">{header}<tbody>{"".join(rows)}</tbody></table>'
+
+
+def report_page_html(report: dict, date: str) -> str:
+    """Render one ticker's full report page (Streamlit expander equivalent)."""
+    code = report["code"]
+    score = report.get("score") or "—"
+    direction = report.get("trade_direction") or "—"
+    operation = report.get("operation_advice") or "—"
+    sentiment = report.get("sentiment") or "—"
+    trend = report.get("trend") or "—"
+    confidence = report.get("confidence") or "—"
+
+    summary_md = report.get("summary_md") or ""
+    full_md = report.get("full_md") or ""
+
+    breakdown = report.get("score_breakdown") or {}
+    if isinstance(breakdown, str):
+        try: breakdown = json.loads(breakdown)
+        except Exception: breakdown = {}
+
+    # Use full_md if available, fall back to summary_md
+    main_md = full_md if full_md else summary_md
+
+    # Back link to all.html
+    back = f'<p><a href="/dashboard/{date}/all.html">← 返回 {date} 全部報告</a></p>'
+
+    # Score breakdown bar
+    v = breakdown.get("value_score", 0) or 0
+    q = breakdown.get("quality_score", 0) or 0
+    m = breakdown.get("momentum_score", 0) or 0
+    breakdown_html = (
+        '<div class="score-breakdown">'
+        f'<div class="dim"><span>估值</span><div class="bar"><div class="fill" style="width:{v}%;background:var(--blue);"></div></div><b>{v}</b></div>'
+        f'<div class="dim"><span>質素</span><div class="bar"><div class="fill" style="width:{q}%;background:var(--purple);"></div></div><b>{q}</b></div>'
+        f'<div class="dim"><span>動能</span><div class="bar"><div class="fill" style="width:{m}%;background:var(--amber);"></div></div><b>{m}</b></div>'
+        '</div>'
+    )
+
+    # Key levels
+    support = report.get("support_zone") or "—"
+    resistance = report.get("resistance_zone") or "—"
+    entry = report.get("entry_zone") or "—"
+    stop = report.get("stop_loss") or "—"
+    target = report.get("target_price") or "—"
+
+    levels_html = (
+        '<div class="levels">'
+        f'<div><span>入場區間</span><b>{_html.escape(entry)}</b></div>'
+        f'<div><span>止損</span><b class="bear">{_html.escape(stop)}</b></div>'
+        f'<div><span>目標</span><b class="bull">{_html.escape(target)}</b></div>'
+        f'<div><span>支持位</span><b>{_html.escape(support)}</b></div>'
+        f'<div><span>阻力位</span><b>{_html.escape(resistance)}</b></div>'
+        '</div>'
+    )
+
+    # Main markdown body
+    body_md_html = body_md_to_html(main_md)
+
+    body = (
+        back
+        + '<div class="report-header">'
+        f'<h1>📊 {_html.escape(code)} 詳細報告</h1>'
+        '<div class="meta">'
+        f'<span class="badge score">評分 {score}</span>'
+        f'<span class="badge dir">{_html.escape(direction)}</span>'
+        f'<span class="badge op">{_html.escape(operation)}</span>'
+        f'<span class="badge">{_html.escape(sentiment)}</span>'
+        f'<span class="badge">{_html.escape(trend)}</span>'
+        f'<span class="badge conf">信心 {confidence}</span>'
+        '</div>'
+        '</div>'
+        + breakdown_html
+        + levels_html
+        + '<h2>完整分析</h2>'
+        + body_md_html
+    )
+
+    return shell(
+        title=f"{code} 詳細報告 · {date} · Leeks Terminal",
+        body_html=body,
+        active_path="/dashboard/",
+        description=f"{code} {date} AI 詳細報告 — 評分 {score}, {direction} {operation}",
+    )
 
 
 def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
@@ -394,7 +576,7 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
             disclaimer_block()
             + filter_chips_html(date, slug)
             + f'<h1>📊 決策儀表板 — {date} ({label})</h1>'
-            + body_md_to_html(body_md)
+            + body_md_to_html(body_md, link_inject_date=date)
         )
 
         # Add detail table — re-apply filters manually (already in scope from loop)
@@ -410,7 +592,7 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
 
         body_html += (
             "<h2>詳細表格</h2>"
-            + detail_table_html(filtered)
+            + detail_table_html(filtered, date)
         )
 
         out_path = PUBLIC_DIR / "dashboard" / date / f"{slug}.html"
@@ -426,31 +608,80 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
         )
         written.append(str(out_path.relative_to(PUBLIC_DIR)))
 
+    # === Generate per-ticker detail pages ===
+    reports_dir = PUBLIC_DIR / "dashboard" / date / "reports"
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    for r in all_reports:
+        code = r["code"]
+        report_path = reports_dir / f"{code}.html"
+        report_path.write_text(
+            report_page_html(r, date),
+            encoding="utf-8",
+        )
+        written.append(str(report_path.relative_to(PUBLIC_DIR)))
+
     return written, len(all_reports)
 
 
-def body_md_to_html(md: str) -> str:
+def body_md_to_html(md: str, link_inject_date: str | None = None) -> str:
     """Convert the build_dashboard_md markdown output to HTML for static pages.
-    The output already contains raw HTML <div style=...> for cards (preserved)."""
+    The output already contains raw HTML <div style=...> for cards (preserved).
+    If link_inject_date is set, append a '→ 完整 ... 詳細報告' link inside each card."""
     import re
+    # Card pattern: <div style="...">CARD_CONTENT</div>
+    # CARD_CONTENT is single-line text with **KO** or **00700.HK** bold code prefix.
+    # Replace each card div to use class="card" + append a '→ 詳細報告' link inside.
+    card_re = re.compile(
+        r'(<div\s+style="[^"]*">)(.+?)(</div>)',
+        flags=re.DOTALL,
+    )
+
+    def _rewrite_card(match: re.Match) -> str:
+        open_tag, body, close_tag = match.group(1), match.group(2), match.group(3)
+        # Convert inline style to class
+        open_tag_new = '<div class="card">'
+
+        # Capture code from body
+        code = None
+        m_hk = re.search(r'\b(\d{4,5}\.HK)\b', body)
+        m_us = re.search(r'\*\*([A-Z][A-Z0-9.]{0,5})\*\*', body)
+        if m_hk:
+            code = m_hk.group(1)
+        elif m_us:
+            code = m_us.group(1)
+
+        # Markdown-ish transforms inside the card body
+        body = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', body)
+        body = re.sub(r'(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)', r'<em>\1</em>', body)
+        body = re.sub(r'🟢', '<span style="color:var(--bull);font-weight:600;">🟢</span>', body)
+        body = re.sub(r'🟡', '<span style="color:var(--amber);font-weight:600;">🟡</span>', body)
+        body = re.sub(r'🔴', '<span style="color:var(--bear);font-weight:600;">🔴</span>', body)
+
+        link_html = ''
+        if code and link_inject_date:
+            link_html = (
+                f'<p class="card-link">'
+                f'<a href="/dashboard/{link_inject_date}/reports/{code}.html">'
+                f'→ 完整 {code} 詳細報告</a></p>'
+            )
+        return open_tag_new + body + link_html + close_tag
+
+    # First rewrite cards (block-aware)
+    md = card_re.sub(_rewrite_card, md)
+
+    # Now process the rest line-by-line for headers / paragraphs / emoji outside cards
     html_parts = []
     in_card = False
     for line in md.split("\n"):
         if line.startswith("<div"):
             in_card = True
-            line = re.sub(
-                r'<div style="[^"]*"',
-                '<div class="card"',
-                line,
-                count=1,
-            )
+            html_parts.append(line)
+            continue
         elif line.startswith("</div>"):
             in_card = False
             html_parts.append(line)
             continue
-        # Convert **bold** and emoji color spans — apply in BOTH card and outer text.
-        line = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', line)
-        line = re.sub(r'(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)', r'<em>\1</em>', line)
+        # Emoji color spans outside cards too
         line = re.sub(r'🟢', '<span style="color:var(--bull);font-weight:600;">🟢</span>', line)
         line = re.sub(r'🟡', '<span style="color:var(--amber);font-weight:600;">🟡</span>', line)
         line = re.sub(r'🔴', '<span style="color:var(--bear);font-weight:600;">🔴</span>', line)
