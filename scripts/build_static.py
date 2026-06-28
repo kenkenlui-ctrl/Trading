@@ -522,8 +522,8 @@ def report_page_html(report: dict, date: str) -> str:
         '</div>'
     )
 
-    # Main markdown body
-    body_md_html = body_md_to_html(main_md)
+    # Main markdown body — pass link_inject_date=None so cards in the detail page itself don't get extra links
+    body_md_html = body_md_to_html(main_md, link_inject_date=None)
 
     body = (
         back
@@ -689,7 +689,10 @@ def body_md_to_html(md: str, link_inject_date: str | None = None) -> str:
             in_card = False
             html_parts.append(line)
             continue
-        # Emoji color spans outside cards too
+        # Markdown transforms first (so they happen BEFORE escape)
+        line = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', line)
+        line = re.sub(r'(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)', r'<em>\1</em>', line)
+        # Then emoji color spans outside cards too
         line = re.sub(r'🟢', '<span style="color:var(--bull);font-weight:600;">🟢</span>', line)
         line = re.sub(r'🟡', '<span style="color:var(--amber);font-weight:600;">🟡</span>', line)
         line = re.sub(r'🔴', '<span style="color:var(--bear);font-weight:600;">🔴</span>', line)
@@ -702,6 +705,20 @@ def body_md_to_html(md: str, link_inject_date: str | None = None) -> str:
                 line = "<hr>"
             elif line.strip() and not line.startswith("<"):
                 line = f"<p>{line}</p>"
+        # NOTE: _html.escape above will escape <span ...> emitted into header/paragraph lines by
+        # emoji replacement, AND <b>/<em> tags emitted by markdown transforms. That's wrong —
+        # the tags should remain raw HTML. Un-escape the patterns we emit.
+        for tag, marker, emoji in [
+            ('span', 'color:var(--bull);font-weight:600;', '🟢'),
+            ('span', 'color:var(--amber);font-weight:600;', '🟡'),
+            ('span', 'color:var(--bear);font-weight:600;', '🔴'),
+        ]:
+            escaped = f'&lt;{tag} style=&quot;{marker}&quot;&gt;{emoji}&lt;/{tag}&gt;'
+            raw = f'<{tag} style="{marker}">{emoji}</{tag}>'
+            line = line.replace(escaped, raw)
+        # Restore escaped <b>/<em> in paragraph lines
+        line = line.replace('&lt;b&gt;', '<b>').replace('&lt;/b&gt;', '</b>')
+        line = line.replace('&lt;em&gt;', '<em>').replace('&lt;/em&gt;', '</em>')
         html_parts.append(line)
     return "\n".join(html_parts)
 
