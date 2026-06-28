@@ -28,32 +28,46 @@ DENY_LIST: set[str] = {
 }
 
 
+def normalize_hk_code(code: str) -> str:
+    """Normalize HK ticker to canonical 5-digit .HK form (Tencent format).
+    Accepts: 0700.HK, 00700.HK, 700.HK → returns 00700.HK"""
+    if not code:
+        return code
+    base = code.split(".")[0].strip().zfill(5)
+    return f"{base}.HK"
+
+
 def build_candidate_pool() -> list[str]:
-    """Build HK candidate pool from HSI/HSCEI constituents + current universe + DB."""
-    # Constituent lists live alongside this script (in scripts/)
-    here = Path(__file__).resolve().parent
-    sources = [
-        str(here / "hsi_constituents.txt"),
-        str(here / "hscei_extra.txt"),
-        str(here / "hk_midcaps.txt"),
-    ]
+    """Build HK candidate pool from full HKEX universe (Tencent gtimg) + DB-known codes.
+    Owner request 2026-06-28: stop using HSI/HSCEI/midcaps curated subset — use whole
+    HKEX (~5,500 stocks) so the top-200 ranking reflects actual market-wide turnover.
+
+    All codes normalized to 5-digit .HK (00700.HK form, Tencent canonical).
+    """
     pool = set()
-    for src in sources:
-        p = Path(src)
-        if p.exists():
-            for line in p.read_text().splitlines():
-                line = line.strip()
-                if line and line.endswith(".HK"):
-                    pool.add(line)
-    # Existing universe (for backward compat)
+    full_file = Path(__file__).resolve().parent / "hk_full_universe.json"
+    if full_file.exists():
+        try:
+            data = json.loads(full_file.read_text())
+            for entry in data:
+                if isinstance(entry, dict) and entry.get("code", "").endswith(".HK"):
+                    pool.add(normalize_hk_code(entry["code"]))
+        except Exception as e:
+            print(f"[warn] {full_file.name} read failed: {e}", file=sys.stderr)
+    else:
+        print(f"[warn] {full_file.name} missing — run scripts/fetch_hk_universe.py first",
+              file=sys.stderr)
+    # Existing universe (for backward compat — keep around in case full file is stale)
     if UNIVERSE_FILE.exists():
         try:
             for c in json.loads(UNIVERSE_FILE.read_text()):
                 if isinstance(c, str) and c.endswith(".HK"):
-                    pool.add(c)
+                    pool.add(normalize_hk_code(c))
         except Exception:
             pass
-    # DB-known HK codes (last 7 days)
+    # DB-known HK codes (last 7 days) — protects codes that were in old runs but
+    # today's turnover < MIN_TURNOVER (e.g. illiquid days). We don't promote them
+    # to top-200, but we still probe in case today's a normal day.
     db_path = PROJECT_ROOT / "data" / "dsa_hk.db"
     if db_path.exists():
         try:
@@ -65,7 +79,7 @@ def build_candidate_pool() -> list[str]:
             ).fetchall()
             for r in rows:
                 if r[0].endswith(".HK"):
-                    pool.add(r[0])
+                    pool.add(normalize_hk_code(r[0]))
             db.close()
         except Exception as e:
             print(f"[warn] DB lookup failed: {e}", file=sys.stderr)
@@ -73,38 +87,39 @@ def build_candidate_pool() -> list[str]:
 
 
 def fetch_turnover(codes: list[str]) -> list[tuple[str, float]]:
-    """Fetch 20d avg turnover (HKD millions) for each code via yfinance."""
-    import yfinance as yf
+    """Fetch today's turnover (HKD millions) per code via Tencent gtimg batch API.
 
-    def _fetch(code: str) -> tuple[str, float]:
-        try:
-            t = yf.Ticker(code)
-            hist = t.history(period="1mo")
-            if len(hist) >= 10:
-                avg = (hist["Close"] * hist["Volume"]).mean() / 1e6
-                return (code, float(avg))
-        except Exception:
-            pass
-        return (code, 0.0)
+    Reads from scripts/hk_full_universe.json (prefetched by scripts/fetch_hk_universe.py
+    which scans all 9999 5-digit HK codes in ~3s). Faster + more reliable than yfinance.
+    """
+    full_file = Path(__file__).resolve().parent / "hk_full_universe.json"
+    if not full_file.exists():
+        print(f"[warn] {full_file.name} missing — run fetch_hk_universe.py first",
+              file=sys.stderr)
+        return [(c, 0.0) for c in codes]
 
-    results = []
-    with ThreadPoolExecutor(max_workers=15) as pool:
-        futures = {pool.submit(_fetch, c): c for c in codes}
-        for f in as_completed(futures):
-            results.append(f.result())
-    return results
+    # Build lookup map: code → turnover_m_hkd
+    by_code = {}
+    try:
+        for entry in json.loads(full_file.read_text()):
+            if isinstance(entry, dict):
+                by_code[entry["code"]] = entry.get("turnover_m_hkd", 0.0)
+    except Exception as e:
+        print(f"[warn] {full_file.name} parse failed: {e}", file=sys.stderr)
+        return [(c, 0.0) for c in codes]
+
+    return [(c, by_code.get(c, 0.0)) for c in codes]
 
 
 def main() -> int:
     t0 = time.time()
-    print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] Building HK candidate pool...")
+    print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] Building HK candidate pool (full HKEX universe)...")
     pool = build_candidate_pool()
     print(f"  Pool size: {len(pool)} codes")
 
-    # Cache pool to /tmp for debugging
     CANDIDATE_FILE.write_text("\n".join(pool))
 
-    print(f"  Fetching 20d turnover via yfinance...")
+    print(f"  Loading turnover from hk_full_universe.json...")
     results = fetch_turnover(pool)
     filtered = [(c, t) for c, t in results if t >= MIN_TURNOVER_M_HKD and c not in DENY_LIST]
     dropped_deny = sorted(DENY_LIST & set(c for c, _ in results))
@@ -119,11 +134,20 @@ def main() -> int:
     UNIVERSE_FILE.write_text(json.dumps(top, ensure_ascii=False, indent=2))
     elapsed = time.time() - t0
     print(f"  Wrote {len(top)} codes to {UNIVERSE_FILE.name}")
-    print(f"  Dropped {len(results) - len(filtered)} codes below threshold")
+    print(f"  Dropped {len(results) - len(filtered)} codes below {MIN_TURNOVER_M_HKD}M HKD")
     if dropped_deny:
         print(f"  Deny-list dropped: {dropped_deny}")
-    print(f"  Top 5 by turnover: {[(c, f'{t:.0f}M') for c, t in filtered[:5]]}")
-    print(f"  Bottom 5 in top 200: {[(c, f'{t:.0f}M') for c, t in filtered[195:200]]}")
+    # 0921.HK specific check — owner complaint 2026-06-28
+    if "00921.HK" not in top:
+        print(f"  ✓ 0921.HK dropped (low turnover today)")
+    else:
+        print(f"  ⚠ 0921.HK still in top 200 — investigate")
+    print(f"  Top 10 by turnover:")
+    for c, t in filtered[:10]:
+        print(f"    {c}: {t:.0f}M HKD")
+    print(f"  Bottom 5 in top {TOP_N}:")
+    for c, t in filtered[TOP_N-5:TOP_N]:
+        print(f"    {c}: {t:.0f}M HKD")
     print(f"  Elapsed: {elapsed:.1f}s")
     return 0
 

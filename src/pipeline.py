@@ -73,7 +73,8 @@ def analyze_ticker(code: str, save: bool = True, language: Optional[str] = None)
         # Render full markdown report
         full_md = render_report_md(result, snap, language=language)
         summary_md = render_summary_md(result, language=language)
-        report_date = datetime.now().strftime("%Y-%m-%d")
+        # Allow backfill via env var (used by --date=YYYY-MM-DD CLI flag)
+        report_date = os.environ.get("DSA_REPORT_DATE_OVERRIDE") or datetime.now().strftime("%Y-%m-%d")
         save_report(
             code=code,
             report_date=report_date,
@@ -113,10 +114,14 @@ def run_full_analysis(
     markets: Optional[list[str]] = None,
     trigger: str = "cli",
     skip_non_trading: bool = True,
+    target_date: Optional[str] = None,
 ) -> dict:
     """
     Run analysis for HK + US tickers (or specified list).
     Returns summary dict {total, done, failed, duration_sec, hk_done, us_done}.
+
+    target_date: Override the report_date (YYYY-MM-DD). Used for backfilling
+    e.g. running 2026-06-27 analysis on a Sunday (when skip_non_trading=True).
     """
     cfg = get_config()
 
@@ -124,6 +129,11 @@ def run_full_analysis(
     if skip_non_trading and cfg.skip_non_trading_days and not is_hk_trading_day():
         logger.info("Non-trading day (weekend) — skipping full run")
         return {"total": 0, "done": 0, "failed": 0, "skipped": True, "duration_sec": 0}
+
+    # Set DB override if requested (used by CLI to backfill a specific date)
+    if target_date:
+        os.environ["DSA_REPORT_DATE_OVERRIDE"] = target_date
+        logger.info(f"Backfilling reports for date={target_date}")
 
     if codes is None:
         # Load both markets by default
@@ -357,7 +367,19 @@ if __name__ == "__main__":
         cmd = sys.argv[1]
         if cmd == "analyze":
             codes = sys.argv[2].split(",") if len(sys.argv) > 2 else None
-            result = run_full_analysis(codes=codes, trigger="cli")
+            skip_non_trading = True
+            target_date = None
+            for arg in sys.argv[3:]:
+                if arg.startswith("--date="):
+                    target_date = arg.split("=", 1)[1]
+                elif arg == "--force":
+                    skip_non_trading = False
+            result = run_full_analysis(
+                codes=codes,
+                trigger="cli",
+                skip_non_trading=skip_non_trading,
+                target_date=target_date,
+            )
             print(json.dumps(result, ensure_ascii=False, indent=2))
         elif cmd == "one":
             code = sys.argv[2]
@@ -370,5 +392,6 @@ if __name__ == "__main__":
         else:
             print(f"Unknown command: {cmd}")
             print("Usage: python -m src.pipeline [analyze|one <code>|dashboard]")
+            print("       analyze [codes] [--date=YYYY-MM-DD] [--force]")
     else:
         print("Usage: python -m src.pipeline [analyze|one <code>|dashboard]")
