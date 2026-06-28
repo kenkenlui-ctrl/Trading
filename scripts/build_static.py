@@ -477,10 +477,18 @@ def report_page_html(report: dict, date: str) -> str:
     operation = report.get("operation_advice") or "—"
     sentiment = report.get("sentiment") or "—"
     trend = report.get("trend") or "—"
-    confidence = report.get("confidence") or "—"
-
     summary_md = report.get("summary_md") or ""
     full_md = report.get("full_md") or ""
+
+    # Parse data_snapshot_json early so we can fall back to it for any missing fields
+    snap_raw = report.get("data_snapshot_json") or "{}"
+    if isinstance(snap_raw, str):
+        try: snap = json.loads(snap_raw)
+        except Exception: snap = {}
+    else:
+        snap = snap_raw or {}
+
+    confidence = report.get("confidence") or snap.get("confidence") or "—"
 
     breakdown = report.get("score_breakdown") or {}
     if isinstance(breakdown, str):
@@ -505,12 +513,20 @@ def report_page_html(report: dict, date: str) -> str:
         '</div>'
     )
 
-    # Key levels
-    support = report.get("support_zone") or "—"
-    resistance = report.get("resistance_zone") or "—"
-    entry = report.get("entry_zone") or "—"
-    stop = report.get("stop_loss") or "—"
-    target = report.get("target_price") or "—"
+    # Key levels — pull from data_snapshot_json (backfill script parses them from full_md)
+    support = (
+        snap.get("support_zone")
+        or report.get("support_zone")
+        or "—"
+    )
+    resistance = (
+        snap.get("resistance_zone")
+        or report.get("resistance_zone")
+        or "—"
+    )
+    entry = snap.get("entry_zone") or "—"
+    stop = snap.get("stop_loss") or "—"
+    target = snap.get("target_price") or "—"
 
     levels_html = (
         '<div class="levels">'
