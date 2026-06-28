@@ -702,6 +702,26 @@ def body_md_to_html(md: str, link_inject_date: str | None = None, score_lookup: 
     # First rewrite cards (block-aware)
     md = card_re.sub(_rewrite_card, md)
 
+    # Second pass: replace **評分 N/100** and 評分 N in any remaining markdown lines
+    # (e.g. full_md h1 lines like "# 🟢 KO 評分 73/100"). We do a global replace
+    # per code in score_lookup so a single ticker page reflects the current DB score.
+    if score_lookup:
+        for code, new_score in score_lookup.items():
+            # Pattern variants emitted by MiniMax-M3 in full_md:
+            #   **📈 評分 73/100**   評分 73   評分 73/100   評分 73/100 · ...
+            md = re.sub(
+                rf'評分\s*{re.escape(code)}\s*(\d+)',
+                f'評分 {code} {new_score}',
+                md,
+                count=1,
+            )
+            md = re.sub(
+                rf'評分\s*(\d+)\s*[/／]\s*100',
+                f'評分 {new_score}/100',
+                md,
+                count=2,
+            )
+
     # Now process the rest line-by-line for headers / paragraphs / emoji outside cards
     html_parts = []
     in_card = False
