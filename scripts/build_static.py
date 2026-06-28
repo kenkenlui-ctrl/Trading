@@ -40,18 +40,20 @@ from src.config import get_config  # noqa: E402
 PUBLIC_DIR = PROJECT_ROOT / "public"
 
 # ===== Filter presets — each becomes its own static page so filter is
-# "free" via page reload (no Streamlit runtime needed). =====
+# "free" via page reload (no Streamlit runtime needed).
+#
+# Owner feedback 2026-06-28: chips were duplicated (long-hk-buy vs hk-buy
+# show the same subset when only one trade_direction matches). Use a clean
+# 2-axis scheme: (market × operation). Direction is exposed via a separate
+# LAYER on the page header (e.g. "全部 港股買入" includes long AND short).
+# =====
 FILTER_PRESETS = [
-    # (slug, label_zh, dir, market, operation)
-    ("all",          "全部",          None,  None,  None),
-    ("long-hk-buy",  "港股 LONG 買入", "long", "HK",  "buy"),
-    ("short-hk-sell","港股 SHORT 賣出","short","HK",  "sell"),
-    ("long-us-buy",  "美股 LONG 買入", "long", "US",  "buy"),
-    ("short-us-sell","美股 SHORT 賣出","short","US",  "sell"),
-    ("hk-buy",       "港股買入",       None,  "HK",  "buy"),
-    ("hk-sell",      "港股賣出",       None,  "HK",  "sell"),
-    ("us-buy",       "美股買入",       None,  "US",  "buy"),
-    ("us-sell",      "美股賣出",       None,  "US",  "sell"),
+    # (slug, label_zh, market, operation)
+    ("all",     "全部",      None, None),
+    ("hk-buy",  "港股買入",  "HK", "buy"),
+    ("hk-sell", "港股賣出",  "HK", "sell"),
+    ("us-buy",  "美股買入",  "US", "buy"),
+    ("us-sell", "美股賣出",  "US", "sell"),
 ]
 
 
@@ -378,10 +380,9 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
 
     dates = list_report_dates(limit=14)
 
-    for slug, label, dir_, mkt, op in FILTER_PRESETS:
+    for slug, label, mkt, op in FILTER_PRESETS:
         body_md = build_dashboard_md(
             report_date=date,
-            trade_direction=dir_,
             market=mkt,
             operation=op,
         )
@@ -396,13 +397,8 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
             + body_md_to_html(body_md)
         )
 
-        # Add detail table
-        from src.pipeline import build_dashboard_md as _bd
-        # We need filtered reports for the detail table — call build_dashboard_md to get
-        # the count, but we already have all_reports; re-apply filters manually:
+        # Add detail table — re-apply filters manually (already in scope from loop)
         filtered = all_reports
-        if dir_:
-            filtered = [r for r in filtered if (r.get("trade_direction") or "both") == dir_]
         if mkt == "HK":
             filtered = [r for r in filtered if r["code"].endswith(".HK")]
         elif mkt == "US":
