@@ -794,7 +794,7 @@ filter 可以 hide 其他方向。</p>
 <p>Leeks Terminal 係我自己寫嚟用嘅 HK + US day-trade dashboard。香港散戶，side gig 玩 MC。</p>
 <p>200 隻港股 + 200 隻美股，每日 2 次 (HK 開市前 + US 開市前) 用 MiniMax-M3 評分，輸出 Value / Quality / Momentum 三維分數 + 入場區間 / 止損 / 目標。</p>
 <p>全部資料 free：Futu Cloud news (news)、Tencent gtimg (live HK 報價，sub-1min delay)、YFinance (US/EOD)。</p>
-<p>Source code: <a href="https://github.com/kenkenlui-ctrl/Trading">GitHub</a> · Built with Python + Streamlit + Cloudflare.</p>
+<p>Built with Python · Streamlit · Cloudflare Pages. Code closed-source (個人 side project)。</p>
 """
         elif slug == "methodology":
             body += """
