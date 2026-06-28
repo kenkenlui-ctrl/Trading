@@ -523,7 +523,7 @@ def report_page_html(report: dict, date: str) -> str:
     )
 
     # Main markdown body — pass link_inject_date=None so cards in the detail page itself don't get extra links
-    body_md_html = body_md_to_html(main_md, link_inject_date=None)
+    body_md_html = body_md_to_html(main_md, link_inject_date=None, score_lookup={report["code"]: report.get("score")} if report.get("score") is not None else None)
 
     body = (
         back
@@ -584,7 +584,7 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
             disclaimer_block()
             + filter_chips_html(date, slug)
             + f'<h1>📊 決策儀表板 — {date} ({label})</h1>'
-            + body_md_to_html(body_md, link_inject_date=date)
+            + body_md_to_html(body_md, link_inject_date=date, score_lookup={r["code"]: r["score"] for r in all_reports if r.get("score") is not None})
         )
 
         # Add detail table — re-apply filters manually (already in scope from loop)
@@ -631,10 +631,12 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
     return written, len(all_reports)
 
 
-def body_md_to_html(md: str, link_inject_date: str | None = None) -> str:
+def body_md_to_html(md: str, link_inject_date: str | None = None, score_lookup: dict | None = None) -> str:
     """Convert the build_dashboard_md markdown output to HTML for static pages.
     The output already contains raw HTML <div style=...> for cards (preserved).
-    If link_inject_date is set, append a '→ 完整 ... 詳細報告' link inside each card."""
+    If link_inject_date is set, append a '→ 完整 ... 詳細報告' link inside each card.
+    If score_lookup is set, replace any "評分 <digits>" inside the first card body for
+    that ticker with the current DB score (handles rescoring without re-running LLM)."""
     import re
     # Card pattern: <div style="...">CARD_CONTENT</div>
     # CARD_CONTENT is single-line text with **KO** or **00700.HK** bold code prefix.
@@ -657,6 +659,13 @@ def body_md_to_html(md: str, link_inject_date: str | None = None) -> str:
             code = m_hk.group(1)
         elif m_us:
             code = m_us.group(1)
+
+        # If we have a score_lookup and the card body mentions "評分 <number>",
+        # replace it with the current DB score so the rendered card matches the
+        # database after a rescoring pass (without re-running the LLM).
+        if score_lookup and code and code in score_lookup:
+            new_score = score_lookup[code]
+            body = re.sub(r'評分\s*\d+', f'評分 {new_score}', body, count=1)
 
         # Markdown-ish transforms inside the card body
         body = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', body)
