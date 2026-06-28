@@ -557,6 +557,14 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
     written: list[str] = []
     init_db()
     all_reports = list_reports(report_date=date, limit=500)
+    # Normalize: SQLite returns score_breakdown_json but downstream expects score_breakdown
+    for r in all_reports:
+        if "score_breakdown" not in r and "score_breakdown_json" in r:
+            raw = r.pop("score_breakdown_json") or "{}"
+            try:
+                r["score_breakdown"] = json.loads(raw) if isinstance(raw, str) else raw
+            except Exception:
+                r["score_breakdown"] = {}
     if not all_reports:
         return written, 0
 
