@@ -59,14 +59,17 @@ def rerun_with_cached(date: str):
                 name=name,
                 snapshot=snapshot,
                 news=None,
-                language="zh",
+                language="zh-Hant",
             )
+            # Defensive None check BEFORE accessing attributes (was crashing on
+            # rerun with `AttributeError: 'NoneType' object has no attribute 'operation_advice'`)
             if result is None:
                 return code, "analyze-returned-none"
-            # Persist into DB (mimic pipeline's analyze_ticker storage call)
+            # Defensive: if summary_md came back in English, fall back to ZH render
             from src.analyzer import render_summary_md, render_report_md
-            summary_md = render_summary_md(result, language="zh")
-            full_md = render_report_md(result, snapshot, language="zh")
+            summary_md = render_summary_md(result, language="zh-Hant")
+            full_md = render_report_md(result, snapshot, language="zh-Hant")
+            # Persist into DB (mimic pipeline's analyze_ticker storage call)
             save_report(
                 code=code,
                 report_date=date,

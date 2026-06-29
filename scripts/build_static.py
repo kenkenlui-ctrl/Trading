@@ -812,9 +812,10 @@ def body_md_to_html(md: str, link_inject_date: str | None = None, score_lookup: 
             new_score = score_lookup[code]
             body = re.sub(r'評分\s*\d+', f'評分 {new_score}', body, count=1)
 
-        # Override the leading status emoji based on the operation_advice column
-        # (which is structured DB data, not LLM-emitted text). The LLM often emits
-        # a neutral ⚪ even when operation_advice is 買入/賣出, so we trust the DB.
+        # Override both the leading status emoji AND the inline "· 買入/觀望/賣出 ·"
+        # text based on the operation_advice column. The LLM often emits "⚪ ... 觀望"
+        # even when operation_advice is 買入/賣出, so we trust the DB and align
+        # both the emoji AND the body-text tag.
         if op_lookup and code and code in op_lookup:
             op = op_lookup[code] or ""
             target_emoji = None
@@ -825,11 +826,18 @@ def body_md_to_html(md: str, link_inject_date: str | None = None, score_lookup: 
             elif op in ("觀望", "hold"):
                 target_emoji = "🟡"
             if target_emoji:
-                # Replace ANY leading status emoji (🟢🟡🔴⚪) at the very start of
-                # the card body with the operation_advice-driven emoji.
+                # Replace leading status emoji
                 body = re.sub(
                     r'^(?:<[^>]+>)*\s*(?:🟢|🟡|🔴|⚪)',
                     target_emoji,
+                    body,
+                    count=1,
+                )
+                # Replace inline "· 買入 ·" / "· 觀望 ·" / "· 賣出 ·" between score and summary
+                # — these are emitted by LLM in the form "評分 79 · 觀望 · DDOG 今日..."
+                body = re.sub(
+                    r'(評分\s*\d+\s*·\s*)(?:買入|觀望|賣出|buy|hold|sell)(\s*·)',
+                    rf'\1{op}\2',
                     body,
                     count=1,
                 )

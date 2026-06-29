@@ -54,13 +54,13 @@ USER_PROMPT_TEMPLATE_ZH = """請基於以下數據分析 {code} {name}：
 「現價 / 今日漲跌 / 今日最高最低」所指嘅「今日」= as_of_date，
 唔係運行報表嘅當下日期。請以此為時間錨點撰寫 summary 同 reasoning。
 
-【價格數據】
-- 現價 (last_price): {last_price} HKD
+【價格數據 (單位: {price_unit})】
+- 現價 (last_price): {last_price} {price_unit}
 - 今日漲跌 (change_pct): {change_pct}%  ← 以 as_of_date 為準
-- 今日最高/最低 (as_of_date): {day_high} / {day_low}
-- 昨收 (prev_close): {prev_close}
+- 今日最高/最低 (as_of_date): {day_high} / {day_low} {price_unit}
+- 昨收 (prev_close): {prev_close} {price_unit}
 - 成交量 (as_of_date): {volume} 股
-- 成交額 (as_of_date): {turnover_hkd} HKD
+- 成交額 (as_of_date): {turnover_local} {price_unit}
 - 今日 H/L 區間幅度: {day_range_pct}% (高波幅 = >3%)
 - 量比 (vs 5日均量): {vol_ratio}× (放量 = >1.5×)
 
@@ -74,7 +74,7 @@ USER_PROMPT_TEMPLATE_ZH = """請基於以下數據分析 {code} {name}：
 - 市盈率 (PE TTM): {pe_ttm}
 - 市淨率 (PB): {pb}
 - 股息率: {div_yield}%
-- 市值: {market_cap} HKD
+- 市值: {market_cap_local} {price_unit} (≈ {market_cap_hkd_str} HKD)
 
 【近期 K線 (最近30日收盤價序列)】
 {kline_summary}
@@ -196,13 +196,13 @@ USER_PROMPT_TEMPLATE_EN = """Please analyze {code} {name} based on the following
 "Last / Today change / Today high/low" refer to as_of_date, NOT the wall-clock date when
 this report is being generated. Anchor your summary and reasoning to as_of_date.
 
-[Price]
-- Last (last_price): {last_price} HKD
+[Price (unit: {price_unit})]
+- Last (last_price): {last_price} {price_unit}
 - Today change (change_pct): {change_pct}%  ← anchored to as_of_date
-- Today high/low (as_of_date): {day_high} / {day_low}
-- Prev close: {prev_close}
+- Today high/low (as_of_date): {day_high} / {day_low} {price_unit}
+- Prev close: {prev_close} {price_unit}
 - Volume (as_of_date): {volume} shares
-- Turnover (as_of_date): {turnover_hkd} HKD
+- Turnover (as_of_date): {turnover_local} {price_unit}
 - Today's H/L range: {day_range_pct}% (high volatility = >3%)
 - Volume ratio (vs 5-day avg): {vol_ratio}× (high volume = >1.5×)
 
@@ -216,7 +216,7 @@ this report is being generated. Anchor your summary and reasoning to as_of_date.
 - PE TTM: {pe_ttm}
 - PB: {pb}
 - Dividend yield: {div_yield}%
-- Market cap: {market_cap} HKD
+- Market cap: {market_cap_local} {price_unit} (≈ {market_cap_hkd_str} HKD)
 
 [Recent K-line (last 30 days close prices)]
 {kline_summary}
@@ -328,6 +328,27 @@ def fill_user_prompt(template: str, code: str, name: str, snapshot: dict,
     )
     data_stale_warning = snapshot.get("data_stale_warning") or stale_default
 
+    # Derive currency from code suffix (.HK = HKD, otherwise USD)
+    is_hk = code.endswith(".HK") or code.endswith(".hk")
+    price_unit = "HKD" if is_hk else "USD"
+    # turnover is stored as either HKD-converted or raw USD depending on snapshot source
+    # For US stocks, snapshot.turnover_hkd is HKD-converted. We use raw USD if available,
+    # else fall back to converting back from HKD at ~7.8 rate.
+    if is_hk:
+        turnover_local = _fmt(snapshot.get("turnover_hkd"))
+        market_cap_local = _fmt(snapshot.get("market_cap_hkd"))
+    else:
+        # Try raw USD field first (set by newer snapshots), else approximate from HKD/7.8
+        us_turnover = snapshot.get("turnover_usd") or (
+            snapshot.get("turnover_hkd", 0) / 7.8 if snapshot.get("turnover_hkd") else None
+        )
+        us_market_cap = snapshot.get("market_cap_usd") or (
+            snapshot.get("market_cap_hkd", 0) / 7.8 if snapshot.get("market_cap_hkd") else None
+        )
+        turnover_local = _fmt(us_turnover)
+        market_cap_local = _fmt(us_market_cap)
+    market_cap_hkd_str = _fmt(snapshot.get("market_cap_hkd"))
+
     # Build replacement dict
     fills = {
         "code": code,
@@ -335,6 +356,7 @@ def fill_user_prompt(template: str, code: str, name: str, snapshot: dict,
         "as_of_date": as_of_date,
         "is_weekend_or_holiday": is_weekend_or_holiday,
         "data_stale_warning": data_stale_warning,
+        "price_unit": price_unit,
         "last_price": _fmt(snapshot.get("last_price")),
         "change_pct": _fmt(snapshot.get("change_pct")),
         "day_high": _fmt(snapshot.get("day_high")),
@@ -342,6 +364,7 @@ def fill_user_prompt(template: str, code: str, name: str, snapshot: dict,
         "prev_close": _fmt(snapshot.get("prev_close")),
         "volume": _fmt_int(snapshot.get("volume")),
         "turnover_hkd": _fmt(snapshot.get("turnover_hkd")),
+        "turnover_local": turnover_local,
         "day_range_pct": _fmt(snapshot.get("day_range_pct")),
         "vol_ratio": _fmt(snapshot.get("vol_ratio")),
         "ma20": _fmt(snapshot.get("ma20")),
@@ -355,7 +378,9 @@ def fill_user_prompt(template: str, code: str, name: str, snapshot: dict,
         "pe_ttm": _fmt(snapshot.get("pe_ttm")),
         "pb": _fmt(snapshot.get("pb")),
         "div_yield": _fmt(snapshot.get("dividend_yield")),
-        "market_cap": _fmt(snapshot.get("market_cap_hkd")),
+        "market_cap": market_cap_local,
+        "market_cap_local": market_cap_local,
+        "market_cap_hkd_str": market_cap_hkd_str,
         "kline_summary": kline_summary,
         "news_summary": news_summary,
     }
