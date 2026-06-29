@@ -174,6 +174,64 @@ section ul, section ol { line-height: 1.75; max-width: 760px; }
 .sample-summary { font-size: 0.85rem; line-height: 1.55; color: var(--fg); margin: 6px 0 8px; }
 .sample-link { font-size: 0.85rem; }
 
+/* Dashboard hub /dashboard/ */
+.dates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin: 1.5rem 0 2rem;
+    max-width: 1100px;
+}
+.date-card {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    background: #fafbfc;
+}
+.date-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 8px;
+}
+.date-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+.date-stats {
+    display: flex; gap: 12px; margin-bottom: 12px; font-size: 0.95rem;
+}
+.stat-bull { color: var(--bull); font-weight: 600; }
+.stat-amber { color: var(--amber); font-weight: 600; }
+.stat-bear { color: var(--bear); font-weight: 600; }
+.date-filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+}
+.filter-chip {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: #fff;
+    font-size: 0.82rem;
+    text-decoration: none;
+    color: var(--fg);
+    transition: background 0.15s;
+}
+.filter-chip:hover { background: var(--panel-2); text-decoration: none; }
+.filter-chip.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    font-weight: 600;
+}
+.filter-chip.primary:hover { background: #1d4ed8; }
+.hub-cta ul { list-style: none; padding: 0; }
+.hub-cta li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--panel);
+    font-size: 0.95rem;
+}
+
 /* Detail table */
 table.detail {
     width: 100%;
@@ -366,7 +424,7 @@ footer {
 <body>
 <nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
-<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-06-27/all.html">全部</a><a href="/dashboard/2026-06-27/hk-buy.html">港股買入</a><a href="/dashboard/2026-06-27/hk-sell.html">港股賣出</a><a href="/dashboard/2026-06-27/us-buy.html">美股買入</a><a href="/dashboard/2026-06-27/us-sell.html" class="active">美股賣出</a></div><h1>📊 決策儀表板 — 2026-06-27 (美股賣出)</h1><b>2026-06-27</b> · 共分析 <b>17</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:0 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:0 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:17
+<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-06-27/all.html">全部</a><a href="/dashboard/2026-06-27/hk-buy.html">港股買入</a><a href="/dashboard/2026-06-27/hk-sell.html">港股賣出</a><a href="/dashboard/2026-06-27/hk-hold.html">港股觀望</a><a href="/dashboard/2026-06-27/us-buy.html">美股買入</a><a href="/dashboard/2026-06-27/us-sell.html" class="active">美股賣出</a><a href="/dashboard/2026-06-27/us-hold.html">美股觀望</a></div><h1>📊 決策儀表板 — 2026-06-27 (美股賣出)</h1><b>2026-06-27</b> · 共分析 <b>17</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:0 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:0 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:17
 
 <h2>📊 分析結果摘要</h2>
 
@@ -389,7 +447,7 @@ footer {
 <div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>CBOE</b> · 評分 21 · 觀望 · CBOE 現價 242.21 跌 1.13%，從 30 日高位 366.28 大瀉約 33.9%，完全跌穿 MA20 (276.91)、MA50 (310.88)、MA100 (299.15) 及 MA200 (274.89) 所有均線，MA20 &lt; MA50 形成明確空頭排列。RSI14 報 29.72 進入超賣區，但量比僅 0.91× 無承接，弱勢未改。PE 20.70、PB 4.72 估值不算便宜，股息率 1.19% 偏低，缺乏入場理由。日內策略以反彈至 MA200 274.89 附近做空為主，目標 52 週低位 229.00 水平。<p class="card-link"><a href="/dashboard/2026-06-27/reports/CBOE.html">→ 完整 CBOE 詳細報告</a></p></div>
 
 ---
-<em>生成時間: 2026-06-29 17:30:30 · LLM: openai/MiniMax-M3</em>
+<em>生成時間: 2026-06-29 20:56:00 · LLM: openai/MiniMax-M3</em>
 <h2>詳細表格</h2><table class="detail"><thead><tr><th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能/資金流</th><th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th><th>入場</th><th>止損</th><th>目標</th></tr></thead><tbody><tr><td><a href="/dashboard/2026-06-27/reports/ROST.html">ROST</a></td><td>44</td><td>short</td><td>32/58/42</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/GEV.html">GEV</a></td><td>39</td><td>short</td><td>30/55/38</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/GOOG.html">GOOG</a></td><td>36</td><td>short</td><td>35/60/32</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/BLK.html">BLK</a></td><td>35</td><td>short</td><td>48/78/30</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/AVGO.html">AVGO</a></td><td>30</td><td>short</td><td>18/58/25</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/CTSH.html">CTSH</a></td><td>30</td><td>both</td><td>75/45/25</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/META.html">META</a></td><td>30</td><td>short</td><td>38/60/25</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/SMCI.html">SMCI</a></td><td>30</td><td>both</td><td>42/35/30</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/CVNA.html">CVNA</a></td><td>28</td><td>both</td><td>15/28/25</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/ICE.html">ICE</a></td><td>28</td><td>short</td><td>42/55/22</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/VRT.html">VRT</a></td><td>28</td><td>both</td><td>15/50/25</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/CME.html">CME</a></td><td>27</td><td>short</td><td>45/75/18</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/ORCL.html">ORCL</a></td><td>27</td><td>short</td><td>30/65/22</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/STX.html">STX</a></td><td>26</td><td>both</td><td>10/35/25</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/ON.html">ON</a></td><td>25</td><td>both</td><td>20/45/25</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/OXY.html">OXY</a></td><td>23</td><td>short</td><td>22/45/15</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-27/reports/CBOE.html">CBOE</a></td><td>21</td><td>short</td><td>40/50/15</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr></tbody></table>
 </main>
 <footer>

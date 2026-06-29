@@ -49,11 +49,13 @@ PUBLIC_DIR = PROJECT_ROOT / "public"
 # =====
 FILTER_PRESETS = [
     # (slug, label_zh, market, operation)
-    ("all",     "全部",      None, None),
-    ("hk-buy",  "港股買入",  "HK", "buy"),
-    ("hk-sell", "港股賣出",  "HK", "sell"),
-    ("us-buy",  "美股買入",  "US", "buy"),
-    ("us-sell", "美股賣出",  "US", "sell"),
+    ("all",      "全部",      None,  None),
+    ("hk-buy",   "港股買入",  "HK",  "buy"),
+    ("hk-sell",  "港股賣出",  "HK",  "sell"),
+    ("hk-hold",  "港股觀望",  "HK",  "hold"),
+    ("us-buy",   "美股買入",  "US",  "buy"),
+    ("us-sell",  "美股賣出",  "US",  "sell"),
+    ("us-hold",  "美股觀望",  "US",  "hold"),
 ]
 
 
@@ -1187,7 +1189,7 @@ def build_sitemap_xml(dates: list[str]) -> str:
         urls.append((path, prio, freq))
 
     # Per-date dashboard + filter variants
-    filters = ["all", "hk-buy", "hk-sell", "us-buy", "us-sell"]
+    filters = ["all", "hk-buy", "hk-sell", "hk-hold", "us-buy", "us-sell", "us-hold"]
     for d in dates:
         urls.append((f"/dashboard/{d}/all.html", "0.9", "daily"))
         for f in filters[1:]:
@@ -1244,8 +1246,10 @@ def build_dashboard_hub(dates: list[str]) -> str:
         ("all", "全部", "📊"),
         ("hk-buy", "港股買入", "🟢"),
         ("hk-sell", "港股賣出", "🔴"),
+        ("hk-hold", "港股觀望", "🟡"),
         ("us-buy", "美股買入", "🟢"),
         ("us-sell", "美股賣出", "🔴"),
+        ("us-hold", "美股觀望", "🟡"),
     ]
     date_cards_html = []
     for s in date_summaries:
@@ -2111,7 +2115,7 @@ Leeks Terminal 唔同嘅地方：</p>
         urls.append((path, prio, freq))
 
     # Per-date dashboard + filter variants
-    filters = ["all", "hk-buy", "hk-sell", "us-buy", "us-sell"]
+    filters = ["all", "hk-buy", "hk-sell", "hk-hold", "us-buy", "us-sell", "us-hold"]
     for d in dates:
         urls.append((f"/dashboard/{d}/all.html", "0.9", "daily"))
         for f in filters[1:]:
