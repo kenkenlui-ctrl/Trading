@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>即日鮮交易信號 · Day Trade AI Signals | Leeks Terminal</title>
+  <meta name="description" content="AI 即日鮮交易信號 — 港股 9:30 HKT + 美股 9:30 ET 開市前自動出，4 維度評分 + 入場區間 + 止損 + 目標。">
+  <meta property="og:title" content="即日鮮交易信號 · Day Trade AI Signals | Leeks Terminal">
+  <meta property="og:description" content="AI 即日鮮交易信號 — 港股 9:30 HKT + 美股 9:30 ET 開市前自動出，4 維度評分 + 入場區間 + 止損 + 目標。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.win9you.com/day-trade-signals.html">
+  <meta property="og:image" content="https://www.win9you.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://www.win9you.com/og-image.png">
+  <meta name="twitter:title" content="即日鮮交易信號 · Day Trade AI Signals | Leeks Terminal">
+  <meta name="twitter:description" content="AI 即日鮮交易信號 — 港股 9:30 HKT + 美股 9:30 ET 開市前自動出，4 維度評分 + 入場區間 + 止損 + 目標。">
+  <link rel="canonical" href="https://www.win9you.com/day-trade-signals.html">
+  <link rel="alternate" hreflang="zh-Hant" href="https://www.win9you.com/day-trade-signals.html">
+  <link rel="alternate" hreflang="x-default" href="https://www.win9you.com/day-trade-signals.html">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+    --bg: #ffffff;
+    --panel: #f3f4f6;
+    --panel-2: #e5e7eb;
+    --border: #e5e7eb;
+    --fg: #1a1d23;
+    --dim: #4b5563;
+    --bull: #15803d;
+    --bear: #b91c1c;
+    --amber: #92400e;
+    --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Top nav (matches Streamlit worker injection) */
+nav.leeks-site-nav {
+    position: sticky; top: 0; z-index: 999;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+nav.leeks-site-nav .brand {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+}
+nav.leeks-site-nav a {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    padding: 4px 0;
+}
+nav.leeks-site-nav a.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+}
+
+/* Layout */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+h1 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin: 0 0 1rem;
+}
+h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
+
+/* Date selector (top of dashboard) — looks like Streamlit selectbox */
+.date-picker {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+}
+.date-picker a {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--fg);
+    font-size: 0.8rem;
+}
+.date-picker a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Disclaimer */
+.disclaimer {
+    background: #fef3c7;
+    border: 1px solid #b45309;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #78350f;
+}
+
+/* Cards (mirror Streamlit dashboard) */
+.card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+.card.bull { border-left-color: var(--bull); }
+.card.bear { border-left-color: var(--bear); }
+.card.amber { border-left-color: var(--amber); }
+
+/* Stats line */
+.stats {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.stats .bull { color: var(--bull); font-weight: 600; }
+.stats .bear { color: var(--bear); font-weight: 600; }
+.stats .amber { color: var(--amber); font-weight: 600; }
+
+/* Homepage value-prop + sample preview */
+.lede { font-size: 1.05rem; line-height: 1.65; max-width: 760px; }
+section h2 { margin-top: 2.4rem; }
+section ul, section ol { line-height: 1.75; max-width: 760px; }
+.dim { color: var(--dim); }
+
+.sample-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 1rem 0 1.4rem;
+    max-width: 900px;
+}
+.sample-card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 12px 14px;
+    background: #fafbfc;
+}
+.sample-header {
+    display: flex; gap: 8px; align-items: baseline; margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.sample-code { font-weight: 700; font-size: 1.05rem; }
+.sample-op { padding: 1px 6px; border-radius: 3px; background: var(--panel); font-size: 0.85rem; }
+.sample-score { margin-left: auto; font-weight: 600; color: var(--dim); font-size: 0.9rem; }
+.sample-summary { font-size: 0.85rem; line-height: 1.55; color: var(--fg); margin: 6px 0 8px; }
+.sample-link { font-size: 0.85rem; }
+
+/* Detail table */
+table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+}
+table.detail th, table.detail td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+table.detail th {
+    background: var(--panel-2);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+
+/* Methodology dim table */
+table.dim-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+}
+table.dim-table th, table.dim-table td {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+table.dim-table th {
+    background: var(--panel-2);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+table.dim-table td:first-child { font-family: 'JetBrains Mono', monospace; }
+table.dim-table td:nth-child(2) { font-weight: 600; color: var(--accent); text-align: center; }
+
+/* Card-link: appended after each summary card so reader can dive into detail */
+p.card-link {
+    margin: 6px 0 0;
+    text-align: right;
+    font-size: 0.78rem;
+}
+p.card-link a {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+p.card-link a:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Filter chips (alternative to filter dropdown) */
+.filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+}
+.filters span { color: var(--dim); margin-right: 4px; align-self: center; }
+.filters a {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--fg);
+}
+.filters a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Report detail page */
+.report-header h1 { margin: 0 0 0.5rem; }
+.report-header .meta {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 1rem;
+}
+.report-header .badge {
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    font-size: 0.75rem;
+    color: var(--fg);
+}
+.report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.conf { background: var(--panel-2); }
+
+.score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 1rem 0;
+}
+.score-breakdown .dim {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+}
+.score-breakdown .dim span {
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.score-breakdown .bar {
+    background: var(--border);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 6px 0;
+}
+.score-breakdown .bar .fill { height: 100%; }
+.score-breakdown .dim b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+}
+
+.levels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    margin: 1rem 0;
+}
+.levels > div {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+.levels span {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+.levels b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+}
+.levels b.bull { color: var(--bull); }
+.levels b.bear { color: var(--bear); }
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    main { padding: 16px 12px 48px; }
+    h1 { font-size: 1.15rem; }
+    .card { padding: 8px 10px; font-size: 0.8rem; }
+    nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
+    nav.leeks-site-nav a { font-size: 0.7rem; }
+    table.detail { font-size: 0.7rem; }
+    table.detail th, table.detail td { padding: 4px 6px; }
+}
+</style>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "即日鮮交易信號 · Day Trade AI Signals | Leeks Terminal", "description": "AI 即日鮮交易信號 — 港股 9:30 HKT + 美股 9:30 ET 開市前自動出，4 維度評分 + 入場區間 + 止損 + 目標。", "url": "https://www.win9you.com/day-trade-signals.html", "inLanguage": "zh-Hant", "isPartOf": {"@type": "WebSite", "name": "Leeks Terminal", "url": "https://www.win9you.com"}}</script>
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<main>
+<h1>即日鮮交易 AI 信號</h1>
+<p class="lede">Leeks Terminal 即日鮮交易信號 — 港股每朝早 9:00 HKT / 美股每朝早 9:00 ET 開市前自動出，
+涵蓋 HK 200 + US 200 隻主流股票，4 維度評分 + 入場區間 / 止損位 / 目標價，唔使睇晒 200 隻 K 線。</p>
+
+<h2>咩係「即日鮮信號」</h2>
+<p>即日鮮 (day-trade) 定義：</p>
+<ul>
+<li>開市前 9:30 出信號</li>
+<li>16:00 HKT / 16:00 ET 前必須平倉</li>
+<li>唔過夜，唔留倉</li>
+<li>每筆止損 2-3% 內</li>
+<li>高 momentum + 高 order flow 嘅股先會有 signal（其他一律觀望）</li>
+</ul>
+
+<h2>信號 3 個 type</h2>
+<table class="dim-table">
+<thead><tr><th>信號</th><th>條件</th><th>進場</th></tr></thead>
+<tbody>
+<tr><td><b>🟢 買入</b></td>
+    <td>momentum ≥ 60 + 看多趨勢 + 量能配合 + 入場 / 止損 / 目標 齊</td>
+    <td>9:30-10:30 開市 60 分鐘內，等 breakout 確認</td></tr>
+<tr><td><b>🔴 賣出</b></td>
+    <td>momentum ≤ 40 + 看空趨勢 + 跌穿 MA20 / 50W + 量能放大</td>
+    <td>開市即 short，或等反彈 fail 後 short</td></tr>
+<tr><td><b>🟡 觀望</b></td>
+    <td>其他（regime 唔清 / setup 唔齊 / score 40-60 模糊區）</td>
+    <td>唔做</td></tr>
+</tbody>
+</table>
+
+<h2>4 維度評分細節</h2>
+<p>每個信號附帶 4 個 dim 分數 (0-100)：</p>
+<ul>
+<li><b>估值 v (5%)</b> · PE / PB / deviation from 5y mean — 偏貴 = 減分</li>
+<li><b>質素 q (5%)</b> · ROE / margin / dividend stability — 高 ROE = 加分</li>
+<li><b>動能 m (70% 港股 / 60% 美股)</b> · 今日方向 + MA trend + RSI + breakout proximity — 純價格動能</li>
+<li><b>資金流 of (20% 港股 / 30% 美股)</b> · 量比 / 大單 / Relative Volume vs 20d ADV — 確認有大戶入場</li>
+</ul>
+<p>Python-side 確定性加權 — <code>score = 0.05×v + 0.05×q + 0.70×m + 0.20×of</code>。
+LLM 只負責輸出 dim 嘅 raw score (0-100)，總分由 Python 計，避開 LLM 估分嘅 hallucination。</p>
+
+<h2>邊個適合用</h2>
+<ul>
+<li>全職 day-trader · 開市前 5 分鐘決策</li>
+<li>兼職 trader · 工餘時間追蹤信號</li>
+<li>學生 · 學吓 AI + 技術分析點樣結合</li>
+</ul>
+
+<h2>常見問題</h2>
+<h3>Q: 信號幾時出？</h3>
+<p>A: 港股每朝早 9:00 HKT 前；美股每朝早 9:00 ET 前。當日信號當日有效，過期作廢。</p>
+<h3>Q: 點解 LLM 評分唔可靠？</h3>
+<p>A: LLM 容易 hallucinate 數字。所以我哋用 LLM 評 dim 嘅 raw score，總分由 Python 確定性加權計返。同時 entry / stop / target 全部要 LLM 寫具體價位，唔可以寫「支持區」呢類含糊嘢。</p>
+<h3>Q: 過往信號準唔準？</h3>
+<p>A: Dashboard 顯示每隻信號嘅 outcome (paper-trade)，paper-trader 自動追蹤 30d hit-rate。命中率低嘅策略會自動 disable。詳細睇 <a href="/methodology.html">methodology 頁</a>。</p>
+
+<h2>止損 / target 點樣 set</h2>
+<p>「止損點樣 set」(stop loss 計法) 係 day-trade 最常見嘅問題之一。我哋 LLM 出嘅止損位基於三個 framework 並行驗證，揀最貼市嘅嗰個：</p>
+<ol>
+<li><b>ATR-based (Average True Range)</b> · 用 14 日 ATR 做基礎，止損 = entry − 1.5 × ATR (long) 或 entry + 1.5 × ATR (short)。好處係自適應波幅：低波幅股止損窄、高波幅股止損闊，避開被即日震盪震走。Leeks Terminal 對大部份港股即日鮮信號用呢個 framework。</li>
+<li><b>MA20-based</b> · 止損放喺 MA20 下面 0.5% (long) 或上面 0.5% (short)。邏輯：MA20 係 intraday 最重要嘅 pivot，跌穿 MA20 = momentum 失效。適合 trend day，對 range day 容易觸發。</li>
+<li><b>Swing-low / swing-high based</b> · 止損放喺最近 5 個 K 線最低位 − 0.3% (long) 或最近 5 個 K 線最高位 + 0.3% (short)。邏輯：前低/前高係結構位，跌破即 setup 失效。適合 breakout 後追擊。</li>
+</ol>
+<p>Target 方面，TP1 = 1:1.5 risk-reward (例如止損 2%，TP1 = +3%)，TP2 = 1:2.5 risk-reward (止損 2%，TP2 = +5%)。我哋建議一般散戶喺 TP1 先平 50% 鎖定利潤，剩餘 50% 用 trailing stop (例如每升 1% 將止損上移 0.5%) 跟趨勢到 TP2 或收市前強制平倉。具體每隻信號嘅止損 / target 寫喺 detail page 嘅「止損」/「目標」兩個 panel，一目了然。</p>
+<p>⚠️ <b>止損永遠係入場前 set 死</b>，唔係睇住盤中跌幾多再諗。即日鮮最常見嘅死法就係「跌 1% 諗一諗、跌 3% 諗一諗、跌 5% 止蝕」，結果一日輸晒一星期贏嘅。Set 完就 snap落 broker app 嘅 stop loss order，到價自動執行。</p>
+
+<h2>信號失敗 點算</h2>
+<p>即使 4 維度評分再高、信號再強，當日失敗率仍然有 30-50%。「信號失敗 點算」(stopped out / false breakout 點處理) 係每個 day trader 必修課題。我哋嘅規則：</p>
+<ol>
+<li><b>正常止損出場</b> · 到價觸發 stop loss，紀錄喺 paper-trader，唔好即時 reverse。出場後該筆倉位 close，唔好「加碼溝淡」。</li>
+<li><b>False breakout (假突破)</b> · 突破入場區間後 15 分鐘內跌返入去、close 返區間下面 — 即場止損，唔好等 full stop loss。例如 entry 320-325，breakout 上 326 後 5 分鐘內跌返 323，就要手動止損走。Reason：假突破後下一個 support 通常會被跌破。</li>
+<li><b>Re-entry 規則</b> · 止損出場後同一方向當日 <b>唔可以</b> 再入場 (避免報復交易)。下一個 setup 要等下一個交易日 / 下一隻信號。例外：止損後價格 reverse 到原本方向嘅下一個 level (例如原本 short 被止損後 30 分鐘內繼續跌穿前低)，可以喺新 level 再 short，但倉位縮減至原本 50%。</li>
+<li><b>信號 cancel 條件</b> · 開市 30 分鐘內如果大市 regime 急轉 (例如恒指由 +1% 倒跌到 −1%)，所有動能信號自動 cancel，唔好入場。</li>
+<li><b>紀錄 + 覆盤</b> · 每筆止損 (包括 false breakout) 都要記入 paper-trader dashboard，標記失敗原因 (正常 stop / false breakout / news shock / regime flip)。一週後回顧統計：如果你嘅 false breakout 比例 ≥ 40%，代表 entry timing 太早，要等 9:45 之後先入場。</li>
+</ol>
+<p>核心 mindset：<b>止損係 cost of business</b>，唔係 loss。一個日 10 單嘅 day trader 贏 6 輸 4 就係 profitable，關鍵係輸嗰 4 單每單蝕 1-2%，贏嗰 6 單每單賺 3-5%。如果你連續 3 單止損、情緒開始煩燥，就強制收工，唔好再落第 4 單。</p>
+
+<h2>常見問題 (續)</h2>
+<h3>Q: 點解叫「短炒 入場」要等開市 15-60 分鐘？可唔可以開市即刻入？</h3>
+<p>A: 開市頭 5 分鐘 (9:30-9:35 HKT / 09:30-09:35 ET) 係 price discovery 階段，bid-ask spread 大、成交量 spike、stop loss hunt (大戶刻意掃止損位) 極常見。即日鮮入場最佳窗口係 <b>9:45-10:30 開市後 15-60 分鐘</b>，等價格 confirm 方向、volume 正常化、spread 收窄先落單。Leeks Terminal 嘅 entry_zone 設計就係 assume 你喺呢個 window 內分批入場 (例如 320-325 範圍內分兩注：320 入 50%、325 入 50%)，避免一注 all-in 食晒 spread。</p>
+
+<h3>Q: 「day trade signal」中文叫咩？係咪即係「即日鮮信號」？</h3>
+<p>A: 係。「day trade signal」中文翻譯就係「即日鮮信號」、「日內交易訊號」、「當日短炒訊號」，三個講法同一樣嘢 — 指交易日開市前 / 開市初段出嘅短炒 setup，必須當日收市前平倉。台灣用「當沖」呢個 term，內地用「T+0 短線」，香港散戶最普遍叫「即日鮮」。Leeks Terminal dashboard 同 detail page 全部用「即日鮮」呢個香港本地術語。</p>
+
+<h3>Q: 「intraday signal 中文」資源 — 除咗 Leeks Terminal 仲有冇其他？</h3>
+<p>A: 有幾個常用：</p>
+<ul>
+<li><b>經濟通 ET Net</b> · 即時港股報價 + 簡單技術指標 + 篩選器，但冇 AI 評分</li>
+<li><b>富途牛牛 / 輝立 speed quote</b> · 內置 scanner，可以自訂 MA / RSI filter，但都係人手 set，唔似 AI 自動出信號</li>
+<li><b>StockQ (股勢)</b> · 中文版 Finviz，screener 強但 AI 評分弱</li>
+<li><b>TradingView 中文版</b> · 圖表最強但要付費 (Premium USD 15+/月) 先有 AI Pine Script 自動 signal</li>
+</ul>
+<p>Leeks Terminal 嘅定位：<b>完全 free + 中文 + AI 自動出信號 + 每隻信號附 entry / stop / target</b>。如果你想 contribute 或者報 bug，可以喺主頁 footer 搵到我哋嘅 Telegram group。</p>
+
+<h3>Q: 「momentum 信號」同「資金流 訊號」點樣配合用？</h3>
+<p>A: 兩個維度互相 confirm 先係最強信號。我哋嘅 framework：</p>
+<ul>
+<li><b>momentum 信號</b> (m ≥ 60)：純價格動能 — 升穿 MA20、RSI 強、新高、deviation 擴大。代表「市場對呢隻股有興趣」</li>
+<li><b>資金流 訊號</b> (of ≥ 60)：大戶資金流入 — Relative Volume ≥ 2x、大單淨流入、北水 / 機構買入。代表「有人用錢落注」</li>
+<li><b>雙確認 (m ≥ 60 AND of ≥ 60)</b> · 命中率 70%+，呢類信號可以加大倉位 (例如原本 5% 倉，加到 8%)</li>
+<li><b>單 momentum (m ≥ 70 但 of ≤ 50)</b> · 命中率降到 50%，可能係 retail 散戶追入，沒有大戶跟，倉位縮到 3%</li>
+<li><b>單資金流 (of ≥ 70 但 m ≤ 50)</b> · 大戶可能在派貨 (高位接貨給散戶)，呢類 setup 反而要小心做 short，唔好盲目 long</li>
+</ul>
+<p>Dashboard 每個 card 右下角顯示 m / of 兩個 dim，比較兩者比例就知信號 strength。詳細 4 維度框架睇 <a href="/methodology.html">methodology 頁</a>。</p>
+
+<h3>Q: 「short selling 信號」點樣出？港股沽空限制多唔多？</h3>
+<p>A: 港股 short selling (沽空) 規則比美股嚴格：只有「可沽空證券」名單 (俗稱 shortable list) 嘅股票先可以 short，而且有 <b>報升幅規則</b> — 禁止在低於當日開市價 (開市前時段) 或前收市價 (continuous session) 沽空。Leeks Terminal 識別 short selling 信號條件：</p>
+<ul>
+<li>trade_direction = 看空 + score ≤ 40 + 跌穿 MA20 / MA50</li>
+<li>order_flow 反向 (Relative Volume ≥ 2x 但價格向下 = 高位派貨)</li>
+<li>新聞 sentiment 明確負面 (盈利預警 / 監管罰款 / 沽空機構報告例如 Hindenburg、Muddy Waters)</li>
+<li>必須喺 shortable list 內 (Leeks Terminal 對唔 shortable 嘅股，會標 🔴 觀望而唔出 short 信號)</li>
+</ul>
+<p>美股 short 寬鬆得多 — 基本上所有股票都可以 short (除咗 hard-to-borrow 名單例如小型股 MCap < 300M USD)，T+1 交收，可即日鮮平倉。但 short 風險無限大 (股價可以升 100%+)，新手唔建議單獨做 short — 應該同 long 信號對沖 (例如 long 一隻強勢股、short 一隻 weak relative)。</p>
+
+<h3>Q: 「日內 短炒 教學」 — Leeks Terminal 適唔適合新手學 day trade？</h3>
+<p>A: 適合，但要做齊以下 5 步 setup 先可以開始 paper-trade：</p>
+<ol>
+<li><b>讀晒 methodology 頁</b> · 4 維度框架、score 計算、entry / stop / target 邏輯，全部要明</li>
+<li><b>用 paper account 行 30 日</b> · 富途 / IBKR 都有 paper trading 功能，先用 Leeks Terminal 信號做模擬單 30 日，記低 hit-rate</li>
+<li><b>頭 3 個月只做 long、不做 short</b> · long 風險有限 (最多跌 100% 到零)，short 風險無限。新手用 long 學技術</li>
+<li><b>每筆倉位 ≤ 總資金 5%</b> · 就算連續 5 單止損都只輸 25%，仲有 75% 子彈</li>
+<li><b>30 日後 review</b> · 如果 paper-trade hit-rate ≥ 50%、profit factor ≥ 1.5，先開始 real money，倉位 1% 開始，慢慢加</li>
+</ol>
+<p>Day trade 唔係「學完即用」嘅工具 — 係 <b>6 個月 - 1 年嘅紀律訓練</b>。如果你想 1 星期變大師，呢個市場唔適合你。詳細 risk management + 心理質素 setup，睇 <a href="/methodology.html">methodology 頁</a>。</p>
+<section class="cta"><h2>睇今日 (2026-06-29) 完整信號</h2><p>200 隻港股 / 美股 4 維度評分 + 入場 / 止損 / 目標齊全。</p><p><a class="btn" href="/dashboard/2026-06-29/all.html">→ 開 2026-06-29 dashboard</a></p></section>
+</main>
+<footer>
+  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>

@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leeks Terminal · 2026-06-29 · 港股賣出</title>
+  <meta name="description" content="Leeks Terminal 2026-06-29 AI dashboard — 港股賣出">
+  <meta property="og:title" content="Leeks Terminal · 2026-06-29 · 港股賣出">
+  <meta property="og:description" content="Leeks Terminal 2026-06-29 AI dashboard — 港股賣出">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.win9you.com">
+  <meta property="og:image" content="https://www.win9you.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://www.win9you.com/og-image.png">
+  <meta name="twitter:title" content="Leeks Terminal · 2026-06-29 · 港股賣出">
+  <meta name="twitter:description" content="Leeks Terminal 2026-06-29 AI dashboard — 港股賣出">
+  <link rel="canonical" href="https://www.win9you.com">
+  <link rel="alternate" hreflang="zh-Hant" href="https://www.win9you.com">
+  <link rel="alternate" hreflang="x-default" href="https://www.win9you.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+    --bg: #ffffff;
+    --panel: #f3f4f6;
+    --panel-2: #e5e7eb;
+    --border: #e5e7eb;
+    --fg: #1a1d23;
+    --dim: #4b5563;
+    --bull: #15803d;
+    --bear: #b91c1c;
+    --amber: #92400e;
+    --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Top nav (matches Streamlit worker injection) */
+nav.leeks-site-nav {
+    position: sticky; top: 0; z-index: 999;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+nav.leeks-site-nav .brand {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+}
+nav.leeks-site-nav a {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    padding: 4px 0;
+}
+nav.leeks-site-nav a.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+}
+
+/* Layout */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+h1 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin: 0 0 1rem;
+}
+h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
+
+/* Date selector (top of dashboard) — looks like Streamlit selectbox */
+.date-picker {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+}
+.date-picker a {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--fg);
+    font-size: 0.8rem;
+}
+.date-picker a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Disclaimer */
+.disclaimer {
+    background: #fef3c7;
+    border: 1px solid #b45309;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #78350f;
+}
+
+/* Cards (mirror Streamlit dashboard) */
+.card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+.card.bull { border-left-color: var(--bull); }
+.card.bear { border-left-color: var(--bear); }
+.card.amber { border-left-color: var(--amber); }
+
+/* Stats line */
+.stats {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.stats .bull { color: var(--bull); font-weight: 600; }
+.stats .bear { color: var(--bear); font-weight: 600; }
+.stats .amber { color: var(--amber); font-weight: 600; }
+
+/* Homepage value-prop + sample preview */
+.lede { font-size: 1.05rem; line-height: 1.65; max-width: 760px; }
+section h2 { margin-top: 2.4rem; }
+section ul, section ol { line-height: 1.75; max-width: 760px; }
+.dim { color: var(--dim); }
+
+.sample-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 1rem 0 1.4rem;
+    max-width: 900px;
+}
+.sample-card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 12px 14px;
+    background: #fafbfc;
+}
+.sample-header {
+    display: flex; gap: 8px; align-items: baseline; margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.sample-code { font-weight: 700; font-size: 1.05rem; }
+.sample-op { padding: 1px 6px; border-radius: 3px; background: var(--panel); font-size: 0.85rem; }
+.sample-score { margin-left: auto; font-weight: 600; color: var(--dim); font-size: 0.9rem; }
+.sample-summary { font-size: 0.85rem; line-height: 1.55; color: var(--fg); margin: 6px 0 8px; }
+.sample-link { font-size: 0.85rem; }
+
+/* Detail table */
+table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+}
+table.detail th, table.detail td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+table.detail th {
+    background: var(--panel-2);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+
+/* Methodology dim table */
+table.dim-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+}
+table.dim-table th, table.dim-table td {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+table.dim-table th {
+    background: var(--panel-2);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+table.dim-table td:first-child { font-family: 'JetBrains Mono', monospace; }
+table.dim-table td:nth-child(2) { font-weight: 600; color: var(--accent); text-align: center; }
+
+/* Card-link: appended after each summary card so reader can dive into detail */
+p.card-link {
+    margin: 6px 0 0;
+    text-align: right;
+    font-size: 0.78rem;
+}
+p.card-link a {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+p.card-link a:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Filter chips (alternative to filter dropdown) */
+.filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+}
+.filters span { color: var(--dim); margin-right: 4px; align-self: center; }
+.filters a {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--fg);
+}
+.filters a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Report detail page */
+.report-header h1 { margin: 0 0 0.5rem; }
+.report-header .meta {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 1rem;
+}
+.report-header .badge {
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    font-size: 0.75rem;
+    color: var(--fg);
+}
+.report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.conf { background: var(--panel-2); }
+
+.score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 1rem 0;
+}
+.score-breakdown .dim {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+}
+.score-breakdown .dim span {
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.score-breakdown .bar {
+    background: var(--border);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 6px 0;
+}
+.score-breakdown .bar .fill { height: 100%; }
+.score-breakdown .dim b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+}
+
+.levels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    margin: 1rem 0;
+}
+.levels > div {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+.levels span {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+.levels b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+}
+.levels b.bull { color: var(--bull); }
+.levels b.bear { color: var(--bear); }
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    main { padding: 16px 12px 48px; }
+    h1 { font-size: 1.15rem; }
+    .card { padding: 8px 10px; font-size: 0.8rem; }
+    nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
+    nav.leeks-site-nav a { font-size: 0.7rem; }
+    table.detail { font-size: 0.7rem; }
+    table.detail th, table.detail td { padding: 4px 6px; }
+}
+</style>
+  
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<main>
+<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-06-29/all.html">全部</a><a href="/dashboard/2026-06-29/hk-buy.html">港股買入</a><a href="/dashboard/2026-06-29/hk-sell.html" class="active">港股賣出</a><a href="/dashboard/2026-06-29/us-buy.html">美股買入</a><a href="/dashboard/2026-06-29/us-sell.html">美股賣出</a></div><h1>📊 決策儀表板 — 2026-06-29 (港股賣出)</h1><b>2026-06-29</b> · 共分析 <b>11</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:0 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:0 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:11
+
+<h2>📊 分析結果摘要</h2>
+
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>00016.HK</b> · 評分 40 · 賣出 · 新鴻基地產 (00016.HK) 今日開高走高至盤中高點 116.40 HKD（一度升約 1.9%），其後遭逢拋售跌至 113.40 HKD 收市，全日微跌 -0.70%，呈典型嘅高開低走陰燭反轉形態。雖然新聞面有平安證券首次覆蓋「推薦」評級及元朗項目規劃 1140 夥嘅利多，惟盤面買盤唔肯承接高位，技術上係弱勢訊號。PE TTM 僅 2.63 倍估值極低，但係缺少 MA20/50/100/200 同 RSI 數據，趨勢框架唔完整，量比 0.00× 亦無法確認資金流入。短線建議順勢做空反彈。<p class="card-link"><a href="/dashboard/2026-06-29/reports/00016.HK.html">→ 完整 00016.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>01205.HK</b> · 評分 33 · 賣出 · 中信資源(01205.HK)復牌首日急跌 6.60% 至 0.49 HKD，創下日內 0.48-0.52（區間幅度 7.07%）嘅高波幅走勢。主要股東陳健擬沽售 10.01% 股權，構成重大供應壓力，蓋過 TFI Asset Management 場外增持嘅利好。PE TTM 雖僅 6.60 屬便宜水平，但 PB 38.90 極高反映賬面淨值極薄甚至接近資不抵債，估值可信度存疑。技術上無 MA 數據可參照，需以 0.48（日內低）為即時支持、0.52（日內高）為即時阻力操作。短線方向偏空，宜趁反彈至 0.50-0.51 區間做空，並嚴守 4 PM HKT 前平倉。<p class="card-link"><a href="/dashboard/2026-06-29/reports/01205.HK.html">→ 完整 01205.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>06613.HK</b> · 評分 31 · 賣出 · 06613.HK 藍思科技今日急跌 -5.05%，現價 25.96 HKD 較昨收 27.34 大幅下挫，全日波幅高達 10.71%（高位 28.18 至低位 25.40），短炒燃料充足但方向明確偏淡。估值面 PE TTM 10.17 屬偏低，但 PB 78.29 異常高企，反映帳面淨值極低或股東權益結構異常，財務質量存疑。技術指標 MA20/MA50/MA100/MA200 及 RSI14 全部缺失，量比 0.00× 無法確認資金流向，僅可依靠現價與 H/L 區間判斷。建議反彈至 26.50-27.00 區間沽出博調整，止損 28.30，目標 24.80。<p class="card-link"><a href="/dashboard/2026-06-29/reports/06613.HK.html">→ 完整 06613.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>02650.HK</b> · 評分 27 · 賣出 · 02650.HK 挚达科技今日收 11.32，較昨收 11.80 跌 4.07%，盤中由高位 12.48 急插至低位 11.10，全日區間達 12.19%（高波幅）。股價較 52 週高位 65.28 已回吐逾 82%，並已逼近 52 週低位 10.92。負面因素包括：早前折讓約 11.88% 配售 1912.565 萬股淨籌 2.06 億（攤薄效應）、仍處破發泥潭、遭港股通納入後跌幅過六成。PE TTM 11.69 看似合理，但 PB 高達 33.84 反映資本結構異常（疑似股東權益較低或淨資產偏低）。技術層面 MA20/50/100/200 與 RSI14 全部缺失，量比 0.00× 無法確認資金承接，技術判斷僅能依據價格行為。短炒策略：以 11.55-11.80 反彈阻力區做空，止損 12.48（今日高位），目標 10.92（52週低位）。<p class="card-link"><a href="/dashboard/2026-06-29/reports/02650.HK.html">→ 完整 02650.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>06110.HK</b> · 評分 27 · 賣出 · 滔搏 (06110.HK) 2026/06/29 現價 $1.75，今日急跌 -3.31%，盤中創52週新低 $1.74（與52週低位完全重疊），日內波幅 6.86% 屬高波幅，短炒燃料充足。負面催化密集：第一季流水下滑低雙位數、耐克終止線上經銷授權傳聞、早盤曾跌逾 11%。PE TTM 僅 6.63 表面上便宜，但市場已在 price-in 盈利下調。技術指標 MA20/50/100/200 全部缺失，難以確認趨勢底部，操作上以日內為主、嚴設止損。<p class="card-link"><a href="/dashboard/2026-06-29/reports/06110.HK.html">→ 完整 06110.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>03200.HK</b> · 評分 24 · 賣出 · 03200.HK 大族數控 2026/06/29 收市前急跌 3.61% 至 173.50 HKD，全日波幅 9.91%（186.50-169.30）為典型高波動弱勢格局。多宗新聞提及沽空佔比大增 163%、績後高位回吐及跌超 7-8%，資金面明確偏空。PE TTM 9.56 看似便宜，但 PB 高達 100.66（股東權益極薄，質素極差），估值陷阱風險高。MA20/50/100/200 全部 N/A 無技術支撐參考，技術面完全失守。短線以做空為主、嚴設止損，避免接刀。<p class="card-link"><a href="/dashboard/2026-06-29/reports/03200.HK.html">→ 完整 03200.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>06088.HK</b> · 評分 23 · 賣出 · 06088.HK 鴻騰精密現價 6.80 HKD，今日跌 -2.58%，盤中區間 6.58-7.06，H/L 區間達 7.06%（高波幅）。短線動能明顯偏空，盤中曾跌超 7% 受蘋果漲價恐慌傳導影響，疊加技術面出現死亡交叉訊號。PE TTM 僅 6.88 估值便宜，但 PB 報 496.65、市值 496.65 HKD 明顯係數據異常（未能驗證），且量比 0.00× 數據缺失，技術指標 MA20/MA50/MA100/MA200 及 RSI14 均 N/A，技術面判斷受限制。操作上建議反彈沽空，不宜博底。<p class="card-link"><a href="/dashboard/2026-06-29/reports/06088.HK.html">→ 完整 06088.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>01729.HK</b> · 評分 21 · 賣出 · 01729.HK 匯聚科技今日（2026/06/29）急跌 6.72% 至 16.66 HKD，全日波幅高達 8.94%（最高 17.86 / 最低 16.37），屬典型高波幅殺跌日。消息面連環利淡：擬斥資收購目標公司 51% 股權觸發市場對攤薄及資本開支嘅憂慮，加上光通信、存儲板塊集體回吐（長飛光纜跌超 9%、舜宇光學跌超 8%），板塊拖累明顯。估值面 PE TTM 8.34 表面便宜，但 PB 371.86 極度異常（疑股東權益嚴重攤薄或資不抵債），質素訊號極差。MA20/50/100/200 全部 N/A，無法確認中長線趨勢，今日跌幅已遠超 2% 嚴進門檻，短線宜順勢做空或觀望，唔建議接刀。<p class="card-link"><a href="/dashboard/2026-06-29/reports/01729.HK.html">→ 完整 01729.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>06869.HK</b> · 評分 16 · 賣出 · 長飛光纖（06869.HK）今日大幅下挫，現價 237.40 較昨收 250.60 跌 5.27%，盤中區間 256.60 至 227.20，振幅 12.38% 為極高波幅品種。MA20、MA50、MA100、MA200 全部缺失 (N/A)，RSI14 亦為 N/A，技術指標無法判斷中線趨勢。PE 11.73 表面估值合理，但 PB 1000.80 異常（暗示股東權益接近零或數據失真），估值參考扭曲。盤中北水南向淨賣超 24 億，野村警示光纖行業產能擴張加速、競爭加劇。短線動能極弱兼沽壓沉重，建議只做短炒反彈沽空，切忌持倉過夜。<p class="card-link"><a href="/dashboard/2026-06-29/reports/06869.HK.html">→ 完整 06869.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>01138.HK</b> · 評分 15 · 賣出 · 中遠海能(01138.HK) 今日急跌 -9.09%，收報 15.30 HKD，創日內新低 15.20；H/L 區間幅度 7.84%，波幅極大。技術指標 MA20/MA50/MA100/MA200 全部 N/A，無法判斷中長期趨勢，但單日弱勢明確，受海峽通行條款不確定性及 BDI 跌破兩個月新低拖累。估值面 PE TTM 7.13 屬便宜區，惟 PB 198.29 極度異常（反映股東權益極薄），質素存疑。短線宜順勢做空博反彈失效，嚴守 16.83 昨收之上止損。<p class="card-link"><a href="/dashboard/2026-06-29/reports/01138.HK.html">→ 完整 01138.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bear);font-weight:600;">🔴</span> <b>03858.HK</b> · 評分 14 · 賣出 · 03858.HK 佳鑫國際資源今日 (2026/06/29) 急跌 -7.76%，收報 55.85 HKD，日內區間 55.25-60.60，幅度達 9.58% 屬極高波幅。技術面出現死亡交叉，配合大戶資金加速流出新聞，弱勢格局明顯。PE TTM 8.84 雖屬低估值，但 PB 254.51 反映資產質量嚴重存疑（可能為負淨資產或新上市股本薄弱），不構成吸納理由。股價現價 55.85 僅為 52週高位 176.20 嘅 31.7%，但距 52週低位 22.80 仍有 145% 緩衝，弱勢未見底。短線建議趁反彈做空，不持倉過夜。<p class="card-link"><a href="/dashboard/2026-06-29/reports/03858.HK.html">→ 完整 03858.HK 詳細報告</a></p></div>
+
+---
+<em>生成時間: 2026-06-29 16:00:15 · LLM: openai/MiniMax-M3</em>
+<h2>詳細表格</h2><table class="detail"><thead><tr><th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能/資金流</th><th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th><th>入場</th><th>止損</th><th>目標</th></tr></thead><tbody><tr><td><a href="/dashboard/2026-06-29/reports/00016.HK.html">00016.HK</a></td><td>40</td><td>short</td><td>55/60/40</td><td>賣出</td><td>悲觀</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-29/reports/01205.HK.html">01205.HK</a></td><td>33</td><td>short</td><td>30/25/35</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-29/reports/06613.HK.html">06613.HK</a></td><td>31</td><td>short</td><td>45/35/30</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-29/reports/02650.HK.html">02650.HK</a></td><td>27</td><td>short</td><td>35/22/28</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-29/reports/06110.HK.html">06110.HK</a></td><td>27</td><td>both</td><td>38/32/28</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-29/reports/03200.HK.html">03200.HK</a></td><td>24</td><td>short</td><td>30/25/25</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-29/reports/06088.HK.html">06088.HK</a></td><td>23</td><td>short</td><td>35/25/22</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-29/reports/01729.HK.html">01729.HK</a></td><td>21</td><td>short</td><td>25/18/18</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-29/reports/06869.HK.html">06869.HK</a></td><td>16</td><td>short</td><td>38/22/14</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-29/reports/01138.HK.html">01138.HK</a></td><td>15</td><td>short</td><td>40/25/10</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-06-29/reports/03858.HK.html">03858.HK</a></td><td>14</td><td>short</td><td>30/20/10</td><td>賣出</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr></tbody></table>
+</main>
+<footer>
+  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>

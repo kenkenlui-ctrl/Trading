@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>港股即日鮮掃描器 · HK Stock Scanner | Leeks Terminal</title>
+  <meta name="description" content="AI 自動掃描 200 隻港股（恒生 + 國企 + 科技指數成份股），每日兩次輸出買入/觀望/賣出信號 + 入場區間 / 止損 / 目標價。">
+  <meta property="og:title" content="港股即日鮮掃描器 · HK Stock Scanner | Leeks Terminal">
+  <meta property="og:description" content="AI 自動掃描 200 隻港股（恒生 + 國企 + 科技指數成份股），每日兩次輸出買入/觀望/賣出信號 + 入場區間 / 止損 / 目標價。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.win9you.com/hk-scanner.html">
+  <meta property="og:image" content="https://www.win9you.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://www.win9you.com/og-image.png">
+  <meta name="twitter:title" content="港股即日鮮掃描器 · HK Stock Scanner | Leeks Terminal">
+  <meta name="twitter:description" content="AI 自動掃描 200 隻港股（恒生 + 國企 + 科技指數成份股），每日兩次輸出買入/觀望/賣出信號 + 入場區間 / 止損 / 目標價。">
+  <link rel="canonical" href="https://www.win9you.com/hk-scanner.html">
+  <link rel="alternate" hreflang="zh-Hant" href="https://www.win9you.com/hk-scanner.html">
+  <link rel="alternate" hreflang="x-default" href="https://www.win9you.com/hk-scanner.html">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+    --bg: #ffffff;
+    --panel: #f3f4f6;
+    --panel-2: #e5e7eb;
+    --border: #e5e7eb;
+    --fg: #1a1d23;
+    --dim: #4b5563;
+    --bull: #15803d;
+    --bear: #b91c1c;
+    --amber: #92400e;
+    --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Top nav (matches Streamlit worker injection) */
+nav.leeks-site-nav {
+    position: sticky; top: 0; z-index: 999;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+nav.leeks-site-nav .brand {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+}
+nav.leeks-site-nav a {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    padding: 4px 0;
+}
+nav.leeks-site-nav a.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+}
+
+/* Layout */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+h1 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin: 0 0 1rem;
+}
+h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
+
+/* Date selector (top of dashboard) — looks like Streamlit selectbox */
+.date-picker {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+}
+.date-picker a {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--fg);
+    font-size: 0.8rem;
+}
+.date-picker a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Disclaimer */
+.disclaimer {
+    background: #fef3c7;
+    border: 1px solid #b45309;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #78350f;
+}
+
+/* Cards (mirror Streamlit dashboard) */
+.card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+.card.bull { border-left-color: var(--bull); }
+.card.bear { border-left-color: var(--bear); }
+.card.amber { border-left-color: var(--amber); }
+
+/* Stats line */
+.stats {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.stats .bull { color: var(--bull); font-weight: 600; }
+.stats .bear { color: var(--bear); font-weight: 600; }
+.stats .amber { color: var(--amber); font-weight: 600; }
+
+/* Homepage value-prop + sample preview */
+.lede { font-size: 1.05rem; line-height: 1.65; max-width: 760px; }
+section h2 { margin-top: 2.4rem; }
+section ul, section ol { line-height: 1.75; max-width: 760px; }
+.dim { color: var(--dim); }
+
+.sample-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 1rem 0 1.4rem;
+    max-width: 900px;
+}
+.sample-card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 12px 14px;
+    background: #fafbfc;
+}
+.sample-header {
+    display: flex; gap: 8px; align-items: baseline; margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.sample-code { font-weight: 700; font-size: 1.05rem; }
+.sample-op { padding: 1px 6px; border-radius: 3px; background: var(--panel); font-size: 0.85rem; }
+.sample-score { margin-left: auto; font-weight: 600; color: var(--dim); font-size: 0.9rem; }
+.sample-summary { font-size: 0.85rem; line-height: 1.55; color: var(--fg); margin: 6px 0 8px; }
+.sample-link { font-size: 0.85rem; }
+
+/* Detail table */
+table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+}
+table.detail th, table.detail td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+table.detail th {
+    background: var(--panel-2);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+
+/* Methodology dim table */
+table.dim-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+}
+table.dim-table th, table.dim-table td {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+table.dim-table th {
+    background: var(--panel-2);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+table.dim-table td:first-child { font-family: 'JetBrains Mono', monospace; }
+table.dim-table td:nth-child(2) { font-weight: 600; color: var(--accent); text-align: center; }
+
+/* Card-link: appended after each summary card so reader can dive into detail */
+p.card-link {
+    margin: 6px 0 0;
+    text-align: right;
+    font-size: 0.78rem;
+}
+p.card-link a {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+p.card-link a:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Filter chips (alternative to filter dropdown) */
+.filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+}
+.filters span { color: var(--dim); margin-right: 4px; align-self: center; }
+.filters a {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--fg);
+}
+.filters a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Report detail page */
+.report-header h1 { margin: 0 0 0.5rem; }
+.report-header .meta {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 1rem;
+}
+.report-header .badge {
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    font-size: 0.75rem;
+    color: var(--fg);
+}
+.report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.conf { background: var(--panel-2); }
+
+.score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 1rem 0;
+}
+.score-breakdown .dim {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+}
+.score-breakdown .dim span {
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.score-breakdown .bar {
+    background: var(--border);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 6px 0;
+}
+.score-breakdown .bar .fill { height: 100%; }
+.score-breakdown .dim b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+}
+
+.levels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    margin: 1rem 0;
+}
+.levels > div {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+.levels span {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+.levels b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+}
+.levels b.bull { color: var(--bull); }
+.levels b.bear { color: var(--bear); }
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    main { padding: 16px 12px 48px; }
+    h1 { font-size: 1.15rem; }
+    .card { padding: 8px 10px; font-size: 0.8rem; }
+    nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
+    nav.leeks-site-nav a { font-size: 0.7rem; }
+    table.detail { font-size: 0.7rem; }
+    table.detail th, table.detail td { padding: 4px 6px; }
+}
+</style>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "港股即日鮮掃描器 · HK Stock Scanner | Leeks Terminal", "description": "AI 自動掃描 200 隻港股（恒生 + 國企 + 科技指數成份股），每日兩次輸出買入/觀望/賣出信號 + 入場區間 / 止損 / 目標價。", "url": "https://www.win9you.com/hk-scanner.html", "inLanguage": "zh-Hant", "isPartOf": {"@type": "WebSite", "name": "Leeks Terminal", "url": "https://www.win9you.com"}}</script>
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<main>
+<h1>港股即日鮮 AI 掃描器</h1>
+<p class="lede">Leeks Terminal 港股掃描器每日自動分析 <b>200 隻高成交港股</b>（恒生指數 + 國企指數 + 科技指數成份股 + 50 隻高成交二線股），
+用 4 維度評分 (估值 / 質素 / 動能 / 資金流) 排序，輸出買入 / 觀望 / 賣出信號 + 入場區間 / 止損位 / 目標價。</p>
+
+<h2>覆蓋範圍</h2>
+<ul>
+<li>恒生指數 82 隻成份股（HSI）</li>
+<li>恒生中國企業指數 50 隻成份股（HSCEI）</li>
+<li>恒生科技指數 30 隻成份股（HSTECH）</li>
+<li>額外 38 隻高成交二線股（turnover ≥ 50M HKD）</li>
+</ul>
+
+<h2>點樣揀信號</h2>
+<p>每個交易日下午港股收市後 (16:00 HKT) 自動運行一次 pipeline。每隻股票分析流程：</p>
+<ol>
+<li><b>Fetch 報價</b> · Tencent qtimg (sub-1min delay，包括 PE / PB / market cap / 52w range)</li>
+<li><b>計技術指標</b> · MA20/50/100/200 + RSI14 + MACD + 量比</li>
+<li><b>Fetch 新聞</b> · Futu Cloud 頭 5 條 + Yahoo Finance RSS</li>
+<li><b>LLM 評分</b> · MiniMax-M3 輸出 4-dim breakdown (v / q / m / of)</li>
+<li><b>Python 加權</b> · 確定性 score = 0.05×v + 0.05×q + 0.70×m + 0.20×of</li>
+<li><b>操作建議</b> · 買入 / 觀望 / 賣出 + 入場 / 止損 / 目標</li>
+</ol>
+
+<h2>邊個適合用</h2>
+<ul>
+<li>香港散戶 / 全職 trader · 開市前要快速 scan 邊隻有 setup</li>
+<li>美股 trader 開市前 · 順便睇吓港股隔晚有冇隔夜 gap</li>
+<li>學生 / 學習者 · 用嚟睇真實 score breakdown 學技術分析</li>
+</ul>
+
+<h2>同其他港股掃描器嘅分別</h2>
+<table class="dim-table">
+<thead><tr><th>工具</th><th>數據源</th><th>評分方式</th><th>操作建議</th></tr></thead>
+<tbody>
+<tr><td>Leeks Terminal</td><td>Tencent + Futu + YFinance</td><td>4-dim 確定性加權</td><td>🟢 買入 / 🟡 觀望 / 🔴 賣出 + 入場/止損/目標</td></tr>
+<tr><td>一般券商 app</td><td>自家 K 線 + 簡單 MA</td><td>無評分</td><td>無</td></tr>
+<tr><td>付費 AI 平台</td><td>Bloomberg / Refinitiv</td><td>Black box</td><td>信號</td></tr>
+</tbody>
+</table>
+<p>我哋唔係 Bloomberg replacement — 係 day-trade 開市前 5 分鐘決策輔助。</p>
+
+<h2>常見問題</h2>
+<h3>Q: 港股 scanner 幾時更新？</h3>
+<p>A: 每日港股收市後 (16:00 HKT) 自動跑一次，16:30 HKT 前 dashboard 上線。週末 / 假期 skip。</p>
+<h3>Q: 點解用 Tencent 報價唔係 AAStocks / 經濟通？</h3>
+<p>A: Tencent qtimg 同一個 endpoint 提供 price + PE + PB + market cap + 52w range，sub-1min delay，連埋歷史 turnover 全部一個 call 拎到。</p>
+<h3>Q: 唔係 L2 quote 準唔準？</h3>
+<p>A: 對 day-trade 嚟講 sub-1min delay 已經夠用，因為入場時間通常 9:45-10:30 之間（開市 15-60 分鐘），唔係秒級 scalping。如果你係 HFT / scalper，呢個工具唔啱你。</p>
+
+<h3>Q: 咩係「港股即日鮮」？呢個 scanner 同即日鮮有咩關係？</h3>
+<p>A: 港股即日鮮係香港散戶常用嘅術語，指當日開倉、當日收市前平倉嘅短炒策略（intraday / day trade），持倉時間由幾分鐘到幾個鐘，最長唔過夜。即日鮮嘅核心係搵當日有 momentum 爆發嘅股票，喺開市頭 60 分鐘（9:30-10:30 HKT）入場，跟住 15:50-16:00 HKT 強制平倉。Leeks Terminal 港股 scanner 專門為即日鮮設計 — 每朝早 9:00 HKT 出信號，入場區間、止損位、目標價全部寫死，唔使 trader 自己計。即日鮮信號通常都係高 momentum 股票（m 維度 ≥ 60），因為低 momentum 嘅股即日波幅細，無即日鮮 value。</p>
+
+<h3>Q: 港股短炒同即日鮮有咩分別？呢個 scanner cover 唔 cover？</h3>
+<p>A: 港股短炒 (short-term swing) 涵蓋即日鮮 (day-trade) + 隔夜短炒 (overnight swing) + 數日短炒 (2-5d swing)，持倉時間由幾個鐘到 5 個交易日。Leeks Terminal scanner 主力做即日鮮同 1-3 日短炒 — 入場區間、止損位 (2-3%)、目標價 (5-15%) 都係呢個 timeframe 設計。如果你做 1-2 週 swing trade，可以用我哋嘅 momentum 排行做股票初篩，但實際入場 / 止損位要自己再 set 過。Dashboard 唔覆蓋嘅係長線投資 (1 個月以上) 同價值投資 — 嗰啲要睇 PE / PB / ROE / 業務基本面，唔係呢個工具範圍。</p>
+
+<h3>Q: 我係香港散戶，唔識 technical analysis，呢個 scanner 啱唔啱我？</h3>
+<p>A: 啱。Leeks Terminal 港股 scanner 設計對象就係香港散戶，特別係：</p>
+<ul>
+<li>冇時間 / 唔識睇 200 隻 K 線嘅打工族 — 每日 16:30 HKT 之後睇 dashboard 就夠</li>
+<li>想學 technical analysis 但唔知點入手嘅新手 — 每個 detail page 都有 MA20/50/100/200 + RSI14 + MACD 圖解，教你點睇</li>
+<li>用緊一般券商 app (富途 / 輝立 / 致富) 但嫌個 built-in scanner 太簡單嘅進階散戶</li>
+</ul>
+<p>工具唔會話你「一定賺錢」，但會話你邊隻股有 setup、邊隻冇，仲會俾埋入場 / 止損 / 目標，等你自己決定落唔落單。</p>
+
+<h3>Q: 有冇 AI 揀股功能？個 AI 識唔識揀港股科技股 / AI 概念股？</h3>
+<p>A: 有。Leeks Terminal 嘅核心就係 AI 揀股 — 用 MiniMax-M3 分析 200 隻港股，包括恒生科技指數 30 隻成份股（例如騰訊 0700、美團 3690、阿里 9988、京東 9618、小米 1810）同其他 AI 概念股。AI 會根據 4 維度 (估值 / 質素 / 動能 / 資金流) 評分，特別係「動能」+「資金流」兩個維度對 AI 概念股特別 work — 因為呢類股通常靠消息面 + 資金推動，技術分析嘅 breakout / 量比訊號特別有效。注意：我哋講嘅「AI 揀股」係用 AI 做 stock scoring，唔係話呢個工具會推薦 AI 概念股 — 你可以自己 filter 科技指數成份股，AI 會按你 filter 出嘅名單做 ranking。</p>
+
+<h3>Q: 「港股即日鮮信號」同一般券商 app 嘅「今日推薦」有咩分別？</h3>
+<p>A: 一般券商 app 嘅「今日推薦」通常係 sell-side analyst 報告（幾日前出）、又或者係簡單 MA crossover 訊號，冇具體入場 / 止損 / 目標價。Leeks Terminal 港股即日鮮信號每日 16:00 HKT 自動出，每個信號都附帶：</p>
+<ul>
+<li><b>入場區間</b> · 具體價位 (例如 HK$320-325)，唔係「支持位」含糊嘢</li>
+<li><b>止損位</b> · 入場下 2-3%，例如 HK$315</li>
+<li><b>目標價</b> · 入場上 5-10%，分兩級 TP1 / TP2</li>
+<li><b>持倉時間</b> · 1-3 個交易日，過期作廢</li>
+<li><b>4 維度評分 breakdown</b> · v / q / m / of 分數，等你理解點解 AI 揀呢隻</li>
+</ul>
+<p>仲有就係 — 我哋有 paper-trader 自動追蹤過往信號命中率，命中率低嘅策略會自動 disable，唔會亂出。</p>
+
+<h3>Q: 港股 day trade 同美股 day trade 有咩唔同？呢個 scanner 啱唔啱美股？</h3>
+<p>A: 港股 day trade 同美股 day trade 主要分別喺：</p>
+<ul>
+<li><b>開市時間</b> · 港股 09:30-16:00 HKT（無盤前 / 盤後），美股 09:30-16:00 ET（有 pre-market / after-hours）</li>
+<li><b>波幅</b> · 港股即日波幅通常 1-3%，美股 0.5-2%（大股）</li>
+<li><b>T+0 / T+2</b> · 港股 T+2 交收但可以即日鮮（同一日內買賣），美股 T+1 同樣可以即日鮮</li>
+<li><b>Short selling</b> · 港股有沽空名單限制，美股幾乎所有股票都可以 short</li>
+<li><b>交易成本</b> · 港股佣金 + 印花稅 0.13% + 交易徵費；美股零印花稅</li>
+</ul>
+<p>Leeks Terminal 港股 scanner 主力做港股。美股有另一個 <a href="/us-scanner.html">us-scanner</a>。兩個 scanner 嘅 4 維度框架一樣，但美股版本嘅「動能」權重稍低（60% vs 港股 70%），因為美股趨勢持續時間長。</p>
+
+<h3>Q: 有冇 free 版港股 scanner？</h3>
+<p>A: 有，Leeks Terminal 港股 scanner 嘅 dashboard 完全 free，唔使註冊、唔使訂閱，開頁就見到當日 200 隻信號。每日 16:30 HKT 之後上線，週末 / 假期 skip。如果你想睇歷史信號 + paper-trade outcome 追蹤，需要註冊 (free tier)。如果你想收到每日 9:00 HKT 開市前 signal 推送 (Email / Telegram)，需要訂閱 paid tier。詳細定價同功能差異睇主頁 footer。</p>
+
+<h3>Q: 點樣讀取 dashboard 嘅顏色同符號？</h3>
+<p>Dashboard 統一用 3 色 + 3 符號標記信號：</p>
+<ul>
+<li><b>🟢 綠色 = 買入信號</b> · 4 維度綜合分 ≥ 60，建議入場做 long。入場區間顯示喺 card 第二行，止損位喺第三行。</li>
+<li><b>🟡 黃色 = 觀望信號</b> · 綜合分 40-60 之間，setup 唔清或 trend 模糊。等下一日再睇。</li>
+<li><b>🔴 紅色 = 賣出信號</b> · 綜合分 ≤ 40，建議避開或 short。Short 入場區間顯示喺 card 第二行。</li>
+</ul>
+<p>Card 右上有 3 個 icon：</p>
+<ul>
+<li><b>📈 上升箭嘴</b> · momentum 維度 ≥ 60，趨勢向上</li>
+<li><b>📊 柱狀圖</b> · 資金流維度 ≥ 60，有大户入場</li>
+<li><b>⚡ 閃電</b> · 今日有重大新聞（自動從 Futu + Yahoo Finance 抓），可能觸發 breakout</li>
+</ul>
+<p>如果 card 三個 icon 都亮 (綠 + 📈 + 📊 + ⚡)，係當日最強信號。如果係紅 + 下跌箭嘴，就係最弱 setup，建議避開。詳細點樣用 score breakdown 學 technical analysis，睇 <a href="/methodology.html">methodology 頁</a>。</p>
+
+<h3>Q: 港股 technical analysis 中文教學資源喺邊？</h3>
+<p>Leeks Terminal 本身有內建中文 technical indicator 教學 — 每隻股嘅 detail page 都會顯示 MA20/50/100/200、RSI14、MACD、Bollinger Bands 嘅當前數值 + 圖解，例如「MA20 上穿 MA50 = 黃金交叉」、「RSI ≥ 70 = 超買」、「MACD 柱由負轉正 = momentum 反轉」。如果想學深啲，可以睇我哋 <a href="/methodology.html">methodology 頁</a>，有齊 4 維度框架嘅公式同案例。或者 follow 我哋嘅 Telegram channel，每星期出一篇 technical analysis 中文 tutorial（MA / RSI / MACD / Bollinger / 量比）。</p>
+
+<h3>Q: 港股 momentum 排行喺邊睇？有冇類似 Finviz / TradingView 嘅工具？</h3>
+<p>Leeks Terminal 港股 scanner dashboard 預設按 momentum 維度 (70% 權重) 由高到低排，所以首 20 隻 card 就係當日 momentum 排行 — 升幅最大 + 資金流入最強嘅港股。如果想自訂排行（例如按估值 + 動能排），可以用 detail page 嘅 sort 功能。如果你想用 TradingView，佢有港股覆蓋但要付費；Finviz 主力做美股，唔覆蓋港股。我哋嘅 free dashboard 對香港散戶嚟講係最直接嘅選擇。</p>
+
+<h2>港股 vs A股 vs 美股 scanner — 點解唔可以直接用同一個工具？</h2>
+<table class="dim-table">
+<thead><tr><th>維度</th><th>港股</th><th>A股 (滬深)</th><th>美股</th></tr></thead>
+<tbody>
+<tr><td><b>報價源</b></td><td>Tencent qtimg (sub-1min)</td><td>Sina / 網易 (實時但有限流)</td><td>YFinance / Alpaca (real-time)</td></tr>
+<tr><td><b>交易時間</b></td><td>09:30-16:00 HKT</td><td>09:30-15:00 CST (午休 11:30-13:00)</td><td>09:30-16:00 ET (+ pre/after-hours)</td></tr>
+<tr><td><b>T+0 / T+1</b></td><td>T+2 交收但即日鮮 OK</td><td>T+1 交收，但 A 股 ETF / 個別股可 T+0</td><td>T+1 交收，可即日鮮 (PDT 規則)</td></tr>
+<tr><td><b>Short selling</b></td><td>限沽空名單 + 報升幅限制</td><td>融資融券 (限名單)</td><td>幾乎全部可 short</td></tr>
+<tr><td><b>散戶主導度</b></td><td>中高 (30-40% 成交)</td><td>高 (60-70% 成交)</td><td>低 (15-20% 成交)</td></tr>
+<tr><td><b>即日波幅</b></td><td>1-3% (中位)</td><td>1-5% (高，特別中小板)</td><td>0.5-2% (大股)</td></tr>
+<tr><td><b>新聞源</b></td><td>Futu + 經濟通 + AAStocks</td><td>東財 + 同花順 + 新浪財經</td><td>Yahoo Finance + Reuters + Bloomberg</td></tr>
+<tr><td><b>AI 分析挑戰</b></td><td>英文 / 繁中混合，財報複雜</td><td>簡中，政策影響大</td><td>英文為主，數據透明</td></tr>
+<tr><td><b>Leeks Terminal 覆蓋</b></td><td>✅ 完整 200 隻</td><td>❌ 暫未覆蓋</td><td>✅ 完整 200 隻 (us-scanner)</td></tr>
+</tbody>
+</table>
+<p>結論：港股同美股嘅 scanner framework 接近，但 A 股因為交易規則 (T+1、漲跌停 10%) 同新聞語言 (簡中、政策) 差異大，需要另一個 pipeline。我哋暫時主力做港股 + 美股，A 股 scanner 喺 roadmap。</p>
+
+<h2>點樣讀取 dashboard 嘅 4 維度分數</h2>
+<p>每隻股 card 嘅底部有 4 個小數字 (例如 <code>v:45 q:72 m:88 of:65</code>)，呢個就係 4 維度分數。讀法：</p>
+<ul>
+<li><b>v (估值 Valuation, 5%)</b> · 0-100，越高分代表越平。例如 PE 5x = v:90，PE 50x = v:30。</li>
+<li><b>q (質素 Quality, 5%)</b> · 0-100，越高代表公司越好賺。例如 ROE 25% = q:85，ROE 3% = q:25。</li>
+<li><b>m (動能 Momentum, 70%)</b> · 0-100，越高代表近期越強。當日升 5% + 突破 MA20 = m:80+。</li>
+<li><b>of (資金流 Order Flow, 20%)</b> · 0-100，越高代表大户越積極買入。Relative Volume 3x + 大單淨流入 = of:75+。</li>
+</ul>
+<p>綜合分 = <code>0.05×v + 0.05×q + 0.70×m + 0.20×of</code>，由 Python 確定性計出 (避開 LLM hallucination)。綜合分 ≥ 60 = 🟢 買入；40-60 = 🟡 觀望；≤ 40 = 🔴 賣出。如果你想學 technical indicator 點樣對應呢 4 個維度 (例如 RSI 對應 m、量比對應 of)，睇 <a href="/methodology.html">methodology 頁</a>。</p>
+<section class="cta"><h2>睇今日 (2026-06-29) 完整信號</h2><p>200 隻港股 / 美股 4 維度評分 + 入場 / 止損 / 目標齊全。</p><p><a class="btn" href="/dashboard/2026-06-29/all.html">→ 開 2026-06-29 dashboard</a></p></section>
+</main>
+<footer>
+  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>

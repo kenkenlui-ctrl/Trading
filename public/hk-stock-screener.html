@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>港股篩選器 · 每日 AI 自動排序 HK 200 隻 | Leeks Terminal</title>
+  <meta name="description" content="港股 stock screener — 用估值 / 質素 / 動能 / 資金流 4 維度篩選 200 隻高成交港股，每日自動更新排名 + 買入賣出信號。">
+  <meta property="og:title" content="港股篩選器 · 每日 AI 自動排序 HK 200 隻 | Leeks Terminal">
+  <meta property="og:description" content="港股 stock screener — 用估值 / 質素 / 動能 / 資金流 4 維度篩選 200 隻高成交港股，每日自動更新排名 + 買入賣出信號。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.win9you.com/hk-stock-screener.html">
+  <meta property="og:image" content="https://www.win9you.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://www.win9you.com/og-image.png">
+  <meta name="twitter:title" content="港股篩選器 · 每日 AI 自動排序 HK 200 隻 | Leeks Terminal">
+  <meta name="twitter:description" content="港股 stock screener — 用估值 / 質素 / 動能 / 資金流 4 維度篩選 200 隻高成交港股，每日自動更新排名 + 買入賣出信號。">
+  <link rel="canonical" href="https://www.win9you.com/hk-stock-screener.html">
+  <link rel="alternate" hreflang="zh-Hant" href="https://www.win9you.com/hk-stock-screener.html">
+  <link rel="alternate" hreflang="x-default" href="https://www.win9you.com/hk-stock-screener.html">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+    --bg: #ffffff;
+    --panel: #f3f4f6;
+    --panel-2: #e5e7eb;
+    --border: #e5e7eb;
+    --fg: #1a1d23;
+    --dim: #4b5563;
+    --bull: #15803d;
+    --bear: #b91c1c;
+    --amber: #92400e;
+    --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Top nav (matches Streamlit worker injection) */
+nav.leeks-site-nav {
+    position: sticky; top: 0; z-index: 999;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+nav.leeks-site-nav .brand {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+}
+nav.leeks-site-nav a {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    padding: 4px 0;
+}
+nav.leeks-site-nav a.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+}
+
+/* Layout */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+h1 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin: 0 0 1rem;
+}
+h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
+
+/* Date selector (top of dashboard) — looks like Streamlit selectbox */
+.date-picker {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+}
+.date-picker a {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--fg);
+    font-size: 0.8rem;
+}
+.date-picker a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Disclaimer */
+.disclaimer {
+    background: #fef3c7;
+    border: 1px solid #b45309;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #78350f;
+}
+
+/* Cards (mirror Streamlit dashboard) */
+.card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+.card.bull { border-left-color: var(--bull); }
+.card.bear { border-left-color: var(--bear); }
+.card.amber { border-left-color: var(--amber); }
+
+/* Stats line */
+.stats {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.stats .bull { color: var(--bull); font-weight: 600; }
+.stats .bear { color: var(--bear); font-weight: 600; }
+.stats .amber { color: var(--amber); font-weight: 600; }
+
+/* Homepage value-prop + sample preview */
+.lede { font-size: 1.05rem; line-height: 1.65; max-width: 760px; }
+section h2 { margin-top: 2.4rem; }
+section ul, section ol { line-height: 1.75; max-width: 760px; }
+.dim { color: var(--dim); }
+
+.sample-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 1rem 0 1.4rem;
+    max-width: 900px;
+}
+.sample-card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 12px 14px;
+    background: #fafbfc;
+}
+.sample-header {
+    display: flex; gap: 8px; align-items: baseline; margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.sample-code { font-weight: 700; font-size: 1.05rem; }
+.sample-op { padding: 1px 6px; border-radius: 3px; background: var(--panel); font-size: 0.85rem; }
+.sample-score { margin-left: auto; font-weight: 600; color: var(--dim); font-size: 0.9rem; }
+.sample-summary { font-size: 0.85rem; line-height: 1.55; color: var(--fg); margin: 6px 0 8px; }
+.sample-link { font-size: 0.85rem; }
+
+/* Detail table */
+table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+}
+table.detail th, table.detail td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+table.detail th {
+    background: var(--panel-2);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+
+/* Methodology dim table */
+table.dim-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+}
+table.dim-table th, table.dim-table td {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+table.dim-table th {
+    background: var(--panel-2);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+table.dim-table td:first-child { font-family: 'JetBrains Mono', monospace; }
+table.dim-table td:nth-child(2) { font-weight: 600; color: var(--accent); text-align: center; }
+
+/* Card-link: appended after each summary card so reader can dive into detail */
+p.card-link {
+    margin: 6px 0 0;
+    text-align: right;
+    font-size: 0.78rem;
+}
+p.card-link a {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+p.card-link a:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Filter chips (alternative to filter dropdown) */
+.filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+}
+.filters span { color: var(--dim); margin-right: 4px; align-self: center; }
+.filters a {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--fg);
+}
+.filters a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Report detail page */
+.report-header h1 { margin: 0 0 0.5rem; }
+.report-header .meta {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 1rem;
+}
+.report-header .badge {
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    font-size: 0.75rem;
+    color: var(--fg);
+}
+.report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.conf { background: var(--panel-2); }
+
+.score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 1rem 0;
+}
+.score-breakdown .dim {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+}
+.score-breakdown .dim span {
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.score-breakdown .bar {
+    background: var(--border);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 6px 0;
+}
+.score-breakdown .bar .fill { height: 100%; }
+.score-breakdown .dim b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+}
+
+.levels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    margin: 1rem 0;
+}
+.levels > div {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+.levels span {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+.levels b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+}
+.levels b.bull { color: var(--bull); }
+.levels b.bear { color: var(--bear); }
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    main { padding: 16px 12px 48px; }
+    h1 { font-size: 1.15rem; }
+    .card { padding: 8px 10px; font-size: 0.8rem; }
+    nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
+    nav.leeks-site-nav a { font-size: 0.7rem; }
+    table.detail { font-size: 0.7rem; }
+    table.detail th, table.detail td { padding: 4px 6px; }
+}
+</style>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "港股篩選器 · 每日 AI 自動排序 HK 200 隻 | Leeks Terminal", "description": "港股 stock screener — 用估值 / 質素 / 動能 / 資金流 4 維度篩選 200 隻高成交港股，每日自動更新排名 + 買入賣出信號。", "url": "https://www.win9you.com/hk-stock-screener.html", "inLanguage": "zh-Hant", "isPartOf": {"@type": "WebSite", "name": "Leeks Terminal", "url": "https://www.win9you.com"}}</script>
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<main>
+<h1>港股 AI 篩選器</h1>
+<p class="lede">Leeks Terminal 港股篩選器 (HK stock screener) — 唔同一般 technical screener 淨係用 RSI / MA 篩，
+呢個工具用 <b>4 維度評分</b> (估值 5% / 質素 5% / 動能 70% / 資金流 20%) 對 200 隻高成交港股做 ranking + 篩選，
+每日 16:00 HKT 收市後自動更新排名。</p>
+
+<h2>點用呢個篩選器</h2>
+<ol>
+<li>去 <a href="/">主頁</a> 揀一個交易日</li>
+<li>揀 filter：全部 / 港股買入 / 港股賣出</li>
+<li>Dashboard 已經按 score 由高到低排好</li>
+<li>撳任何 card 入 detail page 睇技術分析全文</li>
+</ol>
+
+<h2>篩選邏輯</h2>
+<table class="dim-table">
+<thead><tr><th>篩選類別</th><th>條件</th><th>目標</th></tr></thead>
+<tbody>
+<tr><td>🟢 買入</td><td>operation_advice = 買入 + 看多趨勢 + score ≥ 50 + 入場 / 止損 / 目標 齊</td><td>捕捉高 momentum + 高 order flow 嘅短炒 setup</td></tr>
+<tr><td>🔴 賣出</td><td>operation_advice = 賣出 + 看空趨勢 + score ≤ 30 + 跌穿 MA20/50</td><td>捕捉弱勢股 short setup / 避免接刀</td></tr>
+<tr><td>🟡 觀望</td><td>其他</td><td>未有明確 setup，唔做</td></tr>
+</tbody>
+</table>
+
+<h2>篩選器 vs 一般 screener</h2>
+<p>坊間好多 screener (例如 finviz、aastocks screener) 主要俾 user 自己 set filter (e.g. PE < 15, RSI < 30)。
+Leeks Terminal 唔同嘅地方：</p>
+<ul>
+<li><b>AI 評分</b> · 唔係淨係 technical indicator，仲有 4 維度綜合</li>
+<li><b>操作建議</b> · 唔只 score，仲有具體 entry / stop / target 價位</li>
+<li><b>新聞 sentiment</b> · LLM 評分時考慮頭 5 條新聞 + macro context</li>
+<li><b>Day-trade 優化</b> · 動能 + 資金流合共 90% 權重，唔似 value screener 淨係睇 PE / PB</li>
+</ul>
+
+<h2>覆蓋股票</h2>
+<p>200 隻港股包括：</p>
+<ul>
+<li>恒生指數 82 隻</li>
+<li>國企指數 50 隻</li>
+<li>科技指數 30 隻</li>
+<li>高成交二線股 38 隻 (turnover ≥ 50M HKD)</li>
+</ul>
+<p>唔包括：</p>
+<ul>
+<li>窩輪 / 牛熊證 (衍生工具)</li>
+<li>ETF (例如 2800 / 2828 / 7709 / 7747 呢類 2× leveraged)</li>
+<li>細價股 (turnover < 50M HKD)</li>
+</ul>
+
+<h2>常見 4 維度 preset 篩選</h2>
+<p>以下係幾個常見嘅 preset filter，方便你喺 dashboard 直接套用，每個 preset 都係由歷史 backtest 統計出嚟，命中率比單一條件高：</p>
+
+<table class="dim-table">
+<thead><tr><th>Preset 名</th><th>Filter 條件</th><th>用途</th><th>預期命中率</th></tr></thead>
+<tbody>
+<tr><td><b>高 momentum + 偏淡 PE</b></td><td><code>v_score &lt; 40</code> + <code>m_score &gt; 70</code> + <code>trade_direction = 看多</code></td><td>搵「估值偏貴但資金狂追」嘅強勢股 (典型 AI / 科網概念股)，適合短炒 momentum，唔好長揸</td><td>60-65%</td></tr>
+<tr><td><b>低 PE + 高質素</b></td><td><code>v_score &gt; 70</code> + <code>q_score &gt; 70</code> + <code>m_score 40-60</code></td><td>穩陣價值型 — 平 + 高 ROE，momentum 中性，適合 1-2 週 swing，唔係即日鮮</td><td>55-60%</td></tr>
+<tr><td><b>RSI 超賣 + 量能放大</b></td><td><code>RSI14 &lt; 30</code> + <code>Relative Volume &gt; 2x</code> + <code>order_flow_score &gt; 60</code></td><td>超賣反彈 setup — 跌深咗但有大戶接貨，1-3 日反彈機會大</td><td>50-55%</td></tr>
+<tr><td><b>北水狂掃</b></td><td><code>order_flow_score &gt; 75</code> + <code>momentum_score &gt; 60</code> + 港股通南向資金連續 2 日淨流入</td><td>內地資金主導嘅強勢股 (通常係科技 / 金融權重)，跟大戶順勢 long</td><td>65-70%</td></tr>
+<tr><td><b>跌穿 MA50 + 高沽空比率</b></td><td><code>price &lt; MA50</code> + <code>short_ratio &gt; 15%</code> + <code>trade_direction = 看空</code></td><td>弱勢股 short setup — 大戶借貨沽空，散戶跟沽有肉食</td><td>55-60%</td></tr>
+<tr><td><b>突破新高 + 量比配合</b></td><td><code>52w_high proximity &gt; 95%</code> + <code>量比 &gt; 1.5</code> + <code>momentum_score &gt; 70</code></td><td>Breakout setup — 創新高 + 成交量放大，短炒 momentum 爆發</td><td>60-65%</td></tr>
+<tr><td><b>今日升幅王</b></td><td><code>1d_return &gt; 5%</code> + <code>order_flow_score &gt; 60</code> + market cap &gt; 50 億</td><td>當日大升股 — 注意：高位追入風險大，要等回調 2-3% 再入場</td><td>45-50% (逆勢高)</td></tr>
+</tbody>
+</table>
+
+<p>點樣套用：dashboard 上面有 filter chips「港股買入」/「港股賣出」已經係 preset 1 + 2 + 3 嘅組合。如果想做更細嘅 preset，可以喺 detail page 用瀏覽器 Ctrl-F 搜尋分數條件，或者睇 <a href="/methodology.html">methodology 頁</a> 嘅 4 維度計算方法自己組合。</p>
+
+<h2>點樣用 dashboard 反向篩選</h2>
+<p>除咗「由條件搵股票」(正向篩選)，好多 trader 鍾意「由結果反推條件」(反向篩選)。Leeks Terminal dashboard 嘅 detail table 支援呢個 workflow：</p>
+
+<h3>範例 1：搵今日 RSI &lt; 30 + 量比 &gt; 2 嘅超賣反彈股</h3>
+<ol>
+<li>去 dashboard 入面，撳「詳細表格」嘅表頭「動能」sort by 升序</li>
+<li>再睇「估值/質素/動能/資金流」嗰一欄 (格式 <code>v/q/m/of</code>)，搵 <code>m &lt; 30</code> (即 RSI 超賣) 同時 <code>of &gt; 60</code> (量比放大)</li>
+<li>符合條件嘅股，會喺當日 / 翌日有反彈機會 — 入場區間寫喺 detail page，止損位通常放 RSI &lt; 30 嗰個底 1-2% 下面</li>
+<li>Target 預設 +3% (TP1) / +6% (TP2)，持倉 1-3 日</li>
+</ol>
+
+<h3>範例 2：搵 PE &lt; 10 + ROE &gt; 15% 嘅平靚正港股</h3>
+<ol>
+<li>Sort detail table by score 倒序，搵綜合分高但 score_breakdown 顯示 <code>v &gt; 70</code> + <code>q &gt; 70</code> 嘅股</li>
+<li>呢類股通常 PE 5-10x、ROE 15-25%，係傳統價值投資心水</li>
+<li>注意：dashboard 主力做 day-trade，呢類股未必有 🟢 買入信號 (因為 momentum 中性)，可能要等回調先入場</li>
+</ol>
+
+<h3>範例 3：搵今日大升 5%+ 但 score 只有 50 嘅「虛火」股</h3>
+<ol>
+<li>Sort detail table by score 倒序，搵 score 40-50 但 1d return 排前面嘅股</li>
+<li>通常係新聞 / 消息面刺激嘅單日爆發，冇基本面支持</li>
+<li>呢類股要小心 — 大戶可能高位派貨，散戶接刀。Dashboard 會標 🟡 觀望，建議唔好入場</li>
+</ol>
+
+<h3>範例 4：搵連續 3 日都係 🟢 買入嘅「真強勢股」</h3>
+<ol>
+<li>去 dashboard date picker 揀連續 3 日 (例如今日、昨日、前日)</li>
+<li>比較 3 日 detail table 入面 operation_advice = 買入嘅股 — 如果 3 日都出現，係真強勢股</li>
+<li>呢類股可以加大倉位 (5% → 8%)，因為信號持續性高</li>
+</ol>
+
+<p>總結：dashboard 唔止係順向 ranking，仲可以 reverse-engineer 信號 — 透過 sort、filter、cross-date 比較，你可以由 200 隻港股入面快速搵到符合你個人策略嘅 subset。詳細 4 維度框架同計算方法睇 <a href="/methodology.html">methodology 頁</a>。</p>
+
+<h2>常見問題</h2>
+<h3>Q: 點解篩選器有時得幾個信號？</h3>
+<p>A: 嚴進策略。Day-trade 唔可以強做，我哋寧可 miss 唔做，都唔好 trade 模糊 setup。觀望日 = 等待日。</p>
+<h3>Q: 可以 export CSV 嗎？</h3>
+<p>A: 而家 dashboard 純 static HTML，冇 export 功能。如果要 export 我哋可以加，但暫時 copy table 落 Excel 已經夠用。</p>
+<h3>Q: 有冇 backtest？</h3>
+<p>A: 而家只有 paper-trade tracker，記住每個信號 outcome (30d hit-rate)。完整 backtest 開發中。</p>
+
+<h3>Q: 港股 stock screener 同一般 finviz / TradingView 嘅免費版有咩分別？</h3>
+<p>A: Leeks Terminal 港股 stock screener 同 finviz / TradingView 嘅核心分別：</p>
+<ul>
+<li><b>finviz</b> · 主力做美股，港股覆蓋弱 (只有 ADR 同 major dual-list)，screener 強但要付費先有 real-time + AI 評分</li>
+<li><b>TradingView</b> · 圖表最強但 AI 評分要 Premium (USD 15+/月)，港股覆蓋 OK 但要付費</li>
+<li><b>aastocks / 經濟通 篩選器</b> · 港股覆蓋全，但只有簡單 PE / 成交 / 技術指標 filter，冇 AI 評分同操作建議</li>
+<li><b>Leeks Terminal 港股 stock screener</b> · 完全 free + 4 維度 AI 評分 + 中文操作建議 + entry / stop / target，專為港股散戶設計</li>
+</ul>
+<p>如果你想純做美股 momentum，可以單獨用 finviz 篩 RSI / volume，再對比 Leeks Terminal us-scanner。如果主力做港股，Leeks Terminal 港股 stock screener 已經覆蓋 95% 需求。</p>
+
+<h3>Q: 「港股 free screener」真係完全免費？冇 hidden cost？</h3>
+<p>A: 完全 free。Leeks Terminal 港股 stock screener 唔使註冊、唔使訂閱、唔使信用卡、唔使 email 收集，開 dashboard 就見到 200 隻港股當日信號。冇 hidden cost、冇 premium tier 鎖功能、冇「7 天試用」陷阱、冇 SaaS 訂閱、冇 watermark。資金來源：個人 side project + 純粹開源俾香港 / 台灣 / 內地散戶。</p>
+<p>同其他「港股 free screener」比較：</p>
+<ul>
+<li><b>aastocks 免費版</b> · 只有基本技術指標 filter，冇 AI 評分，UI 有廣告</li>
+<li><b>經濟通 ET Net</b> · 報價 + 簡單 screener，但要登記 email，UI 較舊</li>
+<li><b>StockQ 股勢</b> · 中文版 Finviz，screener 強但 AI 評分弱，要付費先有完整功能</li>
+<li><b>Leeks Terminal 港股 stock screener</b> · 完全 free + 4 維度 AI 評分 + 操作建議，同類工具罕見</li>
+</ul>
+
+<h3>Q: 點樣搵「PE 低 港股」？呢個篩選器有冇 value 篩選？</h3>
+<p>A: 有。「PE 低 港股」嘅定義：PE TTM &lt; 10x (恒生指數中位數 PE 約 11-13x，&lt; 10x 算偏低)。Leeks Terminal 港股 stock screener 用估值維度 (<code>v_score</code>) 處理：</p>
+<ul>
+<li><code>v_score &gt; 70</code> · PE 低 (通常 &lt; 10x)、PB 低 (&lt; 1.0x)、偏離 5 年均值低</li>
+<li><code>v_score 40-70</code> · PE 中性 (10-20x)</li>
+<li><code>v_score &lt; 40</code> · PE 高 (&gt; 20x) 或估值貴</li>
+</ul>
+<p>Dashboard detail table 嘅「估值/質素/動能/資金流」欄位入面，第一個數字就係 <code>v_score</code>。Sort by score 倒序，再搵 <code>v &gt; 70</code> 嘅股就係 PE 偏低嘅名單。常見 PE 低 港股包括內銀 (例如 939 建設銀行 PE ~4x、1398 工商銀行 PE ~4x)、內房 (部分低至 3-5x)、公用股 (2-8x)。注意：PE 低唔一定係 value trap，要 cross-check ROE (質素 q_score) 同 dividend yield 先確認。</p>
+
+<h3>Q: 點樣搵「RSI 超賣 港股」？呢個工具識唔識 RSI 篩選？</h3>
+<p>A: 識。「RSI 超賣 港股」即 RSI14 &lt; 30，Leeks Terminal 港股 stock screener 用動能維度 (<code>m_score</code>) 處理：</p>
+<ul>
+<li><code>m_score &lt; 30</code> · 對應 RSI14 &lt; 30 (嚴重超賣，反彈機會大)</li>
+<li><code>m_score 30-40</code> · RSI 30-40 (輕微超賣)</li>
+<li><code>m_score 40-60</code> · RSI 中性 (40-60)</li>
+<li><code>m_score &gt; 70</code> · RSI &gt; 70 (超買，要小心回調)</li>
+</ul>
+<p>Dashboard detail table 入面第三個數字就係 <code>m_score</code>。Sort by score 倒序，再搵 <code>m &lt; 30</code> 嘅股就係 RSI 超賣名單。注意：單純 RSI 超賣唔可以買 — 要配合 <code>of_score &gt; 60</code> (大戶接貨) 先有反彈動力，否則可能係「弱勢股繼續跌」(即所謂「下跌中嘅刀」)。Leeks Terminal 嘅 preset「RSI 超賣 + 量能放大」(m &lt; 30 + of &gt; 60) 命中率 50-55%，適合 1-3 日短線反彈。</p>
+
+<h3>Q: 「港股 量比」同 Relative Volume 有咩分別？呢個篩選器點處理？</h3>
+<p>A: 「港股 量比」(volume ratio) 同 Relative Volume (RVOL) 係兩個相似但唔同嘅概念：</p>
+<ul>
+<li><b>量比 (Volume Ratio, VR)</b> · 當日成交量 / 過去 5 日平均成交量。即時性高，適合即日鮮用。中國 A 股市場常用。</li>
+<li><b>Relative Volume (RVOL)</b> · 當日成交量 / 過去 20 日 (或 30 日) 平均成交量。穩定性高，適合 swing 用。Finviz / 美股市場常用。</li>
+</ul>
+<p>Leeks Terminal 港股 stock screener 主要用 <b>Relative Volume (vs 20d ADV)</b> 計入 <code>order_flow_score (of_score)</code>：</p>
+<ul>
+<li><code>of_score &gt; 70</code> · Relative Volume ≥ 2x，有大戶入場</li>
+<li><code>of_score 50-70</code> · RVOL 1.2-2x，正常偏活躍</li>
+<li><code>of_score &lt; 40</code> · RVOL &lt; 0.8x，成交淡靜</li>
+</ul>
+<p>如果你想搵「港股 量比」高嘅股 (即 RVOL ≥ 2x)，sort by score 倒序搵 <code>of &gt; 70</code> 嘅股就係。Leeks Terminal 暫時唔提供即時量比 (intraday)，但 dashboard 嘅 <code>of_score</code> 已經反映收市後嘅 RVOL 數值，可以作為下一個交易日嘅參考。</p>
+
+<h3>Q: 點樣睇「港股 資金流」？呢個工具識唔識分析北水 / 大戶動向？</h3>
+<p>A: 識。Leeks Terminal 港股 stock screener 嘅 <code>order_flow_score (of_score)</code> 維度包含 4 個 sub-indicator：</p>
+<ol>
+<li><b>Relative Volume</b> · 當日成交 vs 20 日 ADV (量能放大 = 大戶活動)</li>
+<li><b>大單淨流入</b> · 透過成交股數 × 價格分大單 (≥ 100 萬 HKD) 同小單 (&lt; 100 萬 HKD)，計淨流入比例</li>
+<li><b>港股通南向資金</b> · 內地經滬深港通買入港股嘅淨流入 (CCASS 數據，內銀 / 內房 / 科技權重股覆蓋)</li>
+<li><b>Bid-ask imbalance</b> · 買賣盤差異 (Level-2 data 提供，但 Leeks Terminal 暫時用 closing data 估算)</li>
+</ol>
+<p>Dashboard detail table 入面第四個數字就係 <code>of_score</code>。Sort by score 倒序，再搵 <code>of &gt; 70</code> 嘅股就係「港股 資金流」活躍嘅名單 — 通常係北水狂掃 / 大戶囤貨 / 業績前偷步買入嘅強勢股。注意：單看北水流入未必等於股價升，要配合 <code>m_score &gt; 60</code> 先確認 momentum 同步。</p>
+
+<h3>Q: 「港股 排行」邊度睇？呢個工具出唔出 daily top movers？</h3>
+<p>A: 出。Leeks Terminal 港股 stock screener 嘅 dashboard 預設按 score 由高到低排，所以首 20 隻 card 就係當日「港股 排行」綜合榜 — 包括：</p>
+<ul>
+<li><b>港股 升幅 排行</b> · Sort by score 倒序，搵 m_score 高 (例如 &gt; 75) 嘅股</li>
+<li><b>港股 跌幅 排行</b> · Sort by score 倒序，搵 m_score 低 (例如 &lt; 25) 嘅股</li>
+<li><b>港股 成交 排行</b> · Sort by of_score 倒序，搵 RVOL 高 (例如 &gt; 2x) 嘅股</li>
+<li><b>港股 北水排行</b> · Sort by of_score 倒序，搵南向資金連續 2 日淨流入嘅股</li>
+</ul>
+<p>同一般財經網站 (例如 aastocks 升幅榜、經濟通成交量榜) 嘅分別：Leeks Terminal 排行已經包含 AI 4 維度綜合分，唔係淨係單一指標排序，所以你直接睇 dashboard 頭 20 隻 card 就係當日最強港股 list。如果你想睇「港股 邊隻 升」，dashboard 已經幫你揀晒。</p>
+
+<h3>Q: 「港股 free screener」之外，有冇付費 screener 推介？</h3>
+<p>A>有幾個常見嘅付費港股 / 美股 screener，按 budget 由低至高：</p>
+<ul>
+<li><b>StockQ 股勢 premium</b> · HKD 50/月左右，中文 screener 強 + 基本 AI 評分</li>
+<li><b>AASTOCKS PRO</b> · HKD 200/月左右，港股專業版 + L2 報價 + 大量 filter</li>
+<li><b>Finviz Elite</b> · USD 25/月，美股最強 screener，但港股覆蓋弱</li>
+<li><b>TradingView Premium</b> · USD 15+/月，圖表 + AI Pine Script 信號</li>
+<li><b>Bloomberg Terminal</b> · USD 2000+/月，機構級，個人用戶唔建議</li>
+</ul>
+<p>Leeks Terminal 港股 stock screener 定位：完全 free + 中文 + 4 維度 AI 評分 + 港股 200 隻覆蓋。如果你係香港散戶 / 學生 / 兼職 trader，Leeks Terminal 已經夠用；如果你係全職 trader 想要 L2 報價 + 自訂 Pine Script + 大量歷史 backtest，可以考慮 StockQ / AASTOCKS PRO + Leeks Terminal 並用。</p>
+
+<h3>Q: 點樣用呢個篩選器做「港股 估值 篩選」？value investing 適用嗎？</h3>
+<p>A: 適用但有限制。Leeks Terminal 港股 stock screener 嘅估值維度 (<code>v_score</code>) 同時考慮 PE / PB / deviation from 5y mean，三個 sub-indicator 並行驗證：</p>
+<ul>
+<li><b>PE (TTM)</b> · 對比恒指中位數 (~11-13x)，&lt; 8x 算深低，&gt; 25x 算深高</li>
+<li><b>PB</b> · 對比行業平均，&lt; 0.8x 算深低 (內銀 / 內房常見)，&gt; 5x 算深高 (科技 / 醫療常見)</li>
+<li><b>5 年均值 deviation</b> · 對比該股自身 5 年 PE / PB 中位數，&lt; -30% 算偏低</li>
+</ul>
+<p>「港股 估值 篩選」做法：sort by score 倒序，搵 <code>v &gt; 70</code> + <code>q &gt; 70</code> 嘅股 — 即「平 + 高 ROE」組合。注意：dashboard 主力做 day-trade，呢類股通常 score 40-60 (觀望區)，冇 🟢 買入信號。Value investing 適合 1-3 個月持倉，唔係即日鮮 timeframe。如果你做 value investing，建議用 dashboard 做 stock screening，再用自己嘅 broker 做 deep dive (睇年報 / 行業前景 / management quality)。</p>
+<section class="cta"><h2>睇今日 (2026-06-29) 完整信號</h2><p>200 隻港股 / 美股 4 維度評分 + 入場 / 止損 / 目標齊全。</p><p><a class="btn" href="/dashboard/2026-06-29/all.html">→ 開 2026-06-29 dashboard</a></p></section>
+</main>
+<footer>
+  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>

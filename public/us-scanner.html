@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>美股即日鮮掃描器 · US Stock Scanner | Leeks Terminal</title>
+  <meta name="description" content="AI 自動掃描 200 隻美股（S&amp;P 500 + Nasdaq-100 + 高成交個股），每日 16:00 ET 輸出買入/觀望/賣出信號 + 入場區間 / 止損 / 目標價。">
+  <meta property="og:title" content="美股即日鮮掃描器 · US Stock Scanner | Leeks Terminal">
+  <meta property="og:description" content="AI 自動掃描 200 隻美股（S&amp;P 500 + Nasdaq-100 + 高成交個股），每日 16:00 ET 輸出買入/觀望/賣出信號 + 入場區間 / 止損 / 目標價。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.win9you.com/us-scanner.html">
+  <meta property="og:image" content="https://www.win9you.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://www.win9you.com/og-image.png">
+  <meta name="twitter:title" content="美股即日鮮掃描器 · US Stock Scanner | Leeks Terminal">
+  <meta name="twitter:description" content="AI 自動掃描 200 隻美股（S&amp;P 500 + Nasdaq-100 + 高成交個股），每日 16:00 ET 輸出買入/觀望/賣出信號 + 入場區間 / 止損 / 目標價。">
+  <link rel="canonical" href="https://www.win9you.com/us-scanner.html">
+  <link rel="alternate" hreflang="zh-Hant" href="https://www.win9you.com/us-scanner.html">
+  <link rel="alternate" hreflang="x-default" href="https://www.win9you.com/us-scanner.html">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+    --bg: #ffffff;
+    --panel: #f3f4f6;
+    --panel-2: #e5e7eb;
+    --border: #e5e7eb;
+    --fg: #1a1d23;
+    --dim: #4b5563;
+    --bull: #15803d;
+    --bear: #b91c1c;
+    --amber: #92400e;
+    --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Top nav (matches Streamlit worker injection) */
+nav.leeks-site-nav {
+    position: sticky; top: 0; z-index: 999;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+nav.leeks-site-nav .brand {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+}
+nav.leeks-site-nav a {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    padding: 4px 0;
+}
+nav.leeks-site-nav a.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+}
+
+/* Layout */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+h1 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin: 0 0 1rem;
+}
+h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
+
+/* Date selector (top of dashboard) — looks like Streamlit selectbox */
+.date-picker {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+}
+.date-picker a {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--fg);
+    font-size: 0.8rem;
+}
+.date-picker a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Disclaimer */
+.disclaimer {
+    background: #fef3c7;
+    border: 1px solid #b45309;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #78350f;
+}
+
+/* Cards (mirror Streamlit dashboard) */
+.card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+.card.bull { border-left-color: var(--bull); }
+.card.bear { border-left-color: var(--bear); }
+.card.amber { border-left-color: var(--amber); }
+
+/* Stats line */
+.stats {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.stats .bull { color: var(--bull); font-weight: 600; }
+.stats .bear { color: var(--bear); font-weight: 600; }
+.stats .amber { color: var(--amber); font-weight: 600; }
+
+/* Homepage value-prop + sample preview */
+.lede { font-size: 1.05rem; line-height: 1.65; max-width: 760px; }
+section h2 { margin-top: 2.4rem; }
+section ul, section ol { line-height: 1.75; max-width: 760px; }
+.dim { color: var(--dim); }
+
+.sample-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 1rem 0 1.4rem;
+    max-width: 900px;
+}
+.sample-card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 12px 14px;
+    background: #fafbfc;
+}
+.sample-header {
+    display: flex; gap: 8px; align-items: baseline; margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.sample-code { font-weight: 700; font-size: 1.05rem; }
+.sample-op { padding: 1px 6px; border-radius: 3px; background: var(--panel); font-size: 0.85rem; }
+.sample-score { margin-left: auto; font-weight: 600; color: var(--dim); font-size: 0.9rem; }
+.sample-summary { font-size: 0.85rem; line-height: 1.55; color: var(--fg); margin: 6px 0 8px; }
+.sample-link { font-size: 0.85rem; }
+
+/* Detail table */
+table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+}
+table.detail th, table.detail td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+table.detail th {
+    background: var(--panel-2);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+
+/* Methodology dim table */
+table.dim-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+}
+table.dim-table th, table.dim-table td {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+table.dim-table th {
+    background: var(--panel-2);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+table.dim-table td:first-child { font-family: 'JetBrains Mono', monospace; }
+table.dim-table td:nth-child(2) { font-weight: 600; color: var(--accent); text-align: center; }
+
+/* Card-link: appended after each summary card so reader can dive into detail */
+p.card-link {
+    margin: 6px 0 0;
+    text-align: right;
+    font-size: 0.78rem;
+}
+p.card-link a {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+p.card-link a:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Filter chips (alternative to filter dropdown) */
+.filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+}
+.filters span { color: var(--dim); margin-right: 4px; align-self: center; }
+.filters a {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--fg);
+}
+.filters a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Report detail page */
+.report-header h1 { margin: 0 0 0.5rem; }
+.report-header .meta {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 1rem;
+}
+.report-header .badge {
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    font-size: 0.75rem;
+    color: var(--fg);
+}
+.report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.conf { background: var(--panel-2); }
+
+.score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 1rem 0;
+}
+.score-breakdown .dim {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+}
+.score-breakdown .dim span {
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.score-breakdown .bar {
+    background: var(--border);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 6px 0;
+}
+.score-breakdown .bar .fill { height: 100%; }
+.score-breakdown .dim b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+}
+
+.levels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    margin: 1rem 0;
+}
+.levels > div {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+.levels span {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+.levels b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+}
+.levels b.bull { color: var(--bull); }
+.levels b.bear { color: var(--bear); }
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    main { padding: 16px 12px 48px; }
+    h1 { font-size: 1.15rem; }
+    .card { padding: 8px 10px; font-size: 0.8rem; }
+    nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
+    nav.leeks-site-nav a { font-size: 0.7rem; }
+    table.detail { font-size: 0.7rem; }
+    table.detail th, table.detail td { padding: 4px 6px; }
+}
+</style>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "美股即日鮮掃描器 · US Stock Scanner | Leeks Terminal", "description": "AI 自動掃描 200 隻美股（S&P 500 + Nasdaq-100 + 高成交個股），每日 16:00 ET 輸出買入/觀望/賣出信號 + 入場區間 / 止損 / 目標價。", "url": "https://www.win9you.com/us-scanner.html", "inLanguage": "zh-Hant", "isPartOf": {"@type": "WebSite", "name": "Leeks Terminal", "url": "https://www.win9you.com"}}</script>
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<main>
+<h1>美股即日鮮 AI 掃描器</h1>
+<p class="lede">Leeks Terminal 美股掃描器每日自動分析 <b>200 隻高成交美股</b>（S&P 500 大型股 + Nasdaq-100 + 高成交中小股），
+每個交易日 16:00 ET 美股收市後自動跑一次分析，輸出買入 / 觀望 / 賣出信號 + 入場區間 / 止損位 / 目標價。</p>
+
+<h2>覆蓋範圍</h2>
+<ul>
+<li>S&P 500 top 100 隻（市值最大 + 最高 turnover）</li>
+<li>Nasdaq-100 top 80 隻（科技 + 高增長）</li>
+<li>額外 20 隻高 momentum 個股（最近 20 日平均 turnover ≥ 500M USD）</li>
+</ul>
+
+<h2>點樣同港股 scanner 唔同</h2>
+<table class="dim-table">
+<thead><tr><th>維度</th><th>港股</th><th>美股</th></tr></thead>
+<tbody>
+<tr><td>報價源</td><td>Tencent qtimg (sub-1min)</td><td>YFinance (15-min delay) + Alpaca (real-time)</td></tr>
+<tr><td>新聞</td><td>Futu Cloud + 經濟通</td><td>Yahoo Finance RSS</td></tr>
+<tr><td>收市時間</td><td>16:00 HKT (08:00 UTC)</td><td>16:00 ET (21:00 UTC)</td></tr>
+<tr><td>流動性</td><td>高成交股 turnover ≥ 50M HKD</td><td>高成交股 ≥ 500M USD ADV</td></tr>
+<tr><td>盤前 / 盤後</td><td>無</td><td>YFinance 提供 pre-market / after-hours 報價</td></tr>
+</tbody>
+</table>
+
+<h2>美股 4 維度評分</h2>
+<p>同港股一樣用 4 維度 (v / q / m / of)，但美股嘅「動能」權重稍低（60% vs 港股 70%）— 因為美股趨勢日多過震盪日，趨勢持續時間長，純價格動能 + 一啲 mean-reversion 比較 work。</p>
+<ul>
+<li><b>估值</b> 5% · PE / PEG / forward PE</li>
+<li><b>質素</b> 5% · ROE / margin / FCF yield</li>
+<li><b>動能</b> 60% · MA + RSI + 1d/5d/20d return</li>
+<li><b>資金流</b> 30% · Relative Volume vs 20d ADV + dollar volume + option OI change</li>
+</ul>
+
+<h2>邊個適合用</h2>
+<ul>
+<li>美股 day-trader · 開市前快速睇信號</li>
+<li>美股 swing trader · 收市後睇過夜 setup</li>
+<li>港股 trader · 隔晚準備美股名單</li>
+</ul>
+
+<h2>常見問題</h2>
+<h3>Q: 美股 scanner 幾時更新？</h3>
+<p>A: 每個美股交易日 16:00 ET (即香港時間翌日 04:00 HKT / DST 05:00 HKT) 自動跑一次，17:00 ET 前 dashboard 上線。</p>
+<h3>Q: 點解唔包所有 S&P 500？</h3>
+<p>A: 全 500 隻跑一次要 60+ 分鐘 LLM calls 同 $5+ cost。top 200 覆蓋 85% 市值 + 92% turnover，平衡 coverage 同 cost。</p>
+<h3>Q: 收市後仲有 update 嗎？</h3>
+<p>A: 唔會。每個交易日只跑一次。盤前 / 盤後波動信號唔覆蓋。</p>
+
+<h3>Q: 咩係「美股即日鮮」？同港股即日鮮有咩分別？</h3>
+<p>A: 美股即日鮮 (US day trade) 係指美股市場嘅當日開倉當日平倉短炒策略 — 開倉後唔過夜，最遲 16:00 ET 收市前強制平倉。由於美股有 <b>PDT 規則</b> (Pattern Day Trader)，5 個交易日内有 4 日或以上做 day trade 嘅戶口，賬户資產必須維持 ≥ USD 25,000，否則戶口會被凍結做 day trade。Leeks Terminal 美股 scanner 嚴格為美股即日鮮設計 — 每朝早 9:00 ET 開市前出信號，信號入場區間、止損位 (1-2%)、目標價 (3-8%) 全部係 intraday timeframe 設計。同港股即日鮮主要分別：港股 PDT 規則寬鬆 (T+2 交收，但允許即日鮮)；美股則有 25K USD 資產下限 + 日内交易次數限制 (4 次 / 5 日)。</p>
+
+<h3>Q: 有冇「美股 day trade signal」服務？同一般美股財經網站有咩分別？</h3>
+<p>A: 有。Leeks Terminal 美股 scanner 每日 16:00 ET 收市後自動跑，17:00 ET 前 dashboard 上線，每隻信號附帶入場區間 + 止損 + 目標 + 4 維度分數 breakdown。同一般美股網站 (例如 Seeking Alpha、TipRanks、Zacks) 主要分別：</p>
+<ul>
+<li><b>AI 自動</b> · 唔係 sell-side analyst 報告，係 Python pipeline 每晚自動跑</li>
+<li><b>4 維度量化</b> · v / q / m / of 4 個 raw score 由 LLM 評，總分由 Python 確定性加權，避開 LLM 估分 hallucination</li>
+<li><b>Day-trade 優化</b> · 動能 + 資金流合共 90% 權重，唔似一般「買入推薦」淨睇 PE / PB</li>
+<li><b>免費</b> · Dashboard 完全 free，唔使訂閱 SaaS</li>
+<li><b>操作建議</b> · 每個信號都有具體 entry / stop / target 價位，唔係一句「看多」就算數</li>
+</ul>
+
+<h3>Q: 美股 short signal 同 long signal 點樣分？呢個 scanner 識唔識 short？</h3>
+<p>A: 識。美股 short selling 規則比港股寬鬆 — 基本上所有美股都可以 short (除咗 hard-to-borrow 名單)，T+1 交收，T+0 可平倉。Leeks Terminal 美股 scanner 識別 short signal 嘅條件：</p>
+<ul>
+<li><b>trade_direction = 看空 / bearish</b> · LLM cross-check 4 維度 + 新聞 sentiment + 技術指標後輸出</li>
+<li><b>score ≤ 40</b> · 綜合分偏低，弱勢股</li>
+<li><b>momentum ≤ 40</b> · 跌穿 MA20 / 50 / 200 其中一條</li>
+<li><b>order_flow 反向</b> · Relative Volume ≥ 2x 但價格向下 (高位派貨)</li>
+<li><b>入場區間為 short entry</b> · 反彈 fail 後 short，止損位喺反彈高位之上</li>
+</ul>
+<p>Short signal 喺 dashboard 用 🔴 標記，唔同 🟢 long signal 容易混淆。如果你想淨係睇 long，可以 filter 「美股買入」；想睇 short 就 filter 「美股賣出」。注意：short 風險無限大 (loss > 100%)，新手唔建議單獨做 short。</p>
+
+<h3>Q: 「美股 AI 選股」係咩？同一般 AI stock picker 有咩分別？</h3>
+<p>A: 美股 AI 選股係用 AI (我哋用 MiniMax-M3) 對 200 隻高成交美股做 stock screening + scoring + ranking，每日自動出 top 20 買入名單 + top 20 賣出名單。同坊間 AI stock picker (e.g. Danelfin、Trefis、Kavout) 主要分別：</p>
+<ul>
+<li><b>確定性加權</b> · Danelfin 等用 ML model 直接輸出 1-10 分數 (black box)；我哋分 4 個維度評分再 Python 加權 (transparent)</li>
+<li><b>操作建議</b> · Danelfin 只給 AI score；我哋仲俾具體 entry / stop / target</li>
+<li><b>Day-trade 偏重</b> · 動能 + 資金流 90% 權重，唔似 Danelfin 較為 long-term</li>
+<li><b>免費</b> · 完全 free dashboard，Danelfin 收費 USD 30+/月</li>
+</ul>
+<p>「美股 AI 選股」呢個關鍵詞主要係 Google SEO 搜索 — 例如「美股 AI 選股 推薦」、「best AI stock screener」、「AI 美股分析」等等。我哋嘅工具目標係俾香港 / 台灣 / 內地散戶一個中文 free 嘅 AI 美股分析入口。</p>
+
+<h3>Q: 「美股 momentum scanner」呢個工具識唔識做？同 Finviz / TradingView 比較？</h3>
+<p>A: 識。Leeks Terminal 美股 scanner 嘅 momentum 維度 (60% 權重) 由 4 個 sub-indicator 組成：(1) 當日 1d return、(2) 5d return、(3) 20d return (突破新高 / 新低比例)、(4) RSI14 deviation。所以 dashboard 預設按 momentum 排，首 20 隻就係當日美股 momentum 排行 — 升幅最大 + 趨勢最強嘅美股。</p>
+<p>同 Finviz / TradingView 比較：</p>
+<ul>
+<li><b>Finviz</b> · 主力做美股，screener 功能強 (可以自訂 PE / RSI / MACD filter)，但冇 AI 評分，操作建議要自己 set。我哋嘅工具同 Finviz 互補 — 用 Finviz 自訂 filter，再用我哋做 AI ranking。</li>
+<li><b>TradingView</b> · 圖表最強，但 AI 評分要付費 (TradingView Premium USD 15+/月)。我哋嘅 dashboard 圖表簡單 (因為目標係決策輔助唔係 trading platform)，但 AI 評分免費。</li>
+<li><b>我哋嘅 advantage</b> · 中文介面 + 4 維度評分 + 具體 entry / stop / target，唔係淨係 score。</li>
+</ul>
+<p>如果你想純做美股 momentum trading，可以單獨用 Finviz 篩 RSI > 70 + 20d return > 10% 嘅股，再對比我哋 dashboard 嘅 momentum 排行，命中率會更高。</p>
+
+<h3>Q: 「美股 stock screener free」— 呢個工具係咪完全 free？有冇 hidden cost？</h3>
+<p>A: 完全 free。Leeks Terminal 美股 stock screener 完全免費 — 唔使註冊、唔使訂閱、唔使信用卡、開 dashboard 就見到當日 200 隻美股信號。冇 hidden cost，冇 premium tier 鎖重要功能，冇「7 天試用」陷阱。資金來源：我哋自己 side project，冇投資人，冇商業模式，純粹個人用 + 開源俾香港 / 台灣 / 內地散戶。</p>
+<p>同其他「美股 stock screener free」工具比較：</p>
+<ul>
+<li><b>Finviz</b> · 免費版得基本 screener (15 分鐘延遲報價)；付費 USD 25/月先有 real-time + 高級 filter</li>
+<li><b>TradingView</b> · 免費版得基本圖表；AI 評分 / 進階 indicator 要 Premium USD 15+/月</li>
+<li><b>Yahoo Finance screener</b> · 完全 free 但 filter 簡單，冇 AI 評分</li>
+<li><b>我哋嘅工具</b> · 完全 free + AI 評分 + 操作建議 (entry / stop / target)，同類工具罕見</li>
+</ul>
+<p>如果你想 contribute 或者報 bug，可以喺主頁 footer 搵到我哋嘅 Telegram group 或 GitHub repo (public)。</p>
+
+<h3>Q: 「美股 technical analysis 中文」教學 — 呢個工具包唔包？</h3>
+<p>A: 包。Leeks Terminal 美股 scanner 每隻股嘅 detail page 都有中文 technical analysis 解說 — 包括 MA20 / MA50 / MA100 / MA200、RSI14、MACD、Bollinger Bands、Volume Ratio 嘅當前數值 + 中文解讀 (例如「MA20 上穿 MA50 = 黃金交叉」、「RSI ≥ 70 = 超買」、「MACD 柱由負轉正 = momentum 反轉」)。</p>
+<p>如果你想學深啲，可以睇 <a href="/methodology.html">methodology 頁</a>，有齊 4 維度框架嘅公式同案例。我哋亦都有 Telegram channel 每周出一篇美股 technical analysis 中文 tutorial：</p>
+<ul>
+<li>MA (移動平均線) — 黃金 / 死亡交叉</li>
+<li>RSI (相對強弱指數) — 超買 / 超賣</li>
+<li>MACD — momentum 反轉訊號</li>
+<li>Bollinger Bands — 波動率 squeeze / expansion</li>
+<li>Volume Ratio — 量價配合</li>
+</ul>
+<p>注意：美股 technical analysis 嘅指標計算方法同港股 / A 股一致 (因為係 universal formula)，但「美股 vs 港股」應用上唔同 — 美股趨勢日多，技術指標有效時間長；港股 / A 股噪音多，技術指標容易假突破。我哋嘅 scanner 已經按市場特性 tune 咗 4 維度權重 (美股 m=60%, of=30%；港股 m=70%, of=20%)。</p>
+
+<h3>Q: 「美股 pre-market signal」— 呢個工具包唔包盤前信號？</h3>
+<p>A: 暫時唔包「實時」pre-market signal。我哋美股 scanner 每日只喺 16:00 ET 收市後跑一次（基於收市價 + 成交量），出次日開市前嘅信號。所以 dashboard 上嘅信號會涵蓋前一晚 16:00 ET - 翌日 09:30 ET 嘅 overnight 變動 + pre-market 嘅重要新聞，但唔係即時 (real-time) 更新。</p>
+<p>如果你想要真正 real-time 美股 pre-market signal (例如 08:00 ET 開 pre-market 後即時掃描)，需要付費版工具 — IBKR / Thinkorswim / TradeStation 都有 pre-market scanner (但要付費 + 開 margin 戶口)。我哋暫時唔做 real-time 因為：</p>
+<ul>
+<li>Real-time 美股報價要付費 (USD 50-200/月 data feed)</li>
+<li>Pre-market 流動性低 (只有 regular session 嘅 5-10%)，信號 noise 大</li>
+<li>用 YFinance 嘅 15-min delay 報價做 real-time 會誤導用戶</li>
+</ul>
+<p>如果你係 active 美股 pre-market trader，建議用 IBKR 戶口 + TWS 內置 scanner；Leeks Terminal 主力做收市後 16:00 ET - 翌日 09:30 ET 嘅信號，覆蓋大多數散戶 decision window。</p>
+
+<h3>Q: 「美股 option signal」— 呢個工具識唔識分析期權 / 選擇權？</h3>
+<p>A: 識少少。Leeks Terminal 美股 scanner 嘅 order_flow 維度 (30% 權重) 包含 <b>option OI change</b> (options open interest change) 嘅 sub-indicator — 監察前 5 個交易日 OI 變化 ± 20% 嘅 option chain，標記異常 OI 嘅 strike / expiry。但我哋暫時 <b>唔出 option 策略建議</b> (例如 covered call / bull put spread / iron condor)，只係把 OI 變化納入綜合分數。</p>
+<p>如果你想搵美股 option signal / unusual options activity，建議用：</p>
+<ul>
+<li><b>Unusual Whales</b> · USD 30+/月，美股 option flow 最強工具之一</li>
+<li><b>FlowAlgo</b> · USD 50+/月，real-time option order flow</li>
+<li><b> CBOE 官網</b> · 免費 option chain + OI，但冇 AI 分析</li>
+</ul>
+<p>我哋 roadmap 上面會加入 <b>美股 option signal</b> 獨立模組 (預計 2026 Q4)，會輸出 covered call / cash-secured put / vertical spread 建議，配合現有 4 維度 stock signal 一齊用。短期內 order_flow 維度已經包含 option OI，變相俾你 crude option signal。</p>
+
+<h3>Q: 「美股 high volume scanner」— 點樣搵高成交美股？</h3>
+<p>A: 美股 high volume scanner 有幾個 layer：</p>
+<ol>
+<li><b>Layer 1 — 絕對 volume</b> · 過去 20 日平均成交量 ≥ 5M 股 / 日 (例如 AAPL、TSLA、NVDA、F、AMD)</li>
+<li><b>Layer 2 — Relative Volume</b> · 當日 volume / 過去 20 日平均 volume ≥ 2x (即「量比」概念)</li>
+<li><b>Layer 3 — Dollar volume</b> · 過去 20 日平均成交金額 ≥ USD 500M (例如 NVDA、AAPL、MSFT)</li>
+<li><b>Layer 4 — Unusual volume</b> · 當日成交量 vs 過去 60 日 95th percentile (即「異動」概念)</li>
+</ol>
+<p>Leeks Terminal 美股 scanner 嘅覆蓋範圍 (200 隻) 已經按 Layer 1 + Layer 3 篩過 — 全部係 S&P 500 top 100 + Nasdaq-100 top 80 + 高成交中小股 20 隻，平均 ADV ≥ USD 500M，所以 dashboard 上每隻都已經係「high volume 美股」。</p>
+<p>如果你想搵「unusual volume」嘅美股 (即當日量比突然 ≥ 3x 嘅股)，可以喺 dashboard 入 detail page 睇 Relative Volume 數字 (of 維度 ≥ 70 通常代表 unusual volume + 大戶入場)。</p>
+
+<h3>Q: 「美股 vs 港股 day trade」工作流程比較 — 兩個市場 trader 有咩分別？</h3>
+<p>A: 美股 vs 港股 day trade 工作流程主要有 6 個分別，列表如下：</p>
+<table class="dim-table">
+<thead><tr><th>工作流程</th><th>港股 trader</th><th>美股 trader</th></tr></thead>
+<tbody>
+<tr><td><b>1. 開市前準備</b></td><td>08:30 HKT 起床、09:00 HKT 睇 dashboard、09:15 HKT 落單</td><td>21:00 HKT (前一晚) 睇 dashboard、09:00 ET (翌日) 落單 — 即跨時區</td></tr>
+<tr><td><b>2. 信號來源</b></td><td>Leeks Terminal hk-scanner + 富途 / 輝立 built-in scanner</td><td>Leeks Terminal us-scanner + Finviz / TradingView</td></tr>
+<tr><td><b>3. PDT / 風控規則</b></td><td>無 PDT 規則，但有「T+2 交收」+ 印花稅 0.13%</td><td>PDT 規則 (4 日 / 5 日 day trade，賬户 ≥ USD 25K)；無印花稅</td></tr>
+<tr><td><b>4. 入場時間</b></td><td>09:30-10:30 HKT (開市 60 分鐘內)，11:30 HKT 唔做 (臨午休)</td><td>09:30-10:30 ET (開市 60 分鐘內)，11:30 ET / 14:00 ET 可以繼續</td></tr>
+<tr><td><b>5. 持倉時間</b></td><td>9:30 入場，15:50-16:00 HKT 強制平倉</td><td>9:30 入場，15:50-16:00 ET 強制平倉 (after-hours 可以但流動性低)</td></tr>
+<tr><td><b>6. 出場規則</b></td><td>必須 16:00 HKT 前平倉，唔可以 hold overnight (除非有特別 setup)</td><td>可以 hold overnight (但要小心 gap risk)；margin 戶口可以 short overnight</td></tr>
+<tr><td><b>7. 佣金 / 成本</b></td><td>佣金 0.05% + 印花稅 0.13% + 交易徵費 0.003% ≈ 0.18% 單邊</td><td>佣金 USD 0 (IBKR) / USD 1 (券商) — 零印花稅 ≈ 0.005% 單邊</td></tr>
+<tr><td><b>8. 信號有效時長</b></td><td>當日 09:30 HKT - 16:00 HKT (6.5 小時)</td><td>當日 09:30 ET - 16:00 ET (6.5 小時) + pre-market / after-hours</td></tr>
+<tr><td><b>9. 推薦工具</b></td><td><a href="/hk-scanner.html">hk-scanner</a> + 富途 / 輝立 app</td><td><a href="/us-scanner.html">us-scanner</a> + IBKR TWS / Thinkorswim</td></tr>
+<tr><td><b>10. 適合邊個</b></td><td>香港時區 / 兼職 trader / 想學中文 technical analysis</td><td>美股投資者 / 全職 trader / 想 trade 全球最大市場</td></tr>
+</tbody>
+</table>
+<p>結論：兩個市場工作流程接近，但時區 + 風控規則 + 成本結構唔同。香港散戶如果想同時做港股 + 美股 day trade，建議用 Leeks Terminal 嘅 hk-scanner (16:00 HKT 出信號) + us-scanner (16:00 ET 出信號)，兩個 dashboard 都係 free，配合 IBKR 戶口做美股 + 富途 / 輝立做港股，覆蓋晒兩個時區嘅 decision window。</p>
+
+<h2>美股市場時段 (Trading Sessions)</h2>
+<p>美股一日分 3 個 trading session，流動性、volatility、信號 reliability 都唔同：</p>
+<table class="dim-table">
+<thead><tr><th>時段</th><th>時間 (ET)</th><th>香港時間 (HKT)</th><th>流動性</th><th>Leeks Terminal 覆蓋</th></tr></thead>
+<tbody>
+<tr><td><b>Pre-market 盤前</b></td><td>04:00 - 09:30 ET</td><td>16:00 - 21:30 HKT (前一晚)</td><td>低 (5-10% regular session)</td><td>❌ 唔覆蓋 (noise 太大、報價延遲)</td></tr>
+<tr><td><b>Regular session 正式交易時段</b></td><td>09:30 - 16:00 ET</td><td>21:30 - 04:00 HKT (翌日凌晨)</td><td>高 (85% 全日成交)</td><td>✅ 主力覆蓋 (16:00 ET 收市後跑信號)</td></tr>
+<tr><td><b>After-hours 盤後</b></td><td>16:00 - 20:00 ET</td><td>04:00 - 08:00 HKT (翌日清晨)</td><td>低 (5-10% regular session)</td><td>❌ 唔覆蓋 (同上)</td></tr>
+</tbody>
+</table>
+<h3>Pre-market 盤前 (04:00 - 09:30 ET)</h3>
+<p>盤前係美股嘅第一個交易時段，主要係機構投資者 + overnight news 嘅反應。常見信號：</p>
+<ul>
+<li><b>Earnings 業績公佈</b> · 大部分大型股喺 pre-market / after-hours 公佈季度業績 (e.g. AAPL、MSFT、AMZN)</li>
+<li><b>Fed / 經濟數據</b> · 08:30 ET 公佈 CPI、PPI、NFP 等</li>
+<li><b>FDA 批准 / 監管消息</b> · 生物科技股 (e.g. MRNA、BNTX) 對 FDA 消息極敏感</li>
+<li><b>Gap up / gap down</b> · 開市前 price gap 通常反映 overnight sentiment</li>
+</ul>
+<p>Pre-market 流動性低，bid-ask spread 大，Leeks Terminal 暫時唔覆蓋 — 但 dashboard 嘅 score 已經考慮前一晚 16:00 ET 收市到 09:30 ET 開市前嘅 overnight 變化 (即係 closed-form signal 包含咗 gap risk 嘅 adjustment)。</p>
+
+<h3>Regular session 正式交易時段 (09:30 - 16:00 ET)</h3>
+<p>正式交易時段係美股主力 session，85% 全日成交集中喺呢 6.5 小時，Leeks Terminal 美股 scanner 嘅信號就係為呢個 session 設計：</p>
+<ul>
+<li><b>開市首 30 分鐘 (09:30 - 10:00 ET)</b> · 流動性最高 + 波幅最大，day trader 集中入場</li>
+<li><b>10:00 - 11:30 ET</b> · 主流 setup 出現窗口，momentum + order_flow 信號最有效</li>
+<li><b>11:30 - 14:00 ET (午間)</b> · 流動性下降，noise 增加，唔建議開新倉</li>
+<li><b>14:00 - 15:30 ET</b> · 下午 setup window，尾市前最後一波</li>
+<li><b>15:30 - 16:00 ET 收市前</b> · 必須平倉 (除非有特別 overnight 理由)</li>
+</ul>
+<p>Leeks Terminal 美股 scanner 嘅 entry / stop / target 全部 assume 喺 regular session 9:30 - 16:00 ET 入場。After-hours 入場信號不可靠 (流動性低 + spread 大 + 假突破多)。</p>
+
+<h3>After-hours 盤後 (16:00 - 20:00 ET)</h3>
+<p>盤後係美股最後一個 session，主要係機構對 earnings / 重大新聞嘅反應，散戶參與度低：</p>
+<ul>
+<li><b>Earnings 反應</b> · 大型股公佈業績後嘅 1-2 小時波幅最大</li>
+<li><b>FDA 批准</b> · 生物科技股對盤後 FDA 消息極敏感</li>
+<li><b>M&amp;A 公告</b> · 併購消息通常喺盤後公佈</li>
+</ul>
+<p>After-hours 流動性低，bid-ask spread 大，Leeks Terminal 暫時唔覆蓋。如果你 trade after-hours 嘅 earnings 業績，建議用 IBKR TWS 嘅 extended-hours trading 功能 (但要特別小心 spread + slippage)。</p>
+
+<h3>點解 Leeks Terminal 只覆蓋 regular session？</h3>
+<p>有幾個原因：</p>
+<ol>
+<li><b>報價限制</b> · YFinance 15-min delay + 免費數據源對 pre-market / after-hours 覆蓋唔穩定</li>
+<li><b>流動性低</b> · Pre-market / after-hours 成交只係 regular session 嘅 5-10%，signal noise 大，命中率低</li>
+<li><b>用戶群</b> · Leeks Terminal 主力做香港 / 台灣 / 內地散戶，呢啲用戶主要 trade regular session</li>
+<li><b>Cost-effectiveness</b> · Real-time 美股報價 (含 pre-market / after-hours) 要 USD 50-200/月 data feed，free 工具難以 sustain</li>
+</ol>
+<p>如果你係 active pre-market / after-hours trader，建議配合 IBKR TWS 或 Thinkorswim 嘅 built-in scanner；Leeks Terminal 主力做收市後 16:00 ET 嘅信號，覆蓋大多數散戶 decision window。詳細 4 維度評分框架睇 <a href="/methodology.html">methodology 頁</a>。</p>
+<section class="cta"><h2>睇今日 (2026-06-29) 完整信號</h2><p>200 隻港股 / 美股 4 維度評分 + 入場 / 止損 / 目標齊全。</p><p><a class="btn" href="/dashboard/2026-06-29/all.html">→ 開 2026-06-29 dashboard</a></p></section>
+</main>
+<footer>
+  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>

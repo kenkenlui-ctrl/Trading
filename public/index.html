@@ -3,13 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Leeks Terminal · HK+US Day-Trade AI</title>
-  <meta name="description" content="Real-time HK + US day-trade AI dashboard. 200 tickers × multi-dim scoring + trade direction signals.">
-  <meta property="og:title" content="Leeks Terminal · HK+US Day-Trade AI">
+  <title>Leeks Terminal · HK+US 即日鮮 AI 交易決策儀表板</title>
+  <meta name="description" content="HK + US 即日鮮 AI 交易決策儀表板。200 隻港股 + 200 隻美股，4 維度評分 + 入場區間 / 止損 / 目標價。">
+  <meta property="og:title" content="Leeks Terminal · HK+US 即日鮮 AI 交易決策儀表板">
+  <meta property="og:description" content="HK + US 即日鮮 AI 交易決策儀表板。200 隻港股 + 200 隻美股，4 維度評分 + 入場區間 / 止損 / 目標價。">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.win9you.com">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="https://www.win9you.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://www.win9you.com/og-image.png">
+  <meta name="twitter:title" content="Leeks Terminal · HK+US 即日鮮 AI 交易決策儀表板">
+  <meta name="twitter:description" content="HK + US 即日鮮 AI 交易決策儀表板。200 隻港股 + 200 隻美股，4 維度評分 + 入場區間 / 止損 / 目標價。">
   <link rel="canonical" href="https://www.win9you.com">
+  <link rel="alternate" hreflang="zh-Hant" href="https://www.win9you.com">
+  <link rel="alternate" hreflang="x-default" href="https://www.win9you.com">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
 :root {
@@ -135,6 +144,36 @@ h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
 .stats .bear { color: var(--bear); font-weight: 600; }
 .stats .amber { color: var(--amber); font-weight: 600; }
 
+/* Homepage value-prop + sample preview */
+.lede { font-size: 1.05rem; line-height: 1.65; max-width: 760px; }
+section h2 { margin-top: 2.4rem; }
+section ul, section ol { line-height: 1.75; max-width: 760px; }
+.dim { color: var(--dim); }
+
+.sample-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 1rem 0 1.4rem;
+    max-width: 900px;
+}
+.sample-card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 12px 14px;
+    background: #fafbfc;
+}
+.sample-header {
+    display: flex; gap: 8px; align-items: baseline; margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.sample-code { font-weight: 700; font-size: 1.05rem; }
+.sample-op { padding: 1px 6px; border-radius: 3px; background: var(--panel); font-size: 0.85rem; }
+.sample-score { margin-left: auto; font-weight: 600; color: var(--dim); font-size: 0.9rem; }
+.sample-summary { font-size: 0.85rem; line-height: 1.55; color: var(--fg); margin: 6px 0 8px; }
+.sample-link { font-size: 0.85rem; }
+
 /* Detail table */
 table.detail {
     width: 100%;
@@ -158,6 +197,30 @@ table.detail th {
     letter-spacing: 0.05em;
     color: var(--dim);
 }
+
+/* Methodology dim table */
+table.dim-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+}
+table.dim-table th, table.dim-table td {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+table.dim-table th {
+    background: var(--panel-2);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+table.dim-table td:first-child { font-family: 'JetBrains Mono', monospace; }
+table.dim-table td:nth-child(2) { font-weight: 600; color: var(--accent); text-align: center; }
 
 /* Card-link: appended after each summary card so reader can dive into detail */
 p.card-link {
@@ -298,12 +361,12 @@ footer {
     table.detail th, table.detail td { padding: 4px 6px; }
 }
 </style>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Leeks Terminal", "url": "https://www.win9you.com", "applicationCategory": "FinanceApplication", "operatingSystem": "Any (web browser)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Real-time HK + US day-trade AI dashboard with multi-dim scoring."}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "Leeks Terminal", "url": "https://www.win9you.com", "description": "HK + US 即日鮮 AI 交易決策儀表板。200 隻港股 + 200 隻美股，4 維度評分 + 入場區間 / 止損 / 目標價。", "inLanguage": "zh-Hant", "publisher": {"@type": "Organization", "name": "Leeks Terminal", "url": "https://www.win9you.com"}}</script>
 </head>
 <body>
 <nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
-<h1>◆ Leeks Terminal</h1><p>HK + US Day-Trade AI · 200 隻港股 + 200 隻美股 · 每日兩次分析</p><h2>選擇報告日期</h2><div class="date-picker"><a href="/dashboard/2026-06-27.html">2026-06-27</a><a href="/dashboard/2026-06-26.html">2026-06-26</a></div><p>最新報告：<a href="/dashboard/2026-06-27/all.html">2026-06-27 →</a></p>
+<h1>◆ Leeks Terminal</h1><p class="lede">HK + US 即日鮮 AI 交易決策儀表板。<b>200 隻港股 + 200 隻美股</b>，每日全自動 4 維度評分 + 入場區間 / 止損 / 目標價，一頁睇晒。</p><section class="value-prop"><h2>點解用 Leeks Terminal</h2><ul><li><b>全自動化</b> · 港股用 Tencent 即時報價、美股用 YFinance，Tushare + yfinance 數據源，每個交易日 16:00 HKT / 16:00 ET 自動更新一次。</li><li><b>4 維度評分</b> · 價值（5%）+ 質量（5%）+ 動量（70%）+ 訂單流（20%），Python 端確定性計分，唔靠 LLM 估分數。</li><li><b>實用信號</b> · 每個信號附帶入場區間、止損位、目標價、風險備註，唔係一句「看多」就算數。</li><li><b>即日鮮</b> · 嚴格 day-trade 模式，4 PM HKT / 4 PM ET 前必須平倉，唔過夜，唔留倉。</li></ul></section><section class="sample-preview"><h2>今日信號範例</h2><p class="dim">以下係 2026-06-29 報告入面揀出嘅 3 個代表信號，每個 score 100 分制，0=最差、100=最好。完整 200+200 隻股票睇 <a href="/dashboard/2026-06-29/all.html">2026-06-29 dashboard →</a></p><div class="sample-grid"><div class="sample-card"><div class="sample-header"><span class="sample-code">09999.HK</span><span class="sample-op">🟢 買入</span><span class="sample-score">78/100</span></div><p class="sample-summary">**09999.HK** · 評分 78 · 買入 · 09999.HK 網易-S 受多重利好刺激，今日大升 +5.28% 至 197.40 HKD，成交額達 15.69 億 HKD。消息面上，高盛將目標價升至 264 港元重申買入、大摩重</p><a href="/dashboard/2026-06-29/reports/09999.HK.html" class="sample-link">完整 09999.HK 報告 →</a></div><div class="sample-card"><div class="sample-header"><span class="sample-code">DDOG</span><span class="sample-op">🟡 觀望</span><span class="sample-score">79/100</span></div><p class="sample-summary">**DDOG** · 評分 79 · 觀望 · DDOG 今日爆升 +8.52%，收 239.77 HKD，全日高低區間 7.66%（223.68-242.04）屬極高波幅，量比 2.16× 確認資金積極參與。均線排列完美多頭：MA20 2</p><a href="/dashboard/2026-06-29/reports/DDOG.html" class="sample-link">完整 DDOG 報告 →</a></div><div class="sample-card"><div class="sample-header"><span class="sample-code">00016.HK</span><span class="sample-op">🔴 賣出</span><span class="sample-score">40/100</span></div><p class="sample-summary">**00016.HK** · 評分 40 · 賣出 · 新鴻基地產 (00016.HK) 今日開高走高至盤中高點 116.40 HKD（一度升約 1.9%），其後遭逢拋售跌至 113.40 HKD 收市，全日微跌 -0.70%，呈典型嘅高開</p><a href="/dashboard/2026-06-29/reports/00016.HK.html" class="sample-link">完整 00016.HK 報告 →</a></div></div></section><section class="how-it-works"><h2>點樣運作</h2><ol><li><b>揀日期</b> · 下面揀一個交易日，預設最新嗰日。</li><li><b>揀市場</b> · 全部 / 港股買入 / 港股賣出 / 美股買入 / 美股賣出 5 種 filter。</li><li><b>睇信號</b> · 每張 card 顯示 ticker + 評分 + 買入/觀望/賣出 + 一句總結。</li><li><b>入 detail page</b> · 撳「完整 XXX 詳細報告」睇技術指標 + 操作建議 + 風險備註。</li></ol></section><section class="data-source"><h2>數據來源 + 限制</h2><ul><li>HK 即時報價：Tencent qtimg (1-15 分鐘延遲，唔係 Level-2)</li><li>US 即時報價：YFinance / Alpaca (15-20 分鐘延遲)</li><li>新聞：Futu / Yahoo Finance RSS</li><li>基本面：YFinance (P/E、P/B、ROE、market cap)</li><li>覆蓋：港股 200 隻 (turnover ≥ 50M HKD) + 美股 200 隻 (S&P 500 + Nasdaq-100 樣本)</li></ul><p class="dim">⚠️ 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。</p></section><h2>選擇報告日期</h2><div class="date-picker"><a href="/dashboard/2026-06-29.html">2026-06-29</a><a href="/dashboard/2026-06-27.html">2026-06-27</a><a href="/dashboard/2026-06-26.html">2026-06-26</a></div><p>最新報告：<a href="/dashboard/2026-06-29/all.html">2026-06-29 →</a></p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>

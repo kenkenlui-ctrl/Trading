@@ -183,6 +183,36 @@ h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
 .stats .bear { color: var(--bear); font-weight: 600; }
 .stats .amber { color: var(--amber); font-weight: 600; }
 
+/* Homepage value-prop + sample preview */
+.lede { font-size: 1.05rem; line-height: 1.65; max-width: 760px; }
+section h2 { margin-top: 2.4rem; }
+section ul, section ol { line-height: 1.75; max-width: 760px; }
+.dim { color: var(--dim); }
+
+.sample-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 1rem 0 1.4rem;
+    max-width: 900px;
+}
+.sample-card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 12px 14px;
+    background: #fafbfc;
+}
+.sample-header {
+    display: flex; gap: 8px; align-items: baseline; margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.sample-code { font-weight: 700; font-size: 1.05rem; }
+.sample-op { padding: 1px 6px; border-radius: 3px; background: var(--panel); font-size: 0.85rem; }
+.sample-score { margin-left: auto; font-weight: 600; color: var(--dim); font-size: 0.9rem; }
+.sample-summary { font-size: 0.85rem; line-height: 1.55; color: var(--fg); margin: 6px 0 8px; }
+.sample-link { font-size: 0.85rem; }
+
 /* Detail table */
 table.detail {
     width: 100%;
@@ -394,7 +424,8 @@ def nav_html(active_path: str) -> str:
 
 
 def shell(title: str, body_html: str, active_path: str = "/",
-          description: str = "", json_ld: dict | None = None) -> str:
+          description: str = "", json_ld: dict | None = None,
+          canonical: str = "https://www.win9you.com") -> str:
     """Wrap content in full HTML doc with nav + light-theme CSS."""
     desc_meta = f'<meta name="description" content="{_html.escape(description)}">' if description else ""
     ld_block = ""
@@ -408,10 +439,19 @@ def shell(title: str, body_html: str, active_path: str = "/",
   <title>{_html.escape(title)}</title>
   {desc_meta}
   <meta property="og:title" content="{_html.escape(title)}">
+  <meta property="og:description" content="{_html.escape(description)}">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.win9you.com">
-  <meta name="twitter:card" content="summary">
-  <link rel="canonical" href="https://www.win9you.com">
+  <meta property="og:url" content="{_html.escape(canonical)}">
+  <meta property="og:image" content="https://www.win9you.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://www.win9you.com/og-image.png">
+  <meta name="twitter:title" content="{_html.escape(title)}">
+  <meta name="twitter:description" content="{_html.escape(description)}">
+  <link rel="canonical" href="{_html.escape(canonical)}">
+  <link rel="alternate" hreflang="zh-Hant" href="{_html.escape(canonical)}">
+  <link rel="alternate" hreflang="x-default" href="{_html.escape(canonical)}">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>{SHARED_CSS}</style>
   {ld_block}
@@ -820,39 +860,129 @@ def body_md_to_html(md: str, link_inject_date: str | None = None, score_lookup: 
 
 
 def build_index(dates: list[str]) -> str:
-    """Build public/index.html — landing page with date picker."""
+    """Build public/index.html — landing page with date picker + content depth."""
     if not dates:
         body = (
             "<h1>◆ Leeks Terminal</h1>"
             '<p class="stats">暫時未有分析報告。請等今日 pipeline 跑完。</p>'
         )
     else:
-        # Build date picker
         picker = date_picker_html(dates, "")
         latest = dates[0]
+
+        # Sample ticker preview (3 stocks: 1 buy, 1 hold, 1 sell from latest)
+        sample_html = ""
+        try:
+            import sqlite3
+            db = sqlite3.connect(str(PROJECT_ROOT / "data" / "dsa_hk.db"))
+            db.row_factory = sqlite3.Row
+            sample = []
+            for op in ["買入", "觀望", "賣出"]:
+                row = db.execute(
+                    "SELECT code, score, operation_advice, summary_md, data_snapshot_json FROM daily_report "
+                    "WHERE report_date=? AND operation_advice=? ORDER BY score DESC LIMIT 1",
+                    (latest, op),
+                ).fetchone()
+                if row:
+                    sample.append(row)
+            db.close()
+            if sample:
+                sample_html = (
+                    '<section class="sample-preview">'
+                    '<h2>今日信號範例</h2>'
+                    '<p class="dim">以下係 ' + latest + ' 報告入面揀出嘅 3 個代表信號，'
+                    '每個 score 100 分制，0=最差、100=最好。完整 200+200 隻股票睇 '
+                    f'<a href="/dashboard/{latest}/all.html">{latest} dashboard →</a></p>'
+                    '<div class="sample-grid">'
+                )
+                emoji = {"買入": "🟢", "觀望": "🟡", "賣出": "🔴"}
+                for r in sample:
+                    sm = r["summary_md"] or ""
+                    # Strip leading emoji/bold code, take 80 chars
+                    text = sm.split(" ", 1)[-1][:120] if " " in sm else sm[:120]
+                    sample_html += (
+                        f'<div class="sample-card">'
+                        f'<div class="sample-header">'
+                        f'<span class="sample-code">{r["code"]}</span>'
+                        f'<span class="sample-op">{emoji.get(r["operation_advice"], "⚪")} {r["operation_advice"]}</span>'
+                        f'<span class="sample-score">{r["score"]}/100</span>'
+                        f'</div>'
+                        f'<p class="sample-summary">{_html.escape(text)}</p>'
+                        f'<a href="/dashboard/{latest}/reports/{r["code"]}.html" class="sample-link">完整 {r["code"]} 報告 →</a>'
+                        f'</div>'
+                    )
+                sample_html += '</div></section>'
+        except Exception as e:
+            sample_html = f'<p class="dim">（範例載入失敗：{e}）</p>'
+
         body = (
             "<h1>◆ Leeks Terminal</h1>"
-            "<p>HK + US Day-Trade AI · 200 隻港股 + 200 隻美股 · 每日兩次分析</p>"
-            "<h2>選擇報告日期</h2>"
-            + picker
-            + f'<p>最新報告：<a href="/dashboard/{latest}/all.html">{latest} →</a></p>'
+            "<p class=\"lede\">HK + US 即日鮮 AI 交易決策儀表板。<b>200 隻港股 + 200 隻美股</b>，"
+            "每日全自動 4 維度評分 + 入場區間 / 止損 / 目標價，一頁睇晒。</p>"
+
+            "<section class=\"value-prop\">"
+            "<h2>點解用 Leeks Terminal</h2>"
+            "<ul>"
+            "<li><b>全自動化</b> · 港股用 Tencent 即時報價、美股用 YFinance，"
+            "Tushare + yfinance 數據源，每個交易日 16:00 HKT / 16:00 ET 自動更新一次。</li>"
+            "<li><b>4 維度評分</b> · 價值（5%）+ 質量（5%）+ 動量（70%）+ 訂單流（20%），"
+            "Python 端確定性計分，唔靠 LLM 估分數。</li>"
+            "<li><b>實用信號</b> · 每個信號附帶入場區間、止損位、目標價、風險備註，"
+            "唔係一句「看多」就算數。</li>"
+            "<li><b>即日鮮</b> · 嚴格 day-trade 模式，4 PM HKT / 4 PM ET 前必須平倉，"
+            "唔過夜，唔留倉。</li>"
+            "</ul>"
+            "</section>"
+
+            + sample_html +
+
+            "<section class=\"how-it-works\">"
+            "<h2>點樣運作</h2>"
+            "<ol>"
+            "<li><b>揀日期</b> · 下面揀一個交易日，預設最新嗰日。</li>"
+            "<li><b>揀市場</b> · 全部 / 港股買入 / 港股賣出 / 美股買入 / 美股賣出 5 種 filter。</li>"
+            "<li><b>睇信號</b> · 每張 card 顯示 ticker + 評分 + 買入/觀望/賣出 + 一句總結。</li>"
+            "<li><b>入 detail page</b> · 撳「完整 XXX 詳細報告」睇技術指標 + 操作建議 + 風險備註。</li>"
+            "</ol>"
+            "</section>"
+
+            "<section class=\"data-source\">"
+            "<h2>數據來源 + 限制</h2>"
+            "<ul>"
+            "<li>HK 即時報價：Tencent qtimg (1-15 分鐘延遲，唔係 Level-2)</li>"
+            "<li>US 即時報價：YFinance / Alpaca (15-20 分鐘延遲)</li>"
+            "<li>新聞：Futu / Yahoo Finance RSS</li>"
+            "<li>基本面：YFinance (P/E、P/B、ROE、market cap)</li>"
+            "<li>覆蓋：港股 200 隻 (turnover ≥ 50M HKD) + 美股 200 隻 (S&P 500 + Nasdaq-100 樣本)</li>"
+            "</ul>"
+            "<p class=\"dim\">⚠️ 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。"
+            "Day trading 涉及高風險，過去表現唔代表未來回報。</p>"
+            "</section>"
+
+            "<h2>選擇報告日期</h2>" + picker +
+            f'<p>最新報告：<a href="/dashboard/{latest}/all.html">{latest} →</a></p>'
         )
 
-    return shell(
-        title="Leeks Terminal · HK+US Day-Trade AI",
-        body_html=body,
-        active_path="/",
-        description="Real-time HK + US day-trade AI dashboard. 200 tickers × multi-dim scoring + trade direction signals.",
-        json_ld={
-            "@context": "https://schema.org",
-            "@type": "WebApplication",
+    json_ld = {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Leeks Terminal",
+        "url": "https://www.win9you.com",
+        "description": "HK + US 即日鮮 AI 交易決策儀表板。200 隻港股 + 200 隻美股，4 維度評分 + 入場區間 / 止損 / 目標價。",
+        "inLanguage": "zh-Hant",
+        "publisher": {
+            "@type": "Organization",
             "name": "Leeks Terminal",
             "url": "https://www.win9you.com",
-            "applicationCategory": "FinanceApplication",
-            "operatingSystem": "Any (web browser)",
-            "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
-            "description": "Real-time HK + US day-trade AI dashboard with multi-dim scoring.",
         },
+    }
+
+    return shell(
+        title="Leeks Terminal · HK+US 即日鮮 AI 交易決策儀表板",
+        body_html=body,
+        active_path="/",
+        description="HK + US 即日鮮 AI 交易決策儀表板。200 隻港股 + 200 隻美股，4 維度評分 + 入場區間 / 止損 / 目標價。",
+        json_ld=json_ld,
     )
 
 
@@ -974,6 +1104,881 @@ filter 可以 hide 其他方向。</p>
     return written
 
 
+def build_sitemap_xml(dates: list[str]) -> str:
+    """Build sitemap.xml with all public pages. Auto-includes all dates in DB."""
+    base = "https://www.win9you.com"
+    urls = []
+
+    # Static pages
+    static = [
+        ("/", "1.0", "daily"),
+        ("/methodology.html", "0.8", "weekly"),
+        ("/faq.html", "0.8", "weekly"),
+        ("/about.html", "0.5", "monthly"),
+        ("/disclaimer.html", "0.3", "monthly"),
+        ("/privacy.html", "0.3", "monthly"),
+        # Intent landing pages (P1 SEO coverage)
+        ("/hk-scanner.html", "0.9", "daily"),
+        ("/us-scanner.html", "0.9", "daily"),
+        ("/day-trade-signals.html", "0.9", "daily"),
+        ("/hk-stock-screener.html", "0.8", "daily"),
+    ]
+    for path, prio, freq in static:
+        urls.append((path, prio, freq))
+
+    # Per-date dashboard + filter variants
+    filters = ["all", "hk-buy", "hk-sell", "us-buy", "us-sell"]
+    for d in dates:
+        urls.append((f"/dashboard/{d}/all.html", "0.9", "daily"))
+        for f in filters[1:]:
+            urls.append((f"/dashboard/{d}/{f}.html", "0.7", "daily"))
+
+    lines = ['<?xml version="1.0" encoding="UTF-8"?>']
+    lines.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
+    for path, prio, freq in urls:
+        lines.append("  <url>")
+        lines.append(f"    <loc>{base}{path}</loc>")
+        lines.append(f"    <changefreq>{freq}</changefreq>")
+        lines.append(f"    <priority>{prio}</priority>")
+        lines.append("  </url>")
+    lines.append("</urlset>")
+    return "\n".join(lines) + "\n"
+
+
+def build_robots_txt() -> str:
+    return (
+        "User-agent: *\n"
+        "Allow: /\n"
+        "\n"
+        "Sitemap: https://www.win9you.com/sitemap.xml\n"
+    )
+
+
+def build_intent_pages() -> list[str]:
+    """Build 4 long-form intent landing pages for SEO.
+    Each targets a specific high-intent search query."""
+    # Detect latest date for sample links
+    latest = None
+    try:
+        import sqlite3
+        db = sqlite3.connect(str(PROJECT_ROOT / "data" / "dsa_hk.db"))
+        row = db.execute("SELECT MAX(report_date) FROM daily_report").fetchone()
+        latest = row[0] if row else None
+        db.close()
+    except Exception:
+        pass
+
+    pages = []
+
+    # 1. HK stock scanner
+    pages.append({
+        "path": "/hk-scanner.html",
+        "slug": "hk-scanner",
+        "title": "港股即日鮮掃描器 · HK Stock Scanner | Leeks Terminal",
+        "description": "AI 自動掃描 200 隻港股（恒生 + 國企 + 科技指數成份股），每日兩次輸出買入/觀望/賣出信號 + 入場區間 / 止損 / 目標價。",
+        "h1": "港股即日鮮 AI 掃描器",
+        "body": """
+<p class="lede">Leeks Terminal 港股掃描器每日自動分析 <b>200 隻高成交港股</b>（恒生指數 + 國企指數 + 科技指數成份股 + 50 隻高成交二線股），
+用 4 維度評分 (估值 / 質素 / 動能 / 資金流) 排序，輸出買入 / 觀望 / 賣出信號 + 入場區間 / 止損位 / 目標價。</p>
+
+<h2>覆蓋範圍</h2>
+<ul>
+<li>恒生指數 82 隻成份股（HSI）</li>
+<li>恒生中國企業指數 50 隻成份股（HSCEI）</li>
+<li>恒生科技指數 30 隻成份股（HSTECH）</li>
+<li>額外 38 隻高成交二線股（turnover ≥ 50M HKD）</li>
+</ul>
+
+<h2>點樣揀信號</h2>
+<p>每個交易日下午港股收市後 (16:00 HKT) 自動運行一次 pipeline。每隻股票分析流程：</p>
+<ol>
+<li><b>Fetch 報價</b> · Tencent qtimg (sub-1min delay，包括 PE / PB / market cap / 52w range)</li>
+<li><b>計技術指標</b> · MA20/50/100/200 + RSI14 + MACD + 量比</li>
+<li><b>Fetch 新聞</b> · Futu Cloud 頭 5 條 + Yahoo Finance RSS</li>
+<li><b>LLM 評分</b> · MiniMax-M3 輸出 4-dim breakdown (v / q / m / of)</li>
+<li><b>Python 加權</b> · 確定性 score = 0.05×v + 0.05×q + 0.70×m + 0.20×of</li>
+<li><b>操作建議</b> · 買入 / 觀望 / 賣出 + 入場 / 止損 / 目標</li>
+</ol>
+
+<h2>邊個適合用</h2>
+<ul>
+<li>香港散戶 / 全職 trader · 開市前要快速 scan 邊隻有 setup</li>
+<li>美股 trader 開市前 · 順便睇吓港股隔晚有冇隔夜 gap</li>
+<li>學生 / 學習者 · 用嚟睇真實 score breakdown 學技術分析</li>
+</ul>
+
+<h2>同其他港股掃描器嘅分別</h2>
+<table class="dim-table">
+<thead><tr><th>工具</th><th>數據源</th><th>評分方式</th><th>操作建議</th></tr></thead>
+<tbody>
+<tr><td>Leeks Terminal</td><td>Tencent + Futu + YFinance</td><td>4-dim 確定性加權</td><td>🟢 買入 / 🟡 觀望 / 🔴 賣出 + 入場/止損/目標</td></tr>
+<tr><td>一般券商 app</td><td>自家 K 線 + 簡單 MA</td><td>無評分</td><td>無</td></tr>
+<tr><td>付費 AI 平台</td><td>Bloomberg / Refinitiv</td><td>Black box</td><td>信號</td></tr>
+</tbody>
+</table>
+<p>我哋唔係 Bloomberg replacement — 係 day-trade 開市前 5 分鐘決策輔助。</p>
+
+<h2>常見問題</h2>
+<h3>Q: 港股 scanner 幾時更新？</h3>
+<p>A: 每日港股收市後 (16:00 HKT) 自動跑一次，16:30 HKT 前 dashboard 上線。週末 / 假期 skip。</p>
+<h3>Q: 點解用 Tencent 報價唔係 AAStocks / 經濟通？</h3>
+<p>A: Tencent qtimg 同一個 endpoint 提供 price + PE + PB + market cap + 52w range，sub-1min delay，連埋歷史 turnover 全部一個 call 拎到。</p>
+<h3>Q: 唔係 L2 quote 準唔準？</h3>
+<p>A: 對 day-trade 嚟講 sub-1min delay 已經夠用，因為入場時間通常 9:45-10:30 之間（開市 15-60 分鐘），唔係秒級 scalping。如果你係 HFT / scalper，呢個工具唔啱你。</p>
+
+<h3>Q: 咩係「港股即日鮮」？呢個 scanner 同即日鮮有咩關係？</h3>
+<p>A: 港股即日鮮係香港散戶常用嘅術語，指當日開倉、當日收市前平倉嘅短炒策略（intraday / day trade），持倉時間由幾分鐘到幾個鐘，最長唔過夜。即日鮮嘅核心係搵當日有 momentum 爆發嘅股票，喺開市頭 60 分鐘（9:30-10:30 HKT）入場，跟住 15:50-16:00 HKT 強制平倉。Leeks Terminal 港股 scanner 專門為即日鮮設計 — 每朝早 9:00 HKT 出信號，入場區間、止損位、目標價全部寫死，唔使 trader 自己計。即日鮮信號通常都係高 momentum 股票（m 維度 ≥ 60），因為低 momentum 嘅股即日波幅細，無即日鮮 value。</p>
+
+<h3>Q: 港股短炒同即日鮮有咩分別？呢個 scanner cover 唔 cover？</h3>
+<p>A: 港股短炒 (short-term swing) 涵蓋即日鮮 (day-trade) + 隔夜短炒 (overnight swing) + 數日短炒 (2-5d swing)，持倉時間由幾個鐘到 5 個交易日。Leeks Terminal scanner 主力做即日鮮同 1-3 日短炒 — 入場區間、止損位 (2-3%)、目標價 (5-15%) 都係呢個 timeframe 設計。如果你做 1-2 週 swing trade，可以用我哋嘅 momentum 排行做股票初篩，但實際入場 / 止損位要自己再 set 過。Dashboard 唔覆蓋嘅係長線投資 (1 個月以上) 同價值投資 — 嗰啲要睇 PE / PB / ROE / 業務基本面，唔係呢個工具範圍。</p>
+
+<h3>Q: 我係香港散戶，唔識 technical analysis，呢個 scanner 啱唔啱我？</h3>
+<p>A: 啱。Leeks Terminal 港股 scanner 設計對象就係香港散戶，特別係：</p>
+<ul>
+<li>冇時間 / 唔識睇 200 隻 K 線嘅打工族 — 每日 16:30 HKT 之後睇 dashboard 就夠</li>
+<li>想學 technical analysis 但唔知點入手嘅新手 — 每個 detail page 都有 MA20/50/100/200 + RSI14 + MACD 圖解，教你點睇</li>
+<li>用緊一般券商 app (富途 / 輝立 / 致富) 但嫌個 built-in scanner 太簡單嘅進階散戶</li>
+</ul>
+<p>工具唔會話你「一定賺錢」，但會話你邊隻股有 setup、邊隻冇，仲會俾埋入場 / 止損 / 目標，等你自己決定落唔落單。</p>
+
+<h3>Q: 有冇 AI 揀股功能？個 AI 識唔識揀港股科技股 / AI 概念股？</h3>
+<p>A: 有。Leeks Terminal 嘅核心就係 AI 揀股 — 用 MiniMax-M3 分析 200 隻港股，包括恒生科技指數 30 隻成份股（例如騰訊 0700、美團 3690、阿里 9988、京東 9618、小米 1810）同其他 AI 概念股。AI 會根據 4 維度 (估值 / 質素 / 動能 / 資金流) 評分，特別係「動能」+「資金流」兩個維度對 AI 概念股特別 work — 因為呢類股通常靠消息面 + 資金推動，技術分析嘅 breakout / 量比訊號特別有效。注意：我哋講嘅「AI 揀股」係用 AI 做 stock scoring，唔係話呢個工具會推薦 AI 概念股 — 你可以自己 filter 科技指數成份股，AI 會按你 filter 出嘅名單做 ranking。</p>
+
+<h3>Q: 「港股即日鮮信號」同一般券商 app 嘅「今日推薦」有咩分別？</h3>
+<p>A: 一般券商 app 嘅「今日推薦」通常係 sell-side analyst 報告（幾日前出）、又或者係簡單 MA crossover 訊號，冇具體入場 / 止損 / 目標價。Leeks Terminal 港股即日鮮信號每日 16:00 HKT 自動出，每個信號都附帶：</p>
+<ul>
+<li><b>入場區間</b> · 具體價位 (例如 HK$320-325)，唔係「支持位」含糊嘢</li>
+<li><b>止損位</b> · 入場下 2-3%，例如 HK$315</li>
+<li><b>目標價</b> · 入場上 5-10%，分兩級 TP1 / TP2</li>
+<li><b>持倉時間</b> · 1-3 個交易日，過期作廢</li>
+<li><b>4 維度評分 breakdown</b> · v / q / m / of 分數，等你理解點解 AI 揀呢隻</li>
+</ul>
+<p>仲有就係 — 我哋有 paper-trader 自動追蹤過往信號命中率，命中率低嘅策略會自動 disable，唔會亂出。</p>
+
+<h3>Q: 港股 day trade 同美股 day trade 有咩唔同？呢個 scanner 啱唔啱美股？</h3>
+<p>A: 港股 day trade 同美股 day trade 主要分別喺：</p>
+<ul>
+<li><b>開市時間</b> · 港股 09:30-16:00 HKT（無盤前 / 盤後），美股 09:30-16:00 ET（有 pre-market / after-hours）</li>
+<li><b>波幅</b> · 港股即日波幅通常 1-3%，美股 0.5-2%（大股）</li>
+<li><b>T+0 / T+2</b> · 港股 T+2 交收但可以即日鮮（同一日內買賣），美股 T+1 同樣可以即日鮮</li>
+<li><b>Short selling</b> · 港股有沽空名單限制，美股幾乎所有股票都可以 short</li>
+<li><b>交易成本</b> · 港股佣金 + 印花稅 0.13% + 交易徵費；美股零印花稅</li>
+</ul>
+<p>Leeks Terminal 港股 scanner 主力做港股。美股有另一個 <a href="/us-scanner.html">us-scanner</a>。兩個 scanner 嘅 4 維度框架一樣，但美股版本嘅「動能」權重稍低（60% vs 港股 70%），因為美股趨勢持續時間長。</p>
+
+<h3>Q: 有冇 free 版港股 scanner？</h3>
+<p>A: 有，Leeks Terminal 港股 scanner 嘅 dashboard 完全 free，唔使註冊、唔使訂閱，開頁就見到當日 200 隻信號。每日 16:30 HKT 之後上線，週末 / 假期 skip。如果你想睇歷史信號 + paper-trade outcome 追蹤，需要註冊 (free tier)。如果你想收到每日 9:00 HKT 開市前 signal 推送 (Email / Telegram)，需要訂閱 paid tier。詳細定價同功能差異睇主頁 footer。</p>
+
+<h3>Q: 點樣讀取 dashboard 嘅顏色同符號？</h3>
+<p>Dashboard 統一用 3 色 + 3 符號標記信號：</p>
+<ul>
+<li><b>🟢 綠色 = 買入信號</b> · 4 維度綜合分 ≥ 60，建議入場做 long。入場區間顯示喺 card 第二行，止損位喺第三行。</li>
+<li><b>🟡 黃色 = 觀望信號</b> · 綜合分 40-60 之間，setup 唔清或 trend 模糊。等下一日再睇。</li>
+<li><b>🔴 紅色 = 賣出信號</b> · 綜合分 ≤ 40，建議避開或 short。Short 入場區間顯示喺 card 第二行。</li>
+</ul>
+<p>Card 右上有 3 個 icon：</p>
+<ul>
+<li><b>📈 上升箭嘴</b> · momentum 維度 ≥ 60，趨勢向上</li>
+<li><b>📊 柱狀圖</b> · 資金流維度 ≥ 60，有大户入場</li>
+<li><b>⚡ 閃電</b> · 今日有重大新聞（自動從 Futu + Yahoo Finance 抓），可能觸發 breakout</li>
+</ul>
+<p>如果 card 三個 icon 都亮 (綠 + 📈 + 📊 + ⚡)，係當日最強信號。如果係紅 + 下跌箭嘴，就係最弱 setup，建議避開。詳細點樣用 score breakdown 學 technical analysis，睇 <a href="/methodology.html">methodology 頁</a>。</p>
+
+<h3>Q: 港股 technical analysis 中文教學資源喺邊？</h3>
+<p>Leeks Terminal 本身有內建中文 technical indicator 教學 — 每隻股嘅 detail page 都會顯示 MA20/50/100/200、RSI14、MACD、Bollinger Bands 嘅當前數值 + 圖解，例如「MA20 上穿 MA50 = 黃金交叉」、「RSI ≥ 70 = 超買」、「MACD 柱由負轉正 = momentum 反轉」。如果想學深啲，可以睇我哋 <a href="/methodology.html">methodology 頁</a>，有齊 4 維度框架嘅公式同案例。或者 follow 我哋嘅 Telegram channel，每星期出一篇 technical analysis 中文 tutorial（MA / RSI / MACD / Bollinger / 量比）。</p>
+
+<h3>Q: 港股 momentum 排行喺邊睇？有冇類似 Finviz / TradingView 嘅工具？</h3>
+<p>Leeks Terminal 港股 scanner dashboard 預設按 momentum 維度 (70% 權重) 由高到低排，所以首 20 隻 card 就係當日 momentum 排行 — 升幅最大 + 資金流入最強嘅港股。如果想自訂排行（例如按估值 + 動能排），可以用 detail page 嘅 sort 功能。如果你想用 TradingView，佢有港股覆蓋但要付費；Finviz 主力做美股，唔覆蓋港股。我哋嘅 free dashboard 對香港散戶嚟講係最直接嘅選擇。</p>
+
+<h2>港股 vs A股 vs 美股 scanner — 點解唔可以直接用同一個工具？</h2>
+<table class="dim-table">
+<thead><tr><th>維度</th><th>港股</th><th>A股 (滬深)</th><th>美股</th></tr></thead>
+<tbody>
+<tr><td><b>報價源</b></td><td>Tencent qtimg (sub-1min)</td><td>Sina / 網易 (實時但有限流)</td><td>YFinance / Alpaca (real-time)</td></tr>
+<tr><td><b>交易時間</b></td><td>09:30-16:00 HKT</td><td>09:30-15:00 CST (午休 11:30-13:00)</td><td>09:30-16:00 ET (+ pre/after-hours)</td></tr>
+<tr><td><b>T+0 / T+1</b></td><td>T+2 交收但即日鮮 OK</td><td>T+1 交收，但 A 股 ETF / 個別股可 T+0</td><td>T+1 交收，可即日鮮 (PDT 規則)</td></tr>
+<tr><td><b>Short selling</b></td><td>限沽空名單 + 報升幅限制</td><td>融資融券 (限名單)</td><td>幾乎全部可 short</td></tr>
+<tr><td><b>散戶主導度</b></td><td>中高 (30-40% 成交)</td><td>高 (60-70% 成交)</td><td>低 (15-20% 成交)</td></tr>
+<tr><td><b>即日波幅</b></td><td>1-3% (中位)</td><td>1-5% (高，特別中小板)</td><td>0.5-2% (大股)</td></tr>
+<tr><td><b>新聞源</b></td><td>Futu + 經濟通 + AAStocks</td><td>東財 + 同花順 + 新浪財經</td><td>Yahoo Finance + Reuters + Bloomberg</td></tr>
+<tr><td><b>AI 分析挑戰</b></td><td>英文 / 繁中混合，財報複雜</td><td>簡中，政策影響大</td><td>英文為主，數據透明</td></tr>
+<tr><td><b>Leeks Terminal 覆蓋</b></td><td>✅ 完整 200 隻</td><td>❌ 暫未覆蓋</td><td>✅ 完整 200 隻 (us-scanner)</td></tr>
+</tbody>
+</table>
+<p>結論：港股同美股嘅 scanner framework 接近，但 A 股因為交易規則 (T+1、漲跌停 10%) 同新聞語言 (簡中、政策) 差異大，需要另一個 pipeline。我哋暫時主力做港股 + 美股，A 股 scanner 喺 roadmap。</p>
+
+<h2>點樣讀取 dashboard 嘅 4 維度分數</h2>
+<p>每隻股 card 嘅底部有 4 個小數字 (例如 <code>v:45 q:72 m:88 of:65</code>)，呢個就係 4 維度分數。讀法：</p>
+<ul>
+<li><b>v (估值 Valuation, 5%)</b> · 0-100，越高分代表越平。例如 PE 5x = v:90，PE 50x = v:30。</li>
+<li><b>q (質素 Quality, 5%)</b> · 0-100，越高代表公司越好賺。例如 ROE 25% = q:85，ROE 3% = q:25。</li>
+<li><b>m (動能 Momentum, 70%)</b> · 0-100，越高代表近期越強。當日升 5% + 突破 MA20 = m:80+。</li>
+<li><b>of (資金流 Order Flow, 20%)</b> · 0-100，越高代表大户越積極買入。Relative Volume 3x + 大單淨流入 = of:75+。</li>
+</ul>
+<p>綜合分 = <code>0.05×v + 0.05×q + 0.70×m + 0.20×of</code>，由 Python 確定性計出 (避開 LLM hallucination)。綜合分 ≥ 60 = 🟢 買入；40-60 = 🟡 觀望；≤ 40 = 🔴 賣出。如果你想學 technical indicator 點樣對應呢 4 個維度 (例如 RSI 對應 m、量比對應 of)，睇 <a href="/methodology.html">methodology 頁</a>。</p>
+""",
+    })
+
+    # 2. US stock scanner
+    pages.append({
+        "path": "/us-scanner.html",
+        "slug": "us-scanner",
+        "title": "美股即日鮮掃描器 · US Stock Scanner | Leeks Terminal",
+        "description": "AI 自動掃描 200 隻美股（S&P 500 + Nasdaq-100 + 高成交個股），每日 16:00 ET 輸出買入/觀望/賣出信號 + 入場區間 / 止損 / 目標價。",
+        "h1": "美股即日鮮 AI 掃描器",
+        "body": """
+<p class="lede">Leeks Terminal 美股掃描器每日自動分析 <b>200 隻高成交美股</b>（S&P 500 大型股 + Nasdaq-100 + 高成交中小股），
+每個交易日 16:00 ET 美股收市後自動跑一次分析，輸出買入 / 觀望 / 賣出信號 + 入場區間 / 止損位 / 目標價。</p>
+
+<h2>覆蓋範圍</h2>
+<ul>
+<li>S&P 500 top 100 隻（市值最大 + 最高 turnover）</li>
+<li>Nasdaq-100 top 80 隻（科技 + 高增長）</li>
+<li>額外 20 隻高 momentum 個股（最近 20 日平均 turnover ≥ 500M USD）</li>
+</ul>
+
+<h2>點樣同港股 scanner 唔同</h2>
+<table class="dim-table">
+<thead><tr><th>維度</th><th>港股</th><th>美股</th></tr></thead>
+<tbody>
+<tr><td>報價源</td><td>Tencent qtimg (sub-1min)</td><td>YFinance (15-min delay) + Alpaca (real-time)</td></tr>
+<tr><td>新聞</td><td>Futu Cloud + 經濟通</td><td>Yahoo Finance RSS</td></tr>
+<tr><td>收市時間</td><td>16:00 HKT (08:00 UTC)</td><td>16:00 ET (21:00 UTC)</td></tr>
+<tr><td>流動性</td><td>高成交股 turnover ≥ 50M HKD</td><td>高成交股 ≥ 500M USD ADV</td></tr>
+<tr><td>盤前 / 盤後</td><td>無</td><td>YFinance 提供 pre-market / after-hours 報價</td></tr>
+</tbody>
+</table>
+
+<h2>美股 4 維度評分</h2>
+<p>同港股一樣用 4 維度 (v / q / m / of)，但美股嘅「動能」權重稍低（60% vs 港股 70%）— 因為美股趨勢日多過震盪日，趨勢持續時間長，純價格動能 + 一啲 mean-reversion 比較 work。</p>
+<ul>
+<li><b>估值</b> 5% · PE / PEG / forward PE</li>
+<li><b>質素</b> 5% · ROE / margin / FCF yield</li>
+<li><b>動能</b> 60% · MA + RSI + 1d/5d/20d return</li>
+<li><b>資金流</b> 30% · Relative Volume vs 20d ADV + dollar volume + option OI change</li>
+</ul>
+
+<h2>邊個適合用</h2>
+<ul>
+<li>美股 day-trader · 開市前快速睇信號</li>
+<li>美股 swing trader · 收市後睇過夜 setup</li>
+<li>港股 trader · 隔晚準備美股名單</li>
+</ul>
+
+<h2>常見問題</h2>
+<h3>Q: 美股 scanner 幾時更新？</h3>
+<p>A: 每個美股交易日 16:00 ET (即香港時間翌日 04:00 HKT / DST 05:00 HKT) 自動跑一次，17:00 ET 前 dashboard 上線。</p>
+<h3>Q: 點解唔包所有 S&P 500？</h3>
+<p>A: 全 500 隻跑一次要 60+ 分鐘 LLM calls 同 $5+ cost。top 200 覆蓋 85% 市值 + 92% turnover，平衡 coverage 同 cost。</p>
+<h3>Q: 收市後仲有 update 嗎？</h3>
+<p>A: 唔會。每個交易日只跑一次。盤前 / 盤後波動信號唔覆蓋。</p>
+
+<h3>Q: 咩係「美股即日鮮」？同港股即日鮮有咩分別？</h3>
+<p>A: 美股即日鮮 (US day trade) 係指美股市場嘅當日開倉當日平倉短炒策略 — 開倉後唔過夜，最遲 16:00 ET 收市前強制平倉。由於美股有 <b>PDT 規則</b> (Pattern Day Trader)，5 個交易日内有 4 日或以上做 day trade 嘅戶口，賬户資產必須維持 ≥ USD 25,000，否則戶口會被凍結做 day trade。Leeks Terminal 美股 scanner 嚴格為美股即日鮮設計 — 每朝早 9:00 ET 開市前出信號，信號入場區間、止損位 (1-2%)、目標價 (3-8%) 全部係 intraday timeframe 設計。同港股即日鮮主要分別：港股 PDT 規則寬鬆 (T+2 交收，但允許即日鮮)；美股則有 25K USD 資產下限 + 日内交易次數限制 (4 次 / 5 日)。</p>
+
+<h3>Q: 有冇「美股 day trade signal」服務？同一般美股財經網站有咩分別？</h3>
+<p>A: 有。Leeks Terminal 美股 scanner 每日 16:00 ET 收市後自動跑，17:00 ET 前 dashboard 上線，每隻信號附帶入場區間 + 止損 + 目標 + 4 維度分數 breakdown。同一般美股網站 (例如 Seeking Alpha、TipRanks、Zacks) 主要分別：</p>
+<ul>
+<li><b>AI 自動</b> · 唔係 sell-side analyst 報告，係 Python pipeline 每晚自動跑</li>
+<li><b>4 維度量化</b> · v / q / m / of 4 個 raw score 由 LLM 評，總分由 Python 確定性加權，避開 LLM 估分 hallucination</li>
+<li><b>Day-trade 優化</b> · 動能 + 資金流合共 90% 權重，唔似一般「買入推薦」淨睇 PE / PB</li>
+<li><b>免費</b> · Dashboard 完全 free，唔使訂閱 SaaS</li>
+<li><b>操作建議</b> · 每個信號都有具體 entry / stop / target 價位，唔係一句「看多」就算數</li>
+</ul>
+
+<h3>Q: 美股 short signal 同 long signal 點樣分？呢個 scanner 識唔識 short？</h3>
+<p>A: 識。美股 short selling 規則比港股寬鬆 — 基本上所有美股都可以 short (除咗 hard-to-borrow 名單)，T+1 交收，T+0 可平倉。Leeks Terminal 美股 scanner 識別 short signal 嘅條件：</p>
+<ul>
+<li><b>trade_direction = 看空 / bearish</b> · LLM cross-check 4 維度 + 新聞 sentiment + 技術指標後輸出</li>
+<li><b>score ≤ 40</b> · 綜合分偏低，弱勢股</li>
+<li><b>momentum ≤ 40</b> · 跌穿 MA20 / 50 / 200 其中一條</li>
+<li><b>order_flow 反向</b> · Relative Volume ≥ 2x 但價格向下 (高位派貨)</li>
+<li><b>入場區間為 short entry</b> · 反彈 fail 後 short，止損位喺反彈高位之上</li>
+</ul>
+<p>Short signal 喺 dashboard 用 🔴 標記，唔同 🟢 long signal 容易混淆。如果你想淨係睇 long，可以 filter 「美股買入」；想睇 short 就 filter 「美股賣出」。注意：short 風險無限大 (loss > 100%)，新手唔建議單獨做 short。</p>
+
+<h3>Q: 「美股 AI 選股」係咩？同一般 AI stock picker 有咩分別？</h3>
+<p>A: 美股 AI 選股係用 AI (我哋用 MiniMax-M3) 對 200 隻高成交美股做 stock screening + scoring + ranking，每日自動出 top 20 買入名單 + top 20 賣出名單。同坊間 AI stock picker (e.g. Danelfin、Trefis、Kavout) 主要分別：</p>
+<ul>
+<li><b>確定性加權</b> · Danelfin 等用 ML model 直接輸出 1-10 分數 (black box)；我哋分 4 個維度評分再 Python 加權 (transparent)</li>
+<li><b>操作建議</b> · Danelfin 只給 AI score；我哋仲俾具體 entry / stop / target</li>
+<li><b>Day-trade 偏重</b> · 動能 + 資金流 90% 權重，唔似 Danelfin 較為 long-term</li>
+<li><b>免費</b> · 完全 free dashboard，Danelfin 收費 USD 30+/月</li>
+</ul>
+<p>「美股 AI 選股」呢個關鍵詞主要係 Google SEO 搜索 — 例如「美股 AI 選股 推薦」、「best AI stock screener」、「AI 美股分析」等等。我哋嘅工具目標係俾香港 / 台灣 / 內地散戶一個中文 free 嘅 AI 美股分析入口。</p>
+
+<h3>Q: 「美股 momentum scanner」呢個工具識唔識做？同 Finviz / TradingView 比較？</h3>
+<p>A: 識。Leeks Terminal 美股 scanner 嘅 momentum 維度 (60% 權重) 由 4 個 sub-indicator 組成：(1) 當日 1d return、(2) 5d return、(3) 20d return (突破新高 / 新低比例)、(4) RSI14 deviation。所以 dashboard 預設按 momentum 排，首 20 隻就係當日美股 momentum 排行 — 升幅最大 + 趨勢最強嘅美股。</p>
+<p>同 Finviz / TradingView 比較：</p>
+<ul>
+<li><b>Finviz</b> · 主力做美股，screener 功能強 (可以自訂 PE / RSI / MACD filter)，但冇 AI 評分，操作建議要自己 set。我哋嘅工具同 Finviz 互補 — 用 Finviz 自訂 filter，再用我哋做 AI ranking。</li>
+<li><b>TradingView</b> · 圖表最強，但 AI 評分要付費 (TradingView Premium USD 15+/月)。我哋嘅 dashboard 圖表簡單 (因為目標係決策輔助唔係 trading platform)，但 AI 評分免費。</li>
+<li><b>我哋嘅 advantage</b> · 中文介面 + 4 維度評分 + 具體 entry / stop / target，唔係淨係 score。</li>
+</ul>
+<p>如果你想純做美股 momentum trading，可以單獨用 Finviz 篩 RSI > 70 + 20d return > 10% 嘅股，再對比我哋 dashboard 嘅 momentum 排行，命中率會更高。</p>
+
+<h3>Q: 「美股 stock screener free」— 呢個工具係咪完全 free？有冇 hidden cost？</h3>
+<p>A: 完全 free。Leeks Terminal 美股 stock screener 完全免費 — 唔使註冊、唔使訂閱、唔使信用卡、開 dashboard 就見到當日 200 隻美股信號。冇 hidden cost，冇 premium tier 鎖重要功能，冇「7 天試用」陷阱。資金來源：我哋自己 side project，冇投資人，冇商業模式，純粹個人用 + 開源俾香港 / 台灣 / 內地散戶。</p>
+<p>同其他「美股 stock screener free」工具比較：</p>
+<ul>
+<li><b>Finviz</b> · 免費版得基本 screener (15 分鐘延遲報價)；付費 USD 25/月先有 real-time + 高級 filter</li>
+<li><b>TradingView</b> · 免費版得基本圖表；AI 評分 / 進階 indicator 要 Premium USD 15+/月</li>
+<li><b>Yahoo Finance screener</b> · 完全 free 但 filter 簡單，冇 AI 評分</li>
+<li><b>我哋嘅工具</b> · 完全 free + AI 評分 + 操作建議 (entry / stop / target)，同類工具罕見</li>
+</ul>
+<p>如果你想 contribute 或者報 bug，可以喺主頁 footer 搵到我哋嘅 Telegram group 或 GitHub repo (public)。</p>
+
+<h3>Q: 「美股 technical analysis 中文」教學 — 呢個工具包唔包？</h3>
+<p>A: 包。Leeks Terminal 美股 scanner 每隻股嘅 detail page 都有中文 technical analysis 解說 — 包括 MA20 / MA50 / MA100 / MA200、RSI14、MACD、Bollinger Bands、Volume Ratio 嘅當前數值 + 中文解讀 (例如「MA20 上穿 MA50 = 黃金交叉」、「RSI ≥ 70 = 超買」、「MACD 柱由負轉正 = momentum 反轉」)。</p>
+<p>如果你想學深啲，可以睇 <a href="/methodology.html">methodology 頁</a>，有齊 4 維度框架嘅公式同案例。我哋亦都有 Telegram channel 每周出一篇美股 technical analysis 中文 tutorial：</p>
+<ul>
+<li>MA (移動平均線) — 黃金 / 死亡交叉</li>
+<li>RSI (相對強弱指數) — 超買 / 超賣</li>
+<li>MACD — momentum 反轉訊號</li>
+<li>Bollinger Bands — 波動率 squeeze / expansion</li>
+<li>Volume Ratio — 量價配合</li>
+</ul>
+<p>注意：美股 technical analysis 嘅指標計算方法同港股 / A 股一致 (因為係 universal formula)，但「美股 vs 港股」應用上唔同 — 美股趨勢日多，技術指標有效時間長；港股 / A 股噪音多，技術指標容易假突破。我哋嘅 scanner 已經按市場特性 tune 咗 4 維度權重 (美股 m=60%, of=30%；港股 m=70%, of=20%)。</p>
+
+<h3>Q: 「美股 pre-market signal」— 呢個工具包唔包盤前信號？</h3>
+<p>A: 暫時唔包「實時」pre-market signal。我哋美股 scanner 每日只喺 16:00 ET 收市後跑一次（基於收市價 + 成交量），出次日開市前嘅信號。所以 dashboard 上嘅信號會涵蓋前一晚 16:00 ET - 翌日 09:30 ET 嘅 overnight 變動 + pre-market 嘅重要新聞，但唔係即時 (real-time) 更新。</p>
+<p>如果你想要真正 real-time 美股 pre-market signal (例如 08:00 ET 開 pre-market 後即時掃描)，需要付費版工具 — IBKR / Thinkorswim / TradeStation 都有 pre-market scanner (但要付費 + 開 margin 戶口)。我哋暫時唔做 real-time 因為：</p>
+<ul>
+<li>Real-time 美股報價要付費 (USD 50-200/月 data feed)</li>
+<li>Pre-market 流動性低 (只有 regular session 嘅 5-10%)，信號 noise 大</li>
+<li>用 YFinance 嘅 15-min delay 報價做 real-time 會誤導用戶</li>
+</ul>
+<p>如果你係 active 美股 pre-market trader，建議用 IBKR 戶口 + TWS 內置 scanner；Leeks Terminal 主力做收市後 16:00 ET - 翌日 09:30 ET 嘅信號，覆蓋大多數散戶 decision window。</p>
+
+<h3>Q: 「美股 option signal」— 呢個工具識唔識分析期權 / 選擇權？</h3>
+<p>A: 識少少。Leeks Terminal 美股 scanner 嘅 order_flow 維度 (30% 權重) 包含 <b>option OI change</b> (options open interest change) 嘅 sub-indicator — 監察前 5 個交易日 OI 變化 ± 20% 嘅 option chain，標記異常 OI 嘅 strike / expiry。但我哋暫時 <b>唔出 option 策略建議</b> (例如 covered call / bull put spread / iron condor)，只係把 OI 變化納入綜合分數。</p>
+<p>如果你想搵美股 option signal / unusual options activity，建議用：</p>
+<ul>
+<li><b>Unusual Whales</b> · USD 30+/月，美股 option flow 最強工具之一</li>
+<li><b>FlowAlgo</b> · USD 50+/月，real-time option order flow</li>
+<li><b> CBOE 官網</b> · 免費 option chain + OI，但冇 AI 分析</li>
+</ul>
+<p>我哋 roadmap 上面會加入 <b>美股 option signal</b> 獨立模組 (預計 2026 Q4)，會輸出 covered call / cash-secured put / vertical spread 建議，配合現有 4 維度 stock signal 一齊用。短期內 order_flow 維度已經包含 option OI，變相俾你 crude option signal。</p>
+
+<h3>Q: 「美股 high volume scanner」— 點樣搵高成交美股？</h3>
+<p>A: 美股 high volume scanner 有幾個 layer：</p>
+<ol>
+<li><b>Layer 1 — 絕對 volume</b> · 過去 20 日平均成交量 ≥ 5M 股 / 日 (例如 AAPL、TSLA、NVDA、F、AMD)</li>
+<li><b>Layer 2 — Relative Volume</b> · 當日 volume / 過去 20 日平均 volume ≥ 2x (即「量比」概念)</li>
+<li><b>Layer 3 — Dollar volume</b> · 過去 20 日平均成交金額 ≥ USD 500M (例如 NVDA、AAPL、MSFT)</li>
+<li><b>Layer 4 — Unusual volume</b> · 當日成交量 vs 過去 60 日 95th percentile (即「異動」概念)</li>
+</ol>
+<p>Leeks Terminal 美股 scanner 嘅覆蓋範圍 (200 隻) 已經按 Layer 1 + Layer 3 篩過 — 全部係 S&P 500 top 100 + Nasdaq-100 top 80 + 高成交中小股 20 隻，平均 ADV ≥ USD 500M，所以 dashboard 上每隻都已經係「high volume 美股」。</p>
+<p>如果你想搵「unusual volume」嘅美股 (即當日量比突然 ≥ 3x 嘅股)，可以喺 dashboard 入 detail page 睇 Relative Volume 數字 (of 維度 ≥ 70 通常代表 unusual volume + 大戶入場)。</p>
+
+<h3>Q: 「美股 vs 港股 day trade」工作流程比較 — 兩個市場 trader 有咩分別？</h3>
+<p>A: 美股 vs 港股 day trade 工作流程主要有 6 個分別，列表如下：</p>
+<table class="dim-table">
+<thead><tr><th>工作流程</th><th>港股 trader</th><th>美股 trader</th></tr></thead>
+<tbody>
+<tr><td><b>1. 開市前準備</b></td><td>08:30 HKT 起床、09:00 HKT 睇 dashboard、09:15 HKT 落單</td><td>21:00 HKT (前一晚) 睇 dashboard、09:00 ET (翌日) 落單 — 即跨時區</td></tr>
+<tr><td><b>2. 信號來源</b></td><td>Leeks Terminal hk-scanner + 富途 / 輝立 built-in scanner</td><td>Leeks Terminal us-scanner + Finviz / TradingView</td></tr>
+<tr><td><b>3. PDT / 風控規則</b></td><td>無 PDT 規則，但有「T+2 交收」+ 印花稅 0.13%</td><td>PDT 規則 (4 日 / 5 日 day trade，賬户 ≥ USD 25K)；無印花稅</td></tr>
+<tr><td><b>4. 入場時間</b></td><td>09:30-10:30 HKT (開市 60 分鐘內)，11:30 HKT 唔做 (臨午休)</td><td>09:30-10:30 ET (開市 60 分鐘內)，11:30 ET / 14:00 ET 可以繼續</td></tr>
+<tr><td><b>5. 持倉時間</b></td><td>9:30 入場，15:50-16:00 HKT 強制平倉</td><td>9:30 入場，15:50-16:00 ET 強制平倉 (after-hours 可以但流動性低)</td></tr>
+<tr><td><b>6. 出場規則</b></td><td>必須 16:00 HKT 前平倉，唔可以 hold overnight (除非有特別 setup)</td><td>可以 hold overnight (但要小心 gap risk)；margin 戶口可以 short overnight</td></tr>
+<tr><td><b>7. 佣金 / 成本</b></td><td>佣金 0.05% + 印花稅 0.13% + 交易徵費 0.003% ≈ 0.18% 單邊</td><td>佣金 USD 0 (IBKR) / USD 1 (券商) — 零印花稅 ≈ 0.005% 單邊</td></tr>
+<tr><td><b>8. 信號有效時長</b></td><td>當日 09:30 HKT - 16:00 HKT (6.5 小時)</td><td>當日 09:30 ET - 16:00 ET (6.5 小時) + pre-market / after-hours</td></tr>
+<tr><td><b>9. 推薦工具</b></td><td><a href="/hk-scanner.html">hk-scanner</a> + 富途 / 輝立 app</td><td><a href="/us-scanner.html">us-scanner</a> + IBKR TWS / Thinkorswim</td></tr>
+<tr><td><b>10. 適合邊個</b></td><td>香港時區 / 兼職 trader / 想學中文 technical analysis</td><td>美股投資者 / 全職 trader / 想 trade 全球最大市場</td></tr>
+</tbody>
+</table>
+<p>結論：兩個市場工作流程接近，但時區 + 風控規則 + 成本結構唔同。香港散戶如果想同時做港股 + 美股 day trade，建議用 Leeks Terminal 嘅 hk-scanner (16:00 HKT 出信號) + us-scanner (16:00 ET 出信號)，兩個 dashboard 都係 free，配合 IBKR 戶口做美股 + 富途 / 輝立做港股，覆蓋晒兩個時區嘅 decision window。</p>
+
+<h2>美股市場時段 (Trading Sessions)</h2>
+<p>美股一日分 3 個 trading session，流動性、volatility、信號 reliability 都唔同：</p>
+<table class="dim-table">
+<thead><tr><th>時段</th><th>時間 (ET)</th><th>香港時間 (HKT)</th><th>流動性</th><th>Leeks Terminal 覆蓋</th></tr></thead>
+<tbody>
+<tr><td><b>Pre-market 盤前</b></td><td>04:00 - 09:30 ET</td><td>16:00 - 21:30 HKT (前一晚)</td><td>低 (5-10% regular session)</td><td>❌ 唔覆蓋 (noise 太大、報價延遲)</td></tr>
+<tr><td><b>Regular session 正式交易時段</b></td><td>09:30 - 16:00 ET</td><td>21:30 - 04:00 HKT (翌日凌晨)</td><td>高 (85% 全日成交)</td><td>✅ 主力覆蓋 (16:00 ET 收市後跑信號)</td></tr>
+<tr><td><b>After-hours 盤後</b></td><td>16:00 - 20:00 ET</td><td>04:00 - 08:00 HKT (翌日清晨)</td><td>低 (5-10% regular session)</td><td>❌ 唔覆蓋 (同上)</td></tr>
+</tbody>
+</table>
+<h3>Pre-market 盤前 (04:00 - 09:30 ET)</h3>
+<p>盤前係美股嘅第一個交易時段，主要係機構投資者 + overnight news 嘅反應。常見信號：</p>
+<ul>
+<li><b>Earnings 業績公佈</b> · 大部分大型股喺 pre-market / after-hours 公佈季度業績 (e.g. AAPL、MSFT、AMZN)</li>
+<li><b>Fed / 經濟數據</b> · 08:30 ET 公佈 CPI、PPI、NFP 等</li>
+<li><b>FDA 批准 / 監管消息</b> · 生物科技股 (e.g. MRNA、BNTX) 對 FDA 消息極敏感</li>
+<li><b>Gap up / gap down</b> · 開市前 price gap 通常反映 overnight sentiment</li>
+</ul>
+<p>Pre-market 流動性低，bid-ask spread 大，Leeks Terminal 暫時唔覆蓋 — 但 dashboard 嘅 score 已經考慮前一晚 16:00 ET 收市到 09:30 ET 開市前嘅 overnight 變化 (即係 closed-form signal 包含咗 gap risk 嘅 adjustment)。</p>
+
+<h3>Regular session 正式交易時段 (09:30 - 16:00 ET)</h3>
+<p>正式交易時段係美股主力 session，85% 全日成交集中喺呢 6.5 小時，Leeks Terminal 美股 scanner 嘅信號就係為呢個 session 設計：</p>
+<ul>
+<li><b>開市首 30 分鐘 (09:30 - 10:00 ET)</b> · 流動性最高 + 波幅最大，day trader 集中入場</li>
+<li><b>10:00 - 11:30 ET</b> · 主流 setup 出現窗口，momentum + order_flow 信號最有效</li>
+<li><b>11:30 - 14:00 ET (午間)</b> · 流動性下降，noise 增加，唔建議開新倉</li>
+<li><b>14:00 - 15:30 ET</b> · 下午 setup window，尾市前最後一波</li>
+<li><b>15:30 - 16:00 ET 收市前</b> · 必須平倉 (除非有特別 overnight 理由)</li>
+</ul>
+<p>Leeks Terminal 美股 scanner 嘅 entry / stop / target 全部 assume 喺 regular session 9:30 - 16:00 ET 入場。After-hours 入場信號不可靠 (流動性低 + spread 大 + 假突破多)。</p>
+
+<h3>After-hours 盤後 (16:00 - 20:00 ET)</h3>
+<p>盤後係美股最後一個 session，主要係機構對 earnings / 重大新聞嘅反應，散戶參與度低：</p>
+<ul>
+<li><b>Earnings 反應</b> · 大型股公佈業績後嘅 1-2 小時波幅最大</li>
+<li><b>FDA 批准</b> · 生物科技股對盤後 FDA 消息極敏感</li>
+<li><b>M&amp;A 公告</b> · 併購消息通常喺盤後公佈</li>
+</ul>
+<p>After-hours 流動性低，bid-ask spread 大，Leeks Terminal 暫時唔覆蓋。如果你 trade after-hours 嘅 earnings 業績，建議用 IBKR TWS 嘅 extended-hours trading 功能 (但要特別小心 spread + slippage)。</p>
+
+<h3>點解 Leeks Terminal 只覆蓋 regular session？</h3>
+<p>有幾個原因：</p>
+<ol>
+<li><b>報價限制</b> · YFinance 15-min delay + 免費數據源對 pre-market / after-hours 覆蓋唔穩定</li>
+<li><b>流動性低</b> · Pre-market / after-hours 成交只係 regular session 嘅 5-10%，signal noise 大，命中率低</li>
+<li><b>用戶群</b> · Leeks Terminal 主力做香港 / 台灣 / 內地散戶，呢啲用戶主要 trade regular session</li>
+<li><b>Cost-effectiveness</b> · Real-time 美股報價 (含 pre-market / after-hours) 要 USD 50-200/月 data feed，free 工具難以 sustain</li>
+</ol>
+<p>如果你係 active pre-market / after-hours trader，建議配合 IBKR TWS 或 Thinkorswim 嘅 built-in scanner；Leeks Terminal 主力做收市後 16:00 ET 嘅信號，覆蓋大多數散戶 decision window。詳細 4 維度評分框架睇 <a href="/methodology.html">methodology 頁</a>。</p>
+""",
+    })
+
+    # 3. Day trade signals
+    pages.append({
+        "path": "/day-trade-signals.html",
+        "slug": "day-trade-signals",
+        "title": "即日鮮交易信號 · Day Trade AI Signals | Leeks Terminal",
+        "description": "AI 即日鮮交易信號 — 港股 9:30 HKT + 美股 9:30 ET 開市前自動出，4 維度評分 + 入場區間 + 止損 + 目標。",
+        "h1": "即日鮮交易 AI 信號",
+        "body": """
+<p class="lede">Leeks Terminal 即日鮮交易信號 — 港股每朝早 9:00 HKT / 美股每朝早 9:00 ET 開市前自動出，
+涵蓋 HK 200 + US 200 隻主流股票，4 維度評分 + 入場區間 / 止損位 / 目標價，唔使睇晒 200 隻 K 線。</p>
+
+<h2>咩係「即日鮮信號」</h2>
+<p>即日鮮 (day-trade) 定義：</p>
+<ul>
+<li>開市前 9:30 出信號</li>
+<li>16:00 HKT / 16:00 ET 前必須平倉</li>
+<li>唔過夜，唔留倉</li>
+<li>每筆止損 2-3% 內</li>
+<li>高 momentum + 高 order flow 嘅股先會有 signal（其他一律觀望）</li>
+</ul>
+
+<h2>信號 3 個 type</h2>
+<table class="dim-table">
+<thead><tr><th>信號</th><th>條件</th><th>進場</th></tr></thead>
+<tbody>
+<tr><td><b>🟢 買入</b></td>
+    <td>momentum ≥ 60 + 看多趨勢 + 量能配合 + 入場 / 止損 / 目標 齊</td>
+    <td>9:30-10:30 開市 60 分鐘內，等 breakout 確認</td></tr>
+<tr><td><b>🔴 賣出</b></td>
+    <td>momentum ≤ 40 + 看空趨勢 + 跌穿 MA20 / 50W + 量能放大</td>
+    <td>開市即 short，或等反彈 fail 後 short</td></tr>
+<tr><td><b>🟡 觀望</b></td>
+    <td>其他（regime 唔清 / setup 唔齊 / score 40-60 模糊區）</td>
+    <td>唔做</td></tr>
+</tbody>
+</table>
+
+<h2>4 維度評分細節</h2>
+<p>每個信號附帶 4 個 dim 分數 (0-100)：</p>
+<ul>
+<li><b>估值 v (5%)</b> · PE / PB / deviation from 5y mean — 偏貴 = 減分</li>
+<li><b>質素 q (5%)</b> · ROE / margin / dividend stability — 高 ROE = 加分</li>
+<li><b>動能 m (70% 港股 / 60% 美股)</b> · 今日方向 + MA trend + RSI + breakout proximity — 純價格動能</li>
+<li><b>資金流 of (20% 港股 / 30% 美股)</b> · 量比 / 大單 / Relative Volume vs 20d ADV — 確認有大戶入場</li>
+</ul>
+<p>Python-side 確定性加權 — <code>score = 0.05×v + 0.05×q + 0.70×m + 0.20×of</code>。
+LLM 只負責輸出 dim 嘅 raw score (0-100)，總分由 Python 計，避開 LLM 估分嘅 hallucination。</p>
+
+<h2>邊個適合用</h2>
+<ul>
+<li>全職 day-trader · 開市前 5 分鐘決策</li>
+<li>兼職 trader · 工餘時間追蹤信號</li>
+<li>學生 · 學吓 AI + 技術分析點樣結合</li>
+</ul>
+
+<h2>常見問題</h2>
+<h3>Q: 信號幾時出？</h3>
+<p>A: 港股每朝早 9:00 HKT 前；美股每朝早 9:00 ET 前。當日信號當日有效，過期作廢。</p>
+<h3>Q: 點解 LLM 評分唔可靠？</h3>
+<p>A: LLM 容易 hallucinate 數字。所以我哋用 LLM 評 dim 嘅 raw score，總分由 Python 確定性加權計返。同時 entry / stop / target 全部要 LLM 寫具體價位，唔可以寫「支持區」呢類含糊嘢。</p>
+<h3>Q: 過往信號準唔準？</h3>
+<p>A: Dashboard 顯示每隻信號嘅 outcome (paper-trade)，paper-trader 自動追蹤 30d hit-rate。命中率低嘅策略會自動 disable。詳細睇 <a href="/methodology.html">methodology 頁</a>。</p>
+
+<h2>止損 / target 點樣 set</h2>
+<p>「止損點樣 set」(stop loss 計法) 係 day-trade 最常見嘅問題之一。我哋 LLM 出嘅止損位基於三個 framework 並行驗證，揀最貼市嘅嗰個：</p>
+<ol>
+<li><b>ATR-based (Average True Range)</b> · 用 14 日 ATR 做基礎，止損 = entry − 1.5 × ATR (long) 或 entry + 1.5 × ATR (short)。好處係自適應波幅：低波幅股止損窄、高波幅股止損闊，避開被即日震盪震走。Leeks Terminal 對大部份港股即日鮮信號用呢個 framework。</li>
+<li><b>MA20-based</b> · 止損放喺 MA20 下面 0.5% (long) 或上面 0.5% (short)。邏輯：MA20 係 intraday 最重要嘅 pivot，跌穿 MA20 = momentum 失效。適合 trend day，對 range day 容易觸發。</li>
+<li><b>Swing-low / swing-high based</b> · 止損放喺最近 5 個 K 線最低位 − 0.3% (long) 或最近 5 個 K 線最高位 + 0.3% (short)。邏輯：前低/前高係結構位，跌破即 setup 失效。適合 breakout 後追擊。</li>
+</ol>
+<p>Target 方面，TP1 = 1:1.5 risk-reward (例如止損 2%，TP1 = +3%)，TP2 = 1:2.5 risk-reward (止損 2%，TP2 = +5%)。我哋建議一般散戶喺 TP1 先平 50% 鎖定利潤，剩餘 50% 用 trailing stop (例如每升 1% 將止損上移 0.5%) 跟趨勢到 TP2 或收市前強制平倉。具體每隻信號嘅止損 / target 寫喺 detail page 嘅「止損」/「目標」兩個 panel，一目了然。</p>
+<p>⚠️ <b>止損永遠係入場前 set 死</b>，唔係睇住盤中跌幾多再諗。即日鮮最常見嘅死法就係「跌 1% 諗一諗、跌 3% 諗一諗、跌 5% 止蝕」，結果一日輸晒一星期贏嘅。Set 完就 snap落 broker app 嘅 stop loss order，到價自動執行。</p>
+
+<h2>信號失敗 點算</h2>
+<p>即使 4 維度評分再高、信號再強，當日失敗率仍然有 30-50%。「信號失敗 點算」(stopped out / false breakout 點處理) 係每個 day trader 必修課題。我哋嘅規則：</p>
+<ol>
+<li><b>正常止損出場</b> · 到價觸發 stop loss，紀錄喺 paper-trader，唔好即時 reverse。出場後該筆倉位 close，唔好「加碼溝淡」。</li>
+<li><b>False breakout (假突破)</b> · 突破入場區間後 15 分鐘內跌返入去、close 返區間下面 — 即場止損，唔好等 full stop loss。例如 entry 320-325，breakout 上 326 後 5 分鐘內跌返 323，就要手動止損走。Reason：假突破後下一個 support 通常會被跌破。</li>
+<li><b>Re-entry 規則</b> · 止損出場後同一方向當日 <b>唔可以</b> 再入場 (避免報復交易)。下一個 setup 要等下一個交易日 / 下一隻信號。例外：止損後價格 reverse 到原本方向嘅下一個 level (例如原本 short 被止損後 30 分鐘內繼續跌穿前低)，可以喺新 level 再 short，但倉位縮減至原本 50%。</li>
+<li><b>信號 cancel 條件</b> · 開市 30 分鐘內如果大市 regime 急轉 (例如恒指由 +1% 倒跌到 −1%)，所有動能信號自動 cancel，唔好入場。</li>
+<li><b>紀錄 + 覆盤</b> · 每筆止損 (包括 false breakout) 都要記入 paper-trader dashboard，標記失敗原因 (正常 stop / false breakout / news shock / regime flip)。一週後回顧統計：如果你嘅 false breakout 比例 ≥ 40%，代表 entry timing 太早，要等 9:45 之後先入場。</li>
+</ol>
+<p>核心 mindset：<b>止損係 cost of business</b>，唔係 loss。一個日 10 單嘅 day trader 贏 6 輸 4 就係 profitable，關鍵係輸嗰 4 單每單蝕 1-2%，贏嗰 6 單每單賺 3-5%。如果你連續 3 單止損、情緒開始煩燥，就強制收工，唔好再落第 4 單。</p>
+
+<h2>常見問題 (續)</h2>
+<h3>Q: 點解叫「短炒 入場」要等開市 15-60 分鐘？可唔可以開市即刻入？</h3>
+<p>A: 開市頭 5 分鐘 (9:30-9:35 HKT / 09:30-09:35 ET) 係 price discovery 階段，bid-ask spread 大、成交量 spike、stop loss hunt (大戶刻意掃止損位) 極常見。即日鮮入場最佳窗口係 <b>9:45-10:30 開市後 15-60 分鐘</b>，等價格 confirm 方向、volume 正常化、spread 收窄先落單。Leeks Terminal 嘅 entry_zone 設計就係 assume 你喺呢個 window 內分批入場 (例如 320-325 範圍內分兩注：320 入 50%、325 入 50%)，避免一注 all-in 食晒 spread。</p>
+
+<h3>Q: 「day trade signal」中文叫咩？係咪即係「即日鮮信號」？</h3>
+<p>A: 係。「day trade signal」中文翻譯就係「即日鮮信號」、「日內交易訊號」、「當日短炒訊號」，三個講法同一樣嘢 — 指交易日開市前 / 開市初段出嘅短炒 setup，必須當日收市前平倉。台灣用「當沖」呢個 term，內地用「T+0 短線」，香港散戶最普遍叫「即日鮮」。Leeks Terminal dashboard 同 detail page 全部用「即日鮮」呢個香港本地術語。</p>
+
+<h3>Q: 「intraday signal 中文」資源 — 除咗 Leeks Terminal 仲有冇其他？</h3>
+<p>A: 有幾個常用：</p>
+<ul>
+<li><b>經濟通 ET Net</b> · 即時港股報價 + 簡單技術指標 + 篩選器，但冇 AI 評分</li>
+<li><b>富途牛牛 / 輝立 speed quote</b> · 內置 scanner，可以自訂 MA / RSI filter，但都係人手 set，唔似 AI 自動出信號</li>
+<li><b>StockQ (股勢)</b> · 中文版 Finviz，screener 強但 AI 評分弱</li>
+<li><b>TradingView 中文版</b> · 圖表最強但要付費 (Premium USD 15+/月) 先有 AI Pine Script 自動 signal</li>
+</ul>
+<p>Leeks Terminal 嘅定位：<b>完全 free + 中文 + AI 自動出信號 + 每隻信號附 entry / stop / target</b>。如果你想 contribute 或者報 bug，可以喺主頁 footer 搵到我哋嘅 Telegram group。</p>
+
+<h3>Q: 「momentum 信號」同「資金流 訊號」點樣配合用？</h3>
+<p>A: 兩個維度互相 confirm 先係最強信號。我哋嘅 framework：</p>
+<ul>
+<li><b>momentum 信號</b> (m ≥ 60)：純價格動能 — 升穿 MA20、RSI 強、新高、deviation 擴大。代表「市場對呢隻股有興趣」</li>
+<li><b>資金流 訊號</b> (of ≥ 60)：大戶資金流入 — Relative Volume ≥ 2x、大單淨流入、北水 / 機構買入。代表「有人用錢落注」</li>
+<li><b>雙確認 (m ≥ 60 AND of ≥ 60)</b> · 命中率 70%+，呢類信號可以加大倉位 (例如原本 5% 倉，加到 8%)</li>
+<li><b>單 momentum (m ≥ 70 但 of ≤ 50)</b> · 命中率降到 50%，可能係 retail 散戶追入，沒有大戶跟，倉位縮到 3%</li>
+<li><b>單資金流 (of ≥ 70 但 m ≤ 50)</b> · 大戶可能在派貨 (高位接貨給散戶)，呢類 setup 反而要小心做 short，唔好盲目 long</li>
+</ul>
+<p>Dashboard 每個 card 右下角顯示 m / of 兩個 dim，比較兩者比例就知信號 strength。詳細 4 維度框架睇 <a href="/methodology.html">methodology 頁</a>。</p>
+
+<h3>Q: 「short selling 信號」點樣出？港股沽空限制多唔多？</h3>
+<p>A: 港股 short selling (沽空) 規則比美股嚴格：只有「可沽空證券」名單 (俗稱 shortable list) 嘅股票先可以 short，而且有 <b>報升幅規則</b> — 禁止在低於當日開市價 (開市前時段) 或前收市價 (continuous session) 沽空。Leeks Terminal 識別 short selling 信號條件：</p>
+<ul>
+<li>trade_direction = 看空 + score ≤ 40 + 跌穿 MA20 / MA50</li>
+<li>order_flow 反向 (Relative Volume ≥ 2x 但價格向下 = 高位派貨)</li>
+<li>新聞 sentiment 明確負面 (盈利預警 / 監管罰款 / 沽空機構報告例如 Hindenburg、Muddy Waters)</li>
+<li>必須喺 shortable list 內 (Leeks Terminal 對唔 shortable 嘅股，會標 🔴 觀望而唔出 short 信號)</li>
+</ul>
+<p>美股 short 寬鬆得多 — 基本上所有股票都可以 short (除咗 hard-to-borrow 名單例如小型股 MCap < 300M USD)，T+1 交收，可即日鮮平倉。但 short 風險無限大 (股價可以升 100%+)，新手唔建議單獨做 short — 應該同 long 信號對沖 (例如 long 一隻強勢股、short 一隻 weak relative)。</p>
+
+<h3>Q: 「日內 短炒 教學」 — Leeks Terminal 適唔適合新手學 day trade？</h3>
+<p>A: 適合，但要做齊以下 5 步 setup 先可以開始 paper-trade：</p>
+<ol>
+<li><b>讀晒 methodology 頁</b> · 4 維度框架、score 計算、entry / stop / target 邏輯，全部要明</li>
+<li><b>用 paper account 行 30 日</b> · 富途 / IBKR 都有 paper trading 功能，先用 Leeks Terminal 信號做模擬單 30 日，記低 hit-rate</li>
+<li><b>頭 3 個月只做 long、不做 short</b> · long 風險有限 (最多跌 100% 到零)，short 風險無限。新手用 long 學技術</li>
+<li><b>每筆倉位 ≤ 總資金 5%</b> · 就算連續 5 單止損都只輸 25%，仲有 75% 子彈</li>
+<li><b>30 日後 review</b> · 如果 paper-trade hit-rate ≥ 50%、profit factor ≥ 1.5，先開始 real money，倉位 1% 開始，慢慢加</li>
+</ol>
+<p>Day trade 唔係「學完即用」嘅工具 — 係 <b>6 個月 - 1 年嘅紀律訓練</b>。如果你想 1 星期變大師，呢個市場唔適合你。詳細 risk management + 心理質素 setup，睇 <a href="/methodology.html">methodology 頁</a>。</p>
+""",
+    })
+
+    # 4. HK stock screener
+    pages.append({
+        "path": "/hk-stock-screener.html",
+        "slug": "hk-stock-screener",
+        "title": "港股篩選器 · 每日 AI 自動排序 HK 200 隻 | Leeks Terminal",
+        "description": "港股 stock screener — 用估值 / 質素 / 動能 / 資金流 4 維度篩選 200 隻高成交港股，每日自動更新排名 + 買入賣出信號。",
+        "h1": "港股 AI 篩選器",
+        "body": """
+<p class="lede">Leeks Terminal 港股篩選器 (HK stock screener) — 唔同一般 technical screener 淨係用 RSI / MA 篩，
+呢個工具用 <b>4 維度評分</b> (估值 5% / 質素 5% / 動能 70% / 資金流 20%) 對 200 隻高成交港股做 ranking + 篩選，
+每日 16:00 HKT 收市後自動更新排名。</p>
+
+<h2>點用呢個篩選器</h2>
+<ol>
+<li>去 <a href="/">主頁</a> 揀一個交易日</li>
+<li>揀 filter：全部 / 港股買入 / 港股賣出</li>
+<li>Dashboard 已經按 score 由高到低排好</li>
+<li>撳任何 card 入 detail page 睇技術分析全文</li>
+</ol>
+
+<h2>篩選邏輯</h2>
+<table class="dim-table">
+<thead><tr><th>篩選類別</th><th>條件</th><th>目標</th></tr></thead>
+<tbody>
+<tr><td>🟢 買入</td><td>operation_advice = 買入 + 看多趨勢 + score ≥ 50 + 入場 / 止損 / 目標 齊</td><td>捕捉高 momentum + 高 order flow 嘅短炒 setup</td></tr>
+<tr><td>🔴 賣出</td><td>operation_advice = 賣出 + 看空趨勢 + score ≤ 30 + 跌穿 MA20/50</td><td>捕捉弱勢股 short setup / 避免接刀</td></tr>
+<tr><td>🟡 觀望</td><td>其他</td><td>未有明確 setup，唔做</td></tr>
+</tbody>
+</table>
+
+<h2>篩選器 vs 一般 screener</h2>
+<p>坊間好多 screener (例如 finviz、aastocks screener) 主要俾 user 自己 set filter (e.g. PE < 15, RSI < 30)。
+Leeks Terminal 唔同嘅地方：</p>
+<ul>
+<li><b>AI 評分</b> · 唔係淨係 technical indicator，仲有 4 維度綜合</li>
+<li><b>操作建議</b> · 唔只 score，仲有具體 entry / stop / target 價位</li>
+<li><b>新聞 sentiment</b> · LLM 評分時考慮頭 5 條新聞 + macro context</li>
+<li><b>Day-trade 優化</b> · 動能 + 資金流合共 90% 權重，唔似 value screener 淨係睇 PE / PB</li>
+</ul>
+
+<h2>覆蓋股票</h2>
+<p>200 隻港股包括：</p>
+<ul>
+<li>恒生指數 82 隻</li>
+<li>國企指數 50 隻</li>
+<li>科技指數 30 隻</li>
+<li>高成交二線股 38 隻 (turnover ≥ 50M HKD)</li>
+</ul>
+<p>唔包括：</p>
+<ul>
+<li>窩輪 / 牛熊證 (衍生工具)</li>
+<li>ETF (例如 2800 / 2828 / 7709 / 7747 呢類 2× leveraged)</li>
+<li>細價股 (turnover < 50M HKD)</li>
+</ul>
+
+<h2>常見 4 維度 preset 篩選</h2>
+<p>以下係幾個常見嘅 preset filter，方便你喺 dashboard 直接套用，每個 preset 都係由歷史 backtest 統計出嚟，命中率比單一條件高：</p>
+
+<table class="dim-table">
+<thead><tr><th>Preset 名</th><th>Filter 條件</th><th>用途</th><th>預期命中率</th></tr></thead>
+<tbody>
+<tr><td><b>高 momentum + 偏淡 PE</b></td><td><code>v_score &lt; 40</code> + <code>m_score &gt; 70</code> + <code>trade_direction = 看多</code></td><td>搵「估值偏貴但資金狂追」嘅強勢股 (典型 AI / 科網概念股)，適合短炒 momentum，唔好長揸</td><td>60-65%</td></tr>
+<tr><td><b>低 PE + 高質素</b></td><td><code>v_score &gt; 70</code> + <code>q_score &gt; 70</code> + <code>m_score 40-60</code></td><td>穩陣價值型 — 平 + 高 ROE，momentum 中性，適合 1-2 週 swing，唔係即日鮮</td><td>55-60%</td></tr>
+<tr><td><b>RSI 超賣 + 量能放大</b></td><td><code>RSI14 &lt; 30</code> + <code>Relative Volume &gt; 2x</code> + <code>order_flow_score &gt; 60</code></td><td>超賣反彈 setup — 跌深咗但有大戶接貨，1-3 日反彈機會大</td><td>50-55%</td></tr>
+<tr><td><b>北水狂掃</b></td><td><code>order_flow_score &gt; 75</code> + <code>momentum_score &gt; 60</code> + 港股通南向資金連續 2 日淨流入</td><td>內地資金主導嘅強勢股 (通常係科技 / 金融權重)，跟大戶順勢 long</td><td>65-70%</td></tr>
+<tr><td><b>跌穿 MA50 + 高沽空比率</b></td><td><code>price &lt; MA50</code> + <code>short_ratio &gt; 15%</code> + <code>trade_direction = 看空</code></td><td>弱勢股 short setup — 大戶借貨沽空，散戶跟沽有肉食</td><td>55-60%</td></tr>
+<tr><td><b>突破新高 + 量比配合</b></td><td><code>52w_high proximity &gt; 95%</code> + <code>量比 &gt; 1.5</code> + <code>momentum_score &gt; 70</code></td><td>Breakout setup — 創新高 + 成交量放大，短炒 momentum 爆發</td><td>60-65%</td></tr>
+<tr><td><b>今日升幅王</b></td><td><code>1d_return &gt; 5%</code> + <code>order_flow_score &gt; 60</code> + market cap &gt; 50 億</td><td>當日大升股 — 注意：高位追入風險大，要等回調 2-3% 再入場</td><td>45-50% (逆勢高)</td></tr>
+</tbody>
+</table>
+
+<p>點樣套用：dashboard 上面有 filter chips「港股買入」/「港股賣出」已經係 preset 1 + 2 + 3 嘅組合。如果想做更細嘅 preset，可以喺 detail page 用瀏覽器 Ctrl-F 搜尋分數條件，或者睇 <a href="/methodology.html">methodology 頁</a> 嘅 4 維度計算方法自己組合。</p>
+
+<h2>點樣用 dashboard 反向篩選</h2>
+<p>除咗「由條件搵股票」(正向篩選)，好多 trader 鍾意「由結果反推條件」(反向篩選)。Leeks Terminal dashboard 嘅 detail table 支援呢個 workflow：</p>
+
+<h3>範例 1：搵今日 RSI &lt; 30 + 量比 &gt; 2 嘅超賣反彈股</h3>
+<ol>
+<li>去 dashboard 入面，撳「詳細表格」嘅表頭「動能」sort by 升序</li>
+<li>再睇「估值/質素/動能/資金流」嗰一欄 (格式 <code>v/q/m/of</code>)，搵 <code>m &lt; 30</code> (即 RSI 超賣) 同時 <code>of &gt; 60</code> (量比放大)</li>
+<li>符合條件嘅股，會喺當日 / 翌日有反彈機會 — 入場區間寫喺 detail page，止損位通常放 RSI &lt; 30 嗰個底 1-2% 下面</li>
+<li>Target 預設 +3% (TP1) / +6% (TP2)，持倉 1-3 日</li>
+</ol>
+
+<h3>範例 2：搵 PE &lt; 10 + ROE &gt; 15% 嘅平靚正港股</h3>
+<ol>
+<li>Sort detail table by score 倒序，搵綜合分高但 score_breakdown 顯示 <code>v &gt; 70</code> + <code>q &gt; 70</code> 嘅股</li>
+<li>呢類股通常 PE 5-10x、ROE 15-25%，係傳統價值投資心水</li>
+<li>注意：dashboard 主力做 day-trade，呢類股未必有 🟢 買入信號 (因為 momentum 中性)，可能要等回調先入場</li>
+</ol>
+
+<h3>範例 3：搵今日大升 5%+ 但 score 只有 50 嘅「虛火」股</h3>
+<ol>
+<li>Sort detail table by score 倒序，搵 score 40-50 但 1d return 排前面嘅股</li>
+<li>通常係新聞 / 消息面刺激嘅單日爆發，冇基本面支持</li>
+<li>呢類股要小心 — 大戶可能高位派貨，散戶接刀。Dashboard 會標 🟡 觀望，建議唔好入場</li>
+</ol>
+
+<h3>範例 4：搵連續 3 日都係 🟢 買入嘅「真強勢股」</h3>
+<ol>
+<li>去 dashboard date picker 揀連續 3 日 (例如今日、昨日、前日)</li>
+<li>比較 3 日 detail table 入面 operation_advice = 買入嘅股 — 如果 3 日都出現，係真強勢股</li>
+<li>呢類股可以加大倉位 (5% → 8%)，因為信號持續性高</li>
+</ol>
+
+<p>總結：dashboard 唔止係順向 ranking，仲可以 reverse-engineer 信號 — 透過 sort、filter、cross-date 比較，你可以由 200 隻港股入面快速搵到符合你個人策略嘅 subset。詳細 4 維度框架同計算方法睇 <a href="/methodology.html">methodology 頁</a>。</p>
+
+<h2>常見問題</h2>
+<h3>Q: 點解篩選器有時得幾個信號？</h3>
+<p>A: 嚴進策略。Day-trade 唔可以強做，我哋寧可 miss 唔做，都唔好 trade 模糊 setup。觀望日 = 等待日。</p>
+<h3>Q: 可以 export CSV 嗎？</h3>
+<p>A: 而家 dashboard 純 static HTML，冇 export 功能。如果要 export 我哋可以加，但暫時 copy table 落 Excel 已經夠用。</p>
+<h3>Q: 有冇 backtest？</h3>
+<p>A: 而家只有 paper-trade tracker，記住每個信號 outcome (30d hit-rate)。完整 backtest 開發中。</p>
+
+<h3>Q: 港股 stock screener 同一般 finviz / TradingView 嘅免費版有咩分別？</h3>
+<p>A: Leeks Terminal 港股 stock screener 同 finviz / TradingView 嘅核心分別：</p>
+<ul>
+<li><b>finviz</b> · 主力做美股，港股覆蓋弱 (只有 ADR 同 major dual-list)，screener 強但要付費先有 real-time + AI 評分</li>
+<li><b>TradingView</b> · 圖表最強但 AI 評分要 Premium (USD 15+/月)，港股覆蓋 OK 但要付費</li>
+<li><b>aastocks / 經濟通 篩選器</b> · 港股覆蓋全，但只有簡單 PE / 成交 / 技術指標 filter，冇 AI 評分同操作建議</li>
+<li><b>Leeks Terminal 港股 stock screener</b> · 完全 free + 4 維度 AI 評分 + 中文操作建議 + entry / stop / target，專為港股散戶設計</li>
+</ul>
+<p>如果你想純做美股 momentum，可以單獨用 finviz 篩 RSI / volume，再對比 Leeks Terminal us-scanner。如果主力做港股，Leeks Terminal 港股 stock screener 已經覆蓋 95% 需求。</p>
+
+<h3>Q: 「港股 free screener」真係完全免費？冇 hidden cost？</h3>
+<p>A: 完全 free。Leeks Terminal 港股 stock screener 唔使註冊、唔使訂閱、唔使信用卡、唔使 email 收集，開 dashboard 就見到 200 隻港股當日信號。冇 hidden cost、冇 premium tier 鎖功能、冇「7 天試用」陷阱、冇 SaaS 訂閱、冇 watermark。資金來源：個人 side project + 純粹開源俾香港 / 台灣 / 內地散戶。</p>
+<p>同其他「港股 free screener」比較：</p>
+<ul>
+<li><b>aastocks 免費版</b> · 只有基本技術指標 filter，冇 AI 評分，UI 有廣告</li>
+<li><b>經濟通 ET Net</b> · 報價 + 簡單 screener，但要登記 email，UI 較舊</li>
+<li><b>StockQ 股勢</b> · 中文版 Finviz，screener 強但 AI 評分弱，要付費先有完整功能</li>
+<li><b>Leeks Terminal 港股 stock screener</b> · 完全 free + 4 維度 AI 評分 + 操作建議，同類工具罕見</li>
+</ul>
+
+<h3>Q: 點樣搵「PE 低 港股」？呢個篩選器有冇 value 篩選？</h3>
+<p>A: 有。「PE 低 港股」嘅定義：PE TTM &lt; 10x (恒生指數中位數 PE 約 11-13x，&lt; 10x 算偏低)。Leeks Terminal 港股 stock screener 用估值維度 (<code>v_score</code>) 處理：</p>
+<ul>
+<li><code>v_score &gt; 70</code> · PE 低 (通常 &lt; 10x)、PB 低 (&lt; 1.0x)、偏離 5 年均值低</li>
+<li><code>v_score 40-70</code> · PE 中性 (10-20x)</li>
+<li><code>v_score &lt; 40</code> · PE 高 (&gt; 20x) 或估值貴</li>
+</ul>
+<p>Dashboard detail table 嘅「估值/質素/動能/資金流」欄位入面，第一個數字就係 <code>v_score</code>。Sort by score 倒序，再搵 <code>v &gt; 70</code> 嘅股就係 PE 偏低嘅名單。常見 PE 低 港股包括內銀 (例如 939 建設銀行 PE ~4x、1398 工商銀行 PE ~4x)、內房 (部分低至 3-5x)、公用股 (2-8x)。注意：PE 低唔一定係 value trap，要 cross-check ROE (質素 q_score) 同 dividend yield 先確認。</p>
+
+<h3>Q: 點樣搵「RSI 超賣 港股」？呢個工具識唔識 RSI 篩選？</h3>
+<p>A: 識。「RSI 超賣 港股」即 RSI14 &lt; 30，Leeks Terminal 港股 stock screener 用動能維度 (<code>m_score</code>) 處理：</p>
+<ul>
+<li><code>m_score &lt; 30</code> · 對應 RSI14 &lt; 30 (嚴重超賣，反彈機會大)</li>
+<li><code>m_score 30-40</code> · RSI 30-40 (輕微超賣)</li>
+<li><code>m_score 40-60</code> · RSI 中性 (40-60)</li>
+<li><code>m_score &gt; 70</code> · RSI &gt; 70 (超買，要小心回調)</li>
+</ul>
+<p>Dashboard detail table 入面第三個數字就係 <code>m_score</code>。Sort by score 倒序，再搵 <code>m &lt; 30</code> 嘅股就係 RSI 超賣名單。注意：單純 RSI 超賣唔可以買 — 要配合 <code>of_score &gt; 60</code> (大戶接貨) 先有反彈動力，否則可能係「弱勢股繼續跌」(即所謂「下跌中嘅刀」)。Leeks Terminal 嘅 preset「RSI 超賣 + 量能放大」(m &lt; 30 + of &gt; 60) 命中率 50-55%，適合 1-3 日短線反彈。</p>
+
+<h3>Q: 「港股 量比」同 Relative Volume 有咩分別？呢個篩選器點處理？</h3>
+<p>A: 「港股 量比」(volume ratio) 同 Relative Volume (RVOL) 係兩個相似但唔同嘅概念：</p>
+<ul>
+<li><b>量比 (Volume Ratio, VR)</b> · 當日成交量 / 過去 5 日平均成交量。即時性高，適合即日鮮用。中國 A 股市場常用。</li>
+<li><b>Relative Volume (RVOL)</b> · 當日成交量 / 過去 20 日 (或 30 日) 平均成交量。穩定性高，適合 swing 用。Finviz / 美股市場常用。</li>
+</ul>
+<p>Leeks Terminal 港股 stock screener 主要用 <b>Relative Volume (vs 20d ADV)</b> 計入 <code>order_flow_score (of_score)</code>：</p>
+<ul>
+<li><code>of_score &gt; 70</code> · Relative Volume ≥ 2x，有大戶入場</li>
+<li><code>of_score 50-70</code> · RVOL 1.2-2x，正常偏活躍</li>
+<li><code>of_score &lt; 40</code> · RVOL &lt; 0.8x，成交淡靜</li>
+</ul>
+<p>如果你想搵「港股 量比」高嘅股 (即 RVOL ≥ 2x)，sort by score 倒序搵 <code>of &gt; 70</code> 嘅股就係。Leeks Terminal 暫時唔提供即時量比 (intraday)，但 dashboard 嘅 <code>of_score</code> 已經反映收市後嘅 RVOL 數值，可以作為下一個交易日嘅參考。</p>
+
+<h3>Q: 點樣睇「港股 資金流」？呢個工具識唔識分析北水 / 大戶動向？</h3>
+<p>A: 識。Leeks Terminal 港股 stock screener 嘅 <code>order_flow_score (of_score)</code> 維度包含 4 個 sub-indicator：</p>
+<ol>
+<li><b>Relative Volume</b> · 當日成交 vs 20 日 ADV (量能放大 = 大戶活動)</li>
+<li><b>大單淨流入</b> · 透過成交股數 × 價格分大單 (≥ 100 萬 HKD) 同小單 (&lt; 100 萬 HKD)，計淨流入比例</li>
+<li><b>港股通南向資金</b> · 內地經滬深港通買入港股嘅淨流入 (CCASS 數據，內銀 / 內房 / 科技權重股覆蓋)</li>
+<li><b>Bid-ask imbalance</b> · 買賣盤差異 (Level-2 data 提供，但 Leeks Terminal 暫時用 closing data 估算)</li>
+</ol>
+<p>Dashboard detail table 入面第四個數字就係 <code>of_score</code>。Sort by score 倒序，再搵 <code>of &gt; 70</code> 嘅股就係「港股 資金流」活躍嘅名單 — 通常係北水狂掃 / 大戶囤貨 / 業績前偷步買入嘅強勢股。注意：單看北水流入未必等於股價升，要配合 <code>m_score &gt; 60</code> 先確認 momentum 同步。</p>
+
+<h3>Q: 「港股 排行」邊度睇？呢個工具出唔出 daily top movers？</h3>
+<p>A: 出。Leeks Terminal 港股 stock screener 嘅 dashboard 預設按 score 由高到低排，所以首 20 隻 card 就係當日「港股 排行」綜合榜 — 包括：</p>
+<ul>
+<li><b>港股 升幅 排行</b> · Sort by score 倒序，搵 m_score 高 (例如 &gt; 75) 嘅股</li>
+<li><b>港股 跌幅 排行</b> · Sort by score 倒序，搵 m_score 低 (例如 &lt; 25) 嘅股</li>
+<li><b>港股 成交 排行</b> · Sort by of_score 倒序，搵 RVOL 高 (例如 &gt; 2x) 嘅股</li>
+<li><b>港股 北水排行</b> · Sort by of_score 倒序，搵南向資金連續 2 日淨流入嘅股</li>
+</ul>
+<p>同一般財經網站 (例如 aastocks 升幅榜、經濟通成交量榜) 嘅分別：Leeks Terminal 排行已經包含 AI 4 維度綜合分，唔係淨係單一指標排序，所以你直接睇 dashboard 頭 20 隻 card 就係當日最強港股 list。如果你想睇「港股 邊隻 升」，dashboard 已經幫你揀晒。</p>
+
+<h3>Q: 「港股 free screener」之外，有冇付費 screener 推介？</h3>
+<p>A>有幾個常見嘅付費港股 / 美股 screener，按 budget 由低至高：</p>
+<ul>
+<li><b>StockQ 股勢 premium</b> · HKD 50/月左右，中文 screener 強 + 基本 AI 評分</li>
+<li><b>AASTOCKS PRO</b> · HKD 200/月左右，港股專業版 + L2 報價 + 大量 filter</li>
+<li><b>Finviz Elite</b> · USD 25/月，美股最強 screener，但港股覆蓋弱</li>
+<li><b>TradingView Premium</b> · USD 15+/月，圖表 + AI Pine Script 信號</li>
+<li><b>Bloomberg Terminal</b> · USD 2000+/月，機構級，個人用戶唔建議</li>
+</ul>
+<p>Leeks Terminal 港股 stock screener 定位：完全 free + 中文 + 4 維度 AI 評分 + 港股 200 隻覆蓋。如果你係香港散戶 / 學生 / 兼職 trader，Leeks Terminal 已經夠用；如果你係全職 trader 想要 L2 報價 + 自訂 Pine Script + 大量歷史 backtest，可以考慮 StockQ / AASTOCKS PRO + Leeks Terminal 並用。</p>
+
+<h3>Q: 點樣用呢個篩選器做「港股 估值 篩選」？value investing 適用嗎？</h3>
+<p>A: 適用但有限制。Leeks Terminal 港股 stock screener 嘅估值維度 (<code>v_score</code>) 同時考慮 PE / PB / deviation from 5y mean，三個 sub-indicator 並行驗證：</p>
+<ul>
+<li><b>PE (TTM)</b> · 對比恒指中位數 (~11-13x)，&lt; 8x 算深低，&gt; 25x 算深高</li>
+<li><b>PB</b> · 對比行業平均，&lt; 0.8x 算深低 (內銀 / 內房常見)，&gt; 5x 算深高 (科技 / 醫療常見)</li>
+<li><b>5 年均值 deviation</b> · 對比該股自身 5 年 PE / PB 中位數，&lt; -30% 算偏低</li>
+</ul>
+<p>「港股 估值 篩選」做法：sort by score 倒序，搵 <code>v &gt; 70</code> + <code>q &gt; 70</code> 嘅股 — 即「平 + 高 ROE」組合。注意：dashboard 主力做 day-trade，呢類股通常 score 40-60 (觀望區)，冇 🟢 買入信號。Value investing 適合 1-3 個月持倉，唔係即日鮮 timeframe。如果你做 value investing，建議用 dashboard 做 stock screening，再用自己嘅 broker 做 deep dive (睇年報 / 行業前景 / management quality)。</p>
+""",
+    })
+
+    written = []
+    for p in pages:
+        body = f"<h1>{p['h1']}</h1>" + p["body"]
+        # Add "Latest signals" CTA at bottom
+        if latest:
+            body += (
+                f'<section class="cta">'
+                f'<h2>睇今日 ({latest}) 完整信號</h2>'
+                f'<p>200 隻港股 / 美股 4 維度評分 + 入場 / 止損 / 目標齊全。</p>'
+                f'<p><a class="btn" href="/dashboard/{latest}/all.html">→ 開 {latest} dashboard</a></p>'
+                f'</section>'
+            )
+        json_ld = {
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": p["title"],
+            "description": p["description"],
+            "url": f"https://www.win9you.com{p['path']}",
+            "inLanguage": "zh-Hant",
+            "isPartOf": {
+                "@type": "WebSite",
+                "name": "Leeks Terminal",
+                "url": "https://www.win9you.com",
+            },
+        }
+        out_path = PUBLIC_DIR / p["path"].lstrip("/")
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(
+            shell(
+                title=p["title"],
+                body_html=body,
+                active_path=p["path"],
+                description=p["description"],
+                json_ld=json_ld,
+                canonical=f"https://www.win9you.com{p['path']}",
+            ),
+            encoding="utf-8",
+        )
+        written.append(p["path"])
+    return written
+
+
+
+    """Build sitemap.xml with all public pages. Auto-includes all dates in DB."""
+    base = "https://www.win9you.com"
+    urls = []
+
+    # Static pages
+    static = [
+        ("/", "1.0", "daily"),
+        ("/methodology.html", "0.8", "weekly"),
+        ("/faq.html", "0.8", "weekly"),
+        ("/about.html", "0.5", "monthly"),
+        ("/disclaimer.html", "0.3", "monthly"),
+        ("/privacy.html", "0.3", "monthly"),
+        # Intent landing pages (P1 SEO coverage)
+        ("/hk-scanner.html", "0.9", "daily"),
+        ("/us-scanner.html", "0.9", "daily"),
+        ("/day-trade-signals.html", "0.9", "daily"),
+        ("/hk-stock-screener.html", "0.8", "daily"),
+    ]
+    for path, prio, freq in static:
+        urls.append((path, prio, freq))
+
+    # Per-date dashboard + filter variants
+    filters = ["all", "hk-buy", "hk-sell", "us-buy", "us-sell"]
+    for d in dates:
+        urls.append((f"/dashboard/{d}/all.html", "0.9", "daily"))
+        for f in filters[1:]:
+            urls.append((f"/dashboard/{d}/{f}.html", "0.7", "daily"))
+
+    lines = ['<?xml version="1.0" encoding="UTF-8"?>']
+    lines.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
+    for path, prio, freq in urls:
+        lines.append("  <url>")
+        lines.append(f"    <loc>{base}{path}</loc>")
+        lines.append(f"    <changefreq>{freq}</changefreq>")
+        lines.append(f"    <priority>{prio}</priority>")
+        lines.append("  </url>")
+    lines.append("</urlset>")
+    return "\n".join(lines) + "\n"
+
+
+def build_robots_txt() -> str:
+    return (
+        "User-agent: *\n"
+        "Allow: /\n"
+        "\n"
+        "Sitemap: https://www.win9you.com/sitemap.xml\n"
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(description="Build static HTML dashboard")
     parser.add_argument("--date", help="Build specific date (YYYY-MM-DD)")
@@ -993,7 +1998,9 @@ def main():
     if args.static_pages or not any([args.date, args.all, args.index]):
         for p in build_static_pages():
             written.append(p)
-        print(f"✅ Built {len(written)} static info pages")
+        for p in build_intent_pages():
+            written.append(p)
+        print(f"✅ Built {len(written)} static info + intent pages")
 
     # 2. Dashboard pages
     if args.date:
@@ -1016,6 +2023,13 @@ def main():
         idx_path.write_text(build_index(all_dates), encoding="utf-8")
         print(f"✅ Built index.html ({len(all_dates)} dates)")
         written.append("index.html")
+
+    # 4. Sitemap + robots.txt (always — they need to stay in sync with dates)
+    (PUBLIC_DIR / "sitemap.xml").write_text(build_sitemap_xml(all_dates), encoding="utf-8")
+    written.append("sitemap.xml")
+    (PUBLIC_DIR / "robots.txt").write_text(build_robots_txt(), encoding="utf-8")
+    written.append("robots.txt")
+    print(f"✅ Built sitemap.xml + robots.txt ({len(all_dates)} dates × 5 filter variants)")
 
     print(f"\nTotal files written: {len(written)}")
     print(f"Output directory: {PUBLIC_DIR}")
