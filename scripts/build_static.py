@@ -738,7 +738,8 @@ def body_md_to_html(md: str, link_inject_date: str | None = None, score_lookup: 
         # Capture code from body
         code = None
         m_hk = re.search(r'\b(\d{4,5}\.HK)\b', body)
-        m_us = re.search(r'\*\*([A-Z][A-Z0-9.]{0,5})\*\*', body)
+        # Allow dash, dot, and digits in US tickers (e.g. BRK-B, BRK.A, RDS.A)
+        m_us = re.search(r'\*\*([A-Z][A-Z0-9.\-]{0,8})\*\*', body)
         if m_hk:
             code = m_hk.group(1)
         elif m_us:
