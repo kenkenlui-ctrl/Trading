@@ -213,6 +213,64 @@ section ul, section ol { line-height: 1.75; max-width: 760px; }
 .sample-summary { font-size: 0.85rem; line-height: 1.55; color: var(--fg); margin: 6px 0 8px; }
 .sample-link { font-size: 0.85rem; }
 
+/* Dashboard hub /dashboard/ */
+.dates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin: 1.5rem 0 2rem;
+    max-width: 1100px;
+}
+.date-card {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    background: #fafbfc;
+}
+.date-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 8px;
+}
+.date-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+.date-stats {
+    display: flex; gap: 12px; margin-bottom: 12px; font-size: 0.95rem;
+}
+.stat-bull { color: var(--bull); font-weight: 600; }
+.stat-amber { color: var(--amber); font-weight: 600; }
+.stat-bear { color: var(--bear); font-weight: 600; }
+.date-filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+}
+.filter-chip {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: #fff;
+    font-size: 0.82rem;
+    text-decoration: none;
+    color: var(--fg);
+    transition: background 0.15s;
+}
+.filter-chip:hover { background: var(--panel-2); text-decoration: none; }
+.filter-chip.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    font-weight: 600;
+}
+.filter-chip.primary:hover { background: #1d4ed8; }
+.hub-cta ul { list-style: none; padding: 0; }
+.hub-cta li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--panel);
+    font-size: 0.95rem;
+}
+
 /* Detail table */
 table.detail {
     width: 100%;
@@ -1113,6 +1171,7 @@ def build_sitemap_xml(dates: list[str]) -> str:
     # Static pages
     static = [
         ("/", "1.0", "daily"),
+        ("/dashboard/", "0.9", "daily"),
         ("/methodology.html", "0.8", "weekly"),
         ("/faq.html", "0.8", "weekly"),
         ("/about.html", "0.5", "monthly"),
@@ -1152,6 +1211,104 @@ def build_robots_txt() -> str:
         "Allow: /\n"
         "\n"
         "Sitemap: https://www.win9you.com/sitemap.xml\n"
+    )
+
+
+def build_dashboard_hub(dates: list[str]) -> str:
+    """Build /dashboard/index.html — hub page listing all available dates + filter variants.
+    This replaces the SPA fallback to homepage when user hits /dashboard/."""
+    import sqlite3
+    db = sqlite3.connect(str(PROJECT_ROOT / "data" / "dsa_hk.db"))
+    db.row_factory = sqlite3.Row
+
+    # Per-date summary: count + buy/hold/sell breakdown
+    date_summaries = []
+    for d in dates:
+        rows = db.execute(
+            "SELECT operation_advice, COUNT(*) as n FROM daily_report "
+            "WHERE report_date=? GROUP BY operation_advice",
+            (d,),
+        ).fetchall()
+        ops = {r["operation_advice"]: r["n"] for r in rows}
+        total = sum(ops.values())
+        date_summaries.append({
+            "date": d,
+            "total": total,
+            "buy": ops.get("買入", 0) + ops.get("buy", 0),
+            "hold": ops.get("觀望", 0) + ops.get("hold", 0),
+            "sell": ops.get("賣出", 0) + ops.get("sell", 0),
+        })
+    db.close()
+
+    filters = [
+        ("all", "全部", "📊"),
+        ("hk-buy", "港股買入", "🟢"),
+        ("hk-sell", "港股賣出", "🔴"),
+        ("us-buy", "美股買入", "🟢"),
+        ("us-sell", "美股賣出", "🔴"),
+    ]
+    date_cards_html = []
+    for s in date_summaries:
+        d = s["date"]
+        chips = " ".join(
+            f'<a class="filter-chip" href="/dashboard/{d}/{slug}.html">'
+            f'{em} {label}</a>'
+            for slug, label, em in filters
+            if slug != "all"
+        )
+        date_cards_html.append(
+            f'<div class="date-card">'
+            f'<div class="date-header">'
+            f'<h2>{d}</h2>'
+            f'<span class="dim">{s["total"]} 隻</span>'
+            f'</div>'
+            f'<div class="date-stats">'
+            f'<span class="stat-bull">🟢 {s["buy"]}</span>'
+            f'<span class="stat-amber">🟡 {s["hold"]}</span>'
+            f'<span class="stat-bear">🔴 {s["sell"]}</span>'
+            f'</div>'
+            f'<div class="date-filters">'
+            f'<a class="filter-chip primary" href="/dashboard/{d}/all.html">📊 全部 ({s["total"]})</a>'
+            f'{chips}'
+            f'</div>'
+            f'</div>'
+        )
+
+    body = (
+        '<h1>📊 決策儀表板</h1>'
+        '<p class="lede">所有交易日的 AI 分析報告。'
+        '每日 200 隻港股 + 200 隻美股，4 維度評分 + 入場 / 止損 / 目標。</p>'
+        + (f'<section class="dates-grid">' + "".join(date_cards_html) + '</section>' if date_summaries else '<p>暫時未有報告。</p>')
+        + '<section class="hub-cta">'
+        '<h2>常用入口</h2>'
+        '<ul>'
+        '<li><a href="/hk-scanner.html">港股 scanner</a> · 港股 200 隻 high-turnover stock</li>'
+        '<li><a href="/us-scanner.html">美股 scanner</a> · 美股 200 隻 S&P 500 + Nasdaq-100</li>'
+        '<li><a href="/day-trade-signals.html">即日鮮信號</a> · day trade 決策流程</li>'
+        '<li><a href="/hk-stock-screener.html">港股 stock screener</a> · 4 維度 filter 教學</li>'
+        '<li><a href="/methodology.html">分析方法論</a> · 4-dim 評分模型 + 操作建議</li>'
+        '<li><a href="/faq.html">FAQ</a> · 常見問題</li>'
+        '</ul>'
+        '</section>'
+    )
+
+    json_ld = {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Leeks Terminal 決策儀表板",
+        "description": "所有交易日的 AI 分析報告。HK + US 即日鮮信號、4 維度評分、入場 / 止損 / 目標。",
+        "url": "https://www.win9you.com/dashboard/",
+        "inLanguage": "zh-Hant",
+        "isPartOf": {"@type": "WebSite", "name": "Leeks Terminal", "url": "https://www.win9you.com"},
+    }
+
+    return shell(
+        title="決策儀表板 · 所有交易日報告 | Leeks Terminal",
+        body_html=body,
+        active_path="/dashboard/",
+        description="所有交易日的 AI 分析報告。HK + US 即日鮮信號、4 維度評分、入場 / 止損 / 目標。",
+        json_ld=json_ld,
+        canonical="https://www.win9you.com/dashboard/",
     )
 
 
@@ -1938,6 +2095,7 @@ Leeks Terminal 唔同嘅地方：</p>
     # Static pages
     static = [
         ("/", "1.0", "daily"),
+        ("/dashboard/", "0.9", "daily"),
         ("/methodology.html", "0.8", "weekly"),
         ("/faq.html", "0.8", "weekly"),
         ("/about.html", "0.5", "monthly"),
@@ -2024,6 +2182,13 @@ def main():
         idx_path.write_text(build_index(all_dates), encoding="utf-8")
         print(f"✅ Built index.html ({len(all_dates)} dates)")
         written.append("index.html")
+
+        # Dashboard hub at /dashboard/index.html (replaces SPA fallback to homepage)
+        hub_path = PUBLIC_DIR / "dashboard" / "index.html"
+        hub_path.parent.mkdir(parents=True, exist_ok=True)
+        hub_path.write_text(build_dashboard_hub(all_dates), encoding="utf-8")
+        print(f"✅ Built dashboard/index.html (hub of {len(all_dates)} dates)")
+        written.append("dashboard/index.html")
 
     # 4. Sitemap + robots.txt (always — they need to stay in sync with dates)
     (PUBLIC_DIR / "sitemap.xml").write_text(build_sitemap_xml(all_dates), encoding="utf-8")
