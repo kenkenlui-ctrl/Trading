@@ -298,7 +298,31 @@ section ul, section ol { line-height: 1.75; max-width: 760px; }
     background: var(--panel-2);
 }
 .hint-buy { color: var(--bull); }
-.hint-sell { color: var(--bear); }
+.hint-sell {
+    color: var(--bear);
+    font-weight: 600;
+    background: rgba(185, 28, 28, 0.06);
+    border: 1px solid rgba(185, 28, 28, 0.3);
+}
+
+/* Signal warning banner on dashboard */
+.signal-warning {
+    margin: 0 0 1.2rem;
+    padding: 10px 14px;
+    background: rgba(146, 64, 14, 0.06);
+    border-left: 3px solid var(--amber);
+    border-radius: 4px;
+    font-size: 0.82rem;
+    line-height: 1.55;
+}
+.signal-warning .warn-strong {
+    color: var(--bear);
+    font-weight: 700;
+}
+.signal-warning a {
+    color: var(--accent);
+    text-decoration: underline;
+}
 
 /* Detail table */
 table.detail {
@@ -751,6 +775,11 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
         # then append the filter chips + detail table.
         body_html = (
             disclaimer_block()
+            + f'''<div class="signal-warning"><b>📊 信號使用注意</b> · 根據 22 天 backtest (4,371 outcomes)：
+            <br>· <b>🟢 買入</b>: 1D 58.6% / 1W <b>64.3%</b> — multi-day hold OK
+            <br>· <b>🔴 賣出</b>: 1D <b>59.7%</b> / 1W 48.0% — <span class="warn-strong">mean-revert, close by 4 PM, 唔好 hold 過夜</span>
+            <br>· <b>⚠️</b> 系統會自動 revert extended/overbought 嘅買入信號 (e.g. 偏離 MA20&gt;5%、RSI 超買)
+            <br>· <b>ℹ️</b> 詳細 backtest 結果睇 <a href="/methodology.html">methodology 頁</a></div>'''
             + filter_chips_html(date, slug)
             + f'<h1>📊 決策儀表板 — {date} ({label})</h1>'
             + body_md_to_html(body_md, link_inject_date=date, score_lookup={r["code"]: r["score"] for r in all_reports if r.get("score") is not None}, op_lookup={r["code"]: r.get("operation_advice") for r in all_reports if r.get("operation_advice")})

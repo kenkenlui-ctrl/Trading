@@ -15,10 +15,11 @@ Pattern (zh):
 import json
 import re
 import sqlite3
+import sys
 from pathlib import Path
 
 DB = Path(__file__).parent.parent / "data" / "dsa_hk.db"
-DATE = "2026-06-27"
+DATE = sys.argv[1] if len(sys.argv) > 1 else "2026-06-27"
 
 
 def parse_levels(full_md: str, summary_md: str) -> dict:
@@ -85,7 +86,7 @@ def main():
 
         # Print sample for first 5
         if row_id <= 5 or code in ("KO", "LLY", "00700.HK"):
-            print(f"  {code}: entry={snap.get('entry_zone', '—')[:30]} stop={snap.get('stop_loss', '—')[:30]} target={snap.get('target_price', '—')[:30]} conf={snap.get('confidence', '—')}")
+            print(f"  {code}: entry={(snap.get('entry_zone') or '—')[:30]} stop={(snap.get('stop_loss') or '—')[:30]} target={(snap.get('target_price') or '—')[:30]} conf={(snap.get('confidence') or '—')}")
 
     cur.executemany(
         "UPDATE daily_report SET data_snapshot_json=? WHERE id=?",

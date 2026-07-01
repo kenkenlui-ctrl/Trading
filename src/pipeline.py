@@ -383,7 +383,9 @@ def build_dashboard_md(
         if op in ("買入", "buy"):
             hint = ' <span class="hint hint-buy">multi-day hold OK</span>'
         elif op in ("賣出", "sell", "賣出（反彈做空）"):
-            hint = ' <span class="hint hint-sell">day-trade only · 4 PM 平倉</span>'
+            # Sell signals mean-revert within 1 day per backtest (1D 60% → 1W 48%).
+            # Add explicit warning so user doesn't hold overnight.
+            hint = ' <span class="hint hint-sell">⚠️ mean-revert · close by 4 PM · 唔好 hold 過夜</span>'
 
         card = (
             f'<div style="border:1px solid var(--border);border-left:3px solid var(--accent);'
