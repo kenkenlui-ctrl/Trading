@@ -257,7 +257,62 @@ section ul, section ol { line-height: 1.75; max-width: 760px; }
     background: var(--panel-2);
 }
 .hint-buy { color: var(--bull); }
-.hint-sell { color: var(--bear); }
+.hint-sell {
+    color: var(--bear);
+    font-weight: 600;
+    background: rgba(185, 28, 28, 0.06);
+    border: 1px solid rgba(185, 28, 28, 0.3);
+}
+
+/* LLM confidence + caution chips on cards (Option B: surface LLM self-cautions) */
+.signal-chips {
+    margin: 4px 0 6px 0;
+    font-size: 0.7rem;
+    line-height: 1.4;
+}
+.conf-chip {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: 600;
+    margin-right: 5px;
+    vertical-align: middle;
+    border: 1px solid currentColor;
+}
+.conf-high { color: var(--bull); background: rgba(21, 128, 61, 0.08); }
+.conf-mid  { color: var(--amber); background: rgba(146, 64, 14, 0.08); }
+.conf-low  { color: var(--bear); background: rgba(185, 28, 28, 0.08); }
+.caution-chip {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: 500;
+    margin-right: 5px;
+    margin-bottom: 2px;
+    vertical-align: middle;
+    color: var(--bear);
+    background: rgba(185, 28, 28, 0.06);
+    border: 1px solid rgba(185, 28, 28, 0.25);
+}
+
+/* Signal warning banner on dashboard */
+.signal-warning {
+    margin: 0 0 1.2rem;
+    padding: 10px 14px;
+    background: rgba(146, 64, 14, 0.06);
+    border-left: 3px solid var(--amber);
+    border-radius: 4px;
+    font-size: 0.82rem;
+    line-height: 1.55;
+}
+.signal-warning .warn-strong {
+    color: var(--bear);
+    font-weight: 700;
+}
+.signal-warning a {
+    color: var(--accent);
+    text-decoration: underline;
+}
 
 /* Detail table */
 table.detail {
@@ -451,7 +506,7 @@ footer {
 <body>
 <nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
-<h1>📊 決策儀表板</h1><p class="lede">所有交易日的 AI 分析報告。每日 200 隻港股 + 200 隻美股，4 維度評分 + 入場 / 止損 / 目標。</p><section class="dates-grid"><div class="date-card"><div class="date-header"><h2>2026-06-30</h2><span class="dim">400 隻</span></div><div class="date-stats"><span class="stat-bull">🟢 74</span><span class="stat-amber">🟡 256</span><span class="stat-bear">🔴 70</span></div><div class="date-filters"><a class="filter-chip primary" href="/dashboard/2026-06-30/all.html">📊 全部 (400)</a><a class="filter-chip" href="/dashboard/2026-06-30/hk-buy.html">🟢 港股買入</a> <a class="filter-chip" href="/dashboard/2026-06-30/hk-sell.html">🔴 港股賣出</a> <a class="filter-chip" href="/dashboard/2026-06-30/hk-hold.html">🟡 港股觀望</a> <a class="filter-chip" href="/dashboard/2026-06-30/us-buy.html">🟢 美股買入</a> <a class="filter-chip" href="/dashboard/2026-06-30/us-sell.html">🔴 美股賣出</a> <a class="filter-chip" href="/dashboard/2026-06-30/us-hold.html">🟡 美股觀望</a></div></div><div class="date-card"><div class="date-header"><h2>2026-06-29</h2><span class="dim">400 隻</span></div><div class="date-stats"><span class="stat-bull">🟢 82</span><span class="stat-amber">🟡 277</span><span class="stat-bear">🔴 40</span></div><div class="date-filters"><a class="filter-chip primary" href="/dashboard/2026-06-29/all.html">📊 全部 (400)</a><a class="filter-chip" href="/dashboard/2026-06-29/hk-buy.html">🟢 港股買入</a> <a class="filter-chip" href="/dashboard/2026-06-29/hk-sell.html">🔴 港股賣出</a> <a class="filter-chip" href="/dashboard/2026-06-29/hk-hold.html">🟡 港股觀望</a> <a class="filter-chip" href="/dashboard/2026-06-29/us-buy.html">🟢 美股買入</a> <a class="filter-chip" href="/dashboard/2026-06-29/us-sell.html">🔴 美股賣出</a> <a class="filter-chip" href="/dashboard/2026-06-29/us-hold.html">🟡 美股觀望</a></div></div><div class="date-card"><div class="date-header"><h2>2026-06-27</h2><span class="dim">400 隻</span></div><div class="date-stats"><span class="stat-bull">🟢 47</span><span class="stat-amber">🟡 267</span><span class="stat-bear">🔴 86</span></div><div class="date-filters"><a class="filter-chip primary" href="/dashboard/2026-06-27/all.html">📊 全部 (400)</a><a class="filter-chip" href="/dashboard/2026-06-27/hk-buy.html">🟢 港股買入</a> <a class="filter-chip" href="/dashboard/2026-06-27/hk-sell.html">🔴 港股賣出</a> <a class="filter-chip" href="/dashboard/2026-06-27/hk-hold.html">🟡 港股觀望</a> <a class="filter-chip" href="/dashboard/2026-06-27/us-buy.html">🟢 美股買入</a> <a class="filter-chip" href="/dashboard/2026-06-27/us-sell.html">🔴 美股賣出</a> <a class="filter-chip" href="/dashboard/2026-06-27/us-hold.html">🟡 美股觀望</a></div></div><div class="date-card"><div class="date-header"><h2>2026-06-26</h2><span class="dim">474 隻</span></div><div class="date-stats"><span class="stat-bull">🟢 81</span><span class="stat-amber">🟡 317</span><span class="stat-bear">🔴 76</span></div><div class="date-filters"><a class="filter-chip primary" href="/dashboard/2026-06-26/all.html">📊 全部 (474)</a><a class="filter-chip" href="/dashboard/2026-06-26/hk-buy.html">🟢 港股買入</a> <a class="filter-chip" href="/dashboard/2026-06-26/hk-sell.html">🔴 港股賣出</a> <a class="filter-chip" href="/dashboard/2026-06-26/hk-hold.html">🟡 港股觀望</a> <a class="filter-chip" href="/dashboard/2026-06-26/us-buy.html">🟢 美股買入</a> <a class="filter-chip" href="/dashboard/2026-06-26/us-sell.html">🔴 美股賣出</a> <a class="filter-chip" href="/dashboard/2026-06-26/us-hold.html">🟡 美股觀望</a></div></div></section><section class="hub-cta"><h2>常用入口</h2><ul><li><a href="/hk-scanner.html">港股 scanner</a> · 港股 200 隻 high-turnover stock</li><li><a href="/us-scanner.html">美股 scanner</a> · 美股 200 隻 S&P 500 + Nasdaq-100</li><li><a href="/day-trade-signals.html">即日鮮信號</a> · day trade 決策流程</li><li><a href="/hk-stock-screener.html">港股 stock screener</a> · 4 維度 filter 教學</li><li><a href="/methodology.html">分析方法論</a> · 4-dim 評分模型 + 操作建議</li><li><a href="/faq.html">FAQ</a> · 常見問題</li></ul></section>
+<h1>📊 決策儀表板</h1><p class="lede">所有交易日的 AI 分析報告。每日 200 隻港股 + 200 隻美股，4 維度評分 + 入場 / 止損 / 目標。</p><section class="dates-grid"><div class="date-card"><div class="date-header"><h2>2026-06-30</h2><span class="dim">400 隻</span></div><div class="date-stats"><span class="stat-bull">🟢 74</span><span class="stat-amber">🟡 266</span><span class="stat-bear">🔴 60</span></div><div class="date-filters"><a class="filter-chip primary" href="/dashboard/2026-06-30/all.html">📊 全部 (400)</a><a class="filter-chip" href="/dashboard/2026-06-30/hk-buy.html">🟢 港股買入</a> <a class="filter-chip" href="/dashboard/2026-06-30/hk-sell.html">🔴 港股賣出</a> <a class="filter-chip" href="/dashboard/2026-06-30/hk-hold.html">🟡 港股觀望</a> <a class="filter-chip" href="/dashboard/2026-06-30/us-buy.html">🟢 美股買入</a> <a class="filter-chip" href="/dashboard/2026-06-30/us-sell.html">🔴 美股賣出</a> <a class="filter-chip" href="/dashboard/2026-06-30/us-hold.html">🟡 美股觀望</a></div></div><div class="date-card"><div class="date-header"><h2>2026-06-29</h2><span class="dim">400 隻</span></div><div class="date-stats"><span class="stat-bull">🟢 83</span><span class="stat-amber">🟡 282</span><span class="stat-bear">🔴 35</span></div><div class="date-filters"><a class="filter-chip primary" href="/dashboard/2026-06-29/all.html">📊 全部 (400)</a><a class="filter-chip" href="/dashboard/2026-06-29/hk-buy.html">🟢 港股買入</a> <a class="filter-chip" href="/dashboard/2026-06-29/hk-sell.html">🔴 港股賣出</a> <a class="filter-chip" href="/dashboard/2026-06-29/hk-hold.html">🟡 港股觀望</a> <a class="filter-chip" href="/dashboard/2026-06-29/us-buy.html">🟢 美股買入</a> <a class="filter-chip" href="/dashboard/2026-06-29/us-sell.html">🔴 美股賣出</a> <a class="filter-chip" href="/dashboard/2026-06-29/us-hold.html">🟡 美股觀望</a></div></div><div class="date-card"><div class="date-header"><h2>2026-06-27</h2><span class="dim">400 隻</span></div><div class="date-stats"><span class="stat-bull">🟢 45</span><span class="stat-amber">🟡 276</span><span class="stat-bear">🔴 79</span></div><div class="date-filters"><a class="filter-chip primary" href="/dashboard/2026-06-27/all.html">📊 全部 (400)</a><a class="filter-chip" href="/dashboard/2026-06-27/hk-buy.html">🟢 港股買入</a> <a class="filter-chip" href="/dashboard/2026-06-27/hk-sell.html">🔴 港股賣出</a> <a class="filter-chip" href="/dashboard/2026-06-27/hk-hold.html">🟡 港股觀望</a> <a class="filter-chip" href="/dashboard/2026-06-27/us-buy.html">🟢 美股買入</a> <a class="filter-chip" href="/dashboard/2026-06-27/us-sell.html">🔴 美股賣出</a> <a class="filter-chip" href="/dashboard/2026-06-27/us-hold.html">🟡 美股觀望</a></div></div><div class="date-card"><div class="date-header"><h2>2026-06-26</h2><span class="dim">474 隻</span></div><div class="date-stats"><span class="stat-bull">🟢 81</span><span class="stat-amber">🟡 317</span><span class="stat-bear">🔴 76</span></div><div class="date-filters"><a class="filter-chip primary" href="/dashboard/2026-06-26/all.html">📊 全部 (474)</a><a class="filter-chip" href="/dashboard/2026-06-26/hk-buy.html">🟢 港股買入</a> <a class="filter-chip" href="/dashboard/2026-06-26/hk-sell.html">🔴 港股賣出</a> <a class="filter-chip" href="/dashboard/2026-06-26/hk-hold.html">🟡 港股觀望</a> <a class="filter-chip" href="/dashboard/2026-06-26/us-buy.html">🟢 美股買入</a> <a class="filter-chip" href="/dashboard/2026-06-26/us-sell.html">🔴 美股賣出</a> <a class="filter-chip" href="/dashboard/2026-06-26/us-hold.html">🟡 美股觀望</a></div></div></section><section class="hub-cta"><h2>常用入口</h2><ul><li><a href="/hk-scanner.html">港股 scanner</a> · 港股 200 隻 high-turnover stock</li><li><a href="/us-scanner.html">美股 scanner</a> · 美股 200 隻 S&P 500 + Nasdaq-100</li><li><a href="/day-trade-signals.html">即日鮮信號</a> · day trade 決策流程</li><li><a href="/hk-stock-screener.html">港股 stock screener</a> · 4 維度 filter 教學</li><li><a href="/methodology.html">分析方法論</a> · 4-dim 評分模型 + 操作建議</li><li><a href="/faq.html">FAQ</a> · 常見問題</li></ul></section>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>

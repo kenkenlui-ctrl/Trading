@@ -305,6 +305,37 @@ section ul, section ol { line-height: 1.75; max-width: 760px; }
     border: 1px solid rgba(185, 28, 28, 0.3);
 }
 
+/* LLM confidence + caution chips on cards (Option B: surface LLM self-cautions) */
+.signal-chips {
+    margin: 4px 0 6px 0;
+    font-size: 0.7rem;
+    line-height: 1.4;
+}
+.conf-chip {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: 600;
+    margin-right: 5px;
+    vertical-align: middle;
+    border: 1px solid currentColor;
+}
+.conf-high { color: var(--bull); background: rgba(21, 128, 61, 0.08); }
+.conf-mid  { color: var(--amber); background: rgba(146, 64, 14, 0.08); }
+.conf-low  { color: var(--bear); background: rgba(185, 28, 28, 0.08); }
+.caution-chip {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: 500;
+    margin-right: 5px;
+    margin-bottom: 2px;
+    vertical-align: middle;
+    color: var(--bear);
+    background: rgba(185, 28, 28, 0.06);
+    border: 1px solid rgba(185, 28, 28, 0.25);
+}
+
 /* Signal warning banner on dashboard */
 .signal-warning {
     margin: 0 0 1.2rem;
@@ -775,12 +806,12 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
         # then append the filter chips + detail table.
         body_html = (
             disclaimer_block()
-            + f'''<div class="signal-warning"><b>📊 信號使用注意</b> · 根據 22 天 backtest (4,371 outcomes)：
+            + f'''<div class="signal-warning"><b>🔬 Signal Explorer</b> · LLM 信號 + 信心 + 自己嘅警語。22 天 backtest (4,371 outcomes)：
             <br>· <b>🟢 買入</b>: 1D 58.6% / 1W <b>64.3%</b> — multi-day hold OK
             <br>· <b>🔴 賣出</b>: 1D <b>59.7%</b> / 1W 48.0% — <span class="warn-strong">mean-revert, close by 4 PM, 唔好 hold 過夜</span>
-            <br>· <b>ℹ️</b> 詳細 backtest 結果睇 <a href="/methodology.html">methodology 頁</a></div>'''
+            <br>· <b>ℹ️ 讀法</b>: 每張 card 顯示 <span class="conf-high">信心 高</span> / <span class="conf-mid">信心 中</span> / <span class="conf-low">信心 低</span> + <span class="caution-chip">⚠️ 不宜追</span> 等 LLM 自己嘅 hedging word。詳細睇 <a href="/methodology.html">methodology 頁</a>。</div>'''
             + filter_chips_html(date, slug)
-            + f'<h1>📊 決策儀表板 — {date} ({label})</h1>'
+            + f'<h1>🔬 Signal Explorer — {date} ({label})</h1>'
             + body_md_to_html(body_md, link_inject_date=date, score_lookup={r["code"]: r["score"] for r in all_reports if r.get("score") is not None}, op_lookup={r["code"]: r.get("operation_advice") for r in all_reports if r.get("operation_advice")})
         )
 

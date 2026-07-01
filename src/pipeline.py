@@ -311,6 +311,7 @@ def build_dashboard_md(
     cards_html = []
     for r in sorted_reports:
         raw = r.get("summary_md", "") or ""
+        full_md = r.get("full_md", "") or ""
         # Strip the embedded "· 買入/觀望/賣出 ·" tag — DB op_advice is canonical,
         # and the badges/emoji at the top of the card already convey the signal.
         # The LLM-emitted op tag in body text is often stale (overridden by rule).
@@ -331,6 +332,51 @@ def build_dashboard_md(
             target_emoji = "🟡"
         if target_emoji:
             raw = _re.sub(r'^(?:<[^>]+>)*\s*(?:🟢|🟡|🔴|⚪)', target_emoji, raw, count=1)
+
+        # === Extract LLM confidence from full_md header ===
+        # Pattern: "信心 中/高/低" appears in full_md header line
+        conf_text = "—"
+        conf_match = _re.search(r'信心\s*([高中低])', full_md)
+        if conf_match:
+            conf_text = conf_match.group(1)
+        # Map to badge + class
+        conf_class = "conf-mid"
+        if conf_text == "高":
+            conf_class = "conf-high"
+        elif conf_text == "低":
+            conf_class = "conf-low"
+
+        # === Detect LLM caution keywords in summary_md ===
+        # These appear when the LLM hedges its own signal — important for the user to see
+        # before acting (e.g. AMD: "不宜追入" + "PE 192 倍極為昂貴" + "偏離 MA20 12.3%")
+        caution_chips = []
+        caution_patterns = [
+            (r'(不宜追[入高]|不建議追[入高])', '不宜追', 'caution-chase'),
+            (r'(偏離\s*MA\d+\s*\d+\.?\d*%)', None, 'caution-extended'),
+            (r'(RSI\d*\s*[6-9]\d|RSI\d*\s*[1-9]\d{2})', 'RSI 偏高', 'caution-rsi'),
+            (r'(PE\s*TTM\s*\d+\s*倍.{0,8}貴|估值.{0,4}貴|極為昂貴|估值.{0,4}高)', '估值貴', 'caution-valuation'),
+            (r'(過熱|超買)', '過熱', 'caution-hot'),
+            (r'(止蝕位.{0,4}緊|止損.{0,4}緊|風險回報比.{0,4}低)', '止損緊', 'caution-tightstop'),
+        ]
+        for pat, label, cls in caution_patterns:
+            m = _re.search(pat, raw)
+            if m:
+                # If pattern has a label, use it; otherwise show matched text
+                display = label if label else m.group(1)
+                caution_chips.append(
+                    f'<span class="caution-chip {cls}">⚠️ {_html.escape(display)}</span>'
+                )
+        caution_html = "".join(caution_chips) if caution_chips else ""
+        # Show confidence chip only for actionable signals (buy/sell) — hold signals
+        # with low confidence are noise. Also cap at 2 caution chips to keep card compact.
+        show_conf = op in ("買入", "buy", "賣出", "sell", "賣出（反彈做空）") and conf_text in ("高", "中", "低")
+        conf_chip = f'<span class="conf-chip {conf_class}">信心 {conf_text}</span>' if show_conf else ""
+        # Cap caution chips to first 2 to keep card compact
+        caution_html_limited = "".join(caution_chips[:2]) if caution_chips else ""
+        chips_html = (
+            f'<div class="signal-chips">{conf_chip}{caution_html_limited}</div>'
+            if (conf_chip or caution_html_limited) else ""
+        )
         # Escape any < > & in LLM output so they render as text not markup
         safe = _html.escape(raw).replace("\n", "<br>")
         # Compute R:R badge from key_levels + last_price
@@ -393,6 +439,7 @@ def build_dashboard_md(
             f'margin:8px 0;font-size:0.85rem;line-height:1.5;'
             f'font-family:JetBrains Mono, monospace;">'
             f'<div style="margin-bottom:4px;">{rr_badge}{hint}</div>'
+            f'{chips_html}'
             f'{safe}'
             f'</div>'
         )
