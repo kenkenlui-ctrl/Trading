@@ -813,12 +813,41 @@ def body_md_to_html(md: str, link_inject_date: str | None = None, score_lookup: 
     # CARD_CONTENT is single-line text with **KO** or **00700.HK** bold code prefix.
     # Replace each card div to use class="card" + append a '→ 詳細報告' link inside.
     card_re = re.compile(
-        r'(<div\s+style="[^"]*">)(.+?)(</div>)',
+        r'(<div\s+style="[^"]*">)',
         flags=re.DOTALL,
     )
 
+    def _find_matching_div_end(s: str, start: int) -> int:
+        """Given s[start:] starts with '<div...>', find the index of the matching '</div>'.
+        Tracks nested <div> tags so we don't bail on inner divs (rr-badges, hints)."""
+        depth = 0
+        i = start
+        while i < len(s):
+            if s[i:i+5] == '<div ' or s[i:i+5] == '<div>':
+                depth += 1
+                i = s.find('>', i) + 1
+            elif s[i:i+6] == '</div>':
+                depth -= 1
+                if depth == 0:
+                    return i + 6  # position after </div>
+                i += 6
+            else:
+                i += 1
+        return -1
+
     def _rewrite_card(match: re.Match) -> str:
-        open_tag, body, close_tag = match.group(1), match.group(2), match.group(3)
+        # Re-find the matching close tag manually to handle nested divs
+        open_start = match.start(1)
+        open_end = match.end(1)  # after '<div style="...">'
+        # open_tag includes the original opening tag string
+        full_start = open_start
+        close_end = _find_matching_div_end(match.string, full_start)
+        if close_end < 0:
+            return match.group(0)
+        open_tag = match.string[full_start:open_end]
+        body = match.string[open_end:close_end - len('</div>')]
+        close_tag = '</div>'
+
         # Convert inline style to class
         open_tag_new = '<div class="card">'
 

@@ -232,6 +232,33 @@ section ul, section ol { line-height: 1.75; max-width: 760px; }
     font-size: 0.95rem;
 }
 
+/* R:R badge + timeframe hint inside cards */
+.rr-badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-right: 6px;
+    vertical-align: middle;
+    border: 1px solid currentColor;
+}
+.rr-good { color: var(--bull); background: rgba(21, 128, 61, 0.08); }
+.rr-ok   { color: var(--amber); background: rgba(146, 64, 14, 0.08); }
+.rr-bad  { color: var(--bear); background: rgba(185, 28, 28, 0.08); }
+.hint {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    vertical-align: middle;
+    color: var(--dim);
+    background: var(--panel-2);
+}
+.hint-buy { color: var(--bull); }
+.hint-sell { color: var(--bear); }
+
 /* Detail table */
 table.detail {
     width: 100%;
@@ -424,7 +451,7 @@ footer {
 <body>
 <nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
-<h1>◆ Leeks Terminal</h1><p class="lede">HK + US 即日鮮 AI 交易決策儀表板。<b>200 隻港股 + 200 隻美股</b>，每日全自動 4 維度評分 + 入場區間 / 止損 / 目標價，一頁睇晒。</p><section class="value-prop"><h2>點解用 Leeks Terminal</h2><ul><li><b>全自動化</b> · 港股用 Tencent 即時報價、美股用 YFinance，Tushare + yfinance 數據源，每個交易日 16:00 HKT / 16:00 ET 自動更新一次。</li><li><b>4 維度評分</b> · 價值（5%）+ 質量（5%）+ 動量（70%）+ 訂單流（20%），Python 端確定性計分，唔靠 LLM 估分數。</li><li><b>實用信號</b> · 每個信號附帶入場區間、止損位、目標價、風險備註，唔係一句「看多」就算數。</li><li><b>即日鮮</b> · 嚴格 day-trade 模式，4 PM HKT / 4 PM ET 前必須平倉，唔過夜，唔留倉。</li></ul></section><section class="sample-preview"><h2>今日信號範例</h2><p class="dim">以下係 2026-06-29 報告入面揀出嘅 3 個代表信號，每個 score 100 分制，0=最差、100=最好。完整 200+200 隻股票睇 <a href="/dashboard/2026-06-29/all.html">2026-06-29 dashboard →</a></p><div class="sample-grid"><div class="sample-card"><div class="sample-header"><span class="sample-code">DDOG</span><span class="sample-op">🟢 買入</span><span class="sample-score">79/100</span></div><p class="sample-summary">**DDOG** · 評分 79 · 觀望 · DDOG 今日爆升 +8.52%，收 239.77 HKD，全日高低區間 7.66%（223.68-242.04）屬極高波幅，量比 2.16× 確認資金積極參與。均線排列完美多頭：MA20 2</p><a href="/dashboard/2026-06-29/reports/DDOG.html" class="sample-link">完整 DDOG 報告 →</a></div><div class="sample-card"><div class="sample-header"><span class="sample-code">SYK</span><span class="sample-op">🟡 觀望</span><span class="sample-score">70/100</span></div><p class="sample-summary">**SYK** · 評分 70 · 觀望 · SYK 今日急升 5.25% 收 332.71 HKD，突破 MA50 (310.29) 及 MA100 (332.27) 雙重阻力，量比 1.79× 確認資金參與，今日 H/L 區間達 4.8</p><a href="/dashboard/2026-06-29/reports/SYK.html" class="sample-link">完整 SYK 報告 →</a></div><div class="sample-card"><div class="sample-header"><span class="sample-code">TXN</span><span class="sample-op">🔴 賣出</span><span class="sample-score">46/100</span></div><p class="sample-summary">**TXN** · 評分 46 · 賣出 · TXN 今日急跌 -8.46% 收 285.43，跌破 MA20 302.33，距離 MA50 290.72 僅一步之遙。雖然中長期 MA20 &gt; MA50 &gt; MA100 &gt; MA200 多頭</p><a href="/dashboard/2026-06-29/reports/TXN.html" class="sample-link">完整 TXN 報告 →</a></div></div></section><section class="how-it-works"><h2>點樣運作</h2><ol><li><b>揀日期</b> · 下面揀一個交易日，預設最新嗰日。</li><li><b>揀市場</b> · 全部 / 港股買入 / 港股賣出 / 美股買入 / 美股賣出 5 種 filter。</li><li><b>睇信號</b> · 每張 card 顯示 ticker + 評分 + 買入/觀望/賣出 + 一句總結。</li><li><b>入 detail page</b> · 撳「完整 XXX 詳細報告」睇技術指標 + 操作建議 + 風險備註。</li></ol></section><section class="data-source"><h2>數據來源 + 限制</h2><ul><li>HK 即時報價：Tencent qtimg (1-15 分鐘延遲，唔係 Level-2)</li><li>US 即時報價：YFinance / Alpaca (15-20 分鐘延遲)</li><li>新聞：Futu / Yahoo Finance RSS</li><li>基本面：YFinance (P/E、P/B、ROE、market cap)</li><li>覆蓋：港股 200 隻 (turnover ≥ 50M HKD) + 美股 200 隻 (S&P 500 + Nasdaq-100 樣本)</li></ul><p class="dim">⚠️ 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。</p></section><h2>選擇報告日期</h2><div class="date-picker"><a href="/dashboard/2026-06-29.html">2026-06-29</a><a href="/dashboard/2026-06-27.html">2026-06-27</a><a href="/dashboard/2026-06-26.html">2026-06-26</a></div><p>最新報告：<a href="/dashboard/2026-06-29/all.html">2026-06-29 →</a></p>
+<h1>◆ Leeks Terminal</h1><p class="lede">HK + US 即日鮮 AI 交易決策儀表板。<b>200 隻港股 + 200 隻美股</b>，每日全自動 4 維度評分 + 入場區間 / 止損 / 目標價，一頁睇晒。</p><section class="value-prop"><h2>點解用 Leeks Terminal</h2><ul><li><b>全自動化</b> · 港股用 Tencent 即時報價、美股用 YFinance，Tushare + yfinance 數據源，每個交易日 16:00 HKT / 16:00 ET 自動更新一次。</li><li><b>4 維度評分</b> · 價值（5%）+ 質量（5%）+ 動量（70%）+ 訂單流（20%），Python 端確定性計分，唔靠 LLM 估分數。</li><li><b>實用信號</b> · 每個信號附帶入場區間、止損位、目標價、風險備註，唔係一句「看多」就算數。</li><li><b>即日鮮</b> · 嚴格 day-trade 模式，4 PM HKT / 4 PM ET 前必須平倉，唔過夜，唔留倉。</li></ul></section><section class="sample-preview"><h2>今日信號範例</h2><p class="dim">以下係 2026-06-30 報告入面揀出嘅 3 個代表信號，每個 score 100 分制，0=最差、100=最好。完整 200+200 隻股票睇 <a href="/dashboard/2026-06-30/all.html">2026-06-30 dashboard →</a></p><div class="sample-grid"><div class="sample-card"><div class="sample-header"><span class="sample-code">AMD</span><span class="sample-op">🟢 買入</span><span class="sample-score">73/100</span></div><p class="sample-summary">**AMD** · 評分 73 · 觀望 · AMD 現價 $580.91，今日大升 +7.68%，收於 52 週新高 $580.91，技術面 MA20 $517.10 &gt; MA50 $450.40 &gt; MA100 $331.27 &gt; MA</p><a href="/dashboard/2026-06-30/reports/AMD.html" class="sample-link">完整 AMD 報告 →</a></div><div class="sample-card"><div class="sample-header"><span class="sample-code">02513.HK</span><span class="sample-op">🟡 觀望</span><span class="sample-score">66/100</span></div><p class="sample-summary">**02513.HK** · 評分 66 · 觀望 · 智谱(02513.HK)今日(2026/06/30)極為波動，現價 2104.00 較昨收 1961.00 上漲 7.29%，盤中區間 1933.00-2198.00 幅度高達 12.</p><a href="/dashboard/2026-06-30/reports/02513.HK.html" class="sample-link">完整 02513.HK 報告 →</a></div><div class="sample-card"><div class="sample-header"><span class="sample-code">ZS</span><span class="sample-op">🔴 賣出</span><span class="sample-score">40/100</span></div><p class="sample-summary">**ZS** · 評分 40 · 賣出 · ZS 收報 $141.15，今日升 2.58%，盤中區間 $134.50-$142.03，幅度 5.33% 屬高波幅提供短炒燃料。今日反彈已令股價升穿 MA20 ($129.96) 達 8.6%，</p><a href="/dashboard/2026-06-30/reports/ZS.html" class="sample-link">完整 ZS 報告 →</a></div></div></section><section class="how-it-works"><h2>點樣運作</h2><ol><li><b>揀日期</b> · 下面揀一個交易日，預設最新嗰日。</li><li><b>揀市場</b> · 全部 / 港股買入 / 港股賣出 / 美股買入 / 美股賣出 5 種 filter。</li><li><b>睇信號</b> · 每張 card 顯示 ticker + 評分 + 買入/觀望/賣出 + 一句總結。</li><li><b>入 detail page</b> · 撳「完整 XXX 詳細報告」睇技術指標 + 操作建議 + 風險備註。</li></ol></section><section class="data-source"><h2>數據來源 + 限制</h2><ul><li>HK 即時報價：Tencent qtimg (1-15 分鐘延遲，唔係 Level-2)</li><li>US 即時報價：YFinance / Alpaca (15-20 分鐘延遲)</li><li>新聞：Futu / Yahoo Finance RSS</li><li>基本面：YFinance (P/E、P/B、ROE、market cap)</li><li>覆蓋：港股 200 隻 (turnover ≥ 50M HKD) + 美股 200 隻 (S&P 500 + Nasdaq-100 樣本)</li></ul><p class="dim">⚠️ 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。</p></section><h2>選擇報告日期</h2><div class="date-picker"><a href="/dashboard/2026-06-30.html">2026-06-30</a><a href="/dashboard/2026-06-29.html">2026-06-29</a><a href="/dashboard/2026-06-27.html">2026-06-27</a><a href="/dashboard/2026-06-26.html">2026-06-26</a></div><p>最新報告：<a href="/dashboard/2026-06-30/all.html">2026-06-30 →</a></p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
