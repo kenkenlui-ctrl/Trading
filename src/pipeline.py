@@ -311,6 +311,26 @@ def build_dashboard_md(
     cards_html = []
     for r in sorted_reports:
         raw = r.get("summary_md", "") or ""
+        # Strip the embedded "· 買入/觀望/賣出 ·" tag — DB op_advice is canonical,
+        # and the badges/emoji at the top of the card already convey the signal.
+        # The LLM-emitted op tag in body text is often stale (overridden by rule).
+        import re as _re
+        raw = _re.sub(
+            r'(評分\s*\d+)\s*·\s*(?:買入|觀望|賣出|buy|hold|sell|賣出（反彈做空）)\s*·\s*',
+            r'\1 · ', raw, count=1
+        )
+        # Override leading status emoji based on op_advice (canonical) — LLM often
+        # emits ⚪ or wrong emoji even when rule-based override flipped the signal
+        op = r.get("operation_advice", "")
+        target_emoji = None
+        if op in ("買入", "buy"):
+            target_emoji = "🟢"
+        elif op in ("賣出", "sell", "賣出（反彈做空）"):
+            target_emoji = "🔴"
+        elif op in ("觀望", "hold"):
+            target_emoji = "🟡"
+        if target_emoji:
+            raw = _re.sub(r'^(?:<[^>]+>)*\s*(?:🟢|🟡|🔴|⚪)', target_emoji, raw, count=1)
         # Escape any < > & in LLM output so they render as text not markup
         safe = _html.escape(raw).replace("\n", "<br>")
         # Compute R:R badge from key_levels + last_price
