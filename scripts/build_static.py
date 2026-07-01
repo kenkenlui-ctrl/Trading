@@ -778,7 +778,6 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
             + f'''<div class="signal-warning"><b>📊 信號使用注意</b> · 根據 22 天 backtest (4,371 outcomes)：
             <br>· <b>🟢 買入</b>: 1D 58.6% / 1W <b>64.3%</b> — multi-day hold OK
             <br>· <b>🔴 賣出</b>: 1D <b>59.7%</b> / 1W 48.0% — <span class="warn-strong">mean-revert, close by 4 PM, 唔好 hold 過夜</span>
-            <br>· <b>⚠️</b> 系統會自動 revert extended/overbought 嘅買入信號 (e.g. 偏離 MA20&gt;5%、RSI 超買)
             <br>· <b>ℹ️</b> 詳細 backtest 結果睇 <a href="/methodology.html">methodology 頁</a></div>'''
             + filter_chips_html(date, slug)
             + f'<h1>📊 決策儀表板 — {date} ({label})</h1>'
