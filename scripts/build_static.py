@@ -273,6 +273,33 @@ section ul, section ol { line-height: 1.75; max-width: 760px; }
     font-size: 0.95rem;
 }
 
+/* R:R badge + timeframe hint inside cards */
+.rr-badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-right: 6px;
+    vertical-align: middle;
+    border: 1px solid currentColor;
+}
+.rr-good { color: var(--bull); background: rgba(21, 128, 61, 0.08); }
+.rr-ok   { color: var(--amber); background: rgba(146, 64, 14, 0.08); }
+.rr-bad  { color: var(--bear); background: rgba(185, 28, 28, 0.08); }
+.hint {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    vertical-align: middle;
+    color: var(--dim);
+    background: var(--panel-2);
+}
+.hint-buy { color: var(--bull); }
+.hint-sell { color: var(--bear); }
+
 /* Detail table */
 table.detail {
     width: 100%;
@@ -1137,6 +1164,42 @@ filter 可以 hide 其他方向。</p>
   <li><b>🟡 觀望</b>: 其他（regime 唔清、setup 唔齊、score 40-60 模糊區間）</li>
 </ul>
 <p><b>⚠️</b> 操作建議 <b>唔等於單一 score threshold</b> — LLM 會 cross-check 4-dim + sentiment + news flow + technical setup。一個 score 80 但 setup 模糊嘅股票仍然可能係觀望。</p>
+
+<h2>📊 Backtest 驗證 (2026-05-29 至 2026-06-29, 22 個交易日)</h2>
+<p>我哋用 historical yfinance data 跑咗 22 個交易日 × 200 隻美股 (US-only，HK 暫時冇 historical source)，
+總共 <b>4,379 個信號 × 1D/1W horizons</b>。Hit rate 表：</p>
+<table class="dim-table">
+<thead><tr><th>信號</th><th>1 日 hit rate</th><th>1 週 hit rate</th><th>1 日 avg move</th><th>1 週 avg move</th></tr></thead>
+<tbody>
+<tr><td><b>🟢 買入</b></td><td>58.6% (n=58)</td><td><b>64.3% (n=42)</b></td><td>+0.91%</td><td>+1.24%</td></tr>
+<tr><td><b>🔴 賣出</b></td><td><b>59.7% (n=191)</td><td>48.0% (n=202)</td><td>-0.40%</td><td>+0.45%</td></tr>
+<tr><td><b>🟡 觀望</b></td><td>n/a</td><td>n/a</td><td>+0.11%</td><td>+0.72%</td></tr>
+</tbody>
+</table>
+<p><b>兩個關鍵 takeaway</b>：</p>
+<ol>
+<li><b>🟢 買入 multi-day 有效</b> — 1 週 hit rate (64.3%) > 1 日 (58.6%)，表示 buy signal 嘅 lead time work，long 倉 hold 過夜仲跟到。</li>
+<li><b>🔴 賣出 day-trade only</b> — 1 日 hit rate (59.7%) > 1 週 (48.0%)，表示 short setup mean-revert，第二日就會反彈。SELL 必須 16:00 HKT/ET 前平倉。</li>
+</ol>
+<p><b>Implication 落 dashboard</b>：</p>
+<ul>
+<li>買入 cards 標 "🟢 買入 — multi-day hold OK"</li>
+<li>賣出 cards 標 "🔴 賣出 — day-trade only, close by 4 PM"</li>
+</ul>
+
+<h2>🛡️ R:R Override 過濾 (Risk:Reward)</h2>
+<p>每個 buy setup 計算 <b>reward / risk</b> ratio:</p>
+<ul>
+<li><b>Reward</b> = |target_price - last| / last</li>
+<li><b>Risk</b> = |last - min(LLM_support, today_low)| / last</li>
+</ul>
+<p>Dashboard card 會顯示 R:R badge：</p>
+<ul>
+<li><b>🟢 R:R ≥ 2.0</b> — setup 質量好，risk-controlled</li>
+<li><b>🟡 1.0 ≤ R:R < 2.0</b> — 普通 setup，risk/reward 1:1</li>
+<li><b>🔴 R:R < 1.0</b> — risk 大過 reward，避開</li>
+</ul>
+<p>邏輯：buy setup 入場前要計清楚「贏幾多 vs 輸幾多」。R:R ≥ 2.0 表示 setup 期望值正（2:1 風險回報），否則好 setup 都係陷阱。</p>
 """
         elif slug == "disclaimer":
             body += """

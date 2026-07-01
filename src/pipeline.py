@@ -313,11 +313,64 @@ def build_dashboard_md(
         raw = r.get("summary_md", "") or ""
         # Escape any < > & in LLM output so they render as text not markup
         safe = _html.escape(raw).replace("\n", "<br>")
+        # Compute R:R badge from key_levels + last_price
+        rr_badge = ""
+        op = r.get("operation_advice", "")
+        if op in ("買入", "buy", "賣出", "sell", "賣出（反彈做空）"):
+            try:
+                kl = json.loads(r.get("key_levels_json") or "{}")
+                snap = json.loads(r.get("data_snapshot_json") or "{}")
+                last = snap.get("last_price")
+                support = kl.get("support_floor")
+                day_low = kl.get("day_low_value")
+                target = kl.get("resistance_target")
+                if op in ("買入", "buy"):
+                    # Long setup: target > last, stop = min(support, day_low) < last
+                    if all(x is not None for x in [last, target, support, day_low]) and last > 0 and target > last:
+                        best_stop = min(support, day_low)
+                        if best_stop < last:
+                            risk_pct = abs(last - best_stop) / last * 100
+                            reward_pct = abs(target - last) / last * 100
+                            if risk_pct > 0.5:  # min 0.5% risk to avoid div-by-zero noise
+                                rr = reward_pct / risk_pct
+                                if rr >= 2.0:
+                                    rr_badge = f' <span class="rr-badge rr-good">🛡️ R:R {rr:.1f}</span>'
+                                elif rr >= 1.0:
+                                    rr_badge = f' <span class="rr-badge rr-ok">🛡️ R:R {rr:.1f}</span>'
+                                else:
+                                    rr_badge = f' <span class="rr-badge rr-bad">🛡️ R:R {rr:.1f}</span>'
+                # Short setup (sell): target < last, stop = max(resistance, day_high) > last
+                elif op in ("賣出", "sell", "賣出（反彈做空）"):
+                    day_high = kl.get("day_high_value")
+                    # For short setup: target = support_floor (going down), stop = max(resistance, day_high)
+                    short_target = support
+                    short_stop = max(target, day_high) if day_high else target
+                    if all(x is not None for x in [last, short_target, short_stop]) and last > 0 and short_target < last and short_stop > last:
+                        risk_pct = abs(short_stop - last) / last * 100
+                        reward_pct = abs(last - short_target) / last * 100
+                        if risk_pct > 0.5:
+                            rr = reward_pct / risk_pct
+                            if rr >= 2.0:
+                                rr_badge = f' <span class="rr-badge rr-good">🛡️ R:R {rr:.1f}</span>'
+                            elif rr >= 1.0:
+                                rr_badge = f' <span class="rr-badge rr-ok">🛡️ R:R {rr:.1f}</span>'
+                            else:
+                                rr_badge = f' <span class="rr-badge rr-bad">🛡️ R:R {rr:.1f}</span>'
+            except (json.JSONDecodeError, TypeError, ValueError):
+                pass
+        # Build timeframe hint (buy multi-day / sell day-trade)
+        hint = ""
+        if op in ("買入", "buy"):
+            hint = ' <span class="hint hint-buy">multi-day hold OK</span>'
+        elif op in ("賣出", "sell", "賣出（反彈做空）"):
+            hint = ' <span class="hint hint-sell">day-trade only · 4 PM 平倉</span>'
+
         card = (
             f'<div style="border:1px solid var(--border);border-left:3px solid var(--accent);'
             f'background:var(--panel);border-radius:4px;padding:10px 14px;'
             f'margin:8px 0;font-size:0.85rem;line-height:1.5;'
             f'font-family:JetBrains Mono, monospace;">'
+            f'<div style="margin-bottom:4px;">{rr_badge}{hint}</div>'
             f'{safe}'
             f'</div>'
         )
