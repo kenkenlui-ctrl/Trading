@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leeks Terminal · 2026-07-02 · 港股買入</title>
+  <meta name="description" content="Leeks Terminal 2026-07-02 AI dashboard — 港股買入">
+  <meta property="og:title" content="Leeks Terminal · 2026-07-02 · 港股買入">
+  <meta property="og:description" content="Leeks Terminal 2026-07-02 AI dashboard — 港股買入">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.win9you.com">
+  <meta property="og:image" content="https://www.win9you.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://www.win9you.com/og-image.png">
+  <meta name="twitter:title" content="Leeks Terminal · 2026-07-02 · 港股買入">
+  <meta name="twitter:description" content="Leeks Terminal 2026-07-02 AI dashboard — 港股買入">
+  <link rel="canonical" href="https://www.win9you.com">
+  <link rel="alternate" hreflang="zh-Hant" href="https://www.win9you.com">
+  <link rel="alternate" hreflang="x-default" href="https://www.win9you.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+    --bg: #ffffff;
+    --panel: #f3f4f6;
+    --panel-2: #e5e7eb;
+    --border: #e5e7eb;
+    --fg: #1a1d23;
+    --dim: #4b5563;
+    --bull: #15803d;
+    --bear: #b91c1c;
+    --amber: #92400e;
+    --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Top nav (matches Streamlit worker injection) */
+nav.leeks-site-nav {
+    position: sticky; top: 0; z-index: 999;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+nav.leeks-site-nav .brand {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+}
+nav.leeks-site-nav a {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    padding: 4px 0;
+}
+nav.leeks-site-nav a.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+}
+
+/* Layout */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+h1 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin: 0 0 1rem;
+}
+h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
+
+/* Date selector (top of dashboard) — looks like Streamlit selectbox */
+.date-picker {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+}
+.date-picker a {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--fg);
+    font-size: 0.8rem;
+}
+.date-picker a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Disclaimer */
+.disclaimer {
+    background: #fef3c7;
+    border: 1px solid #b45309;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #78350f;
+}
+
+/* Cards (mirror Streamlit dashboard) */
+.card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+.card.bull { border-left-color: var(--bull); }
+.card.bear { border-left-color: var(--bear); }
+.card.amber { border-left-color: var(--amber); }
+
+/* Stats line */
+.stats {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.stats .bull { color: var(--bull); font-weight: 600; }
+.stats .bear { color: var(--bear); font-weight: 600; }
+.stats .amber { color: var(--amber); font-weight: 600; }
+
+/* Homepage value-prop + sample preview */
+.lede { font-size: 1.05rem; line-height: 1.65; max-width: 760px; }
+section h2 { margin-top: 2.4rem; }
+section ul, section ol { line-height: 1.75; max-width: 760px; }
+.dim { color: var(--dim); }
+
+.sample-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 1rem 0 1.4rem;
+    max-width: 900px;
+}
+.sample-card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 12px 14px;
+    background: #fafbfc;
+}
+.sample-header {
+    display: flex; gap: 8px; align-items: baseline; margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.sample-code { font-weight: 700; font-size: 1.05rem; }
+.sample-op { padding: 1px 6px; border-radius: 3px; background: var(--panel); font-size: 0.85rem; }
+.sample-score { margin-left: auto; font-weight: 600; color: var(--dim); font-size: 0.9rem; }
+.sample-summary { font-size: 0.85rem; line-height: 1.55; color: var(--fg); margin: 6px 0 8px; }
+.sample-link { font-size: 0.85rem; }
+
+/* Dashboard hub /dashboard/ */
+.dates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin: 1.5rem 0 2rem;
+    max-width: 1100px;
+}
+.date-card {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    background: #fafbfc;
+}
+.date-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 8px;
+}
+.date-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+.date-stats {
+    display: flex; gap: 12px; margin-bottom: 12px; font-size: 0.95rem;
+}
+.stat-bull { color: var(--bull); font-weight: 600; }
+.stat-amber { color: var(--amber); font-weight: 600; }
+.stat-bear { color: var(--bear); font-weight: 600; }
+.date-filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+}
+.filter-chip {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: #fff;
+    font-size: 0.82rem;
+    text-decoration: none;
+    color: var(--fg);
+    transition: background 0.15s;
+}
+.filter-chip:hover { background: var(--panel-2); text-decoration: none; }
+.filter-chip.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    font-weight: 600;
+}
+.filter-chip.primary:hover { background: #1d4ed8; }
+.hub-cta ul { list-style: none; padding: 0; }
+.hub-cta li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--panel);
+    font-size: 0.95rem;
+}
+
+/* R:R badge + timeframe hint inside cards */
+.rr-badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-right: 6px;
+    vertical-align: middle;
+    border: 1px solid currentColor;
+}
+.rr-good { color: var(--bull); background: rgba(21, 128, 61, 0.08); }
+.rr-ok   { color: var(--amber); background: rgba(146, 64, 14, 0.08); }
+.rr-bad  { color: var(--bear); background: rgba(185, 28, 28, 0.08); }
+.hint {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    vertical-align: middle;
+    color: var(--dim);
+    background: var(--panel-2);
+}
+.hint-buy { color: var(--bull); }
+.hint-sell {
+    color: var(--bear);
+    font-weight: 600;
+    background: rgba(185, 28, 28, 0.06);
+    border: 1px solid rgba(185, 28, 28, 0.3);
+}
+
+/* LLM confidence + caution chips on cards (Option B: surface LLM self-cautions) */
+.signal-chips {
+    margin: 4px 0 6px 0;
+    font-size: 0.7rem;
+    line-height: 1.4;
+}
+.conf-chip {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: 600;
+    margin-right: 5px;
+    vertical-align: middle;
+    border: 1px solid currentColor;
+}
+.conf-high { color: var(--bull); background: rgba(21, 128, 61, 0.08); }
+.conf-mid  { color: var(--amber); background: rgba(146, 64, 14, 0.08); }
+.conf-low  { color: var(--bear); background: rgba(185, 28, 28, 0.08); }
+.caution-chip {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: 500;
+    margin-right: 5px;
+    margin-bottom: 2px;
+    vertical-align: middle;
+    color: var(--bear);
+    background: rgba(185, 28, 28, 0.06);
+    border: 1px solid rgba(185, 28, 28, 0.25);
+}
+
+/* Signal warning banner on dashboard */
+.signal-warning {
+    margin: 0 0 1.2rem;
+    padding: 10px 14px;
+    background: rgba(146, 64, 14, 0.06);
+    border-left: 3px solid var(--amber);
+    border-radius: 4px;
+    font-size: 0.82rem;
+    line-height: 1.55;
+}
+.signal-warning .warn-strong {
+    color: var(--bear);
+    font-weight: 700;
+}
+.signal-warning a {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+/* Detail table */
+table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+}
+table.detail th, table.detail td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+table.detail th {
+    background: var(--panel-2);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+
+/* Methodology dim table */
+table.dim-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+}
+table.dim-table th, table.dim-table td {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+table.dim-table th {
+    background: var(--panel-2);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+table.dim-table td:first-child { font-family: 'JetBrains Mono', monospace; }
+table.dim-table td:nth-child(2) { font-weight: 600; color: var(--accent); text-align: center; }
+
+/* Card-link: appended after each summary card so reader can dive into detail */
+p.card-link {
+    margin: 6px 0 0;
+    text-align: right;
+    font-size: 0.78rem;
+}
+p.card-link a {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+p.card-link a:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Filter chips (alternative to filter dropdown) */
+.filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+}
+.filters span { color: var(--dim); margin-right: 4px; align-self: center; }
+.filters a {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--fg);
+}
+.filters a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Report detail page */
+.report-header h1 { margin: 0 0 0.5rem; }
+.report-header .meta {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 1rem;
+}
+.report-header .badge {
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    font-size: 0.75rem;
+    color: var(--fg);
+}
+.report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.conf { background: var(--panel-2); }
+
+.score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 1rem 0;
+}
+.score-breakdown .dim {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+}
+.score-breakdown .dim span {
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.score-breakdown .bar {
+    background: var(--border);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 6px 0;
+}
+.score-breakdown .bar .fill { height: 100%; }
+.score-breakdown .dim b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+}
+
+.levels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    margin: 1rem 0;
+}
+.levels > div {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+.levels span {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+.levels b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+}
+.levels b.bull { color: var(--bull); }
+.levels b.bear { color: var(--bear); }
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    main { padding: 16px 12px 48px; }
+    h1 { font-size: 1.15rem; }
+    .card { padding: 8px 10px; font-size: 0.8rem; }
+    nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
+    nav.leeks-site-nav a { font-size: 0.7rem; }
+    table.detail { font-size: 0.7rem; }
+    table.detail th, table.detail td { padding: 4px 6px; }
+}
+</style>
+  
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<main>
+<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="signal-warning"><b>🔬 Signal Explorer</b> · LLM 信號 + 信心 + 自己嘅警語。22 天 backtest (4,371 outcomes)：
+            <br>· <b>🟢 買入</b>: 1D 58.6% / 1W <b>64.3%</b> — multi-day hold OK
+            <br>· <b>🔴 賣出</b>: 1D <b>59.7%</b> / 1W 48.0% — <span class="warn-strong">mean-revert, close by 4 PM, 唔好 hold 過夜</span>
+            <br>· <b>ℹ️ 讀法</b>: 每張 card 顯示 <span class="conf-high">信心 高</span> / <span class="conf-mid">信心 中</span> / <span class="conf-low">信心 低</span> + <span class="caution-chip">⚠️ 不宜追</span> 等 LLM 自己嘅 hedging word。詳細睇 <a href="/methodology.html">methodology 頁</a>。</div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-07-02/all.html">全部</a><a href="/dashboard/2026-07-02/hk-buy.html" class="active">港股買入</a><a href="/dashboard/2026-07-02/hk-sell.html">港股賣出</a><a href="/dashboard/2026-07-02/hk-hold.html">港股觀望</a><a href="/dashboard/2026-07-02/us-buy.html">美股買入</a><a href="/dashboard/2026-07-02/us-sell.html">美股賣出</a><a href="/dashboard/2026-07-02/us-hold.html">美股觀望</a></div><h1>🔬 Signal Explorer — 2026-07-02 (港股買入)</h1><b>2026-07-02</b> · 共分析 <b>10</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:10 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:0 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:0
+
+<h2>📊 分析結果摘要</h2>
+
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-ok">🛡️ R:R 1.8</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>02057.HK</b> · 評分 69 · 中通快遞-W(02057.HK) 2026/07/02 收報 180.10 HKD，大升 4.95%，跑贏大市並受惠快遞業『反內卷』板塊共振，極兔同日亦升逾 5%。今日 H/L 區間 175.80-181.20，幅度 3.00% 屬高波幅，短炒燃料充足。公司近期持續回購（6月30日 499.55萬美元、7月1日 499.57萬美元，並斥資 1.35億美元回購股份），為股價提供下行緩衝。PE TTM 僅 3.15 估值極便宜，但 PB 1006.91 異常（疑因連續回購導致賬面權益大幅攤薄），需警惕數據陷阱。MA20/MA50/MA100/MA200 及 RSI 數據缺失，技術面判斷以價位區間為主。建議回調至 178.50-179.80 區間短多，博反彈至 188.00 中段阻力，嚴守 174.50 止損。<p class="card-link"><a href="/dashboard/2026-07-02/reports/02057.HK.html">→ 完整 02057.HK 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-ok">🛡️ R:R 1.8</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-ok">🛡️ R:R 1.8</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div>🟢 **02057.HK** · 評分 69 · 中通快遞-W(02057.HK) 2026/07/02 收報 180.10 HKD，大升 4.95%，跑贏大市並受惠快遞業『反內卷』板塊共振，極兔同日亦升逾 5%。今日 H/L 區間 175.80-181.20，幅度 3.00% 屬高波幅，短炒燃料充足。公司近期持續回購（6月30日 499.55萬美元、7月1日 499.57萬美元，並斥資 1.35億美元回購股份），為股價提供下行緩衝。PE TTM 僅 3.15 估值極便宜，但 PB 1006.91 異常（疑因連續回購導致賬面權益大幅攤薄），需警惕數據陷阱。MA20/MA50/MA100/MA200 及 RSI 數據缺失，技術面判斷以價位區間為主。建議回調至 178.50-179.80 區間短多，博反彈至 188.00 中段阻力，嚴守 174.50 止損。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-ok">🛡️ R:R 1.5</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>03690.HK</b> · 評分 68 · 美團-W(03690.HK)2026/07/02收報70.85港元，全日升3.43%，盤中高見73.65、低見69.45，H/L區間達5.93%屬高波幅交易日，短炒燃料充足。PE TTM僅6.13倍估值極低，管理層表態股價被低估並啟動回購，疊加港股科網股集體走強（美團盤中曾升逾5%），短線momentum明顯改善。惟MA20/50/100/200及RSI14均缺數據，中長期趨勢無法量化確認，且PB 3964.49異常（疑為大量回購導致賬面權益偏低），技術派宜以價格行為為主。<p class="card-link"><a href="/dashboard/2026-07-02/reports/03690.HK.html">→ 完整 03690.HK 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-ok">🛡️ R:R 1.5</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-ok">🛡️ R:R 1.5</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div>🟢 **03690.HK** · 評分 68 · 美團-W(03690.HK)2026/07/02收報70.85港元，全日升3.43%，盤中高見73.65、低見69.45，H/L區間達5.93%屬高波幅交易日，短炒燃料充足。PE TTM僅6.13倍估值極低，管理層表態股價被低估並啟動回購，疊加港股科網股集體走強（美團盤中曾升逾5%），短線momentum明顯改善。惟MA20/50/100/200及RSI14均缺數據，中長期趨勢無法量化確認，且PB 3964.49異常（疑為大量回購導致賬面權益偏低），技術派宜以價格行為為主。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.4</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>00005.HK</b> · 評分 64 · 滙豐控股現價 149.50 HKD，今日升 1.08%，收市前 (16:08 HKT) 喺 149.60 全日高位附近企穩，距離 52 週高位 150.50 只差 0.67%，短線呈突破前高態勢。PE TTM 1.76 極低（銀行股常見），但 PB 25689.43 同市值數據明顯有誤，估值參考價值打折。今日 H/L 區間 1.74% 屬中等波幅，短炒燃料尚可。最大隱憂係量比 0.00×，即 5 日均量數據缺失，無法確認突破嘅量能配合，建議嚴控倉位。MA20/50/100/200 全部 N/A，趨勢判斷只能靠現價 vs 52 週區間。<p class="card-link"><a href="/dashboard/2026-07-02/reports/00005.HK.html">→ 完整 00005.HK 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-bad">🛡️ R:R 0.4</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-bad">🛡️ R:R 0.4</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div>🟢 **00005.HK** · 評分 64 · 滙豐控股現價 149.50 HKD，今日升 1.08%，收市前 (16:08 HKT) 喺 149.60 全日高位附近企穩，距離 52 週高位 150.50 只差 0.67%，短線呈突破前高態勢。PE TTM 1.76 極低（銀行股常見），但 PB 25689.43 同市值數據明顯有誤，估值參考價值打折。今日 H/L 區間 1.74% 屬中等波幅，短炒燃料尚可。最大隱憂係量比 0.00×，即 5 日均量數據缺失，無法確認突破嘅量能配合，建議嚴控倉位。MA20/50/100/200 全部 N/A，趨勢判斷只能靠現價 vs 52 週區間。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-ok">🛡️ R:R 1.1</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>02050.HK</b> · 評分 64 · 02050.HK 三花智控 2026/07/02 收報 27.48 HKD，全日大升 +3.93%，H/L 區間 26.98-28.62，幅度 5.97% 屬高波幅，提供短炒燃料。PE TTM 僅 6.20 估值便宜，惟 PB 異常高達 130.95（賬面權益基數極低或會計結構問題），估值信號矛盾。消息面上，公司被定性為特斯拉 Optimus 機器人核心供應商，主題催化持續。惟 MA20/MA50/MA200 全部 N/A，量比 0.00× 數據缺失，趨勢及資金面確認不足。短線操作宜趁回調至 27.00-27.40 區間分注吸納，目標 28.50-28.62（今日高位），止損 26.40。<p class="card-link"><a href="/dashboard/2026-07-02/reports/02050.HK.html">→ 完整 02050.HK 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-ok">🛡️ R:R 1.1</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-ok">🛡️ R:R 1.1</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div>🟢 **02050.HK** · 評分 64 · 02050.HK 三花智控 2026/07/02 收報 27.48 HKD，全日大升 +3.93%，H/L 區間 26.98-28.62，幅度 5.97% 屬高波幅，提供短炒燃料。PE TTM 僅 6.20 估值便宜，惟 PB 異常高達 130.95（賬面權益基數極低或會計結構問題），估值信號矛盾。消息面上，公司被定性為特斯拉 Optimus 機器人核心供應商，主題催化持續。惟 MA20/MA50/MA200 全部 N/A，量比 0.00× 數據缺失，趨勢及資金面確認不足。短線操作宜趁回調至 27.00-27.40 區間分注吸納，目標 28.50-28.62（今日高位），止損 26.40。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-ok">🛡️ R:R 1.3</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>01336.HK</b> · 評分 62 · 新華保險（01336.HK）今日收報 47.38 HKD，單日升 2.96%，盤中區間 47.20-49.18，幅度達 4.18%（高波幅），短炒燃料充足。行業層面受 2025 年淨利潤增長 38.3% 帶動，五大險企全線飄紅，板塊共振效應明顯。PE TTM 僅 4.30，估值極具吸引力；惟 PB 報 489.96 明顯異常（保險公司負債驅動資產負債表，PB 參考意義有限，且數值疑為 feed 異常）。技術指標 MA/RSI 全部缺失，限制中線判斷。建議以日內交易為主，待回調至 47.20-47.60 區間分批吸納做多，博反彈至 49.00（接近今日高位 49.18）短線獲利。<p class="card-link"><a href="/dashboard/2026-07-02/reports/01336.HK.html">→ 完整 01336.HK 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-ok">🛡️ R:R 1.3</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-ok">🛡️ R:R 1.3</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div>🟢 **01336.HK** · 評分 62 · 新華保險（01336.HK）今日收報 47.38 HKD，單日升 2.96%，盤中區間 47.20-49.18，幅度達 4.18%（高波幅），短炒燃料充足。行業層面受 2025 年淨利潤增長 38.3% 帶動，五大險企全線飄紅，板塊共振效應明顯。PE TTM 僅 4.30，估值極具吸引力；惟 PB 報 489.96 明顯異常（保險公司負債驅動資產負債表，PB 參考意義有限，且數值疑為 feed 異常）。技術指標 MA/RSI 全部缺失，限制中線判斷。建議以日內交易為主，待回調至 47.20-47.60 區間分批吸納做多，博反彈至 49.00（接近今日高位 49.18）短線獲利。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-ok">🛡️ R:R 1.2</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>00175.HK</b> · 評分 61 · 吉利汽車今日（2026/07/02）收報 17.32 HKD，升 2.73%，盤中 H/L 區間 17.62/17.07 達 3.18%，屬高波幅交易日，短炒燃料充足。PE TTM 3.26 極為便宜，估值修復空間大。H1 2026 銷量超 142 萬輛、單月出口破 10 萬輛、6 月極氪銷量暴漲，叠加電池新國標提前達標等基本面催化支持。但量比 0.00× 數據缺失，MA20/50/100/200 均無數據，技術面確認不足，僅以當日 momentum 為主做短線參與。建議日內做多為主，嚴守止損。<p class="card-link"><a href="/dashboard/2026-07-02/reports/00175.HK.html">→ 完整 00175.HK 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-ok">🛡️ R:R 1.2</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-ok">🛡️ R:R 1.2</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div>🟢 **00175.HK** · 評分 61 · 吉利汽車今日（2026/07/02）收報 17.32 HKD，升 2.73%，盤中 H/L 區間 17.62/17.07 達 3.18%，屬高波幅交易日，短炒燃料充足。PE TTM 3.26 極為便宜，估值修復空間大。H1 2026 銷量超 142 萬輛、單月出口破 10 萬輛、6 月極氪銷量暴漲，叠加電池新國標提前達標等基本面催化支持。但量比 0.00× 數據缺失，MA20/50/100/200 均無數據，技術面確認不足，僅以當日 momentum 為主做短線參與。建議日內做多為主，嚴守止損。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 1.0</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>01519.HK</b> · 評分 60 · 01519.HK 极兔速递-W 今日（2026/07/02）收報 8.76 HKD，大升 +4.78%，跑贏大市。今日 H/L 區間 8.51-8.87 幅度達 4.11%，屬高波幅交易日，短炒燃料充足。催化劑包括快遞業反內卷成效釋放、寧德時代 5000 台換電重卡戰略合作、20 億港元回購計劃三大正面消息。估值 PE TTM 僅 4.31 屬極低水平，但 PB 高達 761.43 反映股東權益極薄，質素面有暗瘡。日內動能強勁但量比數據缺失（0.00×），缺乏長線 MA 趨勢參考，宜短炒不留倉。<p class="card-link"><a href="/dashboard/2026-07-02/reports/01519.HK.html">→ 完整 01519.HK 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-bad">🛡️ R:R 1.0</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-bad">🛡️ R:R 1.0</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div>🟢 **01519.HK** · 評分 60 · 01519.HK 极兔速递-W 今日（2026/07/02）收報 8.76 HKD，大升 +4.78%，跑贏大市。今日 H/L 區間 8.51-8.87 幅度達 4.11%，屬高波幅交易日，短炒燃料充足。催化劑包括快遞業反內卷成效釋放、寧德時代 5000 台換電重卡戰略合作、20 億港元回購計劃三大正面消息。估值 PE TTM 僅 4.31 屬極低水平，但 PB 高達 761.43 反映股東權益極薄，質素面有暗瘡。日內動能強勁但量比數據缺失（0.00×），缺乏長線 MA 趨勢參考，宜短炒不留倉。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.7</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>06110.HK</b> · 評分 59 · 滔搏 (06110.HK) 今日升 5.75% 至 $1.84，盤中區間 $1.78-$1.91，幅度 7.07% 屬高波幅，短炒燃料充足。股價從 52 週低位 $1.65 反彈，受惠特別股息公告及耐克線上授權傳聞澄清。PE TTM 僅 7.47 屬深度估值，PB 高達 114.10（疑因持續回購導致賬面值偏低，技術上需留意）。日內操作建議待回吐至 $1.80-$1.82 區間吸納做多博反彈至 $1.91 阻力位；止損設 $1.75（即前收 $1.74 之上）。注意量比 0.00× 反映資金確認度不足，需嚴控倉位。<p class="card-link"><a href="/dashboard/2026-07-02/reports/06110.HK.html">→ 完整 06110.HK 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-bad">🛡️ R:R 0.7</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-bad">🛡️ R:R 0.7</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span></div>🟢 **06110.HK** · 評分 59 · 滔搏 (06110.HK) 今日升 5.75% 至 $1.84，盤中區間 $1.78-$1.91，幅度 7.07% 屬高波幅，短炒燃料充足。股價從 52 週低位 $1.65 反彈，受惠特別股息公告及耐克線上授權傳聞澄清。PE TTM 僅 7.47 屬深度估值，PB 高達 114.10（疑因持續回購導致賬面值偏低，技術上需留意）。日內操作建議待回吐至 $1.80-$1.82 區間吸納做多博反彈至 $1.91 阻力位；止損設 $1.75（即前收 $1.74 之上）。注意量比 0.00× 反映資金確認度不足，需嚴控倉位。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 1.0</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>02313.HK</b> · 評分 57 · 02313.HK 申洲國際今日 (2026-07-02) 收報 40.84 港元，全日升 3.76%，盤中高低 41.58 / 40.40，振幅 2.89% 接近高波幅 (3%) 門檻。現價距 52週低位 38.66 僅 5.6%，處跌勢末段尋底區。PE TTM 3.00 極低反映盈利周期底部，配合摩根大通增持 131.22 萬股 (約 5,866.95 萬港元)、大摩料下半年盈利恢復增長及足球服營收年增 28%，機構信號正面。但 MA20/50/100/200、RSI14 全部缺失無從驗證中長期趨勢；量比 0.00× (數據異常) 資金跟進未確認；PB 613.76 與市值 613.76 港元明顯為數據錯誤 (申洲實際市值應數百億計)，估值信號不可靠。短線建議回調 40.40-40.60 區間 (今日低位附近) 吸納做多，博反彈至 43.00。<p class="card-link"><a href="/dashboard/2026-07-02/reports/02313.HK.html">→ 完整 02313.HK 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-bad">🛡️ R:R 1.0</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-bad">🛡️ R:R 1.0</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div>🟢 **02313.HK** · 評分 57 · 02313.HK 申洲國際今日 (2026-07-02) 收報 40.84 港元，全日升 3.76%，盤中高低 41.58 / 40.40，振幅 2.89% 接近高波幅 (3%) 門檻。現價距 52週低位 38.66 僅 5.6%，處跌勢末段尋底區。PE TTM 3.00 極低反映盈利周期底部，配合摩根大通增持 131.22 萬股 (約 5,866.95 萬港元)、大摩料下半年盈利恢復增長及足球服營收年增 28%，機構信號正面。但 MA20/50/100/200、RSI14 全部缺失無從驗證中長期趨勢；量比 0.00× (數據異常) 資金跟進未確認；PB 613.76 與市值 613.76 港元明顯為數據錯誤 (申洲實際市值應數百億計)，估值信號不可靠。短線建議回調 40.40-40.60 區間 (今日低位附近) 吸納做多，博反彈至 43.00。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-ok">🛡️ R:R 1.0</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>03896.HK</b> · 評分 53 · 03896.HK 金山雲 2026/07/02 收報 4.77 HKD，全日升 2.80%，區間 4.73-4.94 HKD，波幅 4.40% 屬高波幅短炒格局。受惠 AI 算力擴張（小米百億預算落地、阿里五年長約）、AI 服務擬漲價及股東會批准股份回購等多重利好帶動，AI 應用板塊普遍走強。PE TTM 僅 4.53 屬深度低估，惟 PB 高達 216.17 反映賬面權益極薄，財務質素打折。技術上 MA20/50/100/200 及 RSI 數據全缺，量比 0.00× 屬數據異常，技術面判斷受限。短線順勢做多博延續，但嚴控止損於 4.60 HKD。<p class="card-link"><a href="/dashboard/2026-07-02/reports/03896.HK.html">→ 完整 03896.HK 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-ok">🛡️ R:R 1.0</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-ok">🛡️ R:R 1.0</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div>🟢 **03896.HK** · 評分 53 · 03896.HK 金山雲 2026/07/02 收報 4.77 HKD，全日升 2.80%，區間 4.73-4.94 HKD，波幅 4.40% 屬高波幅短炒格局。受惠 AI 算力擴張（小米百億預算落地、阿里五年長約）、AI 服務擬漲價及股東會批准股份回購等多重利好帶動，AI 應用板塊普遍走強。PE TTM 僅 4.53 屬深度低估，惟 PB 高達 216.17 反映賬面權益極薄，財務質素打折。技術上 MA20/50/100/200 及 RSI 數據全缺，量比 0.00× 屬數據異常，技術面判斷受限。短線順勢做多博延續，但嚴控止損於 4.60 HKD。</div>
+
+---
+<em>生成時間: 2026-07-03 08:30:19 · LLM: openai/MiniMax-M3</em>
+<h2>詳細表格</h2><table class="detail"><thead><tr><th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能/資金流</th><th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th><th>入場</th><th>止損</th><th>目標</th></tr></thead><tbody><tr><td><a href="/dashboard/2026-07-02/reports/02057.HK.html">02057.HK</a></td><td>69</td><td>long</td><td>70/55/75</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-02/reports/03690.HK.html">03690.HK</a></td><td>68</td><td>both</td><td>78/65/70</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-02/reports/00005.HK.html">00005.HK</a></td><td>64</td><td>long</td><td>65/65/72</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-02/reports/02050.HK.html">02050.HK</a></td><td>64</td><td>long</td><td>55/50/72</td><td>買入</td><td>樂觀</td><td>震盪向上</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-02/reports/01336.HK.html">01336.HK</a></td><td>62</td><td>long</td><td>60/50/70</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-02/reports/00175.HK.html">00175.HK</a></td><td>61</td><td>long</td><td>78/70/65</td><td>買入</td><td>樂觀</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-02/reports/01519.HK.html">01519.HK</a></td><td>60</td><td>long</td><td>50/38/68</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-02/reports/06110.HK.html">06110.HK</a></td><td>59</td><td>long</td><td>55/50/68</td><td>買入</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-02/reports/02313.HK.html">02313.HK</a></td><td>57</td><td>long</td><td>55/45/62</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-02/reports/03896.HK.html">03896.HK</a></td><td>53</td><td>long</td><td>35/45/58</td><td>買入</td><td>中性偏樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr></tbody></table>
+</main>
+<footer>
+  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>
