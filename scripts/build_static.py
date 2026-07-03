@@ -849,12 +849,20 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
     reports_dir.mkdir(parents=True, exist_ok=True)
     for r in all_reports:
         code = r["code"]
+        # Canonical (Tencent 5-digit format, e.g. 09988.HK)
         report_path = reports_dir / f"{code}.html"
-        report_path.write_text(
-            report_page_html(r, date),
-            encoding="utf-8",
-        )
+        html_content = report_page_html(r, date)
+        report_path.write_text(html_content, encoding="utf-8")
         written.append(str(report_path.relative_to(PUBLIC_DIR)))
+        # 4-digit HK alias — strip leading zero so HKEX-style URL also works
+        # (e.g. /reports/9988.HK serves same content as /reports/09988.HK)
+        if code.endswith(".HK"):
+            stem = code[:-3]  # e.g. "09988"
+            if stem.startswith("0") and len(stem) == 5:
+                alias_code = stem[1:] + ".HK"  # e.g. "9988.HK"
+                alias_path = reports_dir / f"{alias_code}.html"
+                alias_path.write_text(html_content, encoding="utf-8")
+                written.append(str(alias_path.relative_to(PUBLIC_DIR)))
 
     return written, len(all_reports)
 
