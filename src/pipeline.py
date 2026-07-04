@@ -208,6 +208,7 @@ def build_dashboard_md(
     trade_direction: Optional[str] = None,
     market: Optional[str] = None,
     operation: Optional[str] = None,
+    preset: Optional[str] = None,
 ) -> str:
     """
     Build the daily decision dashboard markdown. Aggregates all reports for a date.
@@ -221,6 +222,17 @@ def build_dashboard_md(
       operation:       None / "" / "all" → no filter
                       "buy" / "hold" / "sell" → only matching operation_advice
                       (also accepts zh-Hant: "買入" / "觀望" / "賣出")
+      preset:          None | "conservative_buy" | "cyber_buy"
+                      2026-07-05 backtest-validated high-WR subsets.
+                      Conservative BUY rules:
+                        - US only
+                        - operation_advice = 買入
+                        - prior-day change_pct between -3% and 0%
+                        - sector not in TECH_SECTORS_AVOID
+                        - momentum_score 30-70
+                        - sentiment != 樂觀
+                        - score < 70
+                      Cyber BUY: US BUY signals restricted to CYBER_TICKERS.
     """
     cfg = get_config()
     language = language or cfg.report_language
@@ -232,43 +244,105 @@ def build_dashboard_md(
     # Apply filters — chain them so the stats line shows final filtered counts.
     filter_parts = []
 
-    if trade_direction and trade_direction not in ("", "all", "全部"):
+    # 2026-07-05 preset filters take precedence over market/operation kwargs
+    # and apply multiple criteria atomically.
+    if preset == "conservative-buy":
+        from .conservative_filters import TECH_SECTORS_AVOID
         before = len(reports)
-        reports = [r for r in reports if (r.get("trade_direction") or "both") == trade_direction]
-        filter_parts.append({
-            "long": "只做多 LONG", "short": "只做空 SHORT", "both": "雙向"
-        }.get(trade_direction, trade_direction))
-        logger.info(f"Dashboard filter trade_direction={trade_direction}: {before} → {len(reports)}")
+        kept = []
+        for r in reports:
+            if r["code"].endswith(".HK"):
+                continue
+            if r.get("operation_advice") != "買入":
+                continue
+            snap_raw = r.get("data_snapshot_json") or "{}"
+            try:
+                snap = json.loads(snap_raw) if isinstance(snap_raw, str) else snap_raw
+            except Exception:
+                snap = {}
+            day_chg = snap.get("change_pct") or 0
+            sector = (snap.get("sector") or "").strip()
+            bd_raw = r.get("score_breakdown_json") or "{}"
+            try:
+                bd = json.loads(bd_raw) if isinstance(bd_raw, str) else bd_raw
+            except Exception:
+                bd = {}
+            m_score = int(bd.get("momentum_score") or 0)
+            sentiment = r.get("sentiment") or ""
+            score = r.get("score") or 0
+            # Mean-reversion + non-tech + mid momentum + not euphoric + not extended
+            if not (-3 < day_chg < 0):
+                continue
+            if sector in TECH_SECTORS_AVOID:
+                continue
+            if not (30 <= m_score <= 70):
+                continue
+            if sentiment == "樂觀":
+                continue
+            if score >= 70:
+                continue
+            kept.append(r)
+        reports = kept
+        filter_parts.append("🛡️ Conservative BUY (mean-reversion · non-tech · m 30-70)")
+        logger.info(f"Dashboard preset conservative_buy: {before} → {len(reports)}")
 
-    if market and market not in ("", "all", "全部"):
+    elif preset == "cyber-buy":
+        from .conservative_filters import CYBER_TICKERS
         before = len(reports)
-        if market == "HK":
-            reports = [r for r in reports if r["code"].endswith(".HK")]
-        elif market == "US":
-            reports = [r for r in reports if not r["code"].endswith(".HK")]
-        else:
-            reports = [r for r in reports if r["code"].endswith(f".{market}")]
-        filter_parts.append({"HK": "港股 HK", "US": "美股 US"}.get(market, market))
-        logger.info(f"Dashboard filter market={market}: {before} → {len(reports)}")
+        kept = []
+        for r in reports:
+            if r["code"].endswith(".HK"):
+                continue
+            if r.get("operation_advice") != "買入":
+                continue
+            # code like "DDOG" (US), strip suffix
+            tk = r["code"].split(".")[0]
+            if tk not in CYBER_TICKERS:
+                continue
+            kept.append(r)
+        reports = kept
+        filter_parts.append(f"🔐 Cyber BUY ({len(CYBER_TICKERS)} tickers whitelist)")
+        logger.info(f"Dashboard preset cyber_buy: {before} → {len(reports)}")
 
-    if operation and operation not in ("", "all", "全部"):
-        before = len(reports)
-        # Map zh-Hant + en aliases
-        op_aliases = {
-            "buy":  ("買入", "buy"),
-            "hold": ("觀望", "hold"),
-            "sell": ("賣出", "sell"),
-            "買入": ("買入", "buy"),
-            "觀望": ("觀望", "hold"),
-            "賣出": ("賣出", "sell"),
-        }
-        wanted = op_aliases.get(operation, (operation,))
-        reports = [r for r in reports if r.get("operation_advice") in wanted]
-        filter_parts.append({
-            "buy": "🟢買入 BUY", "hold": "🟡觀望 HOLD", "sell": "🔴賣出 SELL",
-            "買入": "🟢買入 BUY", "觀望": "🟡觀望 HOLD", "賣出": "🔴賣出 SELL",
-        }.get(operation, operation))
-        logger.info(f"Dashboard filter operation={operation}: {before} → {len(reports)}")
+    else:
+        # Original market + operation filter chain
+        if trade_direction and trade_direction not in ("", "all", "全部"):
+            before = len(reports)
+            reports = [r for r in reports if (r.get("trade_direction") or "both") == trade_direction]
+            filter_parts.append({
+                "long": "只做多 LONG", "short": "只做空 SHORT", "both": "雙向"
+            }.get(trade_direction, trade_direction))
+            logger.info(f"Dashboard filter trade_direction={trade_direction}: {before} → {len(reports)}")
+
+        if market and market not in ("", "all", "全部"):
+            before = len(reports)
+            if market == "HK":
+                reports = [r for r in reports if r["code"].endswith(".HK")]
+            elif market == "US":
+                reports = [r for r in reports if not r["code"].endswith(".HK")]
+            else:
+                reports = [r for r in reports if r["code"].endswith(f".{market}")]
+            filter_parts.append({"HK": "港股 HK", "US": "美股 US"}.get(market, market))
+            logger.info(f"Dashboard filter market={market}: {before} → {len(reports)}")
+
+        if operation and operation not in ("", "all", "全部"):
+            before = len(reports)
+            # Map zh-Hant + en aliases
+            op_aliases = {
+                "buy":  ("買入", "buy"),
+                "hold": ("觀望", "hold"),
+                "sell": ("賣出", "sell"),
+                "買入": ("買入", "buy"),
+                "觀望": ("觀望", "hold"),
+                "賣出": ("賣出", "sell"),
+            }
+            wanted = op_aliases.get(operation, (operation,))
+            reports = [r for r in reports if r.get("operation_advice") in wanted]
+            filter_parts.append({
+                "buy": "🟢買入 BUY", "hold": "🟡觀望 HOLD", "sell": "🔴賣出 SELL",
+                "買入": "🟢買入 BUY", "觀望": "🟡觀望 HOLD", "賣出": "🔴賣出 SELL",
+            }.get(operation, operation))
+            logger.info(f"Dashboard filter operation={operation}: {before} → {len(reports)}")
 
     filter_label = " · ".join(filter_parts) if filter_parts else "全部"
 

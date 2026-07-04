@@ -46,17 +46,57 @@ PUBLIC_DIR = PROJECT_ROOT / "public"
 # show the same subset when only one trade_direction matches). Use a clean
 # 2-axis scheme: (market × operation). Direction is exposed via a separate
 # LAYER on the page header (e.g. "全部 港股買入" includes long AND short).
+#
+# 2026-07-05 additions: conservative-buy + cyber-buy based on 6-day backtest
+# evidence — these filters improved hit rate from 38% to ~60% on subset.
+# SELL filters kept but flagged with pause-warning banner (avg direction
+# reversed +0.86% on 6-day trace).
 # =====
 FILTER_PRESETS = [
     # (slug, label_zh, market, operation)
-    ("all",      "全部",      None,  None),
-    ("hk-buy",   "港股買入",  "HK",  "buy"),
-    ("hk-sell",  "港股賣出",  "HK",  "sell"),
-    ("hk-hold",  "港股觀望",  "HK",  "hold"),
-    ("us-buy",   "美股買入",  "US",  "buy"),
-    ("us-sell",  "美股賣出",  "US",  "sell"),
-    ("us-hold",  "美股觀望",  "US",  "hold"),
+    ("all",              "全部",              None,  None),
+    ("hk-buy",           "港股買入",          "HK",  "buy"),
+    ("hk-sell",          "港股賣出",          "HK",  "sell"),
+    ("hk-hold",          "港股觀望",          "HK",  "hold"),
+    ("us-buy",           "美股買入",          "US",  "buy"),
+    ("us-sell",          "美股賣出",          "US",  "sell"),
+    ("us-hold",          "美股觀望",          "US",  "hold"),
+    # 2026-07-05: backtest-validated high-WR subsets
+    ("conservative-buy", "🛡️ Conservative BUY",  "US", "conservative_buy"),
+    ("cyber-buy",        "🔐 Cyber BUY",         "US", "cyber_buy"),
 ]
+
+# Cybersecurity / network-security tickers that historically delivered
+# positive returns on BUY signals (backtest 2026-06-26 → 2026-07-02).
+# All are large-cap with strong momentum + recurring BUY across multiple days.
+CYBER_TICKERS = {
+    "DDOG",   # Datadog — observability
+    "PANW",   # Palo Alto Networks — firewall
+    "CRWD",   # CrowdStrike — endpoint
+    "FTNT",   # Fortinet — firewall/SD-WAN
+    "OKTA",   # Okta — identity
+    "ZS",     # Zscaler — zero-trust network
+    "NET",    # Cloudflare — edge
+    "S",      # SentinelOne — endpoint
+    "CYBR",   # CyberArk — privileged access
+    "RBRK",   # Rubrik — data security
+    "QLYS",   # Qualys — vulnerability
+    "TENB",   # Tenable — vulnerability
+    "VRNS",   # Varonis — data security
+    "OKTA",   # Okta — identity (dup)
+}
+
+# Tech / communication-services sectors to AVOID for BUY (mean-reversion fails).
+# 6-day trace: Technology -1.86% avg, Industrials -1.23% avg.
+TECH_SECTORS_AVOID = {
+    "Technology",
+    "Communication Services",
+    "科技",
+    "通訊服務",
+    "Information Technology",
+    "軟件",
+    "互聯網",
+}
 
 
 # ===== Shared HTML shell (matches Streamlit dashboard light theme) =====
@@ -795,21 +835,45 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
     dates = list_report_dates(limit=14)
 
     for slug, label, mkt, op in FILTER_PRESETS:
+        # preset slugs use Python-level preset filter; everything else uses market/op
+        preset_arg = slug if slug in ("conservative-buy", "cyber-buy") else None
         body_md = build_dashboard_md(
             report_date=date,
-            market=mkt,
-            operation=op,
+            market=mkt if not preset_arg else None,
+            operation=op if not preset_arg else None,
+            preset=preset_arg,
         )
         # Re-render the cards so they use our static .card class instead of inline styles
         # — easier to style + a11y. We do a simple post-process: wrap any <div style=...> from build_dashboard_md
         # into <div class="card">. Simpler: just use the build_dashboard_md HTML as-is (inline styles work),
         # then append the filter chips + detail table.
-        body_html = (
-            disclaimer_block()
-            + f'''<div class="signal-warning"><b>🔬 Signal Explorer</b> · LLM 信號 + 信心 + 自己嘅警語。22 天 backtest (4,371 outcomes)：
+        # 2026-07-05: sell pages get a pause banner; preset pages get their own banner
+        if slug in ("us-sell", "hk-sell"):
+            signal_banner = f'''<div class="signal-warning"><b>⏸️ SELL signals paused (6-day trace)</b> · 賣出 1D hit rate 52.9% 但 <b>avg 方向反咗 +0.86%</b> (即升唔跌)。SELL 跟咗會輸錢。
+            <br>· <b>暫停 SELL trading</b> 直至 further evidence
+            <br>· 想 short 市場？考慮 <a href="/dashboard/{date}/conservative-buy.html">Conservative BUY</a> (用 mean-reversion 揀股份跌勢) 或 <a href="/dashboard/{date}/cyber-buy.html">Cyber BUY</a> (避開大市)
+            <br>· 22 天 backtest (4,371 outcomes): <b>🟢 BUY 1D 58.6% / 1W 64.3%</b> · <b>🔴 SELL 1D 59.7% / 1W 48.0%</b> (mean-revert, 4 PM 平倉)</div>'''
+        elif slug == "conservative-buy":
+            signal_banner = f'''<div class="signal-warning"><b>🛡️ Conservative BUY</b> · 6-day trace evidence (mean-reversion + non-tech + m 30-70 + score < 70):
+            <br>· <b>Filter rules</b>: 前日 -3% to 0% 跌勢 · sector ≠ Tech/Comms · momentum 30-70 · sentiment ≠ 樂觀 · score < 70
+            <br>· <b>Evidence</b>: -1% to 0% 桶 → <b>+0.68% avg, 70.6% WR</b> · -3% to -1% 桶 → <b>+1.02% avg, 50% WR</b>
+            <br>· <b>EV/trade ≈ +0.5%</b> if 跟 6% 止損 · 唔 chase extended (score≥70 hit rate 跌到 28%)
+            <br>· 22-day BUY backtest 1D 58.6% / 1W 64.3% · 多日 hold OK</div>'''
+        elif slug == "cyber-buy":
+            signal_banner = f'''<div class="signal-warning"><b>🔐 Cyber BUY</b> · 6-day trace high-conviction list (cybersecurity / network):
+            <br>· <b>Tickers</b>: DDOG · PANW · CRWD · FTNT · OKTA · ZS · NET · S · CYBR · RBRK · QLYS · TENB · VRNS (13 隻)
+            <br>· <b>Evidence</b>: top 5 6-day avg return — DDOG <b>+3.16%</b> · PANW <b>+2.97%</b> · CRWD +1.99% · FTNT +1.17% · APH +1.81%
+            <br>· <b>Risk</b>: high-beta 科技股，適合 <b>2-3 日 hold</b> 唔好 day-trade intraday 炒
+            <br>· 22-day BUY backtest 1D 58.6% / 1W 64.3% · 平均 3D hold +0.45%</div>'''
+        else:
+            signal_banner = f'''<div class="signal-warning"><b>🔬 Signal Explorer</b> · LLM 信號 + 信心 + 自己嘅警語。22 天 backtest (4,371 outcomes)：
             <br>· <b>🟢 買入</b>: 1D 58.6% / 1W <b>64.3%</b> — multi-day hold OK
             <br>· <b>🔴 賣出</b>: 1D <b>59.7%</b> / 1W 48.0% — <span class="warn-strong">mean-revert, close by 4 PM, 唔好 hold 過夜</span>
+            <br>· <b>🛡️ 高 WR 替代</b>: 6-day trace 顯示 Conservative BUY + Cyber BUY 兩 preset 表現好過 raw BUY/SELL → 試吓
             <br>· <b>ℹ️ 讀法</b>: 每張 card 顯示 <span class="conf-high">信心 高</span> / <span class="conf-mid">信心 中</span> / <span class="conf-low">信心 低</span> + <span class="caution-chip">⚠️ 不宜追</span> 等 LLM 自己嘅 hedging word。詳細睇 <a href="/methodology.html">methodology 頁</a>。</div>'''
+        body_html = (
+            disclaimer_block()
+            + signal_banner
             + filter_chips_html(date, slug)
             + f'<h1>🔬 Signal Explorer — {date} ({label})</h1>'
             + body_md_to_html(body_md, link_inject_date=date, score_lookup={r["code"]: r["score"] for r in all_reports if r.get("score") is not None}, op_lookup={r["code"]: r.get("operation_advice") for r in all_reports if r.get("operation_advice")})
@@ -817,14 +881,56 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
 
         # Add detail table — re-apply filters manually (already in scope from loop)
         filtered = all_reports
-        if mkt == "HK":
-            filtered = [r for r in filtered if r["code"].endswith(".HK")]
-        elif mkt == "US":
-            filtered = [r for r in filtered if not r["code"].endswith(".HK")]
-        if op:
-            aliases = {"buy": ("買入", "buy"), "hold": ("觀望", "hold"), "sell": ("賣出", "sell")}
-            wanted = aliases.get(op, (op,))
-            filtered = [r for r in filtered if r.get("operation_advice") in wanted]
+        if slug in ("conservative-buy", "cyber-buy"):
+            # Use the same filter logic as pipeline.py
+            if slug == "conservative-buy":
+                from src.conservative_filters import TECH_SECTORS_AVOID
+                kept = []
+                for r in filtered:
+                    if r["code"].endswith(".HK"):
+                        continue
+                    if r.get("operation_advice") != "買入":
+                        continue
+                    snap_raw = r.get("data_snapshot_json") or "{}"
+                    try:
+                        snap = json.loads(snap_raw) if isinstance(snap_raw, str) else snap_raw
+                    except Exception:
+                        snap = {}
+                    day_chg = snap.get("change_pct") or 0
+                    sector = (snap.get("sector") or "").strip()
+                    bd_raw = r.get("score_breakdown_json") or "{}"
+                    try:
+                        bd = json.loads(bd_raw) if isinstance(bd_raw, str) else bd_raw
+                    except Exception:
+                        bd = {}
+                    m_score = int(bd.get("momentum_score") or 0)
+                    if not (-3 < day_chg < 0):
+                        continue
+                    if sector in TECH_SECTORS_AVOID:
+                        continue
+                    if not (30 <= m_score <= 70):
+                        continue
+                    if r.get("sentiment") == "樂觀":
+                        continue
+                    if (r.get("score") or 0) >= 70:
+                        continue
+                    kept.append(r)
+                filtered = kept
+            elif slug == "cyber-buy":
+                from src.conservative_filters import CYBER_TICKERS
+                filtered = [r for r in filtered
+                            if not r["code"].endswith(".HK")
+                            and r.get("operation_advice") == "買入"
+                            and r["code"].split(".")[0] in CYBER_TICKERS]
+        else:
+            if mkt == "HK":
+                filtered = [r for r in filtered if r["code"].endswith(".HK")]
+            elif mkt == "US":
+                filtered = [r for r in filtered if not r["code"].endswith(".HK")]
+            if op:
+                aliases = {"buy": ("買入", "buy"), "hold": ("觀望", "hold"), "sell": ("賣出", "sell")}
+                wanted = aliases.get(op, (op,))
+                filtered = [r for r in filtered if r.get("operation_advice") in wanted]
 
         body_html += (
             "<h2>詳細表格</h2>"
@@ -1419,11 +1525,13 @@ def build_dashboard_hub(dates: list[str]) -> str:
     filters = [
         ("all", "全部", "📊"),
         ("hk-buy", "港股買入", "🟢"),
-        ("hk-sell", "港股賣出", "🔴"),
+        ("hk-sell", "港股賣出 ⏸️", "🔴"),
         ("hk-hold", "港股觀望", "🟡"),
         ("us-buy", "美股買入", "🟢"),
-        ("us-sell", "美股賣出", "🔴"),
+        ("us-sell", "美股賣出 ⏸️", "🔴"),
         ("us-hold", "美股觀望", "🟡"),
+        ("conservative-buy", "🛡️ Conservative BUY", "🛡️"),
+        ("cyber-buy", "🔐 Cyber BUY", "🔐"),
     ]
     date_cards_html = []
     for s in date_summaries:
