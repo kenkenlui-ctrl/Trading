@@ -589,6 +589,7 @@ def nav_html(active_path: str) -> str:
     links = [
         ("/", "Home", "Home"),
         ("/dashboard/", "Dashboard", "Dashboard"),
+        ("/paper-trades.html", "Paper Trades", "Paper Trades"),
         ("/faq.html", "FAQ", "FAQ"),
         ("/methodology.html", "Methodology", "Methodology"),
         ("/about.html", "About", "About"),
@@ -2424,6 +2425,133 @@ def build_robots_txt() -> str:
     )
 
 
+def build_paper_trades_page() -> str:
+    """Build /paper-trades.html — paper-trade performance dashboard.
+
+    Shows: cumulative P&L, win rate, avg win/loss, per-trade table, by-preset breakdown.
+    Reads from paper_trade table populated by scripts/paper_trade.py.
+    """
+    import sqlite3
+    from pathlib import Path
+    db_path = PROJECT_ROOT / "data" / "dsa_hk.db"
+    con = sqlite3.connect(str(db_path))
+    con.row_factory = sqlite3.Row
+
+    # Aggregate stats
+    closed = con.execute("SELECT * FROM paper_trade WHERE status='closed' ORDER BY exit_date DESC").fetchall()
+    open_trades = con.execute("SELECT * FROM paper_trade WHERE status='open' ORDER BY entry_date ASC").fetchall()
+    total = con.execute("SELECT COUNT(*) FROM paper_trade").fetchone()[0]
+    n_closed = len(closed)
+    n_open = len(open_trades)
+    if n_closed > 0:
+        wins = sum(1 for t in closed if (t["pnl_pct"] or 0) > 0)
+        losses = n_closed - wins
+        wr = wins / n_closed * 100
+        avg_win = sum(t["pnl_pct"] for t in closed if (t["pnl_pct"] or 0) > 0) / max(wins, 1)
+        avg_loss = sum(t["pnl_pct"] for t in closed if (t["pnl_pct"] or 0) <= 0) / max(losses, 1)
+        total_pnl = sum(t["pnl_usd"] for t in closed)
+        total_deployed = sum(t["position_size_usd"] for t in closed)
+        roi = total_pnl / total_deployed * 100 if total_deployed else 0
+    else:
+        wins = losses = 0
+        wr = avg_win = avg_loss = total_pnl = roi = 0
+
+    # Per-preset breakdown
+    preset_stats = {}
+    for t in closed:
+        src = t["signal_source"] or "unknown"
+        if src not in preset_stats:
+            preset_stats[src] = {"n": 0, "wins": 0, "pnl_usd": 0.0}
+        preset_stats[src]["n"] += 1
+        if (t["pnl_pct"] or 0) > 0:
+            preset_stats[src]["wins"] += 1
+        preset_stats[src]["pnl_usd"] += t["pnl_usd"] or 0
+    for src, s in preset_stats.items():
+        s["wr"] = s["wins"] / s["n"] * 100 if s["n"] else 0
+
+    # Close-reason breakdown
+    reason_stats = {}
+    for t in closed:
+        reason = t["close_reason"] or "?"
+        if reason not in reason_stats:
+            reason_stats[reason] = {"n": 0, "wins": 0}
+        reason_stats[reason]["n"] += 1
+        if (t["pnl_pct"] or 0) > 0:
+            reason_stats[reason]["wins"] += 1
+
+    con.close()
+
+    # Build HTML
+    summary_html = f'''<div class="paper-stats">
+        <div class="stat-box"><b>{total}</b><span>Total Trades</span></div>
+        <div class="stat-box"><b>{n_open}</b><span>Open</span></div>
+        <div class="stat-box"><b>{n_closed}</b><span>Closed</span></div>
+        <div class="stat-box stat-bull"><b>{wr:.1f}%</b><span>Win Rate</span></div>
+        <div class="stat-box stat-bull"><b>+${total_pnl:.0f}</b><span>Total P&L</span></div>
+        <div class="stat-box"><b>{roi:+.2f}%</b><span>ROI on ${total_deployed:.0f}</span></div>
+        <div class="stat-box stat-bull"><b>+{avg_win:.2f}%</b><span>Avg Win</span></div>
+        <div class="stat-box stat-bear"><b>{avg_loss:+.2f}%</b><span>Avg Loss</span></div>
+    </div>'''
+
+    preset_html = ""
+    if preset_stats:
+        preset_html = '<h3>By Signal Source</h3><table class="detail"><thead><tr><th>Source</th><th>Trades</th><th>Wins</th><th>WR</th><th>P&L</th></tr></thead><tbody>'
+        for src, s in sorted(preset_stats.items()):
+            pnl_class = "stat-bull" if s["pnl_usd"] > 0 else "stat-bear"
+            preset_html += f'<tr><td>{src}</td><td>{s["n"]}</td><td>{s["wins"]}</td><td>{s["wr"]:.1f}%</td><td class="{pnl_class}">${s["pnl_usd"]:+.2f}</td></tr>'
+        preset_html += '</tbody></table>'
+
+    reason_html = ""
+    if reason_stats:
+        reason_html = '<h3>By Close Reason</h3><table class="detail"><thead><tr><th>Reason</th><th>Trades</th><th>Wins</th></tr></thead><tbody>'
+        for reason, s in sorted(reason_stats.items()):
+            reason_html += f'<tr><td>{reason}</td><td>{s["n"]}</td><td>{s["wins"]}</td></tr>'
+        reason_html += '</tbody></table>'
+
+    # Recent closed trades table
+    closed_html = ""
+    if closed:
+        closed_html = '<h2>Recent Closed Trades</h2><table class="detail"><thead><tr><th>Exit Date</th><th>Code</th><th>Source</th><th>Entry</th><th>Exit</th><th>P&L %</th><th>P&L $</th><th>Reason</th><th>Held</th></tr></thead><tbody>'
+        for t in closed[:30]:
+            pnl_pct = t["pnl_pct"] or 0
+            pnl_class = "stat-bull" if pnl_pct > 0 else "stat-bear"
+            try:
+                held = (datetime.strptime(t["exit_date"], "%Y-%m-%d") - datetime.strptime(t["entry_date"], "%Y-%m-%d")).days
+            except Exception:
+                held = "?"
+            closed_html += f'<tr><td>{t["exit_date"]}</td><td>{t["code"]}</td><td>{t["signal_source"]}</td><td>${t["entry_price"]:.2f}</td><td>${t["exit_price"]:.2f}</td><td class="{pnl_class}">{pnl_pct:+.2f}%</td><td class="{pnl_class}">${t["pnl_usd"]:+.2f}</td><td>{t["close_reason"]}</td><td>{held}d</td></tr>'
+        closed_html += '</tbody></table>'
+
+    # Open trades
+    open_html = ""
+    if open_trades:
+        open_html = '<h2>Open Positions</h2><table class="detail"><thead><tr><th>Entry Date</th><th>Code</th><th>Source</th><th>Entry</th><th>Stop</th><th>Target</th><th>Held</th></tr></thead><tbody>'
+        for t in open_trades:
+            try:
+                held = (datetime.now() - datetime.strptime(t["entry_date"], "%Y-%m-%d")).days
+            except Exception:
+                held = "?"
+            open_html += f'<tr><td>{t["entry_date"]}</td><td>{t["code"]}</td><td>{t["signal_source"]}</td><td>${t["entry_price"]:.2f}</td><td>${t["stop_loss"]:.2f}</td><td>${t["target_price"]:.2f}</td><td>{held}d</td></tr>'
+        open_html += '</tbody></table>'
+
+    body_html = f'''<div class="signal-warning"><b>📈 Paper Trade Tracker</b> · 跟 Conservative BUY + Cyber BUY signals 自動落 paper trade · $1000/trade · 6% stop loss · 2-3 day hold
+        <br>· <b>Workflow</b>: 每日 4:30 PM HKT 跑 <code>scripts/paper_trade.py</code> · 新 signals 開倉 + 現有倉位 check stop/target/3-day timeout
+        <br>· <b>Current rules</b>: Conservative BUY (mean-rev + non-tech + m 30-70) · Cyber BUY (13 隻 whitelist) · 暫停 SELL signals
+        <br>· <b>Performance</b>: 即時 P&L + 命中率 + avg win/loss · See <a href="/methodology.html">methodology</a> 了解 backtest 背景</div>
+        {summary_html}
+        {preset_html}
+        {reason_html}
+        {closed_html}
+        {open_html}'''
+
+    return shell(
+        title="Leeks Terminal · Paper Trade Tracker",
+        body_html=body_html,
+        active_path="/paper-trades/",
+        description="Paper trade performance — Conservative BUY + Cyber BUY signals auto-tracked",
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(description="Build static HTML dashboard")
     parser.add_argument("--date", help="Build specific date (YYYY-MM-DD)")
@@ -2445,6 +2573,10 @@ def main():
             written.append(p)
         for p in build_intent_pages():
             written.append(p)
+        # Paper trades tracker page (always rebuilt)
+        paper_path = PUBLIC_DIR / "paper-trades.html"
+        paper_path.write_text(build_paper_trades_page(), encoding="utf-8")
+        written.append("paper-trades.html")
         print(f"✅ Built {len(written)} static info + intent pages")
 
     # 2. Dashboard pages
