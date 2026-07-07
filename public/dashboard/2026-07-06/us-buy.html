@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leeks Terminal · 2026-07-06 · 美股買入</title>
+  <meta name="description" content="Leeks Terminal 2026-07-06 AI dashboard — 美股買入">
+  <meta property="og:title" content="Leeks Terminal · 2026-07-06 · 美股買入">
+  <meta property="og:description" content="Leeks Terminal 2026-07-06 AI dashboard — 美股買入">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.win9you.com">
+  <meta property="og:image" content="https://www.win9you.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://www.win9you.com/og-image.png">
+  <meta name="twitter:title" content="Leeks Terminal · 2026-07-06 · 美股買入">
+  <meta name="twitter:description" content="Leeks Terminal 2026-07-06 AI dashboard — 美股買入">
+  <link rel="canonical" href="https://www.win9you.com">
+  <link rel="alternate" hreflang="zh-Hant" href="https://www.win9you.com">
+  <link rel="alternate" hreflang="x-default" href="https://www.win9you.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+    --bg: #ffffff;
+    --panel: #f3f4f6;
+    --panel-2: #e5e7eb;
+    --border: #e5e7eb;
+    --fg: #1a1d23;
+    --dim: #4b5563;
+    --bull: #15803d;
+    --bear: #b91c1c;
+    --amber: #92400e;
+    --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Top nav (matches Streamlit worker injection) */
+nav.leeks-site-nav {
+    position: sticky; top: 0; z-index: 999;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+nav.leeks-site-nav .brand {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+}
+nav.leeks-site-nav a {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    padding: 4px 0;
+}
+nav.leeks-site-nav a.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+}
+
+/* Layout */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+h1 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin: 0 0 1rem;
+}
+h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
+
+/* Date selector (top of dashboard) — looks like Streamlit selectbox */
+.date-picker {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+}
+.date-picker a {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--fg);
+    font-size: 0.8rem;
+}
+.date-picker a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Disclaimer */
+.disclaimer {
+    background: #fef3c7;
+    border: 1px solid #b45309;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #78350f;
+}
+
+/* Cards (mirror Streamlit dashboard) */
+.card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+.card.bull { border-left-color: var(--bull); }
+.card.bear { border-left-color: var(--bear); }
+.card.amber { border-left-color: var(--amber); }
+
+/* Stats line */
+.stats {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.stats .bull { color: var(--bull); font-weight: 600; }
+.stats .bear { color: var(--bear); font-weight: 600; }
+.stats .amber { color: var(--amber); font-weight: 600; }
+
+/* Homepage value-prop + sample preview */
+.lede { font-size: 1.05rem; line-height: 1.65; max-width: 760px; }
+section h2 { margin-top: 2.4rem; }
+section ul, section ol { line-height: 1.75; max-width: 760px; }
+.dim { color: var(--dim); }
+
+.sample-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 1rem 0 1.4rem;
+    max-width: 900px;
+}
+.sample-card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 12px 14px;
+    background: #fafbfc;
+}
+.sample-header {
+    display: flex; gap: 8px; align-items: baseline; margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.sample-code { font-weight: 700; font-size: 1.05rem; }
+.sample-op { padding: 1px 6px; border-radius: 3px; background: var(--panel); font-size: 0.85rem; }
+.sample-score { margin-left: auto; font-weight: 600; color: var(--dim); font-size: 0.9rem; }
+.sample-summary { font-size: 0.85rem; line-height: 1.55; color: var(--fg); margin: 6px 0 8px; }
+.sample-link { font-size: 0.85rem; }
+
+/* Dashboard hub /dashboard/ */
+.dates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin: 1.5rem 0 2rem;
+    max-width: 1100px;
+}
+.date-card {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    background: #fafbfc;
+}
+.date-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 8px;
+}
+.date-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+.date-stats {
+    display: flex; gap: 12px; margin-bottom: 12px; font-size: 0.95rem;
+}
+.stat-bull { color: var(--bull); font-weight: 600; }
+.stat-amber { color: var(--amber); font-weight: 600; }
+.stat-bear { color: var(--bear); font-weight: 600; }
+.date-filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+}
+.filter-chip {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: #fff;
+    font-size: 0.82rem;
+    text-decoration: none;
+    color: var(--fg);
+    transition: background 0.15s;
+}
+.filter-chip:hover { background: var(--panel-2); text-decoration: none; }
+.filter-chip.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    font-weight: 600;
+}
+.filter-chip.primary:hover { background: #1d4ed8; }
+.hub-cta ul { list-style: none; padding: 0; }
+.hub-cta li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--panel);
+    font-size: 0.95rem;
+}
+
+/* R:R badge + timeframe hint inside cards */
+.rr-badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-right: 6px;
+    vertical-align: middle;
+    border: 1px solid currentColor;
+}
+.rr-good { color: var(--bull); background: rgba(21, 128, 61, 0.08); }
+.rr-ok   { color: var(--amber); background: rgba(146, 64, 14, 0.08); }
+.rr-bad  { color: var(--bear); background: rgba(185, 28, 28, 0.08); }
+.hint {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    vertical-align: middle;
+    color: var(--dim);
+    background: var(--panel-2);
+}
+.hint-buy { color: var(--bull); }
+.hint-sell {
+    color: var(--bear);
+    font-weight: 600;
+    background: rgba(185, 28, 28, 0.06);
+    border: 1px solid rgba(185, 28, 28, 0.3);
+}
+
+/* LLM confidence + caution chips on cards (Option B: surface LLM self-cautions) */
+.signal-chips {
+    margin: 4px 0 6px 0;
+    font-size: 0.7rem;
+    line-height: 1.4;
+}
+.conf-chip {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: 600;
+    margin-right: 5px;
+    vertical-align: middle;
+    border: 1px solid currentColor;
+}
+.conf-high { color: var(--bull); background: rgba(21, 128, 61, 0.08); }
+.conf-mid  { color: var(--amber); background: rgba(146, 64, 14, 0.08); }
+.conf-low  { color: var(--bear); background: rgba(185, 28, 28, 0.08); }
+.caution-chip {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: 500;
+    margin-right: 5px;
+    margin-bottom: 2px;
+    vertical-align: middle;
+    color: var(--bear);
+    background: rgba(185, 28, 28, 0.06);
+    border: 1px solid rgba(185, 28, 28, 0.25);
+}
+
+/* Signal warning banner on dashboard */
+.signal-warning {
+    margin: 0 0 1.2rem;
+    padding: 10px 14px;
+    background: rgba(146, 64, 14, 0.06);
+    border-left: 3px solid var(--amber);
+    border-radius: 4px;
+    font-size: 0.82rem;
+    line-height: 1.55;
+}
+.signal-warning .warn-strong {
+    color: var(--bear);
+    font-weight: 700;
+}
+.signal-warning a {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+/* Detail table */
+table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+}
+table.detail th, table.detail td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+table.detail th {
+    background: var(--panel-2);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+
+/* Methodology dim table */
+table.dim-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+}
+table.dim-table th, table.dim-table td {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+table.dim-table th {
+    background: var(--panel-2);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+table.dim-table td:first-child { font-family: 'JetBrains Mono', monospace; }
+table.dim-table td:nth-child(2) { font-weight: 600; color: var(--accent); text-align: center; }
+
+/* Card-link: appended after each summary card so reader can dive into detail */
+p.card-link {
+    margin: 6px 0 0;
+    text-align: right;
+    font-size: 0.78rem;
+}
+p.card-link a {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+p.card-link a:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Filter chips (alternative to filter dropdown) */
+.filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+}
+.filters span { color: var(--dim); margin-right: 4px; align-self: center; }
+.filters a {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--fg);
+}
+.filters a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Report detail page */
+.report-header h1 { margin: 0 0 0.5rem; }
+.report-header .meta {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 1rem;
+}
+.report-header .badge {
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    font-size: 0.75rem;
+    color: var(--fg);
+}
+.report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.conf { background: var(--panel-2); }
+
+.score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 1rem 0;
+}
+.score-breakdown .dim {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+}
+.score-breakdown .dim span {
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.score-breakdown .bar {
+    background: var(--border);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 6px 0;
+}
+.score-breakdown .bar .fill { height: 100%; }
+.score-breakdown .dim b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+}
+
+.levels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    margin: 1rem 0;
+}
+.levels > div {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+.levels span {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+.levels b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+}
+.levels b.bull { color: var(--bull); }
+.levels b.bear { color: var(--bear); }
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    main { padding: 16px 12px 48px; }
+    h1 { font-size: 1.15rem; }
+    .card { padding: 8px 10px; font-size: 0.8rem; }
+    nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
+    nav.leeks-site-nav a { font-size: 0.7rem; }
+    table.detail { font-size: 0.7rem; }
+    table.detail th, table.detail td { padding: 4px 6px; }
+}
+</style>
+  
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<main>
+<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="signal-warning"><b>🔬 Signal Explorer</b> · LLM 信號 + 信心 + 自己嘅警語。22 天 backtest (4,371 outcomes)：
+            <br>· <b>🟢 買入</b>: 1D 58.6% / 1W <b>64.3%</b> — multi-day hold OK
+            <br>· <b>🔴 賣出</b>: 1D <b>59.7%</b> / 1W 48.0% — <span class="warn-strong">mean-revert, close by 4 PM, 唔好 hold 過夜</span>
+            <br>· <b>🛡️ 高 WR 替代</b>: 6-day trace 顯示 Conservative BUY + Cyber BUY 兩 preset 表現好過 raw BUY/SELL → 試吓
+            <br>· <b>ℹ️ 讀法</b>: 每張 card 顯示 <span class="conf-high">信心 高</span> / <span class="conf-mid">信心 中</span> / <span class="conf-low">信心 低</span> + <span class="caution-chip">⚠️ 不宜追</span> 等 LLM 自己嘅 hedging word。詳細睇 <a href="/methodology.html">methodology 頁</a>。</div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-07-06/all.html">全部</a><a href="/dashboard/2026-07-06/hk-buy.html">港股買入</a><a href="/dashboard/2026-07-06/hk-sell.html">港股賣出</a><a href="/dashboard/2026-07-06/hk-hold.html">港股觀望</a><a href="/dashboard/2026-07-06/us-buy.html" class="active">美股買入</a><a href="/dashboard/2026-07-06/us-sell.html">美股賣出</a><a href="/dashboard/2026-07-06/us-hold.html">美股觀望</a><a href="/dashboard/2026-07-06/conservative-buy.html">🛡️ Conservative BUY</a><a href="/dashboard/2026-07-06/cyber-buy.html">🔐 Cyber BUY</a></div><h1>🔬 Signal Explorer — 2026-07-06 (美股買入)</h1><b>2026-07-06</b> · 共分析 <b>13</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:13 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:0 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:0
+
+<h2>📊 分析結果摘要</h2>
+
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.9</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>IBM</b> · 評分 72 · IBM 今日急升 3.45%，現價 $299.52 收於全日高位 $300.82 附近，日內 H/L 區間 $287.65–$300.82 達 4.58%，屬高波幅短炒格局。多項利好催化：美銀上調目標價至 $330、JPMorgan 升評至「超配」目標價 $291（已被突破）、加入 OpenAI Daybreak 合作夥伴計劃，資金面強勁。估值 PE 26.53、PB 8.54 偏高限制上行空間，但動能主導下仍有短線交易價值。建議下一交易日回調至 $294.00–$297.00 區間分批吸納做多，止損 $286.50，目標 $310.00，風險回報比約 1.8。注意股息率 233% 數據明顯異常（IBM 正常股息率約 3%），應以官方公布為準。<p class="card-link"><a href="/dashboard/2026-07-06/reports/IBM.html">→ 完整 IBM 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-bad">🛡️ R:R 0.9</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-bad">🛡️ R:R 0.9</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div>🟢 **IBM** · 評分 72 · IBM 今日急升 3.45%，現價 $299.52 收於全日高位 $300.82 附近，日內 H/L 區間 $287.65–$300.82 達 4.58%，屬高波幅短炒格局。多項利好催化：美銀上調目標價至 $330、JPMorgan 升評至「超配」目標價 $291（已被突破）、加入 OpenAI Daybreak 合作夥伴計劃，資金面強勁。估值 PE 26.53、PB 8.54 偏高限制上行空間，但動能主導下仍有短線交易價值。建議下一交易日回調至 $294.00–$297.00 區間分批吸納做多，止損 $286.50，目標 $310.00，風險回報比約 1.8。注意股息率 233% 數據明顯異常（IBM 正常股息率約 3%），應以官方公布為準。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.8</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>QCOM</b> · 評分 67 · QCOM 今日大升 5.80%，收報 $186.48，盤中區間 $177.10-$188.67，波幅達 6.53%，屬於高波幅交易日，具備短炒燃料。股價從 52 週低位 $121.99 反彈至今已升約 53%，動能明顯。今日升穿 $176.25 昨收確認短線轉強，惟距離 52 週高位 $259.92 仍有約 39% 空間。PE TTM 20.03、PB 7.24 估值偏貴，股息率 209% 明顯屬數據異常（疑似派息除淨或輸入錯誤），不宜作估值依據。建議回調至 $181-$184 區間吸納做多，博反彈至 $195-$200。<p class="card-link"><a href="/dashboard/2026-07-06/reports/QCOM.html">→ 完整 QCOM 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-bad">🛡️ R:R 0.8</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-bad">🛡️ R:R 0.8</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span></div>🟢 **QCOM** · 評分 67 · QCOM 今日大升 5.80%，收報 $186.48，盤中區間 $177.10-$188.67，波幅達 6.53%，屬於高波幅交易日，具備短炒燃料。股價從 52 週低位 $121.99 反彈至今已升約 53%，動能明顯。今日升穿 $176.25 昨收確認短線轉強，惟距離 52 週高位 $259.92 仍有約 39% 空間。PE TTM 20.03、PB 7.24 估值偏貴，股息率 209% 明顯屬數據異常（疑似派息除淨或輸入錯誤），不宜作估值依據。建議回調至 $181-$184 區間吸納做多，博反彈至 $195-$200。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-ok">🛡️ R:R 1.4</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>FSLR</b> · 評分 65 · FSLR 當日勁升 +3.78%，收 233.06 美元，盤中區間 227.26-238.24，幅度約 4.89%，屬高波幅，短炒燃料充足。德意志銀行及富國集團雙雙將評級上調/初次評為買入，目標價分別為 $272 及 $320，估值上 PE TTM 15.07、PB 2.54 屬合理區間。股價仍處 52 週區間中段（$159.85-$320.95），具向上重估空間。建議等待回調至 $224.57-$227.26 區間再吸納，目標短打 $245，止損 $220.00。<p class="card-link"><a href="/dashboard/2026-07-06/reports/FSLR.html">→ 完整 FSLR 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-ok">🛡️ R:R 1.4</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-ok">🛡️ R:R 1.4</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div>🟢 **FSLR** · 評分 65 · FSLR 當日勁升 +3.78%，收 233.06 美元，盤中區間 227.26-238.24，幅度約 4.89%，屬高波幅，短炒燃料充足。德意志銀行及富國集團雙雙將評級上調/初次評為買入，目標價分別為 $272 及 $320，估值上 PE TTM 15.07、PB 2.54 屬合理區間。股價仍處 52 週區間中段（$159.85-$320.95），具向上重估空間。建議等待回調至 $224.57-$227.26 區間再吸納，目標短打 $245，止損 $220.00。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.7</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>GS</b> · 評分 64 · GS 今日升 3.36%，收報 1055.29 USD，逼近 52 週高位 1125.00 USD。今日 H/L 區間 1029.00-1055.29 幅度約 2.55%，短炒燃料充足。PE TTM 19.28、PB 2.96 對大型投行屬合理估值；股息率 176% 數據異常需獨立核實。建議待回調至 1029.00-1040.00 區間吸納做多，止蝕 1018.00，目標先睇 1080.00，進取可博 52 週高位 1125.00。<p class="card-link"><a href="/dashboard/2026-07-06/reports/GS.html">→ 完整 GS 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-bad">🛡️ R:R 0.7</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-bad">🛡️ R:R 0.7</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div>🟢 **GS** · 評分 64 · GS 今日升 3.36%，收報 1055.29 USD，逼近 52 週高位 1125.00 USD。今日 H/L 區間 1029.00-1055.29 幅度約 2.55%，短炒燃料充足。PE TTM 19.28、PB 2.96 對大型投行屬合理估值；股息率 176% 數據異常需獨立核實。建議待回調至 1029.00-1040.00 區間吸納做多，止蝕 1018.00，目標先睇 1080.00，進取可博 52 週高位 1125.00。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 1.0</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>DELL</b> · 評分 63 · DELL 今日急升 4.43%，收報 $411.80，盤中區間 $393.25-$429.74，波幅高達約 9.3%，短炒燃料充足。消息面受惠特朗普公開讚揚戴爾捐款支持「特朗普帳戶」項目，盤初漲幅一度擴大至 4% 以上。技術上股價已突破昨收 $394.32 並站穩 $400 上方，逼近 52 週高位 $469.47。估值面 PE TTM 32.84 偏高、PB -190.38（因積極回購導致股東權益為負，技術上資不抵債），股息率 64% 屬異常數據需留意。日內策略建議等待回調至 $400-$405 吸納，止損 $393.25 今日低位，目標 $429.74 今日高位，風險回報比約 2.0。<p class="card-link"><a href="/dashboard/2026-07-06/reports/DELL.html">→ 完整 DELL 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-bad">🛡️ R:R 1.0</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-bad">🛡️ R:R 1.0</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div>🟢 **DELL** · 評分 63 · DELL 今日急升 4.43%，收報 $411.80，盤中區間 $393.25-$429.74，波幅高達約 9.3%，短炒燃料充足。消息面受惠特朗普公開讚揚戴爾捐款支持「特朗普帳戶」項目，盤初漲幅一度擴大至 4% 以上。技術上股價已突破昨收 $394.32 並站穩 $400 上方，逼近 52 週高位 $469.47。估值面 PE TTM 32.84 偏高、PB -190.38（因積極回購導致股東權益為負，技術上資不抵債），股息率 64% 屬異常數據需留意。日內策略建議等待回調至 $400-$405 吸納，止損 $393.25 今日低位，目標 $429.74 今日高位，風險回報比約 2.0。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.5</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>APP</b> · 評分 62 · APP 收報 $543.79，今日升 3.17%，盤中由 $513.40 反彈至 $545.35，區間波幅約 6.2%，屬高波幅品種，短炒燃料充足。估值偏貴 — PE 47.33、PB 77.37 兩項均處於極高水平，限制向上空間。股價較 52 週高位 $745.61 回吐約 27%，仍處於高位震盪區間。CFRA 維持買入評級，公司指引 Q2 收入 $19.2-19.5 億，整體基本面正面。短線動能偏多，建議順勢做多但嚴設止損，控制單筆風險 2-3%。<p class="card-link"><a href="/dashboard/2026-07-06/reports/APP.html">→ 完整 APP 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-bad">🛡️ R:R 0.5</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-bad">🛡️ R:R 0.5</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span></div>🟢 **APP** · 評分 62 · APP 收報 $543.79，今日升 3.17%，盤中由 $513.40 反彈至 $545.35，區間波幅約 6.2%，屬高波幅品種，短炒燃料充足。估值偏貴 — PE 47.33、PB 77.37 兩項均處於極高水平，限制向上空間。股價較 52 週高位 $745.61 回吐約 27%，仍處於高位震盪區間。CFRA 維持買入評級，公司指引 Q2 收入 $19.2-19.5 億，整體基本面正面。短線動能偏多，建議順勢做多但嚴設止損，控制單筆風險 2-3%。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.8</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>GM</b> · 評分 62 · GM 現價 $77.85，今日升幅 +2.43%，盤中高見 $78.07、低見 $76.12，受惠於 Q1 業績大超預期（營收 $436.2 億 vs 預期 $435.1 億、調整後 EPS $3.70 vs 預期 $2.60）及與美光戰略合作消息帶動盤前急升。PE TTM 28.41 偏貴，PB 1.12 中性，估值不算吸引但業績催化蓋過估值壓力。股價已升至 52 週高位 $87.62 下方約 11.2% 位置（77.85/87.62 = 88.8%），短線有追高風險，建議回調吸納而非突破追入。注意股息率 95.00% 明顯異常（可能數據錯誤），需自行核實。<p class="card-link"><a href="/dashboard/2026-07-06/reports/GM.html">→ 完整 GM 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-bad">🛡️ R:R 0.8</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-bad">🛡️ R:R 0.8</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div>🟢 **GM** · 評分 62 · GM 現價 $77.85，今日升幅 +2.43%，盤中高見 $78.07、低見 $76.12，受惠於 Q1 業績大超預期（營收 $436.2 億 vs 預期 $435.1 億、調整後 EPS $3.70 vs 預期 $2.60）及與美光戰略合作消息帶動盤前急升。PE TTM 28.41 偏貴，PB 1.12 中性，估值不算吸引但業績催化蓋過估值壓力。股價已升至 52 週高位 $87.62 下方約 11.2% 位置（77.85/87.62 = 88.8%），短線有追高風險，建議回調吸納而非突破追入。注意股息率 95.00% 明顯異常（可能數據錯誤），需自行核實。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-ok">🛡️ R:R 1.1</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>C</b> · 評分 61 · 花旗集團 (C) 今日大升 +2.78% 至 $143.86，創近期高位並貼近 52 週高位 $147.96，動能明顯轉強。估值方面 PE TTM 17.78、PB 1.28 屬合理區間，未見明顯泡沫。基本面催化方面，富國銀行將目標價由 $162 上調至 $165，為股價提供上行參考。但需注意信用卡壞賬率 2.28%、逾期率 1.29% 反映消費信貸風險仍在上升，且股息率 171.00% 數據明顯異常（疑為數據源錯誤）。今日 H/L 區間 $141.56-$143.89 幅度約 1.65%，未算高波幅，短炒燃料中等。建議回調至 $141.56-$142.50 區間吸納做多，博反彈至 $147-$148（52 週高位前），止損 $139.50。<p class="card-link"><a href="/dashboard/2026-07-06/reports/C.html">→ 完整 C 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-ok">🛡️ R:R 1.1</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-ok">🛡️ R:R 1.1</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div>🟢 **C** · 評分 61 · 花旗集團 (C) 今日大升 +2.78% 至 $143.86，創近期高位並貼近 52 週高位 $147.96，動能明顯轉強。估值方面 PE TTM 17.78、PB 1.28 屬合理區間，未見明顯泡沫。基本面催化方面，富國銀行將目標價由 $162 上調至 $165，為股價提供上行參考。但需注意信用卡壞賬率 2.28%、逾期率 1.29% 反映消費信貸風險仍在上升，且股息率 171.00% 數據明顯異常（疑為數據源錯誤）。今日 H/L 區間 $141.56-$143.89 幅度約 1.65%，未算高波幅，短炒燃料中等。建議回調至 $141.56-$142.50 區間吸納做多，博反彈至 $147-$148（52 週高位前），止損 $139.50。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.7</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>FIX</b> · 評分 61 · FIX 今日 (as_of_date) 強勢升 2.97% 至 $1793.03，日內區間 $1766.13-$1831.63，幅度約 3.65%，符合高波幅短炒條件。估值偏貴：PE TTM 51.75、PB 97.69（賬面權益極低，反推 ROE ≈ 53%），股息率 15.00% 屬異常（疑為特別股息，不可作長期持有依據）。瑞銀上調目標價至 $2125，與 52週高位 $2073.99 接近。建議回調至 $1775-$1793 區間吸納做多博日內突破，止蝕 $1741.30（昨收），首目標 $1831.63（日高），延伸目標 $1900-$2073.99。<p class="card-link"><a href="/dashboard/2026-07-06/reports/FIX.html">→ 完整 FIX 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-bad">🛡️ R:R 0.7</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-bad">🛡️ R:R 0.7</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span></div>🟢 **FIX** · 評分 61 · FIX 今日 (as_of_date) 強勢升 2.97% 至 $1793.03，日內區間 $1766.13-$1831.63，幅度約 3.65%，符合高波幅短炒條件。估值偏貴：PE TTM 51.75、PB 97.69（賬面權益極低，反推 ROE ≈ 53%），股息率 15.00% 屬異常（疑為特別股息，不可作長期持有依據）。瑞銀上調目標價至 $2125，與 52週高位 $2073.99 接近。建議回調至 $1775-$1793 區間吸納做多博日內突破，止蝕 $1741.30（昨收），首目標 $1831.63（日高），延伸目標 $1900-$2073.99。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-ok">🛡️ R:R 1.2</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>MDB</b> · 評分 57 · MDB 收報 $357.91，單日升 0.85%，盤中區間 $345.66-$360.17，幅度達 4.20%（高波幅，短炒燃料充足）。股價從盤中低位 $345.66 反彈至接近高位 $360.17，技術上守住日內低位即視為短線強勢訊號。多家券商包括 UBS（$275→$350）、Oppenheimer（$375→$410）、Stifel（$330→$435）相繼上調目標價，CFRA 維持強力買入，新聞面全面偏多。PB 9.82 反映高估值預期，係主要風險點。股價距 52 週高位 $444.72 仍有約 19.5% 上行空間，距 52 週低位 $198.47 已反彈約 80%，短線建議回調吸納做多博反彈。<p class="card-link"><a href="/dashboard/2026-07-06/reports/MDB.html">→ 完整 MDB 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-ok">🛡️ R:R 1.2</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-ok">🛡️ R:R 1.2</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div>🟢 **MDB** · 評分 57 · MDB 收報 $357.91，單日升 0.85%，盤中區間 $345.66-$360.17，幅度達 4.20%（高波幅，短炒燃料充足）。股價從盤中低位 $345.66 反彈至接近高位 $360.17，技術上守住日內低位即視為短線強勢訊號。多家券商包括 UBS（$275→$350）、Oppenheimer（$375→$410）、Stifel（$330→$435）相繼上調目標價，CFRA 維持強力買入，新聞面全面偏多。PB 9.82 反映高估值預期，係主要風險點。股價距 52 週高位 $444.72 仍有約 19.5% 上行空間，距 52 週低位 $198.47 已反彈約 80%，短線建議回調吸納做多博反彈。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.9</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CMI</b> · 評分 56 · Cummins（CMI）現價 $678.24，當日升 +2.50%，收復昨日 $661.70 失地並創盤中新高 $679.56。基本面上，富國銀行將目標價由 $693 上調至 $794、美銀由 $540 上調至 $731、CFRA 上調至買入，加上公司上調業績預期，多重利好推動當日強勢。然而 PE TTM 35.21、PB 7.58 估值偏貴，且股息率 121% 數據異常（疑為派息特殊事件），加上 C3.ai 商業祕密案陪審團裁定 CMI 敗訴構成潛在訴訟風險，整體為短炒可參與但中線持有需慎估值。日內交易策略：等待回調至 $670-$674 區間（即接近今日低位 $666.64 上方）吸納做多，博反彈至 $695（舊目標價共識區），嚴守 4 PM HKT 前平倉。<p class="card-link"><a href="/dashboard/2026-07-06/reports/CMI.html">→ 完整 CMI 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-bad">🛡️ R:R 0.9</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-bad">🛡️ R:R 0.9</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span></div>🟢 **CMI** · 評分 56 · Cummins（CMI）現價 $678.24，當日升 +2.50%，收復昨日 $661.70 失地並創盤中新高 $679.56。基本面上，富國銀行將目標價由 $693 上調至 $794、美銀由 $540 上調至 $731、CFRA 上調至買入，加上公司上調業績預期，多重利好推動當日強勢。然而 PE TTM 35.21、PB 7.58 估值偏貴，且股息率 121% 數據異常（疑為派息特殊事件），加上 C3.ai 商業祕密案陪審團裁定 CMI 敗訴構成潛在訴訟風險，整體為短炒可參與但中線持有需慎估值。日內交易策略：等待回調至 $670-$674 區間（即接近今日低位 $666.64 上方）吸納做多，博反彈至 $695（舊目標價共識區），嚴守 4 PM HKT 前平倉。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-ok">🛡️ R:R 1.0</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CEG</b> · 評分 53 · CEG 現價 $245.87，今日強勢反彈 +2.77%，日內區間 $241.20-$247.40（幅度約 2.57%）反映買盤積極但未明確突破。估值 PE TTM 21.36、PB 2.66 屬合理區間；股息率 71.00% 明顯異常（疑為一次性特別息或派息政策異常所致），不可當常態收益率。股價距 52 週高位 $412.70 低約 40%，但僅高於 52 週低位 $228.63 約 7.5%，處於歷史低位區間博弈。缺乏 MA20/MA50/MA200 及 RSI 數據，趨勢結構難以判斷。建議日內回調至 $242.00-$244.00 區間做多博動能延續，目標 $252.00，止損 $240.00。<p class="card-link"><a href="/dashboard/2026-07-06/reports/CEG.html">→ 完整 CEG 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-ok">🛡️ R:R 1.0</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-ok">🛡️ R:R 1.0</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div>🟢 **CEG** · 評分 53 · CEG 現價 $245.87，今日強勢反彈 +2.77%，日內區間 $241.20-$247.40（幅度約 2.57%）反映買盤積極但未明確突破。估值 PE TTM 21.36、PB 2.66 屬合理區間；股息率 71.00% 明顯異常（疑為一次性特別息或派息政策異常所致），不可當常態收益率。股價距 52 週高位 $412.70 低約 40%，但僅高於 52 週低位 $228.63 約 7.5%，處於歷史低位區間博弈。缺乏 MA20/MA50/MA200 及 RSI 數據，趨勢結構難以判斷。建議日內回調至 $242.00-$244.00 區間做多博動能延續，目標 $252.00，止損 $240.00。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.9</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>TTWO</b> · 評分 53 · TTWO 現價 258.41 USD，今日升 1.34%，收於 258.51 高位附近，距 52 週高位 264.79 仅約 2.4%，短線動能正面。多家大行維持買入評級，BTIG 上調目標價至 293 美元、BMO 至 285 美元、Piper 維持 280 美元，疊加 GTA VI 定價正面評論，催化劑明確。惟 PB 高達 13.65 反映估值偏貴，且 MA20/MA50/MA100/MA200 及 RSI14 數據缺失，趨勢強度無法量化確認。建議日內做多博挑戰 52 週高位，嚴設止損，控制持倉時間於 4 PM ET 之前。<p class="card-link"><a href="/dashboard/2026-07-06/reports/TTWO.html">→ 完整 TTWO 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-bad">🛡️ R:R 0.9</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-bad">🛡️ R:R 0.9</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span></div>🟢 **TTWO** · 評分 53 · TTWO 現價 258.41 USD，今日升 1.34%，收於 258.51 高位附近，距 52 週高位 264.79 仅約 2.4%，短線動能正面。多家大行維持買入評級，BTIG 上調目標價至 293 美元、BMO 至 285 美元、Piper 維持 280 美元，疊加 GTA VI 定價正面評論，催化劑明確。惟 PB 高達 13.65 反映估值偏貴，且 MA20/MA50/MA100/MA200 及 RSI14 數據缺失，趨勢強度無法量化確認。建議日內做多博挑戰 52 週高位，嚴設止損，控制持倉時間於 4 PM ET 之前。</div>
+
+---
+<em>生成時間: 2026-07-07 14:00:34 · LLM: openai/MiniMax-M3</em>
+<h2>詳細表格</h2><table class="detail"><thead><tr><th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能/資金流</th><th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th><th>入場</th><th>止損</th><th>目標</th></tr></thead><tbody><tr><td><a href="/dashboard/2026-07-06/reports/IBM.html">IBM</a></td><td>72</td><td>long</td><td>30/60/78</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-06/reports/QCOM.html">QCOM</a></td><td>67</td><td>long</td><td>45/50/72</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-06/reports/FSLR.html">FSLR</a></td><td>65</td><td>long</td><td>55/58/68</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-06/reports/GS.html">GS</a></td><td>64</td><td>long</td><td>45/58/70</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-06/reports/DELL.html">DELL</a></td><td>63</td><td>long</td><td>25/35/72</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-06/reports/APP.html">APP</a></td><td>62</td><td>long</td><td>15/55/70</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-06/reports/GM.html">GM</a></td><td>62</td><td>long</td><td>40/60/65</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-06/reports/C.html">C</a></td><td>61</td><td>long</td><td>55/50/65</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-06/reports/FIX.html">FIX</a></td><td>61</td><td>long</td><td>15/42/70</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-06/reports/MDB.html">MDB</a></td><td>57</td><td>long</td><td>28/70/60</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-06/reports/CMI.html">CMI</a></td><td>56</td><td>long</td><td>20/55/62</td><td>買入</td><td>中性偏樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-06/reports/CEG.html">CEG</a></td><td>53</td><td>long</td><td>50/60/55</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-06/reports/TTWO.html">TTWO</a></td><td>53</td><td>long</td><td>22/50/58</td><td>買入</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr></tbody></table>
+</main>
+<footer>
+  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>
