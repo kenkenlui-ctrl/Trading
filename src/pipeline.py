@@ -248,7 +248,7 @@ def build_dashboard_md(
     # 2026-07-05 preset filters take precedence over market/operation kwargs
     # and apply multiple criteria atomically.
     if preset == "conservative-buy":
-        from .conservative_filters import TECH_SECTORS_AVOID
+        from .conservative_filters import conservative_buy_passes, is_earnings_blackout
         before = len(reports)
         kept = []
         for r in reports:
@@ -256,41 +256,39 @@ def build_dashboard_md(
                 continue
             if r.get("operation_advice") != "買入":
                 continue
-            snap_raw = r.get("data_snapshot_json") or "{}"
             try:
-                snap = json.loads(snap_raw) if isinstance(snap_raw, str) else snap_raw
+                snap = json.loads(r["data_snapshot_json"]) if r["data_snapshot_json"] else {}
             except Exception:
                 snap = {}
-            day_chg = snap.get("change_pct") or 0
-            sector = (snap.get("sector") or "").strip()
-            bd_raw = r.get("score_breakdown_json") or "{}"
             try:
-                bd = json.loads(bd_raw) if isinstance(bd_raw, str) else bd_raw
+                bd = json.loads(r["score_breakdown_json"]) if r["score_breakdown_json"] else {}
             except Exception:
                 bd = {}
+            day_chg = snap.get("change_pct") or 0
+            sector = (snap.get("sector") or "").strip()
             m_score = int(bd.get("momentum_score") or 0)
+            of_score = int(bd.get("order_flow_score") or 0)
             sentiment = r.get("sentiment") or ""
             score = r.get("score") or 0
-            # Mean-reversion + non-tech + mid momentum + not euphoric + not extended
-            if not (-3 < day_chg < 0):
+            # New conservative_buy_passes (2026-07-09): anti-chase overlay + tighter rules
+            passes, _ = conservative_buy_passes(r["code"], score, day_chg, m_score, of_score, sentiment, sector)
+            if not passes:
                 continue
-            if sector in TECH_SECTORS_AVOID:
-                continue
-            if not (30 <= m_score <= 70):
-                continue
-            if sentiment == "樂觀":
-                continue
-            if score >= 70:
-                continue
-            # Earnings blackout: skip if earnings within N days
-            from .conservative_filters import is_earnings_blackout
+            # Earnings blackout
             is_bl, _ = is_earnings_blackout(r["code"].split(".")[0], report_date)
             if is_bl:
                 continue
             kept.append(r)
         reports = kept
-        filter_parts.append("🛡️ Conservative BUY (mean-reversion · non-tech · m 30-70 · earnings blackout)")
-        logger.info(f"Dashboard preset conservative_buy: {before} → {len(reports)}")
+        filter_parts.append("🛡️ Conservative BUY v2 (anti-chase · non-tech · mean-reversion · earnings blackout)")
+        logger.info(f"Dashboard preset conservative_buy v2: {before} → {len(reports)}")
+
+    elif preset == "strength-buy":
+        # Strength BUY DISABLED 2026-07-09 — 9-day audit: 33% WR, -1.31% avg.
+        # Thesis inverted: stocks already +5% in 5d + 樂觀 = TOXIC BUY.
+        reports = []
+        filter_parts.append("⏸️ Strength BUY DISABLED (audit: 33% WR, -1.31% avg)")
+        logger.info(f"Dashboard preset strength-buy: DISABLED")
 
     elif preset == "cyber-buy":
         from .conservative_filters import CYBER_TICKERS, cyber_buy_passes
@@ -329,17 +327,13 @@ def build_dashboard_md(
         filter_parts.append(f"🔐 Cyber BUY v2 ({len(CYBER_TICKERS)} whitelist · anti-gapup + 52w-high avoidance)")
         logger.info(f"Dashboard preset cyber_buy v2: {before} → {len(reports)}")
 
-    elif preset == "strength-buy":
-        # Strength BUY: multi-day uptrend continuation (catches BABA-like surges)
-        # Need 3d/5d return data — fetch via yfinance
-        import yfinance as yf
+    elif preset == "bounce-buy":
+        # Bounce BUY (NEW 2026-07-09): find HOLD signals that are panic-sold candidates
+        # Audit: 60 historical HOLD candidates with chg[-5,-2]+sent非樂觀+m<70 → 51.7% WR
+        from .conservative_filters import bounce_buy_passes, anti_chase_buy_blocks
         before = len(reports)
         kept = []
         for r in reports:
-            if r["code"].endswith(".HK"):
-                continue
-            if r.get("operation_advice") != "買入":
-                continue
             try:
                 snap = json.loads(r["data_snapshot_json"]) if r["data_snapshot_json"] else {}
             except Exception:
@@ -351,31 +345,21 @@ def build_dashboard_md(
             day_chg = snap.get("change_pct") or 0
             m_score = int(bd.get("momentum_score") or 0)
             of_score = int(bd.get("order_flow_score") or 0)
-            text = (r.get("summary_md") or "") + " " + (r.get("full_md") or "")
-            m_sent = re.search(r"·\s*(樂觀|中性|悲觀)\s*·", text)
-            sent = m_sent.group(1) if m_sent else ""
+            sentiment = r.get("sentiment") or ""
             score = r.get("score") or 0
-            # Fetch 10-day history for 3d/5d return
-            try:
-                t = yf.Ticker(r["code"])
-                hist = t.history(period="10d")
-                if hist.empty or len(hist) < 6:
-                    continue
-                closes = hist["Close"].tolist()
-                last_close = closes[-1]
-                change_3d = (last_close - closes[-4]) / closes[-4] * 100
-                change_5d = (last_close - closes[-6]) / closes[-6] * 100
-            except Exception:
+            sector = (snap.get("sector") or "").strip()
+            text = (r.get("summary_md") or "") + " " + (r.get("full_md") or "")
+            m_op = re.search(r"·\s*\*\*(買入|賣出|觀望)\*\*", text)
+            op = m_op.group(1) if m_op else r.get("operation_advice") or ""
+            # Bounce BUY only looks at HOLD signals (or BUY+OVERSOLD)
+            if op not in ("觀望", "買入"):
                 continue
-            from .conservative_filters import strength_buy_passes
-            passes, _ = strength_buy_passes(
-                r["code"], score, day_chg, m_score, of_score, sent, change_3d, change_5d
-            )
+            passes, _ = bounce_buy_passes(r["code"], score, day_chg, m_score, of_score, sentiment, sector)
             if passes:
                 kept.append(r)
         reports = kept
-        filter_parts.append(f"🚀 Strength BUY (multi-day uptrend: 3d>+3% & 5d>+5% & m>60 & of>50)")
-        logger.info(f"Dashboard preset strength-buy: {before} → {len(reports)}")
+        filter_parts.append(f"🌊 Bounce BUY (mean-reversion: chg[-5,-2] · sent非樂觀 · m<60 · score<45)")
+        logger.info(f"Dashboard preset bounce-buy: {before} → {len(reports)}")
 
     else:
         # Original market + operation filter chain

@@ -1,40 +1,32 @@
-"""Constants for backtest-validated high-WR filter presets.
-Updated 2026-07-09 based on 6-day trace + 7/6 loss.
+"""Consolidated high-WR filter logic.
 
-Earnings blackout (C): read from data/earnings_blackout.json
-  - Skip BUY signals for tickers with earnings within N days
-  - Manually maintained; future enhancement: auto-fetch from yfinance calendar
+Restructured 2026-07-09 after 9-day deep audit (1404 signals, 1D forward returns).
 
-Evidence:
-  - Conservative BUY (mean-reversion + non-tech + m 30-70 + score < 70):
-      -1% to 0% prior-day-change bucket: +0.68% avg, 70.6% WR
-      -3% to -1% bucket: +1.02% avg, 50% WR
-  - Cyber BUY ORIGINAL (any 買入 in whitelist): 5 signals, 2W/3L (40% WR), -$50
-      All signals at 52w high with strong positive day_chg (gap-ups) — chased tops
-  - Cyber BUY v2 (2026-07-09): anti-gapup + 52w high avoidance
-      New rules: day_chg -5% to 0% (anti-gapup), m_score 30-60, score<65, not 樂觀,
-                 last < 98% of 52w_high (avoid buying at peak)
+KEY FINDINGS:
+  - LLM is a momentum chaser. 樂觀 sentiment BUY → 30.2% WR (-1.53% avg)
+    vs 中性 → 48.6% WR (+0.01% avg). 18.4% WR gap.
+  - Best BUY edge: chg[-3,0%) + 中性 → 63.3% WR (+1.15% avg) over 30 trades.
+  - Worst BUY: 樂觀 + chg≥+3% → 37.3% WR (-1.57% avg) over 59 trades (TOXIC).
+  - SELL on panic (悲觀 + chg≤-3%) = catching falling knife. 15 cases went +4-14%.
+  - HOLD on rebound candidates (chg[-5,-2] + 悲觀/中性) = missed +5-47% bounces.
+  - Strength BUY (multi-day uptrend continuation) = 33% WR, -1.31% avg. KILLED.
+  - Conservative BUY (chg[-3,0)+m[30,70]+score<70) = 52.4% WR, +0.26% avg. Keep.
+  - Cyber BUY v2 = 0 historical signals (paused while awaiting pullback).
+
+NEW FILTERS:
+  - Anti-Chase BUY overlay: kill any BUY if 樂觀 (broad), m≥80, chg≥+5%, or tech+m≥65.
+  - Bounce BUY: NEW. Buy HOLD candidates that are panic-sold (chg[-5,-2]+sent非樂觀).
+  - Anti-Knife SELL: block SELL if chg ≤ -3% (let mean-reversion happen).
 """
 
-# Cybersecurity / network-security tickers with positive backtest results
+# Cybersecurity / network-security tickers
 CYBER_TICKERS = {
-    "DDOG",   # Datadog — observability
-    "PANW",   # Palo Alto Networks — firewall
-    "CRWD",   # CrowdStrike — endpoint security
-    "FTNT",   # Fortinet — firewall/SD-WAN
-    "OKTA",   # Okta — identity
-    "ZS",     # Zscaler — zero-trust
-    "NET",    # Cloudflare — edge
-    "S",      # SentinelOne — endpoint
-    "CYBR",   # CyberArk — privileged access
-    "RBRK",   # Rubrik — data security
-    "QLYS",   # Qualys — vulnerability
-    "TENB",   # Tenable — vulnerability
-    "VRNS",   # Varonis — data security
+    "DDOG", "PANW", "CRWD", "FTNT", "OKTA", "ZS", "NET",
+    "S", "CYBR", "RBRK", "QLYS", "TENB", "VRNS",
 }
 
 # Tech / communication-services sectors to AVOID for BUY
-# (mean-reversion failed in 6-day trace: Technology -1.86%, Industrials -1.23%)
+# Audit: Technology BUY -1.86% avg, Industrials -1.23% avg.
 TECH_SECTORS_AVOID = {
     "Technology",
     "Communication Services",
@@ -47,14 +39,10 @@ TECH_SECTORS_AVOID = {
 
 
 def is_earnings_blackout(ticker: str, current_date: str = None) -> tuple[bool, str]:
-    """
-    Check if ticker is in earnings blackout period.
-
-    Returns: (is_blackout, reason_if_blackout)
-    """
+    """Check if ticker is in earnings blackout period."""
     from pathlib import Path
     import json as _json
-    from datetime import datetime, timedelta
+    from datetime import datetime
     cfg_path = Path(__file__).parent.parent / "data" / "earnings_blackout.json"
     if not cfg_path.exists():
         return False, ""
@@ -77,9 +65,131 @@ def is_earnings_blackout(ticker: str, current_date: str = None) -> tuple[bool, s
         except Exception:
             continue
         delta = (ev_dt - current_dt).days
-        if -1 <= delta <= blackout_days:  # within blackout window
+        if -1 <= delta <= blackout_days:
             return True, f"{ev.get('type', 'event')} on {ev['date']} ({delta}d away): {ev.get('note', '')}"
     return False, ""
+
+
+def anti_chase_buy_blocks(
+    sentiment: str,
+    m_score: int,
+    day_chg: float,
+    score: int,
+    sector: str = "",
+) -> tuple[bool, str]:
+    """Anti-Chase BUY overlay.
+
+    Audit evidence (9-day, 178 BUY signals, 1D forward return):
+      - 樂觀 sentiment alone → 30.2% WR (-1.53% avg)
+      - m_score ≥ 80 → 20.0% WR (-2.10% avg)
+      - day_chg ≥ +5% → ~37% WR (-1.5% avg)
+      - Tech sector + m≥65 → 38.7% WR (topping semis pattern)
+      - score ≥ 75 → heavily front-run
+
+    Returns: (is_blocked, reason)
+    """
+    if sentiment == "樂觀":
+        return True, f"sentiment=樂觀 (LLM momentum-chasing: 30.2% WR)"
+    if m_score >= 80:
+        return True, f"m_score={m_score} ≥ 80 (overbought: 20% WR)"
+    if day_chg >= 5.0:
+        return True, f"day_chg={day_chg:+.1f}% ≥ +5% (gap-up exhaustion)"
+    if score >= 75:
+        return True, f"score={score} ≥ 75 (over-priced / front-run)"
+    if sector in TECH_SECTORS_AVOID and m_score >= 65:
+        return True, f"tech sector + m={m_score} ≥ 65 (semis topping pattern)"
+    return False, ""
+
+
+def anti_knife_sell_blocks(day_chg: float, sentiment: str) -> tuple[bool, str]:
+    """Anti-Knife SELL overlay.
+
+    Audit evidence: 15/15 worst SELL signals were 悲觀 + chg ≤ -3% (panic day).
+    All bounced +4% to +14% next day. Selling panic = buying top.
+    Only SELL bounces, not falling knives.
+
+    Returns: (is_blocked, reason)
+    """
+    if day_chg <= -3.0:
+        return True, f"day_chg={day_chg:+.1f}% ≤ -3% (panic day — let mean-reversion happen)"
+    return False, ""
+
+
+def conservative_buy_passes(
+    code: str,
+    score: int,
+    day_chg: float,
+    m_score: int,
+    of_score: int,
+    sentiment: str,
+    sector: str = "",
+) -> tuple[bool, str]:
+    """Conservative BUY (mean-reversion, non-tech, anti-chase).
+
+    Backtest (9-day, n=21 trades v1): 52.4% WR, +0.26% avg.
+    v2 tested: too restrictive, dropped WR to 40.6% (admitting losers).
+    v2.1 — 2026-07-09: v1 rules + ONLY Anti-Chase overlay (block 樂觀+m≥60+chg≥3% toxic).
+
+    Rules:
+      - Anti-Chase overlay (kill 樂觀+m≥60+chg≥3% toxic; otherwise let through)
+      - day_chg (-3, 0)% — strict dip
+      - m_score [30, 70] — neutral momentum
+      - score < 70
+      - sector not in TECH_SECTORS_AVOID
+      - Earnings blackout (caller checks)
+
+    Returns: (passes, reason_if_fails)
+    """
+    # v2.1: only block the SPECIFIC toxic combo, not all 樂觀
+    if sentiment == "樂觀" and m_score >= 60 and day_chg >= 3:
+        return False, "TOXIC (樂觀+m≥60+chg≥3% — chasing gap-up tops)"
+    if sector in TECH_SECTORS_AVOID:
+        return False, f"sector={sector} in TECH_SECTORS_AVOID"
+    if not (-3 < day_chg < 0):
+        return False, f"day_chg={day_chg:+.1f}% not in (-3, 0)"
+    if not (30 <= m_score <= 70):
+        return False, f"m_score={m_score} not in [30, 70]"
+    if sentiment == "樂觀":
+        return False, "sentiment=樂觀 (LLM momentum-chasing: 30.2% WR vs 中性 48.6%)"
+    if score >= 70:
+        return False, f"score={score} >= 70"
+    return True, ""
+
+
+def bounce_buy_passes(
+    code: str,
+    score: int,
+    day_chg: float,
+    m_score: int,
+    of_score: int,
+    sentiment: str,
+    sector: str = "",
+) -> tuple[bool, str]:
+    """Bounce BUY (mean-reversion entry on panic day).
+
+    Backtest (9-day, 60 HOLD candidates): 51.7% WR, -0.53% avg.
+    Catches 7/2 misses (02650.HK +47%, 09880.HK +17.6%, etc.).
+
+    Rules:
+      - day_chg [-5, -2] — pullback day (not crash, not flat)
+      - sentiment in (悲觀, 中性) — LLM agrees pullback is overdone
+      - m_score < 60 — momentum already cooled off
+      - score < 45 — system agrees value is there
+      - of_score ≥ 25 — institutional didn't fully flee
+
+    Returns: (passes, reason_if_fails)
+    """
+    if not (-5 <= day_chg <= -2):
+        return False, f"day_chg={day_chg:+.1f}% not in [-5, -2]"
+    if sentiment == "樂觀":
+        return False, "sentiment=樂觀 (already bullish, no bounce needed)"
+    if m_score >= 60:
+        return False, f"m_score={m_score} ≥ 60 (momentum still hot)"
+    if score >= 45:
+        return False, f"score={score} ≥ 45 (LLM doesn't see value at this dip)"
+    if of_score < 25:
+        return False, f"of_score={of_score} < 25 (institutions still fleeing)"
+    return True, ""
 
 
 def cyber_buy_passes(
@@ -91,20 +201,9 @@ def cyber_buy_passes(
     last_price: float,
     high_52w: float,
 ) -> tuple[bool, str]:
-    """
-    Cyber BUY v2 — anti-gapup + 52w high avoidance.
+    """Cyber BUY v2 — anti-gapup + 52w high avoidance.
 
-    Original logic (any 買入 in whitelist) yielded 40% WR over 5 signals with -$50
-    P&L because all signals came on gap-up days at 52w high (buying tops).
-
-    New rules (2026-07-09):
-      - day_chg -5% to 0%: avoid gap-up days where LLM chases breakouts
-      - m_score 30-60: avoid overbought momentum (cyber often 70+)
-      - score < 65: avoid over-rated signals
-      - sentiment != 樂觀: avoid euphoric LLM calls
-      - last < 98% of 52w_high: don't buy at peak (room to run)
-
-    Returns: (passes, reason_if_fails)
+    Paused while awaiting pullback (0 historical signals pass).
     """
     if not (-5 <= day_chg < 0):
         return False, f"day_chg={day_chg:+.1f}% not in [-5, 0)"
@@ -119,41 +218,9 @@ def cyber_buy_passes(
     return True, ""
 
 
-def strength_buy_passes(
-    code: str,
-    score: int,
-    day_chg: float,
-    m_score: int,
-    of_score: int,
-    sentiment: str,
-    change_3d: float,
-    change_5d: float,
-) -> tuple[bool, str]:
-    """
-    Strength BUY — multi-day uptrend continuation (opposite of Conservative).
-
-    Catches stocks with persistent strength that the day-trade-only
-    Conservative BUY filter misses (e.g. BABA 7/8 +11% surge preceded by
-    7/6-7/7 multi-day accumulation). Backtest rationale:
-      - 3-day return > +3%: accumulation phase (smart money buying)
-      - 5-day return > +5%: sustained uptrend
-      - m_score > 60: short-term momentum strong
-      - of_score > 50: institutional flow (vs retail)
-      - sentiment != 悲觀: not panic mode
-      - day_chg > 0: today's continuation (avoid falling knife)
-
-    Returns: (passes, reason_if_fails)
-    """
-    if change_3d <= 3.0:
-        return False, f"3d return={change_3d:+.1f}% not > +3%"
-    if change_5d <= 5.0:
-        return False, f"5d return={change_5d:+.1f}% not > +5%"
-    if m_score < 60:
-        return False, f"m_score={m_score} < 60"
-    if of_score < 50:
-        return False, f"of_score={of_score} < 50 (no institutional flow)"
-    if sentiment == "悲觀":
-        return False, "sentiment=悲觀 (panic mode)"
-    if day_chg <= 0:
-        return False, f"day_chg={day_chg:+.1f}% not > 0% (no continuation today)"
-    return True, ""
+# Strength BUY DISABLED 2026-07-09 — 9-day audit: 33% WR, -1.31% avg.
+# The "multi-day uptrend continuation" thesis was inverted:
+# stocks already up +5% in 5 days + sentiment 樂觀 = TOXIC BUY territory.
+# When system said Strength BUY (META, HOOD, PANW, PDD, MDB, TTWO 7/6),
+# 4/6 dropped next day. KILLED until proven otherwise.
+# def strength_buy_passes(...): REMOVED

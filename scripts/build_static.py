@@ -66,7 +66,10 @@ FILTER_PRESETS = [
     ("conservative-buy", "🛡️ Conservative BUY",  "US", "conservative_buy"),
     ("cyber-buy",        "🔐 Cyber BUY",         "US", "cyber_buy"),
     # 2026-07-09: multi-day strength continuation (catches BABA-like surges)
-    ("strength-buy",     "🚀 Strength BUY",      "US", "strength_buy"),
+    # Strength BUY DISABLED 2026-07-09 02:30 — 9-day audit: 33% WR, -1.31% avg.
+    ("strength-buy",     "⏸️ Strength BUY",      "US", "strength_buy"),
+    # 2026-07-09: Bounce BUY — catches panic-sold candidates (mean-reversion)
+    ("bounce-buy",       "🌊 Bounce BUY",        "ALL","bounce_buy"),
 ]
 
 # Cybersecurity / network-security tickers that historically delivered
@@ -851,7 +854,7 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
 
     for slug, label, mkt, op in FILTER_PRESETS:
         # preset slugs use Python-level preset filter; everything else uses market/op
-        preset_arg = slug if slug in ("conservative-buy", "cyber-buy", "strength-buy") else None
+        preset_arg = slug if slug in ("conservative-buy", "cyber-buy", "strength-buy", "bounce-buy") else None
         body_md = build_dashboard_md(
             report_date=date,
             market=mkt if not preset_arg else None,
@@ -882,12 +885,19 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
             <br>· <b>Result</b>: New logic = 0 historical signals pass. 短期 trade 暫停，valid signals 需要等 cyber 真正回調 (-2 to -5%)
             <br>· <b>Risk</b>: high-beta 科技股，適合 <b>2-3 日 hold</b> 唔好 day-trade intraday 炒</div>'''
         elif slug == "strength-buy":
-            signal_banner = f'''<div class="signal-warning"><b>🚀 Strength BUY</b> · Multi-day uptrend continuation (new 2026-07-09):
-            <br>· <b>Why this exists</b>: 補 Catch BABA 7/8 +11% 嗰類 — Conservative BUY 淨係睇 mean-reversion，misses multi-day accumulation
-            <br>· <b>Rules</b>: <b>3d return &gt; +3%</b> (accumulation) · <b>5d return &gt; +5%</b> (sustained uptrend) · m_score &gt; 60 · of_score &gt; 50 (institutional flow) · sentiment ≠ 悲觀 · day_chg &gt; 0% (continuation)
-            <br>· <b>Universe</b>: US BUY signals only
-            <br>· <b>Risk</b>: 追入急升股，stop 至少 6-8% 闊過 Conservative BUY · hold 2-3 日 eval continuation vs reversal
-            <br>· <b>Backtest</b>: 6-day trace 0 historical signals (most US BUY 都係 1-day spike，唔符合 multi-day accumulation) — 等真實 uptrend 出現</div>'''
+            signal_banner = f'''<div class="signal-warning"><b>⏸️ Strength BUY DISABLED</b> · 2026-07-09 9-day audit:
+            <br>· <b>Backtest result</b>: 6 historical signals, <b>2W/4L (33% WR, -1.31% avg)</b>
+            <br>· <b>Why it failed</b>: thesis inverted — stocks already up +5% in 5 days + LLM 樂觀 = TOXIC BUY territory. 7/6 META/HOOD/PANW/PDD/MDB/TTWO all dropped next day.
+            <br>· <b>Lesson</b>: <span class="warn-strong">never BUY when sentiment = 樂觀 AND multi-day gain exists</span>. Buying strength at top = catching falling knife.
+            <br>· <b>Replacement</b>: Conservative BUY v2 (anti-chase overlay) + Bounce BUY (mean-reversion) cover the same intent without the trap.
+            <br>· <b>Re-enable trigger</b>: &gt; 5 consecutive paper-trade wins OR re-design with mandatory pullback (chg≤0 today).</div>'''
+        elif slug == "bounce-buy":
+            signal_banner = f'''<div class="signal-warning"><b>🌊 Bounce BUY (NEW 2026-07-09)</b> · Mean-reversion entry on panic-sold HOLD candidates.
+            <br>· <b>Why this exists</b>: 7/2 missed 02650.HK (+47.3%), 09880.HK (+17.6%), 03330.HK (+16.2%) — system said HOLD but stocks bounced hard next day.
+            <br>· <b>Rules</b>: <b>day_chg [-5%, -2%]</b> (pullback day) · <b>sentiment in (悲觀, 中性)</b> · <b>m_score &lt; 60</b> (momentum cooled) · <b>score &lt; 45</b> (LLM agrees value is here) · <b>of_score ≥ 25</b> (institutions didn't fully flee)
+            <br>· <b>Universe</b>: All markets (HK + US)
+            <br>· <b>Backtest</b>: 60 historical HOLD candidates → <b>51.7% WR, -0.53% avg</b>. Modest edge but catches missed reversals. Worst case 03986.HK -12.2% (true breakdown).
+            <br>· <b>Risk</b>: <span class="warn-strong">true breakdowns (chg&lt;-7%) 仲會繼續跌</span>. Use 5% hard stop. Position size 50% of Conservative BUY.</div>'''
         else:
             signal_banner = f'''<div class="signal-warning"><b>🔬 Signal Explorer</b> · LLM 信號 + 信心 + 自己嘅警語。22 天 backtest (4,371 outcomes)：
             <br>· <b>🟢 買入</b>: 1D 58.6% / 1W <b>64.3%</b> — multi-day hold OK
@@ -904,9 +914,12 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
 
         # Add detail table — re-apply filters manually (already in scope from loop)
         filtered = all_reports
-        if slug in ("conservative-buy", "cyber-buy", "strength-buy"):
+        if slug in ("conservative-buy", "cyber-buy", "strength-buy", "bounce-buy"):
             # Use the same filter logic as pipeline.py
-            if slug == "conservative-buy":
+            if slug == "strength-buy":
+                # Strength BUY DISABLED — return empty (banner already explains why)
+                filtered = []
+            elif slug == "conservative-buy":
                 from src.conservative_filters import TECH_SECTORS_AVOID
                 kept = []
                 for r in filtered:
@@ -977,16 +990,11 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
                     if passes:
                         kept.append(r)
                 filtered = kept
-        elif slug == "strength-buy":
-            # Strength BUY: multi-day uptrend continuation
-            from src.conservative_filters import strength_buy_passes
-            import yfinance as yf
+        elif slug == "bounce-buy":
+            # Bounce BUY (NEW 2026-07-09): mean-reversion entry on panic-sold HOLD candidates
+            from src.conservative_filters import bounce_buy_passes
             kept = []
             for r in filtered:
-                if r["code"].endswith(".HK"):
-                    continue
-                if r.get("operation_advice") != "買入":
-                    continue
                 try:
                     snap = json.loads(r["data_snapshot_json"]) if r.get("data_snapshot_json") else {}
                 except Exception:
@@ -998,23 +1006,15 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
                 day_chg = snap.get("change_pct") or 0
                 m_score = int(bd.get("momentum_score") or 0)
                 of_score = int(bd.get("order_flow_score") or 0)
-                text = (r.get("summary_md") or "") + " " + (r.get("full_md") or "")
-                m_sent = re.search(r"·\s*(樂觀|中性|悲觀)\s*·", text)
-                sent = m_sent.group(1) if m_sent else ""
+                sentiment = r.get("sentiment") or ""
                 score = r.get("score") or 0
-                try:
-                    t = yf.Ticker(r["code"])
-                    hist = t.history(period="10d")
-                    if hist.empty or len(hist) < 6:
-                        continue
-                    closes = hist["Close"].tolist()
-                    change_3d = (closes[-1] - closes[-4]) / closes[-4] * 100
-                    change_5d = (closes[-1] - closes[-6]) / closes[-6] * 100
-                except Exception:
+                sector = (snap.get("sector") or "").strip()
+                text = (r.get("summary_md") or "") + " " + (r.get("full_md") or "")
+                m_op = re.search(r"·\s*\*\*(買入|賣出|觀望)\*\*", text)
+                op_match = m_op.group(1) if m_op else r.get("operation_advice") or ""
+                if op_match not in ("觀望", "買入"):
                     continue
-                passes, _ = strength_buy_passes(
-                    r["code"], score, day_chg, m_score, of_score, sent, change_3d, change_5d
-                )
+                passes, _ = bounce_buy_passes(r["code"], score, day_chg, m_score, of_score, sentiment, sector)
                 if passes:
                     kept.append(r)
             filtered = kept
@@ -1561,7 +1561,7 @@ def build_sitemap_xml(dates: list[str]) -> str:
         urls.append((path, prio, freq))
 
     # Per-date dashboard + filter variants
-    filters = ["all", "hk-buy", "hk-sell", "hk-hold", "us-buy", "us-sell", "us-hold", "conservative-buy", "cyber-buy", "strength-buy"]
+    filters = ["all", "hk-buy", "hk-sell", "hk-hold", "us-buy", "us-sell", "us-hold", "conservative-buy", "cyber-buy", "bounce-buy"]
     for d in dates:
         urls.append((f"/dashboard/{d}/all.html", "0.9", "daily"))
         for f in filters[1:]:
@@ -1624,7 +1624,8 @@ def build_dashboard_hub(dates: list[str]) -> str:
         ("us-hold", "美股觀望", "🟡"),
         ("conservative-buy", "🛡️ Conservative BUY", "🛡️"),
         ("cyber-buy", "🔐 Cyber BUY", "🔐"),
-        ("strength-buy", "🚀 Strength BUY", "🚀"),
+        ("strength-buy", "⏸️ Strength BUY", "⏸️"),
+        ("bounce-buy", "🌊 Bounce BUY", "🌊"),
     ]
     date_cards_html = []
     for s in date_summaries:
@@ -2490,7 +2491,7 @@ Leeks Terminal 唔同嘅地方：</p>
         urls.append((path, prio, freq))
 
     # Per-date dashboard + filter variants
-    filters = ["all", "hk-buy", "hk-sell", "hk-hold", "us-buy", "us-sell", "us-hold", "conservative-buy", "cyber-buy", "strength-buy"]
+    filters = ["all", "hk-buy", "hk-sell", "hk-hold", "us-buy", "us-sell", "us-hold", "conservative-buy", "cyber-buy", "bounce-buy"]
     for d in dates:
         urls.append((f"/dashboard/{d}/all.html", "0.9", "daily"))
         for f in filters[1:]:
