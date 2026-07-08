@@ -47,6 +47,22 @@ def to_futu_code(code: str) -> str:
     return code
 
 
+def parse_entry_stop_target(full_md: str) -> tuple[str | None, str | None, str | None]:
+    """Extract entry_zone, stop_loss, target_price from LLM markdown."""
+    import re
+    entry = stop = target = None
+    m = re.search(r"入場區間[：:]\s*([^\n]+)", full_md or "")
+    if m:
+        entry = m.group(1).strip()
+    m = re.search(r"止[損蝕]位[：:]\s*([^\n]+)", full_md or "")
+    if m:
+        stop = m.group(1).strip()
+    m = re.search(r"目標價[：:]\s*([^\n]+)", full_md or "")
+    if m:
+        target = m.group(1).strip()
+    return entry, stop, target
+
+
 def fetch_futu_kline_snapshot(code: str, ctx: OpenQuoteContext) -> dict | None:
     """Fetch actual TARGET_DATE OHLC + close from Futu for HK ticker.
 
@@ -215,6 +231,7 @@ def process_hk(code: str, ctx: OpenQuoteContext) -> tuple[str, str]:
             return code, "analyze-none"
         summary_md = render_summary_md(result, language="zh-Hant")
         full_md = render_report_md(result, snap, language="zh-Hant")
+        entry_zone, stop_loss, target_price = parse_entry_stop_target(full_md)
         save_report(
             code=code, report_date=TARGET_DATE, score=result.score,
             sentiment=result.sentiment, trend=result.trend,
@@ -223,6 +240,7 @@ def process_hk(code: str, ctx: OpenQuoteContext) -> tuple[str, str]:
             llm_model=result.llm_model,
             score_breakdown_json=json.dumps(result.score_breakdown or {}, ensure_ascii=False),
             trade_direction=result.trade_direction,
+            entry_zone=entry_zone, stop_loss=stop_loss, target_price=target_price,
             support_zone=result.support_zone, resistance_zone=result.resistance_zone,
             key_levels_json=json.dumps(result.key_levels or {}, ensure_ascii=False),
         )
@@ -248,6 +266,7 @@ def process_us(code: str) -> tuple[str, str]:
             return code, "analyze-none"
         summary_md = render_summary_md(result, language="zh-Hant")
         full_md = render_report_md(result, snap, language="zh-Hant")
+        entry_zone, stop_loss, target_price = parse_entry_stop_target(full_md)
         save_report(
             code=code, report_date=TARGET_DATE, score=result.score,
             sentiment=result.sentiment, trend=result.trend,
@@ -256,6 +275,7 @@ def process_us(code: str) -> tuple[str, str]:
             llm_model=result.llm_model,
             score_breakdown_json=json.dumps(result.score_breakdown or {}, ensure_ascii=False),
             trade_direction=result.trade_direction,
+            entry_zone=entry_zone, stop_loss=stop_loss, target_price=target_price,
             support_zone=result.support_zone, resistance_zone=result.resistance_zone,
             key_levels_json=json.dumps(result.key_levels or {}, ensure_ascii=False),
         )

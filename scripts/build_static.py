@@ -773,9 +773,18 @@ def report_page_html(report: dict, date: str) -> str:
         or report.get("resistance_zone")
         or "—"
     )
-    entry = snap.get("entry_zone") or "—"
-    stop = snap.get("stop_loss") or "—"
-    target = snap.get("target_price") or "—"
+    # Entry/stop/target are LLM-emitted text in full_md, NOT in data_snapshot
+    # (the original render_report_md in src/analyzer.py writes them as
+    # markdown lines like '- **入場區間**: $X-$Y'). Parse from full_md so
+    # per-ticker detail pages show the LLM's concrete trade plan.
+    import re as _re
+    entry = stop = target = "—"
+    m = _re.search(r"\*?\*?入場區間\*?\*?[：:]\s*([^\n]+)", main_md or "")
+    if m: entry = m.group(1).strip()
+    m = _re.search(r"\*?\*?止[損蝕]位\*?\*?[：:]\s*([^\n]+)", main_md or "")
+    if m: stop = m.group(1).strip()
+    m = _re.search(r"\*?\*?目標價\*?\*?[：:]\s*([^\n]+)", main_md or "")
+    if m: target = m.group(1).strip()
 
     levels_html = (
         '<div class="levels">'
