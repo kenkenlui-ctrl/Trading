@@ -85,7 +85,7 @@ def get_current_price(code: str) -> float | None:
 def get_signal_codes(report_date: str, preset: str) -> list[dict]:
     """Get all codes + signal data passing the given filter preset."""
     import sqlite3
-    from src.conservative_filters import CYBER_TICKERS, TECH_SECTORS_AVOID
+    from src.conservative_filters import CYBER_TICKERS, TECH_SECTORS_AVOID, cyber_buy_passes
     con = sqlite3.connect(str(DB_PATH))
     con.row_factory = sqlite3.Row
     # For conservative-buy we need score_breakdown which isn't in the row above
@@ -109,9 +109,28 @@ def get_signal_codes(report_date: str, preset: str) -> list[dict]:
     for r in rows:
         code = r["code"]
         if preset == "cyber-buy":
-            # Cyber BUY: only WHITELIST (cyber tickers are US, no .HK suffix)
+            # Cyber BUY v2: whitelist + anti-gapup + 52w high avoidance
             tk = code.split(".")[0]
-            if tk in CYBER_TICKERS:
+            if tk not in CYBER_TICKERS:
+                continue
+            try:
+                snap = json.loads(r["data_snapshot_json"]) if r["data_snapshot_json"] else {}
+            except Exception:
+                snap = {}
+            try:
+                bd = json.loads(r["score_breakdown_json"]) if r["score_breakdown_json"] else {}
+            except Exception:
+                bd = {}
+            day_chg = snap.get("change_pct") or 0
+            m_score = int(bd.get("momentum_score") or 0)
+            text = (r["summary_md"] or "") + " " + (r["full_md"] or "")
+            m_sent = re.search(r"·\s*(樂觀|中性|悲觀)\s*·", text)
+            sent = m_sent.group(1) if m_sent else ""
+            score = r["score"] or 0
+            last = snap.get("last_price") or 0
+            h52 = snap.get("52w_high") or 0
+            passes, _ = cyber_buy_passes(tk, score, day_chg, m_score, sent, last, h52)
+            if passes:
                 out.append(dict(r))
         elif preset == "conservative-buy":
             if code.endswith(".HK"):

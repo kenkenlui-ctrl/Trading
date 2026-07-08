@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, date
@@ -287,7 +288,7 @@ def build_dashboard_md(
         logger.info(f"Dashboard preset conservative_buy: {before} → {len(reports)}")
 
     elif preset == "cyber-buy":
-        from .conservative_filters import CYBER_TICKERS
+        from .conservative_filters import CYBER_TICKERS, cyber_buy_passes
         before = len(reports)
         kept = []
         for r in reports:
@@ -299,10 +300,29 @@ def build_dashboard_md(
             tk = r["code"].split(".")[0]
             if tk not in CYBER_TICKERS:
                 continue
-            kept.append(r)
+            # Cyber BUY v2 (2026-07-09): anti-gapup + 52w high avoidance
+            try:
+                snap = json.loads(r["data_snapshot_json"]) if r["data_snapshot_json"] else {}
+            except Exception:
+                snap = {}
+            try:
+                bd = json.loads(r["score_breakdown_json"]) if r["score_breakdown_json"] else {}
+            except Exception:
+                bd = {}
+            day_chg = snap.get("change_pct") or 0
+            m_score = int(bd.get("momentum_score") or 0)
+            text = (r.get("summary_md") or "") + " " + (r.get("full_md") or "")
+            m_sent = re.search(r"·\s*(樂觀|中性|悲觀)\s*·", text)
+            sent = m_sent.group(1) if m_sent else ""
+            score = r.get("score") or 0
+            last = snap.get("last_price") or 0
+            h52 = snap.get("52w_high") or 0
+            passes, _ = cyber_buy_passes(tk, score, day_chg, m_score, sent, last, h52)
+            if passes:
+                kept.append(r)
         reports = kept
-        filter_parts.append(f"🔐 Cyber BUY ({len(CYBER_TICKERS)} tickers whitelist)")
-        logger.info(f"Dashboard preset cyber_buy: {before} → {len(reports)}")
+        filter_parts.append(f"🔐 Cyber BUY v2 ({len(CYBER_TICKERS)} whitelist · anti-gapup + 52w-high avoidance)")
+        logger.info(f"Dashboard preset cyber_buy v2: {before} → {len(reports)}")
 
     else:
         # Original market + operation filter chain

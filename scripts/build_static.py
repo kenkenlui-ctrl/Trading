@@ -25,6 +25,7 @@ from __future__ import annotations
 import argparse
 import html as _html
 import json
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -872,11 +873,12 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
             <br>· <b>EV/trade ≈ +0.5%</b> if 跟 6% 止損 · 唔 chase extended (score≥70 hit rate 跌到 28%)
             <br>· 22-day BUY backtest 1D 58.6% / 1W 64.3% · 多日 hold OK</div>'''
         elif slug == "cyber-buy":
-            signal_banner = f'''<div class="signal-warning"><b>🔐 Cyber BUY</b> · 6-day trace high-conviction list (cybersecurity / network):
+            signal_banner = f'''<div class="signal-warning"><b>🔐 Cyber BUY v2</b> · Anti-gapup + 52w high avoidance (new logic 2026-07-09):
             <br>· <b>Tickers</b>: DDOG · PANW · CRWD · FTNT · OKTA · ZS · NET · S · CYBR · RBRK · QLYS · TENB · VRNS (13 隻)
-            <br>· <b>Evidence</b>: top 5 6-day avg return — DDOG <b>+3.16%</b> · PANW <b>+2.97%</b> · CRWD +1.99% · FTNT +1.17% · APH +1.81%
-            <br>· <b>Risk</b>: high-beta 科技股，適合 <b>2-3 日 hold</b> 唔好 day-trade intraday 炒
-            <br>· 22-day BUY backtest 1D 58.6% / 1W 64.3% · 平均 3D hold +0.45%</div>'''
+            <br>· <b>New rules</b>: day_chg <b>-5 to 0%</b> (anti-gapup) · m_score 30-60 (avoid overbought) · score &lt; 65 · sentiment ≠ 樂觀 · last &lt; 98% of 52w_high
+            <br>· <b>Why change</b>: 舊 cyber BUY (any 買入) = 5 signals 2W/3L (40% WR, -$50) — all signals at 52w high on gap-up days
+            <br>· <b>Result</b>: New logic = 0 historical signals pass. 短期 trade 暫停，valid signals 需要等 cyber 真正回調 (-2 to -5%)
+            <br>· <b>Risk</b>: high-beta 科技股，適合 <b>2-3 日 hold</b> 唔好 day-trade intraday 炒</div>'''
         else:
             signal_banner = f'''<div class="signal-warning"><b>🔬 Signal Explorer</b> · LLM 信號 + 信心 + 自己嘅警語。22 天 backtest (4,371 outcomes)：
             <br>· <b>🟢 買入</b>: 1D 58.6% / 1W <b>64.3%</b> — multi-day hold OK
@@ -929,11 +931,38 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
                     kept.append(r)
                 filtered = kept
             elif slug == "cyber-buy":
-                from src.conservative_filters import CYBER_TICKERS
-                filtered = [r for r in filtered
-                            if not r["code"].endswith(".HK")
-                            and r.get("operation_advice") == "買入"
-                            and r["code"].split(".")[0] in CYBER_TICKERS]
+                from src.conservative_filters import CYBER_TICKERS, cyber_buy_passes
+                kept = []
+                for r in filtered:
+                    if r["code"].endswith(".HK"):
+                        continue
+                    if r.get("operation_advice") != "買入":
+                        continue
+                    if r["code"].split(".")[0] not in CYBER_TICKERS:
+                        continue
+                    # Cyber BUY v2 (2026-07-09): anti-gapup + 52w high avoidance
+                    try:
+                        snap = json.loads(r["data_snapshot_json"]) if r.get("data_snapshot_json") else {}
+                    except Exception:
+                        snap = {}
+                    try:
+                        bd = json.loads(r["score_breakdown_json"]) if r.get("score_breakdown_json") else {}
+                    except Exception:
+                        bd = {}
+                    day_chg = snap.get("change_pct") or 0
+                    m_score = int(bd.get("momentum_score") or 0)
+                    text = (r.get("summary_md") or "") + " " + (r.get("full_md") or "")
+                    m_sent = re.search(r"·\s*(樂觀|中性|悲觀)\s*·", text)
+                    sent = m_sent.group(1) if m_sent else ""
+                    score = r.get("score") or 0
+                    last = snap.get("last_price") or 0
+                    h52 = snap.get("52w_high") or 0
+                    passes, _ = cyber_buy_passes(
+                        r["code"].split(".")[0], score, day_chg, m_score, sent, last, h52
+                    )
+                    if passes:
+                        kept.append(r)
+                filtered = kept
         else:
             if mkt == "HK":
                 filtered = [r for r in filtered if r["code"].endswith(".HK")]
