@@ -145,14 +145,17 @@ temperature=0.3,
             data = _extract_json(content)
 
             actual_model = response.get("model", model) if hasattr(response, "get") else model
-            # Recompute total score deterministically using 4-dim weighting (5/5/70/20)
-            # so the score is consistent with the breakdown, not whatever the LLM emitted.
+            # Recompute total score deterministically using 5-dim weighting
+            # (5/5/60/20/10) so the score is consistent with the breakdown,
+            # not whatever the LLM emitted.
+            # Weights: value 5% · quality 5% · momentum 60% · order_flow 20% · news 10%
             breakdown = data.get("score_breakdown", {}) or {}
             v = int(breakdown.get("value_score") or 0)
             q = int(breakdown.get("quality_score") or 0)
             m = int(breakdown.get("momentum_score") or 0)
             of = int(breakdown.get("order_flow_score") or 0)
-            total = int(round(0.05 * v + 0.05 * q + 0.70 * m + 0.20 * of))
+            news = int(breakdown.get("news_score") or 50)  # default neutral if missing
+            total = int(round(0.05 * v + 0.05 * q + 0.60 * m + 0.20 * of + 0.10 * news))
             total = max(0, min(100, total))
             result = AnalysisResult(
                 code=code,

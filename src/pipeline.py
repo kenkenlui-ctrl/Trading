@@ -282,9 +282,14 @@ def build_dashboard_md(
                 continue
             if score >= 70:
                 continue
+            # Earnings blackout: skip if earnings within N days
+            from .conservative_filters import is_earnings_blackout
+            is_bl, _ = is_earnings_blackout(r["code"].split(".")[0], report_date)
+            if is_bl:
+                continue
             kept.append(r)
         reports = kept
-        filter_parts.append("🛡️ Conservative BUY (mean-reversion · non-tech · m 30-70)")
+        filter_parts.append("🛡️ Conservative BUY (mean-reversion · non-tech · m 30-70 · earnings blackout)")
         logger.info(f"Dashboard preset conservative_buy: {before} → {len(reports)}")
 
     elif preset == "cyber-buy":
@@ -323,6 +328,54 @@ def build_dashboard_md(
         reports = kept
         filter_parts.append(f"🔐 Cyber BUY v2 ({len(CYBER_TICKERS)} whitelist · anti-gapup + 52w-high avoidance)")
         logger.info(f"Dashboard preset cyber_buy v2: {before} → {len(reports)}")
+
+    elif preset == "strength-buy":
+        # Strength BUY: multi-day uptrend continuation (catches BABA-like surges)
+        # Need 3d/5d return data — fetch via yfinance
+        import yfinance as yf
+        before = len(reports)
+        kept = []
+        for r in reports:
+            if r["code"].endswith(".HK"):
+                continue
+            if r.get("operation_advice") != "買入":
+                continue
+            try:
+                snap = json.loads(r["data_snapshot_json"]) if r["data_snapshot_json"] else {}
+            except Exception:
+                snap = {}
+            try:
+                bd = json.loads(r["score_breakdown_json"]) if r["score_breakdown_json"] else {}
+            except Exception:
+                bd = {}
+            day_chg = snap.get("change_pct") or 0
+            m_score = int(bd.get("momentum_score") or 0)
+            of_score = int(bd.get("order_flow_score") or 0)
+            text = (r.get("summary_md") or "") + " " + (r.get("full_md") or "")
+            m_sent = re.search(r"·\s*(樂觀|中性|悲觀)\s*·", text)
+            sent = m_sent.group(1) if m_sent else ""
+            score = r.get("score") or 0
+            # Fetch 10-day history for 3d/5d return
+            try:
+                t = yf.Ticker(r["code"])
+                hist = t.history(period="10d")
+                if hist.empty or len(hist) < 6:
+                    continue
+                closes = hist["Close"].tolist()
+                last_close = closes[-1]
+                change_3d = (last_close - closes[-4]) / closes[-4] * 100
+                change_5d = (last_close - closes[-6]) / closes[-6] * 100
+            except Exception:
+                continue
+            from .conservative_filters import strength_buy_passes
+            passes, _ = strength_buy_passes(
+                r["code"], score, day_chg, m_score, of_score, sent, change_3d, change_5d
+            )
+            if passes:
+                kept.append(r)
+        reports = kept
+        filter_parts.append(f"🚀 Strength BUY (multi-day uptrend: 3d>+3% & 5d>+5% & m>60 & of>50)")
+        logger.info(f"Dashboard preset strength-buy: {before} → {len(reports)}")
 
     else:
         # Original market + operation filter chain

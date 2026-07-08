@@ -1,6 +1,10 @@
 """Constants for backtest-validated high-WR filter presets.
 Updated 2026-07-09 based on 6-day trace + 7/6 loss.
 
+Earnings blackout (C): read from data/earnings_blackout.json
+  - Skip BUY signals for tickers with earnings within N days
+  - Manually maintained; future enhancement: auto-fetch from yfinance calendar
+
 Evidence:
   - Conservative BUY (mean-reversion + non-tech + m 30-70 + score < 70):
       -1% to 0% prior-day-change bucket: +0.68% avg, 70.6% WR
@@ -42,6 +46,42 @@ TECH_SECTORS_AVOID = {
 }
 
 
+def is_earnings_blackout(ticker: str, current_date: str = None) -> tuple[bool, str]:
+    """
+    Check if ticker is in earnings blackout period.
+
+    Returns: (is_blackout, reason_if_blackout)
+    """
+    from pathlib import Path
+    import json as _json
+    from datetime import datetime, timedelta
+    cfg_path = Path(__file__).parent.parent / "data" / "earnings_blackout.json"
+    if not cfg_path.exists():
+        return False, ""
+    try:
+        with open(cfg_path) as f:
+            config = _json.load(f)
+    except Exception:
+        return False, ""
+    blackout_days = config.get("blackout_days", 2)
+    events = config.get("events", [])
+    if current_date is None:
+        current_dt = datetime.now()
+    else:
+        current_dt = datetime.strptime(current_date, "%Y-%m-%d")
+    for ev in events:
+        if ev.get("ticker") != ticker:
+            continue
+        try:
+            ev_dt = datetime.strptime(ev["date"], "%Y-%m-%d")
+        except Exception:
+            continue
+        delta = (ev_dt - current_dt).days
+        if -1 <= delta <= blackout_days:  # within blackout window
+            return True, f"{ev.get('type', 'event')} on {ev['date']} ({delta}d away): {ev.get('note', '')}"
+    return False, ""
+
+
 def cyber_buy_passes(
     code: str,
     score: int,
@@ -76,4 +116,44 @@ def cyber_buy_passes(
         return False, "sentiment=樂觀 (too euphoric)"
     if high_52w and last_price >= high_52w * 0.98:
         return False, f"near 52w high (last={last_price:.0f} >= 98% of {high_52w:.0f})"
+    return True, ""
+
+
+def strength_buy_passes(
+    code: str,
+    score: int,
+    day_chg: float,
+    m_score: int,
+    of_score: int,
+    sentiment: str,
+    change_3d: float,
+    change_5d: float,
+) -> tuple[bool, str]:
+    """
+    Strength BUY — multi-day uptrend continuation (opposite of Conservative).
+
+    Catches stocks with persistent strength that the day-trade-only
+    Conservative BUY filter misses (e.g. BABA 7/8 +11% surge preceded by
+    7/6-7/7 multi-day accumulation). Backtest rationale:
+      - 3-day return > +3%: accumulation phase (smart money buying)
+      - 5-day return > +5%: sustained uptrend
+      - m_score > 60: short-term momentum strong
+      - of_score > 50: institutional flow (vs retail)
+      - sentiment != 悲觀: not panic mode
+      - day_chg > 0: today's continuation (avoid falling knife)
+
+    Returns: (passes, reason_if_fails)
+    """
+    if change_3d <= 3.0:
+        return False, f"3d return={change_3d:+.1f}% not > +3%"
+    if change_5d <= 5.0:
+        return False, f"5d return={change_5d:+.1f}% not > +5%"
+    if m_score < 60:
+        return False, f"m_score={m_score} < 60"
+    if of_score < 50:
+        return False, f"of_score={of_score} < 50 (no institutional flow)"
+    if sentiment == "悲觀":
+        return False, "sentiment=悲觀 (panic mode)"
+    if day_chg <= 0:
+        return False, f"day_chg={day_chg:+.1f}% not > 0% (no continuation today)"
     return True, ""

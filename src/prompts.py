@@ -90,7 +90,8 @@ USER_PROMPT_TEMPLATE_ZH = """請基於以下數據分析 {code} {name}：
     "value_score": <0-100，估值維度: PE/PB/deviation from fair value，越低越便宜分越高>,
     "quality_score": <0-100，質量維度: ROE/margin/financial health/dividend 穩定性>,
     "momentum_score": <0-100，動能維度: 今日方向/MA trend/RSI/deviation — 不含成交量/大單>,
-    "order_flow_score": <0-100，資金流維度: 量比 (volume ratio)、大單流入、相對成交量、買賣盤力度、異常成交 — 純資金行為指標>
+    "order_flow_score": <0-100，資金流維度: 量比 (volume ratio)、大單流入、相對成交量、買賣盤力度、異常成交 — 純資金行為指標>,
+    "news_score": <0-100，新聞/催化劑維度: 近期新聞 sentiment + 重大事件 (earnings beat / 政策利好 / M&A / 行業催化) — 0=極度負面，50=中性，100=極度正面>
   }},
   "trade_direction": "<long | short | both>",
   "sentiment": "<樂觀 | 中性 | 悲觀>",
@@ -232,7 +233,8 @@ Output ONLY a JSON object (no markdown):
     "value_score": <0-100, valuation: PE/PB/deviation from fair value>,
     "quality_score": <0-100, quality: ROE/margin/financial health/dividend>,
     "momentum_score": <0-100, momentum: today direction/MA trend/RSI/deviation — exclude volume/big order>,
-    "order_flow_score": <0-100, money flow: volume ratio, big-order inflow, relative volume vs ADV, bid/ask imbalance, abnormal turnover — pure capital behaviour indicator>
+    "order_flow_score": <0-100, money flow: volume ratio, big-order inflow, relative volume vs ADV, bid/ask imbalance, abnormal turnover — pure capital behaviour indicator>,
+    "news_score": <0-100, news/catalyst: recent news sentiment + major events (earnings beat / policy tailwind / M&A / industry catalyst) — 0=very negative, 50=neutral, 100=very positive>
   }},
   "trade_direction": "<long | short | both>",
   "sentiment": "<bullish | neutral | bearish>",

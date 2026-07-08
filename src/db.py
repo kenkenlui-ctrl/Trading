@@ -119,6 +119,11 @@ ALTER TABLE chanlun_signal ADD COLUMN llm_risks_json TEXT;
 ALTER TABLE daily_report ADD COLUMN support_zone TEXT;
 ALTER TABLE daily_report ADD COLUMN resistance_zone TEXT;
 ALTER TABLE daily_report ADD COLUMN key_levels_json TEXT;
+
+-- Idempotent migration for entry/stop/target (2026-07-09)
+ALTER TABLE daily_report ADD COLUMN entry_zone TEXT;
+ALTER TABLE daily_report ADD COLUMN stop_loss TEXT;
+ALTER TABLE daily_report ADD COLUMN target_price TEXT;
 """
 
 
@@ -222,6 +227,9 @@ def save_report(
     support_zone: Optional[str] = None,
     resistance_zone: Optional[str] = None,
     key_levels_json: Optional[str] = None,
+    entry_zone: Optional[str] = None,
+    stop_loss: Optional[str] = None,
+    target_price: Optional[str] = None,
 ) -> int:
     """Insert or replace today's report for code. Returns row id."""
     conn = get_db()
@@ -233,12 +241,14 @@ def save_report(
                (code, report_date, score, sentiment, trend, operation_advice,
                 score_breakdown_json, trade_direction,
                 support_zone, resistance_zone, key_levels_json,
+                entry_zone, stop_loss, target_price,
                 summary_md, full_md, news_json, data_snapshot_json, llm_model, generated_at)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 code, report_date, score, sentiment, trend, operation_advice,
                 score_breakdown_json, trade_direction,
                 support_zone, resistance_zone, key_levels_json,
+                entry_zone, stop_loss, target_price,
                 summary_md, full_md, json.dumps(news, ensure_ascii=False),
                 json.dumps(data_snapshot, ensure_ascii=False), llm_model, now,
             ),

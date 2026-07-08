@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leeks Terminal · 2026-06-27 · 🛡️ Conservative BUY</title>
+  <meta name="description" content="Leeks Terminal 2026-06-27 AI dashboard — 🛡️ Conservative BUY">
+  <meta property="og:title" content="Leeks Terminal · 2026-06-27 · 🛡️ Conservative BUY">
+  <meta property="og:description" content="Leeks Terminal 2026-06-27 AI dashboard — 🛡️ Conservative BUY">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.win9you.com">
+  <meta property="og:image" content="https://www.win9you.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://www.win9you.com/og-image.png">
+  <meta name="twitter:title" content="Leeks Terminal · 2026-06-27 · 🛡️ Conservative BUY">
+  <meta name="twitter:description" content="Leeks Terminal 2026-06-27 AI dashboard — 🛡️ Conservative BUY">
+  <link rel="canonical" href="https://www.win9you.com">
+  <link rel="alternate" hreflang="zh-Hant" href="https://www.win9you.com">
+  <link rel="alternate" hreflang="x-default" href="https://www.win9you.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+    --bg: #ffffff;
+    --panel: #f3f4f6;
+    --panel-2: #e5e7eb;
+    --border: #e5e7eb;
+    --fg: #1a1d23;
+    --dim: #4b5563;
+    --bull: #15803d;
+    --bear: #b91c1c;
+    --amber: #92400e;
+    --blue: #2563eb;
+    --purple: #7c3aed;
+    --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Top nav (matches Streamlit worker injection) */
+nav.leeks-site-nav {
+    position: sticky; top: 0; z-index: 999;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+nav.leeks-site-nav .brand {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+}
+nav.leeks-site-nav a {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    padding: 4px 0;
+}
+nav.leeks-site-nav a.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+}
+
+/* Layout */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+h1 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin: 0 0 1rem;
+}
+h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
+
+/* Date selector (top of dashboard) — looks like Streamlit selectbox */
+.date-picker {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+}
+.date-picker a {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--fg);
+    font-size: 0.8rem;
+}
+.date-picker a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Disclaimer */
+.disclaimer {
+    background: #fef3c7;
+    border: 1px solid #b45309;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #78350f;
+}
+
+/* Cards (mirror Streamlit dashboard) */
+.card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+.card.bull { border-left-color: var(--bull); }
+.card.bear { border-left-color: var(--bear); }
+.card.amber { border-left-color: var(--amber); }
+
+/* Stats line */
+.stats {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.stats .bull { color: var(--bull); font-weight: 600; }
+.stats .bear { color: var(--bear); font-weight: 600; }
+.stats .amber { color: var(--amber); font-weight: 600; }
+
+/* Homepage value-prop + sample preview */
+.lede { font-size: 1.05rem; line-height: 1.65; max-width: 760px; }
+section h2 { margin-top: 2.4rem; }
+section ul, section ol { line-height: 1.75; max-width: 760px; }
+.dim { color: var(--dim); }
+
+.sample-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 1rem 0 1.4rem;
+    max-width: 900px;
+}
+.sample-card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 12px 14px;
+    background: #fafbfc;
+}
+.sample-header {
+    display: flex; gap: 8px; align-items: baseline; margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.sample-code { font-weight: 700; font-size: 1.05rem; }
+.sample-op { padding: 1px 6px; border-radius: 3px; background: var(--panel); font-size: 0.85rem; }
+.sample-score { margin-left: auto; font-weight: 600; color: var(--dim); font-size: 0.9rem; }
+.sample-summary { font-size: 0.85rem; line-height: 1.55; color: var(--fg); margin: 6px 0 8px; }
+.sample-link { font-size: 0.85rem; }
+
+/* Dashboard hub /dashboard/ */
+.dates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin: 1.5rem 0 2rem;
+    max-width: 1100px;
+}
+.date-card {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    background: #fafbfc;
+}
+.date-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 8px;
+}
+.date-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+.date-stats {
+    display: flex; gap: 12px; margin-bottom: 12px; font-size: 0.95rem;
+}
+.stat-bull { color: var(--bull); font-weight: 600; }
+.stat-amber { color: var(--amber); font-weight: 600; }
+.stat-bear { color: var(--bear); font-weight: 600; }
+.date-filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+}
+.filter-chip {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: #fff;
+    font-size: 0.82rem;
+    text-decoration: none;
+    color: var(--fg);
+    transition: background 0.15s;
+}
+.filter-chip:hover { background: var(--panel-2); text-decoration: none; }
+.filter-chip.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    font-weight: 600;
+}
+.filter-chip.primary:hover { background: #1d4ed8; }
+.hub-cta ul { list-style: none; padding: 0; }
+.hub-cta li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--panel);
+    font-size: 0.95rem;
+}
+
+/* R:R badge + timeframe hint inside cards */
+.rr-badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-right: 6px;
+    vertical-align: middle;
+    border: 1px solid currentColor;
+}
+.rr-good { color: var(--bull); background: rgba(21, 128, 61, 0.08); }
+.rr-ok   { color: var(--amber); background: rgba(146, 64, 14, 0.08); }
+.rr-bad  { color: var(--bear); background: rgba(185, 28, 28, 0.08); }
+.hint {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    vertical-align: middle;
+    color: var(--dim);
+    background: var(--panel-2);
+}
+.hint-buy { color: var(--bull); }
+.hint-sell {
+    color: var(--bear);
+    font-weight: 600;
+    background: rgba(185, 28, 28, 0.06);
+    border: 1px solid rgba(185, 28, 28, 0.3);
+}
+
+/* LLM confidence + caution chips on cards (Option B: surface LLM self-cautions) */
+.signal-chips {
+    margin: 4px 0 6px 0;
+    font-size: 0.7rem;
+    line-height: 1.4;
+}
+.conf-chip {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: 600;
+    margin-right: 5px;
+    vertical-align: middle;
+    border: 1px solid currentColor;
+}
+.conf-high { color: var(--bull); background: rgba(21, 128, 61, 0.08); }
+.conf-mid  { color: var(--amber); background: rgba(146, 64, 14, 0.08); }
+.conf-low  { color: var(--bear); background: rgba(185, 28, 28, 0.08); }
+.caution-chip {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: 500;
+    margin-right: 5px;
+    margin-bottom: 2px;
+    vertical-align: middle;
+    color: var(--bear);
+    background: rgba(185, 28, 28, 0.06);
+    border: 1px solid rgba(185, 28, 28, 0.25);
+}
+
+/* Signal warning banner on dashboard */
+.signal-warning {
+    margin: 0 0 1.2rem;
+    padding: 10px 14px;
+    background: rgba(146, 64, 14, 0.06);
+    border-left: 3px solid var(--amber);
+    border-radius: 4px;
+    font-size: 0.82rem;
+    line-height: 1.55;
+}
+.signal-warning .warn-strong {
+    color: var(--bear);
+    font-weight: 700;
+}
+.signal-warning a {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+/* Detail table */
+table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+}
+table.detail th, table.detail td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+table.detail th {
+    background: var(--panel-2);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+
+/* Methodology dim table */
+table.dim-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+}
+table.dim-table th, table.dim-table td {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+table.dim-table th {
+    background: var(--panel-2);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+table.dim-table td:first-child { font-family: 'JetBrains Mono', monospace; }
+table.dim-table td:nth-child(2) { font-weight: 600; color: var(--accent); text-align: center; }
+
+/* Card-link: appended after each summary card so reader can dive into detail */
+p.card-link {
+    margin: 6px 0 0;
+    text-align: right;
+    font-size: 0.78rem;
+}
+p.card-link a {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+p.card-link a:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Filter chips (alternative to filter dropdown) */
+.filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+}
+.filters span { color: var(--dim); margin-right: 4px; align-self: center; }
+.filters a {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--fg);
+}
+.filters a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Report detail page */
+.report-header h1 { margin: 0 0 0.5rem; }
+.report-header .meta {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 1rem;
+}
+.report-header .badge {
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    font-size: 0.75rem;
+    color: var(--fg);
+}
+.report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.conf { background: var(--panel-2); }
+
+.score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 1rem 0;
+}
+.score-breakdown .dim {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+}
+.score-breakdown .dim span {
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.score-breakdown .bar {
+    background: var(--border);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 6px 0;
+}
+.score-breakdown .bar .fill { height: 100%; }
+.score-breakdown .dim b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+}
+
+.levels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    margin: 1rem 0;
+}
+.levels > div {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+.levels span {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+.levels b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+}
+.levels b.bull { color: var(--bull); }
+.levels b.bear { color: var(--bear); }
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    main { padding: 16px 12px 48px; }
+    h1 { font-size: 1.15rem; }
+    .card { padding: 8px 10px; font-size: 0.8rem; }
+    nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
+    nav.leeks-site-nav a { font-size: 0.7rem; }
+    table.detail { font-size: 0.7rem; }
+    table.detail th, table.detail td { padding: 4px 6px; }
+}
+</style>
+  
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<main>
+<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="signal-warning"><b>🛡️ Conservative BUY</b> · 6-day trace evidence (mean-reversion + non-tech + m 30-70 + score < 70):
+            <br>· <b>Filter rules</b>: 前日 -3% to 0% 跌勢 · sector ≠ Tech/Comms · momentum 30-70 · sentiment ≠ 樂觀 · score < 70
+            <br>· <b>Evidence</b>: -1% to 0% 桶 → <b>+0.68% avg, 70.6% WR</b> · -3% to -1% 桶 → <b>+1.02% avg, 50% WR</b>
+            <br>· <b>EV/trade ≈ +0.5%</b> if 跟 6% 止損 · 唔 chase extended (score≥70 hit rate 跌到 28%)
+            <br>· 22-day BUY backtest 1D 58.6% / 1W 64.3% · 多日 hold OK</div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-06-27/all.html">全部</a><a href="/dashboard/2026-06-27/hk-buy.html">港股買入</a><a href="/dashboard/2026-06-27/hk-sell.html">港股賣出</a><a href="/dashboard/2026-06-27/hk-hold.html">港股觀望</a><a href="/dashboard/2026-06-27/us-buy.html">美股買入</a><a href="/dashboard/2026-06-27/us-sell.html">美股賣出</a><a href="/dashboard/2026-06-27/us-hold.html">美股觀望</a><a href="/dashboard/2026-06-27/conservative-buy.html" class="active">🛡️ Conservative BUY</a><a href="/dashboard/2026-06-27/cyber-buy.html">🔐 Cyber BUY</a><a href="/dashboard/2026-06-27/strength-buy.html">🚀 Strength BUY</a></div><h1>🔬 Signal Explorer — 2026-06-27 (🛡️ Conservative BUY)</h1><b>2026-06-27</b> · 共分析 <b>7</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:7 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:0 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:0
+
+<h2>📊 分析結果摘要</h2>
+
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.1</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-hot">⚠️ 過熱</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>BAC</b> · 評分 60 · BAC 現價 57.88，較昨收 58.19 微跌 0.53%，盤中曾觸及 58.63 高於 52週高位 58.19 後回落，形成突破失敗訊號。RSI14 高達 78.89 明顯超買，股價偏離 MA20 (55.21) 達 4.84% 接近 5% 上限，短線追高風險大。MA20 &gt; MA50 &gt; MA100 (55.21 &gt; 53.31 &gt; 52.00) 多頭排列確認中線趨勢向上，但 MA100 (52.00) 略低於 MA200 (52.43) 顯示長線基礎未完全鞏固。PE 14.36、PB 1.50 估值合理，股息率 1.94% 提供防守。建議等待回調至 MA20 (55.21) 一帶 55.30-55.80 區間重新吸納，止損 54.50，目標 58.19 (52週高位)。<p class="card-link"><a href="/dashboard/2026-06-27/reports/BAC.html">→ 完整 BAC 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-bad">🛡️ R:R 0.1</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-bad">🛡️ R:R 0.1</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-hot">⚠️ 過熱</span></div>🟢 **BAC** · 評分 60 · BAC 現價 57.88，較昨收 58.19 微跌 0.53%，盤中曾觸及 58.63 高於 52週高位 58.19 後回落，形成突破失敗訊號。RSI14 高達 78.89 明顯超買，股價偏離 MA20 (55.21) 達 4.84% 接近 5% 上限，短線追高風險大。MA20 &gt; MA50 &gt; MA100 (55.21 &gt; 53.31 &gt; 52.00) 多頭排列確認中線趨勢向上，但 MA100 (52.00) 略低於 MA200 (52.43) 顯示長線基礎未完全鞏固。PE 14.36、PB 1.50 估值合理，股息率 1.94% 提供防守。建議等待回調至 MA20 (55.21) 一帶 55.30-55.80 區間重新吸納，止損 54.50，目標 58.19 (52週高位)。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.3</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>LIN</b> · 評分 60 · Linde (519.62 HKD) 雖處於明確多頭排列（MA20 511.69 &gt; MA50 507.37 &gt; MA100 498.29 &gt; MA200 468.61），價格站穩 MA200 之上 10.88%，RSI 57.96 處健康區間，結構性偏多。但今日區間僅 1.28%、微跌 0.51%，短炒波幅不足；估值面 PE TTM 34.48、PB 6.23 屬昂貴區，限制向上空間。操作上宜待回調至 MA20 511.69 附近確認承接後再考慮做多，目標看 52週高位 523.57 與今日高位 525.00。<p class="card-link"><a href="/dashboard/2026-06-27/reports/LIN.html">→ 完整 LIN 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-bad">🛡️ R:R 0.3</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-bad">🛡️ R:R 0.3</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div>🟢 **LIN** · 評分 60 · Linde (519.62 HKD) 雖處於明確多頭排列（MA20 511.69 &gt; MA50 507.37 &gt; MA100 498.29 &gt; MA200 468.61），價格站穩 MA200 之上 10.88%，RSI 57.96 處健康區間，結構性偏多。但今日區間僅 1.28%、微跌 0.51%，短炒波幅不足；估值面 PE TTM 34.48、PB 6.23 屬昂貴區，限制向上空間。操作上宜待回調至 MA20 511.69 附近確認承接後再考慮做多，目標看 52週高位 523.57 與今日高位 525.00。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.2</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span><span class="caution-chip caution-hot">⚠️ 過熱</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>AXP</b> · 評分 58 · AXP 現價 340.36 HKD，今日跌 0.61%，日內區間 338.32-344.01（波幅 1.67%，未達高波幅門檻）。均線呈完美多頭排列：MA20 325.43 &gt; MA50 320.60 &gt; MA100 319.69，且現價站於 MA200 337.79 之上，長線趨勢完好。然而 RSI14 已達 79.56（明顯超買），股價偏離 MA20 高達 4.59%，接近 5% 嚴進上限，短線追高風險大。量比 1.58× 顯示資金參與度提升，但估值偏貴（PE 21.23 / PB 6.83），股息率僅 1.12%。建議等待回調至 MA20 325.43 或 MA200 337.79 附近再考慮做多博反彈。<p class="card-link"><a href="/dashboard/2026-06-27/reports/AXP.html">→ 完整 AXP 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-bad">🛡️ R:R 0.2</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-bad">🛡️ R:R 0.2</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span><span class="caution-chip caution-hot">⚠️ 過熱</span></div>🟢 **AXP** · 評分 58 · AXP 現價 340.36 HKD，今日跌 0.61%，日內區間 338.32-344.01（波幅 1.67%，未達高波幅門檻）。均線呈完美多頭排列：MA20 325.43 &gt; MA50 320.60 &gt; MA100 319.69，且現價站於 MA200 337.79 之上，長線趨勢完好。然而 RSI14 已達 79.56（明顯超買），股價偏離 MA20 高達 4.59%，接近 5% 嚴進上限，短線追高風險大。量比 1.58× 顯示資金參與度提升，但估值偏貴（PE 21.23 / PB 6.83），股息率僅 1.12%。建議等待回調至 MA20 325.43 或 MA200 337.79 附近再考慮做多博反彈。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-hot">⚠️ 過熱</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>PH</b> · 評分 55 · PH Parker-Hannifin 現價 968.92 HKD，今日回吐 -2.12%，收近全日低位 965.58 附近。股價今年以來累升 38.31%，現價較 MA20 908.30 高出 6.67%，已超出「嚴進策略」5% 警戒線，短期超買明顯；RSI14 處於 69.90 接近超買區。估值面 PE TTM 35.71、PB 8.36 偏高，股息率僅 0.83%，估值並無安全墊。惟中期均線 MA20 908.30 / MA50 906.58 / MA200 881.52 仍呈多頭排列，股價穩企 MA200 之上，長線趨勢未變。量比 1.73× 配合今日下跌，屬放量回調。<p class="card-link"><a href="/dashboard/2026-06-27/reports/PH.html">→ 完整 PH 詳細報告</a></p></div><div class="card"> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-hot">⚠️ 過熱</span></div>🟢 **PH** · 評分 55 · PH Parker-Hannifin 現價 968.92 HKD，今日回吐 -2.12%，收近全日低位 965.58 附近。股價今年以來累升 38.31%，現價較 MA20 908.30 高出 6.67%，已超出「嚴進策略」5% 警戒線，短期超買明顯；RSI14 處於 69.90 接近超買區。估值面 PE TTM 35.71、PB 8.36 偏高，股息率僅 0.83%，估值並無安全墊。惟中期均線 MA20 908.30 / MA50 906.58 / MA200 881.52 仍呈多頭排列，股價穩企 MA200 之上，長線趨勢未變。量比 1.73× 配合今日下跌，屬放量回調。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.9</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-chase">⚠️ 不宜追</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>RCL</b> · 評分 54 · RCL 現價 318.13 HKD，今日由高位 327.33 回落至 318.13，跌 -1.40%，呈現高位放量回吐格局。今日 H/L 區間 2.94% 接近高波幅，量比 2.06× 屬顯著放量。中期趨勢仍然向好，現價 318.13 高於 MA20 297.53 達 6.94%，亦高於 MA50 278.36、MA100 286.55 及 MA200 289.42，RSI14 為 65.77 處於健康偏強區域。然而股價已偏離 MA20 達 6.94%，按嚴進策略不宜追入，建議等候回調至 308-313 區間再考慮做多博反彈；若失守 317.99 今日低位則可嘗試短空。PE TTM 19.42 估值合理，PB 8.70 偏高反映品牌溢價，整體策略以等待回調為主。<p class="card-link"><a href="/dashboard/2026-06-27/reports/RCL.html">→ 完整 RCL 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-bad">🛡️ R:R 0.9</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-bad">🛡️ R:R 0.9</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-chase">⚠️ 不宜追</span></div>🟢 **RCL** · 評分 54 · RCL 現價 318.13 HKD，今日由高位 327.33 回落至 318.13，跌 -1.40%，呈現高位放量回吐格局。今日 H/L 區間 2.94% 接近高波幅，量比 2.06× 屬顯著放量。中期趨勢仍然向好，現價 318.13 高於 MA20 297.53 達 6.94%，亦高於 MA50 278.36、MA100 286.55 及 MA200 289.42，RSI14 為 65.77 處於健康偏強區域。然而股價已偏離 MA20 達 6.94%，按嚴進策略不宜追入，建議等候回調至 308-313 區間再考慮做多博反彈；若失守 317.99 今日低位則可嘗試短空。PE TTM 19.42 估值合理，PB 8.70 偏高反映品牌溢價，整體策略以等待回調為主。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.7</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-rsi">⚠️ RSI 偏高</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CVS</b> · 評分 53 · CVS現價104.34，雖處52週高位區間（最高104.66），但RSI 75.56已超買，今日微跌-0.31%。MA20(98.02) &gt; MA50(91.24) &gt; MA100(83.62) &gt; MA200(80.97)形成完美多頭排列，惟現價較MA20高出6.45%，觸發嚴進策略紅線。量比1.12×未見明顯放量配合，PE 45.56估值偏高。建議等待回調至101.30-102.80區間（即昨日收盤104.66下方及今日低位103.55附近）再考慮做多，博反彈至106.15-107.50；若失守100.48則短線轉弱。<p class="card-link"><a href="/dashboard/2026-06-27/reports/CVS.html">→ 完整 CVS 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-bad">🛡️ R:R 0.7</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-bad">🛡️ R:R 0.7</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-rsi">⚠️ RSI 偏高</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span></div>🟢 **CVS** · 評分 53 · CVS現價104.34，雖處52週高位區間（最高104.66），但RSI 75.56已超買，今日微跌-0.31%。MA20(98.02) &gt; MA50(91.24) &gt; MA100(83.62) &gt; MA200(80.97)形成完美多頭排列，惟現價較MA20高出6.45%，觸發嚴進策略紅線。量比1.12×未見明顯放量配合，PE 45.56估值偏高。建議等待回調至101.30-102.80區間（即昨日收盤104.66下方及今日低位103.55附近）再考慮做多，博反彈至106.15-107.50；若失守100.48則短線轉弱。</div>
+<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.8</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-rsi">⚠️ RSI 偏高</span><span class="caution-chip caution-hot">⚠️ 過熱</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>GE</b> · 評分 52 · GE Aerospace 現價 369.00 港元，貼近 52 週高位 371.36，今日微跌 -0.64%，呈高位整固格局。技術面 MA20 340.11 &gt; MA50 312.78 &gt; MA100 312.69 &gt; MA200 307.57 形成完美多頭排列，但股價偏離 MA20 達 8.48%（369/340.11-1），已超出「不追高」5% 紅線。RSI 73.80 進入超買區域，短期回調風險上升。估值端 PE TTM 45.90、PB 21.32 屬極端昂貴。量比僅 1.28× 未達放量 1.5× 標準，今日 H/L 區間 2.07% 波幅中等。建議觀望，等待回調至 MA20 340.11 附近才考慮做多。<p class="card-link"><a href="/dashboard/2026-06-27/reports/GE.html">→ 完整 GE 詳細報告</a></p></div><div class="card"> <span class="rr-badge rr-bad">🛡️ R:R 0.8</span> <span class="hint hint-buy">multi-day hold OK</span></div> <span class="rr-badge rr-bad">🛡️ R:R 0.8</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-rsi">⚠️ RSI 偏高</span><span class="caution-chip caution-hot">⚠️ 過熱</span></div>🟢 **GE** · 評分 52 · GE Aerospace 現價 369.00 港元，貼近 52 週高位 371.36，今日微跌 -0.64%，呈高位整固格局。技術面 MA20 340.11 &gt; MA50 312.78 &gt; MA100 312.69 &gt; MA200 307.57 形成完美多頭排列，但股價偏離 MA20 達 8.48%（369/340.11-1），已超出「不追高」5% 紅線。RSI 73.80 進入超買區域，短期回調風險上升。估值端 PE TTM 45.90、PB 21.32 屬極端昂貴。量比僅 1.28× 未達放量 1.5× 標準，今日 H/L 區間 2.07% 波幅中等。建議觀望，等待回調至 MA20 340.11 附近才考慮做多。</div>
+
+---
+<em>生成時間: 2026-07-09 01:41:05 · LLM: openai/MiniMax-M3</em>
+<h2>詳細表格</h2><p><em>此條件下無報告。</em></p>
+</main>
+<footer>
+  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>
