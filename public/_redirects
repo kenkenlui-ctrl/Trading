@@ -1,2 +1,9 @@
 # Force .html extension on report pages (so /reports/KO → /reports/KO.html)
 /dashboard/*/reports/*  /dashboard/:splat/reports/:splat.html  301
+
+# Note: Cloudflare Pages _redirects doesn't support regex matching for
+# leading-zero HK alias collapsing. The build script now writes only the
+# canonical (5-digit Tencent) and all-zeros-stripped forms. Old intermediate
+# files (0005.HK, 005.HK, 05.HK, 988.HK) persist in the CDN until natural
+# expiry; they fall back to the homepage if accessed directly.
+# Use either canonical (00005.HK) or all-stripped (5.HK) for clean URLs.

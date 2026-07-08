@@ -961,18 +961,14 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
         html_content = report_page_html(r, date)
         report_path.write_text(html_content, encoding="utf-8")
         written.append(str(report_path.relative_to(PUBLIC_DIR)))
-        # HK aliases — strip leading zeros so any short HKEX format URL works
-        # e.g. /reports/09988.HK → /reports/9988.HK → /reports/988.HK → ... /reports/5.HK
-        # Generate EVERY intermediate stripping (skip ones where stripping
-        # produces ambiguity with another existing ticker — kept simple here
-        # since 5-digit HK codes are practically unique).
+        # HK alias — strip ALL leading zeros in one go
+        # e.g. /reports/00005.HK → /reports/5.HK (single alias, no intermediate forms)
         if code.endswith(".HK"):
             stem = code[:-3]  # e.g. "09988" or "00005"
             if len(stem) == 5 and stem.startswith("0"):
-                # Strip leading zeros one at a time
-                stripped = stem
-                while stripped.startswith("0") and len(stripped) > 1:
-                    stripped = stripped[1:]  # e.g. "09988" → "9988" → "988"
+                # Strip ALL leading zeros (single alias, not incremental)
+                stripped = stem.lstrip("0")  # "00005" → "5", "09988" → "9988"
+                if stripped and stripped != stem:
                     alias_code = stripped + ".HK"
                     alias_path = reports_dir / f"{alias_code}.html"
                     alias_path.write_text(html_content, encoding="utf-8")
