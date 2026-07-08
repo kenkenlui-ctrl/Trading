@@ -48,23 +48,39 @@ def to_futu_code(code: str) -> str:
 
 
 def fetch_futu_kline_snapshot(code: str, ctx: OpenQuoteContext) -> dict | None:
-    """Fetch actual 3/7 OHLC + close from Futu for HK ticker."""
+    """Fetch actual TARGET_DATE OHLC + close from Futu for HK ticker.
+
+    prev_close is the close of the PREVIOUS trading day (not same as last),
+    so we fetch a wider window to get the row before TARGET_DATE.
+    """
     futu_code = to_futu_code(code)
     try:
-        # request_history_kline returns up to N klines before `end`
-        # Use start = target_date, end = next day to get exactly 3/7 close
-        start = TARGET_DATE
+        # Fetch wider window to get both TARGET_DATE close + previous trading day close
+        start = (TARGET_DT - timedelta(days=10)).strftime("%Y-%m-%d")
         end = NEXT_DT.strftime("%Y-%m-%d")
         ret, klines, *_ = ctx.request_history_kline(
             futu_code, start=start, end=end, ktype=KLType.K_DAY
         )
         if ret != RET_OK or klines is None or len(klines) == 0:
             return None
-        # klines columns: code, time_key, open, close, high, low, volume, turnover, pe_ratio...
-        k = klines.iloc[0]
+        # Find target row
+        target_idx = None
+        for i, k in klines.iterrows():
+            ts = pd.Timestamp(k["time_key"]).strftime("%Y-%m-%d")
+            if ts == TARGET_DATE:
+                target_idx = i
+                break
+        if target_idx is None:
+            return None
+        k = klines.iloc[target_idx]
         last = float(k["close"])
-        prev_close = float(klines.iloc[0].get("prev_close", last) if len(klines) > 1 else k["close"])
-        # Try to get pe_ratio from kline (Futu includes it)
+        # prev_close = close of row before target
+        if target_idx > 0:
+            prev_close = float(klines.iloc[target_idx - 1]["close"])
+        else:
+            prev_close = last  # fallback if no prior row
+
+        # Try to get pe_ratio from kline
         try:
             pe = float(k["pe_ratio"]) if pd.notna(k.get("pe_ratio")) else None
         except Exception:
@@ -99,9 +115,9 @@ def fetch_futu_kline_snapshot(code: str, ctx: OpenQuoteContext) -> dict | None:
             "day_high": float(k["high"]),
             "day_low": float(k["low"]),
             "open": float(k["open"]),
-            "volume": float(k["volume"]) * 1000,  # kline volume in shares, not thousands
+            "volume": float(k["volume"]) * 1000,
             "turnover": float(k["turnover"]) if pd.notna(k.get("turnover")) else None,
-            "source": f"futu-kline-3/7 ({futu_code})",
+            "source": f"futu-kline-{TARGET_DATE} ({futu_code})",
             "target_date": TARGET_DATE,
             **snap_extra,
         }
