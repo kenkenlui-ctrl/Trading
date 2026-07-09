@@ -2688,7 +2688,7 @@ def main():
         written.extend(files)
 
     # 3. Index
-    if args.index or not any([args.date, args.all]):
+    if args.index or args.all or not any([args.date, args.all]):
         idx_path = PUBLIC_DIR / "index.html"
         idx_path.write_text(build_index(all_dates), encoding="utf-8")
         print(f"✅ Built index.html ({len(all_dates)} dates)")
