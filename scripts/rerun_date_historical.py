@@ -143,33 +143,34 @@ def fetch_futu_kline_snapshot(code: str, ctx: OpenQuoteContext) -> dict | None:
 
 
 def fetch_yfinance_historical(code: str) -> dict | None:
-    """Fetch US ticker's data for 3/7. NOTE: 2026-07-03 was US Independence Day
-    observed — markets closed. Falls back to last available trading day (2/7) close."""
+    """Fetch US ticker's data for TARGET_DATE. Falls back to most recent trading day
+    if TARGET_DATE is a US market holiday."""
     try:
         t = yf.Ticker(code)
-        # Fetch wider window to handle 3/7 US market holiday
-        hist = t.history(start="2026-06-25", end="2026-07-08")
+        # Fetch wider window ending AFTER TARGET_DATE so the row is included
+        start_window = (TARGET_DT - timedelta(days=20)).strftime("%Y-%m-%d")
+        end_window = (NEXT_DT + timedelta(days=1)).strftime("%Y-%m-%d")
+        hist = t.history(start=start_window, end=end_window)
         if hist.empty:
             return None
         target_ts = pd.Timestamp(TARGET_DATE).tz_localize(hist.index.tz)
         prev_idx = -1
-        # If 3/7 not in hist (US market holiday), use last available trading day
         if target_ts in hist.index:
             row = hist.loc[target_ts]
             data_date = TARGET_DATE
-            source_tag = f"yfinance-historical-3/7 ({code})"
+            source_tag = f"yfinance-historical-{TARGET_DATE} ({code})"
             is_holiday_fallback = False
         else:
-            # Holiday fallback: use most recent close before 3/7
+            # Holiday/weekend fallback: use most recent close BEFORE target
             available_dates = hist.index[hist.index < target_ts]
             if len(available_dates) == 0:
                 return None
             actual_date = available_dates[-1]
             row = hist.loc[actual_date]
             data_date = actual_date.strftime("%Y-%m-%d")
-            source_tag = f"yfinance-holiday-fallback ({code}, 3/7 US markets closed, using {data_date} close)"
+            source_tag = f"yfinance-holiday-fallback ({code}, {TARGET_DATE} US market closed, using {data_date} close)"
             is_holiday_fallback = True
-            prev_idx = -1  # will be set below
+            prev_idx = -1
 
         # prev_idx: get row before current row for change_pct
         try:
