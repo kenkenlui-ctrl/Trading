@@ -731,6 +731,32 @@ def report_page_html(report: dict, date: str) -> str:
     direction = report.get("trade_direction") or "—"
     operation = report.get("operation_advice") or "—"
     sentiment = report.get("sentiment") or "—"
+
+    # 2026-07-09 Anti-Chase OVERRIDE: downgrade toxic BUY at display time.
+    # 9-day audit: 樂觀+m≥60+chg≥3% BUY had 37.3% WR (-1.57% avg).
+    # Apply same override as build_dashboard_md for consistency.
+    if operation == "買入":
+        # NOTE: build_dashboard_for_date pre-normalized score_breakdown_json
+        # into score_breakdown (parsed dict). Use whichever is present.
+        _bd = report.get("score_breakdown")
+        if _bd is None:
+            _raw_bd = report.get("score_breakdown_json") or "{}"
+            try: _bd = json.loads(_raw_bd) if isinstance(_raw_bd, str) else _raw_bd
+            except Exception: _bd = {}
+        if not isinstance(_bd, dict):
+            _bd = {}
+        _raw_snap = report.get("data_snapshot_json") or "{}"
+        try:
+            _snap = json.loads(_raw_snap) if isinstance(_raw_snap, str) else _raw_snap
+        except Exception:
+            _snap = {}
+        _m = int(_bd.get("momentum_score") or 0)
+        _chg = _snap.get("change_pct") or 0
+        if sentiment == "樂觀" and _m >= 60 and _chg >= 3:
+            operation = "觀望"
+            report["operation_advice"] = "觀望"
+            direction = "neutral"
+
     trend = report.get("trend") or "—"
     summary_md = report.get("summary_md") or ""
     full_md = report.get("full_md") or ""
@@ -807,8 +833,39 @@ def report_page_html(report: dict, date: str) -> str:
     # Main markdown body — pass link_inject_date=None so cards in the detail page itself don't get extra links
     body_md_html = body_md_to_html(main_md, link_inject_date=None, score_lookup={report["code"]: report.get("score")} if report.get("score") is not None else None, op_lookup={report["code"]: report.get("operation_advice")} if report.get("operation_advice") else None)
 
+    # Anti-Chase override warning banner (2026-07-09)
+    # If we downgraded the original LLM signal from 買入 → 觀望, show a clear
+    # warning so the user understands why + sees the LLM's bullish analysis
+    # but knows the system flagged it as toxic.
+    anti_chase_banner = ""
+    if report.get("operation_advice") == "觀望" and sentiment == "樂觀":
+        _bd2 = report.get("score_breakdown")
+        if _bd2 is None:
+            _raw_bd2 = report.get("score_breakdown_json") or "{}"
+            try: _bd2 = json.loads(_raw_bd2) if isinstance(_raw_bd2, str) else _raw_bd2
+            except Exception: _bd2 = {}
+        if not isinstance(_bd2, dict):
+            _bd2 = {}
+        _m2 = int(_bd2.get("momentum_score") or 0)
+        _raw_snap2 = report.get("data_snapshot_json") or "{}"
+        try:
+            _snap2 = json.loads(_raw_snap2) if isinstance(_raw_snap2, str) else _raw_snap2
+        except Exception:
+            _snap2 = {}
+        _chg2 = _snap2.get("change_pct") or 0
+        if _m2 >= 60 and _chg2 >= 3:
+            anti_chase_banner = (
+                '<div class="signal-warning"><b>⚠️ Anti-Chase Override</b> · '
+                '原 LLM 信號係 <b>買入</b>，但符合 TOXIC 模式 (樂觀 sentiment + '
+                f'm_score={_m2} ≥ 60 + chg={_chg2:+.1f}% ≥ +3%)。'
+                '<br>· 9-day audit: 同類 BUY 訊號 <b>37.3% WR</b>，平均 <b>-1.57% loss</b> next day'
+                '<br>· 系統自動 downgrade 去 <b>觀望</b>，避免追入已升 +5% 嘅 stock'
+                '<br>· 如果你仍想跟原 BUY 訊號，請先睇 9-day 7/6 嘅 -2.46% 教訓 (32 BUY 9% WR)</div>'
+            )
+
     body = (
         back
+        + anti_chase_banner
         + '<div class="report-header">'
         f'<h1>📊 {_html.escape(code)} 詳細報告</h1>'
         '<div class="meta">'
