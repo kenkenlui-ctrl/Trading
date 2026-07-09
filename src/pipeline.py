@@ -203,6 +203,32 @@ def run_full_analysis(
     return summary
 
 
+def _apply_anti_chase_over(r: dict) -> dict:
+    """Anti-chase override: downgrade TOXIC BUY (樂觀+m≥60+chg≥3%) to 觀望.
+
+    Returns a shallow-copied dict (not the original) when override fires.
+    Otherwise returns the original row reference (no copy).
+    """
+    if r.get("operation_advice") != "買入":
+        return r
+    try:
+        bd = json.loads(r.get("score_breakdown_json") or "{}")
+    except Exception:
+        bd = {}
+    try:
+        snap = json.loads(r.get("data_snapshot_json") or "{}")
+    except Exception:
+        snap = {}
+    m = int(bd.get("momentum_score") or 0)
+    chg = snap.get("change_pct") or 0
+    sent = r.get("sentiment") or ""
+    if sent == "樂觀" and m >= 60 and chg >= 3:
+        r = dict(r)
+        r["operation_advice"] = "觀望"
+        r["_anti_chase_overridden"] = True
+    return r
+
+
 def build_dashboard_md(
     report_date: Optional[str] = None,
     language: Optional[str] = None,
@@ -241,6 +267,14 @@ def build_dashboard_md(
 
     report_date = report_date or datetime.now().strftime("%Y-%m-%d")
     reports = list_reports(report_date=report_date, limit=500)
+
+    # 2026-07-09 Anti-Chase AUTO-OVERRIDE: downgrade any TOXIC BUY signal
+    # (樂觀 sentiment + m_score≥60 + day_chg≥+3%) to 觀望 at the dashboard level.
+    # This protects users who follow raw signals from chasing tops.
+    # Audit (9-day, 1404 signals): 59 such signals had 37.3% WR, -1.57% avg
+    # (would have lost $928 on $1000/trade). The override only affects
+    # display + downstream filters; DB operation_advice is preserved.
+    reports = [_apply_anti_chase_over(r) for r in reports]
 
     # Apply filters — chain them so the stats line shows final filtered counts.
     filter_parts = []
