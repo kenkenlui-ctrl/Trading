@@ -1187,8 +1187,32 @@ def body_md_to_html(md: str, link_inject_date: str | None = None, score_lookup: 
             )
         return open_tag_new + body + link_html + close_tag
 
-    # First rewrite cards (block-aware)
-    md = card_re.sub(_rewrite_card, md)
+    # First rewrite cards (block-aware).
+    # BUGFIX 2026-07-09: re.sub only replaces the matched span (opening tag).
+    # _rewrite_card was returning the FULL card HTML (open + body + link + close),
+    # causing the body content to be DUPLICATED — once in the replacement, once in the
+    # original string (preserved past the matched span).
+    # Fix: replace the entire card span manually so the original body is consumed.
+    out_parts = []
+    i = 0
+    while i < len(md):
+        m = card_re.search(md, i)
+        if not m:
+            out_parts.append(md[i:])
+            break
+        # Append everything before the matched opening tag
+        out_parts.append(md[i:m.start()])
+        # Use _rewrite_card to compute the replacement (it operates on the full md)
+        replacement = _rewrite_card(m)
+        out_parts.append(replacement)
+        # Skip past the matched card span (opening tag → matching </div>)
+        close_end = _find_matching_div_end(md, m.start())
+        if close_end < 0:
+            # Can't find close — bail and append rest
+            out_parts.append(md[m.end():])
+            break
+        i = close_end
+    md = ''.join(out_parts)
 
     # Second pass: replace **評分 N/100** and 評分 N in any remaining markdown lines
     # (e.g. full_md h1 lines like "# 🟢 KO 評分 73/100"). We do a global replace
