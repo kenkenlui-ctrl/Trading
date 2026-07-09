@@ -85,7 +85,7 @@ def get_current_price(code: str) -> float | None:
 def get_signal_codes(report_date: str, preset: str) -> list[dict]:
     """Get all codes + signal data passing the given filter preset."""
     import sqlite3
-    from src.conservative_filters import CYBER_TICKERS, TECH_SECTORS_AVOID, cyber_buy_passes
+    from src.conservative_filters import CYBER_TICKERS, TECH_SECTORS_AVOID, cyber_buy_passes, bounce_buy_passes
     con = sqlite3.connect(str(DB_PATH))
     con.row_factory = sqlite3.Row
     # For conservative-buy we need score_breakdown which isn't in the row above
@@ -95,6 +95,15 @@ def get_signal_codes(report_date: str, preset: str) -> list[dict]:
                       data_snapshot_json, score_breakdown_json
                FROM daily_report
                WHERE report_date=? AND operation_advice='買入'""",
+            (report_date,),
+        ).fetchall()
+    elif preset == "bounce-buy":
+        # Bounce BUY includes both 觀望 and 買入 (panic-sold candidates)
+        rows = con.execute(
+            """SELECT code, score, sentiment, operation_advice, full_md, summary_md,
+                      data_snapshot_json, score_breakdown_json
+               FROM daily_report
+               WHERE report_date=? AND operation_advice IN ('觀望', '買入')""",
             (report_date,),
         ).fetchall()
     else:
@@ -161,6 +170,25 @@ def get_signal_codes(report_date: str, preset: str) -> list[dict]:
             if score >= 70:
                 continue
             out.append(dict(r))
+        elif preset == "bounce-buy":
+            # Bounce BUY (NEW 2026-07-09): mean-reversion on panic-sold HOLD candidates
+            try:
+                snap = json.loads(r["data_snapshot_json"]) if r["data_snapshot_json"] else {}
+            except Exception:
+                snap = {}
+            try:
+                bd = json.loads(r["score_breakdown_json"]) if r["score_breakdown_json"] else {}
+            except Exception:
+                bd = {}
+            day_chg = snap.get("change_pct") or 0
+            m_score = int(bd.get("momentum_score") or 0)
+            of_score = int(bd.get("order_flow_score") or 0)
+            sentiment = r["sentiment"] or ""
+            score = r["score"] or 0
+            sector = (snap.get("sector") or "").strip()
+            passes, _ = bounce_buy_passes(code, score, day_chg, m_score, of_score, sentiment, sector)
+            if passes:
+                out.append(dict(r))
         elif preset == "all-buy":
             out.append(dict(r))
     return out
@@ -304,7 +332,7 @@ def print_stats():
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--report-date", default=None, help="signal report_date (default: latest in DB)")
-    ap.add_argument("--preset", default="conservative-buy", choices=["conservative-buy", "cyber-buy", "all-buy"])
+    ap.add_argument("--preset", default="conservative-buy", choices=["conservative-buy", "cyber-buy", "all-buy", "bounce-buy"])
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--close-only", action="store_true", help="only close existing trades, don't open new")
     args = ap.parse_args()
