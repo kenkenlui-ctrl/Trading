@@ -28,7 +28,9 @@ CREATE TABLE IF NOT EXISTS daily_report (
     score INTEGER,
     sentiment TEXT,           -- 樂觀 / 中性 / 悲觀
     trend TEXT,                -- 看多 / 震盪 / 看空
-    operation_advice TEXT,     -- 買入 / 觀望 / 賣出
+    operation_advice TEXT,     -- 買入 / 觀望 / 賣出 (RULE-BASED since 2026-07-10)
+    llm_original_op TEXT,     -- LLM's original op before rule override (for audit)
+    decision_reason TEXT,      -- Why rule chose this op (e.g. "ANTI-CHASE: 樂觀+m=78+chg=+5.8%")
     score_breakdown_json TEXT, -- {"value_score":N,"quality_score":N,"momentum_score":N}
     trade_direction TEXT,      -- long / short / both
     support_zone TEXT,         -- 支持區 e.g. "385.00-392.00"
@@ -124,6 +126,12 @@ ALTER TABLE daily_report ADD COLUMN key_levels_json TEXT;
 ALTER TABLE daily_report ADD COLUMN entry_zone TEXT;
 ALTER TABLE daily_report ADD COLUMN stop_loss TEXT;
 ALTER TABLE daily_report ADD COLUMN target_price TEXT;
+
+-- Idempotent migration for rule-based decision engine (2026-07-10)
+-- Phase 2 of WHY_LLM_IS_DUMB fix: LLM op_advice is no longer trusted.
+-- Rule-based decide() sets operation_advice. LLM's original is preserved.
+ALTER TABLE daily_report ADD COLUMN llm_original_op TEXT;
+ALTER TABLE daily_report ADD COLUMN decision_reason TEXT;
 """
 
 
@@ -230,8 +238,40 @@ def save_report(
     entry_zone: Optional[str] = None,
     stop_loss: Optional[str] = None,
     target_price: Optional[str] = None,
+    llm_original_op: Optional[str] = None,
+    decision_reason: Optional[str] = None,
 ) -> int:
-    """Insert or replace today's report for code. Returns row id."""
+    """Insert or replace today's report for code. Returns row id.
+
+    Phase 2 (2026-07-10): operation_advice is RULE-BASED (overrides LLM).
+    LLM's original op is preserved in llm_original_op for audit.
+    decision_reason explains why the rule was applied.
+
+    If llm_original_op is None, save_report auto-applies the rule using
+    the passed operation_advice as the LLM's op. This means existing
+    callers get the new behavior without code changes.
+    """
+    from .signal_decision import apply_to_snapshot
+
+    # If caller didn't pre-apply the rule, apply it here
+    if llm_original_op is None and operation_advice:
+        try:
+            sb = json.loads(score_breakdown_json or "{}") if score_breakdown_json else {}
+        except Exception:
+            sb = {}
+        sector = (data_snapshot.get("sector") or "").strip() if data_snapshot else ""
+        decision = apply_to_snapshot(
+            llm_op=operation_advice,
+            llm_sentiment=sentiment or "",
+            llm_trend=trend or "",
+            score_breakdown=sb,
+            data_snapshot=data_snapshot or {},
+            sector=sector,
+        )
+        operation_advice = decision.op
+        llm_original_op = decision.original_op
+        decision_reason = f"[{decision.matched_rule}] {decision.reason}"
+
     conn = get_db()
     try:
         now = datetime.now().isoformat(timespec="seconds")
@@ -242,8 +282,9 @@ def save_report(
                 score_breakdown_json, trade_direction,
                 support_zone, resistance_zone, key_levels_json,
                 entry_zone, stop_loss, target_price,
-                summary_md, full_md, news_json, data_snapshot_json, llm_model, generated_at)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                summary_md, full_md, news_json, data_snapshot_json, llm_model, generated_at,
+                llm_original_op, decision_reason)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 code, report_date, score, sentiment, trend, operation_advice,
                 score_breakdown_json, trade_direction,
@@ -251,6 +292,7 @@ def save_report(
                 entry_zone, stop_loss, target_price,
                 summary_md, full_md, json.dumps(news, ensure_ascii=False),
                 json.dumps(data_snapshot, ensure_ascii=False), llm_model, now,
+                llm_original_op, decision_reason,
             ),
         )
         conn.commit()

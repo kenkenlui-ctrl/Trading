@@ -729,34 +729,12 @@ def report_page_html(report: dict, date: str) -> str:
     code = report["code"]
     score = report.get("score") or "—"
     direction = report.get("trade_direction") or "—"
+    # Phase 2 (2026-07-10): operation_advice is RULE-BASED (set by save_report).
+    # LLM's original op is in llm_original_op for audit.
     operation = report.get("operation_advice") or "—"
+    llm_original_op = report.get("llm_original_op") or ""
+    decision_reason = report.get("decision_reason") or ""
     sentiment = report.get("sentiment") or "—"
-
-    # 2026-07-09 Anti-Chase OVERRIDE: downgrade toxic BUY at display time.
-    # 9-day audit: 樂觀+m≥60+chg≥3% BUY had 37.3% WR (-1.57% avg).
-    # Apply same override as build_dashboard_md for consistency.
-    if operation == "買入":
-        # NOTE: build_dashboard_for_date pre-normalized score_breakdown_json
-        # into score_breakdown (parsed dict). Use whichever is present.
-        _bd = report.get("score_breakdown")
-        if _bd is None:
-            _raw_bd = report.get("score_breakdown_json") or "{}"
-            try: _bd = json.loads(_raw_bd) if isinstance(_raw_bd, str) else _raw_bd
-            except Exception: _bd = {}
-        if not isinstance(_bd, dict):
-            _bd = {}
-        _raw_snap = report.get("data_snapshot_json") or "{}"
-        try:
-            _snap = json.loads(_raw_snap) if isinstance(_raw_snap, str) else _raw_snap
-        except Exception:
-            _snap = {}
-        _m = int(_bd.get("momentum_score") or 0)
-        _chg = _snap.get("change_pct") or 0
-        if sentiment == "樂觀" and _m >= 60 and _chg >= 3:
-            operation = "觀望"
-            report["operation_advice"] = "觀望"
-            direction = "neutral"
-
     trend = report.get("trend") or "—"
     summary_md = report.get("summary_md") or ""
     full_md = report.get("full_md") or ""
@@ -838,30 +816,28 @@ def report_page_html(report: dict, date: str) -> str:
     # warning so the user understands why + sees the LLM's bullish analysis
     # but knows the system flagged it as toxic.
     anti_chase_banner = ""
-    if report.get("operation_advice") == "觀望" and sentiment == "樂觀":
-        _bd2 = report.get("score_breakdown")
-        if _bd2 is None:
-            _raw_bd2 = report.get("score_breakdown_json") or "{}"
-            try: _bd2 = json.loads(_raw_bd2) if isinstance(_raw_bd2, str) else _raw_bd2
-            except Exception: _bd2 = {}
-        if not isinstance(_bd2, dict):
-            _bd2 = {}
-        _m2 = int(_bd2.get("momentum_score") or 0)
-        _raw_snap2 = report.get("data_snapshot_json") or "{}"
-        try:
-            _snap2 = json.loads(_raw_snap2) if isinstance(_raw_snap2, str) else _raw_snap2
-        except Exception:
-            _snap2 = {}
-        _chg2 = _snap2.get("change_pct") or 0
-        if _m2 >= 60 and _chg2 >= 3:
+    if report.get("operation_advice") == "觀望" and llm_original_op and llm_original_op != "觀望":
+        # Phase 2: show rule-vs-LLM banner using decision_reason
+        if decision_reason:
             anti_chase_banner = (
-                '<div class="signal-warning"><b>⚠️ Anti-Chase Override</b> · '
-                '原 LLM 信號係 <b>買入</b>，但符合 TOXIC 模式 (樂觀 sentiment + '
-                f'm_score={_m2} ≥ 60 + chg={_chg2:+.1f}% ≥ +3%)。'
-                '<br>· 9-day audit: 同類 BUY 訊號 <b>37.3% WR</b>，平均 <b>-1.57% loss</b> next day'
-                '<br>· 系統自動 downgrade 去 <b>觀望</b>，避免追入已升 +5% 嘅 stock'
-                '<br>· 如果你仍想跟原 BUY 訊號，請先睇 9-day 7/6 嘅 -2.46% 教訓 (32 BUY 9% WR)</div>'
+                '<div class="signal-warning"><b>⚠️ Rule-Based Decision (Phase 2)</b> · '
+                f'LLM said <b>{llm_original_op}</b>，但 rule override 去 <b>觀望</b>'
+                '<br>· <b>Rule reason</b>: {_html.escape(decision_reason)}'
+                '<br>· 10-day audit: LLM 樂觀 BUY 30.4% WR · LLM SELL 悲觀 37.7% WR · rule Conservative BUY 61.5% WR'
+                '<br>· <b>唔好跟 LLM 嘅原文</b> — 睇 rule-based signal + LLM 寫嘅 narrative/levels/catalysts 就夠</div>'
             )
+    elif decision_reason and decision_reason.startswith("[CONSERVATIVE]"):
+        anti_chase_banner = (
+            '<div class="signal-warning"><b>🛡️ Conservative BUY (rule-verified)</b> · '
+            f'{_html.escape(decision_reason)}'
+            '<br>· 10-day audit: <b>61.5% WR / +0.92% avg</b> — significant edge over LLM BUY (38.6% WR / -0.72% avg)</div>'
+        )
+    elif decision_reason and decision_reason.startswith("[BOUNCE]"):
+        anti_chase_banner = (
+            '<div class="signal-warning"><b>🌊 Bounce BUY (rule-verified)</b> · '
+            f'{_html.escape(decision_reason)}'
+            '<br>· 10-day audit: <b>51.7% WR / -0.57% avg</b> — catches mean-reversion rebounds that HOLD missed</div>'
+        )
 
     body = (
         back
@@ -956,11 +932,12 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
             <br>· <b>Backtest</b>: 60 historical HOLD candidates → <b>51.7% WR, -0.53% avg</b>. Modest edge but catches missed reversals. Worst case 03986.HK -12.2% (true breakdown).
             <br>· <b>Risk</b>: <span class="warn-strong">true breakdowns (chg&lt;-7%) 仲會繼續跌</span>. Use 5% hard stop. Position size 50% of Conservative BUY.</div>'''
         else:
-            signal_banner = f'''<div class="signal-warning"><b>🔬 Signal Explorer</b> · LLM 信號 + 信心 + 自己嘅警語。22 天 backtest (4,371 outcomes)：
-            <br>· <b>🟢 買入</b>: 1D 58.6% / 1W <b>64.3%</b> — multi-day hold OK
-            <br>· <b>🔴 賣出</b>: 1D <b>59.7%</b> / 1W 48.0% — <span class="warn-strong">mean-revert, close by 4 PM, 唔好 hold 過夜</span>
-            <br>· <b>🛡️ 高 WR 替代</b>: 6-day trace 顯示 Conservative BUY + Cyber BUY 兩 preset 表現好過 raw BUY/SELL → 試吓
-            <br>· <b>ℹ️ 讀法</b>: 每張 card 顯示 <span class="conf-high">信心 高</span> / <span class="conf-mid">信心 中</span> / <span class="conf-low">信心 低</span> + <span class="caution-chip">⚠️ 不宜追</span> 等 LLM 自己嘅 hedging word。詳細睇 <a href="/methodology.html">methodology 頁</a>。</div>'''
+            signal_banner = f'''<div class="signal-warning"><b>🔬 Signal Explorer (Rule-Based, Phase 2)</b> · operation_advice 喺 10-day audit 後改由 deterministic rules 決定 (唔再信 LLM 直接 BUY/SELL call)。
+            <br>· <b>🟢 買入</b> 經 4 rules 揀：<span class="warn-strong">🛡️ Conservative</span> (61.5% WR) + <span class="warn-strong">🌊 Bounce</span> (51.7% WR) + ANTI-MOMENTUM 等
+            <br>· <b>🔴 賣出</b> 幾乎全部被 ANTI-KNIFE override 去 觀望 (LLM SELL 悲觀 37.7% WR，catch falling knife)
+            <br>· <b>🟡 觀望</b> 88% records 係 DEFAULT — LLM 嗰個訊號冇 match 任何 backtested edge
+            <br>· <b>ℹ️ 10-day audit 結論</b>: LLM 樂觀 BUY 30.4% WR (反指)、m≥80 BUY 16.7% WR、悲觀 SELL 37.7% WR (錯方向)
+            <br>· <b>每張 card 顯示</b>: rule-based op + LLM 寫嘅 narrative/catalysts/levels — detail page 入面有 Rule-Based Decision banner 解釋 override 原因</div>'''
         body_html = (
             disclaimer_block()
             + signal_banner

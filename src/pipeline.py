@@ -76,13 +76,30 @@ def analyze_ticker(code: str, save: bool = True, language: Optional[str] = None)
         summary_md = render_summary_md(result, language=language)
         # Allow backfill via env var (used by --date=YYYY-MM-DD CLI flag)
         report_date = os.environ.get("DSA_REPORT_DATE_OVERRIDE") or datetime.now().strftime("%Y-%m-%d")
+        # Phase 2 (2026-07-10): apply RULE-BASED decision BEFORE storing.
+        # The LLM's operation_advice is captured in llm_original_op for audit;
+        # the rule-based op is what gets shown in dashboard / detail page.
+        from .signal_decision import apply_to_snapshot
+        sector = (snap.get("sector") or "").strip() if snap else ""
+        decision = apply_to_snapshot(
+            llm_op=result.operation_advice,
+            llm_sentiment=result.sentiment or "",
+            llm_trend=result.trend or "",
+            score_breakdown=result.score_breakdown or {},
+            data_snapshot=snap or {},
+            sector=sector,
+        )
+        # Use rule-based op + reason for storage
+        op_to_store = decision.op
+        llm_orig = decision.original_op
+        decision_reason = f"[{decision.matched_rule}] {decision.reason}"
         save_report(
             code=code,
             report_date=report_date,
             score=result.score,
             sentiment=result.sentiment,
             trend=result.trend,
-            operation_advice=result.operation_advice,
+            operation_advice=op_to_store,
             summary_md=summary_md,
             full_md=full_md,
             news=news,
@@ -93,6 +110,8 @@ def analyze_ticker(code: str, save: bool = True, language: Optional[str] = None)
             support_zone=result.support_zone,
             resistance_zone=result.resistance_zone,
             key_levels_json=json.dumps(result.key_levels or {}, ensure_ascii=False),
+            llm_original_op=llm_orig,
+            decision_reason=decision_reason,
         )
         # Also save to reports/ dir as a markdown file (for archive)
         try:
@@ -268,13 +287,8 @@ def build_dashboard_md(
     report_date = report_date or datetime.now().strftime("%Y-%m-%d")
     reports = list_reports(report_date=report_date, limit=500)
 
-    # 2026-07-09 Anti-Chase AUTO-OVERRIDE: downgrade any TOXIC BUY signal
-    # (樂觀 sentiment + m_score≥60 + day_chg≥+3%) to 觀望 at the dashboard level.
-    # This protects users who follow raw signals from chasing tops.
-    # Audit (9-day, 1404 signals): 59 such signals had 37.3% WR, -1.57% avg
-    # (would have lost $928 on $1000/trade). The override only affects
-    # display + downstream filters; DB operation_advice is preserved.
-    reports = [_apply_anti_chase_over(r) for r in reports]
+    # 2026-07-10 Phase 2: operation_advice in DB is already RULE-BASED.
+    # No more runtime override needed here. The rule engine ran in save_report.
 
     # Apply filters — chain them so the stats line shows final filtered counts.
     filter_parts = []
