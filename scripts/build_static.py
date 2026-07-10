@@ -757,6 +757,35 @@ def report_page_html(report: dict, date: str) -> str:
     # Use full_md if available, fall back to summary_md
     main_md = full_md if full_md else summary_md
 
+    # Phase 2: Replace LLM's header lines in full_md body with rule-based.
+    # The LLM-generated full_md has the LLM's ORIGINAL op embedded (e.g.
+    # "# 🟡 02208.HK 02208.HK" and "**評分 58/100** · ... · **觀望**").
+    # The rule-based system overrode it (e.g. to 買入 via BOUNCE rule),
+    # so we need to update the body text to match — otherwise the user
+    # sees 🟢 買入 in the badge but 🟡 觀望 in the body (confusing).
+    if operation in ("買入", "觀望", "賣出") and llm_original_op and llm_original_op != operation:
+        op_emoji_map = {"買入": "🟢", "觀望": "🟡", "賣出": "🔴"}
+        rule_emoji = op_emoji_map.get(operation, "🟡")
+        # Replace "# 🟡 XXX XXX" → "# 🟢 XXX XXX" (or whatever the rule op emoji is)
+        main_md = re.sub(
+            r"^# (?:🟢|🟡|🔴|⚪)\s+",
+            f"# {rule_emoji} ",
+            main_md,
+            count=1,
+            flags=re.MULTILINE,
+        )
+        # Replace the inline op tag "(評分 X/100** · ... · **OBSOLETE_OP** · 信心 ...)"
+        # pattern: **OBSOLETE_OP** → **NEW_OP** (rule: RULE_NAME)
+        rule_name = decision_reason.split("]")[0].lstrip("[").strip() if decision_reason else ""
+        rule_suffix = f" (rule: {rule_name})" if rule_name else ""
+        # Use lookahead/lookbehind so we only replace the *OBSOLETE_OP** part
+        main_md = re.sub(
+            r"\*\*" + re.escape(llm_original_op) + r"\*\*",
+            f"**{operation}**{rule_suffix}",
+            main_md,
+            count=2,  # may appear twice in the header line
+        )
+
     # Back link to all.html
     back = f'<p><a href="/dashboard/{date}/all.html">← 返回 {date} 全部報告</a></p>'
 
