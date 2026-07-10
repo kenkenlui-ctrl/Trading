@@ -822,7 +822,7 @@ def report_page_html(report: dict, date: str) -> str:
             anti_chase_banner = (
                 '<div class="signal-warning"><b>⚠️ Rule-Based Decision (Phase 2)</b> · '
                 f'LLM said <b>{llm_original_op}</b>，但 rule override 去 <b>觀望</b>'
-                '<br>· <b>Rule reason</b>: {_html.escape(decision_reason)}'
+                f'<br>· <b>Rule reason</b>: {_html.escape(decision_reason)}'
                 '<br>· 10-day audit: LLM 樂觀 BUY 30.4% WR · LLM SELL 悲觀 37.7% WR · rule Conservative BUY 61.5% WR'
                 '<br>· <b>唔好跟 LLM 嘅原文</b> — 睇 rule-based signal + LLM 寫嘅 narrative/levels/catalysts 就夠</div>'
             )
