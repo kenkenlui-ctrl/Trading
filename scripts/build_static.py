@@ -40,6 +40,39 @@ from src.config import get_config  # noqa: E402
 
 PUBLIC_DIR = PROJECT_ROOT / "public"
 
+# 2026-07-10: Per-page SEO meta (T1 work). Used by build_static_pages() so the
+# build produces the same expanded meta tags as the hand-edited public/ files.
+# Without this, `python3 scripts/build_static.py --static-pages` would revert
+# t1's hand-edits. The verification (BSD awk length) requires:
+#   - title 40-60 chars
+#   - description 130-170 bytes (BSD awk counts bytes, not chars)
+_STATIC_META = {
+    "faq": {
+        "title": "Leeks Terminal 常見問題 · 4-Dim 評分 + Conservative BUY Filter 教學",
+        "description": "Leeks Terminal 常見問題 — 4-dim 評分模型、Conservative BUY filter、AI 信心 chips 教學。200 港股 + 200 美股 9:30 自動掃描。",
+    },
+    "about": {
+        "title": "Leeks Terminal 關於我們 · AI 交易決策儀表板的由來與使命",
+        "description": "Leeks Terminal — HK+US day-trade AI dashboard. Built rule-based overrides after 9-day audit of 1913 LLM signals: BUY was inverted. Ex-finance retail trader since 2018.",
+    },
+    "methodology": {
+        "title": "Leeks Terminal 分析方法論 · 4-Dim 評分 + Rule-Based 決策引擎",
+        "description": "Leeks Terminal 分析方法論 — 4-dim 評分 (value/quality/momentum) + Rule-based 引擎 + 4 濾網 + 9-day audit win-rate 公開。",
+    },
+    "insights": {
+        "title": "Leeks Terminal Insights · 9-Day AI Trading Signal Audit + Rule-Based Decision Research",
+        "description": "1913 AI trading signals audited in 10 days: LLM BUY 38.6% WR, Conservative BUY 61.5% WR. First-party data on 3 LLM mistakes + our fix. Day-trade, HK+US, 1D.",
+    },
+    "disclaimer": {
+        "title": "Leeks Terminal 免責聲明 · AI 信號使用須知 + 投資風險提示 + 法律責任",
+        "description": "Leeks Terminal 免責聲明 — AI 信號僅供教育用途、非投資建議。過去表現不代表未來回報。做好風險管理。",
+    },
+    "privacy": {
+        "title": "Leeks Terminal 隱私政策 · 數據收集、cookie 使用與第三方分享",
+        "description": "Leeks Terminal 隱私政策 — 收集什麼數據 (Futu + Alpaca)、cookie 使用、第三方 (Analytics) 分享、刪除權利。",
+    },
+}
+
 # ===== Filter presets — each becomes its own static page so filter is
 # "free" via page reload (no Streamlit runtime needed).
 #
@@ -651,6 +684,7 @@ def shell(title: str, body_html: str, active_path: str = "/",
 {nav_html(active_path)}
 <main>
 {body_html}
+{"<p class=\"last-updated\">最後更新: " + datetime.now().strftime("%Y-%m-%d %H:%M HKT") + "</p>" if "last-updated" not in body_html else ""}
 </main>
 <footer>
   © {datetime.now().year} Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
@@ -893,6 +927,7 @@ def report_page_html(report: dict, date: str) -> str:
         body_html=body,
         active_path="/dashboard/",
         description=f"{code} {date} AI 詳細報告 — 評分 {score}, {direction} {operation}",
+        canonical=f"https://www.win9you.com/dashboard/{date}/reports/{code}.html",
     )
 
 
@@ -1104,6 +1139,7 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
                 body_html=body_html,
                 active_path="/dashboard/",
                 description=f"Leeks Terminal {date} AI dashboard — {label}",
+                canonical=f"https://www.win9you.com/dashboard/{date}/{slug}.html",
             ),
             encoding="utf-8",
         )
@@ -1471,12 +1507,20 @@ def build_index(dates: list[str]) -> str:
 
 
 def build_static_pages() -> list[str]:
-    """Build the static info pages (FAQ, about, methodology, disclaimer, privacy).
-    These mirror what the Worker serves, but as plain HTML so Pages can serve them."""
+    """Build the static info pages (FAQ, about, methodology, insights, disclaimer, privacy).
+    These mirror what the Worker serves, but as plain HTML so Pages can serve them.
+
+    Note: about.html, methodology.html, faq.html, insights.html are typically
+    hand-edited after the build for rich content (T1/T4 SEO work). The build
+    writes a minimal placeholder; manual edits to the public/ files are
+    preserved across builds UNLESS the build is re-run.
+    """
     pages = [
         ("faq", "FAQ", "常見問題", "/faq.html", "faq"),
         ("about", "About", "關於 Leeks Terminal", "/about.html", "about"),
         ("methodology", "Methodology", "分析方法論", "/methodology.html", "methodology"),
+        # 2026-07-10: New SEO/GEO leverage page — 9-day audit + rule-based research
+        ("insights", "Insights", "信號審計研究", "/insights.html", "insights"),
         ("disclaimer", "Disclaimer", "完整免責聲明", "/disclaimer.html", "disclaimer"),
         ("privacy", "Privacy", "私隱政策", "/privacy.html", "privacy"),
     ]
@@ -1589,6 +1633,25 @@ filter 可以 hide 其他方向。</p>
 </ul>
 <p>邏輯：buy setup 入場前要計清楚「贏幾多 vs 輸幾多」。R:R ≥ 2.0 表示 setup 期望值正（2:1 風險回報），否則好 setup 都係陷阱。</p>
 """
+        elif slug == "insights":
+            # 2026-07-10: SEO/GEO leverage page — first-party audit data
+            # Rich content is written to public/insights.html manually (T4 task);
+            # this placeholder gets overwritten on each build, but the real page
+            # is hand-edited after the build with full 9-day audit data.
+            body += """
+<p class="lede"><b>9 天 AI 信號審計</b> · 1,913 個 LLM signal 嘅真實命中率公開數據 · LLM 點解會做錯 · 我哋點樣 rule-based override 修正。</p>
+<p>完整 audit report 載於 <a href="/insights.html">/insights.html</a>，包括 5 個 backtest 比較表 + 8 個章節 (TL;DR / The Problem / 3 LLM Mistakes / Rule-Based Solution / Backtest / Why LLMs / Architecture / FAQ / Methodology)。</p>
+
+<h2>TL;DR — 30 秒讀完</h2>
+<ul>
+  <li><b>LLM BUY 命中率 38.6%</b> (n=197) · 1D forward avg <b>-0.72%</b> (負數 — 比 HOLD 差)</li>
+  <li><b>LLM 樂觀 sentiment BUY</b> 命中率 30.4% (反指標 — 愈樂觀愈輸)</li>
+  <li><b>Rule-based Conservative BUY</b> 命中率 61.5% (n=26) · 1D avg <b>+0.92%</b></li>
+  <li>10 個交易日 · 200 HK + 200 US tickers · 1,913 個 signals</li>
+</ul>
+
+<p>完整數據 + 5 個 backtest table + 修正後架構 + FAQ 答案，全部公開，唔收費，唔追蹤。</p>
+"""
         elif slug == "disclaimer":
             body += """
 <p>本站所有內容 (<a href="/">win9you.com</a>) 包括 dashboard 評分、信號、新聞摘要、方法論描述、FAQ 答案，<b>只供資訊及教育用途</b>。佢<b>唔構成</b>：</p>
@@ -1611,12 +1674,24 @@ filter 可以 hide 其他方向。</p>
 
         out_path = PUBLIC_DIR / path.lstrip("/")
         out_path.parent.mkdir(parents=True, exist_ok=True)
+        # 2026-07-10: Hand-edited pages (insights.html = T4 task; about.html = T4 task).
+        # If the file already exists and contains the hand-edited marker, skip the
+        # build overwrite so parallel T4 / t5-build work doesn't lose content.
+        if slug in {"insights", "about"} and out_path.exists():
+            try:
+                existing = out_path.read_text(encoding="utf-8")
+                if "<!-- hand-edited-t4 -->" in existing:
+                    print(f"[build_static] skip {path} (hand-edited by T4, {len(existing)} bytes)")
+                    written.append(path)
+                    continue
+            except Exception:
+                pass
         out_path.write_text(
             shell(
-                title=f"Leeks Terminal · {zh}",
+                title=_STATIC_META.get(slug, {}).get("title", f"Leeks Terminal · {zh}"),
                 body_html=body,
                 active_path=f"/{active_key}.html",
-                description=f"Leeks Terminal {en} page",
+                description=_STATIC_META.get(slug, {}).get("description", f"Leeks Terminal {en} page"),
             ),
             encoding="utf-8",
         )
@@ -1636,6 +1711,8 @@ def build_sitemap_xml(dates: list[str]) -> str:
         ("/methodology.html", "0.8", "weekly"),
         ("/faq.html", "0.8", "weekly"),
         ("/about.html", "0.5", "monthly"),
+        # 2026-07-10: Original first-party data (audit + research) — primary SEO/GEO leverage
+        ("/insights.html", "0.9", "weekly"),
         ("/disclaimer.html", "0.3", "monthly"),
         ("/privacy.html", "0.3", "monthly"),
         # Intent landing pages (P1 SEO coverage)
@@ -1754,7 +1831,9 @@ def build_dashboard_hub(dates: list[str]) -> str:
         '<li><a href="/day-trade-signals.html">即日鮮信號</a> · day trade 決策流程</li>'
         '<li><a href="/hk-stock-screener.html">港股 stock screener</a> · 4 維度 filter 教學</li>'
         '<li><a href="/methodology.html">分析方法論</a> · 4-dim 評分模型 + 操作建議</li>'
+        '<li><a href="/insights.html">信號審計研究</a> · 9-day audit · LLM 點解會做錯 · rule-based 修正 (NEW)</li>'
         '<li><a href="/faq.html">FAQ</a> · 常見問題</li>'
+        '<li><a href="/about.html">關於 Leeks Terminal</a> · 由來 + 使命 + 團隊</li>'
         '</ul>'
         '</section>'
     )
@@ -1800,7 +1879,7 @@ def build_intent_pages() -> list[str]:
         "path": "/hk-scanner.html",
         "slug": "hk-scanner",
         "title": "港股即日鮮掃描器 · HK Stock Scanner | Leeks Terminal",
-        "description": "AI 自動掃描 200 隻港股（恒生 + 國企 + 科技指數成份股），每日兩次輸出買入/觀望/賣出信號 + 入場區間 / 止損 / 目標價。",
+        "description": "港股即日鮮掃描器 — AI 自動掃描 200 隻高成交港股，每日 9:30 HKT 開市前 + 13:00 HKT 午市前 2 次更新。",
         "h1": "港股即日鮮 AI 掃描器",
         "body": """
 <p class="lede">Leeks Terminal 港股掃描器每日自動分析 <b>200 隻高成交港股</b>（恒生指數 + 國企指數 + 科技指數成份股 + 50 隻高成交二線股），
@@ -1949,7 +2028,7 @@ def build_intent_pages() -> list[str]:
         "path": "/us-scanner.html",
         "slug": "us-scanner",
         "title": "美股即日鮮掃描器 · US Stock Scanner | Leeks Terminal",
-        "description": "AI 自動掃描 200 隻美股（S&P 500 + Nasdaq-100 + 高成交個股），每日 16:00 ET 輸出買入/觀望/賣出信號 + 入場區間 / 止損 / 目標價。",
+        "description": "美股即日鮮掃描器 — AI 自動掃描 200 隻高成交量美股 (S&P 500 + Nasdaq-100)，每日 16:00 ET 開市前更新。",
         "h1": "美股即日鮮 AI 掃描器",
         "body": """
 <p class="lede">Leeks Terminal 美股掃描器每日自動分析 <b>200 隻高成交美股</b>（S&P 500 大型股 + Nasdaq-100 + 高成交中小股），
@@ -2172,7 +2251,7 @@ def build_intent_pages() -> list[str]:
         "path": "/day-trade-signals.html",
         "slug": "day-trade-signals",
         "title": "即日鮮交易信號 · Day Trade AI Signals | Leeks Terminal",
-        "description": "AI 即日鮮交易信號 — 港股 9:30 HKT + 美股 9:30 ET 開市前自動出，4 維度評分 + 入場區間 + 止損 + 目標。",
+        "description": "即日鮮交易信號 — AI 港股 9:30 HKT + 美股 9:30 ET 開市前自動輸出，4 維度評分 + 入場區間 + 止損 + 目標價。",
         "h1": "即日鮮交易 AI 信號",
         "body": """
 <p class="lede">Leeks Terminal 即日鮮交易信號 — 港股每朝早 9:00 HKT / 美股每朝早 9:00 ET 開市前自動出，
@@ -2307,7 +2386,7 @@ LLM 只負責輸出 dim 嘅 raw score (0-100)，總分由 Python 計，避開 LL
         "path": "/hk-stock-screener.html",
         "slug": "hk-stock-screener",
         "title": "港股篩選器 · 每日 AI 自動排序 HK 200 隻 | Leeks Terminal",
-        "description": "港股 stock screener — 用估值 / 質素 / 動能 / 資金流 4 維度篩選 200 隻高成交港股，每日自動更新排名 + 買入賣出信號。",
+        "description": "港股 stock screener — 4 維度評分 (估值/質素/動能/資金流) 自動排序 200 港股。每日更新排名 + BUY 信號 + 入場區間。",
         "h1": "港股 AI 篩選器",
         "body": """
 <p class="lede">Leeks Terminal 港股篩選器 (HK stock screener) — 唔同一般 technical screener 淨係用 RSI / MA 篩，
@@ -2718,6 +2797,8 @@ def build_paper_trades_page() -> str:
         <br>· <b>Workflow</b>: 每日 4:30 PM HKT 跑 <code>scripts/paper_trade.py</code> · 新 signals 開倉 + 現有倉位 check stop/target/3-day timeout
         <br>· <b>Current rules</b>: Conservative BUY (mean-rev + non-tech + m 30-70) · Cyber BUY (13 隻 whitelist) · 暫停 SELL signals
         <br>· <b>Performance</b>: 即時 P&L + 命中率 + avg win/loss · See <a href="/methodology.html">methodology</a> 了解 backtest 背景</div>
+        <h1>Leeks Terminal Paper Trade Tracker — 即時信號追蹤 + 歷史 P&L</h1>
+        <p class="last-updated">最後更新: 2026-07-10 23:30 HKT · 數據來源: Futu OpenD + Yahoo Finance + LLM 4-dim scoring</p>
         {summary_html}
         {preset_html}
         {reason_html}

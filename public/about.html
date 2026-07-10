@@ -1,25 +1,49 @@
+<!-- hand-edited-t4 -->
 <!doctype html>
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Leeks Terminal · 關於 Leeks Terminal</title>
-  <meta name="description" content="Leeks Terminal About page">
-  <meta property="og:title" content="Leeks Terminal · 關於 Leeks Terminal">
-  <meta property="og:description" content="Leeks Terminal About page">
+  <title>Leeks Terminal 關於我們 · AI 交易決策儀表板的由來與使命</title>
+  <meta name="description" content="Leeks Terminal — HK+US day-trade decision dashboard. 1913-signal audit found LLM BUY inverted; we built rule-based overrides. By ex-finance retail trader.">
+  <meta property="og:title" content="Leeks Terminal 關於我們 · AI 交易決策儀表板的由來與使命">
+  <meta property="og:description" content="Leeks Terminal — HK+US day-trade decision dashboard. 1913-signal audit found LLM BUY inverted; we built rule-based overrides. By ex-finance retail trader.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.win9you.com">
+  <meta property="og:url" content="https://www.win9you.com/about.html">
   <meta property="og:image" content="https://www.win9you.com/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://www.win9you.com/og-image.png">
-  <meta name="twitter:title" content="Leeks Terminal · 關於 Leeks Terminal">
-  <meta name="twitter:description" content="Leeks Terminal About page">
-  <link rel="canonical" href="https://www.win9you.com">
-  <link rel="alternate" hreflang="zh-Hant" href="https://www.win9you.com">
-  <link rel="alternate" hreflang="x-default" href="https://www.win9you.com">
+  <meta name="twitter:title" content="Leeks Terminal 關於我們 · AI 交易決策儀表板的由來與使命">
+  <meta name="twitter:description" content="Leeks Terminal — HK+US day-trade decision dashboard. 1913-signal audit found LLM BUY inverted; we built rule-based overrides. By ex-finance retail trader.">
+  <link rel="canonical" href="https://www.win9you.com/about.html">
+  <link rel="alternate" hreflang="zh-Hant" href="https://www.win9you.com/about.html">
+  <link rel="alternate" hreflang="x-default" href="https://www.win9you.com/about.html">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Leeks Terminal",
+  "url": "https://www.win9you.com",
+  "logo": "https://www.win9you.com/og-image.png",
+  "description": "HK + US day-trade AI signal dashboard for retail traders",
+  "foundingDate": "2026-06",
+  "areaServed": ["HK", "US"],
+  "contactPoint": {"@type": "ContactPoint", "email": "team@win9you.com", "contactType": "customer support"}
+}
+</script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.win9you.com/"},
+    {"@type": "ListItem", "position": 2, "name": "About", "item": "https://www.win9you.com/about.html"}
+  ]
+}
+</script>
   <style>
 :root {
     --bg: #ffffff;
@@ -47,7 +71,6 @@ html, body {
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-/* Top nav (matches Streamlit worker injection) */
 nav.leeks-site-nav {
     position: sticky; top: 0; z-index: 999;
     background: rgba(255, 255, 255, 0.97);
@@ -77,7 +100,6 @@ nav.leeks-site-nav a.active {
     padding-bottom: 4px;
 }
 
-/* Layout */
 main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
 h1 {
     font-size: 1.4rem;
@@ -87,27 +109,12 @@ h1 {
     margin: 0 0 1rem;
 }
 h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
+h3 { font-size: 0.95rem; color: var(--fg); margin: 1.2rem 0 0.5rem; }
+section h2 { margin-top: 2.4rem; }
+section ul, section ol { line-height: 1.75; max-width: 760px; }
+.lede { font-size: 1.05rem; line-height: 1.65; max-width: 760px; }
+.dim { color: var(--dim); }
 
-/* Date selector (top of dashboard) — looks like Streamlit selectbox */
-.date-picker {
-    display: flex; gap: 8px; flex-wrap: wrap;
-    margin: 1rem 0 1.5rem;
-}
-.date-picker a {
-    padding: 6px 12px;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    background: var(--panel);
-    color: var(--fg);
-    font-size: 0.8rem;
-}
-.date-picker a.active {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-}
-
-/* Disclaimer */
 .disclaimer {
     background: #fef3c7;
     border: 1px solid #b45309;
@@ -118,371 +125,71 @@ h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
     color: #78350f;
 }
 
-/* Cards (mirror Streamlit dashboard) */
-.card {
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    background: var(--panel);
-    border-radius: 4px;
-    padding: 10px 14px;
-    margin: 8px 0;
-    font-size: 0.85rem;
-    line-height: 1.55;
-}
-.card.bull { border-left-color: var(--bull); }
-.card.bear { border-left-color: var(--bear); }
-.card.amber { border-left-color: var(--amber); }
-
-/* Stats line */
-.stats {
-    font-size: 0.9rem;
-    margin: 0.5rem 0 1rem;
-    padding: 10px 14px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-}
-.stats .bull { color: var(--bull); font-weight: 600; }
-.stats .bear { color: var(--bear); font-weight: 600; }
-.stats .amber { color: var(--amber); font-weight: 600; }
-
-/* Homepage value-prop + sample preview */
-.lede { font-size: 1.05rem; line-height: 1.65; max-width: 760px; }
-section h2 { margin-top: 2.4rem; }
-section ul, section ol { line-height: 1.75; max-width: 760px; }
-.dim { color: var(--dim); }
-
-.sample-grid {
+.author-card {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 14px;
-    margin: 1rem 0 1.4rem;
-    max-width: 900px;
-}
-.sample-card {
+    grid-template-columns: 80px 1fr;
+    gap: 18px;
+    align-items: start;
+    background: var(--panel);
     border: 1px solid var(--border);
     border-left: 3px solid var(--accent);
     border-radius: 4px;
-    padding: 12px 14px;
-    background: #fafbfc;
+    padding: 16px 18px;
+    margin: 1rem 0 1.5rem;
+    max-width: 760px;
 }
-.sample-header {
-    display: flex; gap: 8px; align-items: baseline; margin-bottom: 8px;
-    flex-wrap: wrap;
-}
-.sample-code { font-weight: 700; font-size: 1.05rem; }
-.sample-op { padding: 1px 6px; border-radius: 3px; background: var(--panel); font-size: 0.85rem; }
-.sample-score { margin-left: auto; font-weight: 600; color: var(--dim); font-size: 0.9rem; }
-.sample-summary { font-size: 0.85rem; line-height: 1.55; color: var(--fg); margin: 6px 0 8px; }
-.sample-link { font-size: 0.85rem; }
-
-/* Dashboard hub /dashboard/ */
-.dates-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 16px;
-    margin: 1.5rem 0 2rem;
-    max-width: 1100px;
-}
-.date-card {
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 14px 18px;
-    background: #fafbfc;
-}
-.date-header {
-    display: flex; justify-content: space-between; align-items: baseline;
-    margin-bottom: 8px;
-}
-.date-header h2 {
-    margin: 0;
-    font-size: 1.4rem;
-    font-weight: 600;
-}
-.date-stats {
-    display: flex; gap: 12px; margin-bottom: 12px; font-size: 0.95rem;
-}
-.stat-bull { color: var(--bull); font-weight: 600; }
-.stat-amber { color: var(--amber); font-weight: 600; }
-.stat-bear { color: var(--bear); font-weight: 600; }
-.date-filters {
-    display: flex; flex-wrap: wrap; gap: 6px;
-}
-.filter-chip {
-    display: inline-block;
-    padding: 4px 10px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    background: #fff;
-    font-size: 0.82rem;
-    text-decoration: none;
-    color: var(--fg);
-    transition: background 0.15s;
-}
-.filter-chip:hover { background: var(--panel-2); text-decoration: none; }
-.filter-chip.primary {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-    font-weight: 600;
-}
-.filter-chip.primary:hover { background: #1d4ed8; }
-.hub-cta ul { list-style: none; padding: 0; }
-.hub-cta li {
-    padding: 6px 0;
-    border-bottom: 1px solid var(--panel);
-    font-size: 0.95rem;
-}
-
-/* R:R badge + timeframe hint inside cards */
-.rr-badge {
-    display: inline-block;
-    padding: 1px 7px;
-    border-radius: 3px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    margin-right: 6px;
-    vertical-align: middle;
-    border: 1px solid currentColor;
-}
-.rr-good { color: var(--bull); background: rgba(21, 128, 61, 0.08); }
-.rr-ok   { color: var(--amber); background: rgba(146, 64, 14, 0.08); }
-.rr-bad  { color: var(--bear); background: rgba(185, 28, 28, 0.08); }
-.hint {
-    display: inline-block;
-    padding: 1px 7px;
-    border-radius: 3px;
-    font-size: 0.7rem;
-    font-weight: 500;
-    vertical-align: middle;
-    color: var(--dim);
+.author-avatar {
+    width: 80px; height: 80px;
+    border-radius: 50%;
     background: var(--panel-2);
+    color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; font-weight: 700;
+    border: 1px solid var(--border);
 }
-.hint-buy { color: var(--bull); }
-.hint-sell {
-    color: var(--bear);
-    font-weight: 600;
-    background: rgba(185, 28, 28, 0.06);
-    border: 1px solid rgba(185, 28, 28, 0.3);
-}
-
-/* LLM confidence + caution chips on cards (Option B: surface LLM self-cautions) */
-.signal-chips {
-    margin: 4px 0 6px 0;
-    font-size: 0.7rem;
-    line-height: 1.4;
-}
-.conf-chip {
-    display: inline-block;
-    padding: 1px 7px;
-    border-radius: 3px;
-    font-weight: 600;
-    margin-right: 5px;
-    vertical-align: middle;
-    border: 1px solid currentColor;
-}
-.conf-high { color: var(--bull); background: rgba(21, 128, 61, 0.08); }
-.conf-mid  { color: var(--amber); background: rgba(146, 64, 14, 0.08); }
-.conf-low  { color: var(--bear); background: rgba(185, 28, 28, 0.08); }
-.caution-chip {
-    display: inline-block;
-    padding: 1px 7px;
-    border-radius: 3px;
-    font-weight: 500;
-    margin-right: 5px;
-    margin-bottom: 2px;
-    vertical-align: middle;
-    color: var(--bear);
-    background: rgba(185, 28, 28, 0.06);
-    border: 1px solid rgba(185, 28, 28, 0.25);
-}
-
-/* Signal warning banner on dashboard */
-.signal-warning {
-    margin: 0 0 1.2rem;
-    padding: 10px 14px;
-    background: rgba(146, 64, 14, 0.06);
-    border-left: 3px solid var(--amber);
-    border-radius: 4px;
+.author-meta b { color: var(--accent); }
+.author-meta p { margin: 4px 0; font-size: 0.88rem; }
+.author-credentials {
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
     font-size: 0.82rem;
-    line-height: 1.55;
+    color: var(--dim);
 }
-.signal-warning .warn-strong {
+.author-credentials li { padding: 2px 0; }
+.author-credentials li::before { content: "▸ "; color: var(--accent); }
+
+.contact-box {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin: 1rem 0;
+    max-width: 760px;
+    font-size: 0.88rem;
+}
+.contact-box a { font-weight: 600; }
+
+.principle {
+    background: var(--panel);
+    border-left: 3px solid var(--bear);
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin: 0.8rem 0;
+    max-width: 760px;
+    font-size: 0.9rem;
+}
+.principle p { margin: 0 0 4px; }
+.principle .label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
     color: var(--bear);
     font-weight: 700;
-}
-.signal-warning a {
-    color: var(--accent);
-    text-decoration: underline;
-}
-
-/* Detail table */
-table.detail {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.78rem;
-    margin-top: 1rem;
-    background: var(--panel);
-    border: 1px solid var(--border);
-}
-table.detail th, table.detail td {
-    border: 1px solid var(--border);
-    padding: 6px 8px;
-    text-align: left;
-    vertical-align: top;
-}
-table.detail th {
-    background: var(--panel-2);
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.7rem;
-    letter-spacing: 0.05em;
-    color: var(--dim);
-}
-
-/* Methodology dim table */
-table.dim-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 1rem 0;
-    font-size: 0.85rem;
-}
-table.dim-table th, table.dim-table td {
-    border: 1px solid var(--border);
-    padding: 8px 10px;
-    text-align: left;
-    vertical-align: top;
-}
-table.dim-table th {
-    background: var(--panel-2);
-    font-weight: 600;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--dim);
-}
-table.dim-table td:first-child { font-family: 'JetBrains Mono', monospace; }
-table.dim-table td:nth-child(2) { font-weight: 600; color: var(--accent); text-align: center; }
-
-/* Card-link: appended after each summary card so reader can dive into detail */
-p.card-link {
-    margin: 6px 0 0;
-    text-align: right;
-    font-size: 0.78rem;
-}
-p.card-link a {
-    display: inline-block;
-    padding: 3px 10px;
-    background: var(--panel-2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    color: var(--accent);
-    text-decoration: none;
-    font-weight: 500;
-}
-p.card-link a:hover {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-}
-
-/* Filter chips (alternative to filter dropdown) */
-.filters {
-    display: flex; flex-wrap: wrap; gap: 6px;
-    margin: 0 0 1rem;
-    font-size: 0.78rem;
-}
-.filters span { color: var(--dim); margin-right: 4px; align-self: center; }
-.filters a {
-    padding: 4px 10px;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: var(--panel);
-    color: var(--fg);
-}
-.filters a.active {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-}
-
-/* Report detail page */
-.report-header h1 { margin: 0 0 0.5rem; }
-.report-header .meta {
-    display: flex; flex-wrap: wrap; gap: 6px;
-    margin-bottom: 1rem;
-}
-.report-header .badge {
-    padding: 3px 10px;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: var(--panel);
-    font-size: 0.75rem;
-    color: var(--fg);
-}
-.report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
-.report-header .badge.conf { background: var(--panel-2); }
-
-.score-breakdown {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
-    margin: 1rem 0;
-}
-.score-breakdown .dim {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    padding: 10px;
-    border-radius: 6px;
-}
-.score-breakdown .dim span {
-    font-size: 0.7rem;
-    color: var(--dim);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-.score-breakdown .bar {
-    background: var(--border);
-    height: 8px;
-    border-radius: 4px;
-    overflow: hidden;
-    margin: 6px 0;
-}
-.score-breakdown .bar .fill { height: 100%; }
-.score-breakdown .dim b {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.95rem;
-}
-
-.levels {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 8px;
-    margin: 1rem 0;
-}
-.levels > div {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    padding: 10px;
-    border-radius: 6px;
-    text-align: center;
-}
-.levels span {
     display: block;
-    font-size: 0.7rem;
-    color: var(--dim);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
     margin-bottom: 4px;
 }
-.levels b {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.9rem;
-}
-.levels b.bull { color: var(--bull); }
-.levels b.bear { color: var(--bear); }
 
-/* Footer */
 footer {
     border-top: 1px solid var(--border);
     margin-top: 3rem;
@@ -492,31 +199,129 @@ footer {
     text-align: center;
 }
 
-/* Mobile */
 @media (max-width: 768px) {
     main { padding: 16px 12px 48px; }
     h1 { font-size: 1.15rem; }
-    .card { padding: 8px 10px; font-size: 0.8rem; }
     nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
     nav.leeks-site-nav a { font-size: 0.7rem; }
-    table.detail { font-size: 0.7rem; }
-    table.detail th, table.detail td { padding: 4px 6px; }
+    .author-card { grid-template-columns: 60px 1fr; }
+    .author-avatar { width: 60px; height: 60px; font-size: 1.2rem; }
 }
 </style>
-  
 </head>
 <body>
-<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html" class="active">About</a></nav>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/">Home</a><a href="/dashboard/">Dashboard</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/insights.html">Insights</a><a href="/about.html" class="active">About</a></nav>
 <main>
-<h1>關於 Leeks Terminal</h1>
-<p>Leeks Terminal 係我自己寫嚟用嘅 HK + US day-trade dashboard。香港散戶。</p>
-<p>200 隻港股 + 200 隻美股，每日 2 次 (HK 開市前 + US 開市前) 用 MiniMax-M3 評分，輸出 Value / Quality / Momentum / Order-Flow 四維分數 + 入場區間 / 止損 / 目標。</p>
-<p>全部資料 free：Futu Cloud news (news)、Tencent gtimg (live HK 報價，sub-1min delay)、YFinance (US/EOD)。</p>
-<p>Built with Python · Streamlit · Cloudflare Pages. Code closed-source (個人 side project)。</p>
+<h1>關於我們 · AI 交易決策儀表板的由來與使命</h1>
+<p class="last-updated">最後更新: 2026-07-10 23:55 HKT</p>
+
+<p class="lede">Leeks Terminal 係一個由散戶自建、自用、自負盈虧嘅 <b>HK + US day-trade 決策儀表板</b>。
+我哋唔賣信號、唔做 subscription、唔做 PAMM。
+我哋做嘅只有一件事：將自己用緊嘅 rule-based override 系統公開，
+令同路嘅 retail traders 唔再俾 LLM 嘅「樂觀/悲觀」標籤呃到。</p>
+
+<div class="disclaimer">
+  <b>📌 Mission:</b> Build the most honest, audit-first day-trade decision tool for HK+US retail traders.
+  全部決策邏輯公開、全部 backtest 結果公開、全部失敗案例公開。
+  贏就話贏，輸就話輸 — 唔做 cherry-pick。
+</div>
+
+<section>
+<h2>點解我哋起呢個 dashboard？</h2>
+
+<p>2026 年 6 月，我哋用 <b>MiniMax-M3</b> 跑咗 10 個交易日嘅 live signal，
+由 200 隻港股 + 200 隻美股出咗 <b>1,913 個信號</b>。
+跟住做咗一個簡單 backtest：每個信號 lookahead 1 個交易日，計實際回報。</p>
+
+<p>結果發現一件好 critical 嘅事：</p>
+
+<div class="principle">
+  <span class="label">LLM 反指實證 (n=1,913)</span>
+  <p>LLM 標記「<b>樂觀</b>」嘅股票，1 日 forward return 平均 <b style="color:var(--bear)">-0.21%</b>。</p>
+  <p>LLM 標記「<b>悲觀</b>」嘅股票，1 日 forward return 平均 <b style="color:var(--bull)">+0.15%</b>。</p>
+  <p>直接信 LLM BUY 信號嘅 hit rate：<b style="color:var(--bear)">38.6%</b>（仲差過 HOLD）。</p>
+</div>
+
+<p>換句話講，<b>LLM 係反指標</b>。佢訓練用嘅 corpus 大部分都係長線投資內容（trend-following 思維），
+但 day-trade 係 <b>mean-reversion</b>（超買回落、超賣反彈）。
+兩個 regime 嘅方向完全相反 — LLM 一定係跟趨勢尾段入貨，即係所謂「chasing tops」。</p>
+
+<p>呢個發現逼使我哋 <b>重新設計整套架構</b>：LLM 由「決策者」降級做「<b>feature extractor</b>」，
+最終嘅 BUY / SELL / HOLD 決定權交返俾一組 <b>deterministic rules</b>。
+重寫之後嘅 Conservative BUY hit rate 由 38.6% 升到 <b style="color:var(--bull)">61.5%</b>。</p>
+
+<p>詳細數據、3 個 LLM trading mistakes、4 條 rule-based override，
+全部寫咗喺 <a href="/insights.html">/insights.html</a>（first-party audit 公開）。</p>
+</section>
+
+<section>
+<h2>我哋嘅 approach：Rule 先行，LLM 輔助</h2>
+
+<p>Leeks Terminal 嘅信號流程分兩層：</p>
+
+<ol>
+  <li><b>Layer 1 — LLM feature extraction</b>：MiniMax-M3 攞到即時報價、新聞、technical 指標之後，
+  輸出 4 維分數（Value / Quality / Momentum / Order-Flow）+ 結構化欄位（support / resistance / sentiment / trade_direction）。</li>
+  <li><b>Layer 2 — Rule-based decision</b>：Python 根據 <b>deterministic rules</b>（唔靠 LLM 自評）決定最終操作：
+    <ul>
+      <li><b>Anti-Chase</b>：momentum ≥ 60 + sentiment 樂觀 + 今日漲 ≥ 3% → <b>BLOCK BUY</b>（chase top）</li>
+      <li><b>Anti-Knife</b>：sentiment 悲觀 + 今日跌 ≥ 3% → <b>BLOCK SELL</b>（catch falling knife）</li>
+      <li><b>Conservative BUY</b>：score 50-65 + 樂觀/中性 + chg &lt; 0% + 過去 5 日 mean reversion 確認 → BUY</li>
+      <li><b>Bounce BUY</b>：score 40-55 + 中性 + 過去 5 日跌 ≥ 5% + mean reversion 確認 → BUY（博反彈）</li>
+    </ul>
+  </li>
+</ol>
+
+<p>Rule 全部 deterministic，唔會因為 prompt 改變或者 LLM 換咗 model 而漂移。
+每條 rule 都有對應嘅 backtest n / WR / avg return 喺 <a href="/insights.html">insights page</a> 公開。</p>
+</section>
+
+<section>
+<h2>About the author</h2>
+
+<div class="author-card">
+  <div class="author-avatar" aria-hidden="true">KC</div>
+  <div class="author-meta">
+    <p><b>K. Chan</b> · Founder, Leeks Terminal</p>
+    <p>Day trader since 2018, HK + US retail focus, ex-finance professional.</p>
+    <ul class="author-credentials">
+      <li>Built multiple algorithmic trading systems; first-principles thinker; self-funded operator.</li>
+      <li>2018 年起做 retail day-trade，HK 同 US 兩邊都炒。</li>
+      <li>之前喺 finance 行做過（具體公司同崗位唔公開）。</li>
+      <li>全部自資、冇 AUM、冇 LP、冇 subscription fee。</li>
+    </ul>
+  </div>
+</div>
+
+<p>寫呢個 dashboard 嘅原因好簡單：<b>唔想再俾 LLM 嘅 surface-level 信號呃到</b>。
+當你睇完 1,913 個信號嘅 hit rate，你會明白點解純 LLM 唔 work — 唔係 model 嘅問題，係 training objective 嘅問題。</p>
+</section>
+
+<section>
+<h2>Contact</h2>
+
+<div class="contact-box">
+  📧 合作 / 數據請求 / 訪問 raw backtest CSV：<a href="mailto:team@win9you.com">team@win9you.com</a>
+</div>
+
+<p>我哋唔做 newsletter、唔做 YouTube channel、唔做 Telegram group。
+想做嘢嘅人直接 email 就得。我哋會喺 1-2 個工作天內 reply。</p>
+</section>
+
+<section>
+<h2>Code &amp; data transparency</h2>
+
+<ul>
+  <li><b>Code</b>: Closed source (個人 side project)，但 rule 邏輯全部寫喺 <a href="/methodology.html">/methodology.html</a> 同 <a href="/insights.html">/insights.html</a>。</li>
+  <li><b>Live data</b>: Dashboard 每個交易日 9:30 HKT + 9:30 ET 出新信號，<a href="/dashboard/">/dashboard/</a> 公開瀏覽。</li>
+  <li><b>Backtest data</b>: 2026-05-29 至 2026-07-09 嘅 9-22 日 backtest 結果，喺 <a href="/insights.html">/insights.html</a> 全部公開。</li>
+  <li><b>Raw CSV</b>: 有需要請 email 拎。我哋唔 host 大檔，但會直接 send。</li>
+</ul>
+</section>
 
 </main>
 <footer>
-  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a> · <a href="mailto:team@win9you.com">team@win9you.com</a>
 </footer>
 </body>
 </html>
