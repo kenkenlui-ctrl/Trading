@@ -908,7 +908,7 @@ def report_page_html(report: dict, date: str) -> str:
         + '<div class="report-header">'
         f'<h1>📊 {_html.escape(code)} 詳細報告</h1>'
         '<div class="meta">'
-        f'<span class="badge score">評分 {score}</span>'
+        f'<span class="badge score">LLM 評分 {score}</span>'
         f'<span class="badge dir">{_html.escape(direction)}</span>'
         f'<span class="badge op">{_html.escape(operation)}</span>'
         f'<span class="badge">{_html.escape(sentiment)}</span>'
