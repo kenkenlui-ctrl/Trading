@@ -474,8 +474,15 @@ def build_dashboard_md(
     else:
         stats_line = f"**{report_date}** · Analyzed **{n}** stocks · 🟢Buy:{n_buy} · 🟡Hold:{n_hold} · 🔴Sell:{n_sell}"
 
-    # Sort by score desc
-    sorted_reports = sorted(reports, key=lambda r: r["score"] or 0, reverse=True)
+    # Sort by signal_score desc (下日勝率) — NOT LLM 評分.
+    # 2026-07-13 fix: user hard rule "越高分等於越大機會 next day 贏" maps to
+    # signal_score, not LLM score. Prior sort by r["score"] put 02208.HK (LLM 79
+    # but signal_score 18%) at top, violating the rule.
+    sorted_reports = sorted(
+        reports,
+        key=lambda r: (r.get("signal_score") or 0, r.get("score") or 0),
+        reverse=True,
+    )
 
     # Render each card as a styled HTML <div> with explicit border + padding
     # so cards are visually distinct (1 per row). Markdown soft-breaks were
@@ -617,8 +624,6 @@ def build_dashboard_md(
             f'background:var(--panel);border-radius:4px;padding:10px 14px;'
             f'margin:8px 0;font-size:0.85rem;line-height:1.5;'
             f'font-family:JetBrains Mono, monospace;">'
-            f'<div style="margin-bottom:4px;">{rr_badge}{hint}</div>'
-            f'{chips_html}'
             f'{safe}'
             f'</div>'
         )

@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS daily_report (
     operation_advice TEXT,     -- 買入 / 觀望 / 賣出 (RULE-BASED since 2026-07-10)
     llm_original_op TEXT,     -- LLM's original op before rule override (for audit)
     decision_reason TEXT,      -- Why rule chose this op (e.g. "ANTI-CHASE: 樂觀+m=78+chg=+5.8%")
+    signal_score INTEGER,      -- 0-100, rule-based edge confidence (NOT LLM narrative)
     score_breakdown_json TEXT, -- {"value_score":N,"quality_score":N,"momentum_score":N}
     trade_direction TEXT,      -- long / short / both
     support_zone TEXT,         -- 支持區 e.g. "385.00-392.00"
@@ -132,6 +133,12 @@ ALTER TABLE daily_report ADD COLUMN target_price TEXT;
 -- Rule-based decide() sets operation_advice. LLM's original is preserved.
 ALTER TABLE daily_report ADD COLUMN llm_original_op TEXT;
 ALTER TABLE daily_report ADD COLUMN decision_reason TEXT;
+
+-- Idempotent migration for Signal Score (2026-07-11)
+-- Separates LLM narrative confidence (LLM 評分) from rule-based edge
+-- confidence (訊號強度). User complained 02208 (LLM 評分 58 + 買入)
+-- and 00992 (LLM 評分 77 + 觀望) feel contradictory.
+ALTER TABLE daily_report ADD COLUMN signal_score INTEGER;
 """
 
 
@@ -240,19 +247,26 @@ def save_report(
     target_price: Optional[str] = None,
     llm_original_op: Optional[str] = None,
     decision_reason: Optional[str] = None,
+    signal_score: Optional[int] = None,
 ) -> int:
     """Insert or replace today's report for code. Returns row id.
 
     Phase 2 (2026-07-10): operation_advice is RULE-BASED (overrides LLM).
     LLM's original op is preserved in llm_original_op for audit.
     decision_reason explains why the rule was applied.
+    signal_score (0-100) is the rule-based edge confidence (Phase 3 UX fix
+    to separate LLM narrative confidence from trade edge).
 
     If llm_original_op is None, save_report auto-applies the rule using
     the passed operation_advice as the LLM's op. This means existing
     callers get the new behavior without code changes.
     """
-    from .signal_decision import apply_to_snapshot
+    from .signal_decision import (
+        apply_to_snapshot, extract_matched_rule,
+        predict_win_probability,
+    )
 
+    matched_rule = ""
     # If caller didn't pre-apply the rule, apply it here
     if llm_original_op is None and operation_advice:
         try:
@@ -271,6 +285,32 @@ def save_report(
         operation_advice = decision.op
         llm_original_op = decision.original_op
         decision_reason = f"[{decision.matched_rule}] {decision.reason}"
+        matched_rule = decision.matched_rule
+
+    # Compute Signal Score if not provided
+    # Note: parameter renamed to avoid shadowing the imported function name.
+    if signal_score is None:
+        # If we just applied the rule, use the matched_rule directly
+        if not matched_rule and decision_reason:
+            matched_rule = extract_matched_rule(decision_reason)
+        # Phase 4 (2026-07-11): use logistic-regression-based win probability
+        # instead of static mapping. Falls back to static for missing features.
+        try:
+            sb = json.loads(score_breakdown_json or "{}") if score_breakdown_json else {}
+        except Exception:
+            sb = {}
+        signal_score_val = predict_win_probability(
+            m=sb.get("momentum_score") or 0,
+            of=sb.get("order_flow_score") or 0,
+            v=sb.get("value_score") or 0,
+            q=sb.get("quality_score") or 0,
+            chg=(data_snapshot or {}).get("change_pct") or 0,
+            sentiment=sentiment or "",
+            matched_rule=matched_rule,
+        )
+    else:
+        # Use the explicit signal_score passed by caller
+        signal_score_val = signal_score
 
     conn = get_db()
     try:
@@ -283,8 +323,8 @@ def save_report(
                 support_zone, resistance_zone, key_levels_json,
                 entry_zone, stop_loss, target_price,
                 summary_md, full_md, news_json, data_snapshot_json, llm_model, generated_at,
-                llm_original_op, decision_reason)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                llm_original_op, decision_reason, signal_score)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 code, report_date, score, sentiment, trend, operation_advice,
                 score_breakdown_json, trade_direction,
@@ -292,7 +332,7 @@ def save_report(
                 entry_zone, stop_loss, target_price,
                 summary_md, full_md, json.dumps(news, ensure_ascii=False),
                 json.dumps(data_snapshot, ensure_ascii=False), llm_model, now,
-                llm_original_op, decision_reason,
+                llm_original_op, decision_reason, signal_score_val,
             ),
         )
         conn.commit()
@@ -329,19 +369,23 @@ def get_report(code: str, report_date: Optional[str] = None) -> Optional[dict]:
 
 
 def list_reports(report_date: Optional[str] = None, limit: int = 100) -> list[dict]:
-    """List reports for a date (default today), sorted by score DESC."""
+    """List reports for a date (default today), sorted by signal_score DESC (下日勝率).
+
+    Phase 4 (2026-07-11): sort by 下日勝率 (signal_score) instead of LLM 評分 (score).
+    User wanted "越高分等於越大機會 next day 贏" + cards should be ranked by win rate.
+    """
     conn = get_db()
     try:
         if report_date:
             rows = conn.execute(
                 """SELECT * FROM daily_report WHERE report_date=?
-                   ORDER BY score DESC, code ASC LIMIT ?""",
+                   ORDER BY signal_score DESC, score DESC, code ASC LIMIT ?""",
                 (report_date, limit),
             ).fetchall()
         else:
             rows = conn.execute(
                 """SELECT * FROM daily_report
-                   ORDER BY report_date DESC, score DESC LIMIT ?""",
+                   ORDER BY report_date DESC, signal_score DESC, score DESC LIMIT ?""",
                 (limit,),
             ).fetchall()
         return [dict(r) for r in rows]

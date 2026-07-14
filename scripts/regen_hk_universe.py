@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 """
-Daily HK universe regeneration (2026-06-27).
-Fetches 20d avg turnover for a wide HK candidate pool (HSI + HSCEI + mid-caps + DB-known),
-filters to >= 50M HKD turnover, takes top 200, writes to hk_universe_200.json.
+HK universe regeneration (2026-06-27, cadence revised 2026-07-14 to 5-day).
+Fetches 20d avg turnover for a wide HK candidate pool (full HKEX ~5,500 stocks),
+filters to >= 50M HKD turnover, takes top 200, writes to hk_universe_200.json,
+and logs cadence to data/radar_regen.json.
 
-Run daily before the 18:00 HKT scheduler via launchd (com.dsa-hk.regen-universe.plist).
+Cadence: every 5 trading days (Mon) — Owner 2026-07-14 decision. NO cron.
+Run via `python3 scripts/regen_all.py`. Legacy `com.dsa-hk.regen-universe.plist`
+launchd entry was never installed; cadence is enforced by regen_all.py gate
++ Owner memory note.
 """
 from __future__ import annotations
 
@@ -17,6 +21,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 UNIVERSE_FILE = PROJECT_ROOT / "hk_universe_200.json"
 CANDIDATE_FILE = Path("/tmp/hk_candidate_pool.txt")
+CADENCE_LOG = PROJECT_ROOT / "data" / "radar_regen.json"
 MIN_TURNOVER_M_HKD = 50.0
 TOP_N = 200
 
@@ -132,6 +137,21 @@ def main() -> int:
         return 1
 
     UNIVERSE_FILE.write_text(json.dumps(top, ensure_ascii=False, indent=2))
+    # Log cadence so regen_all.py can decide whether to skip (5-day cycle)
+    log: dict = {}
+    if CADENCE_LOG.exists():
+        try:
+            log = json.loads(CADENCE_LOG.read_text())
+        except Exception:
+            log = {}
+    log["hk"] = {
+        "last_regen": time.strftime("%Y-%m-%d"),
+        "count": len(top),
+        "threshold_m_hkd": MIN_TURNOVER_M_HKD,
+    }
+    CADENCE_LOG.parent.mkdir(parents=True, exist_ok=True)
+    CADENCE_LOG.write_text(json.dumps(log, indent=2, ensure_ascii=False))
+
     elapsed = time.time() - t0
     print(f"  Wrote {len(top)} codes to {UNIVERSE_FILE.name}")
     print(f"  Dropped {len(results) - len(filtered)} codes below {MIN_TURNOVER_M_HKD}M HKD")

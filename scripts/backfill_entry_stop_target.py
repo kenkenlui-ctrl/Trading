@@ -1,69 +1,102 @@
-"""Backfill missing entry_zone / stop_loss / target_price from full_md.
+#!/usr/bin/env python3
+"""Backfill entry_zone / stop_loss / target_price from full_md.
 
-Bug: rerun_date_historical.py save_report() was missing these 3 fields.
-This script reads existing full_md and extracts them via regex, then
-updates the DB without re-running the LLM.
+2026-07-13: User noticed detail table shows "—" for these 3 columns.
+Root cause: save_report() never extracted them from full_md into DB columns.
+This script parses full_md with the same regex used in render_report_page()
+and updates the DB. Safe to re-run (idempotent, skips already-filled rows).
 """
-import re
 import sqlite3
+import re
 import sys
-from datetime import datetime
+from pathlib import Path
 
-DB_PATH = "/Users/kenken/Documents/dsa-hk/data/dsa_hk.db"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = PROJECT_ROOT / "data" / "dsa_hk.db"
 
-DATES = sys.argv[1:] or ["2026-07-03", "2026-07-06", "2026-07-07"]
+# Match the same patterns as scripts/build_static.py report_page_html
+ENTRY_RE = re.compile(r"\*?\*?入場區間\*?\*?[：:]\s*([^\n]+)")
+STOP_RE = re.compile(r"\*?\*?止[損蝕]位\*?\*?[：:]\s*([^\n]+)")
+TARGET_RE = re.compile(r"\*?\*?目標價\*?\*?[：:]\s*([^\n]+)")
+
+# Optional stop-loss variants the LLM might emit
+STOP_FALLBACK_RE = re.compile(r"\*?\*?(?:止[損蝕]位|止[損蝕])[^\n]*?\*?\*?[：:]\s*([^\n]+)")
 
 
-def parse_entry_stop_target(full_md: str) -> tuple[str | None, str | None, str | None]:
-    """Parse from rendered full_md format: '- **入場區間**: $X-$Y ...'"""
-    entry = stop = target = None
-    # Markdown bold prefix optional, supports full-width or half-width colon
-    m = re.search(r"\*?\*?入場區間\*?\*?[：:]\s*([^\n]+)", full_md or "")
-    if m:
-        entry = m.group(1).strip()
-    m = re.search(r"\*?\*?止[損蝕]位\*?\*?[：:]\s*([^\n]+)", full_md or "")
-    if m:
-        stop = m.group(1).strip()
-    m = re.search(r"\*?\*?目標價\*?\*?[：:]\s*([^\n]+)", full_md or "")
-    if m:
-        target = m.group(1).strip()
+def extract(md: str) -> tuple[str | None, str | None, str | None]:
+    """Pull entry/stop/target text from full_md. Returns (None, None, None) if not found."""
+    if not md:
+        return None, None, None
+    entry_m = ENTRY_RE.search(md)
+    stop_m = STOP_RE.search(md)
+    target_m = TARGET_RE.search(md)
+    entry = entry_m.group(1).strip() if entry_m else None
+    stop = stop_m.group(1).strip() if stop_m else None
+    target = target_m.group(1).strip() if target_m else None
+    # If stop didn't match primary, try fallback
+    if not stop:
+        fb = STOP_FALLBACK_RE.search(md)
+        if fb:
+            stop = fb.group(1).strip()
     return entry, stop, target
 
 
-con = sqlite3.connect(DB_PATH)
-cur = con.cursor()
+def main() -> int:
+    con = sqlite3.connect(str(DB_PATH))
+    con.row_factory = sqlite3.Row
+    cur = con.cursor()
 
-# Find records missing entry_zone
-total_updated = 0
-for date in DATES:
+    # All rows where entry_zone is empty
     rows = cur.execute(
-        """SELECT id, code, full_md, entry_zone, stop_loss, target_price
-           FROM daily_report
-           WHERE report_date=?""",
-        (date,),
+        """
+        SELECT id, report_date, code, full_md, entry_zone, stop_loss, target_price
+        FROM daily_report
+        WHERE (entry_zone IS NULL OR entry_zone = '')
+           OR (stop_loss IS NULL OR stop_loss = '')
+           OR (target_price IS NULL OR target_price = '')
+        ORDER BY report_date DESC, code
+        """
     ).fetchall()
-    print(f"\n=== {date}: {len(rows)} records ===")
-    updated = 0
+
+    print(f"Candidates to backfill: {len(rows)}")
+
+    filled = 0
     skipped = 0
-    for id_, code, full_md, e, s, t in rows:
-        # Skip if all 3 already populated
-        if e and s and t:
+    no_match = 0
+    for r in rows:
+        e, s, t = extract(r["full_md"] or "")
+        if not e and not s and not t:
+            no_match += 1
+            continue
+        # Only write fields that are currently empty AND we have a value
+        sets = []
+        params: list = []
+        if e and (not r["entry_zone"]):
+            sets.append("entry_zone = ?")
+            params.append(e)
+        if s and (not r["stop_loss"]):
+            sets.append("stop_loss = ?")
+            params.append(s)
+        if t and (not r["target_price"]):
+            sets.append("target_price = ?")
+            params.append(t)
+        if not sets:
             skipped += 1
             continue
-        ne, ns, nt = parse_entry_stop_target(full_md or "")
-        if ne or ns or nt:
-            cur.execute(
-                """UPDATE daily_report
-                   SET entry_zone=COALESCE(?, entry_zone),
-                       stop_loss=COALESCE(?, stop_loss),
-                       target_price=COALESCE(?, target_price)
-                   WHERE id=?""",
-                (ne, ns, nt, id_),
-            )
-            updated += 1
-    con.commit()
-    print(f"  Updated: {updated}, Skipped (already populated): {skipped}")
-    total_updated += updated
+        params.append(r["id"])
+        cur.execute(
+            f"UPDATE daily_report SET {', '.join(sets)} WHERE id = ?",
+            params,
+        )
+        filled += 1
 
-con.close()
-print(f"\n=== Total updated: {total_updated} ===")
+    con.commit()
+    con.close()
+    print(f"  Updated: {filled}")
+    print(f"  Skipped (already filled): {skipped}")
+    print(f"  No regex match: {no_match}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
