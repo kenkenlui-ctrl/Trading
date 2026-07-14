@@ -133,6 +133,81 @@ h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
 .card.bear { border-left-color: var(--bear); }
 .card.amber { border-left-color: var(--amber); }
 
+/* Decision strip (Phase 4e, 2026-07-13) — splits 下日勝率 (WR) from 決策 (rule).
+   Two-column layout makes clear that the colored emoji comes from rule, not WR. */
+.decision-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin: 0 0 8px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+.strip-col {
+    padding: 5px 9px;
+    background: var(--panel);
+}
+.strip-decision { border-right: 1px solid var(--border); }
+.strip-label {
+    display: block;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+    margin-bottom: 1px;
+    font-weight: 600;
+}
+.strip-val {
+    display: inline;
+    font-weight: 700;
+    color: var(--fg);
+    font-size: 0.95rem;
+}
+.strip-rule {
+    display: inline;
+    color: var(--dim);
+    font-size: 0.78rem;
+    margin-left: 3px;
+}
+
+/* Full Results page — archive list (2026-07-13) */
+.archive-list {
+    margin: 2rem 0 0.5rem;
+    padding: 14px 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.archive-list h3 {
+    margin: 0 0 0.6rem;
+    font-size: 0.95rem;
+    color: var(--accent);
+}
+.date-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.date-grid a {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 0.78rem;
+    color: var(--dim);
+    background: var(--bg);
+    text-decoration: none;
+}
+.date-grid a:hover { border-color: var(--accent); color: var(--accent); }
+.date-grid a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
 /* Stats line */
 .stats {
     font-size: 0.9rem;
@@ -421,6 +496,7 @@ p.card-link a:hover {
     color: var(--fg);
 }
 .report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.signal { background: #1f6feb; color: #fff; border-color: #1f6feb; font-weight: 600; }
 .report-header .badge.conf { background: var(--panel-2); }
 
 .score-breakdown {
@@ -497,16 +573,20 @@ footer {
     main { padding: 16px 12px 48px; }
     h1 { font-size: 1.15rem; }
     .card { padding: 8px 10px; font-size: 0.8rem; }
+    .decision-strip { font-size: 0.75rem; }
+    .strip-val { font-size: 0.88rem; }
+    .strip-label { font-size: 0.6rem; }
     nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
     nav.leeks-site-nav a { font-size: 0.7rem; }
     table.detail { font-size: 0.7rem; }
     table.detail th, table.detail td { padding: 4px 6px; }
+    .date-grid a { font-size: 0.7rem; padding: 3px 7px; }
 }
 </style>
   
 </head>
 <body>
-<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
 <div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="signal-warning"><b>🛡️ Conservative BUY</b> · 6-day trace evidence (mean-reversion + non-tech + m 30-70 + score < 70):
             <br>· <b>Filter rules</b>: 前日 -3% to 0% 跌勢 · sector ≠ Tech/Comms · momentum 30-70 · sentiment ≠ 樂觀 · score < 70
@@ -516,18 +596,18 @@ footer {
 
 <h2>📊 分析結果摘要</h2>
 
-<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 1.0</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>OXY</b> · 評分 42 · OXY 現價 $52.30，今日逆勢下跌 -2.41%，盤中區間 $52.00-$52.94，區間幅度約 1.8%，屬中等波幅。估值面 PE TTM 70.68 偏高，PB 1.69 中性，估值不便宜。多家大行近期上調評級及目標價至 $72（巴克萊、富國），CFRA 由賣出上調至持有，催化劑偏正面。但今日 -2.41% 跌幅反映短期動能偏弱，且 MA20/MA50/MA200 數據缺失，趨勢判斷受限。日內策略以區間操作為主，留意 $52.00 守穩與否，跌破則偏空看待。<p class="card-link"><a href="/dashboard/2026-07-09/reports/OXY.html">→ 完整 OXY 詳細報告</a></p></div>
-<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-ok">🛡️ R:R 1.7</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-low">信心 低</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>DVN</b> · 評分 41 · DVN 今日急跌 -2.98%，收報 $42.02，盤中區間 $41.84-$43.23，幅度約 3.32%，達高波幅門檻，短炒燃料充足。技術指標 MA20/50/100/200 及 RSI 全部缺失，難以確認中長線趨勢；股價處於 52 週區間 $31.45-$52.71 中間偏下位置。估值 PE TTM 12.07、PB 1.69 屬合理區間。新聞好淡爭持：Wells Fargo 將目標價由 $66 上調至 $68 偏多，但 CFRA 維持賣出意見偏空；行業層面油股集體上漲，但 DVN 今日逆市下跌顯弱勢。日內交易建議關注 $41.84（即今日低位）支持與 $43.23（即今日高位）阻力，短炒為主。<p class="card-link"><a href="/dashboard/2026-07-09/reports/DVN.html">→ 完整 DVN 詳細報告</a></p></div>
-<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-ok">🛡️ R:R 1.3</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>TTWO</b> · 評分 41 · TTWO 現價 $246.10，今日跌 -2.10%，全日區間 $244.30-$253.86，幅度約 3.80% 屬高波幅，提供短炒燃料。PB 13.00 估值偏貴，52週區間 $187.63-$265.94，現價處中上位置。新聞面強烈正面：富國上調目標價至 $289、Arete 大幅上調至 $308（前值 $245）、BTIG 維持買入目標 $293，平均目標價隱含約 20% 上升空間。惟 MA20/50/100/200 及 RSI14 數據缺失，趨勢判斷受限，建議短炒博反彈至 $251.38 阻力，嚴守止損。<p class="card-link"><a href="/dashboard/2026-07-09/reports/TTWO.html">→ 完整 TTWO 詳細報告</a></p></div>
-<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.8</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-low">信心 低</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>EOG</b> · 評分 40 · EOG Resources（EOG.US）今日急跌2.94%至$133.54，盤中由前收$137.59跌至全日低位$133.09，日內區間$133.09-$136.66，幅度約2.6%，當日拋壓沉重。估值面PE TTM 13.53倍屬合理，PB 2.31倍中等，52週區間$101.59-$151.87顯示現價處於中段約46%位置。花旗下調目標價至$141（隱含約5.6%上升空間），整體情緒偏淡。由於MA20/MA50/MA100/MA200、RSI14及量比數據全部缺失，趨勢確認不足，建議觀望等待企穩訊號。<p class="card-link"><a href="/dashboard/2026-07-09/reports/EOG.html">→ 完整 EOG 詳細報告</a></p></div>
-<div class="card"><div style="margin-bottom:4px;"> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-low">信心 低</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>COP</b> · 評分 35 · COP 收市報 $108.02，今日急跌 -2.44%，最低見 $107.79、最高 $110.48，盤中沽壓明顯。技術指標 MA20/MA50/MA100/MA200 全部缺失，RSI 亦無數據，難以判斷中短線趨勢；股價較 52 週高位 $135.87 已回落約 20.5%，較 52 週低位 $85.57 仍有約 26.2% 緩衝。估值 PE TTM 18.75、PB 2.04 屬合理區間，股息率 3.00%（原始 303% 應為數據異常）反映成熟能源股特質。瑞銀下調目標價至 $143 與 RBC 維持買入形成多空交織。整體以觀望為主，留意 $107.79 能否守穩。<p class="card-link"><a href="/dashboard/2026-07-09/reports/COP.html">→ 完整 COP 詳細報告</a></p></div>
-<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.4</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-low">信心 低</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>IBM</b> · 評分 35 · IBM 今日下跌 2.23%，收報 $295.30，明顯受星巴克擬自行開發工具以減少對 IBM 軟件依賴之負面新聞衝擊，結束此前連續 7 日升勢。盤中區間 $284.44-$297.28，幅度約 4.52%，屬高波幅日，提供短炒燃料。估值面 PE TTM 26.75x、PB 8.42x 均偏貴，股息率 224% 明顯為數據異常（IBM 實際股息率約 3%）。技術面無 MA/RSI 數據，建議以 $284.44 為短線支持、$302.05 為短線阻力，高波幅下兩個方向均有 setup。<p class="card-link"><a href="/dashboard/2026-07-09/reports/IBM.html">→ 完整 IBM 詳細報告</a></p></div>
-<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.6</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-low">信心 低</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>PLTR</b> · 評分 35 · PLTR 現價 $129.04，當日下跌 -2.41%，由昨收 $132.22 顯著回落。內日 H/L 區間 $124.81-$129.19，幅度約 3.51%，屬高波幅日，提供短炒燃料。估值面極度偏貴：PE TTM 150.05、PB 36.61，遠離合理水平；股價距 52 週高位 $207.52 仍有 37.8% 折讓，但距 52 週低位 $106.37 僅高 21.3%，向下空間仍存。由於 MA20/50/100/200 及 RSI 數據全部缺失，技術判斷受限；建議以日內區間操作為主，配合嚴止損。短線策略：反彈至 $128.50-$129.19 做空，博回測 $125.00；或急跌至 $124.00-$125.00 短多博反彈 $129.19。<p class="card-link"><a href="/dashboard/2026-07-09/reports/PLTR.html">→ 完整 PLTR 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">54%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 54%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>COP</b> · 下日勝率 54% · COP 收市報 $108.02，今日急跌 -2.44%，最低見 $107.79、最高 $110.48，盤中沽壓明顯。技術指標 MA20/MA50/MA100/MA200 全部缺失，RSI 亦無數據，難以判斷中短線趨勢；股價較 52 週高位 $135.87 已回落約 20.5%，較 52 週低位 $85.57 仍有約 26.2% 緩衝。估值 PE TTM 18.75、PB 2.04 屬合理區間，股息率 3.00%（原始 303% 應為數據異常）反映成熟能源股特質。瑞銀下調目標價至 $143 與 RBC 維持買入形成多空交織。整體以觀望為主，留意 $107.79 能否守穩。<p class="card-link"><a href="/dashboard/2026-07-09/reports/COP.html">→ 完整 COP 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">52%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 52%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>EOG</b> · 下日勝率 52% · EOG Resources（EOG.US）今日急跌2.94%至$133.54，盤中由前收$137.59跌至全日低位$133.09，日內區間$133.09-$136.66，幅度約2.6%，當日拋壓沉重。估值面PE TTM 13.53倍屬合理，PB 2.31倍中等，52週區間$101.59-$151.87顯示現價處於中段約46%位置。花旗下調目標價至$141（隱含約5.6%上升空間），整體情緒偏淡。由於MA20/MA50/MA100/MA200、RSI14及量比數據全部缺失建議觀望等待企穩訊號。<p class="card-link"><a href="/dashboard/2026-07-09/reports/EOG.html">→ 完整 EOG 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">51%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 51%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>DVN</b> · 下日勝率 51% · DVN 今日急跌 -2.98%，收報 $42.02，盤中區間 $41.84-$43.23，幅度約 3.32%，達高波幅門檻，短炒燃料充足。技術指標 MA20/50/100/200 及 RSI 全部缺失，難以確認中長線趨勢；股價處於 52 週區間 $31.45-$52.71 中間偏下位置。估值 PE TTM 12.07、PB 1.69 屬合理區間。新聞好淡爭持：Wells Fargo 將目標價由 $66 上調至 $68 偏多，但 CFRA 維持賣出意見偏空；行業層面油股集體上漲，但 DVN 今日逆市下跌顯弱勢。日內交易建議關注 $41.84（即今日低位）支持與 $43.23（即今日高位）阻力，短炒為主。<p class="card-link"><a href="/dashboard/2026-07-09/reports/DVN.html">→ 完整 DVN 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">49%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 49%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>IBM</b> · 下日勝率 49% · IBM 今日下跌 2.23%，收報 $295.30，明顯受星巴克擬自行開發工具以減少對 IBM 軟件依賴之負面新聞衝擊，結束此前連續 7 日升勢。盤中區間 $284.44-$297.28，幅度約 4.52%，屬高波幅日，提供短炒燃料。估值面 PE TTM 26.75x、PB 8.42x 均偏貴，股息率 224% 明顯為數據異常（IBM 實際股息率約 3%）。技術面無 MA/RSI 數據，建議以 $284.44 為短線支持、$302.05 為短線阻力，高波幅下兩個方向均有 setup。<p class="card-link"><a href="/dashboard/2026-07-09/reports/IBM.html">→ 完整 IBM 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">46%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 46%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>TTWO</b> · 下日勝率 46% · TTWO 現價 $246.10，今日跌 -2.10%，全日區間 $244.30-$253.86，幅度約 3.80% 屬高波幅，提供短炒燃料。PB 13.0052週區間 $187.63-$265.94，現價處中上位置。新聞面強烈正面：富國上調目標價至 $289、Arete 大幅上調至 $308（前值 $245）、BTIG 維持買入目標 $293，平均目標價隱含約 20% 上升空間。惟 MA20/50/100/200 及 RSI14 數據缺失，趨勢判斷受限，建議短炒博反彈至 $251.38 阻力，嚴守止損。<p class="card-link"><a href="/dashboard/2026-07-09/reports/TTWO.html">→ 完整 TTWO 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">45%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 45%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>OXY</b> · 下日勝率 45% · OXY 現價 $52.30，今日逆勢下跌 -2.41%，盤中區間 $52.00-$52.94，區間幅度約 1.8%，屬中等波幅。估值面 PE TTM 70.68 偏高，PB 1.69 中性，估值不便宜。多家大行近期上調評級及目標價至 $72（巴克萊、富國），CFRA 由賣出上調至持有，催化劑偏正面。但今日 -2.41% 跌幅反映短期動能偏弱，且 MA20/MA50/MA200 數據缺失，趨勢判斷受限。日內策略以區間操作為主，留意 $52.00 守穩與否，跌破則偏空看待。<p class="card-link"><a href="/dashboard/2026-07-09/reports/OXY.html">→ 完整 OXY 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">43%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 43%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>PLTR</b> · 下日勝率 43% · PLTR 現價 $129.04，當日下跌 -2.41%，由昨收 $132.22 顯著回落。內日 H/L 區間 $124.81-$129.19，幅度約 3.51%，屬高波幅日，提供短炒燃料。：PE TTM 150.05、PB 36.61，遠離合理水平；股價距 52 週高位 $207.52 仍有 37.8% 折讓，但距 52 週低位 $106.37 僅高 21.3%，向下空間仍存。由於 MA20/50/100/200 及 RSI 數據全部缺失，技術判斷受限；建議以日內區間操作為主，配合嚴止損。短線策略：反彈至 $128.50-$129.19 做空，博回測 $125.00；或急跌至 $124.00-$125.00 短多博反彈 $129.19。<p class="card-link"><a href="/dashboard/2026-07-09/reports/PLTR.html">→ 完整 PLTR 詳細報告</a></p></div>
 
 ---
-<em>生成時間: 2026-07-11 00:32:56 · LLM: openai/MiniMax-M3</em>
-<h2>詳細表格</h2><p><em>此條件下無報告。</em></p>
-<p class="last-updated">最後更新: 2026-07-11 00:32 HKT</p>
+<em>生成時間: 2026-07-14 14:39:40 · LLM: openai/MiniMax-M3</em>
+<div style="text-align:center;margin:1.5rem 0 0.5rem;padding:14px 18px;background:var(--panel);border:1px dashed var(--border);border-radius:4px;font-size:0.88rem;">👇 想睇 <b>全部 0 隻股票</b>嘅 score + 操作 + entry/stop/target？ 去 <a href="/full-results/2026-07-09.html"><b>Full Results (2026-07-09)</b></a></div>
+<p class="last-updated">最後更新: 2026-07-14 14:39 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>

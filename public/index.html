@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Leeks Terminal · HK+US 即日鮮 AI 交易決策儀表板</title>
-  <meta name="description" content="Leeks Terminal · HK + US 即日鮮 AI 交易決策儀表板。200 隻港股 + 200 隻美股，4 維度評分 (value / quality / momentum / order_flow) + Conservative BUY + Bounce BUY rule-based 訊號。即時信號 free 試用，10-day audit 公開。">
+  <meta name="description" content="HK + US 即日鮮 AI 交易決策儀表板。200 隻港股 + 200 隻美股，4 維度評分 + 入場區間 / 止損 / 目標價。">
   <meta property="og:title" content="Leeks Terminal · HK+US 即日鮮 AI 交易決策儀表板">
   <meta property="og:description" content="HK + US 即日鮮 AI 交易決策儀表板。200 隻港股 + 200 隻美股，4 維度評分 + 入場區間 / 止損 / 目標價。">
   <meta property="og:type" content="website">
@@ -132,6 +132,81 @@ h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
 .card.bull { border-left-color: var(--bull); }
 .card.bear { border-left-color: var(--bear); }
 .card.amber { border-left-color: var(--amber); }
+
+/* Decision strip (Phase 4e, 2026-07-13) — splits 下日勝率 (WR) from 決策 (rule).
+   Two-column layout makes clear that the colored emoji comes from rule, not WR. */
+.decision-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin: 0 0 8px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+.strip-col {
+    padding: 5px 9px;
+    background: var(--panel);
+}
+.strip-decision { border-right: 1px solid var(--border); }
+.strip-label {
+    display: block;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+    margin-bottom: 1px;
+    font-weight: 600;
+}
+.strip-val {
+    display: inline;
+    font-weight: 700;
+    color: var(--fg);
+    font-size: 0.95rem;
+}
+.strip-rule {
+    display: inline;
+    color: var(--dim);
+    font-size: 0.78rem;
+    margin-left: 3px;
+}
+
+/* Full Results page — archive list (2026-07-13) */
+.archive-list {
+    margin: 2rem 0 0.5rem;
+    padding: 14px 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.archive-list h3 {
+    margin: 0 0 0.6rem;
+    font-size: 0.95rem;
+    color: var(--accent);
+}
+.date-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.date-grid a {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 0.78rem;
+    color: var(--dim);
+    background: var(--bg);
+    text-decoration: none;
+}
+.date-grid a:hover { border-color: var(--accent); color: var(--accent); }
+.date-grid a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
 
 /* Stats line */
 .stats {
@@ -421,6 +496,7 @@ p.card-link a:hover {
     color: var(--fg);
 }
 .report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.signal { background: #1f6feb; color: #fff; border-color: #1f6feb; font-weight: 600; }
 .report-header .badge.conf { background: var(--panel-2); }
 
 .score-breakdown {
@@ -497,34 +573,23 @@ footer {
     main { padding: 16px 12px 48px; }
     h1 { font-size: 1.15rem; }
     .card { padding: 8px 10px; font-size: 0.8rem; }
+    .decision-strip { font-size: 0.75rem; }
+    .strip-val { font-size: 0.88rem; }
+    .strip-label { font-size: 0.6rem; }
     nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
     nav.leeks-site-nav a { font-size: 0.7rem; }
     table.detail { font-size: 0.7rem; }
     table.detail th, table.detail td { padding: 4px 6px; }
+    .date-grid a { font-size: 0.7rem; padding: 3px 7px; }
 }
 </style>
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "Leeks Terminal", "url": "https://www.win9you.com", "description": "HK + US 即日鮮 AI 交易決策儀表板。200 隻港股 + 200 隻美股，4 維度評分 + 入場區間 / 止損 / 目標價。", "inLanguage": "zh-Hant", "publisher": {"@type": "Organization", "name": "Leeks Terminal", "url": "https://www.win9you.com"}}</script>
-
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "Home",
-      "item": "https://www.win9you.com/"
-    }
-  ]
-}
-</script>
 </head>
 <body>
-<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
-<h1>◆ Leeks Terminal</h1>
-<p class="last-updated">最後更新: 2026-07-10 23:55 HKT</p><p class="lede">HK + US 即日鮮 AI 交易決策儀表板。<b>200 隻港股 + 200 隻美股</b>，每日全自動 4 維度評分 + 入場區間 / 止損 / 目標價，一頁睇晒。</p><section class="value-prop"><h2>點解用 Leeks Terminal</h2><ul><li><b>全自動化</b> · 港股用 Tencent 即時報價、美股用 YFinance，Tushare + yfinance 數據源，每個交易日 16:00 HKT / 16:00 ET 自動更新一次。</li><li><b>4 維度評分</b> · 價值（5%）+ 質量（5%）+ 動量（70%）+ 訂單流（20%），Python 端確定性計分，唔靠 LLM 估分數。</li><li><b>實用信號</b> · 每個信號附帶入場區間、止損位、目標價、風險備註，唔係一句「看多」就算數。</li><li><b>即日鮮</b> · 嚴格 day-trade 模式，4 PM HKT / 4 PM ET 前必須平倉，唔過夜，唔留倉。</li></ul></section><section class="sample-preview"><h2>今日信號範例</h2><p class="dim">以下係 2026-07-09 報告入面揀出嘅 3 個代表信號，每個 score 100 分制，0=最差、100=最好。完整 200+200 隻股票睇 <a href="/dashboard/2026-07-09/all.html">2026-07-09 dashboard →</a></p><div class="sample-grid"><div class="sample-card"><div class="sample-header"><span class="sample-code">02208.HK</span><span class="sample-op">🟢 買入</span><span class="sample-score">58/100</span></div><p class="sample-summary">**02208.HK** · 評分 58 · 觀望 · 金風科技(02208.HK)現價9.76 HKD，今日回吐-2.59%，全日區間9.56-10.03，波幅約4.8%屬高波動交易日。近期受惠商業航天主題、長征十號乙運載火箭政策、《十五</p><a href="/dashboard/2026-07-09/reports/02208.HK.html" class="sample-link">完整 02208.HK 報告 →</a></div><div class="sample-card"><div class="sample-header"><span class="sample-code">00992.HK</span><span class="sample-op">🟡 觀望</span><span class="sample-score">77/100</span></div><p class="sample-summary">**00992.HK** · 評分 77 · 觀望 · 聯想集團(00992.HK)受惠於創紀錄財報、AI 服務器業務進展、PC 市佔率擴大及高盛上調目標價至 36 港元等多重利好消息催化，今日大升 7.71% 收報 24.04 HKD，盤</p><a href="/dashboard/2026-07-09/reports/00992.HK.html" class="sample-link">完整 00992.HK 報告 →</a></div></div></section><section class="how-it-works"><h2>點樣運作</h2><ol><li><b>揀日期</b> · 下面揀一個交易日，預設最新嗰日。</li><li><b>揀市場</b> · 全部 / 港股買入 / 港股賣出 / 美股買入 / 美股賣出 5 種 filter。</li><li><b>睇信號</b> · 每張 card 顯示 ticker + 評分 + 買入/觀望/賣出 + 一句總結。</li><li><b>入 detail page</b> · 撳「完整 XXX 詳細報告」睇技術指標 + 操作建議 + 風險備註。</li></ol></section><section class="data-source"><h2>數據來源 + 限制</h2><ul><li>HK 即時報價：Tencent qtimg (1-15 分鐘延遲，唔係 Level-2)</li><li>US 即時報價：YFinance / Alpaca (15-20 分鐘延遲)</li><li>新聞：Futu / Yahoo Finance RSS</li><li>基本面：YFinance (P/E、P/B、ROE、market cap)</li><li>覆蓋：港股 200 隻 (turnover ≥ 50M HKD) + 美股 200 隻 (S&P 500 + Nasdaq-100 樣本)</li></ul><p class="dim">⚠️ 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。</p></section><h2>選擇報告日期</h2><div class="date-picker"><a href="/dashboard/2026-07-09.html">2026-07-09</a><a href="/dashboard/2026-07-08.html">2026-07-08</a><a href="/dashboard/2026-07-07.html">2026-07-07</a><a href="/dashboard/2026-07-06.html">2026-07-06</a><a href="/dashboard/2026-07-03.html">2026-07-03</a><a href="/dashboard/2026-07-02.html">2026-07-02</a><a href="/dashboard/2026-07-01.html">2026-07-01</a><a href="/dashboard/2026-06-30.html">2026-06-30</a><a href="/dashboard/2026-06-29.html">2026-06-29</a><a href="/dashboard/2026-06-27.html">2026-06-27</a><a href="/dashboard/2026-06-26.html">2026-06-26</a></div><p>最新報告：<a href="/dashboard/2026-07-09/all.html">2026-07-09 →</a></p>
+<h1>◆ Leeks Terminal</h1><p class="lede">HK + US 即日鮮 AI 交易決策儀表板。<b>200 隻港股 + 200 隻美股</b>，每日全自動 4 維度評分 + 入場區間 / 止損 / 目標價，一頁睇晒。</p><section class="value-prop"><h2>點解用 Leeks Terminal</h2><ul><li><b>全自動化</b> · 港股用 Tencent 即時報價、美股用 YFinance，Tushare + yfinance 數據源，每個交易日 16:00 HKT / 16:00 ET 自動更新一次。</li><li><b>4 維度評分</b> · 價值（5%）+ 質量（5%）+ 動量（70%）+ 訂單流（20%），Python 端確定性計分，唔靠 LLM 估分數。</li><li><b>實用信號</b> · 每個信號附帶入場區間、止損位、目標價、風險備註，唔係一句「看多」就算數。</li><li><b>即日鮮</b> · 嚴格 day-trade 模式，4 PM HKT / 4 PM ET 前必須平倉，唔過夜，唔留倉。</li></ul></section><section class="sample-preview"><h2>今日信號範例</h2><p class="dim">以下係 2026-07-13 報告入面揀出嘅 3 個代表信號，每個 score 100 分制，0=最差、100=最好。完整 200+200 隻股票睇 <a href="/dashboard/2026-07-13/all.html">2026-07-13 dashboard →</a></p><div class="sample-grid"><div class="sample-card"><div class="sample-header"><span class="sample-code">02628.HK</span><span class="sample-op">🟢 買入</span><span class="sample-score">下日勝率 54%</span></div><p class="sample-summary">**02628.HK** · 下日勝率 54% · 買入 · 中國人壽（02628.HK）現價 27.52 HKD，今日急跌 -3.17%，高低區間達 5.23%（28.34-26.90），波幅充足具短炒條件。估值極低：PE TTM 僅 4.86</p><a href="/dashboard/2026-07-13/reports/02628.HK.html" class="sample-link">完整 02628.HK 報告 →</a></div><div class="sample-card"><div class="sample-header"><span class="sample-code">03750.HK</span><span class="sample-op">🟡 觀望</span><span class="sample-score">下日勝率 26%</span></div><p class="sample-summary">**03750.HK** · 下日勝率 26% · 觀望 · 03750.HK 寧德時代今日 (as_of_date) 大幅波動，全日 H/L 區間達 30.50 點（576.50-607.00），相對今日低位計幅度約 5.29%，屬高波幅交易日</p><a href="/dashboard/2026-07-13/reports/03750.HK.html" class="sample-link">完整 03750.HK 報告 →</a></div></div></section><section class="how-it-works"><h2>點樣運作</h2><ol><li><b>揀日期</b> · 下面揀一個交易日，預設最新嗰日。</li><li><b>揀市場</b> · 全部 / 港股買入 / 港股賣出 / 美股買入 / 美股賣出 5 種 filter。</li><li><b>睇信號</b> · 每張 card 顯示 ticker + 評分 + 買入/觀望/賣出 + 一句總結。</li><li><b>入 detail page</b> · 撳「完整 XXX 詳細報告」睇技術指標 + 操作建議 + 風險備註。</li></ol></section><section class="data-source"><h2>數據來源 + 限制</h2><ul><li>HK 即時報價：Tencent qtimg (1-15 分鐘延遲，唔係 Level-2)</li><li>US 即時報價：YFinance / Alpaca (15-20 分鐘延遲)</li><li>新聞：Futu / Yahoo Finance RSS</li><li>基本面：YFinance (P/E、P/B、ROE、market cap)</li><li>覆蓋：港股 200 隻 (turnover ≥ 50M HKD) + 美股 200 隻 (S&P 500 + Nasdaq-100 樣本)</li></ul><p class="dim">⚠️ 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。</p></section><h2>選擇報告日期</h2><div class="date-picker"><a href="/dashboard/2026-07-13.html">2026-07-13</a><a href="/dashboard/2026-07-10.html">2026-07-10</a><a href="/dashboard/2026-07-09.html">2026-07-09</a><a href="/dashboard/2026-07-08.html">2026-07-08</a><a href="/dashboard/2026-07-07.html">2026-07-07</a><a href="/dashboard/2026-07-06.html">2026-07-06</a><a href="/dashboard/2026-07-03.html">2026-07-03</a><a href="/dashboard/2026-07-02.html">2026-07-02</a><a href="/dashboard/2026-07-01.html">2026-07-01</a><a href="/dashboard/2026-06-30.html">2026-06-30</a><a href="/dashboard/2026-06-29.html">2026-06-29</a><a href="/dashboard/2026-06-27.html">2026-06-27</a><a href="/dashboard/2026-06-26.html">2026-06-26</a></div><p>最新報告：<a href="/dashboard/2026-07-13/all.html">2026-07-13 →</a></p>
+<p class="last-updated">最後更新: 2026-07-14 14:44 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>

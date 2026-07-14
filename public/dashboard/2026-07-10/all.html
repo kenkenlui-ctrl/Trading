@@ -1,0 +1,1006 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leeks Terminal · 2026-07-10 · 全部</title>
+  <meta name="description" content="Leeks Terminal 2026-07-10 AI dashboard — 全部">
+  <meta property="og:title" content="Leeks Terminal · 2026-07-10 · 全部">
+  <meta property="og:description" content="Leeks Terminal 2026-07-10 AI dashboard — 全部">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.win9you.com/dashboard/2026-07-10/all.html">
+  <meta property="og:image" content="https://www.win9you.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://www.win9you.com/og-image.png">
+  <meta name="twitter:title" content="Leeks Terminal · 2026-07-10 · 全部">
+  <meta name="twitter:description" content="Leeks Terminal 2026-07-10 AI dashboard — 全部">
+  <link rel="canonical" href="https://www.win9you.com/dashboard/2026-07-10/all.html">
+  <link rel="alternate" hreflang="zh-Hant" href="https://www.win9you.com/dashboard/2026-07-10/all.html">
+  <link rel="alternate" hreflang="x-default" href="https://www.win9you.com/dashboard/2026-07-10/all.html">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+    --bg: #ffffff;
+    --panel: #f3f4f6;
+    --panel-2: #e5e7eb;
+    --border: #e5e7eb;
+    --fg: #1a1d23;
+    --dim: #4b5563;
+    --bull: #15803d;
+    --bear: #b91c1c;
+    --amber: #92400e;
+    --blue: #2563eb;
+    --purple: #7c3aed;
+    --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Top nav (matches Streamlit worker injection) */
+nav.leeks-site-nav {
+    position: sticky; top: 0; z-index: 999;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+nav.leeks-site-nav .brand {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+}
+nav.leeks-site-nav a {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    padding: 4px 0;
+}
+nav.leeks-site-nav a.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+}
+
+/* Layout */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+h1 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin: 0 0 1rem;
+}
+h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
+
+/* Date selector (top of dashboard) — looks like Streamlit selectbox */
+.date-picker {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+}
+.date-picker a {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--fg);
+    font-size: 0.8rem;
+}
+.date-picker a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Disclaimer */
+.disclaimer {
+    background: #fef3c7;
+    border: 1px solid #b45309;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #78350f;
+}
+
+/* Cards (mirror Streamlit dashboard) */
+.card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+.card.bull { border-left-color: var(--bull); }
+.card.bear { border-left-color: var(--bear); }
+.card.amber { border-left-color: var(--amber); }
+
+/* Decision strip (Phase 4e, 2026-07-13) — splits 下日勝率 (WR) from 決策 (rule).
+   Two-column layout makes clear that the colored emoji comes from rule, not WR. */
+.decision-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin: 0 0 8px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+.strip-col {
+    padding: 5px 9px;
+    background: var(--panel);
+}
+.strip-decision { border-right: 1px solid var(--border); }
+.strip-label {
+    display: block;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+    margin-bottom: 1px;
+    font-weight: 600;
+}
+.strip-val {
+    display: inline;
+    font-weight: 700;
+    color: var(--fg);
+    font-size: 0.95rem;
+}
+.strip-rule {
+    display: inline;
+    color: var(--dim);
+    font-size: 0.78rem;
+    margin-left: 3px;
+}
+
+/* Full Results page — archive list (2026-07-13) */
+.archive-list {
+    margin: 2rem 0 0.5rem;
+    padding: 14px 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.archive-list h3 {
+    margin: 0 0 0.6rem;
+    font-size: 0.95rem;
+    color: var(--accent);
+}
+.date-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.date-grid a {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 0.78rem;
+    color: var(--dim);
+    background: var(--bg);
+    text-decoration: none;
+}
+.date-grid a:hover { border-color: var(--accent); color: var(--accent); }
+.date-grid a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Stats line */
+.stats {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.stats .bull { color: var(--bull); font-weight: 600; }
+.stats .bear { color: var(--bear); font-weight: 600; }
+.stats .amber { color: var(--amber); font-weight: 600; }
+
+/* Homepage value-prop + sample preview */
+.lede { font-size: 1.05rem; line-height: 1.65; max-width: 760px; }
+section h2 { margin-top: 2.4rem; }
+section ul, section ol { line-height: 1.75; max-width: 760px; }
+.dim { color: var(--dim); }
+
+.sample-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 1rem 0 1.4rem;
+    max-width: 900px;
+}
+.sample-card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 12px 14px;
+    background: #fafbfc;
+}
+.sample-header {
+    display: flex; gap: 8px; align-items: baseline; margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.sample-code { font-weight: 700; font-size: 1.05rem; }
+.sample-op { padding: 1px 6px; border-radius: 3px; background: var(--panel); font-size: 0.85rem; }
+.sample-score { margin-left: auto; font-weight: 600; color: var(--dim); font-size: 0.9rem; }
+.sample-summary { font-size: 0.85rem; line-height: 1.55; color: var(--fg); margin: 6px 0 8px; }
+.sample-link { font-size: 0.85rem; }
+
+/* Dashboard hub /dashboard/ */
+.dates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin: 1.5rem 0 2rem;
+    max-width: 1100px;
+}
+.date-card {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    background: #fafbfc;
+}
+.date-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 8px;
+}
+.date-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+.date-stats {
+    display: flex; gap: 12px; margin-bottom: 12px; font-size: 0.95rem;
+}
+.stat-bull { color: var(--bull); font-weight: 600; }
+.stat-amber { color: var(--amber); font-weight: 600; }
+.stat-bear { color: var(--bear); font-weight: 600; }
+.date-filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+}
+.filter-chip {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: #fff;
+    font-size: 0.82rem;
+    text-decoration: none;
+    color: var(--fg);
+    transition: background 0.15s;
+}
+.filter-chip:hover { background: var(--panel-2); text-decoration: none; }
+.filter-chip.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    font-weight: 600;
+}
+.filter-chip.primary:hover { background: #1d4ed8; }
+.hub-cta ul { list-style: none; padding: 0; }
+.hub-cta li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--panel);
+    font-size: 0.95rem;
+}
+
+/* R:R badge + timeframe hint inside cards */
+.rr-badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-right: 6px;
+    vertical-align: middle;
+    border: 1px solid currentColor;
+}
+.rr-good { color: var(--bull); background: rgba(21, 128, 61, 0.08); }
+.rr-ok   { color: var(--amber); background: rgba(146, 64, 14, 0.08); }
+.rr-bad  { color: var(--bear); background: rgba(185, 28, 28, 0.08); }
+.hint {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    vertical-align: middle;
+    color: var(--dim);
+    background: var(--panel-2);
+}
+.hint-buy { color: var(--bull); }
+.hint-sell {
+    color: var(--bear);
+    font-weight: 600;
+    background: rgba(185, 28, 28, 0.06);
+    border: 1px solid rgba(185, 28, 28, 0.3);
+}
+
+/* LLM confidence + caution chips on cards (Option B: surface LLM self-cautions) */
+.signal-chips {
+    margin: 4px 0 6px 0;
+    font-size: 0.7rem;
+    line-height: 1.4;
+}
+.conf-chip {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: 600;
+    margin-right: 5px;
+    vertical-align: middle;
+    border: 1px solid currentColor;
+}
+.conf-high { color: var(--bull); background: rgba(21, 128, 61, 0.08); }
+.conf-mid  { color: var(--amber); background: rgba(146, 64, 14, 0.08); }
+.conf-low  { color: var(--bear); background: rgba(185, 28, 28, 0.08); }
+.caution-chip {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: 500;
+    margin-right: 5px;
+    margin-bottom: 2px;
+    vertical-align: middle;
+    color: var(--bear);
+    background: rgba(185, 28, 28, 0.06);
+    border: 1px solid rgba(185, 28, 28, 0.25);
+}
+
+/* Signal warning banner on dashboard */
+.signal-warning {
+    margin: 0 0 1.2rem;
+    padding: 10px 14px;
+    background: rgba(146, 64, 14, 0.06);
+    border-left: 3px solid var(--amber);
+    border-radius: 4px;
+    font-size: 0.82rem;
+    line-height: 1.55;
+}
+.signal-warning .warn-strong {
+    color: var(--bear);
+    font-weight: 700;
+}
+.signal-warning a {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+/* Detail table */
+table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+}
+table.detail th, table.detail td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+table.detail th {
+    background: var(--panel-2);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+
+/* Methodology dim table */
+table.dim-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+}
+table.dim-table th, table.dim-table td {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+table.dim-table th {
+    background: var(--panel-2);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+table.dim-table td:first-child { font-family: 'JetBrains Mono', monospace; }
+table.dim-table td:nth-child(2) { font-weight: 600; color: var(--accent); text-align: center; }
+
+/* Card-link: appended after each summary card so reader can dive into detail */
+p.card-link {
+    margin: 6px 0 0;
+    text-align: right;
+    font-size: 0.78rem;
+}
+p.card-link a {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+p.card-link a:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Filter chips (alternative to filter dropdown) */
+.filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+}
+.filters span { color: var(--dim); margin-right: 4px; align-self: center; }
+.filters a {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--fg);
+}
+.filters a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Report detail page */
+.report-header h1 { margin: 0 0 0.5rem; }
+.report-header .meta {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 1rem;
+}
+.report-header .badge {
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    font-size: 0.75rem;
+    color: var(--fg);
+}
+.report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.signal { background: #1f6feb; color: #fff; border-color: #1f6feb; font-weight: 600; }
+.report-header .badge.conf { background: var(--panel-2); }
+
+.score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 1rem 0;
+}
+.score-breakdown .dim {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+}
+.score-breakdown .dim span {
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.score-breakdown .bar {
+    background: var(--border);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 6px 0;
+}
+.score-breakdown .bar .fill { height: 100%; }
+.score-breakdown .dim b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+}
+
+.levels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    margin: 1rem 0;
+}
+.levels > div {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+.levels span {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+.levels b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+}
+.levels b.bull { color: var(--bull); }
+.levels b.bear { color: var(--bear); }
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    main { padding: 16px 12px 48px; }
+    h1 { font-size: 1.15rem; }
+    .card { padding: 8px 10px; font-size: 0.8rem; }
+    .decision-strip { font-size: 0.75rem; }
+    .strip-val { font-size: 0.88rem; }
+    .strip-label { font-size: 0.6rem; }
+    nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
+    nav.leeks-site-nav a { font-size: 0.7rem; }
+    table.detail { font-size: 0.7rem; }
+    table.detail th, table.detail td { padding: 4px 6px; }
+    .date-grid a { font-size: 0.7rem; padding: 3px 7px; }
+}
+</style>
+  
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<main>
+<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="signal-warning"><b>🔬 Signal Explorer</b> · 每張 card 顯示單一 <b>下日勝率</b> (0-100%) — 越高 = 越大機會 next day 贏。基於 10-day 1,913 signals 嘅 logistic regression 校準，唔再睇 LLM 自評分。</div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-07-10/all.html" class="active">全部</a><a href="/dashboard/2026-07-10/hk-buy.html">港股買入</a><a href="/dashboard/2026-07-10/hk-sell.html">港股賣出</a><a href="/dashboard/2026-07-10/hk-hold.html">港股觀望</a><a href="/dashboard/2026-07-10/us-buy.html">美股買入</a><a href="/dashboard/2026-07-10/us-sell.html">美股賣出</a><a href="/dashboard/2026-07-10/us-hold.html">美股觀望</a><a href="/dashboard/2026-07-10/conservative-buy.html">🛡️ Conservative BUY</a><a href="/dashboard/2026-07-10/cyber-buy.html">🔐 Cyber BUY</a><a href="/dashboard/2026-07-10/strength-buy.html">⏸️ Strength BUY</a><a href="/dashboard/2026-07-10/bounce-buy.html">🌊 Bounce BUY</a></div><h1>🔬 Signal Explorer — 2026-07-10 (全部)</h1><b>2026-07-10</b> · 共分析 <b>399</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:27 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:372 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:0
+
+<h2>📊 分析結果摘要</h2>
+
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· ANTI-KNIFE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">71%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 賣出 → 觀望 <span style="opacity:0.75;">(ANTI-KNIFE)</span> · 下日勝率 71%</div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>02650.HK</b> · 下日勝率 71% · 02650.HK 挚达科技今日出現典型 blow-off top 走勢，股價由高位 29.12 HKD 大幅回落至 22.32 HKD，全日波幅達 29.44%，最終收報 23.10 HKD，較昨收 28.34 HKD 大跌 18.49%。盤面結構顯示早段衝高後急插水，疑似熱炒後獲利回吐。雖然近期新聞提及充電機器人業務、成立具身智能新公司及加入機器人谷生態聯盟等利好，但今日盤面已明顯轉弱，利好已被 price in。PE TTM 23.99 屬中等水平，PB 高達 73.47 反映賬面價值極低，質素面存疑。建議短線反彈做空博下試 22.32 HKD 今日低位支持。<p class="card-link"><a href="/dashboard/2026-07-10/reports/02650.HK.html">→ 完整 02650.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· ANTI-KNIFE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">70%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 賣出 → 觀望 <span style="opacity:0.75;">(ANTI-KNIFE)</span> · 下日勝率 70%</div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>02513.HK</b> · 下日勝率 70% · 02513.HK 智譜今日（2026/07/10）單日暴瀉 -19.29%，由昨收 2032.00 HKD 跌至現價 1640.00 HKD，全日 H/L 區間 24.51%（高位 1999.00 / 低位 1597.00），屬極端波動。成交額高達 132.6 億 HKD 但量比為 0.00×（5日均量數據缺失，疑因新上市不足5日）。PE TTM 19.78 屬合理，但 PB 3629.56 反映賬面權益近乎零，估值結構極度脆弱。MA20/50/100/200 全部 N/A，技術指標無參考，RSI 亦缺。日內交易首選做空反彈至 1750-1800 區間；若低位 1597.00 失守則切勿撈底。<p class="card-link"><a href="/dashboard/2026-07-10/reports/02513.HK.html">→ 完整 02513.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· ANTI-KNIFE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">65%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 賣出 → 觀望 <span style="opacity:0.75;">(ANTI-KNIFE)</span> · 下日勝率 65%</div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>06809.HK</b> · 下日勝率 65% · 瀾起科技(06809.HK) 2026/07/10 急跌 -8.70% 收 $350.40，全日高低區間達 19.41%（$344.40-$412.40）屬極端波動，板塊層面港股芯片股集體調整（兆易 -21%、天數智芯 -18%），負面 sentiment 濃厚。估值面 PE TTM 17.72 屬合理但 PB 高達 265.51（典型輕資產 IC 設計），量比 0.00× 反映買盤極弱。技術面缺乏 MA 數據，但現價 $350.40 已大幅低於 52週高位 $542.56（-35.4%），弱勢明顯。短線策略以做空為主，博反彈需嚴設止損，不建議接刀。<p class="card-link"><a href="/dashboard/2026-07-10/reports/06809.HK.html">→ 完整 06809.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· ANTI-KNIFE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">63%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 賣出 → 觀望 <span style="opacity:0.75;">(ANTI-KNIFE)</span> · 下日勝率 63%</div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>06088.HK</b> · 下日勝率 63% · 06088.HK 鴻騰精密 2026/07/10 收報 6.07 港元，大跌 5.01%，全日 H/L 區間 6.70/6.02 港元，波幅高達 11.20%，收市靠近全日低位 6.02 港元，沽壓沉重。新聞面連環負面：蘋果漲價恐慌傳導、死亡交叉訊號、蘋果概念股集體重挫，技術面與消息面同步轉弱。PE TTM 10.64 雖屬偏低，但 PB 443.34 數據明顯異常（市值不可能僅 443.34 港元），估值參考受限。短線部署以做空為主，候反彈至 6.20-6.35 港元沽出，止損 6.75 港元，目標 5.65 港元<p class="card-link"><a href="/dashboard/2026-07-10/reports/06088.HK.html">→ 完整 06088.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· ANTI-KNIFE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">63%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 賣出 → 觀望 <span style="opacity:0.75;">(ANTI-KNIFE)</span> · 下日勝率 63%</div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>00100.HK</b> · 下日勝率 63% · MINIMAX-W（00100.HK）週五急跌 9.68%，收 $268.60，主因公司完成新一輪 HK$160 億融資及配售 35,600,000 股新股，每股配售價僅 $268.00（低於前收 $297.40），加上首批限售股解禁，雙重供應衝擊令股價單日急挫。盤中區間 $248.40-$291.60，波幅達 16.08%，反映極端拋售。日線 MA20/MA50/MA100/MA200 全部 N/A，技術面缺失；PE 14.53 看似合理，但 PB 624.58 顯示股東權益極薄，估值結構脆弱。短期供需失衡未消化前，宜順勢做空或觀望，避免接刀。<p class="card-link"><a href="/dashboard/2026-07-10/reports/00100.HK.html">→ 完整 00100.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· ANTI-KNIFE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">63%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 賣出 → 觀望 <span style="opacity:0.75;">(ANTI-KNIFE)</span> · 下日勝率 63%</div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>06082.HK</b> · 下日勝率 63% · 06082.HK 壁仞科技 2026/07/10 大幅下挫 -7.71% 收 $44.98，全日區間 $44.60-$51.10（區間幅度 14.45%，極高波幅），成交額約 $15.6 億。技術指標 MA20/50/100/200 及 RSI14 全部缺失，僅可依靠 $44.60（即日低位）、$48.74（昨收）作關鍵位判斷。估值 PE TTM 13.34 表面合理，但 PB 608.96 反映股東權益極薄、屬高度投機性新股結構。新聞面以負面主導：港股解禁股尾盤下挫拖累其跌逾 6%，雖然『光電融合 AI 智算底座』三方合作及『靈睿智芯數億元融資參投』屬正面催化劑，但短期定增解禁拋壓顯著蓋過。日內交易建議以順勢做空為主、嚴控止損，極短線博技術性反彈為輔。<p class="card-link"><a href="/dashboard/2026-07-10/reports/06082.HK.html">→ 完整 06082.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· default</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">62%</span></div></div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>03986.HK</b> · 下日勝率 62% · 03986.HK 兆易創新 2026/07/10 經歷極端波動，當日由開盤高位 1000.00 HKD 急挫至 742.50 HKD，收跌 -21.05%，H/L 區間達 34.68%，屬極端高波幅。雖然半年報預增 1099% 屬重大利好，但股價反而暴跌，呈典型『buy the rumor, sell the fact』格局，顯示利好已被提前 price-in。PE TTM 27.38 屬合理，但 PB 246.90 極高，反映賬面資產極低；52週區間 219.15-1248.00 顯示現價仍處高位。技術指標全數缺失（MA20/50/100/200、RSI14 均 N/A），無 trend 依據。建議觀望，等待 700 HKD 附近確認支持或反彈至 820-850 HKD 再考慮做空博第二腳。<p class="card-link"><a href="/dashboard/2026-07-10/reports/03986.HK.html">→ 完整 03986.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· ANTI-KNIFE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">62%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 賣出 → 觀望 <span style="opacity:0.75;">(ANTI-KNIFE)</span> · 下日勝率 62%</div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>09696.HK</b> · 下日勝率 62% · 天齊鋰業 (09696.HK) 報 33.74 HKD，大跌 4.20%，為連續第 4 日下跌，3 日累計跌幅達 19.24%，鋰礦板塊持續走弱、A股兩日跌停潮延伸至港股。技術指標 MA20/50/100/200 全部 N/A，無法判斷中長期趨勢線位置，但 52 週高位 69.15 至今已回落約 51.2%，弱勢明顯。估值面 PE TTM 僅 5.39 看似便宜，但 PB 高達 79.68，反映股東權益接近零或技術上資不抵債，廉價估值實為周期下行情景。當日 H/L 區間 5.63%（35.50-33.60）波幅充足，適合短炒做空博弱勢延續。<p class="card-link"><a href="/dashboard/2026-07-10/reports/09696.HK.html">→ 完整 09696.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">60%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 60%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>01797.HK</b> · 下日勝率 60% · 01797.HK 东方甄選 2026/07/10 收 22.26 HKD，大跌 -4.79%，收近全日低位 22.16/23.58 區間下緣，日內 H/L 區間達 6.38% 屬極高波幅，但量比 0.00× 完全失效、缺乏 5日均量對比，短期資金參與度難以確認。PE TTM 6.07 屬深度低估值，但 PB 236.10 反映賬面權益極低、潛在資不抵債疑慮，估值呈現『低 PE 配異常高 PB』嘅特殊結構。技術指標（MA20/MA50/MA100/MA200、RSI14）全部 N/A，無法判斷趨勢排列。股價 22.26 處於 52週區間 13.54–53.70 中下段，弱勢明顯。建議日內交易者觀望為主，待方向明朗。<p class="card-link"><a href="/dashboard/2026-07-10/reports/01797.HK.html">→ 完整 01797.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· default</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">60%</span></div></div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>09630.HK</b> · 下日勝率 60% · 09630.HK 芯碁微裝 2026/07/10 單日暴瀉 13.62%，收報 376.60 HKD，今日區間 370.00-436.20 HKD 幅度達 17.58%，創 52週新低 370.00。PE TTM 僅 15.18 但 PB 48.35 反映資產極輕、估值溢價極高，技術面嚴重破壞。量比 0.00× 數據異常，無法確認資金流入方向。短線動能極度偏空，建議場外觀望，待 370.00 失守或確認企穩再行部署。<p class="card-link"><a href="/dashboard/2026-07-10/reports/09630.HK.html">→ 完整 09630.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· default</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">59%</span></div></div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>06651.HK</b> · 下日勝率 59% · 06651.HK 今日(2026/07/10)收 65.40 HKD，急跌 -14.79%，受配售 546.56 萬股新股 (折讓約 12%) 攤薄消息衝擊，淨籌約 3.95 億港元。盤中 H/L 區間 78.80/65.40，振幅 20.49% 屬極端波幅。PE TTM 17.46 表面合理，但 PB 高達 261.85 反映股本基礎極薄，配售後每股權益進一步稀釋。MA20/MA50/MA100/MA200 及 RSI14 全部 N/A，缺乏趨勢錨點；52 週區間 147.00/35.00 顯示股性極波動。跳空下跌趨勢明顯，但 20%+ 振幅同時提供 dead-cat-bounce 與 continuation short 雙向短炒機會，散戶宜觀望。<p class="card-link"><a href="/dashboard/2026-07-10/reports/06651.HK.html">→ 完整 06651.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· default</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">58%</span></div></div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>09903.HK</b> · 下日勝率 58% · 09903.HK 今日急挫 18.68%，收 482.20 HKD，貼近全日低位 476.60（高低區間 585.50/476.60 = 22.58%，屬極端波幅）。MA20/50/100/200 全部 N/A，欠缺中長線 trend 結構參考。估值面 PE TTM 18.36 屬中等，但 PB 1181.88 顯示股本基礎極薄弱（典型 IPO 初期或大額配股後之浮誇估值）。新聞兩極：美銀首評目標 HK$1013 屬長線正面催化，但今日「港股解禁股尾盤持續下挫」、「芯片股集體調整」為短線強力負面事件（03986 跌約 21%、06809 跌約 9%）。下一交易日 setup 為『貼近全日低位博超跌反彈做多』或『反彈乏力做空』兩向，極端波幅下風險管理重於方向。<p class="card-link"><a href="/dashboard/2026-07-10/reports/09903.HK.html">→ 完整 09903.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· ANTI-KNIFE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">57%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 賣出 → 觀望 <span style="opacity:0.75;">(ANTI-KNIFE)</span> · 下日勝率 57%</div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>02577.HK</b> · 下日勝率 57% · 02577.HK 英諾賽科今日收市前（16:08 HKT）已急跌 -6.22% 至 52.75 HKD，今日區間 52.50-59.50 極度波動（13.27%）。雖然新聞面全面向好（花旗指其 8 英寸 GaN 全球第一、東吳證券首予買入評級、車規獎項、專利勝訴），但股價逆消息急跌屬典型派發訊號。估值上 PE TTM 12.44 看似平，但 PB 達 474.42 反映股東權益嚴重縮水（資產負債表風險），Citi 點出毛利率僅 7.3%。今日日內交易時間近乎結束（16:08 接近 16:10 收市），建議觀望翌日反彈做空機會，主調看空。<p class="card-link"><a href="/dashboard/2026-07-10/reports/02577.HK.html">→ 完整 02577.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">57%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 57%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>06066.HK</b> · 下日勝率 57% · 06066.HK 中信建投證券 2026/07/10 收報 $11.86，全日急跌 -3.34%，收於全日低位 $11.86 附近，弱勢訊號明顯。雖然 PE TTM 僅 4.40 屬深度低估，但 PB 高達 149.56（數據異常或反映股東權益極薄），質素面存疑。技術指標 MA20/50/100/200 及 RSI 全部缺失，無法確認中線趨勢。52週區間為 $9.98-$15.38，現價距 52週低 $9.98 僅約 18.8%。量比 0.00× 數據異常，但全日波幅達 4.55% 為高波動日。建議觀望為主，待技術指標補齊及確認方向。<p class="card-link"><a href="/dashboard/2026-07-10/reports/06066.HK.html">→ 完整 06066.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">56%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 56%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>03661.HK</b> · 下日勝率 56% · 03661.HK 今日收報 102.50 HKD，大跌 4.30%，盤中最低 98.30 觸及 52 週新低，全日波幅高達 12.00%，反映極端動盪。市盈率僅 11.48 看似便宜，但市淨率 55.35 異常高（疑因大量回購壓縮股東權益），Morningstar 唱空形成負面催化。然而新加坡 GIC 增持至 13.09% 與 Point72 加倉屬正面資金流訊號。技術上 MA20/50/100/200 及 RSI 全部 N/A，缺乏趨勢錨點，量比 0.00× 數據異常，短線操作宜兩面睇、波段高賣低買為主。<p class="card-link"><a href="/dashboard/2026-07-10/reports/03661.HK.html">→ 完整 03661.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">55%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 55%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>00981.HK</b> · 下日勝率 55% · 中芯國際 (00981.HK) 2026/07/10 急跌 4.67% 至 $79.65，全日高低區間 $78.75–$87.60，幅度達 11.11% 屬極高波幅，受整個港股芯片板塊集體調整拖累，兆易創新跌近 20%、瀾起科技跌超 9%、華虹宏力跌超 5%，中芯未能倖免。PE TTM 10.59 看似便宜，但 PB 4790.20 極度異常（反映股東權益基數極低或資不抵債），估值參考性大降。技術指標 MA20/50/100/200 全部缺失，無從判斷中長期趨勢。量比 0.00× 數據異常，但實際成交額達 141.39 億 HKD，資金參與度極高。整體以悲觀看待，日內可考慮做空反彈或等待超跌後才有長線佈局價值。<p class="card-link"><a href="/dashboard/2026-07-10/reports/00981.HK.html">→ 完整 00981.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">54%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 54%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>00700.HK</b> · 下日勝率 54% · 騰訊 (00700.HK) 2026/07/10 收報 $460.20，全日跌 2.00%，H/L 區間 $458.80-$473.60，波幅 3.22% 屬高波幅具短炒空間。惟收市價 $460.20 貼近全日低位 $458.80（僅高 $1.40），弱勢收市訊號明顯。PE TTM 3.15 異常偏低（疑數據問題），PB 41843.76 與市值 $41843.76 HKD 明顯係數據錯誤，量比 0.00× 同樣缺參考價值。MA20/50/100/200 及 RSI14 全部 N/A，技術面訊號不足。建議先觀望，待反彈至 $468.00-$472.00 阻力區或失守 $458.80 確認方向再出手。<p class="card-link"><a href="/dashboard/2026-07-10/reports/00700.HK.html">→ 完整 00700.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· default</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">54%</span></div></div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>02476.HK</b> · 下日勝率 54% · 勝宏科技 (02476.HK) 2026/07/10 單日暴瀉 -12.87%，由昨收 264.20 HKD 直插至 230.20 HKD，全日 H/L 區間 275.00/228.40 HKD 波幅達 20.24%，創 52 週新低 228.40 HKD。雖然 PB 253.74 顯示資產結構異常、PE TTM 17.64 估值仍算中等，但英偉達 Rubin 架構延遲傳聞加上 PCB 板塊整體走弱，造成恐慌性拋售，全日成交額 25.24 億 HKD。日內操作建議觀望為主；若反彈至 245.00-252.00 HKD 弱勢區可短做，下方支持位睇 228.40 HKD（52週低）。<p class="card-link"><a href="/dashboard/2026-07-10/reports/02476.HK.html">→ 完整 02476.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">54%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 54%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>ORCL</b> · 下日勝率 54% · ORCL 現價 $140.64，今日跌 2.48%，收市接近 52 週新低 $136.48 之上約 3%，H/L 區間 4.56% 屬高波幅但量比僅 0.81×，跌勢未獲成交確認。股價同時跌穿 MA20 $160.18、MA100 $168.97、MA50 $183.07、MA200 $195.72，全部均線呈空頭排列。RSI14 12.43 處於極度超賣區域，反彈誘因存在但趨勢壓倒性偏空。PB 10.79 顯示估值並非真正平宜，PE TTM 24.08 中性偏貴。短線宜觀望，待方向明朗再部署。<p class="card-link"><a href="/dashboard/2026-07-10/reports/ORCL.html">→ 完整 ORCL 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">53%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 53%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>00522.HK</b> · 下日勝率 53% · ASMPT(00522.HK) 現價 187.90 HKD，今日收跌 4.62%，日內 H/L 區間 210.00/187.00 達 12.24%，屬極高波幅。股價收近全日低位 187.00，弱勢明顯。PE TTM 11.68 屬半導體設備股中合理水平；但 PB 788.07 與市值 788.07HKD 均明顯屬數據異常（ASMPT 實際市值應以數十億 HKD 計），MA20/50/100/200 及 RSI 全部缺失，需審慎解讀數據。半導體資本開支加速、長鑫海力士 IPO 擴產、摩根士丹利 OSAT+PCB 同步擴產皆為利好，但短期沽壓未盡，建議短線觀望待方向確認。<p class="card-link"><a href="/dashboard/2026-07-10/reports/00522.HK.html">→ 完整 00522.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· default</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">53%</span></div></div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>03750.HK</b> · 下日勝率 53% · 03750.HK 宁德時代今日（2026/07/10）大幅下挫 -7.92%，收報 587.00 HKD，今日區間 647.50-581.50 波幅達 11.24%，屬極高波幅交易日。PE TTM 10.35 顯示估值偏低，但 PB 1,281.42 異常高（疑因 H 股與 A 股股本結構口徑差異），52週區間 360.01-794.50，目前 587.00 處中位偏下。技術指標 MA20/50/100/200 全部缺失，量比 0.00× 無法確認資金方向。鑑於單日急跌且技術指標不全，建議觀望等待止跌訊號，激進者可博 582-587 反彈至 615 或等跌破 581.50 後追空。<p class="card-link"><a href="/dashboard/2026-07-10/reports/03750.HK.html">→ 完整 03750.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· default</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">53%</span></div></div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>01288.HK</b> · 下日勝率 53% · 01288.HK 農業銀行今日完全持平收於 5.49 HKD（+0.00%），日內區間 5.46-5.55 HKD 僅 1.64%，波幅未達日內短炒 3% 門檻，燃料不足。所有移動平均線（MA20/50/100/200）及 RSI14 均無數據，技術面完全缺失方向指引。量比 0.00× 反映今日成交量嚴重萎縮（51.75M 股），缺乏資金參與確認。PE TTM 1.64 雖然極度便宜（國有大型銀行特性），但 PB 1687.56 明顯為數據異常（單位/口徑問題），需以現價 5.49 為準。綜合而言，今日為低波幅、低成交、無方向嘅牛皮市，日內可交易性極低，建議觀望。<p class="card-link"><a href="/dashboard/2026-07-10/reports/01288.HK.html">→ 完整 01288.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· default</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">53%</span></div></div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>07709.HK</b> · 下日勝率 53% · 07709.HK（XL二南方海力士，2倍槓桿ETF）今日急跌 -6.88%，現價 89.40 HKD 貼近全日低位 89.32，盤中高低區間達 10.67%（高波幅短炒燃料充足）。PE TTM 9.94 看似便宜，但 PB 691.96 因槓桿ETF追蹤單一股票結構所致，並非估值訊號。MA20/MA50/MA100/MA200/RSI 全部 N/A，技術面缺乏參考錨點。量比 0.00× 數據異常（需留意），但成交額仍達 101.8 億 HKD 顯示交投活躍。52週區間 8.42–193.65，目前處於中下區域。短線可順勢做空博繼續下行，亦可博超賣反彈，雙向 setup 成立，但技術面缺失令<p class="card-link"><a href="/dashboard/2026-07-10/reports/07709.HK.html">→ 完整 07709.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· default</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">53%</span></div></div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>00189.HK</b> · 下日勝率 53% · 東岳集團(00189.HK)於 2026/07/10 急跌 8.99%，收報 13.77 HKD，全日波幅 12.56%（高位 15.39 / 低位 13.66），屬典型「盈喜後倒跌」sell the news 格局。中期純利預增逾 31% 嘅基本面利好完全被沽盤消化，加上子公司未來材料撤回科創板 IPO 申請、沽空金額居原材料行業前三，負面訊號壓過正面催化。PE TTM 11.43 估值尚算合理，但 PB 238.59 數據明顯異常（疑為市值欄位數據錯置），需以審慎態度解讀。技術指標 MA20/50/100/200、RSI 全部 N/A，量比 0.00× 數據存疑，趨勢判斷受限。建議觀望至 13.66 低位失守或 15.13 收復後再部署，雙向短炒皆有機會但勝算一般。<p class="card-link"><a href="/dashboard/2026-07-10/reports/00189.HK.html">→ 完整 00189.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">52%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 52%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>ACN</b> · 下日勝率 52% · ACN 收報 $135.23，今日下跌 -2.75%，收於全日低位 $134.85 附近，全日波幅 5.62% 屬高波幅短炒燃料。技術上股價 $135.23 全面跌破 MA20 $139.84 / MA50 $162.19 / MA100 $180.29 / MA200 $218.17，呈標準空頭排列；YTD 跌幅 -51.89%，PE TTM 10.80 倍雖屬估值便宜區，但同時反映盈利預期持續下修。三家券商（摩根士丹利由 $177 降至 $130、Susquehanna 由 $186 降至 $140、德意志銀行由 $199 降至 $140）相繼下調目標價，疊加 $45 億票據發行稀釋憂慮，新聞面極度負面。建議觀望等待方向確認，或以做空為主、做多為輔之區間操作。<p class="card-link"><a href="/dashboard/2026-07-10/reports/ACN.html">→ 完整 ACN 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· default</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">52%</span></div></div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>02338.HK</b> · 下日勝率 52% · 02338.HK 濰柴動力今日（2026/07/10）收報 34.26 HKD，較昨收 34.90 跌 1.83%，盤中區間 35.68-34.08 達 4.67%，屬高波幅日內，盤面呈現「開高後遭拋售、收近全日低位」嘅失敗反彈形態。技術指標 MA20/MA50/MA100/MA200 及 RSI14 全部缺失，無法確認中短期趨勢，量比報 0.00× 屬數據異常。估值面 PE TTM 4.58 非常低，反映傳統重資產內燃機股嘅折讓，但 PB 665.69 為極端異常數值（疑似股東權益口徑或單位問題），需警惕數據可信度。整體數據基礎薄弱，建議觀望為主，僅可小注順勢做空博日內延續弱勢。<p class="card-link"><a href="/dashboard/2026-07-10/reports/02338.HK.html">→ 完整 02338.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">52%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 52%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>01772.HK</b> · 下日勝率 52% · 01772.HK 贛鋒鋰業今日 (2026/07/10) 大跌3.39%，收報41.62 HKD，全日區間41.30-43.56 HKD，波幅5.43%屬高波幅交易日，提供短炒燃料但方向偏空。PE TTM 5.25表面便宜，但PB高達201.07屬極端異常，幾乎肯定反映股東權益接近零或為負（資不抵債疑慮），估值訊號失真。鋰礦板塊持續走弱、貝萊德由8.0%減持H股、公司轉型卡半山腰等新聞面偏負面。MA20/MA50/MA100/MA200及RSI14全部N/A，量比0.00×數據疑異常，技術面能見度極低。短線傾向做空博弱勢延續，但因數據殘缺<p class="card-link"><a href="/dashboard/2026-07-10/reports/01772.HK.html">→ 完整 01772.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">52%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 52%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>01205.HK</b> · 下日勝率 52% · 中信資源(01205.HK)收報 0.47 HKD，跌 2.08%，股價已大幅低於 52週高位 0.65（約 -27.7%），亦低於 52週低位 0.37 上方 27%。PE TTM 雖僅 2.08 看似便宜，但 PB 高達 36.93 反映賬面值極低或股東權益受壓，估值訊號矛盾。技術指標 MA20/50/100/200 及 RSI14 全部缺失，無法確認趨勢。量比 0.00× 顯示當日成交遠遜 5 日均量，資金參與度極低。疊加主要股東陳健擬減持 10.01% 股權嘅利空，整體短線偏弱但流動性差，難以執行，策略上以觀望為主。<p class="card-link"><a href="/dashboard/2026-07-10/reports/01205.HK.html">→ 完整 01205.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· default</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">52%</span></div></div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>02676.HK</b> · 下日勝率 52% · 02676.HK 纳芯微週五 (2026/07/10) 急跌 7.25%，收報 184.30 HKD，貼近全日低位 182.40 HKD，全日波幅高達 12.70%，反映當日沽壓極重。PE TTM 11.78 屬偏低估值，但 PB 高達 37.04 反映資產基礎薄弱，且 MA20/50/100/200 及 RSI14 全部缺失，技術面無從判斷趨勢支撐。量比 0.00× 數據異常（可能系統未能計算），資金面訊號不可靠。新聞面兩極：摩通增持 18.58 萬股於 203.29 HKD（正面），但 7/15 將有 88.18 萬股限制性股票解禁（潛在沽壓）。短線動能極弱，建議觀望，待 182.40 HKD 跌破後或反彈至 198-205 區間再尋機會。<p class="card-link"><a href="/dashboard/2026-07-10/reports/02676.HK.html">→ 完整 02676.HK 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--amber);font-weight:600;">🟡</span> 觀望</span><span class="strip-rule">· default</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">52%</span></div></div><span style="color:var(--amber);font-weight:600;">🟡</span> <b>06613.HK</b> · 下日勝率 52% · 06613.HK 蓝思科技今日急跌 -5.82%，收報 22.00 HKD，全日區間 21.62-24.10 波幅達 11.27%，屬極高波幅日。PE TTM 10.62 表面平但 PB 異常高達 66.35，反映資產質素或結構性問題；技術指標 MA20/50/100/200 及 RSI 全部缺失，趨勢判斷困難。量比 0.00× 數據異常（疑源頭錯誤），但 5.59 億 HKD 成交額絕對值不算細。負面新聞主導（光伏板塊承壓、領跌光通信），催化劑匱乏。短線建議觀望，待 MA 數據齊全及量比正常化再部署。<p class="card-link"><a href="/dashboard/2026-07-10/reports/06613.HK.html">→ 完整 06613.HK 詳細報告</a></p></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+<em>生成時間: 2026-07-14 14:39:40 · LLM: openai/MiniMax-M3</em>
+
+<div style="text-align:center;margin:1.2rem 0 0.4rem;padding:10px 16px;background:var(--panel);border:1px dashed var(--border);border-radius:4px;font-size:0.85rem;color:var(--dim);">👇 <b>完整 30+ 隻股票</b>嘅 score + 操作 + entry/stop/target → <a href="/full-results.html">Full Results</a></div>
+<div style="text-align:center;margin:1.5rem 0 0.5rem;padding:14px 18px;background:var(--panel);border:1px dashed var(--border);border-radius:4px;font-size:0.88rem;">👇 想睇 <b>全部 399 隻股票</b>嘅 score + 操作 + entry/stop/target？ 去 <a href="/full-results/2026-07-10.html"><b>Full Results (2026-07-10)</b></a></div>
+<p class="last-updated">最後更新: 2026-07-14 14:39 HKT</p>
+</main>
+<footer>
+  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>

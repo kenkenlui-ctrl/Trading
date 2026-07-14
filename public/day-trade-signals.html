@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>即日鮮交易信號 · Day Trade AI Signals | Leeks Terminal</title>
-  <meta name="description" content="即日鮮交易信號 — AI 港股 9:30 HKT + 美股 9:30 ET 開市前自動輸出 BUY/SELL/HOLD 信號，4 維度評分 (value/quality/momentum/order_flow) + 入場區間 + 止損 + 目標價。Rule-based Conservative BUY filter verified 61.5% WR over 10-day audit。即時信號 free 試用。">
+  <meta name="description" content="即日鮮交易信號 — AI 港股 9:30 HKT + 美股 9:30 ET 開市前自動輸出，4 維度評分 + 入場區間 + 止損 + 目標價。">
   <meta property="og:title" content="即日鮮交易信號 · Day Trade AI Signals | Leeks Terminal">
   <meta property="og:description" content="即日鮮交易信號 — AI 港股 9:30 HKT + 美股 9:30 ET 開市前自動輸出，4 維度評分 + 入場區間 + 止損 + 目標價。">
   <meta property="og:type" content="website">
@@ -132,6 +132,81 @@ h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
 .card.bull { border-left-color: var(--bull); }
 .card.bear { border-left-color: var(--bear); }
 .card.amber { border-left-color: var(--amber); }
+
+/* Decision strip (Phase 4e, 2026-07-13) — splits 下日勝率 (WR) from 決策 (rule).
+   Two-column layout makes clear that the colored emoji comes from rule, not WR. */
+.decision-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin: 0 0 8px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+.strip-col {
+    padding: 5px 9px;
+    background: var(--panel);
+}
+.strip-decision { border-right: 1px solid var(--border); }
+.strip-label {
+    display: block;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+    margin-bottom: 1px;
+    font-weight: 600;
+}
+.strip-val {
+    display: inline;
+    font-weight: 700;
+    color: var(--fg);
+    font-size: 0.95rem;
+}
+.strip-rule {
+    display: inline;
+    color: var(--dim);
+    font-size: 0.78rem;
+    margin-left: 3px;
+}
+
+/* Full Results page — archive list (2026-07-13) */
+.archive-list {
+    margin: 2rem 0 0.5rem;
+    padding: 14px 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.archive-list h3 {
+    margin: 0 0 0.6rem;
+    font-size: 0.95rem;
+    color: var(--accent);
+}
+.date-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.date-grid a {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 0.78rem;
+    color: var(--dim);
+    background: var(--bg);
+    text-decoration: none;
+}
+.date-grid a:hover { border-color: var(--accent); color: var(--accent); }
+.date-grid a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
 
 /* Stats line */
 .stats {
@@ -421,6 +496,7 @@ p.card-link a:hover {
     color: var(--fg);
 }
 .report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.signal { background: #1f6feb; color: #fff; border-color: #1f6feb; font-weight: 600; }
 .report-header .badge.conf { background: var(--panel-2); }
 
 .score-breakdown {
@@ -497,69 +573,22 @@ footer {
     main { padding: 16px 12px 48px; }
     h1 { font-size: 1.15rem; }
     .card { padding: 8px 10px; font-size: 0.8rem; }
+    .decision-strip { font-size: 0.75rem; }
+    .strip-val { font-size: 0.88rem; }
+    .strip-label { font-size: 0.6rem; }
     nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
     nav.leeks-site-nav a { font-size: 0.7rem; }
     table.detail { font-size: 0.7rem; }
     table.detail th, table.detail td { padding: 4px 6px; }
+    .date-grid a { font-size: 0.7rem; padding: 3px 7px; }
 }
 </style>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "即日鮮交易信號 · Day Trade AI Signals | Leeks Terminal", "description": "AI 即日鮮交易信號 — 港股 9:30 HKT + 美股 9:30 ET 開市前自動出，4 維度評分 + 入場區間 + 止損 + 目標。", "url": "https://www.win9you.com/day-trade-signals.html", "inLanguage": "zh-Hant", "isPartOf": {"@type": "WebSite", "name": "Leeks Terminal", "url": "https://www.win9you.com"}}</script>
-
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": "即日鮮交易信號 · Day Trade AI Signals | Leeks Terminal",
-  "description": "即日鮮交易信號 — AI 港股 9:30 HKT + 美股 9:30 ET 開市前自動輸出，4 維度評分 + 入場區間 + 止損 + 目標價。",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://www.win9you.com/day-trade-signals.html"
-  },
-  "author": {
-    "@type": "Organization",
-    "name": "Leeks Terminal",
-    "url": "https://www.win9you.com"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "Leeks Terminal",
-    "url": "https://www.win9you.com",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://www.win9you.com/og-image.png"
-    }
-  },
-  "datePublished": "2026-07-10",
-  "dateModified": "2026-07-10",
-  "inLanguage": "zh-Hant"
-}
-</script>
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "Home",
-      "item": "https://www.win9you.com/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "Day Trade Signals",
-      "item": "https://www.win9you.com/day-trade-signals.html"
-    }
-  ]
-}
-</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "即日鮮交易信號 · Day Trade AI Signals | Leeks Terminal", "description": "即日鮮交易信號 — AI 港股 9:30 HKT + 美股 9:30 ET 開市前自動輸出，4 維度評分 + 入場區間 + 止損 + 目標價。", "url": "https://www.win9you.com/day-trade-signals.html", "inLanguage": "zh-Hant", "isPartOf": {"@type": "WebSite", "name": "Leeks Terminal", "url": "https://www.win9you.com"}}</script>
 </head>
 <body>
-<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
 <h1>即日鮮交易 AI 信號</h1>
-<p class="last-updated">最後更新: 2026-07-10 23:55 HKT</p>
 <p class="lede">Leeks Terminal 即日鮮交易信號 — 港股每朝早 9:00 HKT / 美股每朝早 9:00 ET 開市前自動出，
 涵蓋 HK 200 + US 200 隻主流股票，4 維度評分 + 入場區間 / 止損位 / 目標價，唔使睇晒 200 隻 K 線。</p>
 
@@ -684,7 +713,8 @@ LLM 只負責輸出 dim 嘅 raw score (0-100)，總分由 Python 計，避開 LL
 <li><b>30 日後 review</b> · 如果 paper-trade hit-rate ≥ 50%、profit factor ≥ 1.5，先開始 real money，倉位 1% 開始，慢慢加</li>
 </ol>
 <p>Day trade 唔係「學完即用」嘅工具 — 係 <b>6 個月 - 1 年嘅紀律訓練</b>。如果你想 1 星期變大師，呢個市場唔適合你。詳細 risk management + 心理質素 setup，睇 <a href="/methodology.html">methodology 頁</a>。</p>
-<section class="cta"><h2>睇今日 (2026-07-09) 完整信號</h2><p>200 隻港股 / 美股 4 維度評分 + 入場 / 止損 / 目標齊全。</p><p><a class="btn" href="/dashboard/2026-07-09/all.html">→ 開 2026-07-09 dashboard</a></p></section>
+<section class="cta"><h2>睇今日 (2026-07-10) 完整信號</h2><p>200 隻港股 / 美股 4 維度評分 + 入場 / 止損 / 目標齊全。</p><p><a class="btn" href="/dashboard/2026-07-10/all.html">→ 開 2026-07-10 dashboard</a></p></section>
+<p class="last-updated">最後更新: 2026-07-14 14:39 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>

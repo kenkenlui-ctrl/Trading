@@ -133,6 +133,81 @@ h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
 .card.bear { border-left-color: var(--bear); }
 .card.amber { border-left-color: var(--amber); }
 
+/* Decision strip (Phase 4e, 2026-07-13) — splits 下日勝率 (WR) from 決策 (rule).
+   Two-column layout makes clear that the colored emoji comes from rule, not WR. */
+.decision-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin: 0 0 8px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+.strip-col {
+    padding: 5px 9px;
+    background: var(--panel);
+}
+.strip-decision { border-right: 1px solid var(--border); }
+.strip-label {
+    display: block;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+    margin-bottom: 1px;
+    font-weight: 600;
+}
+.strip-val {
+    display: inline;
+    font-weight: 700;
+    color: var(--fg);
+    font-size: 0.95rem;
+}
+.strip-rule {
+    display: inline;
+    color: var(--dim);
+    font-size: 0.78rem;
+    margin-left: 3px;
+}
+
+/* Full Results page — archive list (2026-07-13) */
+.archive-list {
+    margin: 2rem 0 0.5rem;
+    padding: 14px 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.archive-list h3 {
+    margin: 0 0 0.6rem;
+    font-size: 0.95rem;
+    color: var(--accent);
+}
+.date-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.date-grid a {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 0.78rem;
+    color: var(--dim);
+    background: var(--bg);
+    text-decoration: none;
+}
+.date-grid a:hover { border-color: var(--accent); color: var(--accent); }
+.date-grid a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
 /* Stats line */
 .stats {
     font-size: 0.9rem;
@@ -421,6 +496,7 @@ p.card-link a:hover {
     color: var(--fg);
 }
 .report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.signal { background: #1f6feb; color: #fff; border-color: #1f6feb; font-weight: 600; }
 .report-header .badge.conf { background: var(--panel-2); }
 
 .score-breakdown {
@@ -497,16 +573,20 @@ footer {
     main { padding: 16px 12px 48px; }
     h1 { font-size: 1.15rem; }
     .card { padding: 8px 10px; font-size: 0.8rem; }
+    .decision-strip { font-size: 0.75rem; }
+    .strip-val { font-size: 0.88rem; }
+    .strip-label { font-size: 0.6rem; }
     nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
     nav.leeks-site-nav a { font-size: 0.7rem; }
     table.detail { font-size: 0.7rem; }
     table.detail th, table.detail td { padding: 4px 6px; }
+    .date-grid a { font-size: 0.7rem; padding: 3px 7px; }
 }
 </style>
   
 </head>
 <body>
-<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
 <div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="signal-warning"><b>🛡️ Conservative BUY</b> · 6-day trace evidence (mean-reversion + non-tech + m 30-70 + score < 70):
             <br>· <b>Filter rules</b>: 前日 -3% to 0% 跌勢 · sector ≠ Tech/Comms · momentum 30-70 · sentiment ≠ 樂觀 · score < 70
@@ -516,22 +596,23 @@ footer {
 
 <h2>📊 分析結果摘要</h2>
 
-<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-ok">🛡️ R:R 1.1</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-low">信心 低</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>DHR</b> · 評分 49 · DHR Danaher 今日收報 $193.62，急跌 -2.18%，全日區間 $189.78-$196.60，幅度達 3.52%（高波幅，短炒燃料充足），收價位於全日區間下半部（距日低 $189.78 僅 $3.84，距日高 $196.60 仍有 $2.98），確認當日弱勢。近 52週區間 $160.93-$242.80 中段偏下，反映中期動能轉差。PE TTM 37.56 偏貴，PB 2.60 中性，估值無安全邊際。股息率 82.00% 為數據異常（DHR 實際 yield 遠低於此），需謹慎對待。今日走勢屬「急跌+高波幅」，兩個方向都有 setup：$189.78 附近博均值回歸做多，或 $196.60-$197.93 阻力區做空博延續弱勢。<p class="card-link"><a href="/dashboard/2026-07-06/reports/DHR.html">→ 完整 DHR 詳細報告</a></p></div>
-<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 1.0</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>ELV</b> · 評分 46 · ELV 現價 $408.17，今日跌 2.33%，盤中區間 $406.91-$418.00，幅度約 2.65%（略低於 3% 高波幅門檻）。股價仍處 $273.71-$427.19 52週區間高位（約 95.6% 位置），長線趨勢仍偏多。Cantor Fitzgerald 維持買入並調目標至 $450（隱含上行 ~10.3%），但 PE TTM 17.76、PB 2.07 估值中性偏高，股息率 164% 數據異常需審慎。短炒策略：留意 $406.91 今日低位能否守住，守穩可博反彈至 $418 否則不排除假突破後回補至 $400 以下。<p class="card-link"><a href="/dashboard/2026-07-06/reports/ELV.html">→ 完整 ELV 詳細報告</a></p></div>
-<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-good">🛡️ R:R 3.6</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-low">信心 低</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>AMGN</b> · 評分 43 · AMGN現價$366.44，今日跌-2.06%，高位$373.98/低位$359.47，H/L區間4.04%屬高波幅，短炒燃料充足。股價距52週高位$391.29僅-6.3%，長線處於強勢區，但Truist目標價$340、Mizuho目標價$303均低於現價，分析師共識偏淡。PE TTM 25.63屬合理，PB 21.62偏高（生物科技股特性），股息率275%明顯係數據異常不予採信。缺乏MA20/MA50/MA200/RSI數據，趨勢確認度不足，建議觀望或短炒兩向。日內策略：上方$370-$374.15（前收附近）做空博回$360；下方$359-$362（今日低位區）吸納做多博$373。<p class="card-link"><a href="/dashboard/2026-07-06/reports/AMGN.html">→ 完整 AMGN 詳細報告</a></p></div>
-<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-ok">🛡️ R:R 1.3</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-mid">信心 中</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>RCL</b> · 評分 41 · RCL 現價 $287.78，今日急跌 -2.88%，H/L 區間 285.33-299.00，波幅約 4.79% 屬高波幅，提供短炒燃料。今日收近全日低位 $285.33 附近，技術面偏弱，但 BMO/巴克萊/富國三大行均維持買入評級，目標價 $340-$370，潛在升幅仍大。PE 17.21 屬合理水平，PB 7.72 偏高。股息率 177% 明顯異常（疑為一次性特殊股息或數據異常）。日內交易可博反彈做多（目標 $295-$299），亦可等反彈至 $293-$296 區間做空博繼續下試 $280。<p class="card-link"><a href="/dashboard/2026-07-06/reports/RCL.html">→ 完整 RCL 詳細報告</a></p></div>
-<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-ok">🛡️ R:R 1.7</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-low">信心 低</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>HD</b> · 評分 39 · Home Depot (HD) 今日收報 $350.65，急跌 -2.03%，從前收 $357.90 一路下挫至日內低位 $345.80，H/L 區間 $345.80-$358.85 幅度約 3.65%，屬於高波幅交易日，提供短炒燃料。技術上股價明顯受壓於前收 $357.90 之下，但 $345.80 為當日重要支持，52週區間 $289.10-$426.75 中位偏低。PE 24.87 估值中性，PB 24.81 偏高（HD 大量回購導致賬面價值偏低所致），股息率 266% 明顯為數據異常，實際應約 2.6%。短線建議觀望 $345.80 支持是否守穩，破位可追空。<p class="card-link"><a href="/dashboard/2026-07-06/reports/HD.html">→ 完整 HD 詳細報告</a></p></div>
-<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-ok">🛡️ R:R 1.6</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-low">信心 低</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>MDLZ</b> · 評分 37 · MDLZ 現價 $59.17，今日急跌 -2.86%，盤中區間 $58.88-$61.08（約 3.7% 區間），屬高波幅交易日。股價已較 52 週高位 $71.15 回落約 16.8%，但仍高於 52 週低位 $51.20 約 15.6%。估值方面 PE TTM 29.38 偏高（消費必需品類偏貴），PB 3.00 中性，股息率數據 332.00% 明顯異常（實際應為約 3.32%）。美銀證券維持買入評級，目標價 $67，較現價有約 13.2% 上行空間。今日大跌配合高波幅提供短炒燃料，但缺少 MA/RSI/成交量比等關鍵指標，入場需謹慎。<p class="card-link"><a href="/dashboard/2026-07-06/reports/MDLZ.html">→ 完整 MDLZ 詳細報告</a></p></div>
-<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-ok">🛡️ R:R 1.8</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-low">信心 低</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>AMT</b> · 評分 36 · AMT 現價 $162.11，今日下跌 -2.36%，收市前正測試 52週低位 $160.06（與今日低位完全重疊），技術面明顯轉弱。今日 H/L 區間 $160.06-$165.79，幅度約 3.53%，屬高波幅交易日，短炒燃料充足。PE TTM 26.65 偏高，PB 21.86 對 REIT 而言屬常見（資產淨值較高），但股價偏離 52週高位 $234.33 達 -30.8%，估值修復空間與下行壓力並存。股息率顯示 422% 明顯係數據錯誤（AMT 實際股息率約 3-4%），估值可信度低。缺乏 MA20/MA50/RSI 等技術指標，難以判斷中期趨勢，建議只做日內嚴守止損。<p class="card-link"><a href="/dashboard/2026-07-06/reports/AMT.html">→ 完整 AMT 詳細報告</a></p></div>
-<div class="card"><div style="margin-bottom:4px;"> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-low">信心 低</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>ABBV</b> · 評分 34 · ABBV 現價 $254.76，今日跌 -2.42%，盤中由 $260.92 跌至 $253.60，波幅 2.80%，貼近高波幅門檻。股價距離 52 週高位 $261.64 僅約 2.6%，屬於高位回吐格局。PE TTM 高達 124.83 倍遠超醫藥板塊均值，PB -67.60 反映股東權益為負，估值面極度昂貴。MA20/50/100/200 全部缺失無從判斷中短期 trend；股息率 272.00% 明顯為數據異常。滙豐將目標價上調至 $300 屬中長期利好，限制短線下行空間。整體即日偏弱，但波幅足夠支援雙向短炒。<p class="card-link"><a href="/dashboard/2026-07-06/reports/ABBV.html">→ 完整 ABBV 詳細報告</a></p></div>
-<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.4</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-low">信心 低</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>DIS</b> · 評分 34 · DIS 現價 97.41 USD，今日下跌 -2.10%，收於 97.02-99.44 區間下端，距離 52週低位 92.19 僅約 5.65%，弱勢明顯。PE TTM 為 15.57、PB 為 1.56，估值處於合理區間但無明顯折讓。股息率數據 154% 屬明顯異常（Disney 實際股息率約 0.9-1.0%），需視作數據瑕疵處理。今日跌幅 -2.10% 為當日方向性下行，但因接近 52週低位，下方承接力存疑。短線建議觀望，等待 92.19 附近是否破位或出現反轉訊號再行部署。<p class="card-link"><a href="/dashboard/2026-07-06/reports/DIS.html">→ 完整 DIS 詳細報告</a></p></div>
-<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-ok">🛡️ R:R 1.6</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-low">信心 低</span><span class="caution-chip caution-valuation">⚠️ 估值貴</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CVS</b> · 評分 32 · CVS 現價 $102.08，今日下跌 2.52%，雖然基本面新聞正面（CFRA 上調至買入、富國銀行目標價由 $102 升至 $103、Q1 業績 EPS 超預期 19% 並上調 2026 全年指引），但股價仍逆新聞下跌 $2.64，出現明顯負面背離。估值偏高，PE TTM 44.78 屬昂貴水平，PB 1.71 中性，股息率 255% 數據明顯異常（CVS 歷史派息率約 3-4%）。股價位處 52 週高位 $106.15 下方，向上空間有限；短線 $105.38（今日高位）為即時阻力，$101.78（今日低位）為關鍵支持。缺乏 MA20/MA50/RSI 數據，技術面判斷受限，建議觀望等待更清晰 setup。<p class="card-link"><a href="/dashboard/2026-07-06/reports/CVS.html">→ 完整 CVS 詳細報告</a></p></div>
-<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-bad">🛡️ R:R 0.9</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-low">信心 低</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>UBER</b> · 評分 32 · UBER 今日下挫 2.70% 至 $72.42，日內區間 $71.86-$74.56，幅度約 3.76% 屬高波幅，短炒燃料充足但方向偏空。股價由 52 週高位 $101.99 回落近 29%，明顯處於中期下降通道，惟逼近 52 週低 $67.19 附近存技術反彈誘因。PE TTM 18.00 屬合理區間，PB 6.12 反映輕資產平台溢價。由於 MA20/MA50/MA200 及 RSI 數據缺失，趨勢確認度不足，建議控制倉位、嚴設止損，做短不做長。<p class="card-link"><a href="/dashboard/2026-07-06/reports/UBER.html">→ 完整 UBER 詳細報告</a></p></div>
-<div class="card"><div style="margin-bottom:4px;"> <span class="rr-badge rr-ok">🛡️ R:R 1.2</span> <span class="hint hint-buy">multi-day hold OK</span></div><div class="signal-chips"><span class="conf-chip conf-low">信心 低</span></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>BMY</b> · 評分 31 · BMY 今日收報 $56.70，下跌 2.46%，盤中區間 $56.49-$58.11，波幅 2.87%，顯示當日有一定方向性賣壓。估值面 PE 16.24 屬合理區間，但 PB 5.90 偏高，估值缺乏明顯折讓。股息率欄位顯示 435% 明顯屬數據異常（BMY 實際派息率約 4-5%），不應誤判為極高息。眾議院委員會調查中國藥物試驗為主要負面催化，坎託·菲茨傑拉德目標價 $54 較現價低 4.8%，RBC 目標 $60 較現價高 5.8%，分析師共識中性偏淡。整體缺 MA/RSI 等技術錨點，日內交易以 $58.11 高位做空或 $56.49 低位博技術反彈為主，不建議持倉過夜。<p class="card-link"><a href="/dashboard/2026-07-06/reports/BMY.html">→ 完整 BMY 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">53%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 53%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>DIS</b> · 下日勝率 53% · DIS 現價 97.41 USD，今日下跌 -2.10%，收於 97.02-99.44 區間下端，距離 52週低位 92.19 僅約 5.65%，弱勢明顯。PE TTM 為 15.57、PB 為 1.56，估值處於合理區間但無明顯折讓。股息率數據 154% 屬明顯異常（Disney 實際股息率約 0.9-1.0%），需視作數據瑕疵處理。今日跌幅 -2.10% 為當日方向性下行，但因接近 52週低位，下方承接力存疑。短線建議觀望，等待 92.19 附近是否破位或出現反轉訊號再行部署。<p class="card-link"><a href="/dashboard/2026-07-06/reports/DIS.html">→ 完整 DIS 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">51%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 51%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>UBER</b> · 下日勝率 51% · UBER 今日下挫 2.70% 至 $72.42，日內區間 $71.86-$74.56，幅度約 3.76% 屬高波幅，短炒燃料充足但方向偏空。股價由 52 週高位 $101.99 回落近 29%，明顯處於中期下降通道，惟逼近 52 週低 $67.19 附近存技術反彈誘因。PE TTM 18.00 屬合理區間，PB 6.12 反映輕資產平台溢價。由於 MA20/MA50/MA200 及 RSI 數據缺失，趨勢確認度不足，建議控制倉位、嚴設止損，做短不做長。<p class="card-link"><a href="/dashboard/2026-07-06/reports/UBER.html">→ 完整 UBER 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">51%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 51%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>BMY</b> · 下日勝率 51% · BMY 今日收報 $56.70，下跌 2.46%，盤中區間 $56.49-$58.11，波幅 2.87%，顯示當日有一定方向性賣壓。估值面 PE 16.24 屬合理區間，但 PB 5.90 偏高，估值缺乏明顯折讓。股息率欄位顯示 435% 明顯屬數據異常（BMY 實際派息率約 4-5%），不應誤判為極高息。眾議院委員會調查中國藥物試驗為主要負面催化，坎託·菲茨傑拉德目標價 $54 較現價低 4.8%，RBC 目標 $60 較現價高 5.8%，分析師共識中性偏淡。整體缺 MA/RSI 等技術錨點，日內交易以 $58.11 高位做空或 $56.49 低位博技術反彈為主，不建議持倉過夜。<p class="card-link"><a href="/dashboard/2026-07-06/reports/BMY.html">→ 完整 BMY 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">49%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 49%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>RCL</b> · 下日勝率 49% · RCL 現價 $287.78，今日急跌 -2.88%，H/L 區間 285.33-299.00，波幅約 4.79% 屬高波幅，提供短炒燃料。今日收近全日低位 $285.33 附近，技術面偏弱，但 BMO/巴克萊/富國三大行均維持買入評級，目標價 $340-$370，潛在升幅仍大。PE 17.21 屬合理水平，PB 7.72 偏高。股息率 177% 明顯異常（疑為一次性特殊股息或數據異常）。日內交易可博反彈做多（目標 $295-$299），亦可等反彈至 $293-$296 區間做空博繼續下試 $280。<p class="card-link"><a href="/dashboard/2026-07-06/reports/RCL.html">→ 完整 RCL 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">49%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 49%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>MDLZ</b> · 下日勝率 49% · MDLZ 現價 $59.17，今日急跌 -2.86%，盤中區間 $58.88-$61.08（約 3.7% 區間），屬高波幅交易日。股價已較 52 週高位 $71.15 回落約 16.8%，但仍高於 52 週低位 $51.20 約 15.6%。估值方面 PE TTM 29.38 偏高（消費必需品類偏貴），PB 3.00 中性，股息率數據 332.00% 明顯異常（實際應為約 3.32%）。美銀證券維持買入評級，目標價 $67，較現價有約 13.2% 上行空間。今日大跌配合高波幅提供短炒燃料，但缺少 MA/RSI/成交量比等關鍵指標，入場需謹慎。<p class="card-link"><a href="/dashboard/2026-07-06/reports/MDLZ.html">→ 完整 MDLZ 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">48%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 48%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>HD</b> · 下日勝率 48% · Home Depot (HD) 今日收報 $350.65，急跌 -2.03%，從前收 $357.90 一路下挫至日內低位 $345.80，H/L 區間 $345.80-$358.85 幅度約 3.65%，屬於高波幅交易日，提供短炒燃料。技術上股價明顯受壓於前收 $357.90 之下，但 $345.80 為當日重要支持，52週區間 $289.10-$426.75 中位偏低。PE 24.87 估值中性，PB 24.81 偏高（HD 大量回購導致賬面價值偏低所致），股息率 266% 明顯為數據異常，實際應約 2.6%。短線建議觀望 $345.80 支持是否守穩，破位可追空。<p class="card-link"><a href="/dashboard/2026-07-06/reports/HD.html">→ 完整 HD 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">48%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 48%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CVS</b> · 下日勝率 48% · CVS 現價 $102.08，今日下跌 2.52%，雖然基本面新聞正面（CFRA 上調至買入、富國銀行目標價由 $102 升至 $103、Q1 業績 EPS 超預期 19% 並上調 2026 全年指引），但股價仍逆新聞下跌 $2.64，出現明顯負面背離。PE TTM 44.78 屬昂貴水平，PB 1.71 中性，股息率 255% 數據明顯異常（CVS 歷史派息率約 3-4%）。股價位處 52 週高位 $106.15 下方，向上空間有限；短線 $105.38（今日高位）為即時阻力，$101.78（今日低位）為關鍵支持。缺乏 MA20/MA50/RSI 數據，技術面判斷受限，建議觀望等待更清晰 setup。<p class="card-link"><a href="/dashboard/2026-07-06/reports/CVS.html">→ 完整 CVS 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">47%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 47%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>ELV</b> · 下日勝率 47% · ELV 現價 $408.17，今日跌 2.33%，盤中區間 $406.91-$418.00，幅度約 2.65%（略低於 3% 高波幅門檻）。股價仍處 $273.71-$427.19 52週區間高位（約 95.6% 位置），長線趨勢仍偏多。Cantor Fitzgerald 維持買入並調目標至 $450（隱含上行 ~10.3%），但 PE TTM 17.76、PB 2.07 估值中性偏高，股息率 164% 數據異常需審慎。短炒策略：留意 $406.91 今日低位能否守住，守穩可博反彈至 $418 否則不排除假突破後回補至 $400 以下。<p class="card-link"><a href="/dashboard/2026-07-06/reports/ELV.html">→ 完整 ELV 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">47%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 47%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>AMT</b> · 下日勝率 47% · AMT 現價 $162.11，今日下跌 -2.36%，收市前正測試 52週低位 $160.06（與今日低位完全重疊），技術面明顯轉弱。今日 H/L 區間 $160.06-$165.79，幅度約 3.53%，屬高波幅交易日，短炒燃料充足。PE TTM 26.65 偏高，PB 21.86 對 REIT 而言屬常見（資產淨值較高），但股價偏離 52週高位 $234.33 達 -30.8%，估值修復空間與下行壓力並存。股息率顯示 422% 明顯係數據錯誤（AMT 實際股息率約 3-4%），估值可信度低。缺乏 MA20/MA50/RSI 等技術指標，難以判斷中期趨勢，建議只做日內嚴守止損。<p class="card-link"><a href="/dashboard/2026-07-06/reports/AMT.html">→ 完整 AMT 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">45%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 45%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>DHR</b> · 下日勝率 45% · DHR Danaher 今日收報 $193.62，急跌 -2.18%，全日區間 $189.78-$196.60，幅度達 3.52%（高波幅，短炒燃料充足），收價位於全日區間下半部（距日低 $189.78 僅 $3.84，距日高 $196.60 仍有 $2.98），確認當日弱勢。近 52週區間 $160.93-$242.80 中段偏下，反映中期動能轉差。PE TTM 37.56 偏貴，PB 2.60 中性，估值無安全邊際。股息率 82.00% 為數據異常（DHR 實際 yield 遠低於此），需謹慎對待。今日走勢屬「急跌+高波幅」，兩個方向都有 setup：$189.78 附近博均值回歸做多，或 $196.60-$197.93 阻力區做空博延續弱勢。<p class="card-link"><a href="/dashboard/2026-07-06/reports/DHR.html">→ 完整 DHR 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">44%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 44%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>ABBV</b> · 下日勝率 44% · ABBV 現價 $254.76，今日跌 -2.42%，盤中由 $260.92 跌至 $253.60，波幅 2.80%，貼近高波幅門檻。股價距離 52 週高位 $261.64 僅約 2.6%，屬於高位回吐格局。PE TTM 高達 124.83 倍遠超醫藥板塊均值，PB -67.60 反映股東權益為負MA20/50/100/200 全部缺失無從判斷中短期 trend；股息率 272.00% 明顯為數據異常。滙豐將目標價上調至 $300 屬中長期利好，限制短線下行空間。整體即日偏弱，但波幅足夠支援雙向短炒。<p class="card-link"><a href="/dashboard/2026-07-06/reports/ABBV.html">→ 完整 ABBV 詳細報告</a></p></div>
+<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">43%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 43%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>AMGN</b> · 下日勝率 43% · AMGN現價$366.44，今日跌-2.06%，高位$373.98/低位$359.47，H/L區間4.04%屬高波幅，短炒燃料充足。股價距52週高位$391.29僅-6.3%，長線處於強勢區，但Truist目標價$340、Mizuho目標價$303均低於現價，分析師共識偏淡。PE TTM 25.63屬合理，PB 21.62偏高（生物科技股特性），股息率275%明顯係數據異常不予採信。缺乏MA20/MA50/MA200/RSI數據，趨勢確認度不足，建議觀望或短炒兩向。日內策略：上方$370-$374.15（前收附近）做空博回$360；下方$359-$362（今日低位區）吸納做多博$373。<p class="card-link"><a href="/dashboard/2026-07-06/reports/AMGN.html">→ 完整 AMGN 詳細報告</a></p></div>
 
 ---
-<em>生成時間: 2026-07-10 23:57:03 · LLM: openai/MiniMax-M3</em>
-<h2>詳細表格</h2><p><em>此條件下無報告。</em></p>
+<em>生成時間: 2026-07-13 17:04:41 · LLM: openai/MiniMax-M3</em>
+<div style="text-align:center;margin:1.5rem 0 0.5rem;padding:14px 18px;background:var(--panel);border:1px dashed var(--border);border-radius:4px;font-size:0.88rem;">👇 想睇 <b>全部 0 隻股票</b>嘅 score + 操作 + entry/stop/target？ 去 <a href="/full-results/2026-07-06.html"><b>Full Results (2026-07-06)</b></a></div>
+<p class="last-updated">最後更新: 2026-07-13 17:04 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Leeks Terminal 常見問題 · 4-Dim 評分 + Conservative BUY Filter 教學</title>
-  <meta name="description" content="Leeks Terminal 常見問題 — 4-dim 評分模型、Conservative BUY filter、Rule-based 決策引擎 (Anti-Chase / Anti-Knife) 、AI 信心 chips 教學。200 港股 + 200 美股 9:30 HKT/ET 自動掃描。即時信號 free 試用，10-day audit 真實 win-rate 公開 data 分享。">
+  <meta name="description" content="Leeks Terminal 常見問題 — 4-dim 評分模型、Conservative BUY filter、AI 信心 chips 教學。200 港股 + 200 美股 9:30 自動掃描。">
   <meta property="og:title" content="Leeks Terminal 常見問題 · 4-Dim 評分 + Conservative BUY Filter 教學">
   <meta property="og:description" content="Leeks Terminal 常見問題 — 4-dim 評分模型、Conservative BUY filter、AI 信心 chips 教學。200 港股 + 200 美股 9:30 自動掃描。">
   <meta property="og:type" content="website">
@@ -132,6 +132,81 @@ h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
 .card.bull { border-left-color: var(--bull); }
 .card.bear { border-left-color: var(--bear); }
 .card.amber { border-left-color: var(--amber); }
+
+/* Decision strip (Phase 4e, 2026-07-13) — splits 下日勝率 (WR) from 決策 (rule).
+   Two-column layout makes clear that the colored emoji comes from rule, not WR. */
+.decision-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin: 0 0 8px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+.strip-col {
+    padding: 5px 9px;
+    background: var(--panel);
+}
+.strip-decision { border-right: 1px solid var(--border); }
+.strip-label {
+    display: block;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+    margin-bottom: 1px;
+    font-weight: 600;
+}
+.strip-val {
+    display: inline;
+    font-weight: 700;
+    color: var(--fg);
+    font-size: 0.95rem;
+}
+.strip-rule {
+    display: inline;
+    color: var(--dim);
+    font-size: 0.78rem;
+    margin-left: 3px;
+}
+
+/* Full Results page — archive list (2026-07-13) */
+.archive-list {
+    margin: 2rem 0 0.5rem;
+    padding: 14px 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.archive-list h3 {
+    margin: 0 0 0.6rem;
+    font-size: 0.95rem;
+    color: var(--accent);
+}
+.date-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.date-grid a {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 0.78rem;
+    color: var(--dim);
+    background: var(--bg);
+    text-decoration: none;
+}
+.date-grid a:hover { border-color: var(--accent); color: var(--accent); }
+.date-grid a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
 
 /* Stats line */
 .stats {
@@ -421,6 +496,7 @@ p.card-link a:hover {
     color: var(--fg);
 }
 .report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.signal { background: #1f6feb; color: #fff; border-color: #1f6feb; font-weight: 600; }
 .report-header .badge.conf { background: var(--panel-2); }
 
 .score-breakdown {
@@ -497,80 +573,22 @@ footer {
     main { padding: 16px 12px 48px; }
     h1 { font-size: 1.15rem; }
     .card { padding: 8px 10px; font-size: 0.8rem; }
+    .decision-strip { font-size: 0.75rem; }
+    .strip-val { font-size: 0.88rem; }
+    .strip-label { font-size: 0.6rem; }
     nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
     nav.leeks-site-nav a { font-size: 0.7rem; }
     table.detail { font-size: 0.7rem; }
     table.detail th, table.detail td { padding: 4px 6px; }
+    .date-grid a { font-size: 0.7rem; padding: 3px 7px; }
 }
 </style>
   
-
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "點解睇唔到 bar chart / 即時 K 線？",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "本工具係決策輔助而唔係 trading platform。你嘅 broker (Futu / IBKR / SC) 已經有完整即時圖表。我哋只提供每日 2 次嘅 AI 評分 + 方向信號 + 入場/止損/目標 區間。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "個 score 點樣計？",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "四維評分 (0–100)，Python-side 確定性加權 (非 LLM 自評)：估值 (PE/PB，5%) · 質素 (ROE/margin，5%) · 動能 (MA/RSI/deviation，70%) · 資金流 (量比/大單/Relative Volume，20%)。公式：score = 0.05 × value + 0.05 × quality + 0.70 × momentum + 0.20 × order_flow。Day-trade 完全偏重 momentum + order flow；估值/質素只係 tiebreaker。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "trade_direction 點解有時「雙向」？",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "「雙向」代表波動率足夠，long 同 short setup 都有，用戶自己揀邊個方向做。filter 可以 hide 其他方向。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "點解 entry / stop / target 有時顯示「—」？",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "個別 LLM output 唔齊全；我哋有 backfill script parse full_md 嘅 markdown bullets 拎返。如果仍然「—」表示該股真係冇明確 setup，建議觀望。"
-      }
-    }
-  ]
-}
-</script>
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "Home",
-      "item": "https://www.win9you.com/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "FAQ",
-      "item": "https://www.win9you.com/faq.html"
-    }
-  ]
-}
-</script>
 </head>
 <body>
-<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html" class="active">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html" class="active">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
 <h1>常見問題</h1>
-<p class="last-updated">最後更新: 2026-07-10 23:55 HKT</p>
 <h2>Q: 點解睇唔到 bar chart / 即時 K 線？</h2>
 <p>A: 本工具係 <b>決策輔助</b> 而唔係 trading platform。你嘅 broker (Futu / IBKR / SC) 已經有完整即時圖表。
 我哋只提供每日 2 次嘅 AI 評分 + 方向信號 + 入場/止損/目標 區間。</p>
@@ -589,6 +607,7 @@ filter 可以 hide 其他方向。</p>
 <p>A: 個別 LLM output 唔齊全；我哋有 backfill script parse <code>full_md</code> 嘅 markdown bullets 拎返。
 如果仍然「—」表示該股真係冇明確 setup，建議觀望。</p>
 
+<p class="last-updated">最後更新: 2026-07-14 14:39 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>

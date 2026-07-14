@@ -133,6 +133,81 @@ h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
 .card.bear { border-left-color: var(--bear); }
 .card.amber { border-left-color: var(--amber); }
 
+/* Decision strip (Phase 4e, 2026-07-13) — splits 下日勝率 (WR) from 決策 (rule).
+   Two-column layout makes clear that the colored emoji comes from rule, not WR. */
+.decision-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin: 0 0 8px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+.strip-col {
+    padding: 5px 9px;
+    background: var(--panel);
+}
+.strip-decision { border-right: 1px solid var(--border); }
+.strip-label {
+    display: block;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+    margin-bottom: 1px;
+    font-weight: 600;
+}
+.strip-val {
+    display: inline;
+    font-weight: 700;
+    color: var(--fg);
+    font-size: 0.95rem;
+}
+.strip-rule {
+    display: inline;
+    color: var(--dim);
+    font-size: 0.78rem;
+    margin-left: 3px;
+}
+
+/* Full Results page — archive list (2026-07-13) */
+.archive-list {
+    margin: 2rem 0 0.5rem;
+    padding: 14px 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.archive-list h3 {
+    margin: 0 0 0.6rem;
+    font-size: 0.95rem;
+    color: var(--accent);
+}
+.date-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.date-grid a {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 0.78rem;
+    color: var(--dim);
+    background: var(--bg);
+    text-decoration: none;
+}
+.date-grid a:hover { border-color: var(--accent); color: var(--accent); }
+.date-grid a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
 /* Stats line */
 .stats {
     font-size: 0.9rem;
@@ -421,6 +496,7 @@ p.card-link a:hover {
     color: var(--fg);
 }
 .report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.signal { background: #1f6feb; color: #fff; border-color: #1f6feb; font-weight: 600; }
 .report-header .badge.conf { background: var(--panel-2); }
 
 .score-breakdown {
@@ -497,27 +573,27 @@ footer {
     main { padding: 16px 12px 48px; }
     h1 { font-size: 1.15rem; }
     .card { padding: 8px 10px; font-size: 0.8rem; }
+    .decision-strip { font-size: 0.75rem; }
+    .strip-val { font-size: 0.88rem; }
+    .strip-label { font-size: 0.6rem; }
     nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
     nav.leeks-site-nav a { font-size: 0.7rem; }
     table.detail { font-size: 0.7rem; }
     table.detail th, table.detail td { padding: 4px 6px; }
+    .date-grid a { font-size: 0.7rem; padding: 3px 7px; }
 }
 </style>
   
 </head>
 <body>
-<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
-<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="signal-warning"><b>🔬 Signal Explorer (Rule-Based, Phase 2)</b> · operation_advice 喺 10-day audit 後改由 deterministic rules 決定 (唔再信 LLM 直接 BUY/SELL call)。
-            <br>· <b>🟢 買入</b> 經 4 rules 揀：<span class="warn-strong">🛡️ Conservative</span> (61.5% WR) + <span class="warn-strong">🌊 Bounce</span> (51.7% WR) + ANTI-MOMENTUM 等
-            <br>· <b>🔴 賣出</b> 幾乎全部被 ANTI-KNIFE override 去 觀望 (LLM SELL 悲觀 37.7% WR，catch falling knife)
-            <br>· <b>🟡 觀望</b> 88% records 係 DEFAULT — LLM 嗰個訊號冇 match 任何 backtested edge
-            <br>· <b>ℹ️ 10-day audit 結論</b>: LLM 樂觀 BUY 30.4% WR (反指)、m≥80 BUY 16.7% WR、悲觀 SELL 37.7% WR (錯方向)
-            <br>· <b>每張 card 顯示</b>: rule-based op + LLM 寫嘅 narrative/catalysts/levels — detail page 入面有 Rule-Based Decision banner 解釋 override 原因</div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-07-03/all.html">全部</a><a href="/dashboard/2026-07-03/hk-buy.html" class="active">港股買入</a><a href="/dashboard/2026-07-03/hk-sell.html">港股賣出</a><a href="/dashboard/2026-07-03/hk-hold.html">港股觀望</a><a href="/dashboard/2026-07-03/us-buy.html">美股買入</a><a href="/dashboard/2026-07-03/us-sell.html">美股賣出</a><a href="/dashboard/2026-07-03/us-hold.html">美股觀望</a><a href="/dashboard/2026-07-03/conservative-buy.html">🛡️ Conservative BUY</a><a href="/dashboard/2026-07-03/cyber-buy.html">🔐 Cyber BUY</a><a href="/dashboard/2026-07-03/strength-buy.html">⏸️ Strength BUY</a><a href="/dashboard/2026-07-03/bounce-buy.html">🌊 Bounce BUY</a></div><h1>🔬 Signal Explorer — 2026-07-03 (港股買入)</h1><h1>📊 HK+US 決策儀表板</h1>
+<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="signal-warning"><b>🔬 Signal Explorer</b> · 每張 card 顯示單一 <b>下日勝率</b> (0-100%) — 越高 = 越大機會 next day 贏。基於 10-day 1,913 signals 嘅 logistic regression 校準，唔再睇 LLM 自評分。</div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-07-03/all.html">全部</a><a href="/dashboard/2026-07-03/hk-buy.html" class="active">港股買入</a><a href="/dashboard/2026-07-03/hk-sell.html">港股賣出</a><a href="/dashboard/2026-07-03/hk-hold.html">港股觀望</a><a href="/dashboard/2026-07-03/us-buy.html">美股買入</a><a href="/dashboard/2026-07-03/us-sell.html">美股賣出</a><a href="/dashboard/2026-07-03/us-hold.html">美股觀望</a><a href="/dashboard/2026-07-03/conservative-buy.html">🛡️ Conservative BUY</a><a href="/dashboard/2026-07-03/cyber-buy.html">🔐 Cyber BUY</a><a href="/dashboard/2026-07-03/strength-buy.html">⏸️ Strength BUY</a><a href="/dashboard/2026-07-03/bounce-buy.html">🌊 Bounce BUY</a></div><h1>🔬 Signal Explorer — 2026-07-03 (港股買入)</h1><h1>📊 HK+US 決策儀表板</h1>
 
 <p>日期: 2026-07-03 · 篩選: 港股 HK · <span style="color:var(--bull);font-weight:600;">🟢</span>買入 BUY</p>
 
-<p>_此條件下無報告。_</p><h2>詳細表格</h2><p><em>此條件下無報告。</em></p>
+<p>_此條件下無報告。_</p><div style="text-align:center;margin:1.5rem 0 0.5rem;padding:14px 18px;background:var(--panel);border:1px dashed var(--border);border-radius:4px;font-size:0.88rem;">👇 想睇 <b>全部 0 隻股票</b>嘅 score + 操作 + entry/stop/target？ 去 <a href="/full-results/2026-07-03.html"><b>Full Results (2026-07-03)</b></a></div>
+<p class="last-updated">最後更新: 2026-07-13 17:04 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>

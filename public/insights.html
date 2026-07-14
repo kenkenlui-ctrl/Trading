@@ -676,8 +676,8 @@ This means the decision layer is auditable, reproducible, and stable across mode
 
 <div class="faq-item">
   <p class="faq-q">Q2. Does this work for long-term investing (1W, 1M, 1Y horizons)?</p>
-  <p class="faq-a">No. Our earlier backtest (22 trading days, US-only, n=4,379) showed that LLM BUY at the <b>1-week horizon</b> hit rate is 64.3% with +1.24% avg move — i.e., the LLM works on the trend horizon, just not on the 1D horizon.
-  The rule-based overrides in this report are <b>day-trade only</b>. Long-term investors should ignore the override layer and trust the LLM's multi-day thesis.</p>
+  <p class="faq-a">Leeks Terminal 係 <b>day-trade only</b> 嘅 dashboard。我哋冇做 1W/1M/1Y 嘅 backtest（呢個工具嘅 calibration 只校準 1D forward return）。</p>
+  <p>如果你想做 longer-term，呢個工具 <b>唔啱用</b>：1) 1D forward calibration 唔代表 1W/1M 表現，2) Rule-based 決策引擎專為 mean-reversion day-trade 設計，唔代表 swing/position trading 嘅 edge。建議用 1D 同 rule-based 嘅 signal 做 day-trade，longer-term 用其它工具（如 portfolio backtest、fundamental analysis）。</p>
 </div>
 
 <div class="faq-item">
@@ -736,7 +736,7 @@ This means the decision layer is auditable, reproducible, and stable across mode
 <section>
 <h2>9. Related reading</h2>
 <ul>
-  <li><a href="/methodology.html">/methodology.html</a> — How the dashboard scoring works (4-dim score, LLM prompt template, R:R override).</li>
+  <li><a href="/methodology.html">/methodology.html</a> — How the dashboard scoring works (4-dim features, rule-based decision engine, 下日勝率 calibration).</li>
   <li><a href="/faq.html">/faq.html</a> — General questions about the dashboard, position sizing, market hours.</li>
   <li><a href="/about.html">/about.html</a> — About the operator, mission, and contact.</li>
   <li><a href="/dashboard/">/dashboard/</a> — Live signal stream, updated twice daily at 9:30 HKT and 9:30 ET.</li>
