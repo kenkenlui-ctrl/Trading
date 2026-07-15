@@ -157,6 +157,20 @@ temperature=0.3,
             news = int(breakdown.get("news_score") or 50)  # default neutral if missing
             total = int(round(0.05 * v + 0.05 * q + 0.60 * m + 0.20 * of + 0.10 * news))
             total = max(0, min(100, total))
+
+            # Post-process: for ETP/leveraged products, strip meaningless 52-week
+            # extreme values from support_zone / resistance_zone / summary.
+            # The LLM often hallucinates 52w levels that are years old and
+            # irrelevant for daily-reset leveraged products. See src/etp_utils.py
+            # for rationale (path-dependent decay, vol drag).
+            from .etp_utils import filter_etp_support_resistance
+            support_zone = data.get("support_zone")
+            resistance_zone = data.get("resistance_zone")
+            summary_text = str(data.get("summary", ""))
+            support_zone, resistance_zone, summary_text = filter_etp_support_resistance(
+                code, name or "", "", support_zone, resistance_zone, summary_text
+            )
+
             result = AnalysisResult(
                 code=code,
                 score=total,
@@ -164,15 +178,15 @@ temperature=0.3,
                 trend=str(data.get("trend", "震盪")),
                 operation_advice=str(data.get("operation_advice", "觀望")),
                 confidence=str(data.get("confidence", "中")),
-                summary=str(data.get("summary", "")),
+                summary=summary_text,
                 score_breakdown=breakdown,
                 trade_direction=str(data.get("trade_direction", "both")),
                 entry_zone=data.get("entry_zone"),
                 stop_loss=data.get("stop_loss"),
                 target_price=data.get("target_price"),
                 risk_reward_ratio=data.get("risk_reward_ratio"),
-                support_zone=data.get("support_zone"),
-                resistance_zone=data.get("resistance_zone"),
+                support_zone=support_zone,
+                resistance_zone=resistance_zone,
                 key_levels=data.get("key_levels"),
                 catalysts=data.get("catalysts", []),
                 risks=data.get("risks", []),
@@ -262,7 +276,11 @@ def render_report_md(result: AnalysisResult, snapshot: dict, language: str = "zh
         md += f"| 指標 | 數值 |\n|---|---|\n"
         md += f"| MA20 / MA50 / MA100 / MA200 | {snapshot.get('ma20')} / {snapshot.get('ma50')} / {snapshot.get('ma100')} / {snapshot.get('ma200')} |\n"
         md += f"| RSI14 | {snapshot.get('rsi14')} |\n"
-        md += f"| 52週高/低 | {snapshot.get('52w_high')} / {snapshot.get('52w_low')} |\n"
+        # For leveraged ETPs, 52w high/low is MEANINGLESS (path-dependent decay, vol drag).
+        # Skip the row entirely to avoid misleading the user. (Owner 2026-07-15)
+        from .etp_utils import is_leveraged_etp
+        if not is_leveraged_etp(result.code, snapshot.get("name_zh", ""), snapshot.get("name_en", "")):
+            md += f"| 52週高/低 | {snapshot.get('52w_high')} / {snapshot.get('52w_low')} |\n"
         md += f"| PE (TTM) / PB | {snapshot.get('pe_ttm')} / {snapshot.get('pb')} |\n"
         md += f"| 股息率 | {snapshot.get('dividend_yield')}% |\n"
         md += f"| 年初至今 | {snapshot.get('ytd_change_pct')}% |\n"
@@ -301,7 +319,9 @@ def render_report_md(result: AnalysisResult, snapshot: dict, language: str = "zh
         md += f"| Metric | Value |\n|---|---|\n"
         md += f"| MA20/50/100/200 | {snapshot.get('ma20')} / {snapshot.get('ma50')} / {snapshot.get('ma100')} / {snapshot.get('ma200')} |\n"
         md += f"| RSI14 | {snapshot.get('rsi14')} |\n"
-        md += f"| 52w high/low | {snapshot.get('52w_high')} / {snapshot.get('52w_low')} |\n"
+        from .etp_utils import is_leveraged_etp
+        if not is_leveraged_etp(result.code, snapshot.get("name_zh", ""), snapshot.get("name_en", "")):
+            md += f"| 52w high/low | {snapshot.get('52w_high')} / {snapshot.get('52w_low')} |\n"
         md += f"| PE (TTM) / PB | {snapshot.get('pe_ttm')} / {snapshot.get('pb')} |\n"
         md += f"| Dividend yield | {snapshot.get('dividend_yield')}% |\n"
         md += f"| YTD | {snapshot.get('ytd_change_pct')}% |\n"

@@ -69,6 +69,7 @@ USER_PROMPT_TEMPLATE_ZH = """請基於以下數據分析 {code} {name}：
 - RSI14: {rsi14}
 - 52週最高/最低: {w52_high} / {w52_low}
 - 年初至今: {ytd_chg}%
+{etp_instruction}
 
 【估值】
 - 市盈率 (PE TTM): {pe_ttm}
@@ -330,6 +331,36 @@ def fill_user_prompt(template: str, code: str, name: str, snapshot: dict,
     )
     data_stale_warning = snapshot.get("data_stale_warning") or stale_default
 
+    # ETP / leveraged product detection — 52-week extreme values are MEANINGLESS
+    # for 2x/3x leveraged ETPs (path-dependent decay, vol drag, daily reset).
+    # Inject an explicit instruction so the LLM does not use them for support/resistance.
+    # The post-processor in src/analyzer.py also strips 52-week refs from the LLM output
+    # as a safety net (catches any leakage).
+    from .etp_utils import is_leveraged_etp
+    is_etp = is_leveraged_etp(code, name, name)
+    if is_etp:
+        if language == "en":
+            etp_instruction = (
+                "\n⚠️ ETP / LEVERAGED PRODUCT (Owner 2026-07-15): This is a "
+                "leveraged or inverse ETP (2x / 3x / inverse). The 52-week high/low "
+                "values above are MEANINGLESS — they reflect old underlying price "
+                "levels and don't apply to today's daily-reset ETP. Do NOT use "
+                "52-week values for support_zone / resistance_zone. Only use: "
+                "today's low / today's high / yesterday's close / recent session "
+                "averages / round-number psychological levels. If you must mention "
+                "any 'extreme' reference, qualify it with 'since recent reset' or similar."
+            )
+        else:
+            etp_instruction = (
+                "\n⚠️ ETP / 槓桿產品提示 (Owner 2026-07-15): 此為 2x / 3x / 反向 ETP / 槓桿產品。"
+                "上面 52 週最高/最低 **無意義** — 屬舊標的價格 level，對每日 reset 嘅 ETP 唔適用。"
+                "support_zone / resistance_zone 絕對唔可以用 52 週值。"
+                "只能用：今日低 / 今日高 / 昨收 / 近期 session 均價 / 整數心理位。"
+                "如要提 'extreme' 參考，必須加註『近期 reset 範圍』之類限定語。"
+            )
+    else:
+        etp_instruction = ""
+
     # Derive currency from code suffix (.HK = HKD, otherwise USD)
     is_hk = code.endswith(".HK") or code.endswith(".hk")
     price_unit = "HKD" if is_hk else "USD"
@@ -385,6 +416,7 @@ def fill_user_prompt(template: str, code: str, name: str, snapshot: dict,
         "market_cap_hkd_str": market_cap_hkd_str,
         "kline_summary": kline_summary,
         "news_summary": news_summary,
+        "etp_instruction": etp_instruction,
     }
 
     return template.format(**fills)
