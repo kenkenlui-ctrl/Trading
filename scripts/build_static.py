@@ -707,7 +707,7 @@ def date_picker_html(dates: list[str], current: str) -> str:
     items = []
     for d in dates[:14]:  # last 14 dates
         cls = ' class="active"' if d == current else ""
-        items.append(f'<a href="/dashboard/{d}.html"{cls}>{d}</a>')
+        items.append(f'<a href="/dashboard/{d}/all.html"{cls}>{d}</a>')
     return '<div class="date-picker">' + "".join(items) + "</div>"
 
 
