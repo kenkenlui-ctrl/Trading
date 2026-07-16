@@ -133,81 +133,6 @@ h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
 .card.bear { border-left-color: var(--bear); }
 .card.amber { border-left-color: var(--amber); }
 
-/* Decision strip (Phase 4e, 2026-07-13) — splits 下日勝率 (WR) from 決策 (rule).
-   Two-column layout makes clear that the colored emoji comes from rule, not WR. */
-.decision-strip {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    margin: 0 0 8px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-    font-size: 0.8rem;
-    line-height: 1.4;
-}
-.strip-col {
-    padding: 5px 9px;
-    background: var(--panel);
-}
-.strip-decision { border-right: 1px solid var(--border); }
-.strip-label {
-    display: block;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--dim);
-    margin-bottom: 1px;
-    font-weight: 600;
-}
-.strip-val {
-    display: inline;
-    font-weight: 700;
-    color: var(--fg);
-    font-size: 0.95rem;
-}
-.strip-rule {
-    display: inline;
-    color: var(--dim);
-    font-size: 0.78rem;
-    margin-left: 3px;
-}
-
-/* Full Results page — archive list (2026-07-13) */
-.archive-list {
-    margin: 2rem 0 0.5rem;
-    padding: 14px 18px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-}
-.archive-list h3 {
-    margin: 0 0 0.6rem;
-    font-size: 0.95rem;
-    color: var(--accent);
-}
-.date-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-.date-grid a {
-    display: inline-block;
-    padding: 4px 10px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    font-size: 0.78rem;
-    color: var(--dim);
-    background: var(--bg);
-    text-decoration: none;
-}
-.date-grid a:hover { border-color: var(--accent); color: var(--accent); }
-.date-grid a.active {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-}
-
 /* Stats line */
 .stats {
     font-size: 0.9rem;
@@ -496,7 +421,6 @@ p.card-link a:hover {
     color: var(--fg);
 }
 .report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
-.report-header .badge.signal { background: #1f6feb; color: #fff; border-color: #1f6feb; font-weight: 600; }
 .report-header .badge.conf { background: var(--panel-2); }
 
 .score-breakdown {
@@ -573,20 +497,16 @@ footer {
     main { padding: 16px 12px 48px; }
     h1 { font-size: 1.15rem; }
     .card { padding: 8px 10px; font-size: 0.8rem; }
-    .decision-strip { font-size: 0.75rem; }
-    .strip-val { font-size: 0.88rem; }
-    .strip-label { font-size: 0.6rem; }
     nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
     nav.leeks-site-nav a { font-size: 0.7rem; }
     table.detail { font-size: 0.7rem; }
     table.detail th, table.detail td { padding: 4px 6px; }
-    .date-grid a { font-size: 0.7rem; padding: 3px 7px; }
 }
 </style>
   
 </head>
 <body>
-<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
 <div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="signal-warning"><b>🛡️ Conservative BUY</b> · 6-day trace evidence (mean-reversion + non-tech + m 30-70 + score < 70):
             <br>· <b>Filter rules</b>: 前日 -3% to 0% 跌勢 · sector ≠ Tech/Comms · momentum 30-70 · sentiment ≠ 樂觀 · score < 70
@@ -596,17 +516,17 @@ footer {
 
 <h2>📊 分析結果摘要</h2>
 
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">51%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 51%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>ORLY</b> · 下日勝率 51% · ORLY 現價 $90.25，今日下跌 -2.63%，全日區間 $88.00-$93.52，幅度達 6.27%，屬高波幅交易日。股價已逼近 52 週低位 $82.71（目前僅高 9.1%），52 週高位 $108.72 距離 -16.7%。PE TTM 27.32 屬中等偏高估值，PB -65.43 為負值，反映公司因積極回購導致股東權益為負，並非資不抵債。基本面具多家券商唱多（Davidson 目標價 $114、TD Cowen $117、Mizuho $110），但短線價格動能偏弱，宜等方向明確。<p class="card-link"><a href="/dashboard/2026-07-03/reports/ORLY.html">→ 完整 ORLY 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">50%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 50%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>F</b> · 下日勝率 50% · 福特 (F) 今日跌 -2.05%，收報 $13.36，盤中區間 $13.22-$14.00，單日波幅約 5.87%（高於 3% 閾值），短炒波幅充足。股價 $13.36 較 52 週高位 $17.78 低 24.9%，但較 52 週低位 $10.68 高 25.1%，處於中下游弱勢區間。基本面具多宗大規模召回（741,195 輛、66,383 輛等），負面消息頻密，質素面扣分。PB 1.47 屬中等水平，估值不算吸引。MA20/MA50/MA100/MA200 及 RSI 數據缺失，趨勢判斷受限。短線建議觀望，可雙向操作——跌勢中博反彈至 $13.80-$14.00，或反彈乏力時做空至 $13.20 下方。<p class="card-link"><a href="/dashboard/2026-07-03/reports/F.html">→ 完整 F 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">45%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 45%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CAT</b> · 下日勝率 45% · 卡特彼勒 (CAT) 今日急跌 2.81%，收報 $963.53，全日區間 $948.78–$1001.28，振幅約 5.45%，屬高波幅交易日，提供短炒燃料。今日成交 3,568,600 股，但量比及 MA20/50/100/200 數據缺失，趨勢判斷受限。估值面上 PE TTM 高達 48.61、PB 24.05 極為昂貴，估值安全邊際薄弱。消息面雖見 JPM 將目標價上調至 $1,165、Argus 上調至 $990、$820→$990 等連串唱多，但股價不升反跌，呈典型「sell the news」格局。短線建議觀望，伺機做空反彈至 $980–$990 區域，或待 $948.78 低位企穩後小注博反彈至 $985。<p class="card-link"><a href="/dashboard/2026-07-03/reports/CAT.html">→ 完整 CAT 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">44%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 44%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>NXPI</b> · 下日勝率 44% · NXPI 現價 $273.36，今日下跌 -2.08%，呈明顯弱勢。H/L 區間 $267.55-$285.94，幅度約 6.59%，屬高波幅交易日，短炒燃料充足。現價 $273.36 已接近今日低位 $267.55（僅高 2.2%），反映沽壓沉重。估值面 PE TTM 27.12、PB 6.57 並不便宜，限制反彈空間。股息率 148.00% 數據明顯異常（NXPI 正常股息率約 1-2%），數據可信度存疑，建議以今日高低位及 52 週區間 $183.00-$339.95 作為主要操作參考。MA20/MA50/MA100/RSI14 數據缺失，趨勢判斷受制。<p class="card-link"><a href="/dashboard/2026-07-03/reports/NXPI.html">→ 完整 NXPI 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">44%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 44%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CCL</b> · 下日勝率 44% · CCL 收報 $27.91 USD，全日跌 -2.14%，區間 $27.46-$29.15，振幅約 6.15%（高波幅日），由 $29.15 急跌至 $27.46 後反彈至 $27.91，低位見承接。技術指標 MA20/MA50/MA100/MA200 全部 N/A、量比 N/A、RSI N/A，缺乏 trend 與資金流確認。估值 PE 12.34 屬合理，PB 2.90 偏高；股息率 107% 明顯異常（疑數據錯誤，正常 Carnival 息率僅 2-3%），數據質量存疑。新聞全屬港股，與 CCL 無關。短炒可區間操作，但置信度低，建議觀望或小注。<p class="card-link"><a href="/dashboard/2026-07-03/reports/CCL.html">→ 完整 CCL 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">42%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 42%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>JCI</b> · 下日勝率 42% · 江森自控（JCI）現報 $140.76，當日急跌 -2.79%，盤中區間 $139.23-$146.27，幅度約 5%，屬高波幅交易日。基本面PE TTM 43.60、PB 6.44，雙雙高於行業均值；股息率 114% 數據明顯異常，疑為錯誤輸入。技術面因 MA20/MA50/RSI 等指標缺失，難以判斷中短線趨勢。然而 4 間投行（Bernstein/Morgan Stanley/UBS/高盛）目標價區間 $175-$180，距現價仍有 24%-28% 上行空間，顯示長線看好。今日急跌疊加高波幅，提供日內短炒雙向 setup：做多博 $139.23 守住反彈、做空則博 $146.27 阻力失守。<p class="card-link"><a href="/dashboard/2026-07-03/reports/JCI.html">→ 完整 JCI 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>ORLY</b> · 評分 31 · ORLY 現價 $90.25，今日下跌 -2.63%，全日區間 $88.00-$93.52，幅度達 6.27%，屬高波幅交易日。股價已逼近 52 週低位 $82.71（目前僅高 9.1%），52 週高位 $108.72 距離 -16.7%。PE TTM 27.32 屬中等偏高估值，PB -65.43 為負值，反映公司因積極回購導致股東權益為負，並非資不抵債。基本面具多家券商唱多（Davidson 目標價 $114、TD Cowen $117、Mizuho $110），但短線價格動能偏弱，宜等方向明確。<p class="card-link"><a href="/dashboard/2026-07-03/reports/ORLY.html">→ 完整 ORLY 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>F</b> · 評分 33 · 福特 (F) 今日跌 -2.05%，收報 $13.36，盤中區間 $13.22-$14.00，單日波幅約 5.87%（高於 3% 閾值），短炒波幅充足。股價 $13.36 較 52 週高位 $17.78 低 24.9%，但較 52 週低位 $10.68 高 25.1%，處於中下游弱勢區間。基本面具多宗大規模召回（741,195 輛、66,383 輛等），負面消息頻密，質素面扣分。PB 1.47 屬中等水平，估值不算吸引。MA20/MA50/MA100/MA200 及 RSI 數據缺失，趨勢判斷受限。短線建議觀望，可雙向操作——跌勢中博反彈至 $13.80-$14.00，或反彈乏力時做空至 $13.20 下方。<p class="card-link"><a href="/dashboard/2026-07-03/reports/F.html">→ 完整 F 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CAT</b> · 評分 35 · 卡特彼勒 (CAT) 今日急跌 2.81%，收報 $963.53，全日區間 $948.78–$1001.28，振幅約 5.45%，屬高波幅交易日，提供短炒燃料。今日成交 3,568,600 股，但量比及 MA20/50/100/200 數據缺失，趨勢判斷受限。估值面上 PE TTM 高達 48.61、PB 24.05 極為昂貴，估值安全邊際薄弱。消息面雖見 JPM 將目標價上調至 $1,165、Argus 上調至 $990、$820→$990 等連串唱多，但股價不升反跌，呈典型「sell the news」格局。短線建議觀望，伺機做空反彈至 $980–$990 區域，或待 $948.78 低位企穩後小注博反彈至 $985。<p class="card-link"><a href="/dashboard/2026-07-03/reports/CAT.html">→ 完整 CAT 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>NXPI</b> · 評分 49 · NXPI 現價 $273.36，今日下跌 -2.08%，呈明顯弱勢。H/L 區間 $267.55-$285.94，幅度約 6.59%，屬高波幅交易日，短炒燃料充足。現價 $273.36 已接近今日低位 $267.55（僅高 2.2%），反映沽壓沉重。估值面 PE TTM 27.12、PB 6.57 並不便宜，限制反彈空間。股息率 148.00% 數據明顯異常（NXPI 正常股息率約 1-2%），數據可信度存疑，建議以今日高低位及 52 週區間 $183.00-$339.95 作為主要操作參考。MA20/MA50/MA100/RSI14 數據缺失，趨勢判斷受制。<p class="card-link"><a href="/dashboard/2026-07-03/reports/NXPI.html">→ 完整 NXPI 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CCL</b> · 評分 48 · CCL 收報 $27.91 USD，全日跌 -2.14%，區間 $27.46-$29.15，振幅約 6.15%（高波幅日），由 $29.15 急跌至 $27.46 後反彈至 $27.91，低位見承接。技術指標 MA20/MA50/MA100/MA200 全部 N/A、量比 N/A、RSI N/A，缺乏 trend 與資金流確認。估值 PE 12.34 屬合理，PB 2.90 偏高；股息率 107% 明顯異常（疑數據錯誤，正常 Carnival 息率僅 2-3%），數據質量存疑。新聞全屬港股，與 CCL 無關。短炒可區間操作，但置信度低，建議觀望或小注。<p class="card-link"><a href="/dashboard/2026-07-03/reports/CCL.html">→ 完整 CCL 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>JCI</b> · 評分 42 · 江森自控（JCI）現報 $140.76，當日急跌 -2.79%，盤中區間 $139.23-$146.27，幅度約 5%，屬高波幅交易日。基本面估值偏貴，PE TTM 43.60、PB 6.44，雙雙高於行業均值；股息率 114% 數據明顯異常，疑為錯誤輸入。技術面因 MA20/MA50/RSI 等指標缺失，難以判斷中短線趨勢。然而 4 間投行（Bernstein/Morgan Stanley/UBS/高盛）目標價區間 $175-$180，距現價仍有 24%-28% 上行空間，顯示長線看好。今日急跌疊加高波幅，提供日內短炒雙向 setup：做多博 $139.23 守住反彈、做空則博 $146.27 阻力失守。<p class="card-link"><a href="/dashboard/2026-07-03/reports/JCI.html">→ 完整 JCI 詳細報告</a></p></div>
 
 ---
-<em>生成時間: 2026-07-14 15:40:29 · LLM: openai/MiniMax-M3</em>
-<div style="text-align:center;margin:1.5rem 0 0.5rem;padding:14px 18px;background:var(--panel);border:1px dashed var(--border);border-radius:4px;font-size:0.88rem;">👇 想睇 <b>全部 0 隻股票</b>嘅 score + 操作 + entry/stop/target？ 去 <a href="/full-results/2026-07-03.html"><b>Full Results (2026-07-03)</b></a></div>
-<p class="last-updated">最後更新: 2026-07-14 15:40 HKT</p>
+<em>生成時間: 2026-07-16 19:33:48 · LLM: openai/MiniMax-M3</em>
+<h2>詳細表格</h2><p><em>此條件下無報告。</em></p>
+<p class="last-updated">最後更新: 2026-07-16 19:33 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>

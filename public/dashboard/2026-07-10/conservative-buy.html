@@ -133,81 +133,6 @@ h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
 .card.bear { border-left-color: var(--bear); }
 .card.amber { border-left-color: var(--amber); }
 
-/* Decision strip (Phase 4e, 2026-07-13) — splits 下日勝率 (WR) from 決策 (rule).
-   Two-column layout makes clear that the colored emoji comes from rule, not WR. */
-.decision-strip {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    margin: 0 0 8px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-    font-size: 0.8rem;
-    line-height: 1.4;
-}
-.strip-col {
-    padding: 5px 9px;
-    background: var(--panel);
-}
-.strip-decision { border-right: 1px solid var(--border); }
-.strip-label {
-    display: block;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--dim);
-    margin-bottom: 1px;
-    font-weight: 600;
-}
-.strip-val {
-    display: inline;
-    font-weight: 700;
-    color: var(--fg);
-    font-size: 0.95rem;
-}
-.strip-rule {
-    display: inline;
-    color: var(--dim);
-    font-size: 0.78rem;
-    margin-left: 3px;
-}
-
-/* Full Results page — archive list (2026-07-13) */
-.archive-list {
-    margin: 2rem 0 0.5rem;
-    padding: 14px 18px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-}
-.archive-list h3 {
-    margin: 0 0 0.6rem;
-    font-size: 0.95rem;
-    color: var(--accent);
-}
-.date-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-.date-grid a {
-    display: inline-block;
-    padding: 4px 10px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    font-size: 0.78rem;
-    color: var(--dim);
-    background: var(--bg);
-    text-decoration: none;
-}
-.date-grid a:hover { border-color: var(--accent); color: var(--accent); }
-.date-grid a.active {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-}
-
 /* Stats line */
 .stats {
     font-size: 0.9rem;
@@ -496,7 +421,6 @@ p.card-link a:hover {
     color: var(--fg);
 }
 .report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
-.report-header .badge.signal { background: #1f6feb; color: #fff; border-color: #1f6feb; font-weight: 600; }
 .report-header .badge.conf { background: var(--panel-2); }
 
 .score-breakdown {
@@ -573,20 +497,16 @@ footer {
     main { padding: 16px 12px 48px; }
     h1 { font-size: 1.15rem; }
     .card { padding: 8px 10px; font-size: 0.8rem; }
-    .decision-strip { font-size: 0.75rem; }
-    .strip-val { font-size: 0.88rem; }
-    .strip-label { font-size: 0.6rem; }
     nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
     nav.leeks-site-nav a { font-size: 0.7rem; }
     table.detail { font-size: 0.7rem; }
     table.detail th, table.detail td { padding: 4px 6px; }
-    .date-grid a { font-size: 0.7rem; padding: 3px 7px; }
 }
 </style>
   
 </head>
 <body>
-<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
 <div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="signal-warning"><b>🛡️ Conservative BUY</b> · 6-day trace evidence (mean-reversion + non-tech + m 30-70 + score < 70):
             <br>· <b>Filter rules</b>: 前日 -3% to 0% 跌勢 · sector ≠ Tech/Comms · momentum 30-70 · sentiment ≠ 樂觀 · score < 70
@@ -596,14 +516,14 @@ footer {
 
 <h2>📊 分析結果摘要</h2>
 
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">45%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 45%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>UAL</b> · 下日勝率 45% · UAL 現價 $126.00 正好回踩 MA20 ($126.20)，今日下跌 -2.36% 至全日低位 $124.00，全日波幅達 4.37%（高波幅有利短炒）。長線結構仍健康，MA20 ($126.20) &gt; MA50 ($110.74) &gt; MA100 ($103.84) &gt; MA200 ($103.95) 多頭排列完整，股價站穩 MA200 ($103.95) 之上 $22.05，RSI14 為 60.92 未現短線從 52週高位 $136.11 回調約 7.4%，PE TTM 11.27 對航空股屬中性偏高，PB 2.58，年初至今升幅 +43.69% 已大幅擴張估值。建議待 MA20 確認企穩後再判斷方向，操作上以 $124.00-$126.20 區間做多博反彈至 $129.50-$130.50，或反彈乏力時做空至 $122.00 下方。<p class="card-link"><a href="/dashboard/2026-07-10/reports/UAL.html">→ 完整 UAL 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">43%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 43%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>VRTX</b> · 下日勝率 43% · VRTX 收報 $485.39，今日下跌 -2.24%，由 52週高位 $529.59 回落約 8.3%，呈現健康回調格局。股價仍企於 MA20 $482.04、MA50 $454.37 及 MA200 $446.88 之上，長線多頭結構未變。RSI 14 為 63.19，處於健康區間未見MA50 $454.37 與 MA100 $455.37 幾乎重疊，短中期均線糾結需時間消化。日內 H/L 區間 3.00% 為高波幅，提供短炒空間，但量比 0.74× 屬縮量，賣壓未獲成交確認。基本面強勁：Q1 調整後 EPS $4.47 勝預期 $4.24，富國上調目標價至 $515。建議於 $481.00-$484.33 區間試多博反彈，否則觀望等待方向明確。<p class="card-link"><a href="/dashboard/2026-07-10/reports/VRTX.html">→ 完整 VRTX 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">41%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 41%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>HOOD</b> · 下日勝率 41% · HOOD 現價 $111.97，今日跌 2.73%，區間 $108.81-$119.43，波幅 9.48% 屬高波動日，短炒燃料充足。技術上 MA20 $104.32 &gt; MA50 $89.55 &gt; MA100 $83.02 多頭排列未破，股價站於 MA200 $102.19 之上長線偏多。但現價 $111.97 較 MA20 $104.32 高出 7.3%，超出 5% 嚴進閾值RSI 53.68 中性。PE 54.35、PB 10.83 限制上行空間。建議等回調至 MA20 $104.32 附近吸納做多博反彈至 $115.11 阻力，或反彈至 $115-$117 區域做空博回測 MA20。<p class="card-link"><a href="/dashboard/2026-07-10/reports/HOOD.html">→ 完整 HOOD 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>UAL</b> · 評分 51 · UAL 現價 $126.00 正好回踩 MA20 ($126.20)，今日下跌 -2.36% 至全日低位 $124.00，全日波幅達 4.37%（高波幅有利短炒）。長線結構仍健康，MA20 ($126.20) &gt; MA50 ($110.74) &gt; MA100 ($103.84) &gt; MA200 ($103.95) 多頭排列完整，股價站穩 MA200 ($103.95) 之上 $22.05，RSI14 為 60.92 未現超買。短線從 52週高位 $136.11 回調約 7.4%，PE TTM 11.27 對航空股屬中性偏高，PB 2.58，年初至今升幅 +43.69% 已大幅擴張估值。建議待 MA20 確認企穩後再判斷方向，操作上以 $124.00-$126.20 區間做多博反彈至 $129.50-$130.50，或反彈乏力時做空至 $122.00 下方。<p class="card-link"><a href="/dashboard/2026-07-10/reports/UAL.html">→ 完整 UAL 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>VRTX</b> · 評分 52 · VRTX 收報 $485.39，今日下跌 -2.24%，由 52週高位 $529.59 回落約 8.3%，呈現健康回調格局。股價仍企於 MA20 $482.04、MA50 $454.37 及 MA200 $446.88 之上，長線多頭結構未變。RSI 14 為 63.19，處於健康區間未見超買。MA50 $454.37 與 MA100 $455.37 幾乎重疊，短中期均線糾結需時間消化。日內 H/L 區間 3.00% 為高波幅，提供短炒空間，但量比 0.74× 屬縮量，賣壓未獲成交確認。基本面強勁：Q1 調整後 EPS $4.47 勝預期 $4.24，富國上調目標價至 $515。建議於 $481.00-$484.33 區間試多博反彈，否則觀望等待方向明確。<p class="card-link"><a href="/dashboard/2026-07-10/reports/VRTX.html">→ 完整 VRTX 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>HOOD</b> · 評分 47 · HOOD 現價 $111.97，今日跌 2.73%，區間 $108.81-$119.43，波幅 9.48% 屬高波動日，短炒燃料充足。技術上 MA20 $104.32 &gt; MA50 $89.55 &gt; MA100 $83.02 多頭排列未破，股價站於 MA200 $102.19 之上長線偏多。但現價 $111.97 較 MA20 $104.32 高出 7.3%，超出 5% 嚴進閾值，不宜追入。RSI 53.68 中性。估值昂貴 PE 54.35、PB 10.83 限制上行空間。建議等回調至 MA20 $104.32 附近吸納做多博反彈至 $115.11 阻力，或反彈至 $115-$117 區域做空博回測 MA20。<p class="card-link"><a href="/dashboard/2026-07-10/reports/HOOD.html">→ 完整 HOOD 詳細報告</a></p></div>
 
 ---
-<em>生成時間: 2026-07-14 15:40:27 · LLM: openai/MiniMax-M3</em>
-<div style="text-align:center;margin:1.5rem 0 0.5rem;padding:14px 18px;background:var(--panel);border:1px dashed var(--border);border-radius:4px;font-size:0.88rem;">👇 想睇 <b>全部 0 隻股票</b>嘅 score + 操作 + entry/stop/target？ 去 <a href="/full-results/2026-07-10.html"><b>Full Results (2026-07-10)</b></a></div>
-<p class="last-updated">最後更新: 2026-07-14 15:40 HKT</p>
+<em>生成時間: 2026-07-16 19:33:45 · LLM: openai/MiniMax-M3</em>
+<h2>詳細表格</h2><p><em>此條件下無報告。</em></p>
+<p class="last-updated">最後更新: 2026-07-16 19:33 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>

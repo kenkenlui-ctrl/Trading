@@ -133,81 +133,6 @@ h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
 .card.bear { border-left-color: var(--bear); }
 .card.amber { border-left-color: var(--amber); }
 
-/* Decision strip (Phase 4e, 2026-07-13) — splits 下日勝率 (WR) from 決策 (rule).
-   Two-column layout makes clear that the colored emoji comes from rule, not WR. */
-.decision-strip {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    margin: 0 0 8px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-    font-size: 0.8rem;
-    line-height: 1.4;
-}
-.strip-col {
-    padding: 5px 9px;
-    background: var(--panel);
-}
-.strip-decision { border-right: 1px solid var(--border); }
-.strip-label {
-    display: block;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--dim);
-    margin-bottom: 1px;
-    font-weight: 600;
-}
-.strip-val {
-    display: inline;
-    font-weight: 700;
-    color: var(--fg);
-    font-size: 0.95rem;
-}
-.strip-rule {
-    display: inline;
-    color: var(--dim);
-    font-size: 0.78rem;
-    margin-left: 3px;
-}
-
-/* Full Results page — archive list (2026-07-13) */
-.archive-list {
-    margin: 2rem 0 0.5rem;
-    padding: 14px 18px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-}
-.archive-list h3 {
-    margin: 0 0 0.6rem;
-    font-size: 0.95rem;
-    color: var(--accent);
-}
-.date-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-.date-grid a {
-    display: inline-block;
-    padding: 4px 10px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    font-size: 0.78rem;
-    color: var(--dim);
-    background: var(--bg);
-    text-decoration: none;
-}
-.date-grid a:hover { border-color: var(--accent); color: var(--accent); }
-.date-grid a.active {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-}
-
 /* Stats line */
 .stats {
     font-size: 0.9rem;
@@ -496,7 +421,6 @@ p.card-link a:hover {
     color: var(--fg);
 }
 .report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
-.report-header .badge.signal { background: #1f6feb; color: #fff; border-color: #1f6feb; font-weight: 600; }
 .report-header .badge.conf { background: var(--panel-2); }
 
 .score-breakdown {
@@ -573,20 +497,16 @@ footer {
     main { padding: 16px 12px 48px; }
     h1 { font-size: 1.15rem; }
     .card { padding: 8px 10px; font-size: 0.8rem; }
-    .decision-strip { font-size: 0.75rem; }
-    .strip-val { font-size: 0.88rem; }
-    .strip-label { font-size: 0.6rem; }
     nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
     nav.leeks-site-nav a { font-size: 0.7rem; }
     table.detail { font-size: 0.7rem; }
     table.detail th, table.detail td { padding: 4px 6px; }
-    .date-grid a { font-size: 0.7rem; padding: 3px 7px; }
 }
 </style>
   
 </head>
 <body>
-<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
 <div class="signal-warning"><b>📈 Paper Trade Tracker</b> · 跟 Conservative BUY + Cyber BUY signals 自動落 paper trade · $1000/trade · 6% stop loss · 2-3 day hold
         <br>· <b>Workflow</b>: 每日 4:30 PM HKT 跑 <code>scripts/paper_trade.py</code> · 新 signals 開倉 + 現有倉位 check stop/target/3-day timeout
@@ -607,7 +527,7 @@ footer {
         <h3>By Signal Source</h3><table class="detail"><thead><tr><th>Source</th><th>Trades</th><th>Wins</th><th>WR</th><th>P&L</th></tr></thead><tbody><tr><td>bounce-buy</td><td>67</td><td>29</td><td>43.3%</td><td class="stat-bear">$-160.12</td></tr><tr><td>conservative-buy</td><td>16</td><td>13</td><td>81.2%</td><td class="stat-bull">$+167.88</td></tr><tr><td>cyber-buy</td><td>5</td><td>2</td><td>40.0%</td><td class="stat-bear">$-148.51</td></tr></tbody></table>
         <h3>By Close Reason</h3><table class="detail"><thead><tr><th>Reason</th><th>Trades</th><th>Wins</th></tr></thead><tbody><tr><td>eod-3day</td><td>32</td><td>16</td></tr><tr><td>stop</td><td>24</td><td>17</td></tr><tr><td>target</td><td>32</td><td>11</td></tr></tbody></table>
         <h2>Recent Closed Trades</h2><table class="detail"><thead><tr><th>Exit Date</th><th>Code</th><th>Source</th><th>Entry</th><th>Exit</th><th>P&L %</th><th>P&L $</th><th>Reason</th><th>Held</th></tr></thead><tbody><tr><td>2026-07-13</td><td>03690.HK</td><td>bounce-buy</td><td>$80.75</td><td>$77.95</td><td class="stat-bear">-3.47%</td><td class="stat-bear">$-34.67</td><td>eod-3day</td><td>5d</td></tr><tr><td>2026-07-13</td><td>01299.HK</td><td>bounce-buy</td><td>$72.95</td><td>$72.40</td><td class="stat-bear">-0.75%</td><td class="stat-bear">$-7.54</td><td>eod-3day</td><td>5d</td></tr><tr><td>2026-07-13</td><td>01024.HK</td><td>bounce-buy</td><td>$43.80</td><td>$43.60</td><td class="stat-bear">-0.46%</td><td class="stat-bear">$-4.57</td><td>eod-3day</td><td>5d</td></tr><tr><td>2026-07-13</td><td>03661.HK</td><td>bounce-buy</td><td>$113.60</td><td>$104.00</td><td class="stat-bear">-8.45%</td><td class="stat-bear">$-84.51</td><td>stop</td><td>5d</td></tr><tr><td>2026-07-13</td><td>02899.HK</td><td>bounce-buy</td><td>$29.52</td><td>$29.40</td><td class="stat-bear">-0.41%</td><td class="stat-bear">$-4.07</td><td>target</td><td>5d</td></tr><tr><td>2026-07-13</td><td>09992.HK</td><td>bounce-buy</td><td>$154.30</td><td>$153.50</td><td class="stat-bear">-0.52%</td><td class="stat-bear">$-5.18</td><td>eod-3day</td><td>5d</td></tr><tr><td>2026-07-13</td><td>01336.HK</td><td>bounce-buy</td><td>$48.80</td><td>$47.30</td><td class="stat-bear">-3.07%</td><td class="stat-bear">$-30.74</td><td>stop</td><td>5d</td></tr><tr><td>2026-07-13</td><td>01772.HK</td><td>bounce-buy</td><td>$43.82</td><td>$41.19</td><td class="stat-bear">-6.00%</td><td class="stat-bear">$-60.02</td><td>stop</td><td>5d</td></tr><tr><td>2026-07-13</td><td>02015.HK</td><td>bounce-buy</td><td>$47.60</td><td>$47.20</td><td class="stat-bear">-0.84%</td><td class="stat-bear">$-8.40</td><td>eod-3day</td><td>5d</td></tr><tr><td>2026-07-13</td><td>01956.HK</td><td>bounce-buy</td><td>$82.80</td><td>$77.83</td><td class="stat-bear">-6.00%</td><td class="stat-bear">$-60.02</td><td>stop</td><td>5d</td></tr><tr><td>2026-07-13</td><td>09868.HK</td><td>bounce-buy</td><td>$52.00</td><td>$50.80</td><td class="stat-bear">-2.31%</td><td class="stat-bear">$-23.08</td><td>eod-3day</td><td>5d</td></tr><tr><td>2026-07-13</td><td>02328.HK</td><td>bounce-buy</td><td>$14.10</td><td>$13.96</td><td class="stat-bear">-0.99%</td><td class="stat-bear">$-9.93</td><td>eod-3day</td><td>5d</td></tr><tr><td>2026-07-13</td><td>03692.HK</td><td>bounce-buy</td><td>$32.26</td><td>$32.52</td><td class="stat-bull">+0.81%</td><td class="stat-bull">$+8.06</td><td>eod-3day</td><td>5d</td></tr><tr><td>2026-07-13</td><td>02601.HK</td><td>bounce-buy</td><td>$27.94</td><td>$27.40</td><td class="stat-bear">-1.93%</td><td class="stat-bear">$-19.33</td><td>eod-3day</td><td>5d</td></tr><tr><td>2026-07-13</td><td>09863.HK</td><td>bounce-buy</td><td>$36.20</td><td>$36.38</td><td class="stat-bull">+0.50%</td><td class="stat-bull">$+4.97</td><td>eod-3day</td><td>5d</td></tr><tr><td>2026-07-13</td><td>01519.HK</td><td>bounce-buy</td><td>$9.53</td><td>$9.08</td><td class="stat-bear">-4.72%</td><td class="stat-bear">$-47.22</td><td>target</td><td>5d</td></tr><tr><td>2026-07-13</td><td>09696.HK</td><td>bounce-buy</td><td>$36.36</td><td>$34.18</td><td class="stat-bear">-6.00%</td><td class="stat-bear">$-59.96</td><td>stop</td><td>5d</td></tr><tr><td>2026-07-13</td><td>01818.HK</td><td>bounce-buy</td><td>$17.99</td><td>$18.00</td><td class="stat-bull">+0.06%</td><td class="stat-bull">$+0.56</td><td>target</td><td>5d</td></tr><tr><td>2026-07-13</td><td>01339.HK</td><td>bounce-buy</td><td>$5.07</td><td>$4.91</td><td class="stat-bear">-3.16%</td><td class="stat-bear">$-31.56</td><td>eod-3day</td><td>5d</td></tr><tr><td>2026-07-13</td><td>01928.HK</td><td>bounce-buy</td><td>$13.42</td><td>$13.22</td><td class="stat-bear">-1.49%</td><td class="stat-bear">$-14.90</td><td>eod-3day</td><td>5d</td></tr><tr><td>2026-07-13</td><td>JPM</td><td>bounce-buy</td><td>$330.62</td><td>$336.47</td><td class="stat-bull">+1.77%</td><td class="stat-bull">$+17.69</td><td>eod-3day</td><td>5d</td></tr><tr><td>2026-07-13</td><td>BAC</td><td>bounce-buy</td><td>$58.30</td><td>$59.67</td><td class="stat-bull">+2.35%</td><td class="stat-bull">$+23.50</td><td>eod-3day</td><td>5d</td></tr><tr><td>2026-07-13</td><td>HD</td><td>bounce-buy</td><td>$336.21</td><td>$343.30</td><td class="stat-bull">+2.11%</td><td class="stat-bull">$+21.09</td><td>eod-3day</td><td>5d</td></tr><tr><td>2026-07-13</td><td>C</td><td>bounce-buy</td><td>$137.39</td><td>$140.79</td><td class="stat-bull">+2.47%</td><td class="stat-bull">$+24.75</td><td>eod-3day</td><td>5d</td></tr><tr><td>2026-07-13</td><td>COIN</td><td>bounce-buy</td><td>$159.36</td><td>$159.07</td><td class="stat-bear">-0.18%</td><td class="stat-bear">$-1.82</td><td>eod-3day</td><td>5d</td></tr><tr><td>2026-07-13</td><td>BA</td><td>bounce-buy</td><td>$224.95</td><td>$222.28</td><td class="stat-bear">-1.19%</td><td class="stat-bear">$-11.87</td><td>eod-3day</td><td>5d</td></tr><tr><td>2026-07-13</td><td>HON</td><td>bounce-buy</td><td>$220.36</td><td>$225.05</td><td class="stat-bull">+2.13%</td><td class="stat-bull">$+21.28</td><td>target</td><td>5d</td></tr><tr><td>2026-07-13</td><td>SHOP</td><td>bounce-buy</td><td>$119.22</td><td>$120.50</td><td class="stat-bull">+1.07%</td><td class="stat-bull">$+10.74</td><td>target</td><td>5d</td></tr><tr><td>2026-07-13</td><td>ACN</td><td>bounce-buy</td><td>$137.19</td><td>$135.23</td><td class="stat-bear">-1.43%</td><td class="stat-bear">$-14.29</td><td>eod-3day</td><td>5d</td></tr><tr><td>2026-07-13</td><td>RTX</td><td>bounce-buy</td><td>$194.91</td><td>$195.93</td><td class="stat-bull">+0.52%</td><td class="stat-bull">$+5.23</td><td>eod-3day</td><td>5d</td></tr></tbody></table>
-        <h2>Open Positions</h2><table class="detail"><thead><tr><th>Entry Date</th><th>Code</th><th>Source</th><th>Entry</th><th>Stop</th><th>Target</th><th>Held</th></tr></thead><tbody><tr><td>2026-07-08</td><td>00939.HK</td><td>bounce-buy</td><td>$8.25</td><td>$7.75</td><td>$8.05</td><td>6d</td></tr><tr><td>2026-07-08</td><td>00027.HK</td><td>bounce-buy</td><td>$31.02</td><td>$30.20</td><td>$31.48</td><td>6d</td></tr><tr><td>2026-07-08</td><td>00179.HK</td><td>bounce-buy</td><td>$20.92</td><td>$19.70</td><td>$20.00</td><td>6d</td></tr><tr><td>2026-07-08</td><td>00241.HK</td><td>bounce-buy</td><td>$3.47</td><td>$3.28</td><td>$3.36</td><td>6d</td></tr><tr><td>2026-07-08</td><td>00966.HK</td><td>bounce-buy</td><td>$18.82</td><td>$19.15</td><td>$18.85</td><td>6d</td></tr><tr><td>2026-07-08</td><td>00688.HK</td><td>bounce-buy</td><td>$12.76</td><td>$12.40</td><td>$12.85</td><td>6d</td></tr><tr><td>2026-07-08</td><td>00780.HK</td><td>bounce-buy</td><td>$12.80</td><td>$12.03</td><td>$12.20</td><td>6d</td></tr></tbody></table>
+        <h2>Open Positions</h2><table class="detail"><thead><tr><th>Entry Date</th><th>Code</th><th>Source</th><th>Entry</th><th>Stop</th><th>Target</th><th>Held</th></tr></thead><tbody><tr><td>2026-07-08</td><td>00939.HK</td><td>bounce-buy</td><td>$8.25</td><td>$7.75</td><td>$8.05</td><td>8d</td></tr><tr><td>2026-07-08</td><td>00027.HK</td><td>bounce-buy</td><td>$31.02</td><td>$30.20</td><td>$31.48</td><td>8d</td></tr><tr><td>2026-07-08</td><td>00179.HK</td><td>bounce-buy</td><td>$20.92</td><td>$19.70</td><td>$20.00</td><td>8d</td></tr><tr><td>2026-07-08</td><td>00241.HK</td><td>bounce-buy</td><td>$3.47</td><td>$3.28</td><td>$3.36</td><td>8d</td></tr><tr><td>2026-07-08</td><td>00966.HK</td><td>bounce-buy</td><td>$18.82</td><td>$19.15</td><td>$18.85</td><td>8d</td></tr><tr><td>2026-07-08</td><td>00688.HK</td><td>bounce-buy</td><td>$12.76</td><td>$12.40</td><td>$12.85</td><td>8d</td></tr><tr><td>2026-07-08</td><td>00780.HK</td><td>bounce-buy</td><td>$12.80</td><td>$12.03</td><td>$12.20</td><td>8d</td></tr></tbody></table>
 
 </main>
 <footer>

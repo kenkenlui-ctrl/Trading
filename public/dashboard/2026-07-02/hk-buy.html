@@ -133,81 +133,6 @@ h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
 .card.bear { border-left-color: var(--bear); }
 .card.amber { border-left-color: var(--amber); }
 
-/* Decision strip (Phase 4e, 2026-07-13) — splits 下日勝率 (WR) from 決策 (rule).
-   Two-column layout makes clear that the colored emoji comes from rule, not WR. */
-.decision-strip {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    margin: 0 0 8px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-    font-size: 0.8rem;
-    line-height: 1.4;
-}
-.strip-col {
-    padding: 5px 9px;
-    background: var(--panel);
-}
-.strip-decision { border-right: 1px solid var(--border); }
-.strip-label {
-    display: block;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--dim);
-    margin-bottom: 1px;
-    font-weight: 600;
-}
-.strip-val {
-    display: inline;
-    font-weight: 700;
-    color: var(--fg);
-    font-size: 0.95rem;
-}
-.strip-rule {
-    display: inline;
-    color: var(--dim);
-    font-size: 0.78rem;
-    margin-left: 3px;
-}
-
-/* Full Results page — archive list (2026-07-13) */
-.archive-list {
-    margin: 2rem 0 0.5rem;
-    padding: 14px 18px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-}
-.archive-list h3 {
-    margin: 0 0 0.6rem;
-    font-size: 0.95rem;
-    color: var(--accent);
-}
-.date-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-.date-grid a {
-    display: inline-block;
-    padding: 4px 10px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    font-size: 0.78rem;
-    color: var(--dim);
-    background: var(--bg);
-    text-decoration: none;
-}
-.date-grid a:hover { border-color: var(--accent); color: var(--accent); }
-.date-grid a.active {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-}
-
 /* Stats line */
 .stats {
     font-size: 0.9rem;
@@ -496,7 +421,6 @@ p.card-link a:hover {
     color: var(--fg);
 }
 .report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
-.report-header .badge.signal { background: #1f6feb; color: #fff; border-color: #1f6feb; font-weight: 600; }
 .report-header .badge.conf { background: var(--panel-2); }
 
 .score-breakdown {
@@ -573,41 +497,42 @@ footer {
     main { padding: 16px 12px 48px; }
     h1 { font-size: 1.15rem; }
     .card { padding: 8px 10px; font-size: 0.8rem; }
-    .decision-strip { font-size: 0.75rem; }
-    .strip-val { font-size: 0.88rem; }
-    .strip-label { font-size: 0.6rem; }
     nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
     nav.leeks-site-nav a { font-size: 0.7rem; }
     table.detail { font-size: 0.7rem; }
     table.detail th, table.detail td { padding: 4px 6px; }
-    .date-grid a { font-size: 0.7rem; padding: 3px 7px; }
 }
 </style>
   
 </head>
 <body>
-<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
-<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="signal-warning"><b>🔬 Signal Explorer</b> · 每張 card 顯示單一 <b>下日勝率</b> (0-100%) — 越高 = 越大機會 next day 贏。基於 10-day 1,913 signals 嘅 logistic regression 校準，唔再睇 LLM 自評分。</div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-07-02/all.html">全部</a><a href="/dashboard/2026-07-02/hk-buy.html" class="active">港股買入</a><a href="/dashboard/2026-07-02/hk-sell.html">港股賣出</a><a href="/dashboard/2026-07-02/hk-hold.html">港股觀望</a><a href="/dashboard/2026-07-02/us-buy.html">美股買入</a><a href="/dashboard/2026-07-02/us-sell.html">美股賣出</a><a href="/dashboard/2026-07-02/us-hold.html">美股觀望</a><a href="/dashboard/2026-07-02/conservative-buy.html">🛡️ Conservative BUY</a><a href="/dashboard/2026-07-02/cyber-buy.html">🔐 Cyber BUY</a><a href="/dashboard/2026-07-02/strength-buy.html">⏸️ Strength BUY</a><a href="/dashboard/2026-07-02/bounce-buy.html">🌊 Bounce BUY</a></div><h1>🔬 Signal Explorer — 2026-07-02 (港股買入)</h1><b>2026-07-02</b> · 共分析 <b>11</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:11 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:0 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:0
+<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="signal-warning"><b>🔬 Signal Explorer (Rule-Based, Phase 2)</b> · operation_advice 喺 10-day audit 後改由 deterministic rules 決定 (唔再信 LLM 直接 BUY/SELL call)。
+            <br>· <b>🟢 買入</b> 經 4 rules 揀：<span class="warn-strong">🛡️ Conservative</span> (61.5% WR) + <span class="warn-strong">🌊 Bounce</span> (51.7% WR) + ANTI-MOMENTUM 等
+            <br>· <b>🔴 賣出</b> 幾乎全部被 ANTI-KNIFE override 去 觀望 (LLM SELL 悲觀 37.7% WR，catch falling knife)
+            <br>· <b>🟡 觀望</b> 88% records 係 DEFAULT — LLM 嗰個訊號冇 match 任何 backtested edge
+            <br>· <b>ℹ️ 10-day audit 結論</b>: LLM 樂觀 BUY 30.4% WR (反指)、m≥80 BUY 16.7% WR、悲觀 SELL 37.7% WR (錯方向)
+            <br>· <b>每張 card 顯示</b>: rule-based op + LLM 寫嘅 narrative/catalysts/levels — detail page 入面有 Rule-Based Decision banner 解釋 override 原因</div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-07-02/all.html">全部</a><a href="/dashboard/2026-07-02/hk-buy.html" class="active">港股買入</a><a href="/dashboard/2026-07-02/hk-sell.html">港股賣出</a><a href="/dashboard/2026-07-02/hk-hold.html">港股觀望</a><a href="/dashboard/2026-07-02/us-buy.html">美股買入</a><a href="/dashboard/2026-07-02/us-sell.html">美股賣出</a><a href="/dashboard/2026-07-02/us-hold.html">美股觀望</a><a href="/dashboard/2026-07-02/conservative-buy.html">🛡️ Conservative BUY</a><a href="/dashboard/2026-07-02/cyber-buy.html">🔐 Cyber BUY</a><a href="/dashboard/2026-07-02/strength-buy.html">⏸️ Strength BUY</a><a href="/dashboard/2026-07-02/bounce-buy.html">🌊 Bounce BUY</a></div><h1>🔬 Signal Explorer — 2026-07-02 (港股買入)</h1><b>2026-07-02</b> · 共分析 <b>11</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:11 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:0 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:0
 
 <h2>📊 分析結果摘要</h2>
 
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">61%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 61%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>00992.HK</b> · 下日勝率 61% · 聯想集團 (00992.HK) 今日 (2026/07/02) 大跌 -4.34%，收 22.02 HKD，日內 H/L 區間 21.62-22.84 達 5.54% 屬高波幅。技術指標 MA20/50/100/200、RSI 全部 N/A，無法確認中長期 trend。PE TTM 5.30 極度便宜提供長線安全墊，但 PB 2731.51 數據異常（疑與市值欄位重複，數據來源警訊待確認）。負面催化包括摩根大通於 6/25 將多頭持倉由 13.78% 降至 9.69%，疊加美國 5G 專利侵權訴訟。日內可做空反彈或博技術反彈，止損必須收緊。<p class="card-link"><a href="/dashboard/2026-07-02/reports/00992.HK.html">→ 完整 00992.HK 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">55%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 55%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>02018.HK</b> · 下日勝率 55% · 02018.HK 瑞聲科技 2026/07/02 大跌 -4.78% 收 $40.66，全日區間 $40.14-$43.30，幅度 7.77% 屬極高波幅日，主要受蘋果提價引發供應鏈擔憂拖累。估值端 PE TTM 7.40 偏低具保護，但 PB 471.34 數據異常（疑系統錯誤），需慎用。公司連續 4 日回購（單日約 $1,200 萬），屬正面訊號，惟回購金額相對今日 $2.62 億成交額僅約 4.6%，難扭轉大局。MA20/50/100/200 及 RSI14 均缺數據，趨勢判斷受限，建議先觀望，待明日確認 $40.14 低位守穩或失守方向後再行動。<p class="card-link"><a href="/dashboard/2026-07-02/reports/02018.HK.html">→ 完整 02018.HK 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">55%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 55%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>02431.HK</b> · 下日勝率 55% · 佑駕創新 (02431.HK) 現價 8.78 HKD，今日 (2026/07/02) 跌 3.83%，日內區間 6.26% 屬高波幅。股價從 52週高 29.68 跌至現價，跌幅約 70%，現距 52週低 7.91 僅 11%，處於歷史低位區。估值面 PE TTM 6.02 表面便宜，但 PB 28.55 極高（資產輕、AI/智駕業務無形資產佔比大），估值參考性弱。量比 0.00× 顯示資金參與度極低，MA20/50/100/200 及 RSI 全部 N/A 無法判斷趨勢結構。短線宜觀望，待 8.72 (日低) 或 9.13 (前日收) 出現方向確認。<p class="card-link"><a href="/dashboard/2026-07-02/reports/02431.HK.html">→ 完整 02431.HK 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">55%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 55%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>03696.HK</b> · 下日勝率 55% · 03696 今日「高開低走」，開盤衝高至 $43.88（受武田 $600M BD 利好刺激），其後急挫至 $37.46 全日低位，收 $38.00，跌 4.09%。好消息出貨格局明確，買盤無力承接。日內區間 16.89% 屬極高波幅，短炒燃料充足但方向偏空。PE TTM 16.20 看似合理，但 PB 217.51 反映 biotech 早期階段、股東權益極薄。市值數據疑似異常（顯示 217.51 HKD），量比 0.00× 數據有問題需警覺。建議觀望，待 $37.46 守穩再考慮博反彈 $39.62；反彈乏力則可試空。<p class="card-link"><a href="/dashboard/2026-07-02/reports/03696.HK.html">→ 完整 03696.HK 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">53%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 53%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>02676.HK</b> · 下日勝率 53% · 02676.HK 納芯微今日 (2026-07-02) 大跌 4.52%，現價 198.60 HKD，盤中由 211.20 高位急挫至 184.10 低位後回升收市，全日 H/L 區間幅度 13.65% 屬極端高波動日。技術指標 MA20/MA50/MA100/MA200 及 RSI14 全部缺失 N/A，無趨勢錨點；量比 0× 亦無成交量確認。PE TTM 13.03 屬合理水平，但 PB 39.91 反映估值溢價極高。好消息係摩通士丹利以約 4,163 萬港元增持 19.98 萬 H 股，加上公司回購 125.56 萬股及慕展發佈車規級晶片，潛在買盤存在。日內策略：等回測 184.10-190.00 才考慮博反彈至 208.00 (前收)，止損 180.00，風險回報約 2.5；若反彈至 208.00-211.20 受壓可短炒。<p class="card-link"><a href="/dashboard/2026-07-02/reports/02676.HK.html">→ 完整 02676.HK 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">53%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 53%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>03606.HK</b> · 下日勝率 53% · 福耀玻璃 (03606.HK) 收報 50.15 HKD，今日下跌 2.05%，日內區間 49.84-51.20 (波幅 2.71%)，股價已貼近 52週低位 47.70 (僅高出約 5.1%)，顯示弱勢明顯。MA20/MA50/MA100/MA200 及 RSI14 全部缺失，技術面難以判斷趨勢，需以價格行為為主。PE TTM 2.66 顯示估值極低（數據可能屬 A 股口徑），但 PB 304.29 異常高，疑似權益或會計項目問題，估值參考性大打折扣。建議觀望等待企穩 49.84 之上，或反彈沽空至 51.20 阻力區。<p class="card-link"><a href="/dashboard/2026-07-02/reports/03606.HK.html">→ 完整 03606.HK 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">52%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 52%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>00189.HK</b> · 下日勝率 52% · 東岳集團今日高開後大幅滑落，收報 18.62 HKD，跌 -2.41%，全日區間 18.44–19.80 HKD 達 7.30%（高波幅），呈典型「假突破後派發」結構。日內曾升穿 19.08 昨收高位至 19.80，但無力守穩，最終倒跌收市，技術面轉弱。PE TTM 僅 7.13 估值便宜（正面），惟聯營公司未來材料撤回科創板上市申請屬負面催化劑；好消息係製冷劑價格創十年新高、配額收緊為長線順風。短炒角度，當日 H/L 波幅 7.30% 提供充足燃料，可博反彈失敗做空。MA20/MA50/MA100/MA200 同 RSI14 數據缺失，技術錨點薄弱，量比 0.00× 數據異常，PB 322.63 明顯為數據錯誤（亦見市值欄同值異常），建議降低注碼並嚴控止損。<p class="card-link"><a href="/dashboard/2026-07-02/reports/00189.HK.html">→ 完整 00189.HK 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">51%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 51%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>03750.HK</b> · 下日勝率 51% · 宁德时代 (03750.HK) 現價 681.00 HKD，今日下跌 2.99%，日內區間 670.00-704.00（波幅 4.99% 屬高波幅），具備短炒燃料。估值面 PE TTM 僅 4.84 屬極低水平，但 PB 報 1,486.62 數據異常（CATL 正常 PB 約 4-6 倍），需視為數據警訊。基本面具質素強（淨利潤超十家車企總和、持續獲取電池專利）。動能面今日下跌配合高波幅，但量比 0.00× 顯示資金參與度不足，MA20/50/100/200 及 RSI 全部 N/A，技術面缺乏方向確認。建議區間操作或觀望，待量能配合再行進場。<p class="card-link"><a href="/dashboard/2026-07-02/reports/03750.HK.html">→ 完整 03750.HK 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">49%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 49%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>01772.HK</b> · 下日勝率 49% · 01772.HK 贛鋒鋰業今日急跌 -4.41%，收報 48.08 HKD，盤中區間 7.70% 屬高波幅，短炒燃料充足但方向偏空。估值面 PE TTM 僅 7.36 看似便宜，但 PB 232.27 異常高（疑因股東權益受壓），疊加股東王曉申再質押 570 萬股，財務質素訊號轉差。MA20/MA50/MA100/MA200 及 RSI14 全部缺失，技術面判斷困難；量比 0.00× 屬數據異常，無法確認資金流向。短線建議觀望，待量比及 MA 數據恢復再行部署。<p class="card-link"><a href="/dashboard/2026-07-02/reports/01772.HK.html">→ 完整 01772.HK 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">48%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 48%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>01783.HK</b> · 下日勝率 48% · 晉景新能(01783.HK)2026/07/02收報5.87 HKD,跌3.29%,全日高低區間5.50-6.07 HKD,波幅達9.71%屬高波幅,短炒燃料充足但方向偏空。受22億收購淨資產僅4330萬嘅虧損標的(5000%溢價)及大股東安柯套現等負面消息影響,資金面壓力明顯。PE TTM 9.39看似便宜,但PB 169.60極度異常(極可能股東權益為負,資不抵債訊號),估值陷阱風險高。MA20/MA50/MA100/MA200及量比均無數據,技術面參考性低。建議觀望,待消息面消化及技術指標修復。<p class="card-link"><a href="/dashboard/2026-07-02/reports/01783.HK.html">→ 完整 01783.HK 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">47%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 47%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>01688.HK</b> · 下日勝率 47% · 01688.HK 今日收報 10.18 HKD，較昨收 10.67 大跌 -4.59%，但盤中由低位 9.70 反彈至收市 10.18，反彈幅度約 4.95%，顯示低位有買盤承接。波幅高達 12.38%（10.96/9.70），短炒燃料充足。PE TTM 11.81 屬合理水平，但 PB 82.64 異常偏高（疑股東權益接近零或數據口徑問題），估值訊號矛盾。廣發基金增持 6,466.48 萬股 H 股（約 6.58 億港元）及公司累計 3.11 億元回購 2,219.93 萬股提供基本面接力。技術面無 MA20/50/100/200 數據，趨勢不確定。建議嚴控倉位，日內短炒為主，4 PM 前必須平倉。<p class="card-link"><a href="/dashboard/2026-07-02/reports/01688.HK.html">→ 完整 01688.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>00992.HK</b> · 評分 30 · 聯想集團 (00992.HK) 今日 (2026/07/02) 大跌 -4.34%，收 22.02 HKD，日內 H/L 區間 21.62-22.84 達 5.54% 屬高波幅。技術指標 MA20/50/100/200、RSI 全部 N/A，無法確認中長期 trend。PE TTM 5.30 極度便宜提供長線安全墊，但 PB 2731.51 數據異常（疑與市值欄位重複，數據來源警訊待確認）。負面催化包括摩根大通於 6/25 將多頭持倉由 13.78% 降至 9.69%，疊加美國 5G 專利侵權訴訟。日內可做空反彈或博技術反彈，止損必須收緊。<p class="card-link"><a href="/dashboard/2026-07-02/reports/00992.HK.html">→ 完整 00992.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>02018.HK</b> · 評分 41 · 02018.HK 瑞聲科技 2026/07/02 大跌 -4.78% 收 $40.66，全日區間 $40.14-$43.30，幅度 7.77% 屬極高波幅日，主要受蘋果提價引發供應鏈擔憂拖累。估值端 PE TTM 7.40 偏低具保護，但 PB 471.34 數據異常（疑系統錯誤），需慎用。公司連續 4 日回購（單日約 $1,200 萬），屬正面訊號，惟回購金額相對今日 $2.62 億成交額僅約 4.6%，難扭轉大局。MA20/50/100/200 及 RSI14 均缺數據，趨勢判斷受限，建議先觀望，待明日確認 $40.14 低位守穩或失守方向後再行動。<p class="card-link"><a href="/dashboard/2026-07-02/reports/02018.HK.html">→ 完整 02018.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>02431.HK</b> · 評分 30 · 佑駕創新 (02431.HK) 現價 8.78 HKD，今日 (2026/07/02) 跌 3.83%，日內區間 6.26% 屬高波幅。股價從 52週高 29.68 跌至現價，跌幅約 70%，現距 52週低 7.91 僅 11%，處於歷史低位區。估值面 PE TTM 6.02 表面便宜，但 PB 28.55 極高（資產輕、AI/智駕業務無形資產佔比大），估值參考性弱。量比 0.00× 顯示資金參與度極低，MA20/50/100/200 及 RSI 全部 N/A 無法判斷趨勢結構。短線宜觀望，待 8.72 (日低) 或 9.13 (前日收) 出現方向確認。<p class="card-link"><a href="/dashboard/2026-07-02/reports/02431.HK.html">→ 完整 02431.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>03696.HK</b> · 評分 30 · 03696 今日「高開低走」，開盤衝高至 $43.88（受武田 $600M BD 利好刺激），其後急挫至 $37.46 全日低位，收 $38.00，跌 4.09%。好消息出貨格局明確，買盤無力承接。日內區間 16.89% 屬極高波幅，短炒燃料充足但方向偏空。PE TTM 16.20 看似合理，但 PB 217.51 反映 biotech 早期階段、股東權益極薄。市值數據疑似異常（顯示 217.51 HKD），量比 0.00× 數據有問題需警覺。建議觀望，待 $37.46 守穩再考慮博反彈 $39.62；反彈乏力則可試空。<p class="card-link"><a href="/dashboard/2026-07-02/reports/03696.HK.html">→ 完整 03696.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>02676.HK</b> · 評分 38 · 02676.HK 納芯微今日 (2026-07-02) 大跌 4.52%，現價 198.60 HKD，盤中由 211.20 高位急挫至 184.10 低位後回升收市，全日 H/L 區間幅度 13.65% 屬極端高波動日。技術指標 MA20/MA50/MA100/MA200 及 RSI14 全部缺失 N/A，無趨勢錨點；量比 0× 亦無成交量確認。PE TTM 13.03 屬合理水平，但 PB 39.91 反映估值溢價極高。好消息係摩通士丹利以約 4,163 萬港元增持 19.98 萬 H 股，加上公司回購 125.56 萬股及慕展發佈車規級晶片，潛在買盤存在。日內策略：等回測 184.10-190.00 才考慮博反彈至 208.00 (前收)，止損 180.00，風險回報約 2.5；若反彈至 208.00-211.20 受壓可短炒。<p class="card-link"><a href="/dashboard/2026-07-02/reports/02676.HK.html">→ 完整 02676.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>03606.HK</b> · 評分 36 · 福耀玻璃 (03606.HK) 收報 50.15 HKD，今日下跌 2.05%，日內區間 49.84-51.20 (波幅 2.71%)，股價已貼近 52週低位 47.70 (僅高出約 5.1%)，顯示弱勢明顯。MA20/MA50/MA100/MA200 及 RSI14 全部缺失，技術面難以判斷趨勢，需以價格行為為主。PE TTM 2.66 顯示估值極低（數據可能屬 A 股口徑），但 PB 304.29 異常高，疑似權益或會計項目問題，估值參考性大打折扣。建議觀望等待企穩 49.84 之上，或反彈沽空至 51.20 阻力區。<p class="card-link"><a href="/dashboard/2026-07-02/reports/03606.HK.html">→ 完整 03606.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>00189.HK</b> · 評分 34 · 東岳集團今日高開後大幅滑落，收報 18.62 HKD，跌 -2.41%，全日區間 18.44–19.80 HKD 達 7.30%（高波幅），呈典型「假突破後派發」結構。日內曾升穿 19.08 昨收高位至 19.80，但無力守穩，最終倒跌收市，技術面轉弱。PE TTM 僅 7.13 估值便宜（正面），惟聯營公司未來材料撤回科創板上市申請屬負面催化劑；好消息係製冷劑價格創十年新高、配額收緊為長線順風。短炒角度，當日 H/L 波幅 7.30% 提供充足燃料，可博反彈失敗做空。MA20/MA50/MA100/MA200 同 RSI14 數據缺失，技術錨點薄弱，量比 0.00× 數據異常，PB 322.63 明顯為數據錯誤（亦見市值欄同值異常），建議降低注碼並嚴控止損。<p class="card-link"><a href="/dashboard/2026-07-02/reports/00189.HK.html">→ 完整 00189.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>03750.HK</b> · 評分 44 · 宁德时代 (03750.HK) 現價 681.00 HKD，今日下跌 2.99%，日內區間 670.00-704.00（波幅 4.99% 屬高波幅），具備短炒燃料。估值面 PE TTM 僅 4.84 屬極低水平，但 PB 報 1,486.62 數據異常（CATL 正常 PB 約 4-6 倍），需視為數據警訊。基本面具質素強（淨利潤超十家車企總和、持續獲取電池專利）。動能面今日下跌配合高波幅，但量比 0.00× 顯示資金參與度不足，MA20/50/100/200 及 RSI 全部 N/A，技術面缺乏方向確認。建議區間操作或觀望，待量能配合再行進場。<p class="card-link"><a href="/dashboard/2026-07-02/reports/03750.HK.html">→ 完整 03750.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>01772.HK</b> · 評分 39 · 01772.HK 贛鋒鋰業今日急跌 -4.41%，收報 48.08 HKD，盤中區間 7.70% 屬高波幅，短炒燃料充足但方向偏空。估值面 PE TTM 僅 7.36 看似便宜，但 PB 232.27 異常高（疑因股東權益受壓），疊加股東王曉申再質押 570 萬股，財務質素訊號轉差。MA20/MA50/MA100/MA200 及 RSI14 全部缺失，技術面判斷困難；量比 0.00× 屬數據異常，無法確認資金流向。短線建議觀望，待量比及 MA 數據恢復再行部署。<p class="card-link"><a href="/dashboard/2026-07-02/reports/01772.HK.html">→ 完整 01772.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>01783.HK</b> · 評分 44 · 晉景新能(01783.HK)2026/07/02收報5.87 HKD,跌3.29%,全日高低區間5.50-6.07 HKD,波幅達9.71%屬高波幅,短炒燃料充足但方向偏空。受22億收購淨資產僅4330萬嘅虧損標的(5000%溢價)及大股東安柯套現等負面消息影響,資金面壓力明顯。PE TTM 9.39看似便宜,但PB 169.60極度異常(極可能股東權益為負,資不抵債訊號),估值陷阱風險高。MA20/MA50/MA100/MA200及量比均無數據,技術面參考性低。建議觀望,待消息面消化及技術指標修復。<p class="card-link"><a href="/dashboard/2026-07-02/reports/01783.HK.html">→ 完整 01783.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>01688.HK</b> · 評分 41 · 01688.HK 今日收報 10.18 HKD，較昨收 10.67 大跌 -4.59%，但盤中由低位 9.70 反彈至收市 10.18，反彈幅度約 4.95%，顯示低位有買盤承接。波幅高達 12.38%（10.96/9.70），短炒燃料充足。PE TTM 11.81 屬合理水平，但 PB 82.64 異常偏高（疑股東權益接近零或數據口徑問題），估值訊號矛盾。廣發基金增持 6,466.48 萬股 H 股（約 6.58 億港元）及公司累計 3.11 億元回購 2,219.93 萬股提供基本面接力。技術面無 MA20/50/100/200 數據，趨勢不確定。建議嚴控倉位，日內短炒為主，4 PM 前必須平倉。<p class="card-link"><a href="/dashboard/2026-07-02/reports/01688.HK.html">→ 完整 01688.HK 詳細報告</a></p></div>
 
 ---
-<em>生成時間: 2026-07-14 15:40:30 · LLM: openai/MiniMax-M3</em>
-<div style="text-align:center;margin:1.5rem 0 0.5rem;padding:14px 18px;background:var(--panel);border:1px dashed var(--border);border-radius:4px;font-size:0.88rem;">👇 想睇 <b>全部 11 隻股票</b>嘅 score + 操作 + entry/stop/target？ 去 <a href="/full-results/2026-07-02.html"><b>Full Results (2026-07-02)</b></a></div>
-<p class="last-updated">最後更新: 2026-07-14 15:40 HKT</p>
+<em>生成時間: 2026-07-16 19:33:48 · LLM: openai/MiniMax-M3</em>
+<h2>詳細表格</h2><table class="detail"><thead><tr><th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能/資金流</th><th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th><th>入場</th><th>止損</th><th>目標</th></tr></thead><tbody><tr><td><a href="/dashboard/2026-07-02/reports/03750.HK.html">03750.HK</a></td><td>44</td><td>both</td><td>50/72/45</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>672.00-678.00（靠近今日低位 670.00 上方吸納博反彈）</td><td>660.00（跌破今日低位 670.00 即止損）</td><td>700.00-704.00（今日高位 704.00）</td></tr><tr><td><a href="/dashboard/2026-07-02/reports/01783.HK.html">01783.HK</a></td><td>44</td><td>both</td><td>50/25/48</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>短做空:6.00-6.07 HKD反彈遇阻;短做多:5.55-5.65 HKD靠近全日低位博反彈</td><td>短做空止損:6.20 HKD(突破全日高位6.07之上);短做多止損:5.45 HKD(跌破全日低位5.50)</td><td>短做空目標:5.60 HKD(全日低位附近);短做多目標:5.95-6.00 HKD(昨收6.07下方)</td></tr><tr><td><a href="/dashboard/2026-07-02/reports/02018.HK.html">02018.HK</a></td><td>41</td><td>both</td><td>65/50/40</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>40.20-40.70</td><td>39.70</td><td>42.70 (昨收)</td></tr><tr><td><a href="/dashboard/2026-07-02/reports/01688.HK.html">01688.HK</a></td><td>41</td><td>both</td><td>25/50/45</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>9.80-10.00 (反彈做多) / 10.55-10.70 (反彈做空)</td><td>9.55 (多單止損, 跌破今日低位 9.70) / 11.05 (空單止損, 突破今日高位 10.96)</td><td>10.50 (多單目標, 今日波幅 50% 回吐位) / 9.85 (空單目標, 接近今日低位 9.70)</td></tr><tr><td><a href="/dashboard/2026-07-02/reports/01772.HK.html">01772.HK</a></td><td>39</td><td>both</td><td>38/25/42</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>做多：47.70-48.30（今日低位附近）；做空：50.30-51.00（昨收及反彈高位附近）</td><td>做多止損：47.00（跌破今日低位 47.70）；做空止損：52.00（突破今日高位 51.40）</td><td>做多目標：50.30（昨收價）；做空目標：47.70（今日低位，跌破可看 45.00 心理位）</td></tr><tr><td><a href="/dashboard/2026-07-02/reports/02676.HK.html">02676.HK</a></td><td>38</td><td>both</td><td>52/48/35</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>184.10-190.00</td><td>180.00</td><td>208.00 (前收)</td></tr><tr><td><a href="/dashboard/2026-07-02/reports/03606.HK.html">03606.HK</a></td><td>36</td><td>both</td><td>55/58/35</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>49.80-50.20 (今日低位附近) 做多；或 51.00-51.20 反彈做空</td><td>多單止損 49.20 (跌破今日低位)；空單止損 52.00 (站回昨日收盤 51.20 之上)</td><td>多單目標 51.20 (今日高位 / 昨收)；空單目標 48.50 (靠近 52週低位 47.70)</td></tr><tr><td><a href="/dashboard/2026-07-02/reports/00189.HK.html">00189.HK</a></td><td>34</td><td>short</td><td>55/40/30</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>19.00-19.30 HKD (反彈至今日 close 之上、昨日收 19.08 附近失敗區域短炒做空)</td><td>19.90 HKD (今日高位 19.80 之上 0.10 buffer)</td><td>18.40 HKD (今日低位) → 17.80 HKD (延伸目標)</td></tr><tr><td><a href="/dashboard/2026-07-02/reports/00992.HK.html">00992.HK</a></td><td>30</td><td>both</td><td>75/50/25</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>做空: 22.60-22.84 (反彈至日內高位區域) | 做多: 21.62-21.90 (回踩日內低位)</td><td>做空止損: 23.10 (上破昨收 23.02) | 做多止損: 21.20 (下破日低 21.62 約 1.9%)</td><td>做空目標: 21.62 (日內低位) / 20.80 (日低下方延伸) | 做多目標: 22.84 (日高) / 23.02 (昨收)</td></tr><tr><td><a href="/dashboard/2026-07-02/reports/02431.HK.html">02431.HK</a></td><td>30</td><td>both</td><td>50/40/32</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>9.10-9.25（反彈至前日收 9.13 及日高 9.27 區間做空）／ 8.65-8.72（回踩日低 8.72 下方做多博反彈）</td><td>9.40（短倉：日高 9.27 之上）／ 8.55（多倉：日低 8.72 之下）</td><td>8.50（短倉，跌破日低 8.72）／ 9.13-9.27（多倉，反彈至前日收及日高）</td></tr><tr><td><a href="/dashboard/2026-07-02/reports/03696.HK.html">03696.HK</a></td><td>30</td><td>both</td><td>40/55/30</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>37.46-37.80（貼近今日低位吸納博反彈）；或 38.50-38.80（反彈乏力做空）</td><td>多單 $36.50（今日低位 $37.46 之下）；空單 $39.62（昨收之上）</td><td>多單 $39.62（昨收價）；空單 $36.00（朝向 52週低 $29.98）</td></tr></tbody></table>
+<p class="last-updated">最後更新: 2026-07-16 19:33 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>

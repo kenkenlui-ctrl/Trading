@@ -133,81 +133,6 @@ h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
 .card.bear { border-left-color: var(--bear); }
 .card.amber { border-left-color: var(--amber); }
 
-/* Decision strip (Phase 4e, 2026-07-13) — splits 下日勝率 (WR) from 決策 (rule).
-   Two-column layout makes clear that the colored emoji comes from rule, not WR. */
-.decision-strip {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    margin: 0 0 8px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-    font-size: 0.8rem;
-    line-height: 1.4;
-}
-.strip-col {
-    padding: 5px 9px;
-    background: var(--panel);
-}
-.strip-decision { border-right: 1px solid var(--border); }
-.strip-label {
-    display: block;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--dim);
-    margin-bottom: 1px;
-    font-weight: 600;
-}
-.strip-val {
-    display: inline;
-    font-weight: 700;
-    color: var(--fg);
-    font-size: 0.95rem;
-}
-.strip-rule {
-    display: inline;
-    color: var(--dim);
-    font-size: 0.78rem;
-    margin-left: 3px;
-}
-
-/* Full Results page — archive list (2026-07-13) */
-.archive-list {
-    margin: 2rem 0 0.5rem;
-    padding: 14px 18px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-}
-.archive-list h3 {
-    margin: 0 0 0.6rem;
-    font-size: 0.95rem;
-    color: var(--accent);
-}
-.date-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-.date-grid a {
-    display: inline-block;
-    padding: 4px 10px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    font-size: 0.78rem;
-    color: var(--dim);
-    background: var(--bg);
-    text-decoration: none;
-}
-.date-grid a:hover { border-color: var(--accent); color: var(--accent); }
-.date-grid a.active {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-}
-
 /* Stats line */
 .stats {
     font-size: 0.9rem;
@@ -496,7 +421,6 @@ p.card-link a:hover {
     color: var(--fg);
 }
 .report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
-.report-header .badge.signal { background: #1f6feb; color: #fff; border-color: #1f6feb; font-weight: 600; }
 .report-header .badge.conf { background: var(--panel-2); }
 
 .score-breakdown {
@@ -573,20 +497,16 @@ footer {
     main { padding: 16px 12px 48px; }
     h1 { font-size: 1.15rem; }
     .card { padding: 8px 10px; font-size: 0.8rem; }
-    .decision-strip { font-size: 0.75rem; }
-    .strip-val { font-size: 0.88rem; }
-    .strip-label { font-size: 0.6rem; }
     nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
     nav.leeks-site-nav a { font-size: 0.7rem; }
     table.detail { font-size: 0.7rem; }
     table.detail th, table.detail td { padding: 4px 6px; }
-    .date-grid a { font-size: 0.7rem; padding: 3px 7px; }
 }
 </style>
   
 </head>
 <body>
-<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
 <div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="signal-warning"><b>🔐 Cyber BUY v2</b> · Anti-gapup + 52w high avoidance (new logic 2026-07-09):
             <br>· <b>Tickers</b>: DDOG · PANW · CRWD · FTNT · OKTA · ZS · NET · S · CYBR · RBRK · QLYS · TENB · VRNS (13 隻)
@@ -597,13 +517,13 @@ footer {
 
 <h2>📊 分析結果摘要</h2>
 
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">41%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 41%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>FTNT</b> · 下日勝率 41% · FTNT 現價 $158.67，今日跌 -2.27%，最低 $155.68 / 最高 $163.31，正處於 52 週高位 $163.57 下方出現單日顯著回調。估值面 PE TTM 60.14、PB 115.54 屬極高估值區，無息派。技術面短線偏弱但長線仍處極強升勢（52週低 $70.12 → 現價 $158.67，升幅逾 126%）。消息面 CFRA 維持持有評級，BTIG 目標價上調至 $150、巴克萊上調至 $115，均低於現價 $158.67，估值已跑贏分析師目標。日內建議觀望，等待方向確認。<p class="card-link"><a href="/dashboard/2026-07-07/reports/FTNT.html">→ 完整 FTNT 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">41%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 41%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CRWD</b> · 下日勝率 41% · CRWD 現價 $194.62，今日跌 2.39%，由昨收 $199.38 顯著回落，日內區間 $192.22-$201.37，波幅約 4.7%，屬高波幅交易日，短炒燃料充足。股價位於 52 週高位 $209.50 下方約 7.1%、52 週低位 $85.68 上方約 127%，處於強勢區但短期回調。PB 高達 41.54缺乏安全邊際。重要技術指標（MA20/MA50/MA100/MA200、RSI14、量比）全部缺失，技術面訊號模糊，建議待指標補回後再行部署。短期方向未明，可於 $190.00-$192.50 區間博反彈，或於 $199.00-$201.37 阻力區做空回補。<p class="card-link"><a href="/dashboard/2026-07-07/reports/CRWD.html">→ 完整 CRWD 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>FTNT</b> · 評分 43 · FTNT 現價 $158.67，今日跌 -2.27%，最低 $155.68 / 最高 $163.31，正處於 52 週高位 $163.57 下方出現單日顯著回調。估值面 PE TTM 60.14、PB 115.54 屬極高估值區，無息派。技術面短線偏弱但長線仍處極強升勢（52週低 $70.12 → 現價 $158.67，升幅逾 126%）。消息面 CFRA 維持持有評級，BTIG 目標價上調至 $150、巴克萊上調至 $115，均低於現價 $158.67，估值已跑贏分析師目標。日內建議觀望，等待方向確認。<p class="card-link"><a href="/dashboard/2026-07-07/reports/FTNT.html">→ 完整 FTNT 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CRWD</b> · 評分 42 · CRWD 現價 $194.62，今日跌 2.39%，由昨收 $199.38 顯著回落，日內區間 $192.22-$201.37，波幅約 4.7%，屬高波幅交易日，短炒燃料充足。股價位於 52 週高位 $209.50 下方約 7.1%、52 週低位 $85.68 上方約 127%，處於強勢區但短期回調。PB 高達 41.54，估值偏貴，缺乏安全邊際。重要技術指標（MA20/MA50/MA100/MA200、RSI14、量比）全部缺失，技術面訊號模糊，建議待指標補回後再行部署。短期方向未明，可於 $190.00-$192.50 區間博反彈，或於 $199.00-$201.37 阻力區做空回補。<p class="card-link"><a href="/dashboard/2026-07-07/reports/CRWD.html">→ 完整 CRWD 詳細報告</a></p></div>
 
 ---
-<em>生成時間: 2026-07-14 15:40:28 · LLM: openai/MiniMax-M3</em>
-<div style="text-align:center;margin:1.5rem 0 0.5rem;padding:14px 18px;background:var(--panel);border:1px dashed var(--border);border-radius:4px;font-size:0.88rem;">👇 想睇 <b>全部 0 隻股票</b>嘅 score + 操作 + entry/stop/target？ 去 <a href="/full-results/2026-07-07.html"><b>Full Results (2026-07-07)</b></a></div>
-<p class="last-updated">最後更新: 2026-07-14 15:40 HKT</p>
+<em>生成時間: 2026-07-16 19:33:47 · LLM: openai/MiniMax-M3</em>
+<h2>詳細表格</h2><p><em>此條件下無報告。</em></p>
+<p class="last-updated">最後更新: 2026-07-16 19:33 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>

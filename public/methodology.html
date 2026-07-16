@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Leeks Terminal 分析方法論 · 單一 Score「下日勝率」+ Rule-Based 決策引擎</title>
-  <meta name="description" content="Leeks Terminal 分析方法論 — 4-dim 評分 (value/quality/momentum/order_flow) + Rule-based 決策引擎 (Anti-Chase / Anti-Knife / Conservative BUY / Bounce BUY) + Logistic regression 校準嘅「下日勝率」(0-100%，越高 = next day 越大機會贏) + 1,822 個 1D forward returns 公開 audit。">
-  <meta property="og:title" content="Leeks Terminal 分析方法論 · 單一 Score「下日勝率」+ Rule-Based 決策引擎">
-  <meta property="og:description" content="Leeks Terminal 分析方法論 — 4-dim 評分 (value/quality/momentum/order_flow) + Rule-based 決策引擎 (Anti-Chase / Anti-Knife / Conservative BUY / Bounce BUY) + Logistic regression 校準嘅「下日勝率」(0-100%，越高 = next day 越大機會贏) + 1,822 個 1D forward returns 公開 audit。">
+  <title>Leeks Terminal 分析方法論 · 4-Dim 評分 + Rule-Based 決策引擎</title>
+  <meta name="description" content="Leeks Terminal 分析方法論 — 4-dim 評分 (value/quality/momentum) + Rule-based 引擎 + 4 濾網 + 9-day audit win-rate 公開。">
+  <meta property="og:title" content="Leeks Terminal 分析方法論 · 4-Dim 評分 + Rule-Based 決策引擎">
+  <meta property="og:description" content="Leeks Terminal 分析方法論 — 4-dim 評分 (value/quality/momentum) + Rule-based 引擎 + 4 濾網 + 9-day audit win-rate 公開。">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.win9you.com">
   <meta property="og:image" content="https://www.win9you.com/og-image.png">
@@ -14,8 +14,8 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://www.win9you.com/og-image.png">
-  <meta name="twitter:title" content="Leeks Terminal 分析方法論 · 單一 Score「下日勝率」+ Rule-Based 決策引擎">
-  <meta name="twitter:description" content="Leeks Terminal 分析方法論 — 4-dim 評分 (value/quality/momentum/order_flow) + Rule-based 決策引擎 (Anti-Chase / Anti-Knife / Conservative BUY / Bounce BUY) + Logistic regression 校準嘅「下日勝率」(0-100%，越高 = next day 越大機會贏) + 1,822 個 1D forward returns 公開 audit。">
+  <meta name="twitter:title" content="Leeks Terminal 分析方法論 · 4-Dim 評分 + Rule-Based 決策引擎">
+  <meta name="twitter:description" content="Leeks Terminal 分析方法論 — 4-dim 評分 (value/quality/momentum) + Rule-based 引擎 + 4 濾網 + 9-day audit win-rate 公開。">
   <link rel="canonical" href="https://www.win9you.com">
   <link rel="alternate" hreflang="zh-Hant" href="https://www.win9you.com">
   <link rel="alternate" hreflang="x-default" href="https://www.win9you.com">
@@ -132,81 +132,6 @@ h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
 .card.bull { border-left-color: var(--bull); }
 .card.bear { border-left-color: var(--bear); }
 .card.amber { border-left-color: var(--amber); }
-
-/* Decision strip (Phase 4e, 2026-07-13) — splits 下日勝率 (WR) from 決策 (rule).
-   Two-column layout makes clear that the colored emoji comes from rule, not WR. */
-.decision-strip {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    margin: 0 0 8px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-    font-size: 0.8rem;
-    line-height: 1.4;
-}
-.strip-col {
-    padding: 5px 9px;
-    background: var(--panel);
-}
-.strip-decision { border-right: 1px solid var(--border); }
-.strip-label {
-    display: block;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--dim);
-    margin-bottom: 1px;
-    font-weight: 600;
-}
-.strip-val {
-    display: inline;
-    font-weight: 700;
-    color: var(--fg);
-    font-size: 0.95rem;
-}
-.strip-rule {
-    display: inline;
-    color: var(--dim);
-    font-size: 0.78rem;
-    margin-left: 3px;
-}
-
-/* Full Results page — archive list (2026-07-13) */
-.archive-list {
-    margin: 2rem 0 0.5rem;
-    padding: 14px 18px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-}
-.archive-list h3 {
-    margin: 0 0 0.6rem;
-    font-size: 0.95rem;
-    color: var(--accent);
-}
-.date-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-.date-grid a {
-    display: inline-block;
-    padding: 4px 10px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    font-size: 0.78rem;
-    color: var(--dim);
-    background: var(--bg);
-    text-decoration: none;
-}
-.date-grid a:hover { border-color: var(--accent); color: var(--accent); }
-.date-grid a.active {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-}
 
 /* Stats line */
 .stats {
@@ -496,7 +421,6 @@ p.card-link a:hover {
     color: var(--fg);
 }
 .report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
-.report-header .badge.signal { background: #1f6feb; color: #fff; border-color: #1f6feb; font-weight: 600; }
 .report-header .badge.conf { background: var(--panel-2); }
 
 .score-breakdown {
@@ -573,20 +497,16 @@ footer {
     main { padding: 16px 12px 48px; }
     h1 { font-size: 1.15rem; }
     .card { padding: 8px 10px; font-size: 0.8rem; }
-    .decision-strip { font-size: 0.75rem; }
-    .strip-val { font-size: 0.88rem; }
-    .strip-label { font-size: 0.6rem; }
     nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
     nav.leeks-site-nav a { font-size: 0.7rem; }
     table.detail { font-size: 0.7rem; }
     table.detail th, table.detail td { padding: 4px 6px; }
-    .date-grid a { font-size: 0.7rem; padding: 3px 7px; }
 }
 </style>
   
 </head>
 <body>
-<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html" class="active">Methodology</a><a href="/about.html">About</a></nav>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html" class="active">Methodology</a><a href="/about.html">About</a></nav>
 <main>
 <h1>分析方法論</h1>
 <h2>數據來源</h2>
@@ -595,21 +515,19 @@ footer {
   <li><b>US 即時報價</b>: YFinance (15-min delay)</li>
   <li><b>新聞</b>: Futu Cloud (free tier, 60 req/min)</li>
   <li><b>歷史 bars</b>: YFinance (HK 覆蓋不平均，新 foreign-listed 會 warn)</li>
-  <li><b>1D forward returns</b>: 由 <code>compute_forward_returns.py</code> 喺 user 朝早 run 時自動 fetch 上一個交易日 signal 嘅 next-day close（HK: Futu kline / US: yfinance batch）</li>
 </ul>
 
-<h2>分析流程</h2>
+<h2>LLM 分析流程</h2>
 <ol>
   <li>Fetch 報價 + 技術指標 (MA20/50/100/200 + RSI + MACD + 成交量比)</li>
   <li>Fetch 新聞 (last 5 條 + sentiment)</li>
-  <li>Prompt LLM 輸出 score_breakdown 嘅 4 個 dim (value/quality/momentum/order_flow) + 操作建議欄位 (entry/stop/target/support/resistance/sentiment/trend/operation_advice)</li>
+  <li>Prompt MiniMax-M3 輸出 score_breakdown 嘅 4 個 dim (value/quality/momentum/order_flow) + 操作建議欄位 (entry/stop/target/support/resistance/confidence/trade_direction/sentiment/trend/operation_advice)</li>
   <li>Python <b>確定性加權</b>：<code>score = 0.05×value + 0.05×quality + 0.70×momentum + 0.20×order_flow</code>（唔靠 LLM 自評分）</li>
-  <li>Rule-based 決策引擎 override LLM 嘅 operation_advice（見下面）</li>
-  <li>Logistic regression 計出 <b>下日勝率</b>（見下面）</li>
-  <li>寫入 SQLite + rebuild static HTML + push 到 Cloudflare Pages</li>
+  <li>寫入 SQLite</li>
+  <li>Rebuild static HTML + push 到 Cloudflare Pages</li>
 </ol>
 
-<h2>4 維度評分模型 — 為 day-trade 度身訂造</h2>
+<h2>評分模型 — 為 day-trade 度身訂造</h2>
 <table class="dim-table">
 <thead><tr><th>維度</th><th>權重</th><th>睇咩</th></tr></thead>
 <tbody>
@@ -619,82 +537,54 @@ footer {
 <tr><td><b>資金流</b> order_flow_score</td><td>20%</td><td>量比 / 大單流入 / Relative Volume vs ADV / bid-ask imbalance / 北水</td></tr>
 </tbody>
 </table>
-<p>4 個 dim 嘅 score 0-100，<b>只用嚟做「下日勝率」嘅 features，唔再獨立 display 畀用戶睇</b>。Day-trade 完全偏重 momentum + order flow（合共 90%）。</p>
+<p><b>Day-trade 完全偏重 momentum + order flow</b>（合共 90%）。估值/質素只作 tiebreaker — 因為朝早 9:45 入場 11:30 出場，PE 30 定 60 對 intraday P&amp;L 零 impact。</p>
 
-<h2>Rule-Based 決策引擎（Phase 2，2026-07-10）</h2>
-<p>10-day audit 證明 LLM 直接嘅 operation_advice 係 ANTI-EDGE（LLM BUY 38.6% WR, LLM SELL 37.7% WR），所以我哋用 deterministic rules override LLM。Priority order：</p>
+<h2>操作建議</h2>
+<p>每日 dashboard 約 <b>~93% 觀望 / ~2% 買入 / ~5% 賣出</b>（取決於大市 regime）。LLM 綜合以下 4 個 signal 決定：</p>
+<ul>
+  <li><b>🟢 買入</b>: bullish trade_direction + score ≥ 60 + positive sentiment + 明確 setup（入場/止損/目標 齊全）</li>
+  <li><b>🔴 賣出</b>: bearish trade_direction + score ≤ 40 + negative sentiment + 跌穿關鍵支持位</li>
+  <li><b>🟡 觀望</b>: 其他（regime 唔清、setup 唔齊、score 40-60 模糊區間）</li>
+</ul>
+<p><b>⚠️</b> 操作建議 <b>唔等於單一 score threshold</b> — LLM 會 cross-check 4-dim + sentiment + news flow + technical setup。一個 score 80 但 setup 模糊嘅股票仍然可能係觀望。</p>
+
+<h2>📊 Backtest 驗證 (2026-05-29 至 2026-06-29, 22 個交易日)</h2>
+<p>我哋用 historical yfinance data 跑咗 22 個交易日 × 200 隻美股 (US-only，HK 暫時冇 historical source)，
+總共 <b>4,379 個信號 × 1D/1W horizons</b>。Hit rate 表：</p>
+<table class="dim-table">
+<thead><tr><th>信號</th><th>1 日 hit rate</th><th>1 週 hit rate</th><th>1 日 avg move</th><th>1 週 avg move</th></tr></thead>
+<tbody>
+<tr><td><b>🟢 買入</b></td><td>58.6% (n=58)</td><td><b>64.3% (n=42)</b></td><td>+0.91%</td><td>+1.24%</td></tr>
+<tr><td><b>🔴 賣出</b></td><td><b>59.7% (n=191)</td><td>48.0% (n=202)</td><td>-0.40%</td><td>+0.45%</td></tr>
+<tr><td><b>🟡 觀望</b></td><td>n/a</td><td>n/a</td><td>+0.11%</td><td>+0.72%</td></tr>
+</tbody>
+</table>
+<p><b>兩個關鍵 takeaway</b>：</p>
 <ol>
-<li><b>ANTI-CHASE</b>: LLM 講 BUY + 樂觀 + m≥60 + chg≥+3% → 觀望（TOXIC pattern, 35.3% WR）</li>
-<li><b>ANTI-KNIFE</b>: LLM 講 SELL + 悲觀 + chg≤-3% → 觀望（panic-day 會 mean-revert, 53/53 升）</li>
-<li><b>ANTI-MOMENTUM</b>: LLM 講 BUY + m≥80 → 觀望（m 已 extended, 16.7% WR）</li>
-<li><b>CONSERVATIVE BUY</b>: chg[-3,0) + sent非樂觀 + m[30,60] + 非科技 → 買入（61.5% WR, +0.92% avg, 23 records）</li>
-<li><b>BOUNCE BUY</b>: chg[-5,-2] + sent悲觀/中性 + m&lt;60 → 買入（51.7% WR, catches 7/2-style rebound, 445 records）</li>
-<li><b>DEFAULT</b>: 其他 → 觀望（88% records, 38.6% WR if forced BUY）</li>
+<li><b>🟢 買入 multi-day 有效</b> — 1 週 hit rate (64.3%) > 1 日 (58.6%)，表示 buy signal 嘅 lead time work，long 倉 hold 過夜仲跟到。</li>
+<li><b>🔴 賣出 day-trade only</b> — 1 日 hit rate (59.7%) > 1 週 (48.0%)，表示 short setup mean-revert，第二日就會反彈。SELL 必須 16:00 HKT/ET 前平倉。</li>
 </ol>
-<p>LLM 嘅 operation_advice 會保存喺 <code>llm_original_op</code> column 供 audit，但 dashboard 只顯示 rule-based 決定。</p>
-
-<h2>📊 單一 score：下日勝率（Phase 4，2026-07-11）</h2>
-<p>解決「高 LLM 評分但 觀望」同「低 LLM 評分但 買入」嘅 confusion。方法：</p>
+<p><b>Implication 落 dashboard</b>：</p>
 <ul>
-  <li><b>一個 score 解決所有事</b>：每張 card 同 detail page 只顯示 <b>「下日勝率 X%」</b>，冇 LLM 評分、冇 訊號強度、冇 multi-hold、冇 ⚠️ 不宜追、冇 估值貴 etc.</li>
-  <li><b>越高 = 越大機會 next day 贏</b>：score 50 以上嘅信號 BUY 永遠高過 score 50 以下嘅 觀望</li>
-  <li><b>校準自 1,822 個 1D forward returns</b>（10 trading days，6/27-7/10）</li>
-  <li><b>由 logistic regression 計出</b>：features = m / of / v / q / chg / rule，out-of-sample 校驗：預測 30% bucket 實際 31.3% WR，預測 51% bucket 實際 54.7% WR</li>
+<li>買入 cards 標 "🟢 買入 — multi-day hold OK"</li>
+<li>賣出 cards 標 "🔴 賣出 — day-trade only, close by 4 PM"</li>
 </ul>
-<p><b>為何唔用 LLM 自評分？</b> LLM 訓練數據有 bullish bias — 信心分高往往 = LLM 寫得最 clean = post-rally 嘅時機，正好係散戶接棒嘅時間。10-day audit：LLM 80+ 信心分嘅 BUY 命中率得 16.7%。</p>
-<p><b>下日勝率 calibration</b>（基於 7/6-7/9 out-of-sample 1,166 records）：</p>
-<table class="dim-table">
-<thead><tr><th>預測 bucket</th><th>實際 WR</th><th>實際 avg return</th></tr></thead>
-<tbody>
-<tr><td>預測 29%</td><td>31.3%</td><td>-0.99%</td></tr>
-<tr><td>預測 36%</td><td>36.5%</td><td>-0.38%</td></tr>
-<tr><td>預測 40%</td><td>44.6%</td><td>+0.11%</td></tr>
-<tr><td>預測 44%</td><td>52.4%</td><td>+0.14%</td></tr>
-<tr><td>預測 51%</td><td>54.7%</td><td>+0.06%</td></tr>
-</tbody>
-</table>
-<p><b>下日勝率 → 操作 mapping</b>：</p>
+
+<h2>🛡️ R:R Override 過濾 (Risk:Reward)</h2>
+<p>每個 buy setup 計算 <b>reward / risk</b> ratio:</p>
 <ul>
-  <li><b>🟢 買入</b> 永遠 >= 40%（CONSERVATIVE 78、BOUNCE 62）</li>
-  <li><b>🟡 觀望</b> 通常 14-40%（DEFAULT 38、ANTI-CHASE 24、ANTI-MOMENTUM 22）</li>
-  <li><b>判斷</b>：下日勝率 50 嘅 BUY 一定比下日勝率 50 嘅 觀望 強（已 lock 喺 rule 嗰度）</li>
+<li><b>Reward</b> = |target_price - last| / last</li>
+<li><b>Risk</b> = |last - min(LLM_support, today_low)| / last</li>
 </ul>
-<p><b>點解單一 score 重要？</b>「高 = 大機會贏」係最直覺嘅決策軸。兩個 score 反而 split 注意力 — 用戶要同時記得 LLM 評分同 訊號強度嘅關係。1 個 score × 1 個 badge = 一眼就明。</p>
+<p>Dashboard card 會顯示 R:R badge：</p>
+<ul>
+<li><b>🟢 R:R ≥ 2.0</b> — setup 質量好，risk-controlled</li>
+<li><b>🟡 1.0 ≤ R:R < 2.0</b> — 普通 setup，risk/reward 1:1</li>
+<li><b>🔴 R:R < 1.0</b> — risk 大過 reward，避開</li>
+</ul>
+<p>邏輯：buy setup 入場前要計清楚「贏幾多 vs 輸幾多」。R:R ≥ 2.0 表示 setup 期望值正（2:1 風險回報），否則好 setup 都係陷阱。</p>
 
-<h2>📊 10-day Backtest Audit (2026-06-27 至 2026-07-10)</h2>
-<p>我哋每日朝早由 <code>compute_forward_returns.py</code> 自動計每個 signal 嘅 next-day close return。當前已累積 <b>1,822 forward returns</b>，按 rule 嘅分佈：</p>
-<table class="dim-table">
-<thead><tr><th>Rule</th><th>N</th><th>實際 1D WR</th><th>實際 avg return</th></tr></thead>
-<tbody>
-<tr><td><b>🟢 CONSERVATIVE BUY</b></td><td>23</td><td><b>61.5%</b></td><td>+1.22%</td></tr>
-<tr><td><b>🌊 BOUNCE BUY</b></td><td>445</td><td>53.7%</td><td>+0.75%</td></tr>
-<tr><td><b>🛡️ ANTI-KNIFE (block SELL)</b></td><td>169</td><td><b>59.9%</b></td><td>+1.60%</td></tr>
-<tr><td><b>🟡 DEFAULT 觀望</b></td><td>3,591</td><td>40.3%</td><td>+0.06%</td></tr>
-<tr><td><b>⚠️ ANTI-CHASE (block BUY)</b></td><td>131</td><td>24.4%</td><td>-3.73%</td></tr>
-<tr><td><b>🚫 ANTI-MOMENTUM (block BUY)</b></td><td>7</td><td>14.3%</td><td>-0.98%</td></tr>
-</tbody>
-</table>
-<p><b>Takeaway</b>：BOUNCE + CONSERVATIVE 兩個 BUY rule 加埋 468 records, 54% WR, 接近 8% 跑贏 baseline (40%)。ANTI-CHASE / ANTI-MOMENTUM 阻擋嘅 LLM 買入確實係 anti-edge，避咗啲 chasing-top 嘅 setup。Anti-Knife 阻擋 SELL 都係啱嘅（59.9% WR 表示 SELL 嘅 60% 股票都會升，唔好做 short）。</p>
-
-<h2>📊 Per-date summary (forward returns 已 backfill)</h2>
-<table class="dim-table">
-<thead><tr><th>Signal Date</th><th>N records</th><th>1D WR</th><th>avg return</th></tr></thead>
-<tbody>
-<tr><td>2026-06-27</td><td>259</td><td>53.7%</td><td>+0.24%</td></tr>
-<tr><td>2026-06-29</td><td>200</td><td>48.0%</td><td>+0.39%</td></tr>
-<tr><td>2026-06-30</td><td>200</td><td>53.0%</td><td>-0.47%</td></tr>
-<tr><td>2026-07-01</td><td>200</td><td>46.5%</td><td>-0.02%</td></tr>
-<tr><td>2026-07-02</td><td>60</td><td>86.7%</td><td>+3.04%</td></tr>
-<tr><td>2026-07-03</td><td>200</td><td>54.0%</td><td>+0.60%</td></tr>
-<tr><td>2026-07-06</td><td>244</td><td>41.4%</td><td>-1.07%</td></tr>
-<tr><td>2026-07-07</td><td>200</td><td>33.5%</td><td>-0.34%</td></tr>
-<tr><td>2026-07-08</td><td>259</td><td>62.2%</td><td>+1.24%</td></tr>
-<tr><td>2026-07-09</td><td>257</td><td>52.5%</td><td>(forward)</td></tr>
-</tbody>
-</table>
-<p><b>Takeaway</b>：10-day overall 約 52% WR，冇 dramatic alpha 但冇大幅 loss。Per-day 波動大（33% - 87%），呢個係 day-trade 嘅特性 — 用戶應該 1) 跟 multi-day average 而非單日，2) 等齊信號先入場，3) 嚴守止損。</p>
-
-<p class="last-updated">最後更新: 2026-07-14 15:40 HKT</p>
+<p class="last-updated">最後更新: 2026-07-16 19:28 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>

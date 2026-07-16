@@ -133,81 +133,6 @@ h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
 .card.bear { border-left-color: var(--bear); }
 .card.amber { border-left-color: var(--amber); }
 
-/* Decision strip (Phase 4e, 2026-07-13) — splits 下日勝率 (WR) from 決策 (rule).
-   Two-column layout makes clear that the colored emoji comes from rule, not WR. */
-.decision-strip {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    margin: 0 0 8px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-    font-size: 0.8rem;
-    line-height: 1.4;
-}
-.strip-col {
-    padding: 5px 9px;
-    background: var(--panel);
-}
-.strip-decision { border-right: 1px solid var(--border); }
-.strip-label {
-    display: block;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--dim);
-    margin-bottom: 1px;
-    font-weight: 600;
-}
-.strip-val {
-    display: inline;
-    font-weight: 700;
-    color: var(--fg);
-    font-size: 0.95rem;
-}
-.strip-rule {
-    display: inline;
-    color: var(--dim);
-    font-size: 0.78rem;
-    margin-left: 3px;
-}
-
-/* Full Results page — archive list (2026-07-13) */
-.archive-list {
-    margin: 2rem 0 0.5rem;
-    padding: 14px 18px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-}
-.archive-list h3 {
-    margin: 0 0 0.6rem;
-    font-size: 0.95rem;
-    color: var(--accent);
-}
-.date-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-.date-grid a {
-    display: inline-block;
-    padding: 4px 10px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    font-size: 0.78rem;
-    color: var(--dim);
-    background: var(--bg);
-    text-decoration: none;
-}
-.date-grid a:hover { border-color: var(--accent); color: var(--accent); }
-.date-grid a.active {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-}
-
 /* Stats line */
 .stats {
     font-size: 0.9rem;
@@ -496,7 +421,6 @@ p.card-link a:hover {
     color: var(--fg);
 }
 .report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
-.report-header .badge.signal { background: #1f6feb; color: #fff; border-color: #1f6feb; font-weight: 600; }
 .report-header .badge.conf { background: var(--panel-2); }
 
 .score-breakdown {
@@ -573,20 +497,16 @@ footer {
     main { padding: 16px 12px 48px; }
     h1 { font-size: 1.15rem; }
     .card { padding: 8px 10px; font-size: 0.8rem; }
-    .decision-strip { font-size: 0.75rem; }
-    .strip-val { font-size: 0.88rem; }
-    .strip-label { font-size: 0.6rem; }
     nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
     nav.leeks-site-nav a { font-size: 0.7rem; }
     table.detail { font-size: 0.7rem; }
     table.detail th, table.detail td { padding: 4px 6px; }
-    .date-grid a { font-size: 0.7rem; padding: 3px 7px; }
 }
 </style>
   
 </head>
 <body>
-<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
 <div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="signal-warning"><b>🛡️ Conservative BUY</b> · 6-day trace evidence (mean-reversion + non-tech + m 30-70 + score < 70):
             <br>· <b>Filter rules</b>: 前日 -3% to 0% 跌勢 · sector ≠ Tech/Comms · momentum 30-70 · sentiment ≠ 樂觀 · score < 70
@@ -596,16 +516,16 @@ footer {
 
 <h2>📊 分析結果摘要</h2>
 
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">49%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 49%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CCL</b> · 下日勝率 49% · CCL 現價 $27.91，今日跌 -2.14%，全日高低區間 $27.46-$29.15，幅度達 6.05% 屬高波幅，提供日內短炒燃料。股價跌破 MA20 ($28.73)，但收市仍站於 MA50 ($27.29) 及 MA100 ($27.65) 之上，MA20 &gt; MA200 &gt; MA100 &gt; MA50 嘅排列並非標準多頭，屬均線糾結狀態。RSI14 為 48.90 中性。PE TTM 12.57 對郵輪股屬合理偏低，PB 2.95 略高。建議等 $27.29-$27.46 區間 (MA50 至今日低位) 確認承接再博反彈至 $28.73 (MA20)，或反彈至 $28.73-$29.15 區間遇壓做空。<p class="card-link"><a href="/dashboard/2026-07-02/reports/CCL.html">→ 完整 CCL 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">49%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 49%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>F</b> · 下日勝率 49% · 福特 (F) 現價 $13.36 急跌 -2.05%，RSI14 22.89 嚴重超賣，今日區間 5.80% 波幅大，短炒燃料充足但量比僅 0.84× 未確認。股價已跌穿 MA20 ($14.32) 及 MA50 ($13.84)，但仍守喺 MA100 ($13.22) 同 MA200 ($13.11) 之上，處於長線牛熊分界嘅關鍵支持區。PE TTM 為 N/A（盈利為負或極低），PB 1.42 唔算便宜，股息率 4.40% 係少有亮點。建議喺 $13.10-$13.22 (MA200-MA100) 區間博技術反彈至 MA50 $13.84，止損 $13.00；若反彈見 $13.80-$14.00 受阻可反手造空再試 $13.22。<p class="card-link"><a href="/dashboard/2026-07-02/reports/F.html">→ 完整 F 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">49%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 49%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>ORLY</b> · 下日勝率 49% · ORLY 現價 $90.25，今日急跌 -2.63%，全日波幅達 6.11%（$88.00-$93.52），收市接近全日低位，走勢明顯偏弱。技術上呈空頭排列：MA20 $89.38 &lt; MA50 $90.74 &lt; MA100 $91.68 &lt; MA200 $94.83，現價 $90.25 雖略高於 MA20 但已跌穿 MA50/MA100/MA200，長線確認進入弱勢區域。RSI 50.41 中性，未現超賣。估值面 PE TTM 29.40 偏高，PB -70.40 反映股東權益為負（資不抵債），股息率 N/A，缺乏防禦性。短炒方向兩可：可博 $88.00 反彈至 MA100 $91.68 或昨收 $92.69，亦可待反彈至 $92.69-$93.50 做空博破 $85.63 52週低位。<p class="card-link"><a href="/dashboard/2026-07-02/reports/ORLY.html">→ 完整 ORLY 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">46%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 46%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>JCI</b> · 下日勝率 46% · JCI 今早急跌 -2.79%，收 $140.76，一舉跌穿 MA20 $143.96 及 MA50 $142.03，但重要支持位 MA100 $139.72 暫時守住。整體 MA20 &gt; MA50 &gt; MA100 多頭排列仍未破壞，長線趨勢偏多。RSI14 45.97 處於中性區域，未見超賣。今日 H/L 區間達 5.00% 屬高波幅，短炒燃料充足，但量比僅 0.76×，下跌未獲成交量確認，須防假突破。券商目標價區間 $175-$180 普遍看多，與今日弱勢形成背馳。建議觀望 MA100 $139.72 攻防，企穩可博短多反彈至 MA20 $143.96，跌破則止損觀望。<p class="card-link"><a href="/dashboard/2026-07-02/reports/JCI.html">→ 完整 JCI 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">41%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 41%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CAT</b> · 下日勝率 41% · CAT 現價 $963.53 剛好貼近 MA20 $963.45，處於關鍵樞紐位。今日跌 -2.81%，盤中低見 $948.78 曾跌破 MA20，收市前勉強站穩。技術上 MA20 ($963.45) &gt; MA50 ($913.11) &gt; MA100 ($825.30) &gt; MA200 ($696.78) 多頭排列仍完好，長線向上格局未破，但PE 47.87、PB 23.78，加上 YTD 已升 142.18%，短線修正壓力大。今日 H/L 區間 5.38% 屬高波幅，短炒有空間，但量比僅 0.62× 顯示跌勢缺乏拋售確認，未必是強烈訊號。建議等 MA20 攻防結果再決定方向：守住則博反彈至 $991-$1000，跌破 $948.78 則追沽至 MA50 $913.11。<p class="card-link"><a href="/dashboard/2026-07-02/reports/CAT.html">→ 完整 CAT 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CCL</b> · 評分 41 · CCL 現價 $27.91，今日跌 -2.14%，全日高低區間 $27.46-$29.15，幅度達 6.05% 屬高波幅，提供日內短炒燃料。股價跌破 MA20 ($28.73)，但收市仍站於 MA50 ($27.29) 及 MA100 ($27.65) 之上，MA20 &gt; MA200 &gt; MA100 &gt; MA50 嘅排列並非標準多頭，屬均線糾結狀態。RSI14 為 48.90 中性。PE TTM 12.57 對郵輪股屬合理偏低，PB 2.95 略高。建議等 $27.29-$27.46 區間 (MA50 至今日低位) 確認承接再博反彈至 $28.73 (MA20)，或反彈至 $28.73-$29.15 區間遇壓做空。<p class="card-link"><a href="/dashboard/2026-07-02/reports/CCL.html">→ 完整 CCL 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>F</b> · 評分 39 · 福特 (F) 現價 $13.36 急跌 -2.05%，RSI14 22.89 嚴重超賣，今日區間 5.80% 波幅大，短炒燃料充足但量比僅 0.84× 未確認。股價已跌穿 MA20 ($14.32) 及 MA50 ($13.84)，但仍守喺 MA100 ($13.22) 同 MA200 ($13.11) 之上，處於長線牛熊分界嘅關鍵支持區。PE TTM 為 N/A（盈利為負或極低），PB 1.42 唔算便宜，股息率 4.40% 係少有亮點。建議喺 $13.10-$13.22 (MA200-MA100) 區間博技術反彈至 MA50 $13.84，止損 $13.00；若反彈見 $13.80-$14.00 受阻可反手造空再試 $13.22。<p class="card-link"><a href="/dashboard/2026-07-02/reports/F.html">→ 完整 F 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>ORLY</b> · 評分 32 · ORLY 現價 $90.25，今日急跌 -2.63%，全日波幅達 6.11%（$88.00-$93.52），收市接近全日低位，走勢明顯偏弱。技術上呈空頭排列：MA20 $89.38 &lt; MA50 $90.74 &lt; MA100 $91.68 &lt; MA200 $94.83，現價 $90.25 雖略高於 MA20 但已跌穿 MA50/MA100/MA200，長線確認進入弱勢區域。RSI 50.41 中性，未現超賣。估值面 PE TTM 29.40 偏高，PB -70.40 反映股東權益為負（資不抵債），股息率 N/A，缺乏防禦性。短炒方向兩可：可博 $88.00 反彈至 MA100 $91.68 或昨收 $92.69，亦可待反彈至 $92.69-$93.50 做空博破 $85.63 52週低位。<p class="card-link"><a href="/dashboard/2026-07-02/reports/ORLY.html">→ 完整 ORLY 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>JCI</b> · 評分 39 · JCI 今早急跌 -2.79%，收 $140.76，一舉跌穿 MA20 $143.96 及 MA50 $142.03，但重要支持位 MA100 $139.72 暫時守住。整體 MA20 &gt; MA50 &gt; MA100 多頭排列仍未破壞，長線趨勢偏多。RSI14 45.97 處於中性區域，未見超賣。今日 H/L 區間達 5.00% 屬高波幅，短炒燃料充足，但量比僅 0.76×，下跌未獲成交量確認，須防假突破。券商目標價區間 $175-$180 普遍看多，與今日弱勢形成背馳。建議觀望 MA100 $139.72 攻防，企穩可博短多反彈至 MA20 $143.96，跌破則止損觀望。<p class="card-link"><a href="/dashboard/2026-07-02/reports/JCI.html">→ 完整 JCI 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CAT</b> · 評分 50 · CAT 現價 $963.53 剛好貼近 MA20 $963.45，處於關鍵樞紐位。今日跌 -2.81%，盤中低見 $948.78 曾跌破 MA20，收市前勉強站穩。技術上 MA20 ($963.45) &gt; MA50 ($913.11) &gt; MA100 ($825.30) &gt; MA200 ($696.78) 多頭排列仍完好，長線向上格局未破，但估值極高 PE 47.87、PB 23.78，加上 YTD 已升 142.18%，短線超買修正壓力大。今日 H/L 區間 5.38% 屬高波幅，短炒有空間，但量比僅 0.62× 顯示跌勢缺乏拋售確認，未必是強烈訊號。建議等 MA20 攻防結果再決定方向：守住則博反彈至 $991-$1000，跌破 $948.78 則追沽至 MA50 $913.11。<p class="card-link"><a href="/dashboard/2026-07-02/reports/CAT.html">→ 完整 CAT 詳細報告</a></p></div>
 
 ---
-<em>生成時間: 2026-07-14 15:40:30 · LLM: openai/MiniMax-M3</em>
-<div style="text-align:center;margin:1.5rem 0 0.5rem;padding:14px 18px;background:var(--panel);border:1px dashed var(--border);border-radius:4px;font-size:0.88rem;">👇 想睇 <b>全部 0 隻股票</b>嘅 score + 操作 + entry/stop/target？ 去 <a href="/full-results/2026-07-02.html"><b>Full Results (2026-07-02)</b></a></div>
-<p class="last-updated">最後更新: 2026-07-14 15:40 HKT</p>
+<em>生成時間: 2026-07-16 19:33:48 · LLM: openai/MiniMax-M3</em>
+<h2>詳細表格</h2><p><em>此條件下無報告。</em></p>
+<p class="last-updated">最後更新: 2026-07-16 19:33 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>

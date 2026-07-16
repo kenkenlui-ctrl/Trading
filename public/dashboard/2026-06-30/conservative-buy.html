@@ -133,81 +133,6 @@ h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
 .card.bear { border-left-color: var(--bear); }
 .card.amber { border-left-color: var(--amber); }
 
-/* Decision strip (Phase 4e, 2026-07-13) — splits 下日勝率 (WR) from 決策 (rule).
-   Two-column layout makes clear that the colored emoji comes from rule, not WR. */
-.decision-strip {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    margin: 0 0 8px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-    font-size: 0.8rem;
-    line-height: 1.4;
-}
-.strip-col {
-    padding: 5px 9px;
-    background: var(--panel);
-}
-.strip-decision { border-right: 1px solid var(--border); }
-.strip-label {
-    display: block;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--dim);
-    margin-bottom: 1px;
-    font-weight: 600;
-}
-.strip-val {
-    display: inline;
-    font-weight: 700;
-    color: var(--fg);
-    font-size: 0.95rem;
-}
-.strip-rule {
-    display: inline;
-    color: var(--dim);
-    font-size: 0.78rem;
-    margin-left: 3px;
-}
-
-/* Full Results page — archive list (2026-07-13) */
-.archive-list {
-    margin: 2rem 0 0.5rem;
-    padding: 14px 18px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-}
-.archive-list h3 {
-    margin: 0 0 0.6rem;
-    font-size: 0.95rem;
-    color: var(--accent);
-}
-.date-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-.date-grid a {
-    display: inline-block;
-    padding: 4px 10px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    font-size: 0.78rem;
-    color: var(--dim);
-    background: var(--bg);
-    text-decoration: none;
-}
-.date-grid a:hover { border-color: var(--accent); color: var(--accent); }
-.date-grid a.active {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-}
-
 /* Stats line */
 .stats {
     font-size: 0.9rem;
@@ -496,7 +421,6 @@ p.card-link a:hover {
     color: var(--fg);
 }
 .report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
-.report-header .badge.signal { background: #1f6feb; color: #fff; border-color: #1f6feb; font-weight: 600; }
 .report-header .badge.conf { background: var(--panel-2); }
 
 .score-breakdown {
@@ -573,20 +497,16 @@ footer {
     main { padding: 16px 12px 48px; }
     h1 { font-size: 1.15rem; }
     .card { padding: 8px 10px; font-size: 0.8rem; }
-    .decision-strip { font-size: 0.75rem; }
-    .strip-val { font-size: 0.88rem; }
-    .strip-label { font-size: 0.6rem; }
     nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
     nav.leeks-site-nav a { font-size: 0.7rem; }
     table.detail { font-size: 0.7rem; }
     table.detail th, table.detail td { padding: 4px 6px; }
-    .date-grid a { font-size: 0.7rem; padding: 3px 7px; }
 }
 </style>
   
 </head>
 <body>
-<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
 <div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="signal-warning"><b>🛡️ Conservative BUY</b> · 6-day trace evidence (mean-reversion + non-tech + m 30-70 + score < 70):
             <br>· <b>Filter rules</b>: 前日 -3% to 0% 跌勢 · sector ≠ Tech/Comms · momentum 30-70 · sentiment ≠ 樂觀 · score < 70
@@ -596,26 +516,26 @@ footer {
 
 <h2>📊 分析結果摘要</h2>
 
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· default</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">59%</span></div></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>TRV</b> · 下日勝率 59% · TRV 現價 $330.12 處於 52週高位 $331.88 下方略低，今日微跌 -0.53%，但 RSI14 高達 86.28 嚴重且股價偏離 MA20 $308.55 達約 7.0%（已超出 5% 嚴進門檻）。雖然 PE 9.85 對保險股屬極低估值、長線 MA 多頭排列完整（MA20 $308.55 &gt; MA50 $304.26 &gt; MA100 $302.06 &gt; MA200 $291.33），但今日量比僅 0.85× 缺乏資金確認、今日 H/L 區間 $328.00-$334.13 僅 1.86% 無明顯方向，短線宜觀望等待回調至 MA20 附近或反彈做空，不宜現價追入。<p class="card-link"><a href="/dashboard/2026-06-30/reports/TRV.html">→ 完整 TRV 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">55%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 55%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>PYPL</b> · 下日勝率 55% · PYPL 現價 $43.18，今日下跌 -2.70%，H/L 區間 $42.26-$44.57 達 5.35%，屬高波幅交易日，短炒燃料充足。技術面 MA20 ($42.44) &lt; MA50 ($45.14) &lt; MA100 ($44.96) 呈空頭排列，股價遠低於 MA200 ($54.00)，年初至今 -42.65%，長線弱勢格局未改。RSI 58.11 處於中性區，未見超賣訊號。估值面 PE TTM 8.10、PB 1.92 屬極低水平，理論上具備中長期安全邊際，但量比僅 0.79× 反映資金未積極跟進，估值修復需待趨勢確認。短線以反彈做空為主軸。<p class="card-link"><a href="/dashboard/2026-06-30/reports/PYPL.html">→ 完整 PYPL 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· default</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">54%</span></div></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>MO</b> · 下日勝率 54% · MO 今日急跌 -2.84%，收 $71.95 跌穿昨日收 $74.05 嘅近 52週高位區。技術上 MA20 ($71.28) &gt; MA50 ($70.72) &gt; MA100 ($68.64) &gt; MA200 ($64.82) 多頭排列仍然完整，今日低位 $71.72 正正測試 MA20 $71.28 嘅關鍵 support。RSI 14 報 51.28 屬中性偏弱，未進入超賣。估值 PE TTM 15.02 合理，5.89% 股息率係主要吸引力，但 PB -37.43 反映股東權益為負（煙草股慣性大額回購後嘅現象）。建議喺 MA20 $71.28 附近守穩先考慮做多博反彈，否則觀望。<p class="card-link"><a href="/dashboard/2026-06-30/reports/MO.html">→ 完整 MO 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">54%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 54%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>ABT</b> · 下日勝率 54% · ABT 現價 $90.74，今日急跌 -2.12%，收近全日低位 $90.61，已連跌三日從 $94.12 滑落。長線 MA100 ($98.47) 及 MA200 ($112.21) 仍遠高於現價，年初至今累跌 -33.41%，確認長線熊市格局。短線 MA20 ($90.02) 與 MA50 ($88.95) 幾乎黏合形成短暫支撐樞紐，但今日收破 MA20 之下，且量比僅 0.48× 無買盤承接，弱勢明顯。估值 PE 25.42、PB 3.04 屬合理，股息率 2.78% 提供下檔緩衝，惟動能偏空，宜反彈造淡。<p class="card-link"><a href="/dashboard/2026-06-30/reports/ABT.html">→ 完整 ABT 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· default</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">51%</span></div></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>AEP</b> · 下日勝率 51% · AEP 現價 $136.81 處於年初至今 +31.06% 嘅強勁升勢末端，距 52 週高位 $138.69 僅 -1.36%，短線明顯RSI14 高達 76.57 反映動能股價較 MA20 ($130.78) 偏離 +4.61% 已逼近「不追高」5% 紅線。今日回調 -0.84% 但量比僅 1.04×，缺乏拋售確認，傾向高位震盪消化。估值 PE 20.24 / PB 2.34 對公用股合理，股息率 2.78% 提供防守性。短線以 $138.00-$138.69 阻力區做空博回調至 $133.00-$134.50，或等回測 MA20 $130.78 附近做多更佳。<p class="card-link"><a href="/dashboard/2026-06-30/reports/AEP.html">→ 完整 AEP 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· default</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">50%</span></div></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>LLY</b> · 下日勝率 50% · LLY 現價 $1199.43，今日跌 2.48%，區間 $1190.22-$1230.05，波幅 3.32% 屬高波幅短炒燃料充足。均線 MA20 $1133.89 &gt; MA50 $1043.27 &gt; MA100 $1008.31 &gt; MA200 $980.51 呈完美多頭排列，RSI 60.65 處於健康區間，長線結構未壞。但現價偏離 MA20 達 5.78%，觸發『嚴進策略』不追高原則。量比 0.62× 偏低，今日下跌未見恐慌拋售，屬於高位獲利回吐。估值 PE 42.58、PB 34.35 明顯偏貴，年內升幅 +54.59% 已充分反映 GLP-1 利好。建議觀望，等待回調至 $1140.00-$1170.00 區間（即貼近 MA20 $1133.89 上方）再考慮做多博反彈，止損 $1120.00，目標 $1215.00（接近今日高位 $1230.05 下方）。<p class="card-link"><a href="/dashboard/2026-06-30/reports/LLY.html">→ 完整 LLY 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· default</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">49%</span></div></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>UNP</b> · 下日勝率 49% · UNP 現價 $272.00 略跌 0.26%，處於多頭排列（MA20 $266.00 &gt; MA50 $265.92 &gt; MA100 $258.92 &gt; MA200 $243.77）之中，股價高於 MA20 約 2.26%，長線結構健康。RSI14 50.80 處於中性區，估值 PE TTM 22.37 屬合理偏高，PB 8.32 反映資產密集型行業特性。今日 H/L 區間 $268.78-$273.31 僅 1.67%，量比 0.94× 顯示買盤未確認，短炒燃料不足。股價距 52週高位 $279.39 僅 2.65%，短線面臨阻力。建議等待回調至 MA20/Ma50 $265.92-$266.00 附近確認承接，或放量突破 $273.31 企穩後再追；兩者未明朗前宜觀望。<p class="card-link"><a href="/dashboard/2026-06-30/reports/UNP.html">→ 完整 UNP 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">49%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 49%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CCL</b> · 下日勝率 49% · CCL Carnival 現價 $28.57，今日下跌 -2.12%，H/L 區間 $28.25-$29.12 波幅 3.03% 屬高波幅，短炒燃料充足但量比僅 0.68× 無資金確認。股價 $28.57 略低於 MA20 ($28.65) 0.28%，但仍站穩 MA50 ($27.29)、MA100 ($27.74)、MA200 ($28.28) 之上，長線多頭未破。RSI14 53.30 中性。PE TTM 12.87、PB 3.02 估值合理，股息率 1.05% 偏低。短線從 30 日高點 $30.90 回落至 $28.57，呈 mean reversion 結構但量縮動能不足，建議等待 $28.25-$28.30 區間企穩或突破 $28.65 (MA20) 確認方向。<p class="card-link"><a href="/dashboard/2026-06-30/reports/CCL.html">→ 完整 CCL 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">49%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 49%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>PLD</b> · 下日勝率 49% · PLD 現價 $135.47，今日急跌 -2.46%，盤中區間 $135.23-$138.37，RSI14 跌至 28.02 進入超賣區。股價同步跌破 MA20 $143.17、MA50 $142.86、MA100 $139.58 三條短中期均線，但守在 MA200 $132.02 之上（僅高出約 2.6%，長線牛熊分界仍存）。PE TTM 33.95 偏高，PB 2.36 中等，股息率 3.16% 提供部分估值緩衝。Wells Fargo/RBC/Truist 將目標價上調至 $167/$148/$154，惟今走勢明顯與基本面利好背馳，短炒宜順勢做空反彈。<p class="card-link"><a href="/dashboard/2026-06-30/reports/PLD.html">→ 完整 PLD 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· default</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">48%</span></div></div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CSX</b> · 下日勝率 48% · CSX 現價 $47.53，從 52週高位 $48.01 回落 -1.00%，MA20 ($46.80) &gt; MA50 ($45.88) &gt; MA100 ($43.47) &gt; MA200 ($39.59) 維持完美多頭排列，股價站於 MA200 之上 $7.94 (約 +20%)，長線結構強勁。RSI 51.73 處於中性區，無訊號。但 PE TTM 29.16、PB 6.50今日 H/L 區間僅 1.56%、量比 0.89× 成交萎縮，短炒燃料不足。建議等待回調至 MA20 $46.80 附近再考慮入場，博反彈至 $48.01 52週高位。<p class="card-link"><a href="/dashboard/2026-06-30/reports/CSX.html">→ 完整 CSX 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">48%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 48%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>ISRG</b> · 下日勝率 48% · ISRG 現價 $397.68，今日跌 2.04%，全日區間 $397.52-$406.56，觸及 52 週新低 $397.68，技術上呈空頭排列（MA20 $409.51 &lt; MA50 $431.50 &lt; MA100 $455.62 &lt; MA200 $488.74），股價全線跌破所有均線。RSI14 跌至 27.72 嚴重超賣，存在技術反彈契機，但量比僅 0.93× 並未見恐慌拋售估值面 PE TTM 48.26、PB 8.07 偏高，與股價深度回撤（年初至今 -26.08%）形成矛盾。短線建議觀望，可於 $397-$400 區間博超賣反彈至 $405.97（前收）/ $409.51（MA20），或於反彈至 $405-$409 區間嘗試做空。<p class="card-link"><a href="/dashboard/2026-06-30/reports/ISRG.html">→ 完整 ISRG 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">47%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 47%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>VLO</b> · 下日勝率 47% · VLO 現價 $260.44，今日由昨收 $266.32 急跌 -2.21%，全日 H/L 區間 $259.42-$269.69 幅度達 3.94%（高波幅），由 52週高位 $266.32 獲利回吐。MA20 $252.86 &gt; MA50 $247.82 &gt; MA100 $236.09 &gt; MA200 $204.25 仍維持多頭排列，RSI14 54.71 中性。現價偏離 MA20 +3.0%，略超嚴進策略 5% 上限邊緣。量比僅 0.49×，沽壓未見放量配合，跌勢動能不足。日內可考慮：若回調至 $254-$258 區間（即 MA20 $252.86 與今日低 $259.42 之間）企穩可博反彈至 $265-$267；若反彈至 $266-$269 遇阻力乏力，可短空至 MA20 $252.86。<p class="card-link"><a href="/dashboard/2026-06-30/reports/VLO.html">→ 完整 VLO 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">45%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 45%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>TGT</b> · 下日勝率 45% · TGT 現價 $130.61，今日跌 -2.47%，但仍站穩喺 MA50 ($128.27) 及 MA200 ($109.02) 之上，長線 MA20 &gt; MA50 &gt; MA100 &gt; MA200 多頭排列結構未變。今日 H/L 區間 $129.68-$133.85 達 3.20% 屬高波幅，短炒燃料充足。RSI 54.53 中性偏強，PE 17.25、PB 3.62、股息率 3.55%，估值合理兼有息。建議等回調至 $128.27-$130.77 區間（MA50 至 MA20）確認承接再分注吸納做多博反彈，首目標 $133.85（今日高位），再上望 $135.23。<p class="card-link"><a href="/dashboard/2026-06-30/reports/TGT.html">→ 完整 TGT 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">43%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 43%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>VST</b> · 下日勝率 43% · VST 今日急跌 -2.31%，由 $162.38 收市跌至 $158.63，日內高位 $165.45 觸及後明顯回落形成 bearish reversal。股價 $158.63 仍守住 MA20 $155.99 及 MA50 $154.62 上方，但已跌破 MA200 $169.20 約 6.2%，長線 bear structure 確認。RSI 14 處 61.12 中性偏高，今日 H/L 區間 5.63% 為高波幅，提供短炒燃料。：PE TTM 26.53、PB 17.18 均遠超合理區間，YTD -14.30% 反映弱勢。機構分析師全線買入，但成交量比僅 0.89×，跌勢欠成交確認，短線方向未明，宜觀望。<p class="card-link"><a href="/dashboard/2026-06-30/reports/VST.html">→ 完整 VST 詳細報告</a></p></div>
-<div class="card"><div class="decision-strip"><div class="strip-col strip-decision"><span class="strip-label">決策 (rule)</span><span class="strip-val"><span style="color:var(--bull);font-weight:600;">🟢</span> 買入</span><span class="strip-rule">· BOUNCE</span></div><div class="strip-col strip-wr"><span class="strip-label">下日勝率 (WR)</span><span class="strip-val">42%</span></div></div><div class="rule-override-hint">⚠️ <b>Rule override</b>: LLM 觀望 → 買入 <span style="opacity:0.75;">(BOUNCE)</span> · 下日勝率 42%</div><span style="color:var(--bull);font-weight:600;">🟢</span> <b>BKNG</b> · 下日勝率 42% · BKNG 現價 $178.24 今日回落 -2.29%，處於 $176.70-$181.38 區間。短中期均線排列偏多（MA20 $170.58 &gt; MA50 $168.80 &gt; MA100 $170.46），但股價仍受制於 MA200 $189.14 之下，年初至今累跌 -22.24%。量比僅 0.62× 顯示今日跌市缺乏成交配合，下行未必具備延續性。估值面 PE TTM 23.48 屬中等，但 PB -15.94 為負值（股東權益為負，主因歷年庫藏股回購所致），技術上資不抵債，需留意。整體短線偏震盪，建議候低吸納為主、做空博 MA200 阻力。<p class="card-link"><a href="/dashboard/2026-06-30/reports/BKNG.html">→ 完整 BKNG 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>TRV</b> · 評分 52 · TRV 現價 $330.12 處於 52週高位 $331.88 下方略低，今日微跌 -0.53%，但 RSI14 高達 86.28 嚴重超買，且股價偏離 MA20 $308.55 達約 7.0%（已超出 5% 嚴進門檻）。雖然 PE 9.85 對保險股屬極低估值、長線 MA 多頭排列完整（MA20 $308.55 &gt; MA50 $304.26 &gt; MA100 $302.06 &gt; MA200 $291.33），但今日量比僅 0.85× 缺乏資金確認、今日 H/L 區間 $328.00-$334.13 僅 1.86% 無明顯方向，短線宜觀望等待回調至 MA20 附近或反彈做空，不宜現價追入。<p class="card-link"><a href="/dashboard/2026-06-30/reports/TRV.html">→ 完整 TRV 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>PYPL</b> · 評分 40 · PYPL 現價 $43.18，今日下跌 -2.70%，H/L 區間 $42.26-$44.57 達 5.35%，屬高波幅交易日，短炒燃料充足。技術面 MA20 ($42.44) &lt; MA50 ($45.14) &lt; MA100 ($44.96) 呈空頭排列，股價遠低於 MA200 ($54.00)，年初至今 -42.65%，長線弱勢格局未改。RSI 58.11 處於中性區，未見超賣訊號。估值面 PE TTM 8.10、PB 1.92 屬極低水平，理論上具備中長期安全邊際，但量比僅 0.79× 反映資金未積極跟進，估值修復需待趨勢確認。短線以反彈做空為主軸。<p class="card-link"><a href="/dashboard/2026-06-30/reports/PYPL.html">→ 完整 PYPL 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>MO</b> · 評分 52 · MO 今日急跌 -2.84%，收 $71.95 跌穿昨日收 $74.05 嘅近 52週高位區。技術上 MA20 ($71.28) &gt; MA50 ($70.72) &gt; MA100 ($68.64) &gt; MA200 ($64.82) 多頭排列仍然完整，今日低位 $71.72 正正測試 MA20 $71.28 嘅關鍵 support。RSI 14 報 51.28 屬中性偏弱，未進入超賣。估值 PE TTM 15.02 合理，5.89% 股息率係主要吸引力，但 PB -37.43 反映股東權益為負（煙草股慣性大額回購後嘅現象）。建議喺 MA20 $71.28 附近守穩先考慮做多博反彈，否則觀望。<p class="card-link"><a href="/dashboard/2026-06-30/reports/MO.html">→ 完整 MO 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>ABT</b> · 評分 36 · ABT 現價 $90.74，今日急跌 -2.12%，收近全日低位 $90.61，已連跌三日從 $94.12 滑落。長線 MA100 ($98.47) 及 MA200 ($112.21) 仍遠高於現價，年初至今累跌 -33.41%，確認長線熊市格局。短線 MA20 ($90.02) 與 MA50 ($88.95) 幾乎黏合形成短暫支撐樞紐，但今日收破 MA20 之下，且量比僅 0.48× 無買盤承接，弱勢明顯。估值 PE 25.42、PB 3.04 屬合理，股息率 2.78% 提供下檔緩衝，惟動能偏空，宜反彈造淡。<p class="card-link"><a href="/dashboard/2026-06-30/reports/ABT.html">→ 完整 ABT 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>AEP</b> · 評分 53 · AEP 現價 $136.81 處於年初至今 +31.06% 嘅強勁升勢末端，距 52 週高位 $138.69 僅 -1.36%，短線明顯超買。RSI14 高達 76.57 反映動能過熱，股價較 MA20 ($130.78) 偏離 +4.61% 已逼近「不追高」5% 紅線。今日回調 -0.84% 但量比僅 1.04×，缺乏拋售確認，傾向高位震盪消化。估值 PE 20.24 / PB 2.34 對公用股合理，股息率 2.78% 提供防守性。短線以 $138.00-$138.69 阻力區做空博回調至 $133.00-$134.50，或等回測 MA20 $130.78 附近做多更佳。<p class="card-link"><a href="/dashboard/2026-06-30/reports/AEP.html">→ 完整 AEP 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>LLY</b> · 評分 50 · LLY 現價 $1199.43，今日跌 2.48%，區間 $1190.22-$1230.05，波幅 3.32% 屬高波幅短炒燃料充足。均線 MA20 $1133.89 &gt; MA50 $1043.27 &gt; MA100 $1008.31 &gt; MA200 $980.51 呈完美多頭排列，RSI 60.65 處於健康區間，長線結構未壞。但現價偏離 MA20 達 5.78%，觸發『嚴進策略』不追高原則。量比 0.62× 偏低，今日下跌未見恐慌拋售，屬於高位獲利回吐。估值 PE 42.58、PB 34.35 明顯偏貴，年內升幅 +54.59% 已充分反映 GLP-1 利好。建議觀望，等待回調至 $1140.00-$1170.00 區間（即貼近 MA20 $1133.89 上方）再考慮做多博反彈，止損 $1120.00，目標 $1215.00（接近今日高位 $1230.05 下方）。<p class="card-link"><a href="/dashboard/2026-06-30/reports/LLY.html">→ 完整 LLY 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>UNP</b> · 評分 54 · UNP 現價 $272.00 略跌 0.26%，處於多頭排列（MA20 $266.00 &gt; MA50 $265.92 &gt; MA100 $258.92 &gt; MA200 $243.77）之中，股價高於 MA20 約 2.26%，長線結構健康。RSI14 50.80 處於中性區，估值 PE TTM 22.37 屬合理偏高，PB 8.32 反映資產密集型行業特性。今日 H/L 區間 $268.78-$273.31 僅 1.67%，量比 0.94× 顯示買盤未確認，短炒燃料不足。股價距 52週高位 $279.39 僅 2.65%，短線面臨阻力。建議等待回調至 MA20/Ma50 $265.92-$266.00 附近確認承接，或放量突破 $273.31 企穩後再追；兩者未明朗前宜觀望。<p class="card-link"><a href="/dashboard/2026-06-30/reports/UNP.html">→ 完整 UNP 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CCL</b> · 評分 42 · CCL Carnival 現價 $28.57，今日下跌 -2.12%，H/L 區間 $28.25-$29.12 波幅 3.03% 屬高波幅，短炒燃料充足但量比僅 0.68× 無資金確認。股價 $28.57 略低於 MA20 ($28.65) 0.28%，但仍站穩 MA50 ($27.29)、MA100 ($27.74)、MA200 ($28.28) 之上，長線多頭未破。RSI14 53.30 中性。PE TTM 12.87、PB 3.02 估值合理，股息率 1.05% 偏低。短線從 30 日高點 $30.90 回落至 $28.57，呈 mean reversion 結構但量縮動能不足，建議等待 $28.25-$28.30 區間企穩或突破 $28.65 (MA20) 確認方向。<p class="card-link"><a href="/dashboard/2026-06-30/reports/CCL.html">→ 完整 CCL 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>PLD</b> · 評分 38 · PLD 現價 $135.47，今日急跌 -2.46%，盤中區間 $135.23-$138.37，RSI14 跌至 28.02 進入超賣區。股價同步跌破 MA20 $143.17、MA50 $142.86、MA100 $139.58 三條短中期均線，但守在 MA200 $132.02 之上（僅高出約 2.6%，長線牛熊分界仍存）。PE TTM 33.95 偏高，PB 2.36 中等，股息率 3.16% 提供部分估值緩衝。Wells Fargo/RBC/Truist 將目標價上調至 $167/$148/$154，惟今走勢明顯與基本面利好背馳，短炒宜順勢做空反彈。<p class="card-link"><a href="/dashboard/2026-06-30/reports/PLD.html">→ 完整 PLD 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CSX</b> · 評分 54 · CSX 現價 $47.53，從 52週高位 $48.01 回落 -1.00%，MA20 ($46.80) &gt; MA50 ($45.88) &gt; MA100 ($43.47) &gt; MA200 ($39.59) 維持完美多頭排列，股價站於 MA200 之上 $7.94 (約 +20%)，長線結構強勁。RSI 51.73 處於中性區，無超買訊號。但 PE TTM 29.16、PB 6.50 估值偏高，今日 H/L 區間僅 1.56%、量比 0.89× 成交萎縮，短炒燃料不足。建議等待回調至 MA20 $46.80 附近再考慮入場，博反彈至 $48.01 52週高位。<p class="card-link"><a href="/dashboard/2026-06-30/reports/CSX.html">→ 完整 CSX 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>ISRG</b> · 評分 36 · ISRG 現價 $397.68，今日跌 2.04%，全日區間 $397.52-$406.56，觸及 52 週新低 $397.68，技術上呈空頭排列（MA20 $409.51 &lt; MA50 $431.50 &lt; MA100 $455.62 &lt; MA200 $488.74），股價全線跌破所有均線。RSI14 跌至 27.72 嚴重超賣，存在技術反彈契機，但量比僅 0.93× 並未見恐慌拋售，方向確認不足。估值面 PE TTM 48.26、PB 8.07 偏高，與股價深度回撤（年初至今 -26.08%）形成矛盾。短線建議觀望，可於 $397-$400 區間博超賣反彈至 $405.97（前收）/ $409.51（MA20），或於反彈至 $405-$409 區間嘗試做空。<p class="card-link"><a href="/dashboard/2026-06-30/reports/ISRG.html">→ 完整 ISRG 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>VLO</b> · 評分 44 · VLO 現價 $260.44，今日由昨收 $266.32 急跌 -2.21%，全日 H/L 區間 $259.42-$269.69 幅度達 3.94%（高波幅），由 52週高位 $266.32 獲利回吐。MA20 $252.86 &gt; MA50 $247.82 &gt; MA100 $236.09 &gt; MA200 $204.25 仍維持多頭排列，RSI14 54.71 中性。現價偏離 MA20 +3.0%，略超嚴進策略 5% 上限邊緣。量比僅 0.49×，沽壓未見放量配合，跌勢動能不足。日內可考慮：若回調至 $254-$258 區間（即 MA20 $252.86 與今日低 $259.42 之間）企穩可博反彈至 $265-$267；若反彈至 $266-$269 遇阻力乏力，可短空至 MA20 $252.86。<p class="card-link"><a href="/dashboard/2026-06-30/reports/VLO.html">→ 完整 VLO 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>TGT</b> · 評分 55 · TGT 現價 $130.61，今日跌 -2.47%，但仍站穩喺 MA50 ($128.27) 及 MA200 ($109.02) 之上，長線 MA20 &gt; MA50 &gt; MA100 &gt; MA200 多頭排列結構未變。今日 H/L 區間 $129.68-$133.85 達 3.20% 屬高波幅，短炒燃料充足。RSI 54.53 中性偏強，PE 17.25、PB 3.62、股息率 3.55%，估值合理兼有息。建議等回調至 $128.27-$130.77 區間（MA50 至 MA20）確認承接再分注吸納做多博反彈，首目標 $133.85（今日高位），再上望 $135.23。<p class="card-link"><a href="/dashboard/2026-06-30/reports/TGT.html">→ 完整 TGT 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>VST</b> · 評分 46 · VST 今日急跌 -2.31%，由 $162.38 收市跌至 $158.63，日內高位 $165.45 觸及後明顯回落形成 bearish reversal。股價 $158.63 仍守住 MA20 $155.99 及 MA50 $154.62 上方，但已跌破 MA200 $169.20 約 6.2%，長線 bear structure 確認。RSI 14 處 61.12 中性偏高，今日 H/L 區間 5.63% 為高波幅，提供短炒燃料。估值偏貴：PE TTM 26.53、PB 17.18 均遠超合理區間，YTD -14.30% 反映弱勢。機構分析師全線買入，但成交量比僅 0.89×，跌勢欠成交確認，短線方向未明，宜觀望。<p class="card-link"><a href="/dashboard/2026-06-30/reports/VST.html">→ 完整 VST 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>BKNG</b> · 評分 51 · BKNG 現價 $178.24 今日回落 -2.29%，處於 $176.70-$181.38 區間。短中期均線排列偏多（MA20 $170.58 &gt; MA50 $168.80 &gt; MA100 $170.46），但股價仍受制於 MA200 $189.14 之下，年初至今累跌 -22.24%。量比僅 0.62× 顯示今日跌市缺乏成交配合，下行未必具備延續性。估值面 PE TTM 23.48 屬中等，但 PB -15.94 為負值（股東權益為負，主因歷年庫藏股回購所致），技術上資不抵債，需留意。整體短線偏震盪，建議候低吸納為主、做空博 MA200 阻力。<p class="card-link"><a href="/dashboard/2026-06-30/reports/BKNG.html">→ 完整 BKNG 詳細報告</a></p></div>
 
 ---
-<em>生成時間: 2026-07-14 15:40:31 · LLM: openai/MiniMax-M3</em>
-<div style="text-align:center;margin:1.5rem 0 0.5rem;padding:14px 18px;background:var(--panel);border:1px dashed var(--border);border-radius:4px;font-size:0.88rem;">👇 想睇 <b>全部 0 隻股票</b>嘅 score + 操作 + entry/stop/target？ 去 <a href="/full-results/2026-06-30.html"><b>Full Results (2026-06-30)</b></a></div>
-<p class="last-updated">最後更新: 2026-07-14 15:40 HKT</p>
+<em>生成時間: 2026-07-16 19:33:49 · LLM: openai/MiniMax-M3</em>
+<h2>詳細表格</h2><p><em>此條件下無報告。</em></p>
+<p class="last-updated">最後更新: 2026-07-16 19:33 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
