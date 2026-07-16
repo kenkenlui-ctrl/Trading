@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leeks Terminal · 2026-07-14 · 🌊 Bounce BUY</title>
+  <meta name="description" content="Leeks Terminal 2026-07-14 AI dashboard — 🌊 Bounce BUY">
+  <meta property="og:title" content="Leeks Terminal · 2026-07-14 · 🌊 Bounce BUY">
+  <meta property="og:description" content="Leeks Terminal 2026-07-14 AI dashboard — 🌊 Bounce BUY">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.win9you.com/dashboard/2026-07-14/bounce-buy.html">
+  <meta property="og:image" content="https://www.win9you.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://www.win9you.com/og-image.png">
+  <meta name="twitter:title" content="Leeks Terminal · 2026-07-14 · 🌊 Bounce BUY">
+  <meta name="twitter:description" content="Leeks Terminal 2026-07-14 AI dashboard — 🌊 Bounce BUY">
+  <link rel="canonical" href="https://www.win9you.com/dashboard/2026-07-14/bounce-buy.html">
+  <link rel="alternate" hreflang="zh-Hant" href="https://www.win9you.com/dashboard/2026-07-14/bounce-buy.html">
+  <link rel="alternate" hreflang="x-default" href="https://www.win9you.com/dashboard/2026-07-14/bounce-buy.html">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+    --bg: #ffffff;
+    --panel: #f3f4f6;
+    --panel-2: #e5e7eb;
+    --border: #e5e7eb;
+    --fg: #1a1d23;
+    --dim: #4b5563;
+    --bull: #15803d;
+    --bear: #b91c1c;
+    --amber: #92400e;
+    --blue: #2563eb;
+    --purple: #7c3aed;
+    --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Top nav (matches Streamlit worker injection) */
+nav.leeks-site-nav {
+    position: sticky; top: 0; z-index: 999;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+nav.leeks-site-nav .brand {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+}
+nav.leeks-site-nav a {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    padding: 4px 0;
+}
+nav.leeks-site-nav a.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+}
+
+/* Layout */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+h1 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin: 0 0 1rem;
+}
+h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
+
+/* Date selector (top of dashboard) — looks like Streamlit selectbox */
+.date-picker {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+}
+.date-picker a {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--fg);
+    font-size: 0.8rem;
+}
+.date-picker a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Disclaimer */
+.disclaimer {
+    background: #fef3c7;
+    border: 1px solid #b45309;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #78350f;
+}
+
+/* Cards (mirror Streamlit dashboard) */
+.card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+.card.bull { border-left-color: var(--bull); }
+.card.bear { border-left-color: var(--bear); }
+.card.amber { border-left-color: var(--amber); }
+
+/* Stats line */
+.stats {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.stats .bull { color: var(--bull); font-weight: 600; }
+.stats .bear { color: var(--bear); font-weight: 600; }
+.stats .amber { color: var(--amber); font-weight: 600; }
+
+/* Homepage value-prop + sample preview */
+.lede { font-size: 1.05rem; line-height: 1.65; max-width: 760px; }
+section h2 { margin-top: 2.4rem; }
+section ul, section ol { line-height: 1.75; max-width: 760px; }
+.dim { color: var(--dim); }
+
+.sample-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 1rem 0 1.4rem;
+    max-width: 900px;
+}
+.sample-card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 12px 14px;
+    background: #fafbfc;
+}
+.sample-header {
+    display: flex; gap: 8px; align-items: baseline; margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.sample-code { font-weight: 700; font-size: 1.05rem; }
+.sample-op { padding: 1px 6px; border-radius: 3px; background: var(--panel); font-size: 0.85rem; }
+.sample-score { margin-left: auto; font-weight: 600; color: var(--dim); font-size: 0.9rem; }
+.sample-summary { font-size: 0.85rem; line-height: 1.55; color: var(--fg); margin: 6px 0 8px; }
+.sample-link { font-size: 0.85rem; }
+
+/* Dashboard hub /dashboard/ */
+.dates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin: 1.5rem 0 2rem;
+    max-width: 1100px;
+}
+.date-card {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    background: #fafbfc;
+}
+.date-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 8px;
+}
+.date-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+.date-stats {
+    display: flex; gap: 12px; margin-bottom: 12px; font-size: 0.95rem;
+}
+.stat-bull { color: var(--bull); font-weight: 600; }
+.stat-amber { color: var(--amber); font-weight: 600; }
+.stat-bear { color: var(--bear); font-weight: 600; }
+.date-filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+}
+.filter-chip {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: #fff;
+    font-size: 0.82rem;
+    text-decoration: none;
+    color: var(--fg);
+    transition: background 0.15s;
+}
+.filter-chip:hover { background: var(--panel-2); text-decoration: none; }
+.filter-chip.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    font-weight: 600;
+}
+.filter-chip.primary:hover { background: #1d4ed8; }
+.hub-cta ul { list-style: none; padding: 0; }
+.hub-cta li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--panel);
+    font-size: 0.95rem;
+}
+
+/* R:R badge + timeframe hint inside cards */
+.rr-badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-right: 6px;
+    vertical-align: middle;
+    border: 1px solid currentColor;
+}
+.rr-good { color: var(--bull); background: rgba(21, 128, 61, 0.08); }
+.rr-ok   { color: var(--amber); background: rgba(146, 64, 14, 0.08); }
+.rr-bad  { color: var(--bear); background: rgba(185, 28, 28, 0.08); }
+.hint {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    vertical-align: middle;
+    color: var(--dim);
+    background: var(--panel-2);
+}
+.hint-buy { color: var(--bull); }
+.hint-sell {
+    color: var(--bear);
+    font-weight: 600;
+    background: rgba(185, 28, 28, 0.06);
+    border: 1px solid rgba(185, 28, 28, 0.3);
+}
+
+/* LLM confidence + caution chips on cards (Option B: surface LLM self-cautions) */
+.signal-chips {
+    margin: 4px 0 6px 0;
+    font-size: 0.7rem;
+    line-height: 1.4;
+}
+.conf-chip {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: 600;
+    margin-right: 5px;
+    vertical-align: middle;
+    border: 1px solid currentColor;
+}
+.conf-high { color: var(--bull); background: rgba(21, 128, 61, 0.08); }
+.conf-mid  { color: var(--amber); background: rgba(146, 64, 14, 0.08); }
+.conf-low  { color: var(--bear); background: rgba(185, 28, 28, 0.08); }
+.caution-chip {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: 500;
+    margin-right: 5px;
+    margin-bottom: 2px;
+    vertical-align: middle;
+    color: var(--bear);
+    background: rgba(185, 28, 28, 0.06);
+    border: 1px solid rgba(185, 28, 28, 0.25);
+}
+
+/* Signal warning banner on dashboard */
+.signal-warning {
+    margin: 0 0 1.2rem;
+    padding: 10px 14px;
+    background: rgba(146, 64, 14, 0.06);
+    border-left: 3px solid var(--amber);
+    border-radius: 4px;
+    font-size: 0.82rem;
+    line-height: 1.55;
+}
+.signal-warning .warn-strong {
+    color: var(--bear);
+    font-weight: 700;
+}
+.signal-warning a {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+/* Detail table */
+table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+}
+table.detail th, table.detail td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+table.detail th {
+    background: var(--panel-2);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+
+/* Methodology dim table */
+table.dim-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+}
+table.dim-table th, table.dim-table td {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+table.dim-table th {
+    background: var(--panel-2);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+table.dim-table td:first-child { font-family: 'JetBrains Mono', monospace; }
+table.dim-table td:nth-child(2) { font-weight: 600; color: var(--accent); text-align: center; }
+
+/* Card-link: appended after each summary card so reader can dive into detail */
+p.card-link {
+    margin: 6px 0 0;
+    text-align: right;
+    font-size: 0.78rem;
+}
+p.card-link a {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+p.card-link a:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Filter chips (alternative to filter dropdown) */
+.filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+}
+.filters span { color: var(--dim); margin-right: 4px; align-self: center; }
+.filters a {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--fg);
+}
+.filters a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Report detail page */
+.report-header h1 { margin: 0 0 0.5rem; }
+.report-header .meta {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 1rem;
+}
+.report-header .badge {
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    font-size: 0.75rem;
+    color: var(--fg);
+}
+.report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.conf { background: var(--panel-2); }
+
+.score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 1rem 0;
+}
+.score-breakdown .dim {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+}
+.score-breakdown .dim span {
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.score-breakdown .bar {
+    background: var(--border);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 6px 0;
+}
+.score-breakdown .bar .fill { height: 100%; }
+.score-breakdown .dim b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+}
+
+.levels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    margin: 1rem 0;
+}
+.levels > div {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+.levels span {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+.levels b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+}
+.levels b.bull { color: var(--bull); }
+.levels b.bear { color: var(--bear); }
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    main { padding: 16px 12px 48px; }
+    h1 { font-size: 1.15rem; }
+    .card { padding: 8px 10px; font-size: 0.8rem; }
+    nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
+    nav.leeks-site-nav a { font-size: 0.7rem; }
+    table.detail { font-size: 0.7rem; }
+    table.detail th, table.detail td { padding: 4px 6px; }
+}
+</style>
+  
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<main>
+<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="signal-warning"><b>🌊 Bounce BUY (NEW 2026-07-09)</b> · Mean-reversion entry on panic-sold HOLD candidates.
+            <br>· <b>Why this exists</b>: 7/2 missed 02650.HK (+47.3%), 09880.HK (+17.6%), 03330.HK (+16.2%) — system said HOLD but stocks bounced hard next day.
+            <br>· <b>Rules</b>: <b>day_chg [-5%, -2%]</b> (pullback day) · <b>sentiment in (悲觀, 中性)</b> · <b>m_score &lt; 60</b> (momentum cooled) · <b>score &lt; 45</b> (LLM agrees value is here) · <b>of_score ≥ 25</b> (institutions didn't fully flee)
+            <br>· <b>Universe</b>: All markets (HK + US)
+            <br>· <b>Backtest</b>: 60 historical HOLD candidates → <b>51.7% WR, -0.53% avg</b>. Modest edge but catches missed reversals. Worst case 03986.HK -12.2% (true breakdown).
+            <br>· <b>Risk</b>: <span class="warn-strong">true breakdowns (chg&lt;-7%) 仲會繼續跌</span>. Use 5% hard stop. Position size 50% of Conservative BUY.</div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-07-14/all.html">全部</a><a href="/dashboard/2026-07-14/hk-buy.html">港股買入</a><a href="/dashboard/2026-07-14/hk-sell.html">港股賣出</a><a href="/dashboard/2026-07-14/hk-hold.html">港股觀望</a><a href="/dashboard/2026-07-14/us-buy.html">美股買入</a><a href="/dashboard/2026-07-14/us-sell.html">美股賣出</a><a href="/dashboard/2026-07-14/us-hold.html">美股觀望</a><a href="/dashboard/2026-07-14/conservative-buy.html">🛡️ Conservative BUY</a><a href="/dashboard/2026-07-14/cyber-buy.html">🔐 Cyber BUY</a><a href="/dashboard/2026-07-14/strength-buy.html">⏸️ Strength BUY</a><a href="/dashboard/2026-07-14/bounce-buy.html" class="active">🌊 Bounce BUY</a></div><h1>🔬 Signal Explorer — 2026-07-14 (🌊 Bounce BUY)</h1><b>2026-07-14</b> · 共分析 <b>30</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:29 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:1 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:0
+
+<h2>📊 分析結果摘要</h2>
+
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>AZO</b> · 評分 25 · AZO 現價 $2970.57，今日跌 -2.03%，收於全日低位附近，走勢極弱。MA20 ($3075.87) &gt; MA50 ($3180.42) &gt; MA100 ($3364.30) &gt; MA200 ($3550.35) 呈空頭排列，股價已跌穿全部均線，RSI 14 為 42.74 偏弱。基本面 PE TTM 20.83 屬合理，但 PB 為 -17.46（因長期回購致股東權益為負，技術上資不抵債）。年初至今累跌 -19.34%，多間大行包括 Citi、Truist、Mizuho 同步下調目標價，負面催化劑集中。今日 H/L 區間 3.95% 為高波幅，短炒有燃料，但量比僅 1.03× 缺乏資金確認，建議觀望待方向明確。<p class="card-link"><a href="/dashboard/2026-07-14/reports/AZO.html">→ 完整 AZO 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>06066.HK</b> · 評分 39 · 06066.HK 今日跌 3.09% 收報 11.92 HKD，弱勢收於全日低位 11.91 附近，技術面偏空。日內區間 12.29-11.91 幅度約 3.1%，波幅充足具短炒價值。估值面 PE TTM 8.85 屬偏低、股息率 3.29% 提供防守，但 PB 3.09 偏高限制上行空間。MA20/MA50/MA100/MA200 及 RSI 數據全部缺失，技術判斷受限；52週區間 9.98-15.38，現價 11.92 偏下半部。建議觀望等待方向確認，日內可考慮 12.20-12.30 反彈區做空博續跌，或 11.50 以下承接博技術反彈。<p class="card-link"><a href="/dashboard/2026-07-14/reports/06066.HK.html">→ 完整 06066.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>01138.HK</b> · 評分 33 · 中遠海能(01138.HK)今日顯著下跌 -3.94%，收報 12.18 HKD，全日區間 12.09-12.71 HKD，振幅約 4.89%（高波幅 &gt; 3%，短炒燃料充足）。估值 PE TTM 14.91 中性，PB 4.89 偏高，股息率僅 1.64%，整體估值不便宜。技術指標 MA20/MA50/MA100/MA200 及 RSI14 全數缺失，無法判斷中長線趨勢排列。股價 12.18 處於 52週區間 6.26-22.40 之中位數（約 40% 分位），未有明顯極端超跌或超買訊號。當前時間為 16:08 HKT，接近收市，日內交易窗口已收窄，建議觀望等待下一交易日方向確認。<p class="card-link"><a href="/dashboard/2026-07-14/reports/01138.HK.html">→ 完整 01138.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>02600.HK</b> · 評分 37 · 中鋁 02600.HK 今日（2026/07/16）收報 7.87 港元，跌 2.72%，全日區間 7.78-8.15，波幅 4.58%，屬高波動股。估值面 PE TTM 9.62 偏低，但 PB 4.57 對鋁業而言偏高，股息率 3.75% 中規中矩。股價從 52 週高位 15.38 回落約 48.8%，距 52 週低位 5.24 仍有 50.2% 緩衝。技術指標（MA20/MA50/RSI/量比）全部缺失，難以確認趨勢強度，但日內弱勢明顯。建議短炒以逢反彈做空為主、極度超跌做多為輔。<p class="card-link"><a href="/dashboard/2026-07-14/reports/02600.HK.html">→ 完整 02600.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>07552.HK</b> · 評分 38 · 07552 為恒生科技指數每日 -2x 反向 ETP，今日跌 3.89%，對應恒指科技上漲約 1.94%，現價 1.63，今日區間 1.58-1.69，振幅約 6.47%（高波幅短炒格局）。MA20、MA50、MA100、MA200、RSI14 全部缺失，量比無基準比較；產品每日 reset 特性令 2.15/1.02 不適用。PB 6.72 對 ETP 無估值意義，建議避開持倉過夜、嚴控止損。<p class="card-link"><a href="/dashboard/2026-07-14/reports/07552.HK.html">→ 完整 07552.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>IBM</b> · 評分 31 · IBM 現價 $211.20，較昨日收市 $217.07 急跌 2.70%，創 52 週新低，今日 H/L 區間達 6.05% 屬高波幅。股價較 MA20 $271.82 偏離 22.3%、較 MA200 $274.62 偏離 23.1%，MA20 &gt; MA50 &gt; MA100 排列雖然存在但價格已遠離所有短中期均線，RSI14 33.07 進入超賣區。PE TTM 19.20 屬合理區間，但 PB 6.02 偏高；股息率 3.11% 提供部分防守。基本面雖穩但技術面斷崖式下跌，未見明顯止跌信號，建議場外觀望，待止跌後再行部署。<p class="card-link"><a href="/dashboard/2026-07-14/reports/IBM.html">→ 完整 IBM 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>SMCI</b> · 評分 33 · SMCI 收 $26.89，今日跌 -2.75%，全日區間 $26.17-$28.35 波幅 8.11% 屬高波幅交易日，RSI14 26.91 已跌入嚴重超賣區。股價全面失守 MA20 $29.20、MA50 $33.45、MA100 $30.60、MA200 $34.28 所有均線，年內累跌 -49.47%，長線趨勢明確轉空。短炒可關注兩個 setup：超賣反彈至 $28.00-$28.35 區間考慮做空，或跌穿 $26.17 後追沽至 $25.50；做多則需嚴控倉位，僅博技術反彈至 MA20 $29.20。中線維持觀望，PE 14.54 / PB 2.13 估值非極低，安全邊際不足。<p class="card-link"><a href="/dashboard/2026-07-14/reports/SMCI.html">→ 完整 SMCI 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>02338.HK</b> · 評分 35 · 02338 報 $32.04，今日跌 2.35% 並收近全日低位，全日區間 $31.36-$33.14（5.43%）屬高波幅日。技術指標 MA20/MA50/MA100/MA200 及 RSI14 全部 N/A，無 trend 錨點；52週區間 $13.19-$45.01，現價處中位 (~59%)，缺乏單邊催化。估值面 PE TTM 22.88 屬中性，但 PB 5.43 偏高反映溢價已 price-in 高 ROE。短炒窗口存在但信心受制於數據不足，宜於 $31.40-$31.80 區間博反彈至 $32.80（前收），嚴守 $30.80 止損，4 PM HKT 前必須平倉。<p class="card-link"><a href="/dashboard/2026-07-14/reports/02338.HK.html">→ 完整 02338.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>01171.HK</b> · 評分 43 · 兗礦能源 (01171.HK) 今日 (2026/07/16) 收報 11.11 港元，跌 2.11%，全日高低 11.54/11.02 港元，區間幅度達 4.72%，短炒波幅充足。估值 PE 11.00 倍屬合理水平，但 PB 4.58 倍對煤炭股而言偏高，股息率 5.16% 為下檔亮點。股價自 52 週高位 17.05 累跌約 34.8%，處於 52 週區間 37% 位置 (7.57-17.05)，弱勢明顯。今日跌破前收 11.35 並觸及日低 11.02 後微反彈，短線動能偏空。由於缺乏 MA20/MA50/RSI 等技術指標數據，操作上宜以日內區間為主，待 11.02 守穩或反彈至 11.30-11.35 遇阻再行部署。<p class="card-link"><a href="/dashboard/2026-07-14/reports/01171.HK.html">→ 完整 01171.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>AKAM</b> · 評分 40 · AKAM 急跌 4.84%，收 $120.01，剛好跌穿 MA20 ($120.50)，全日波幅達 8.29% ($118.00-$127.95) 屬高波幅，提供短炒燃料。技術上 MA20 ($120.50) &lt; MA50 ($133.95)，呈短線空頭排列；不過股價仍守於 MA100 ($118.93) 及 MA200 ($102.67) 之上，年內仍升 55.78%，長線多頭未失。PE 42.56 偏高，估值無安全墊；量比 0.90× 顯示沽壓未算恐慌。短線若守 $118.00 (今日低) 可博反彈至 $124-$125；若失守則下試 $113-$114 區間。<p class="card-link"><a href="/dashboard/2026-07-14/reports/AKAM.html">→ 完整 AKAM 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CMG</b> · 評分 40 · CMG 今日急跌 -4.94%，收報 $34.63，今日區間 $36.77-$34.55 波幅達 6.41% 屬極高波幅。股價仍站於 MA20 $33.62 及 MA50 $32.46 之上，但已跌穿 MA200 $35.32 長線牛熊分界，長線轉弱。RSI 14 報 61.91 處中性偏強，未進入超賣區，短線仍有修復空間。估值 PE TTM 33.30、PB 18.51 偏貴，YTD 已跌 -35.13%。建議觀望至 $34.55 守穩或跌穿 MA20 $33.62 後再行入市。<p class="card-link"><a href="/dashboard/2026-07-14/reports/CMG.html">→ 完整 CMG 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CSCO</b> · 評分 39 · CSCO 今日急跌 -4.54%，現價 $111.77 已跌破 MA20 $117.19 達 4.62%，並失守 MA50 $115.26，呈現短線破位。RSI14 為 39.37 進入弱勢區，今日 H/L 區間達 6.51% 屬高波幅，短炒波動充足。估值偏貴（PE 37.26、PB 9.01），不支持長線吸納；惟 RSI 接近超賣、乖離率擴大，反彈日或翌日下行日均具備 day-trade 機會。操作上宜待 $114.50-116.00 反彈區做空，或跌至 $109.00-110.50 博短線技術反彈至 MA50 $115.26，不持倉過夜。<p class="card-link"><a href="/dashboard/2026-07-14/reports/CSCO.html">→ 完整 CSCO 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>03696.HK</b> · 評分 32 · 03696.HK INSILICO 收市報 49.02 港元，全日急跌 3.88%，單日沽壓顯著。H/L 區間 48.84-52.25，幅度約 6.7%，屬高波幅交易日，短炒燃料充足。成交 17,009,052 股、成交額 8.56 億港元，配合下跌顯示真實拋售資金參與。市盈率 TTM 為 -10.35（仍處虧損），市淨率 6.69 偏高，估值面薄弱。股價較 52 週高位 80.90 累跌約 39%，但仍較 52 週低位 29.98 高出 64%。由於 MA20/MA50/MA100/MA200 及 RSI14 數據全部缺失，僅有單根 K 線（49.02），無法判斷中長線趨勢結構，建議觀望為主，待技術指標補全後再行部署。<p class="card-link"><a href="/dashboard/2026-07-14/reports/03696.HK.html">→ 完整 03696.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>COHR</b> · 評分 31 · COHR 急跌 -3.67% 收 $299.38，今日 H/L 區間達 11.71%（$281.06-$316.13），呈現典型 capitulation 形態。股價已大幅跌破 MA20 $358.11（偏離 -16.4%）及 MA100 $323.14（偏離 -7.3%），但仍守在 MA200 $245.17 之上（+22.1%）。RSI 25.25 處於深度超賣區，短線反彈機率高。PE TTM 146.75、PB 5.48 估值偏高。建議觀望，等待 RSI 回升或反彈至 MA100 $323.14 附近再尋做空機會；激進者可在 $285-$292 區間博技術反彈。<p class="card-link"><a href="/dashboard/2026-07-14/reports/COHR.html">→ 完整 COHR 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>07500.HK</b> · 評分 44 · 07500 為恒指 -2X 反向 ETP，今日收 1.76 港元，跌 -2.77%，推算恒指今日反彈約 +1.38%。今日區間 1.72-1.78，振幅約 3.49%（高波幅），成交 287,175,300 股 / 約 5.01 億港元，資金參與極踴躍。屬每日 reset 槓桿 ETP， 2.18/1.52 對此標的無意義，不宜用作 support/resistance。MA20/MA50/MA100/MA200 及 RSI14 全部缺失，技術面判斷受限。PB 3.43 對 ETP 無實際估值意義。短炒建議觀望為主，等待恒指方向確認；若博恒指續升做空此 ETP，1.76-1.78 為入場；若博恒指回吐做多此 ETP，1.72-1.74 為入場。<p class="card-link"><a href="/dashboard/2026-07-14/reports/07500.HK.html">→ 完整 07500.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>01688.HK</b> · 評分 36 · 01688.HK 今日急跌 3.82% 收 6.80 HKD，全日高低區間 7.35-6.59 波幅高達 11.53%，短炒燃料充足但沽壓明顯，收市逼近全日低位顯示弱勢未散。現價僅距 52 週低位 6.30 約 7.94%，技術上踏入重要支持區域。PE TTM 21.80 屬中等，惟 PB 10.75 屬偏高，股息率 0.00%，估值面缺乏安全墊。MA20/MA50/MA100/MA200 及 RSI14 全部 N/A，趨勢確認困難。短線建議觀望：做多可待 6.40-6.50 出現反轉訊號，目標 7.00-7.07 (前收)，止損 6.25 (52 週低位下)；做空則可於反彈 6.90-7.00 沾手，止損 7.20，目標 6.40 (今日低位)。<p class="card-link"><a href="/dashboard/2026-07-14/reports/01688.HK.html">→ 完整 01688.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>03431.HK</b> · 評分 36 · 03431.HK 為追蹤 FTSE 香港-韓國科技+ 指數嘅 ETF，2026/07/16 收 10.15 HKD，全日跌 -2.40%，由昨日收 10.40 大幅下挫至日內低位 9.88 後略為回升。日內 H/L 區間 10.37/9.88 幅度約 4.96%，屬高波幅交易日，短炒燃料充足。成交 8,175,400 股、成交額 83,107,672.50 HKD，量能活躍但 MA20/50/100/200 及 RSI14 全部缺失，技術面參考性有限。PB 4.71 偏高（ETF 持倉為科技股，賬面溢價屬正常）。股價較 52 週高位 19.02 已回落約 46.6%，但較 52 週低位 7.43 仍有約 36.6% 緩衝。整體方向偏空，但日內 4.96% 波幅為日內交易者提供兩個方向嘅 setup。<p class="card-link"><a href="/dashboard/2026-07-14/reports/03431.HK.html">→ 完整 03431.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>TER</b> · 評分 30 · TER 現價 $342.12，今日跌 3.15%，區間 $325.14-$358.00，波幅達 9.60%（高波幅）。股價已跌穿 MA100 ($355.75)，並大幅偏離 MA20 ($402.27) 達 -14.96%，短線嚴重超跌但趨勢明顯轉弱。RSI14 為 37.95 接近超賣區。估值面 PE TTM 65.41、PB 17.04 極貴，量比僅 1.16× 未確認跌勢動能。新聞面 BofA 上調目標至 $525 與 CFRA 維持賣出評級分歧，整體觀望。<p class="card-link"><a href="/dashboard/2026-07-14/reports/TER.html">→ 完整 TER 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>FIX</b> · 評分 31 · FIX 今日跌 2.16% 至 $1,736.70，全日區間達 6.37% 屬高波幅日內可交易品種，但股價已跌穿 MA20 $1,854.69 達 -6.36%（偏離 &gt;5%），按嚴進策略不建議現價追入做多。今日低位 $1,678.03 剛好觸及 MA100 $1,692.84 下方，技術上短線超賣但 RSI 38.95 未算極度超賣。MA20 ($1,854.69) &lt; MA50 ($1,878.94) 屬短線死亡交叉。估值面 PE 51.28、PB 94.62 極高，但 YTD 升 217.71% 顯示仍係 growth premium。<p class="card-link"><a href="/dashboard/2026-07-14/reports/FIX.html">→ 完整 FIX 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>02577.HK</b> · 評分 27 · 02577.HK INNOSCIENCE 今日收 $48.00，跌 -2.56%，收市貼近全日低位 $47.80（差距僅 $0.20），顯示沽壓未消化。基本面具挑戰：PE TTM 為 -47.20（持續虧損），PB 高達 5.18，零股息，估值溢價但盈利薄弱。股價 $48.00 較 52 週高位 $106.10 已回落約 55%，但仍較 52 週低位 $41.00 高約 17%，下行空間未封殺。技術指標 MA20/MA50/MA100/MA200 及 RSI14 全數缺失，無法判斷 trend，需保守。由於缺乏 trend 結構及基本面薄弱，建議觀望為主，待 $47.00 以下確認承接或反彈至 $50.35 上方訊號再行部署。<p class="card-link"><a href="/dashboard/2026-07-14/reports/02577.HK.html">→ 完整 02577.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>ZS</b> · 評分 43 · ZS 現價 $148.19，今日急跌 -2.56% 但全日波幅達 6.60%（高 $156.98 / 低 $147.20），呈現典型高波幅震盪格局。短線 MA20 $137.73 &lt; MA50 $143.37 &lt; MA100 $143.52 屬空頭排列未扭轉，但股價站穩所有短中期均線之上，屬超跌反彈階段。RSI 14 處於 66.07 偏強但未超買。股價 $148.19 較 MA20 $137.73 高出 7.6%，偏離幅度大，嚴進策略下不建議追多。量比僅 0.80×，資金參與度不足，確認買盤信心有限。建議觀望 $147.20 低位及 MA50 $143.37 雙重支持是否守住，再決定方向。<p class="card-link"><a href="/dashboard/2026-07-14/reports/ZS.html">→ 完整 ZS 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>CAT</b> · 評分 42 · CAT 現價 $914.30，今日大跌 -2.04%，今日區間 $890.40-$938.58 幅度達 5.27%（高波幅），盤中已跌穿 MA20 $976.19 及 MA50 $929.44 兩條短中期均線，RSI14 回落至 40 處於弱勢區。估值面 PE TTM 46.51、PB 22.57 明顯偏高，股價仍位於 MA200 $715.92 之上約 27.7%，長線牛市格局未變。量比 1.09× 屬正常，未見恐慌拋售。新聞面獲 Oppenheimer 調目標至 $1,105、JPMorgan 調至 $1,165，屬中線利好。日內策略宜高沽低揸，不追跌亦不追升。<p class="card-link"><a href="/dashboard/2026-07-14/reports/CAT.html">→ 完整 CAT 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>06088.HK</b> · 評分 38 · FIT HON TENG (06088.HK) 2026/07/16 急挫 3.49% 收 5.80 HKD，全日 H/L 區間 5.77-6.03 達 4.33% 屬高波幅，短炒燃料充足但方向偏淡。今日成交 26,079,498 股、成交額 1.53 億 HKD，資金參與度尚可但無 5 日均量對比。估值偏貴：PE TTM 34.88、PB 4.33、股息率 0.00%，缺乏估值安全墊。股價 5.80 位於 52 週區間 2.52-10.89 中下段，較 52 週高位 10.89 仍回落 47%，短線弱勢明顯。現時 as_of_date 已 16:08 HKT 接近收市，新開倉風險回報不對等，建議觀望。<p class="card-link"><a href="/dashboard/2026-07-14/reports/06088.HK.html">→ 完整 06088.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>LRCX</b> · 評分 38 · LRCX 今日大幅波動，當日 H/L 區間達 11.17%（357.25/319.79），收跌 3.08% 至 335.43 USD，擊穿 MA20（369.02）並測試 MA50（334.25）支撐。RSI 14 為 43.17 偏弱，但長期 MA 多頭排列（369.02&gt;334.25&gt;285.69&gt;231.37）仍未破壞。估值面 PE 65.39、PB 39.63 仍屬極貴，限制短線向上空間。富國上調目標至 $450、Oppenheimer 升至 $400 為正面催化，但與當日弱勢形成背離。整體屬於「高位巨震洗牌」結構，建議等待方向確認。<p class="card-link"><a href="/dashboard/2026-07-14/reports/LRCX.html">→ 完整 LRCX 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>01956.HK</b> · 評分 36 · 01956.HK 今日急跌 3.83% 收 $76.65，日內區間 $72.50-$79.70，幅度達 9.93%，波幅極高，具短炒燃料。股價已逼近 52 週低位 $71.55，技術上超賣但弱勢明顯。估值面極差：PE TTM -68.75（持續虧損）、PB 9.03（賬面溢價過高）、零股息，缺乏基本面具吸引力。缺乏催化劑且無近期新聞，今日成交 19.14 萬股、額 $1,476 萬，流通性偏低。建議觀望 $71.55 支撐能否守住，守住則博反彈至 $79.70；跌破則順勢做空至 $68-$70 區間。<p class="card-link"><a href="/dashboard/2026-07-14/reports/01956.HK.html">→ 完整 01956.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>FLEX</b> · 評分 43 · FLEX 今日急跌 -2.66%，盤中區間由 135.67 跌至 123.79，幅度達 9.23%，屬典型高波幅交易日。現價 128.72 已明顯跌破 MA20 144.29（偏離 -10.8%）及 MA50 141.98（偏離 -9.3%），短線 trend 走弱。RSI14 為 38.97 接近超賣區域，但 MA100 106.74 及 MA200 84.53 仍喺下方提供長線保護。估值偏高（PE TTM 56.70、PB 9.15），欠缺估值緩衝。量比 1.47× 接近放量門檻，資金流略偏負面。短線宜觀望，待價格企穩或出現明確方向訊號再入場。<p class="card-link"><a href="/dashboard/2026-07-14/reports/FLEX.html">→ 完整 FLEX 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>02676.HK</b> · 評分 35 · NOVOSENSE (02676.HK) 今日 (2026/07/16) 收報 $164.20，全日下跌 -3.53%，盤中區間 $160.00-$177.00，振幅高達 10.0%，屬極高波幅交易日。收市價 $164.20 僅高於全日低位 $160.00 約 2.6%，反映尾段沽壓未消化，弱勢明顯。公司處於虧損狀態（PE TTM -105.95），PB 高達 9.99，估值嚴重脫離合理區間，中長線缺乏持有理由。技術指標 MA20/MA50/MA100/RSI 全部缺失，趨勢框架難以確認。整體數據嚴重不全，建議日內交易者先行觀望，做多待 $160.00-$162.00 企穩，做空待反彈 $170.00-$173.00（即 38.2% 回吐位）；嚴設止損，不持倉過夜。<p class="card-link"><a href="/dashboard/2026-07-14/reports/02676.HK.html">→ 完整 02676.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>02631.HK</b> · 評分 41 · 02631.HK SICC 今日收 74.65 港元，急跌 3.30%，收盤接近今日低位 74.10，弱勢明顯。現價 74.65 較 52 週高位 138.70 大幅回吐約 46%，但較 52 週低位 40.82 仍有緩衝。今日 H/L 區間為 74.10-80.55，區間幅度約 8.7%（高波幅），短炒燃料充足。估值上 PE TTM 為 -156.85（虧損）、PB 高達 8.35、股息率 0.00%，基本面估值極貴。技術指標 MA20/MA50/MA100/MA200、RSI14、量比全部缺失，缺乏趨勢確認，建議觀望等待數據完整或明確反彈/破位信號。<p class="card-link"><a href="/dashboard/2026-07-14/reports/02631.HK.html">→ 完整 02631.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--bull);font-weight:600;">🟢</span> <b>06990.HK</b> · 評分 35 · 06990.HK 今日（2026/07/16）報 522.50 HKD，急跌 -2.61%，全日波幅 512.00–559.00 HKD，區間達約 8.76%，屬於極高波動日，短炒燃料充足。股價雖較 52 週高位 581.00 HKD 回落約 10%，但仍處 52 週區間上半部，估值面極貴（PE TTM -295.32 反映仍未盈利、PB 高達 8.76、零股息），基本面難以支撐高位。技術指標 MA20/MA50/MA100/MA200 全數缺失，難以判斷中線趨勢，但單日大幅下殺配合 7.59 億 HKD 成交額，顯示多空爭持激烈。短線操作宜兩手準備，可博反彈或順勢做空。<p class="card-link"><a href="/dashboard/2026-07-14/reports/06990.HK.html">→ 完整 06990.HK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>06228.HK</b> · 評分 36 · 06228.HK（MERDEKA GOLD DR）報 25.00 HKD，今日跌 2.19%，盤中區間 24.82–25.58，振幅約 3%，呈高波動格局。負 PE TTM -169.31 反映公司處於虧損狀態，PB 高達 12.20 估值面昂貴，股息率 0%。股價較 52 週高位 26.80 折讓 6.7%，但僅較 52 週低位 23.92 高出 4.5%，技術上無明確方向。成交量 4.844 億股異常放大，配合下跌收場，疑似機構派發。MA20/50/100/200 及 RSI 均缺失，技術參考薄弱。短期宜觀望，等待方向確認。<p class="card-link"><a href="/dashboard/2026-07-14/reports/06228.HK.html">→ 完整 06228.HK 詳細報告</a></p></div>
+
+---
+<em>生成時間: 2026-07-16 16:49:05 · LLM: openai/MiniMax-M3</em>
+<h2>詳細表格</h2><table class="detail"><thead><tr><th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能/資金流</th><th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th><th>入場</th><th>止損</th><th>目標</th></tr></thead><tbody><tr><td><a href="/dashboard/2026-07-14/reports/MS.html">MS</a></td><td>78</td><td>long</td><td>52/68/82</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/AAPL.html">AAPL</a></td><td>74</td><td>long</td><td>18/78/82</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01024.HK.html">01024.HK</a></td><td>72</td><td>long</td><td>72/60/78</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01810.HK.html">01810.HK</a></td><td>70</td><td>both</td><td>55/55/75</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/WFC.html">WFC</a></td><td>69</td><td>long</td><td>60/65/75</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/WELL.html">WELL</a></td><td>69</td><td>long</td><td>25/55/78</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/TGT.html">TGT</a></td><td>68</td><td>long</td><td>50/70/75</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/ASML.html">ASML</a></td><td>68</td><td>long</td><td>20/85/70</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/JPM.html">JPM</a></td><td>67</td><td>long</td><td>58/82/76</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09988.HK.html">09988.HK</a></td><td>67</td><td>both</td><td>55/50/70</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/MRK.html">MRK</a></td><td>67</td><td>long</td><td>28/68/75</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/V.html">V</a></td><td>66</td><td>long</td><td>22/78/72</td><td>觀望</td><td>中性偏樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02018.HK.html">02018.HK</a></td><td>66</td><td>both</td><td>35/50/75</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/TFC.html">TFC</a></td><td>65</td><td>long</td><td>57/67/75</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02319.HK.html">02319.HK</a></td><td>65</td><td>long</td><td>30/62/68</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00175.HK.html">00175.HK</a></td><td>65</td><td>long</td><td>50/55/70</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/COF.html">COF</a></td><td>65</td><td>long</td><td>25/58/72</td><td>觀望</td><td>中性偏樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/BLK.html">BLK</a></td><td>65</td><td>both</td><td>35/85/60</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/PYPL.html">PYPL</a></td><td>65</td><td>both</td><td>72/48/62</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/BAC.html">BAC</a></td><td>64</td><td>both</td><td>55/72/73</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/GS.html">GS</a></td><td>64</td><td>long</td><td>45/70/70</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/MA.html">MA</a></td><td>64</td><td>both</td><td>25/78/72</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/FTNT.html">FTNT</a></td><td>64</td><td>both</td><td>15/70/72</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/07226.HK.html">07226.HK</a></td><td>64</td><td>both</td><td>50/50/72</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03033.HK.html">03033.HK</a></td><td>64</td><td>long</td><td>35/40/68</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02313.HK.html">02313.HK</a></td><td>63</td><td>long</td><td>65/70/70</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00425.HK.html">00425.HK</a></td><td>63</td><td>long</td><td>55/50/70</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/CRWD.html">CRWD</a></td><td>63</td><td>both</td><td>12/50/72</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01211.HK.html">01211.HK</a></td><td>63</td><td>long</td><td>38/58/68</td><td>觀望</td><td>中性偏樂觀</td><td>震盪偏多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01384.HK.html">01384.HK</a></td><td>63</td><td>both</td><td>15/20/75</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/AXP.html">AXP</a></td><td>62</td><td>long</td><td>42/75/72</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/MSFT.html">MSFT</a></td><td>62</td><td>long</td><td>48/78/62</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00688.HK.html">00688.HK</a></td><td>62</td><td>long</td><td>52/58/68</td><td>觀望</td><td>中性</td><td>震盪偏多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03606.HK.html">03606.HK</a></td><td>62</td><td>long</td><td>50/70/70</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/GOOGL.html">GOOGL</a></td><td>62</td><td>long</td><td>30/80/65</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/HWM.html">HWM</a></td><td>62</td><td>long</td><td>15/68/66</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/PANW.html">PANW</a></td><td>62</td><td>both</td><td>15/50/70</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02259.HK.html">02259.HK</a></td><td>62</td><td>long</td><td>40/50/70</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/TTWO.html">TTWO</a></td><td>62</td><td>long</td><td>22/45/72</td><td>觀望</td><td>中性偏樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09992.HK.html">09992.HK</a></td><td>62</td><td>long</td><td>42/50/68</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03888.HK.html">03888.HK</a></td><td>61</td><td>long</td><td>50/45/65</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/DASH.html">DASH</a></td><td>61</td><td>long</td><td>20/48/68</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/06651.HK.html">06651.HK</a></td><td>61</td><td>both</td><td>15/15/72</td><td>觀望</td><td>中性偏樂觀</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09868.HK.html">09868.HK</a></td><td>61</td><td>long</td><td>15/22/70</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01109.HK.html">01109.HK</a></td><td>60</td><td>both</td><td>65/70/62</td><td>觀望</td><td>中性偏樂觀</td><td>震盪偏多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/BKNG.html">BKNG</a></td><td>60</td><td>both</td><td>45/65/62</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00780.HK.html">00780.HK</a></td><td>60</td><td>both</td><td>55/50/65</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/CVS.html">CVS</a></td><td>59</td><td>long</td><td>25/55/70</td><td>觀望</td><td>中性偏樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/ROST.html">ROST</a></td><td>59</td><td>long</td><td>30/58/65</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03330.HK.html">03330.HK</a></td><td>59</td><td>both</td><td>38/45/65</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/GE.html">GE</a></td><td>59</td><td>long</td><td>15/65/58</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/HOOD.html">HOOD</a></td><td>59</td><td>both</td><td>12/45/70</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03896.HK.html">03896.HK</a></td><td>59</td><td>long</td><td>20/25/68</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00291.HK.html">00291.HK</a></td><td>58</td><td>both</td><td>58/60/62</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00386.HK.html">00386.HK</a></td><td>58</td><td>both</td><td>55/62/58</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/RTX.html">RTX</a></td><td>58</td><td>long</td><td>30/75/62</td><td>觀望</td><td>中性偏樂觀</td><td>震盪偏多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01093.HK.html">01093.HK</a></td><td>58</td><td>long</td><td>45/60/62</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02899.HK.html">02899.HK</a></td><td>58</td><td>both</td><td>45/50/62</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/AMZN.html">AMZN</a></td><td>58</td><td>both</td><td>30/72/58</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/06618.HK.html">06618.HK</a></td><td>58</td><td>both</td><td>38/50/62</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09660.HK.html">09660.HK</a></td><td>58</td><td>both</td><td>22/28/65</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03690.HK.html">03690.HK</a></td><td>58</td><td>both</td><td>20/25/65</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/URI.html">URI</a></td><td>57</td><td>long</td><td>40/62/55</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01398.HK.html">01398.HK</a></td><td>57</td><td>both</td><td>78/70/58</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03993.HK.html">03993.HK</a></td><td>57</td><td>both</td><td>42/58/63</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/BMY.html">BMY</a></td><td>57</td><td>long</td><td>45/65/60</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/TT.html">TT</a></td><td>57</td><td>both</td><td>20/70/58</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/DDOG.html">DDOG</a></td><td>57</td><td>both</td><td>5/50/67</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/ABBV.html">ABBV</a></td><td>57</td><td>both</td><td>12/55/60</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02423.HK.html">02423.HK</a></td><td>57</td><td>both</td><td>18/50/62</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02359.HK.html">02359.HK</a></td><td>56</td><td>both</td><td>50/70/58</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00005.HK.html">00005.HK</a></td><td>56</td><td>both</td><td>55/60/58</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00669.HK.html">00669.HK</a></td><td>56</td><td>both</td><td>45/60/62</td><td>觀望</td><td>中性</td><td>震盪偏多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/ADP.html">ADP</a></td><td>56</td><td>both</td><td>35/70/62</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/NVDA.html">NVDA</a></td><td>56</td><td>both</td><td>30/72/60</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/SCHW.html">SCHW</a></td><td>56</td><td>both</td><td>42/66/60</td><td>觀望</td><td>中性</td><td>震盪上行</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02800.HK.html">02800.HK</a></td><td>56</td><td>both</td><td>50/50/58</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/GEV.html">GEV</a></td><td>56</td><td>long</td><td>30/62/55</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/RCL.html">RCL</a></td><td>56</td><td>both</td><td>48/55/62</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/07200.HK.html">07200.HK</a></td><td>56</td><td>both</td><td>45/50/58</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00241.HK.html">00241.HK</a></td><td>56</td><td>long</td><td>42/45/60</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00763.HK.html">00763.HK</a></td><td>56</td><td>long</td><td>38/48/62</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/MMM.html">MMM</a></td><td>56</td><td>both</td><td>18/58/62</td><td>觀望</td><td>中性偏多</td><td>震盪偏多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02476.HK.html">02476.HK</a></td><td>56</td><td>both</td><td>18/35/62</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09698.HK.html">09698.HK</a></td><td>56</td><td>both</td><td>20/45/62</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00288.HK.html">00288.HK</a></td><td>55</td><td>both</td><td>75/80/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03988.HK.html">03988.HK</a></td><td>55</td><td>long</td><td>72/68/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00916.HK.html">00916.HK</a></td><td>55</td><td>both</td><td>68/55/58</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01928.HK.html">01928.HK</a></td><td>55</td><td>long</td><td>52/58/58</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/META.html">META</a></td><td>55</td><td>both</td><td>42/72/62</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/PM.html">PM</a></td><td>55</td><td>long</td><td>40/72/58</td><td>觀望</td><td>中性偏樂觀</td><td>震盪偏多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/TMO.html">TMO</a></td><td>55</td><td>both</td><td>30/75/55</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/LLY.html">LLY</a></td><td>55</td><td>both</td><td>15/70/58</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02015.HK.html">02015.HK</a></td><td>55</td><td>long</td><td>25/35/62</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00268.HK.html">00268.HK</a></td><td>55</td><td>both</td><td>12/35/58</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01797.HK.html">01797.HK</a></td><td>55</td><td>both</td><td>5/10/65</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/JNJ.html">JNJ</a></td><td>54</td><td>long</td><td>28/75/55</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01113.HK.html">01113.HK</a></td><td>54</td><td>both</td><td>55/75/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01288.HK.html">01288.HK</a></td><td>54</td><td>both</td><td>72/55/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09961.HK.html">09961.HK</a></td><td>54</td><td>long</td><td>78/45/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/GILD.html">GILD</a></td><td>54</td><td>both</td><td>45/72/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09633.HK.html">09633.HK</a></td><td>54</td><td>both</td><td>50/65/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/KO.html">KO</a></td><td>54</td><td>both</td><td>35/85/55</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00027.HK.html">00027.HK</a></td><td>54</td><td>both</td><td>55/70/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00700.HK.html">00700.HK</a></td><td>54</td><td>both</td><td>48/62/58</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/ETN.html">ETN</a></td><td>54</td><td>long</td><td>25/70/55</td><td>觀望</td><td>中性偏樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/SPGI.html">SPGI</a></td><td>54</td><td>both</td><td>40/75/58</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01415.HK.html">01415.HK</a></td><td>54</td><td>both</td><td>45/40/58</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01818.HK.html">01818.HK</a></td><td>54</td><td>both</td><td>35/35/60</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00020.HK.html">00020.HK</a></td><td>54</td><td>both</td><td>15/20/58</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00300.HK.html">00300.HK</a></td><td>53</td><td>both</td><td>62/68/52</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/MPC.html">MPC</a></td><td>53</td><td>both</td><td>35/60/55</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/UNH.html">UNH</a></td><td>53</td><td>long</td><td>32/72/58</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00358.HK.html">00358.HK</a></td><td>53</td><td>both</td><td>48/60/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03759.HK.html">03759.HK</a></td><td>53</td><td>both</td><td>38/62/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/AMGN.html">AMGN</a></td><td>53</td><td>both</td><td>35/58/56</td><td>觀望</td><td>中性偏樂觀</td><td>震盪偏多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/CSX.html">CSX</a></td><td>53</td><td>both</td><td>22/65/58</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/PLD.html">PLD</a></td><td>53</td><td>long</td><td>25/72/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02714.HK.html">02714.HK</a></td><td>53</td><td>both</td><td>47/45/58</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09880.HK.html">09880.HK</a></td><td>53</td><td>both</td><td>12/15/62</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/REGN.html">REGN</a></td><td>52</td><td>both</td><td>55/68/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02050.HK.html">02050.HK</a></td><td>52</td><td>both</td><td>48/55/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/MDT.html">MDT</a></td><td>52</td><td>both</td><td>50/70/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02828.HK.html">02828.HK</a></td><td>52</td><td>both</td><td>50/50/52</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00179.HK.html">00179.HK</a></td><td>52</td><td>both</td><td>50/45/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03088.HK.html">03088.HK</a></td><td>52</td><td>both</td><td>50/50/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03032.HK.html">03032.HK</a></td><td>52</td><td>both</td><td>40/50/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03067.HK.html">03067.HK</a></td><td>52</td><td>both</td><td>42/45/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03939.HK.html">03939.HK</a></td><td>52</td><td>both</td><td>30/45/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/VST.html">VST</a></td><td>52</td><td>both</td><td>25/55/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/06613.HK.html">06613.HK</a></td><td>52</td><td>both</td><td>30/50/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/SBUX.html">SBUX</a></td><td>52</td><td>both</td><td>10/30/65</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02228.HK.html">02228.HK</a></td><td>52</td><td>both</td><td>10/30/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02057.HK.html">02057.HK</a></td><td>51</td><td>both</td><td>55/55/52</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/COP.html">COP</a></td><td>51</td><td>both</td><td>42/65/53</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02208.HK.html">02208.HK</a></td><td>51</td><td>both</td><td>35/45/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09626.HK.html">09626.HK</a></td><td>51</td><td>both</td><td>25/40/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/TRV.html">TRV</a></td><td>50</td><td>both</td><td>60/75/50</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/PDD.html">PDD</a></td><td>50</td><td>both</td><td>75/60/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/VLO.html">VLO</a></td><td>50</td><td>both</td><td>35/60/48</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/06690.HK.html">06690.HK</a></td><td>50</td><td>both</td><td>70/55/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/EOG.html">EOG</a></td><td>50</td><td>both</td><td>55/60/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00016.HK.html">00016.HK</a></td><td>50</td><td>both</td><td>55/70/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/TMUS.html">TMUS</a></td><td>50</td><td>both</td><td>40/68/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/JCI.html">JCI</a></td><td>50</td><td>both</td><td>22/55/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/F.html">F</a></td><td>50</td><td>both</td><td>42/45/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/TXN.html">TXN</a></td><td>50</td><td>both</td><td>15/65/52</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/DHR.html">DHR</a></td><td>50</td><td>both</td><td>22/75/52</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09888.HK.html">09888.HK</a></td><td>50</td><td>both</td><td>25/40/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02562.HK.html">02562.HK</a></td><td>50</td><td>both</td><td>20/15/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/CMCSA.html">CMCSA</a></td><td>49</td><td>both</td><td>88/72/48</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03441.HK.html">03441.HK</a></td><td>49</td><td>both</td><td>55/50/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09618.HK.html">09618.HK</a></td><td>49</td><td>both</td><td>52/55/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/SNDK.html">SNDK</a></td><td>49</td><td>both</td><td>10/55/48</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09863.HK.html">09863.HK</a></td><td>49</td><td>both</td><td>15/30/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01378.HK.html">01378.HK</a></td><td>48</td><td>both</td><td>75/72/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02688.HK.html">02688.HK</a></td><td>48</td><td>both</td><td>82/72/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00002.HK.html">00002.HK</a></td><td>48</td><td>both</td><td>55/75/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00001.HK.html">00001.HK</a></td><td>48</td><td>both</td><td>45/65/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00728.HK.html">00728.HK</a></td><td>48</td><td>both</td><td>55/60/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/LIN.html">LIN</a></td><td>48</td><td>both</td><td>28/82/47</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/VRTX.html">VRTX</a></td><td>48</td><td>both</td><td>38/75/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/ANET.html">ANET</a></td><td>48</td><td>both</td><td>20/55/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/CBOE.html">CBOE</a></td><td>48</td><td>both</td><td>45/55/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/PFE.html">PFE</a></td><td>48</td><td>both</td><td>58/62/48</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/HD.html">HD</a></td><td>48</td><td>both</td><td>38/68/48</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/OXY.html">OXY</a></td><td>48</td><td>both</td><td>25/40/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01177.HK.html">01177.HK</a></td><td>48</td><td>both</td><td>30/45/52</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/SHW.html">SHW</a></td><td>48</td><td>both</td><td>28/75/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/AVGO.html">AVGO</a></td><td>48</td><td>both</td><td>15/75/52</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00883.HK.html">00883.HK</a></td><td>47</td><td>both</td><td>85/70/40</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00939.HK.html">00939.HK</a></td><td>47</td><td>both</td><td>78/72/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00857.HK.html">00857.HK</a></td><td>47</td><td>both</td><td>72/60/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/MDB.html">MDB</a></td><td>47</td><td>both</td><td>25/55/48</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/NTAP.html">NTAP</a></td><td>47</td><td>both</td><td>25/60/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/BRK-B.html">BRK-B</a></td><td>47</td><td>both</td><td>55/78/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02388.HK.html">02388.HK</a></td><td>47</td><td>both</td><td>58/60/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/INTC.html">INTC</a></td><td>47</td><td>both</td><td>25/30/45</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/NEE.html">NEE</a></td><td>47</td><td>both</td><td>50/67/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02269.HK.html">02269.HK</a></td><td>47</td><td>both</td><td>45/55/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/CME.html">CME</a></td><td>47</td><td>both</td><td>40/72/48</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/UAL.html">UAL</a></td><td>47</td><td>both</td><td>55/42/48</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/ADSK.html">ADSK</a></td><td>47</td><td>both</td><td>35/55/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/SYK.html">SYK</a></td><td>47</td><td>both</td><td>28/58/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01088.HK.html">01088.HK</a></td><td>46</td><td>both</td><td>55/75/40</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00762.HK.html">00762.HK</a></td><td>46</td><td>long</td><td>85/65/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00902.HK.html">00902.HK</a></td><td>46</td><td>both</td><td>72/60/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03328.HK.html">03328.HK</a></td><td>46</td><td>both</td><td>70/60/44</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/06110.HK.html">06110.HK</a></td><td>46</td><td>both</td><td>72/50/48</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/HPE.html">HPE</a></td><td>46</td><td>both</td><td>22/42/48</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03808.HK.html">03808.HK</a></td><td>46</td><td>both</td><td>55/55/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/SLB.html">SLB</a></td><td>46</td><td>both</td><td>55/65/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00012.HK.html">00012.HK</a></td><td>46</td><td>both</td><td>55/60/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02382.HK.html">02382.HK</a></td><td>46</td><td>both</td><td>55/60/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09987.HK.html">09987.HK</a></td><td>46</td><td>both</td><td>55/60/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/MCK.html">MCK</a></td><td>46</td><td>both</td><td>40/60/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00388.HK.html">00388.HK</a></td><td>46</td><td>both</td><td>42/72/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/ICE.html">ICE</a></td><td>46</td><td>both</td><td>45/60/45</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/ADI.html">ADI</a></td><td>46</td><td>both</td><td>25/70/40</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/XOM.html">XOM</a></td><td>46</td><td>both</td><td>30/60/48</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/UNP.html">UNP</a></td><td>46</td><td>both</td><td>25/75/40</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/APH.html">APH</a></td><td>46</td><td>both</td><td>15/70/40</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/CDNS.html">CDNS</a></td><td>46</td><td>both</td><td>15/55/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09696.HK.html">09696.HK</a></td><td>46</td><td>both</td><td>15/25/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03968.HK.html">03968.HK</a></td><td>45</td><td>both</td><td>78/55/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/AEP.html">AEP</a></td><td>45</td><td>both</td><td>52/67/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00941.HK.html">00941.HK</a></td><td>45</td><td>both</td><td>62/70/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03998.HK.html">03998.HK</a></td><td>45</td><td>both</td><td>55/65/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/MO.html">MO</a></td><td>45</td><td>both</td><td>55/72/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/AMD.html">AMD</a></td><td>45</td><td>both</td><td>10/50/48</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/UBER.html">UBER</a></td><td>45</td><td>both</td><td>50/55/40</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/PH.html">PH</a></td><td>45</td><td>both</td><td>25/78/44</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00285.HK.html">00285.HK</a></td><td>45</td><td>both</td><td>45/50/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/ADBE.html">ADBE</a></td><td>45</td><td>both</td><td>50/45/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03750.HK.html">03750.HK</a></td><td>45</td><td>both</td><td>30/65/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/HCA.html">HCA</a></td><td>45</td><td>both</td><td>55/48/48</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/CVNA.html">CVNA</a></td><td>45</td><td>both</td><td>25/30/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/WDAY.html">WDAY</a></td><td>45</td><td>both</td><td>22/40/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01385.HK.html">01385.HK</a></td><td>45</td><td>both</td><td>15/25/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/07500.HK.html">07500.HK</a></td><td>44</td><td>both</td><td>50/50/38</td><td>買入</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/06030.HK.html">06030.HK</a></td><td>44</td><td>both</td><td>55/65/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02331.HK.html">02331.HK</a></td><td>44</td><td>both</td><td>55/55/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/PG.html">PG</a></td><td>44</td><td>both</td><td>45/75/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03692.HK.html">03692.HK</a></td><td>44</td><td>both</td><td>35/50/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/DE.html">DE</a></td><td>44</td><td>both</td><td>28/65/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/GM.html">GM</a></td><td>44</td><td>both</td><td>30/50/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01787.HK.html">01787.HK</a></td><td>44</td><td>both</td><td>35/40/42</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/COIN.html">COIN</a></td><td>44</td><td>both</td><td>38/48/42</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/BX.html">BX</a></td><td>44</td><td>both</td><td>25/55/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09993.HK.html">09993.HK</a></td><td>44</td><td>both</td><td>12/10/48</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01171.HK.html">01171.HK</a></td><td>43</td><td>both</td><td>45/60/40</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01336.HK.html">01336.HK</a></td><td>43</td><td>both</td><td>78/58/38</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01658.HK.html">01658.HK</a></td><td>43</td><td>both</td><td>80/60/38</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02328.HK.html">02328.HK</a></td><td>43</td><td>both</td><td>78/67/38</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02628.HK.html">02628.HK</a></td><td>43</td><td>both</td><td>70/60/38</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/ZS.html">ZS</a></td><td>43</td><td>both</td><td>30/40/48</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/FLEX.html">FLEX</a></td><td>43</td><td>both</td><td>20/55/38</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/ABT.html">ABT</a></td><td>43</td><td>both</td><td>48/65/35</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/ACN.html">ACN</a></td><td>43</td><td>both</td><td>62/55/40</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02099.HK.html">02099.HK</a></td><td>43</td><td>both</td><td>45/50/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/CMI.html">CMI</a></td><td>43</td><td>both</td><td>22/65/40</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01276.HK.html">01276.HK</a></td><td>43</td><td>both</td><td>30/45/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01208.HK.html">01208.HK</a></td><td>43</td><td>both</td><td>28/40/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/PLTR.html">PLTR</a></td><td>43</td><td>both</td><td>12/47/46</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/TSLA.html">TSLA</a></td><td>43</td><td>short</td><td>12/55/42</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/ISRG.html">ISRG</a></td><td>43</td><td>both</td><td>22/58/42</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00981.HK.html">00981.HK</a></td><td>43</td><td>both</td><td>12/30/40</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/06160.HK.html">06160.HK</a></td><td>43</td><td>both</td><td>18/25/48</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00966.HK.html">00966.HK</a></td><td>42</td><td>both</td><td>85/65/38</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00836.HK.html">00836.HK</a></td><td>42</td><td>both</td><td>75/55/38</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03908.HK.html">03908.HK</a></td><td>42</td><td>both</td><td>62/55/40</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/06886.HK.html">06886.HK</a></td><td>42</td><td>both</td><td>65/50/38</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/CAT.html">CAT</a></td><td>42</td><td>both</td><td>18/72/33</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00788.HK.html">00788.HK</a></td><td>42</td><td>both</td><td>55/62/40</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/DAL.html">DAL</a></td><td>42</td><td>both</td><td>50/62/40</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/NEM.html">NEM</a></td><td>42</td><td>long</td><td>55/50/35</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/SO.html">SO</a></td><td>42</td><td>both</td><td>45/62/40</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/KLAC.html">KLAC</a></td><td>42</td><td>short</td><td>25/55/42</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/C.html">C</a></td><td>42</td><td>both</td><td>45/50/40</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01772.HK.html">01772.HK</a></td><td>42</td><td>both</td><td>25/35/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02162.HK.html">02162.HK</a></td><td>42</td><td>both</td><td>20/32/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02431.HK.html">02431.HK</a></td><td>42</td><td>both</td><td>30/20/45</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02318.HK.html">02318.HK</a></td><td>41</td><td>both</td><td>82/65/35</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/06181.HK.html">06181.HK</a></td><td>41</td><td>both</td><td>58/55/38</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01299.HK.html">01299.HK</a></td><td>41</td><td>both</td><td>50/70/35</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02631.HK.html">02631.HK</a></td><td>41</td><td>both</td><td>15/20/45</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09999.HK.html">09999.HK</a></td><td>41</td><td>both</td><td>50/60/38</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/FCX.html">FCX</a></td><td>41</td><td>both</td><td>25/50/40</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/EQIX.html">EQIX</a></td><td>41</td><td>both</td><td>18/68/35</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/MAR.html">MAR</a></td><td>41</td><td>both</td><td>28/50/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03800.HK.html">03800.HK</a></td><td>41</td><td>both</td><td>28/25/40</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02272.HK.html">02272.HK</a></td><td>41</td><td>both</td><td>15/30/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/SHOP.html">SHOP</a></td><td>41</td><td>both</td><td>12/28/45</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00189.HK.html">00189.HK</a></td><td>40</td><td>both</td><td>42/48/38</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01339.HK.html">01339.HK</a></td><td>40</td><td>both</td><td>70/50/35</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02601.HK.html">02601.HK</a></td><td>40</td><td>both</td><td>75/55/35</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/AKAM.html">AKAM</a></td><td>40</td><td>both</td><td>28/50/38</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/CMG.html">CMG</a></td><td>40</td><td>both</td><td>25/50/40</td><td>買入</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01072.HK.html">01072.HK</a></td><td>40</td><td>both</td><td>45/50/40</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02020.HK.html">02020.HK</a></td><td>40</td><td>both</td><td>55/55/35</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/TEL.html">TEL</a></td><td>40</td><td>both</td><td>45/75/35</td><td>觀望</td><td>中性偏悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/CEG.html">CEG</a></td><td>40</td><td>both</td><td>40/55/38</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/FSLR.html">FSLR</a></td><td>40</td><td>both</td><td>52/48/35</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/CVX.html">CVX</a></td><td>40</td><td>both</td><td>30/55/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/BA.html">BA</a></td><td>40</td><td>both</td><td>15/30/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/06066.HK.html">06066.HK</a></td><td>39</td><td>both</td><td>65/50/33</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01898.HK.html">01898.HK</a></td><td>39</td><td>short</td><td>75/50/32</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/CSCO.html">CSCO</a></td><td>39</td><td>both</td><td>22/62/36</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/CTSH.html">CTSH</a></td><td>39</td><td>short</td><td>70/40/40</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00003.HK.html">00003.HK</a></td><td>39</td><td>both</td><td>50/65/35</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/NOC.html">NOC</a></td><td>39</td><td>both</td><td>45/60/30</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/DVN.html">DVN</a></td><td>39</td><td>both</td><td>45/50/35</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/GLW.html">GLW</a></td><td>39</td><td>both</td><td>12/55/35</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/LMT.html">LMT</a></td><td>39</td><td>short</td><td>42/60/36</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/NXPI.html">NXPI</a></td><td>39</td><td>short</td><td>30/65/35</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/NOW.html">NOW</a></td><td>39</td><td>both</td><td>28/60/38</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09926.HK.html">09926.HK</a></td><td>39</td><td>both</td><td>22/20/38</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/MELI.html">MELI</a></td><td>39</td><td>short</td><td>18/55/40</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01519.HK.html">01519.HK</a></td><td>39</td><td>both</td><td>20/35/38</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03323.HK.html">03323.HK</a></td><td>39</td><td>both</td><td>25/30/40</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/07552.HK.html">07552.HK</a></td><td>38</td><td>both</td><td>50/50/30</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01530.HK.html">01530.HK</a></td><td>38</td><td>both</td><td>72/50/32</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/06088.HK.html">06088.HK</a></td><td>38</td><td>both</td><td>25/30/35</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/CRM.html">CRM</a></td><td>38</td><td>both</td><td>48/55/35</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/LRCX.html">LRCX</a></td><td>38</td><td>both</td><td>12/65/32</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/WDC.html">WDC</a></td><td>38</td><td>both</td><td>25/40/30</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/CCL.html">CCL</a></td><td>38</td><td>both</td><td>55/48/32</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00006.HK.html">00006.HK</a></td><td>38</td><td>both</td><td>40/70/35</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/TJX.html">TJX</a></td><td>38</td><td>both</td><td>30/60/35</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00823.HK.html">00823.HK</a></td><td>38</td><td>both</td><td>30/40/38</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/MPWR.html">MPWR</a></td><td>38</td><td>short</td><td>10/75/35</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03661.HK.html">03661.HK</a></td><td>38</td><td>both</td><td>18/30/40</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09995.HK.html">09995.HK</a></td><td>38</td><td>both</td><td>20/25/38</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/VRT.html">VRT</a></td><td>38</td><td>both</td><td>12/48/35</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09903.HK.html">09903.HK</a></td><td>38</td><td>both</td><td>12/10/38</td><td>觀望</td><td>悲觀</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02600.HK.html">02600.HK</a></td><td>37</td><td>both</td><td>55/45/32</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/HON.html">HON</a></td><td>37</td><td>both</td><td>50/65/28</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/DIS.html">DIS</a></td><td>37</td><td>both</td><td>52/62/30</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/FDX.html">FDX</a></td><td>37</td><td>both</td><td>50/55/38</td><td>觀望</td><td>悲觀</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/06869.HK.html">06869.HK</a></td><td>37</td><td>both</td><td>18/30/35</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/WBD.html">WBD</a></td><td>37</td><td>both</td><td>40/25/40</td><td>觀望</td><td>中性偏悲觀</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/PWR.html">PWR</a></td><td>37</td><td>both</td><td>15/55/32</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/MCHP.html">MCHP</a></td><td>37</td><td>both</td><td>15/45/38</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00100.HK.html">00100.HK</a></td><td>37</td><td>both</td><td>15/10/40</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/HLT.html">HLT</a></td><td>37</td><td>both</td><td>15/30/40</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/ELV.html">ELV</a></td><td>36</td><td>both</td><td>55/50/32</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01688.HK.html">01688.HK</a></td><td>36</td><td>both</td><td>30/40/30</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03431.HK.html">03431.HK</a></td><td>36</td><td>both</td><td>30/50/32</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01956.HK.html">01956.HK</a></td><td>36</td><td>both</td><td>15/12/38</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/STX.html">STX</a></td><td>36</td><td>both</td><td>15/45/30</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/MDLZ.html">MDLZ</a></td><td>36</td><td>both</td><td>30/65/30</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/NKE.html">NKE</a></td><td>36</td><td>both</td><td>30/38/40</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/ON.html">ON</a></td><td>36</td><td>both</td><td>25/45/30</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/APP.html">APP</a></td><td>36</td><td>both</td><td>20/45/35</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/06082.HK.html">06082.HK</a></td><td>36</td><td>both</td><td>12/15/35</td><td>觀望</td><td>中性偏悲觀</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/06228.HK.html">06228.HK</a></td><td>36</td><td>both</td><td>10/15/35</td><td>觀望</td><td>中性偏悲觀</td><td>震盪偏空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/ORLY.html">ORLY</a></td><td>35</td><td>short</td><td>30/42/25</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02338.HK.html">02338.HK</a></td><td>35</td><td>both</td><td>35/50/30</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/INTU.html">INTU</a></td><td>35</td><td>both</td><td>58/45/38</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/QCOM.html">QCOM</a></td><td>35</td><td>both</td><td>35/60/28</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02676.HK.html">02676.HK</a></td><td>35</td><td>both</td><td>10/25/32</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/ORCL.html">ORCL</a></td><td>35</td><td>both</td><td>50/55/30</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/SNPS.html">SNPS</a></td><td>35</td><td>both</td><td>25/50/28</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/06990.HK.html">06990.HK</a></td><td>35</td><td>both</td><td>10/15/30</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/MU.html">MU</a></td><td>34</td><td>both</td><td>30/55/30</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00267.HK.html">00267.HK</a></td><td>34</td><td>both</td><td>80/65/25</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/T.html">T</a></td><td>34</td><td>both</td><td>75/60/25</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02802.HK.html">02802.HK</a></td><td>34</td><td>both</td><td>55/40/28</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00522.HK.html">00522.HK</a></td><td>34</td><td>short</td><td>12/50/28</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/BSX.html">BSX</a></td><td>34</td><td>short</td><td>50/30/30</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/COST.html">COST</a></td><td>34</td><td>both</td><td>15/85/30</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03858.HK.html">03858.HK</a></td><td>34</td><td>both</td><td>10/25/32</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/KR.html">KR</a></td><td>33</td><td>both</td><td>25/50/28</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01138.HK.html">01138.HK</a></td><td>33</td><td>both</td><td>45/50/28</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01783.HK.html">01783.HK</a></td><td>33</td><td>short</td><td>10/35/28</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/SMCI.html">SMCI</a></td><td>33</td><td>both</td><td>40/30/28</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/MCD.html">MCD</a></td><td>33</td><td>both</td><td>45/70/20</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/LOW.html">LOW</a></td><td>33</td><td>both</td><td>45/55/25</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/WMT.html">WMT</a></td><td>33</td><td>both</td><td>25/62/28</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01801.HK.html">01801.HK</a></td><td>33</td><td>short</td><td>15/25/30</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00992.HK.html">00992.HK</a></td><td>32</td><td>both</td><td>40/50/25</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03696.HK.html">03696.HK</a></td><td>32</td><td>both</td><td>25/20/30</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/VZ.html">VZ</a></td><td>32</td><td>both</td><td>50/75/25</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/AMT.html">AMT</a></td><td>32</td><td>short</td><td>35/60/28</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01989.HK.html">01989.HK</a></td><td>32</td><td>both</td><td>15/45/25</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02650.HK.html">02650.HK</a></td><td>32</td><td>both</td><td>20/15/32</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02465.HK.html">02465.HK</a></td><td>32</td><td>both</td><td>10/15/35</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02268.HK.html">02268.HK</a></td><td>31</td><td>short</td><td>20/30/28</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/IBM.html">IBM</a></td><td>31</td><td>both</td><td>35/55/25</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/COHR.html">COHR</a></td><td>31</td><td>both</td><td>18/42/25</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/FIX.html">FIX</a></td><td>31</td><td>both</td><td>12/45/25</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/MRVL.html">MRVL</a></td><td>31</td><td>both</td><td>18/38/30</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03986.HK.html">03986.HK</a></td><td>31</td><td>both</td><td>10/25/25</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/PGR.html">PGR</a></td><td>30</td><td>both</td><td>55/72/20</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/CIEN.html">CIEN</a></td><td>30</td><td>both</td><td>15/40/25</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/TER.html">TER</a></td><td>30</td><td>both</td><td>12/45/25</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03416.HK.html">03416.HK</a></td><td>30</td><td>both</td><td>30/35/25</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/SPCX.html">SPCX</a></td><td>29</td><td>both</td><td>15/25/28</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01729.HK.html">01729.HK</a></td><td>28</td><td>short</td><td>15/30/18</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/LITE.html">LITE</a></td><td>28</td><td>short</td><td>8/22/25</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/DELL.html">DELL</a></td><td>28</td><td>both</td><td>30/50/25</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/NFLX.html">NFLX</a></td><td>28</td><td>both</td><td>30/35/28</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02577.HK.html">02577.HK</a></td><td>27</td><td>both</td><td>15/15/22</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/PEP.html">PEP</a></td><td>27</td><td>both</td><td>35/60/25</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01347.HK.html">01347.HK</a></td><td>25</td><td>short</td><td>5/10/25</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/AZO.html">AZO</a></td><td>25</td><td>both</td><td>45/60/20</td><td>買入</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/00148.HK.html">00148.HK</a></td><td>25</td><td>short</td><td>25/45/18</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01205.HK.html">01205.HK</a></td><td>24</td><td>both</td><td>38/32/20</td><td>觀望</td><td>悲觀</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/07709.HK.html">07709.HK</a></td><td>22</td><td>short</td><td>20/20/15</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/03200.HK.html">03200.HK</a></td><td>22</td><td>short</td><td>15/30/18</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/07747.HK.html">07747.HK</a></td><td>21</td><td>both</td><td>25/20/15</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/02513.HK.html">02513.HK</a></td><td>21</td><td>both</td><td>10/22/15</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/06166.HK.html">06166.HK</a></td><td>20</td><td>short</td><td>8/28/15</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/01888.HK.html">01888.HK</a></td><td>19</td><td>short</td><td>25/45/12</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/09630.HK.html">09630.HK</a></td><td>19</td><td>both</td><td>8/25/15</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-14/reports/06809.HK.html">06809.HK</a></td><td>13</td><td>both</td><td>5/40/8</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr></tbody></table>
+<p class="last-updated">最後更新: 2026-07-16 16:49 HKT</p>
+</main>
+<footer>
+  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>
