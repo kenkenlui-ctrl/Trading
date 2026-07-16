@@ -133,81 +133,6 @@ h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
 .card.bear { border-left-color: var(--bear); }
 .card.amber { border-left-color: var(--amber); }
 
-/* Decision strip (Phase 4e, 2026-07-13) — splits 下日勝率 (WR) from 決策 (rule).
-   Two-column layout makes clear that the colored emoji comes from rule, not WR. */
-.decision-strip {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    margin: 0 0 8px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-    font-size: 0.8rem;
-    line-height: 1.4;
-}
-.strip-col {
-    padding: 5px 9px;
-    background: var(--panel);
-}
-.strip-decision { border-right: 1px solid var(--border); }
-.strip-label {
-    display: block;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--dim);
-    margin-bottom: 1px;
-    font-weight: 600;
-}
-.strip-val {
-    display: inline;
-    font-weight: 700;
-    color: var(--fg);
-    font-size: 0.95rem;
-}
-.strip-rule {
-    display: inline;
-    color: var(--dim);
-    font-size: 0.78rem;
-    margin-left: 3px;
-}
-
-/* Full Results page — archive list (2026-07-13) */
-.archive-list {
-    margin: 2rem 0 0.5rem;
-    padding: 14px 18px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-}
-.archive-list h3 {
-    margin: 0 0 0.6rem;
-    font-size: 0.95rem;
-    color: var(--accent);
-}
-.date-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-.date-grid a {
-    display: inline-block;
-    padding: 4px 10px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    font-size: 0.78rem;
-    color: var(--dim);
-    background: var(--bg);
-    text-decoration: none;
-}
-.date-grid a:hover { border-color: var(--accent); color: var(--accent); }
-.date-grid a.active {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-}
-
 /* Stats line */
 .stats {
     font-size: 0.9rem;
@@ -496,7 +421,6 @@ p.card-link a:hover {
     color: var(--fg);
 }
 .report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
-.report-header .badge.signal { background: #1f6feb; color: #fff; border-color: #1f6feb; font-weight: 600; }
 .report-header .badge.conf { background: var(--panel-2); }
 
 .score-breakdown {
@@ -573,14 +497,10 @@ footer {
     main { padding: 16px 12px 48px; }
     h1 { font-size: 1.15rem; }
     .card { padding: 8px 10px; font-size: 0.8rem; }
-    .decision-strip { font-size: 0.75rem; }
-    .strip-val { font-size: 0.88rem; }
-    .strip-label { font-size: 0.6rem; }
     nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
     nav.leeks-site-nav a { font-size: 0.7rem; }
     table.detail { font-size: 0.7rem; }
     table.detail th, table.detail td { padding: 4px 6px; }
-    .date-grid a { font-size: 0.7rem; padding: 3px 7px; }
 }
 </style>
   
@@ -593,12 +513,16 @@ footer {
             <br>· <b>New rules</b>: day_chg <b>-5 to 0%</b> (anti-gapup) · m_score 30-60 (avoid overbought) · score &lt; 65 · sentiment ≠ 樂觀 · last &lt; 98% of 52w_high
             <br>· <b>Why change</b>: 舊 cyber BUY (any 買入) = 5 signals 2W/3L (40% WR, -$50) — all signals at 52w high on gap-up days
             <br>· <b>Result</b>: New logic = 0 historical signals pass. 短期 trade 暫停，valid signals 需要等 cyber 真正回調 (-2 to -5%)
-            <br>· <b>Risk</b>: high-beta 科技股，適合 <b>2-3 日 hold</b> 唔好 day-trade intraday 炒</div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-07-15/all.html">全部</a><a href="/dashboard/2026-07-15/hk-buy.html">港股買入</a><a href="/dashboard/2026-07-15/hk-sell.html">港股賣出</a><a href="/dashboard/2026-07-15/hk-hold.html">港股觀望</a><a href="/dashboard/2026-07-15/us-buy.html">美股買入</a><a href="/dashboard/2026-07-15/us-sell.html">美股賣出</a><a href="/dashboard/2026-07-15/us-hold.html">美股觀望</a><a href="/dashboard/2026-07-15/conservative-buy.html">🛡️ Conservative BUY</a><a href="/dashboard/2026-07-15/cyber-buy.html" class="active">🔐 Cyber BUY</a><a href="/dashboard/2026-07-15/strength-buy.html">⏸️ Strength BUY</a><a href="/dashboard/2026-07-15/bounce-buy.html">🌊 Bounce BUY</a></div><h1>🔬 Signal Explorer — 2026-07-15 (🔐 Cyber BUY)</h1><h1>📊 HK+US 決策儀表板</h1>
+            <br>· <b>Risk</b>: high-beta 科技股，適合 <b>2-3 日 hold</b> 唔好 day-trade intraday 炒</div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-07-15/all.html">全部</a><a href="/dashboard/2026-07-15/hk-buy.html">港股買入</a><a href="/dashboard/2026-07-15/hk-sell.html">港股賣出</a><a href="/dashboard/2026-07-15/hk-hold.html">港股觀望</a><a href="/dashboard/2026-07-15/us-buy.html">美股買入</a><a href="/dashboard/2026-07-15/us-sell.html">美股賣出</a><a href="/dashboard/2026-07-15/us-hold.html">美股觀望</a><a href="/dashboard/2026-07-15/conservative-buy.html">🛡️ Conservative BUY</a><a href="/dashboard/2026-07-15/cyber-buy.html" class="active">🔐 Cyber BUY</a><a href="/dashboard/2026-07-15/strength-buy.html">⏸️ Strength BUY</a><a href="/dashboard/2026-07-15/bounce-buy.html">🌊 Bounce BUY</a></div><h1>🔬 Signal Explorer — 2026-07-15 (🔐 Cyber BUY)</h1><b>2026-07-15</b> · 共分析 <b>1</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:1 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:0 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:0
 
-<p>日期: 2026-07-15 · 篩選: 🔐 Cyber BUY v2 (13 whitelist · anti-gapup + 52w-high avoidance)</p>
+<h2>📊 分析結果摘要</h2>
 
-<p>_此條件下無報告。_</p><div style="text-align:center;margin:1.5rem 0 0.5rem;padding:14px 18px;background:var(--panel);border:1px dashed var(--border);border-radius:4px;font-size:0.88rem;">👇 想睇 <b>全部 0 隻股票</b>嘅 score + 操作 + entry/stop/target？ 去 <a href="/full-results/2026-07-15.html"><b>Full Results (2026-07-15)</b></a></div>
-<p class="last-updated">最後更新: 2026-07-16 13:25 HKT</p>
+<div class="card">ZS 收報 $148.19，今日急跌 -2.56%，全日 H/L 區間達 6.60% 屬高波幅日，由 $156.98 高位顯著回落至 $147.20 低位附近收盤，形成日內弱勢反轉形態。股價雖位於 MA20 $137.73、MA50 $143.37、MA100 $143.52 之上，但偏離 MA20 達 +7.6%，已超出嚴進策略 5% 上限；同時 MA20 &lt; MA50 &lt; MA100 呈空頭排列，RSI 66.07 偏強但失去上升動能。YTD 仍累跌 -48.50%，股價距 MA200 $199.42 仍非常遙遠，長線熊市格局未改。PB 高達 10.13、無 PE、無股息，估值昂貴，配合量比 0.80× 偏低，弱勢反彈缺乏買盤承接，建議日內順勢做空博回調至 MA50 $143.37 支持位。</div>
+
+---
+<em>生成時間: 2026-07-17 00:58:57 · LLM: openai/MiniMax-M3</em>
+<h2>詳細表格</h2><p><em>此條件下無報告。</em></p>
+<p class="last-updated">最後更新: 2026-07-17 00:58 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
