@@ -2834,10 +2834,13 @@ def main():
             written.append(p)
         for p in build_intent_pages():
             written.append(p)
-        # Paper trades tracker page (always rebuilt)
-        paper_path = PUBLIC_DIR / "paper-trades.html"
-        paper_path.write_text(build_paper_trades_page(), encoding="utf-8")
-        written.append("paper-trades.html")
+        # Paper trades tracker page (always rebuilt) — non-critical, don't fail build
+        try:
+            paper_path = PUBLIC_DIR / "paper-trades.html"
+            paper_path.write_text(build_paper_trades_page(), encoding="utf-8")
+            written.append("paper-trades.html")
+        except Exception as e:
+            print(f"⚠️  Paper-trades page build failed (non-fatal): {type(e).__name__}: {e}")
         print(f"✅ Built {len(written)} static info + intent pages")
 
     # 2. Dashboard pages
