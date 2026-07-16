@@ -149,12 +149,26 @@ temperature=0.3,
             # (5/5/60/20/10) so the score is consistent with the breakdown,
             # not whatever the LLM emitted.
             # Weights: value 5% · quality 5% · momentum 60% · order_flow 20% · news 10%
+            # Owner 2026-07-15: use _safe_int to handle NaN/Inf/non-numeric from LLM
+            # (was causing "cannot convert float NaN to integer" and silently
+            # dropping AAPL/TSLA/NVDA/MU/INTC — 169 of 200 US tickers failed 7/14).
+            import math
+            def _safe_int(x, default: int = 0) -> int:
+                if x is None:
+                    return default
+                try:
+                    v = float(x)
+                    if math.isnan(v) or math.isinf(v):
+                        return default
+                    return int(round(v))
+                except (ValueError, TypeError):
+                    return default
             breakdown = data.get("score_breakdown", {}) or {}
-            v = int(breakdown.get("value_score") or 0)
-            q = int(breakdown.get("quality_score") or 0)
-            m = int(breakdown.get("momentum_score") or 0)
-            of = int(breakdown.get("order_flow_score") or 0)
-            news = int(breakdown.get("news_score") or 50)  # default neutral if missing
+            v = _safe_int(breakdown.get("value_score"))
+            q = _safe_int(breakdown.get("quality_score"))
+            m = _safe_int(breakdown.get("momentum_score"))
+            of = _safe_int(breakdown.get("order_flow_score"))
+            news = _safe_int(breakdown.get("news_score"), default=50)
             total = int(round(0.05 * v + 0.05 * q + 0.60 * m + 0.20 * of + 0.10 * news))
             total = max(0, min(100, total))
 

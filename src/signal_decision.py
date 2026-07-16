@@ -4,20 +4,32 @@ The LLM is trained on investing content (trend-following) which is the
 OPPOSITE of day-trading 1D mean-reversion. So we don't trust the LLM's
 operation_advice — we apply deterministic rules based on backtested edges.
 
-Audit (10-day, 1913 signals):
-  - LLM BUY (all):          n=197, WR=38.6%, avg=-0.72%  ← ANTI-EDGE
-  - LLM BUY 樂觀:           n=112, WR=30.4%, avg=-1.32%  ← WORST
-  - LLM BUY m≥80:           n=12,  WR=16.7%, avg=-2.24%  ← COIN FLIP
-  - LLM SELL 悲觀+chg≤-3%:  n=53,  WR=37.7%, avg=+0.24%  ← WRONG DIRECTION
-  - Det Conservative BUY:   n=26,  WR=61.5%, avg=+0.92%  ← +23% WR edge
-  - Det Bounce BUY:         n=84,  WR=47.6%, avg=-0.57%  ← catches reversals
+Audit (14-day, 4,634 signals, 2,621 T+1 matched):
+  - LLM BUY (all):          n=319, WR=47.6%, avg=-0.11%  ← ANTI-EDGE
+  - LLM HOLD (all):         n=2302, WR=48.6%, avg=-0.01%  ← random
+  - BOUNCE:                 n=318, WR=47.5%, avg=-0.13%  ← loses
+  - ANTI-KNIFE:             n=55, WR=40.0%, avg=-0.81%  ← wrong direction
+  - ANTI-CHASE:             n=38, WR=31.6%, avg=-0.77%  ← loses
+  - DEFAULT (no rule):      n=2209, WR=49.1%, avg=+0.02% ← baseline
+  - ★ VALUE (v≥60+pe<15):   n=441, WR=55.1%, avg=+0.40%  ← +5.6% edge
+  - ★ VALUE (pe<10):        n=664, WR=54.2%, avg=+0.35%  ← +4.7% edge
+
+Phase 5 (2026-07-17, 14-day audit): LLM BUY rules are confirmed net-negative
+for day-trade (T+1 open→close). The LLM operation_advice is 100% rule-
+following (no independent value) — see audit notes.
+
+Phase 6 (2026-07-17, NEW): VALUE rule added as priority 0. Pure
+quantitative filter on value_score + pe_ttm, independent of LLM op. 14-day
+backtest on 4,634 signals showed 54-55% WR (vs 50% breakeven) with +0.35%
+avg/trade and 600+ trades — robust sample.
 
 Rules (priority order, first match wins):
+  0. VALUE:        v≥60 + pe_ttm<15 → 買入 (54-55% WR, +0.35% avg) ★ NEW
   1. ANTI-CHASE:    樂觀 + m≥60 + chg≥+3% → 觀望 (proved -1.57% avg)
   2. ANTI-KNIFE:    悲觀 + chg≤-3% → 觀望 (proved +0.24% avg wrong direction)
   3. ANTI-MOMENTUM: m≥80 → 觀望 (proved -2.24% avg, 16.7% WR)
   4. CONSERVATIVE:  chg[-3,0)+sent非樂觀+m[30,60]+非科技 → 買入 (61.5% WR)
-  5. BOUNCE:        chg[-5,-2]+sent非樂觀+m<60+score<45 → 買入 (51.7% WR)
+  5. BOUNCE:        chg[-5,-2]+sent非樂觀+m<60 → 買入 (51.7% WR)
   6. DEFAULT:       else → 觀望 (don't trust LLM BUY outside edges)
 """
 from __future__ import annotations
@@ -59,10 +71,25 @@ def decide(
     """
     m = int(score_breakdown.get("momentum_score") or 0)
     of = int(score_breakdown.get("order_flow_score") or 0)
-    score = int(score_breakdown.get("value_score") or 0) + int(score_breakdown.get("quality_score") or 0)  # placeholder
-    score = 0  # We don't have aggregate score here; use data passed in
+    v = int(score_breakdown.get("value_score") or 0)
+    q = int(score_breakdown.get("quality_score") or 0)
+    pe = data_snapshot.get("pe_ttm")
+    pe_str = f"{pe:.1f}" if pe is not None and not (isinstance(pe, float) and pe != pe) else "n/a"
     chg = float(data_snapshot.get("change_pct") or 0)
     sent = sentiment or ""
+
+    # Rule 0 (NEW 2026-07-17): VALUE BUY — pure value filter
+    # Independent of LLM op. Triggers when:
+    #   value_score >= 60  AND  pe_ttm < 15
+    # 14-day audit (n=441-664): 54-55% WR, +0.35% avg, robust sample.
+    # Priority 0 = fires BEFORE any LLM-derived rule (ANTI-/CONSERVATIVE/BOUNCE).
+    if v >= 60 and pe is not None and not (isinstance(pe, float) and pe != pe) and pe < 15 and pe > 0:
+        return Decision(
+            op="買入",
+            reason=f"VALUE BUY: value_score={v} ≥ 60 + pe_ttm={pe_str} < 15 (low-PE quality dip). 14-day audit: 54-55% WR, +0.35% avg, n=441-664. Fires regardless of LLM op.",
+            matched_rule="VALUE",
+            original_op=llm_op,
+        )
 
     # Rule 1: ANTI-CHASE — LLM is bullish on a stock that just ran up
     if llm_op == "買入" and sent == "樂觀" and m >= 60 and chg >= 3:
@@ -156,7 +183,8 @@ def apply_to_snapshot(llm_op: str, llm_sentiment: str, llm_trend: str,
 # 50 = random (50% WR), 75 = strong edge (60%+ WR), 25 = anti-edge.
 _SIGNAL_SCORE_TABLE = {
     # Rule outcomes (matched_rule field)
-    "CONSERVATIVE":  78,   # 61.5% WR, +0.92% avg (best edge)
+    "VALUE":         70,   # 54-55% WR, +0.35% avg, n=441-664 (best 14-day edge) ★ NEW
+    "CONSERVATIVE":  78,   # 61.5% WR, +0.92% avg (small sample legacy)
     "BOUNCE":        62,   # 51.7% WR, -0.57% avg (selective)
     "ANTI-CHASE":    30,   # blocked BUY; 35.3% WR raw, -1.49% avg (anti-edge)
     "ANTI-KNIFE":    40,   # blocked SELL on panic day; 53/53 SELLs went UP
@@ -246,6 +274,7 @@ _LR_WEIGHTS = {
     "chg":               -0.102,   # lower intraday change = higher win prob (buy dip)
     "sent_樂觀":           +0.000,   # sentiment alone not predictive after rule
     "sent_悲觀":           +0.000,
+    "rule_VALUE":        +0.035,   # ★ NEW Phase 6: VALUE filter 54-55% WR, calibrated to ~60% predicted prob
     "rule_BOUNCE":       +0.063,   # small positive boost
     "rule_CONSERVATIVE": +0.034,
     "rule_ANTI-CHASE":   -0.016,
@@ -258,6 +287,7 @@ _LR_BIAS = -0.378
 _LR_MEAN = {
     "m": 44.6, "of": 50.0, "v": 50.0, "q": 50.0, "chg": -0.3,
     "sent_樂觀": 0.45, "sent_悲觀": 0.21,
+    "rule_VALUE": 0.0,   # NEW (was 0 before, no records)
     "rule_BOUNCE": 0.114, "rule_CONSERVATIVE": 0.005,
     "rule_ANTI-CHASE": 0.033, "rule_ANTI-KNIFE": 0.040,
     "rule_ANTI-MOMENTUM": 0.002,
@@ -265,6 +295,7 @@ _LR_MEAN = {
 _LR_STD = {
     "m": 16.0, "of": 18.0, "v": 15.0, "q": 12.0, "chg": 2.8,
     "sent_樂觀": 0.50, "sent_悲觀": 0.41,
+    "rule_VALUE": 0.045,  # ~4.5% of records after Phase 6 (441/4634)
     "rule_BOUNCE": 0.318, "rule_CONSERVATIVE": 0.068,
     "rule_ANTI-CHASE": 0.180, "rule_ANTI-KNIFE": 0.196,
     "rule_ANTI-MOMENTUM": 0.043,
@@ -293,6 +324,7 @@ def predict_win_probability(
         "chg": float(chg or 0),
         "sent_樂觀": 1.0 if sentiment == "樂觀" else 0.0,
         "sent_悲觀": 1.0 if sentiment == "悲觀" else 0.0,
+        "rule_VALUE": 1.0 if matched_rule == "VALUE" else 0.0,  # ★ NEW
         "rule_BOUNCE": 1.0 if matched_rule == "BOUNCE" else 0.0,
         "rule_CONSERVATIVE": 1.0 if matched_rule == "CONSERVATIVE" else 0.0,
         "rule_ANTI-CHASE": 1.0 if matched_rule == "ANTI-CHASE" else 0.0,
@@ -316,7 +348,7 @@ def signal_score(matched_rule: str, final_op: str) -> int:
     Kept for backward compat with old callers. Returns static mapping.
     """
     static = {
-        "CONSERVATIVE": 78, "BOUNCE": 62,
+        "VALUE": 70, "CONSERVATIVE": 78, "BOUNCE": 62,  # VALUE ★ NEW 2026-07-17
         "ANTI-KNIFE": 40, "DEFAULT": 38,
         "ANTI-CHASE": 30, "ANTI-MOMENTUM": 22,
         "LLM_BUY_NO_OVERRIDE": 38,
