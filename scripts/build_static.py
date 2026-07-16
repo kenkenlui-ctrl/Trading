@@ -630,6 +630,7 @@ def nav_html(active_path: str) -> str:
     links = [
         ("/", "Home", "Home"),
         ("/dashboard/", "Dashboard", "Dashboard"),
+        ("/full-results.html", "Full Results", "Full Results"),
         ("/paper-trades.html", "Paper Trades", "Paper Trades"),
         ("/faq.html", "FAQ", "FAQ"),
         ("/methodology.html", "Methodology", "Methodology"),
