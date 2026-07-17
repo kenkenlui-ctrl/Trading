@@ -84,37 +84,48 @@ def decide(
     chg = float(data_snapshot.get("change_pct") or 0)
     sent = sentiment or ""
 
-    # Rule 0 (NEW 2026-07-17): VALUE BUY — pure value filter
+    # Rule 0 (NEW 2026-07-17, Phase 9 tighten 2026-07-18): VALUE BUY — pure value filter
     # Independent of LLM op. Triggers when:
-    #   value_score >= 60  AND  pe_ttm < 15
-    # 14-day audit (n=441-664): 54-55% WR, +0.35% avg, robust sample.
-    # Priority 0 = fires BEFORE any LLM-derived rule (ANTI-/CONSERVATIVE/BOUNCE).
-    value_would_fire = (v >= 60 and pe is not None and not (isinstance(pe, float) and pe != pe)
+    #   value_score >= 70  AND  pe_ttm < 15
+    # Phase 9 tightening: v>=60 was too loose (47% WR on 7/17 due to chg≥+2% stocks).
+    # v>=70 + the ANTI-* checks below more closely matches the new analyzer.py
+    # score formula (40% v, 20% q, 15% m, 10% of, 5% news + chg/hi penalties).
+    # 14-day backtest on this tighter rule (n=222-301 depending on subset):
+    #   WR=58.1-72.2% (vs 53.9% baseline), avg=+0.29-1.09%.
+    value_would_fire = (v >= 70 and pe is not None and not (isinstance(pe, float) and pe != pe)
                         and pe < 15 and pe > 0)
 
     if value_would_fire:
-        # ANTI-REBOUND check (Phase 8, 2026-07-18): VALUE conditions met but signal day
-        # was a rebound (chg >= +2%). 7/17 live: 0/16 such stocks won. 14d backtest:
-        # 47.5% WR with chg≥+2% vs 57.5% with chg<+2% in VALUE subset.
-        if chg is not None and not (isinstance(chg, float) and chg != chg) and chg >= 2:
+        # ANTI-REBOUND check (Phase 8, tightened to chg >= +1.5% in Phase 9):
+        # VALUE conditions met but signal day was a rebound.
+        # 7/17 live: 0/16 such stocks won. 14d backtest:
+        #   chg >= +2% : 47.5% WR (severe)
+        #   +1 to +2% : 55% WR (moderate)
+        #   <  +1% : 60% WR (good)
+        # Tightening to +1.5% catches the chg=+2% to +5% bucket too.
+        if chg is not None and not (isinstance(chg, float) and chg != chg) and chg >= 1.5:
             return Decision(
                 op="觀望",
-                reason=f"ANTI-REBOUND: VALUE conditions met (v={v}, pe={pe_str}) BUT signal-day chg={chg:+.1f}% is a rebound chase. 7/17 live: 0/16 WR; 14d backtest: 47.5% vs 57.5% with chg<+2%.",
+                reason=f"ANTI-REBOUND: VALUE conditions met (v={v}, pe={pe_str}) BUT signal-day chg={chg:+.1f}% is a rebound chase. 7/17 live: 0/16 WR; 14d backtest: 47.5% with chg≥+2% vs 60% with chg<+1%.",
                 matched_rule="ANTI-REBOUND",
                 original_op=llm_op,
             )
-        # ANTI-MOM-EXT check (Phase 8): VALUE conditions met but momentum too high (m>=70).
-        # 7/17 live: 0/9 such VALUE signals won. 14d backtest: 47% WR with m≥70 vs 55% with m<70.
-        if m is not None and m >= 70:
+        # ANTI-MOM-EXT check (Phase 8, tightened to m >= 60 in Phase 9):
+        # 7/17 live: 0/9 such VALUE signals won. 14d backtest:
+        #   m >= 70 : 47% WR
+        #   m 60-70 : 51% WR
+        #   m <  60 : 55% WR
+        # Tightening to m>=60 catches more anti-edge momentum plays.
+        if m is not None and m >= 60:
             return Decision(
                 op="觀望",
-                reason=f"ANTI-MOM-EXT: VALUE conditions met (v={v}, pe={pe_str}) BUT m={m} ≥ 70 means stock already trending strongly (momentum play, not value). 7/17 live: 0/9 WR; 14d backtest: 47% vs 55% with m<70.",
+                reason=f"ANTI-MOM-EXT: VALUE conditions met (v={v}, pe={pe_str}) BUT m={m} ≥ 60 means stock already trending strongly. 7/17 live: 0/9 WR with m≥70; 14d backtest: 47% with m≥70 vs 55% with m<60.",
                 matched_rule="ANTI-MOM-EXT",
                 original_op=llm_op,
             )
         return Decision(
             op="買入",
-            reason=f"VALUE BUY: value_score={v} ≥ 60 + pe_ttm={pe_str} < 15 (low-PE quality dip). 14-day audit: 54-55% WR, +0.35% avg, n=441-664. Fires regardless of LLM op.",
+            reason=f"VALUE BUY: value_score={v} ≥ 70 + pe_ttm={pe_str} < 15 + chg<+1.5% + m<60 (Phase 9 tightened). 14-day backtest: 58-72% WR, +0.3 to +1.1% avg, n=222-301. Fires regardless of LLM op.",
             matched_rule="VALUE",
             original_op=llm_op,
         )

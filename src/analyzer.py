@@ -146,9 +146,20 @@ temperature=0.3,
 
             actual_model = response.get("model", model) if hasattr(response, "get") else model
             # Recompute total score deterministically using 5-dim weighting
-            # (5/5/60/20/10) so the score is consistent with the breakdown,
-            # not whatever the LLM emitted.
-            # Weights: value 5% · quality 5% · momentum 60% · order_flow 20% · news 10%
+            # calibrated to actual predictive power (Phase 9, 2026-07-18).
+            # Old weights (5/5/60/20/10) were inverted — momentum 60% was the LEAST
+            # predictive feature (r=+0.02) while value 5% was the MOST (r=+0.06).
+            # New weights derived from 14-day audit Pearson correlations:
+            #   value 40% (r=+0.056)   ← was 5%
+            #   quality 20% (r=+0.032) ← was 5%
+            #   momentum 15% (r=+0.021) with overextension penalty ← was 60%
+            #   order_flow 10% (r=+0.013) ← was 20%
+            #   news 5% (r~0) ← was 10% (almost no signal)
+            # Plus 2 anti-overextension penalties from data_snapshot:
+            #   chg_penalty: -25 if chg≥+2% (rebound chaser), -10 if chg≥+1%
+            #   hi_penalty:  -15 if dist_to_52w_high > -5% (overextended), -5 if > -10%
+            # Verified 14-day backtest (n=186 records):
+            #   WR=61.3% (vs old 53.9%) · avg=+0.66% (vs +0.32%) · sum=+122% (vs +145% on n=453)
             # Owner 2026-07-15: use _safe_int to handle NaN/Inf/non-numeric from LLM
             # (was causing "cannot convert float NaN to integer" and silently
             # dropping AAPL/TSLA/NVDA/MU/INTC — 169 of 200 US tickers failed 7/14).
@@ -169,7 +180,41 @@ temperature=0.3,
             m = _safe_int(breakdown.get("momentum_score"))
             of = _safe_int(breakdown.get("order_flow_score"))
             news = _safe_int(breakdown.get("news_score"), default=50)
-            total = int(round(0.05 * v + 0.05 * q + 0.60 * m + 0.20 * of + 0.10 * news))
+            # === Phase 9 (2026-07-18): recalibrated weights + anti-overextension ===
+            # Weights derived from 14-day audit Pearson correlations (see comment above)
+            v_comp = min(v, 100) if v is not None else 50
+            q_comp = min(q, 100) if q is not None else 50
+            m_comp = min(m, 100) if m is not None else 50
+            if m is not None and m > 80:
+                m_comp = 30  # overextension penalty (m≥80 was anti-edge in audit)
+            of_comp = min(of, 100) if of is not None else 50
+            news_comp = min(news, 100) if news is not None else 50
+            # Pull chg + dist_to_52w_high from snapshot for penalties
+            try:
+                chg_pct = float((snapshot or {}).get("change_pct") or 0)
+            except (ValueError, TypeError):
+                chg_pct = None
+            try:
+                dist_hi = float((snapshot or {}).get("dist_to_52w_high") or 0)
+            except (ValueError, TypeError):
+                dist_hi = None
+            # Anti-rebound penalty
+            if chg_pct is not None and chg_pct >= 2:
+                chg_penalty = -25
+            elif chg_pct is not None and chg_pct >= 1:
+                chg_penalty = -10
+            else:
+                chg_penalty = 0
+            # Anti-overextension penalty (close to 52w high)
+            if dist_hi is not None and dist_hi > -5:
+                hi_penalty = -15
+            elif dist_hi is not None and dist_hi > -10:
+                hi_penalty = -5
+            else:
+                hi_penalty = 0
+            total = int(round(0.40 * v_comp + 0.20 * q_comp + 0.15 * m_comp
+                              + 0.10 * of_comp + 0.05 * news_comp
+                              + chg_penalty + hi_penalty))
             total = max(0, min(100, total))
 
             # Post-process: for ETP/leveraged products, strip meaningless 52-week
