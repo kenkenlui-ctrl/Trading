@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leeks Terminal · 2026-07-16 · 美股觀望</title>
+  <meta name="description" content="Leeks Terminal 2026-07-16 AI dashboard — 美股觀望">
+  <meta property="og:title" content="Leeks Terminal · 2026-07-16 · 美股觀望">
+  <meta property="og:description" content="Leeks Terminal 2026-07-16 AI dashboard — 美股觀望">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.win9you.com/dashboard/2026-07-16/us-hold.html">
+  <meta property="og:image" content="https://www.win9you.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://www.win9you.com/og-image.png">
+  <meta name="twitter:title" content="Leeks Terminal · 2026-07-16 · 美股觀望">
+  <meta name="twitter:description" content="Leeks Terminal 2026-07-16 AI dashboard — 美股觀望">
+  <link rel="canonical" href="https://www.win9you.com/dashboard/2026-07-16/us-hold.html">
+  <link rel="alternate" hreflang="zh-Hant" href="https://www.win9you.com/dashboard/2026-07-16/us-hold.html">
+  <link rel="alternate" hreflang="x-default" href="https://www.win9you.com/dashboard/2026-07-16/us-hold.html">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+    --bg: #ffffff;
+    --panel: #f3f4f6;
+    --panel-2: #e5e7eb;
+    --border: #e5e7eb;
+    --fg: #1a1d23;
+    --dim: #4b5563;
+    --bull: #15803d;
+    --bear: #b91c1c;
+    --amber: #92400e;
+    --blue: #2563eb;
+    --purple: #7c3aed;
+    --accent: #2563eb;
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Top nav (matches Streamlit worker injection) */
+nav.leeks-site-nav {
+    position: sticky; top: 0; z-index: 999;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+nav.leeks-site-nav .brand {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+}
+nav.leeks-site-nav a {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+    padding: 4px 0;
+}
+nav.leeks-site-nav a.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+}
+
+/* Layout */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 64px; }
+h1 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    margin: 0 0 1rem;
+}
+h2 { font-size: 1.05rem; color: var(--accent); margin: 1.5rem 0 0.6rem; }
+
+/* Date selector (top of dashboard) — looks like Streamlit selectbox */
+.date-picker {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+}
+.date-picker a {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--fg);
+    font-size: 0.8rem;
+}
+.date-picker a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Disclaimer */
+.disclaimer {
+    background: #fef3c7;
+    border: 1px solid #b45309;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 13px;
+    color: #78350f;
+}
+
+/* Cards (mirror Streamlit dashboard) */
+.card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+}
+.card.bull { border-left-color: var(--bull); }
+.card.bear { border-left-color: var(--bear); }
+.card.amber { border-left-color: var(--amber); }
+
+/* Stats line */
+.stats {
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.stats .bull { color: var(--bull); font-weight: 600; }
+.stats .bear { color: var(--bear); font-weight: 600; }
+.stats .amber { color: var(--amber); font-weight: 600; }
+
+/* Homepage value-prop + sample preview */
+.lede { font-size: 1.05rem; line-height: 1.65; max-width: 760px; }
+section h2 { margin-top: 2.4rem; }
+section ul, section ol { line-height: 1.75; max-width: 760px; }
+.dim { color: var(--dim); }
+
+.sample-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 1rem 0 1.4rem;
+    max-width: 900px;
+}
+.sample-card {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 12px 14px;
+    background: #fafbfc;
+}
+.sample-header {
+    display: flex; gap: 8px; align-items: baseline; margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+.sample-code { font-weight: 700; font-size: 1.05rem; }
+.sample-op { padding: 1px 6px; border-radius: 3px; background: var(--panel); font-size: 0.85rem; }
+.sample-score { margin-left: auto; font-weight: 600; color: var(--dim); font-size: 0.9rem; }
+.sample-summary { font-size: 0.85rem; line-height: 1.55; color: var(--fg); margin: 6px 0 8px; }
+.sample-link { font-size: 0.85rem; }
+
+/* Dashboard hub /dashboard/ */
+.dates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin: 1.5rem 0 2rem;
+    max-width: 1100px;
+}
+.date-card {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    background: #fafbfc;
+}
+.date-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 8px;
+}
+.date-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+.date-stats {
+    display: flex; gap: 12px; margin-bottom: 12px; font-size: 0.95rem;
+}
+.stat-bull { color: var(--bull); font-weight: 600; }
+.stat-amber { color: var(--amber); font-weight: 600; }
+.stat-bear { color: var(--bear); font-weight: 600; }
+.date-filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+}
+.filter-chip {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: #fff;
+    font-size: 0.82rem;
+    text-decoration: none;
+    color: var(--fg);
+    transition: background 0.15s;
+}
+.filter-chip:hover { background: var(--panel-2); text-decoration: none; }
+.filter-chip.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    font-weight: 600;
+}
+.filter-chip.primary:hover { background: #1d4ed8; }
+.hub-cta ul { list-style: none; padding: 0; }
+.hub-cta li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--panel);
+    font-size: 0.95rem;
+}
+
+/* R:R badge + timeframe hint inside cards */
+.rr-badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-right: 6px;
+    vertical-align: middle;
+    border: 1px solid currentColor;
+}
+.rr-good { color: var(--bull); background: rgba(21, 128, 61, 0.08); }
+.rr-ok   { color: var(--amber); background: rgba(146, 64, 14, 0.08); }
+.rr-bad  { color: var(--bear); background: rgba(185, 28, 28, 0.08); }
+.hint {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    vertical-align: middle;
+    color: var(--dim);
+    background: var(--panel-2);
+}
+.hint-buy { color: var(--bull); }
+.hint-sell {
+    color: var(--bear);
+    font-weight: 600;
+    background: rgba(185, 28, 28, 0.06);
+    border: 1px solid rgba(185, 28, 28, 0.3);
+}
+
+/* LLM confidence + caution chips on cards (Option B: surface LLM self-cautions) */
+.signal-chips {
+    margin: 4px 0 6px 0;
+    font-size: 0.7rem;
+    line-height: 1.4;
+}
+.conf-chip {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: 600;
+    margin-right: 5px;
+    vertical-align: middle;
+    border: 1px solid currentColor;
+}
+.conf-high { color: var(--bull); background: rgba(21, 128, 61, 0.08); }
+.conf-mid  { color: var(--amber); background: rgba(146, 64, 14, 0.08); }
+.conf-low  { color: var(--bear); background: rgba(185, 28, 28, 0.08); }
+.caution-chip {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: 500;
+    margin-right: 5px;
+    margin-bottom: 2px;
+    vertical-align: middle;
+    color: var(--bear);
+    background: rgba(185, 28, 28, 0.06);
+    border: 1px solid rgba(185, 28, 28, 0.25);
+}
+
+/* Signal warning banner on dashboard */
+.signal-warning {
+    margin: 0 0 1.2rem;
+    padding: 10px 14px;
+    background: rgba(146, 64, 14, 0.06);
+    border-left: 3px solid var(--amber);
+    border-radius: 4px;
+    font-size: 0.82rem;
+    line-height: 1.55;
+}
+.signal-warning .warn-strong {
+    color: var(--bear);
+    font-weight: 700;
+}
+.signal-warning a {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+/* Detail table */
+table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+}
+table.detail th, table.detail td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+table.detail th {
+    background: var(--panel-2);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+
+/* Methodology dim table */
+table.dim-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+}
+table.dim-table th, table.dim-table td {
+    border: 1px solid var(--border);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+table.dim-table th {
+    background: var(--panel-2);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+}
+table.dim-table td:first-child { font-family: 'JetBrains Mono', monospace; }
+table.dim-table td:nth-child(2) { font-weight: 600; color: var(--accent); text-align: center; }
+
+/* Card-link: appended after each summary card so reader can dive into detail */
+p.card-link {
+    margin: 6px 0 0;
+    text-align: right;
+    font-size: 0.78rem;
+}
+p.card-link a {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+p.card-link a:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Filter chips (alternative to filter dropdown) */
+.filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+}
+.filters span { color: var(--dim); margin-right: 4px; align-self: center; }
+.filters a {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--fg);
+}
+.filters a.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* Report detail page */
+.report-header h1 { margin: 0 0 0.5rem; }
+.report-header .meta {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 1rem;
+}
+.report-header .badge {
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    font-size: 0.75rem;
+    color: var(--fg);
+}
+.report-header .badge.score { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+.report-header .badge.conf { background: var(--panel-2); }
+
+.score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 1rem 0;
+}
+.score-breakdown .dim {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+}
+.score-breakdown .dim span {
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.score-breakdown .bar {
+    background: var(--border);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 6px 0;
+}
+.score-breakdown .bar .fill { height: 100%; }
+.score-breakdown .dim b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+}
+
+.levels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    margin: 1rem 0;
+}
+.levels > div {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+.levels span {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+.levels b {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+}
+.levels b.bull { color: var(--bull); }
+.levels b.bear { color: var(--bear); }
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    main { padding: 16px 12px 48px; }
+    h1 { font-size: 1.15rem; }
+    .card { padding: 8px 10px; font-size: 0.8rem; }
+    nav.leeks-site-nav { padding: 10px 12px; gap: 10px; font-size: 0.75rem; }
+    nav.leeks-site-nav a { font-size: 0.7rem; }
+    table.detail { font-size: 0.7rem; }
+    table.detail th, table.detail td { padding: 4px 6px; }
+}
+</style>
+  
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<main>
+<div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="signal-warning"><b>🔬 Signal Explorer (Rule-Based, Phase 2)</b> · operation_advice 喺 10-day audit 後改由 deterministic rules 決定 (唔再信 LLM 直接 BUY/SELL call)。
+            <br>· <b>🟢 買入</b> 經 4 rules 揀：<span class="warn-strong">🛡️ Conservative</span> (61.5% WR) + <span class="warn-strong">🌊 Bounce</span> (51.7% WR) + ANTI-MOMENTUM 等
+            <br>· <b>🔴 賣出</b> 幾乎全部被 ANTI-KNIFE override 去 觀望 (LLM SELL 悲觀 37.7% WR，catch falling knife)
+            <br>· <b>🟡 觀望</b> 88% records 係 DEFAULT — LLM 嗰個訊號冇 match 任何 backtested edge
+            <br>· <b>ℹ️ 10-day audit 結論</b>: LLM 樂觀 BUY 30.4% WR (反指)、m≥80 BUY 16.7% WR、悲觀 SELL 37.7% WR (錯方向)
+            <br>· <b>每張 card 顯示</b>: rule-based op + LLM 寫嘅 narrative/catalysts/levels — detail page 入面有 Rule-Based Decision banner 解釋 override 原因</div><div class="filters"><span>FILTER:</span><a href="/dashboard/2026-07-16/all.html">全部</a><a href="/dashboard/2026-07-16/hk-buy.html">港股買入</a><a href="/dashboard/2026-07-16/hk-sell.html">港股賣出</a><a href="/dashboard/2026-07-16/hk-hold.html">港股觀望</a><a href="/dashboard/2026-07-16/us-buy.html">美股買入</a><a href="/dashboard/2026-07-16/us-sell.html">美股賣出</a><a href="/dashboard/2026-07-16/us-hold.html" class="active">美股觀望</a><a href="/dashboard/2026-07-16/conservative-buy.html">🛡️ Conservative BUY</a><a href="/dashboard/2026-07-16/cyber-buy.html">🔐 Cyber BUY</a><a href="/dashboard/2026-07-16/strength-buy.html">⏸️ Strength BUY</a><a href="/dashboard/2026-07-16/bounce-buy.html">🌊 Bounce BUY</a></div><h1>🔬 Signal Explorer — 2026-07-16 (美股觀望)</h1><b>2026-07-16</b> · 共分析 <b>157</b> 隻股票 · <span style="color:var(--bull);font-weight:600;">🟢</span>買入:0 · <span style="color:var(--amber);font-weight:600;">🟡</span>觀望:157 · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出:0
+
+<h2>📊 分析結果摘要</h2>
+
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>NEM</b> · 評分 41 · NEM 今日急跌 -4.60% 收 $90.83，技術面確認中期跌勢：MA20 ($96.17) &lt; MA50 ($103.46) &lt; MA100 ($108.34) 形成空頭排列，現價已跌穿 MA200 ($103.89) 達 12.6%，RSI 40.69 逼近超賣區。估值面 PE TTM 11.78、PB 2.79 屬合理偏低，但股價偏離 MA20 達 -5.54%（已觸及嚴進策略 5% 閾值），不建議撈底。短線策略以沽空反彈為主，博測試 $90.00 心理關口及 $88.00 下方支持。<p class="card-link"><a href="/dashboard/2026-07-16/reports/NEM.html">→ 完整 NEM 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>ORCL</b> · 評分 30 · ORCL 急跌 6.25% 至 $124.21，創 52 週新低（52週區間 $124.21-$328.33），年內累計 -50.07%，完全跌破 MA20 $148.53、MA50 $179.84 及 MA200 $192.32，所有均線呈空頭排列。RSI14 22.73 處於深度超賣區，今日 H/L 區間達 6.43% 波幅極大，量比 1.12× 反映賣壓有實際承接但非恐慌。今日為業績後反應，技術上跌勢未止。PE 21.31 估值合理，PB 9.53 偏高，Oppenheimer 將目標價上調至 $275（基本因素仍看好），但股價無視基本面向下，建議反彈沽空為主。<p class="card-link"><a href="/dashboard/2026-07-16/reports/ORCL.html">→ 完整 ORCL 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>SMCI</b> · 評分 35 · SMCI 現價 $24.68，今日急跌 -8.22%，創 52週新低附近 ($20.53 為52週低)，股價已從 30日前嘅 $47.42 暴跌近 48%。技術面全面弱勢：收市價 $24.68 顯著低於 MA20 $28.97、MA50 $33.38、MA100 $30.52 及 MA200 $34.17，四條均線空頭排列。RSI14 報 24.04，深度超賣。估值 PE TTM 12.99、PB 1.96 屬偏低，但 Hindenburg 報告及延遲提交 10-K 等利空持續發酵，質素評分受壓。整體維持「賣出」判斷，僅可博短線超賣反彈，順勢做空為主。<p class="card-link"><a href="/dashboard/2026-07-16/reports/SMCI.html">→ 完整 SMCI 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>CIEN</b> · 評分 26 · CIEN 急跌 7.09% 至 $388.81，技術結構全面轉弱：MA20 $449.18 &lt; MA50 $503.36，屬明確空頭排列；RSI14 29.31 進入超賣區。雖然 YTD 仍升 358.45% 且 Q2 業績超預期，但 $28.75 億零息可轉換債發行構成明顯稀釋陰霾，疊加量比 1.53× 放量下跌，今日 H/L 區間 6.09% 屬高波幅。估值面 PE TTM 129.17、PB 19.04 仍極度昂貴，缺乏基本面安全邊際。日內建議沽反彈為主，嚴守止損。<p class="card-link"><a href="/dashboard/2026-07-16/reports/CIEN.html">→ 完整 CIEN 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>LITE</b> · 評分 32 · LITE 今日急跌 -6.09%，收 $706.23，創近期新低，並顯著跌穿 MA20 $798.42（偏離 -11.5%）及 MA100 $821.69。RSI14 報 35.67 偏弱但未到超賣 (&lt;30)。估值面 PE TTM 123.47、PB 17.03 屬極高估值區，今日 H/L 區間 $693.00-$737.55 波幅達 6.31%，短炒燃料充足。MA20 &lt; MA100 &lt; MA50 屬弱勢排列，惟股價仍守於 MA200 $569.38 之上約 24%，長線牛熊分界未失。建議反彈至 $730-$750 阻力區做空博回測 $680 之下，嚴守止損。<p class="card-link"><a href="/dashboard/2026-07-16/reports/LITE.html">→ 完整 LITE 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>MPWR</b> · 評分 27 · MPWR 今日急跌 3.48% 至 $1305.65，盤中區間 $1284.21-$1332.44，波幅 3.69% 屬高波動。股價已跌穿 MA20 ($1373.13) 及 MA100 ($1372.30) 雙重支持，短線 MA20 ($1373.13) &lt; MA50 ($1499.38) 確認空頭排列，RSI 14 報 41.28 偏弱。估值 PE TTM 93.73、PB 17.44 極高且無股息。雖然年內仍升 82.97% 且股價仍高於 MA200 ($1188.67) 約 9.8%，但 30 日 K 線由 $1689.89 跌至 $1305.65（跌幅約 22.7%），短線趨勢明確向下。日內策略：反彈至 $1325-$1365 區間做空為主；若回測 $1280-$1290 區間出現承接 K 線，亦可短線做多博反彈。<p class="card-link"><a href="/dashboard/2026-07-16/reports/MPWR.html">→ 完整 MPWR 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>TER</b> · 評分 35 · Teradyne (TER) 今日急跌 5.79%，收 $322.30，已從近期高點 $483.84 大幅回調約 33%。股價 $322.30 遠低於 MA20 $397.92（偏離 -19.0%），MA20 &lt; MA50 &lt; MA100 形成空頭排列，技術面極度弱勢。RSI14 跌至 27.19 嚴重超賣，今日 H/L 區間 5.43% 波幅充足。雖然 BofA 升至 $525、JPM 升至 $450 等分析師升級提供一定支撐，但 CFRA 維持賣出評級，且整體半導體測試設備周期見頂疑慮仍存。短期宜順勢做空反彈，博測試 MA200 $278.01 附近支持；如要博超賣反彈需極嚴止損。<p class="card-link"><a href="/dashboard/2026-07-16/reports/TER.html">→ 完整 TER 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>MCHP</b> · 評分 32 · MCHP 今日急跌 -5.31%，收 $81.68，創近期新低，今日 H/L 區間達 4.86% 屬高波幅日。技術面明顯轉弱：MA20 $89.57 &lt; MA50 $93.02 屬空頭排列，股價 $81.68 跌破 MA20 $89.57 達 -8.81%，同時跌穿 MA100 $82.88 僅靠其上方微撐。RSI14 報 34.26 接近超賣。估值面 PE TTM 高達 371.27、PB 6.88 屬極度昂貴。量比 1.22× 略高於 5 日均量，配合長陰線反映主動拋售。綜合判斷趨勢偏空，雖有超賣反彈機會，但嚴進原則下不建議做多，宜趁反彈做空或觀望。<p class="card-link"><a href="/dashboard/2026-07-16/reports/MCHP.html">→ 完整 MCHP 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>WDC</b> · 評分 31 · WDC 今日急跌 -9.15%，收 $466.81，創近期 30 日新低，且跌破 MA20 ($605.77)、MA50 ($553.84) 及 MA100 ($437.02) 多條均線，技術走勢嚴重轉弱。RSI14 為 30.43 接近超賣，今日 H/L 區間達 9.59%，量比 1.57× 確認拋壓真實。但股價仍站於 MA200 ($310.34) 之上，長線牛熊分界未失。基本面上 PE 27.95、PB 22.32 估值偏貴，盈利消息已大致反映 (Q3 EPS $2.72 勝預期、Citi 目標價 $500)，短線宜觀望，等待超賣反彈或確認止跌。<p class="card-link"><a href="/dashboard/2026-07-16/reports/WDC.html">→ 完整 WDC 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>FSLR</b> · 評分 28 · FSLR 今日急跌 -5.31%，收 $211.93，創近期新低；股價同時跌破 MA20 $235.25、MA100 $223.90 及 MA200 $235.43，處於全面弱勢。RSI14 跌至 25.49 嚴重超賣，量比僅 1.16× 未能確認恐慌拋售完成。技術上 MA20 ($235.25) &lt; MA50 ($249.62) 屬死亡交叉醞釀，中短期趨勢向下。操作上日內交易者宜等待反彈乏力後做空，不接刀。<p class="card-link"><a href="/dashboard/2026-07-16/reports/FSLR.html">→ 完整 FSLR 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>SNDK</b> · 評分 34 · SNDK 今日單日暴跌 12.63%，由 $1615.00 收市跌至 $1411.08，全日波幅高達 11.45%（$1390.04-$1551.63），屬極端波動日。RSI14 為 28.36 已進入超賣區，短線具技術反彈條件。股價 $1411.08 已跌穿 MA20 ($1907.19) 及 MA50 ($1725.33)，但仍守於 MA100 ($1250.17) 及 MA200 ($775.53) 之上，中長期多頭排列未變。估值 PE TTM 48.28、PB 15.16 仍屬極貴，配合 YTD +3298.55% 巨幅升溫後的獲利回吐壓力。建議日內於 $1395.00-$1420.00 區間博技術反彈至 $1500.00-$1551.63 阻力區，止損 $1355.00；或待反彈至 $1500.00-$1540.00 做空博再試 $1390.04 低位。<p class="card-link"><a href="/dashboard/2026-07-16/reports/SNDK.html">→ 完整 SNDK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>MU</b> · 評分 28 · MU 急跌 5.65% 收 853.20 美元，創近日新低。今日 H/L 區間 5.53%（840.51–887.71）屬高波幅，RSI14 21.01 嚴重超賣，股價已跌穿 MA20 1033.13 達 -17.4% 並跌破 MA50 929.51 達 -8.2%，但仍遠高於 MA100 679.07 及 MA200 479.66，長線牛市結構未破。量比 1.15× 未達放量標準，賣壓未見恐慌拋售。PE 19.29 合理但 PB 13.28 偏高。短期超跌反彈與趨勢跟空兩個 setup 並存，宜小注順勢或等 RSI 回升確認。<p class="card-link"><a href="/dashboard/2026-07-16/reports/MU.html">→ 完整 MU 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>GLW</b> · 評分 32 · GLW 今日急跌 -9.19% 收 $158.39，從 52 週高位 $255.69 累跌 38%。RSI14 28.86 進入深度超賣，今日 H/L 區間 8.25% 為極高波幅，量比 1.73× 確認恐慌拋售。股價大幅偏離 MA20 $200.43（-21.0%）及 MA50 $192.20（-17.6%），但估值仍極貴（PE TTM 76.15 / PB 12.16）。日內短炒以做空反彈為主軸：於 $165.00-$168.00 區間（接近今日高位 $167.50 及 MA100 $170.76）沽出，博測試今日低位 $154.43；若 $154.43 失守下望 MA200 $131.90。新聞面有京東方A合作及巴克萊升目標價至 $180 等正面催化，但技術弱勢主導，建議觀望等待止跌訊號。<p class="card-link"><a href="/dashboard/2026-07-16/reports/GLW.html">→ 完整 GLW 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>AVGO</b> · 評分 37 · AVGO 今日急跌 -5.03%，收 $374.45，已跌穿 MA20 $382.94 及 MA50 $404.07，短線呈明顯空頭排列（MA20 &lt; MA50）。股價現距 MA200 $363.41 僅約 2.97%，MA100 $377.61 即時承壓。今日 H/L 區間 3.96%（$371.90-$386.74）波幅充沛，具短炒條件，但 RSI 48.38 屬中性，估值 PE 62.51 / PB 20.32 偏貴。30 日 K 線由 $481.57 高峰持續下滑，呈 lower highs / lower lows 結構。建議觀望，待反彈至 $378-$382.94 (MA100-MA20) 區間再做沽空部署，或待 MA200 $363.41 附近確認承接再做反彈短多。<p class="card-link"><a href="/dashboard/2026-07-16/reports/AVGO.html">→ 完整 AVGO 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>COHR</b> · 評分 32 · COHR 單日急跌 7.49% 至 $276.96，跌穿 $299.38 昨收，並明顯跌破 MA20 ($352.81)、MA50 ($366.61) 與 MA100 ($323.43) 所有中短線均線，但尚未跌穿 MA200 ($246.01) 牛熊分界。RSI14 僅 16.72 處於深度超賣區，今日 H/L 區間 $273.87-$289.93 達 5.80% 波幅充足。雖然 PE TTM 仍高達 131.89、PB 5.07 估值偏貴，但 JPM 將目標價上調至 $435、英偉達持倉 780 萬股屬中期正面催化。短線趨勢已完全轉弱，宜待反彈至 MA100 $323.43 附近做空，或跌至 MA200 $246.01 附近博技術反彈，純做多持倉過夜風險過高。<p class="card-link"><a href="/dashboard/2026-07-16/reports/COHR.html">→ 完整 COHR 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>STX</b> · 評分 32 · STX 收報 $745.49，單日急跌 10.00%，波幅 7.95% 屬高波動日，RSI14 回落至 30.40 進入超賣區。股價已大幅偏離 MA20 $926.27 約 19.5%，亦跌破 MA50 $879.36，但仍穩守 MA100 $673.04 之上。雖然 JPM ($1,095)、Citi ($1,240)、UBS ($860) 普遍上調目標價，但市場用腳投票，短期動能明顯轉弱。估值面 PE TTM 70.86、PB 152.76 極度偏高，股息率僅 0.36%，反彈空間受限。建議觀望待方向確認，或僅短炒超賣反彈至 $798.75-$828.30 阻力區。<p class="card-link"><a href="/dashboard/2026-07-16/reports/STX.html">→ 完整 STX 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>MRVL</b> · 評分 27 · MRVL 單日急挫 -8.71%，現價 $188.30，盤中區間 $186.18-$201.81，波幅高達 8.30%，呈恐慌式拋售。股價已跌破 MA20 ($256.50) 及 MA50 ($235.15)，僅勉強守於 MA100 ($173.34) 之上，RSI14 26.54 處於嚴重超賣區。估值面 PE TTM 64.71、PB 9.05 仍偏貴，未見安全邊際。成交量 34.56M 股、量比 1.41×，屬放量下跌。日內宜觀望為主，若有技術反彈至 $200-$206 區間可嘗試短炒做空；不宜於現價接刀博反彈。<p class="card-link"><a href="/dashboard/2026-07-16/reports/MRVL.html">→ 完整 MRVL 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>NOC</b> · 評分 43 · NOC 現價 $518.65 跌穿 MA20 $524.85，並運行於 MA50 $539.66、MA100/MA200 $610 之下，短線呈現明確空頭排列。今日下跌 -1.25%，區間 $517.48-$528.88 幅度 2.20%，量比 1.60× 屬放量下跌，反映賣壓積極。RSI 58.80 處中性區，未有超賣訊號。基本面 PE 16.27 合理，PB 4.30 偏高，股價較 MA200 $610.91 折讓約 15%，估值並非極度便宜。短期宜順勢做空反彈至 MA20 區間，或在 $516-$518 區間博短線反彈，惟嚴守止損。<p class="card-link"><a href="/dashboard/2026-07-16/reports/NOC.html">→ 完整 NOC 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>ICE</b> · 評分 42 · ICE 現價 $141.76，今日升 +1.37%，但 RSI14 高達 85.00 嚴重超買，且股價較 MA20 ($132.63) 偏離 6.88%，違反嚴進原則。MA20 ($132.63) &lt; MA50 ($142.12) &lt; MA100 ($151.12) &lt; MA200 ($155.54) 形成完整空頭排列，價格仍處於 MA50 ($142.12) 與 MA200 ($155.54) 之下，長線結構偏弱。今日成交量比僅 0.70×，反彈缺乏成交配合，可信度低。短線建議於 $141.50-$142.40 阻力區做空博回調至 MA20 ($132.63) 上方 $137.00 附近，不宜追多。<p class="card-link"><a href="/dashboard/2026-07-16/reports/ICE.html">→ 完整 ICE 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>FLEX</b> · 評分 37 · FLEX 今日急跌 -5.90% 收 $121.12，明顯跌穿 MA20 ($143.00) 及 MA50 ($142.57)，惟仍守於 MA100 ($107.30) 之上。RSI 14 報 29.26 已落入極度超賣區，今日 H/L 區間 3.77% 屬高波幅，短炒空間存在。估值面 PE TTM 51.98、PB 8.61 同樣偏高。短期動能轉弱，但 JPM 目標價 $175、納入標普 500 及 Cerebras AI 合作等中長期催化劑仍在。建議觀望為主，可於 $119.00-$120.76 小注博超賣反彈，目標 $128.72 (昨日收盤位)，嚴設止損 $115.00。<p class="card-link"><a href="/dashboard/2026-07-16/reports/FLEX.html">→ 完整 FLEX 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>SLB</b> · 評分 36 · SLB 現價 $47.08 喺 MA20 $47.12 下方徘徊，今日跌 0.99%，收 $46.86-47.74 窄幅 1.87% 區間。中期均線呈空頭排列（MA20 $47.12 &lt; MA50 $52.29 &lt; MA100 $51.61），股價自 30 日前 $58.01 高位回落約 17%，明顯跑輸大市。成交縮至 0.79× 量比，買盤乏力。短期 price 已靠近 MA200 $45.94 長線牛熊分界，存在技術反彈需求；但動能向下格局未改，建議日內僅喺 47.50 上方做空博回調至 MA200 $45.94，長線持倉訊號未現。PE 20.74 / PB 2.69 估值中性，股息率 N/A，缺乏防禦性。<p class="card-link"><a href="/dashboard/2026-07-16/reports/SLB.html">→ 完整 SLB 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>CCL</b> · 評分 34 · Carnival (CCL) 現價 $26.86，明顯低於 MA20 $28.01、MA50 $27.33、MA100 $27.12 及 MA200 $28.06，全部均線之下確認長中短線皆呈空頭格局。今日雖反彈 +1.02%，但 RSI14 僅 37.01、量比 0.89× 屬縮量反彈，加上 30 日 K 線由 ~$30.90 高位持續下行至近期 $25.64 低位，跌勢未改。PE TTM 12.10、PB 2.84 估值唔算昂貴但無股息率支持，難以構成估值底。短線策略傾向逢反彈至 MA50/MA20 阻力區放空，下望 $26.20 近期低位支持。<p class="card-link"><a href="/dashboard/2026-07-16/reports/CCL.html">→ 完整 CCL 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>LMT</b> · 評分 32 · LMT 現價 $513.52 處於明確下行結構：股價同時跌穿 MA20 $516.52、MA50 $520.85、MA100 $566.50 及 MA200 $542.45，MA20 &lt; MA50 &lt; MA100 形成空頭排列。今日跌 0.18%，區間 $511.31-$520.13 波幅僅 1.72%，量比 0.88× 低於均量，缺乏方向性資金參與。PE TTM 24.89 偏貴、PB 15.77 反映帳面溢價顯著，估值無安全墊。RSI 54.53 中性無超賣，短線缺乏均值回歸張力。綜合建議觀望，反彈至 MA20/MA50 區間可小注做空。<p class="card-link"><a href="/dashboard/2026-07-16/reports/LMT.html">→ 完整 LMT 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>AMT</b> · 評分 27 · AMT 現價 $168.92，明顯低於所有主要均線（MA20 $169.90、MA50 $178.04、MA100 $179.07、MA200 $180.02），技術面確認熊市排列；年初至今累跌 24.26%，弱勢明顯。估值 PE 27.20、PB 22.35 並不便宜，且無股息率數據（REIT 應有派息），質素存疑。今日區間僅 $167.56-$170.09（幅度 1.50%），低於 3% 高波幅門檻；量比 0.79× 顯示成交偏淡，短炒燃料不足。RSI 50.29 中性無方向，新聞面主要為 €7.5 億新債發行及季度業績披露，缺乏正面催化劑。建議觀望為主；若反彈至 $169.90-$170.09 可小注做空，止損 $172.00，目標 $162.11-$165.00。<p class="card-link"><a href="/dashboard/2026-07-16/reports/AMT.html">→ 完整 AMT 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>INTC</b> · 評分 46 · INTC 現價 $96.98，今日急跌 -5.84%，全日區間 $95.48-$101.88，幅度 6.60% 屬高波幅。股價已跌穿 MA20 ($120.80) 及 MA50 ($117.53)，但仍站於 MA100 ($87.08) 與 MA200 ($63.87) 之上，長線牛熊分界未失。RSI14 26.42 嚴重超賣，年初至今仍累積 +325.35%，屬強勢股內的深度回調。量比僅 1.08× 未見恐慌拋售，建議觀望待方向確認後再入場，無論做多博反彈或做空續跌均需嚴守止損。<p class="card-link"><a href="/dashboard/2026-07-16/reports/INTC.html">→ 完整 INTC 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>NEE</b> · 評分 44 · NEE 現價 $89.35 處於 MA20 ($87.74) 與 MA100 ($90.67) 之間，MA20 &lt; MA50 &lt; MA100 排列屬短線弱勢結構，但價格站穩 MA200 ($87.27) 之上反映長線仍偏多。RSI14 為 57.08 處於中性區，今日 H/L 區間僅 1.41% 屬低波幅，日內可操作性偏低。量比 0.70× 顯示資金參與度不足，PE TTM 22.68、PB 3.37 對公用股偏貴。綜合而言，當日缺乏明確方向與量能配合，宜觀望或僅在 $88.50-88.80 區間小注做多博反彈至 $90.67 (MA100)。<p class="card-link"><a href="/dashboard/2026-07-16/reports/NEE.html">→ 完整 NEE 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>SNPS</b> · 評分 35 · SNPS 現價 417.03 USD，今日跌 1.94%，收於 416.33-425.64 USD 區間低位。股價已跌破全部均線：MA20 445.30、MA50 473.85、MA100 453.47、MA200 454.66，偏離 MA20 達 -6.35%，明確空頭排列。RSI 28.20 進入超賣區，但量比 0.91× 偏弱，無買盤承接跡象。PE TTM 95.21 估值極高，PB 2.62，YTD 累跌 29.20%。雖然分析師目標價 $550-$590 全線高於現價，但市場無視利好持續拋售，日內策略以反彈做空為主。<p class="card-link"><a href="/dashboard/2026-07-16/reports/SNPS.html">→ 完整 SNPS 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>HCA</b> · 評分 34 · HCA 現價 $385.74，雖今日反彈 +1.82%，但處於完整空頭排列（MA20 $393.25 &lt; MA50 $395.65 &lt; MA100 $445.19 &lt; MA200 $459.35），股價位於所有均線之下，長線確認弱勢。PE TTM 13.29 屬合理區間，但 PB -13.62 反映股東權益為負（多年大量回購派息導致），非傳統意義嘅估值便宜。今日 H/L 區間 3.74% 屬高波幅，配合 RSI 49.51 中性、量比僅 0.75×（反彈缺乏量能確認），反彈力度偏弱。日內策略為反彈至 $390-$393（貼近 MA20 $393.25 阻力）做空博回吐，下望 $377 今日低位，目標 R:R 接近 3:1，符合日內順勢做空 setup。<p class="card-link"><a href="/dashboard/2026-07-16/reports/HCA.html">→ 完整 HCA 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>BRK-B</b> · 評分 49 · BRK.B 現價 $493.12 處於 MA20 $495.57 之下、MA50 $487.08 之上，MA 排列呈 MA20 &gt; MA200 &gt; MA50 &gt; MA100 嘅混亂格局，唔係乾淨多頭排列。今日區間僅 1.42%，波幅偏低（&lt;3%），量比 1.08× 亦未確認資金流入，日內交易燃料不足。RSI 54.55 中性，估值 PE 14.68 合理但 PB 0.00 異常（保險浮存金結構使然）。新聞面中性偏正面（巴菲特加碼回購），但缺乏短炒催化劑，建議觀望。<p class="card-link"><a href="/dashboard/2026-07-16/reports/BRK-B.html">→ 完整 BRK-B 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>AEP</b> · 評分 44 · AEP 現價 $133.13，今日微升 +0.48%，日內區間 $131.73-$134.05，幅度僅 1.74% 缺乏短炒波幅。股價處於 MA20 ($134.69) 之下、MA50 ($131.31) 之上嘅夾心區，MA20 &gt; MA100 &gt; MA50 並非經典多頭排列。RSI14 為 41.24 偏弱。量比僅 1.03× 無成交配合，暫缺方向性催化。PE 19.69 對公用股合理，PB 2.28，股息率 2.87% 提供防守性。長線站穩 MA200 $125.35 之上，但短線動能不足，宜等待突破 MA20 或失守 MA50 再順勢操作。<p class="card-link"><a href="/dashboard/2026-07-16/reports/AEP.html">→ 完整 AEP 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>DELL</b> · 評分 44 · DELL 今日急跌 -5.16% 至 $391.38，跌破 MA20 ($420.94)，但仍守喺 MA50 ($361.77) 之上，中期多頭結構未完全破壞。今日 H/L 區間 5.79% 屬高波幅日，但量比僅 0.81×，跌勢缺乏成交確認。RSI14 46.45 中性偏弱。估值面 PE TTM 31.19 偏貴、PB -180.94（股東權益為負，技術上資不抵債）。大行方面摩根大通目標價上調至 $550、聯博維持買入目標 $500，與短期股價走勢背馳。短線可留意 $391-$395 區間博反彈，但須嚴控止損。<p class="card-link"><a href="/dashboard/2026-07-16/reports/DELL.html">→ 完整 DELL 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>DVN</b> · 評分 44 · DVN 現價 $43.03 喺 MA20 ($42.31) 之上但受壓於 MA50 ($44.66)，短線 MA 排列呈空頭（MA20 $42.31 &lt; MA50 $44.66 &lt; MA100 $45.95），不過股價站於 MA200 ($41.29) 之上確認長線仲喺牛市區。今日 H/L 區間 1.71% 屬中等波幅，量比 1.02× 冇明顯放量，短炒燃料一般。PE 11.99、PB 1.73 估值合理，富國銀行目標價上調至 $68 係正面催化，但 CFRA 維持賣出意見構成矛盾訊號。建議觀望 $42.10-$42.40 區間或 $43.65 突破/失敗訊號先入市。<p class="card-link"><a href="/dashboard/2026-07-16/reports/DVN.html">→ 完整 DVN 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>FDX</b> · 評分 43 · FDX 現價 $318.20，今日反彈 +1.53%，但收市仍受制於 MA50 ($318.17) 之下不足 1 美元，技術上處於多空分界。RSI14 為 39.15 屬弱勢區，MA20 ($317.27) 已跌穿 MA50 ($318.17)，短期 trend 偏空。股價從 52週高位 $338.75 回調約 6%，今日 H/L 區間 2.02% 提供短炒空間。估值 PE 17.15、PB 2.42 合理，年初至今累升 72.92%，上方空間有限。建議觀望 MA50 攻防結果再部署，唔建議追入。<p class="card-link"><a href="/dashboard/2026-07-16/reports/FDX.html">→ 完整 FDX 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>PEP</b> · 評分 37 · PEP 今日反彈 +2.98% 至 $139.43，但仍未站穩 MA20 $140.19，今日高位 $139.62 剛好觸及均線即回落。技術面呈標準空頭排列：MA20 $140.19 &lt; MA50 $144.49 &lt; MA100 $151.12 &lt; MA200 $150.00，股價 $139.43 低於全部均線。RSI14 49.87 中性。量比 0.97× 反彈缺乏成交配合，可信度打折。新聞面三大行（摩根士丹利、富國、巴克莱）相繼下調目標價，整體氣氛偏空。短線以反彈做空為主，長線防守靠 4.37% 股息率。<p class="card-link"><a href="/dashboard/2026-07-16/reports/PEP.html">→ 完整 PEP 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>AMAT</b> · 評分 36 · AMAT 現價 560.93 USD，今日急跌 -3.19%，單日區間 557.27-591.09（區間幅度 6.03% 屬高波幅），已明確跌破 MA20 610.59（偏離 -8.13%，超過 5% 警戒線，按嚴進策略不建議追入）。RSI14 37.72 偏弱，量比 1.13× 未見恐慌拋售。估值面 PE TTM 52.92、PB 18.63 仍處高位，股價仍高於 MA200 356.76 達 +57.2%，長線牛市結構未破但短線轉弱。MA50 523.23 為下一關鍵支持，若回測不破可博反彈至 575-591 區間；上方 MA20 610.59 為主要阻力。瑞銀上調目標價至 $705 為中線正面催化，但短期動能偏空，宜觀望待方向確認。<p class="card-link"><a href="/dashboard/2026-07-16/reports/AMAT.html">→ 完整 AMAT 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>HON</b> · 評分 36 · HON 現價 226.33 USD，今日反彈 +1.57%，但仍受制於 MA20 230.04 之下，且 MA20 (230.04) &lt; MA50 (231.20) &lt; MA100 (235.91) 形成明確空頭排列。RSI14 為 35.89，處於弱勢區但未到極度超賣。股價僅高於 MA200 (225.60) 約 0.73 美元，呢個關鍵牛熊分界一失守可加速下行。今日 H/L 區間 2.31% 提供短炒空間，但量比只有 0.98 倍，反彈缺乏成交確認。建議等待 MA200 攻防結果再做方向選擇。<p class="card-link"><a href="/dashboard/2026-07-16/reports/HON.html">→ 完整 HON 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>UAL</b> · 評分 51 · UAL 報 $118.81，今日跌 1.79%，全日波幅 5.11%（$116.05-$122.12），屬高波幅交易日，短炒燃料充足。RSI14 僅 21.06 處於極度超賣區域，短線具均值回歸交易價值。股價已跌穿 MA20 ($126.93) 達 -6.4%，觸發『偏離 MA20 超過 5% 不建議買入』嘅閾值；但 MA20 &gt; MA50 ($113.14) &gt; MA100 ($104.11) 多頭排列尚未完全破壞，價格仍站喺 MA200 ($104.34) 之上。PE TTM 11.12、PB 2.43 估值合理，摩通目標價 $190、高盛 $162 提供中期支持。建議喺 $116.00-$117.50（接近今日低位）短線博反彈，止損 $113.00，目標 $122.00（今日高位），R/R 約 1.57。<p class="card-link"><a href="/dashboard/2026-07-16/reports/UAL.html">→ 完整 UAL 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>CBOE</b> · 評分 47 · CBOE 現價 277.89 USD 微升 0.28%，日內波幅 2.85% 接近高波幅門檻。盤中低位 274.94 USD 守穩 MA200 關鍵位 276.38 USD，反彈訊號初步成立，但股價較 MA20 256.83 USD 仍高出 8.2%，追高風險顯著。RSI 14 處 72.86 接近超買，量比僅 0.74× 反映資金參與不足，反彈成色受質疑。巴克萊維持買入評級目標價 347 USD 提供中期催化，但 MA50 298.77 與 MA100 296.96 構成中線結構性壓力，未形成多頭排列。建議觀望，等待回調至 274.50-276.50 USD 才有短炒價值；若突破 282.86 USD 阻力可順勢短多。<p class="card-link"><a href="/dashboard/2026-07-16/reports/CBOE.html">→ 完整 CBOE 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>EOG</b> · 評分 46 · EOG 現價 $138.46，今日微升 +0.72%，但量比僅 0.68×（明顯低於 5 日均量），顯示今日升幅缺乏成交配合，資金參與意願薄弱。技術上 MA20 $133.77 &lt; MA50 $135.79 &lt; MA100 $135.49，三條短中期均線未形成多頭排列，短期 trend 仍偏震盪。股價站穩 MA200 $122.15 之上，長線結構未破壞。RSI14 為 58.11 處於中性偏強區。今日 H/L 區間僅 1.40%，波幅不足，短炒燃料有限。估值 PE TTM 13.61、PB 2.40 屬合理區間，未見明顯折讓。整體適合等待方向確認，建議於 $135.50-$137.00 區間觀察承接力度再決定入場方向。<p class="card-link"><a href="/dashboard/2026-07-16/reports/EOG.html">→ 完整 EOG 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>HOOD</b> · 評分 44 · HOOD 今日急跌 -8.24%，收 $106.02，已跌破 MA20（$107.55）但仍守住 MA200（$101.93）關鍵牛熊分界。RSI14 為 61.52，未到超賣但動能轉弱。估值 PE 51.47、PB 10.25 屬偏高，缺乏安全邊際。今日 H/L 區間達 8.51% 為高波幅日，短炒燃料充足但方向未明。整體建議觀望等待 $101.93（MA200）支持確認或重新站穩 MA20 後再行動。<p class="card-link"><a href="/dashboard/2026-07-16/reports/HOOD.html">→ 完整 HOOD 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>XOM</b> · 評分 42 · XOM 現價 $145.95，今日 +1.00% 但收緊喺 MA50 $146.15 阻力位之下，全日 H/L 區間僅 1.59%，量比 0.69× 買盤乏力。短線 MA20 $139.48 &lt; MA50 $146.15 &lt; MA100 $150.55 呈空頭排列，RSI 68.12 接近超買；長線仍站穩 MA200 $136.90 之上。PE TTM 24.57、PB 2.38 估值偏貴，股息率 2.85%。建議喺 $146.15 阻力附近觀望，破位或會向上試 MA100 $150.55，否則回調落 MA20 $139.48。<p class="card-link"><a href="/dashboard/2026-07-16/reports/XOM.html">→ 完整 XOM 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>AKAM</b> · 評分 38 · AKAM 現價 118.81 USD，今日跌 1.00%，處於 118.22-122.00 區間內偏弱一方收市。技術上嚴重受壓：MA20 119.82 &gt; MA100 119.17 但 MA20 119.82 &lt; MA50 134.21，屬典型短中期空頭排列，股價較 MA50 低水 11.5%。PE TTM 40.14、PB 3.52 估值偏貴，無股息率支撐；量比 0.71× 顯示資金未積極跟倉。RSI14 57.22 中性偏弱，今日 H/L 區間 3.19% 提供短炒波幅，但動能結構向下。短線需觀察 MA100 119.17 能否守住——守住可博反彈至 126.50，跌破則向 112.70 區域尋底。<p class="card-link"><a href="/dashboard/2026-07-16/reports/AKAM.html">→ 完整 AKAM 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>CSCO</b> · 評分 34 · CSCO 現價 $109.66，今日下跌 1.89%，盤中區間 $107.54-$111.24，幅度 3.37% 屬高波幅交易日。股價已跌破 MA20 $116.69 及 MA50 $115.60，偏離 MA20 達 -6.02%（超過 5% 偏離閾值），RSI14 為 38.00 偏弱。雖然 MA20 &gt; MA50 &gt; MA100 $98.79 &gt; MA200 $87.05 長線排列未破，但短線動能明顯轉弱。估值面 PE TTM 36.55、PB 8.84 偏貴，量比 1.08× 未見明顯放量。建議反彈至 MA50/MA20 阻力區做空博回測今日低位。<p class="card-link"><a href="/dashboard/2026-07-16/reports/CSCO.html">→ 完整 CSCO 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>AMZN</b> · 評分 52 · AMZN 現價 $249.89，今日回吐 -1.99%，從盤中高點 $258.08 跌至低位 $248.00，全日波幅 4.03% 屬高波幅，短炒燃料充足。股價仍站於 MA200 $233.94 之上，長線多頭格局未變；惟 RSI14 75.57 進入超買區，且 MA20 ($241.57) &lt; MA50 ($252.66) 出現短線轉弱訊號。多家券商上調目標價（KeyBanc $335、Wedbush $293），基本面具備上行催化劑，但短線超買回調壓力大。建議觀望 $248.00 與 MA20 $241.57 區間能否守住，再決定方向。<p class="card-link"><a href="/dashboard/2026-07-16/reports/AMZN.html">→ 完整 AMZN 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>DAL</b> · 評分 50 · DAL 現價 $86.70 從 52週高位 $93.66 回落約 -7.4%，RSI14 報 31.10 處於超賣區，短線具備反彈條件。今日開盤 $85.96 探低 $85.03 後收 $86.70，形成錘形反轉 K 線，技術面有止跌跡象。MA20 $88.77 為即時阻力，MA50 $81.56 為下方關鍵支持。估值 PE TTM 14.38、PB 2.60 屬合理區間，富國及阿格斯維持買入、目標價 $105。惟量比僅 0.76×，成交量未配合，宜嚴控倉位。<p class="card-link"><a href="/dashboard/2026-07-16/reports/DAL.html">→ 完整 DAL 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>PFE</b> · 評分 46 · PFE 現價 $25.14，今日升 1.29%，但 MA 排列呈空頭（MA20 $24.43 &lt; MA50 $25.30 &lt; MA100 $26.21），股價雖反彈至 MA20 之上 $0.71（偏離 2.91%），仍受制於 MA50 $25.30 及 MA200 $25.88 雙重阻力。RSI 67.05 略高但未超買。量比 1.11× 不足確認，盤後因 Sigvotatug Vedotin 三期試驗 OS 終點未達標跌 1%，Mubadala 亦減持，負面催化劑壓制估值修復。6.93% 息率為主要防守。短線建議 $25.25-$25.35 區間逢高做空，止損 $25.55，目標 $24.50。<p class="card-link"><a href="/dashboard/2026-07-16/reports/PFE.html">→ 完整 PFE 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>SCHW</b> · 評分 46 · SCHW 現價 $102.80，今日幾乎持平（+0.01%），30日內由 $86.59 急升至 $102.80，累積升幅約 18.7%，動能強勁但明顯超買。RSI14 達 86.91 屬極端超買區，股價偏離 MA20（$96.84）達 6.15%，超出嚴進策略 5% 警戒線，不宜追高。MA20（$96.84）&gt; MA100（$93.10）&gt; MA200（$95.06）&gt; MA50（$92.44），排列稍亂但長線仍站於 MA200 之上。今日 H/L 區間僅 1.80%、量比 1.04×，燃料不足，建議等待回調至 MA20 附近再部署做多博反彈。<p class="card-link"><a href="/dashboard/2026-07-16/reports/SCHW.html">→ 完整 SCHW 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>APH</b> · 評分 43 · APH 今期下跌 2.48% 至 $153.14，跌破 MA20 $162.52 達 -5.77%，按嚴進策略已觸發「不追跌」紅線。但長線結構未壞：MA20 $162.52 &gt; MA50 $148.30 &gt; MA100 $143.26 &gt; MA200 $140.48 仍係多頭排列，價格 $153.14 仍高於 MA200 $140.48 達 +9.0%，年內累計升幅 +50.20%。RSI14 38.97 接近超賣區域，今日下跌伴隨量縮（量比僅 0.69×），暗示沽壓可能減弱。基本面新聞偏正面：Q1 經調整 EPS $1.06 勝預期 $0.94，Q2 收入指引 $81-82 億，Evercore ISI 重申「優於大盤」。然而 PE TTM 43.88、PB 13.47 估值偏貴，限制估值修復空間。短炒宜觀望為主，等待回調至 $148.30-$152.47（MA50 至今日低位 $152.47）出現止跌訊號再博反彈至 MA20 $162.52，止損 $146.00。<p class="card-link"><a href="/dashboard/2026-07-16/reports/APH.html">→ 完整 APH 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>CMI</b> · 評分 43 · CMI 現價 $647.83，今日大跌 -2.75%，收於全日最低 $640.02 附近，創近期弱勢。股價已跌穿 MA20 ($686.30) 及 MA50 ($678.83)，偏離 MA20 達 -5.60%，RSI14 跌至 31.99 接近超賣區。今日 H/L 區間 4.49% 屬高波幅，短炒燃料充足但方向偏空。年內仍漲 86.07%，估值 PE TTM 33.65、PB 7.24 偏高，估值未提供安全邊際。基本面上調高股息、上調業績指引、Wells Fargo 調升目標價至 $794 屬正面，但 C3.ai 商業機密訴訟敗訴為隱憂。短線建議觀望，待 RSI 確認見底或反彈至 MA50 $678.83 附近再做 short setup。<p class="card-link"><a href="/dashboard/2026-07-16/reports/CMI.html">→ 完整 CMI 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>IBM</b> · 評分 36 · IBM 現價 $219.05，今日急彈 3.72%，日內區間 $204.44-$219.93，幅度達 7.07%（高波幅，短炒燃料充足）。然而股價 $219.05 仍遠低於 MA20 $269.23、MA50 $261.99、MA100 $252.31 及 MA200 $274.30，全部均線在上方形成強大壓力，長線趨勢明顯向下。今日反彈呈典型急跌後反彈形態（前日收 $211.20，今日低見 $204.44 後急彈收近全日高位），但量比僅 0.87×，成交量未配合，反彈可信度存疑。PE TTM 19.38、PB 6.24，估值無明顯折讓；年初至今跌 22.32%，弱勢格局未改。RSI 37.43 接近超賣但未確認。整體宜觀望，若博反彈須嚴控止損。<p class="card-link"><a href="/dashboard/2026-07-16/reports/IBM.html">→ 完整 IBM 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>AZO</b> · 評分 34 · AZO 現價 $3062.16，今日反彈 +3.08%，但全日 H/L 區間 2.80%、量比僅 0.65×，反彈缺乏成交配合。技術上 MA20 $3072.58 &lt; MA50 $3172.02 &lt; MA100 $3357.43 &lt; MA200 $3544.67 呈標準空頭排列，股價 $3062.16 正測試 MA20 $3072.58 阻力。RSI14 50.18 中性偏弱。估值 PE TTM 21.08 合理，PB -18.00 因長期回購致股東權益為負（結構性，非資不抵債）。五家券商（Citi、Truist、Mizuho、MS、Jefferies）全線下調目標價至 $3200-$4000，news sentiment 極度負面。建議日內操作以 MA20 阻力 $3072.58 為分水嶺：突破失敗則短，破位則追多。<p class="card-link"><a href="/dashboard/2026-07-16/reports/AZO.html">→ 完整 AZO 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>NTAP</b> · 評分 56 · NTAP 現價 $159.69，今日下跌 1.49%，從 52 週高位 $181.08 回調中。長線 MA20 $160.46 &gt; MA50 $150.08 &gt; MA100 $126.34 &gt; MA200 $118.23 維持完美多頭排列，股價遠高於 MA200（+35%），確認長線牛勢。今日區間 $156.26-$162.08，波幅 3.64% 屬高波幅日，短炒燃料充足，但量比僅 0.79× 反映資金參與度不足，唔宜追沽。RSI 54.22 中性，估值 PE 25.15 / PB 23.17 並唔平。多間大行上調目標價（JPM $175、Argus $200、UBS $160）提供中線催化劑，但短線宜等待 $156.26 附近企穩再做多博反彈。<p class="card-link"><a href="/dashboard/2026-07-16/reports/NTAP.html">→ 完整 NTAP 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>COP</b> · 評分 52 · COP 現價 $112.84，今日升 +1.24%，自近期低位 $103.22 反彈約 9.4%，但仍受制於 MA50 $113.98 短線阻力。RSI14 63.80 處於健康區間，價格站穩 MA200 $106.39 上方確認長線多頭格局。MA20 $108.14 &lt; MA50 $113.98 &lt; MA100 $118.15 為短線空頭排列，未確認升勢。今日 H/L 區間僅 0.97%，量比 0.81× 低於均值，燃料不足，日內交易可操作性偏低。<p class="card-link"><a href="/dashboard/2026-07-16/reports/COP.html">→ 完整 COP 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>DIS</b> · 評分 51 · DIS 今日收 $99.71，急彈 +2.64%，突破 MA20 ($98.54) 但仍受制於 MA50 ($101.06) 同 MA100 ($100.98) 雙重阻力。RSI 55.19 中性偏強，但 MA20 &lt; MA50 嘅短線排列未確認轉多，股價仍低於 MA200 ($105.56) 達 5.54%，長線弱勢格局未改。今日 H/L 區間 2.38% 唔算高波幅，量比僅 0.81×，升幅缺乏成交配合。基本面上 PE 15.95 同 PB 1.60 估值合理，CFRA 升評至買入、Q2 業績超預期為正面催化，但短炒宜待回調至 $97.50-$98.50 區間再部署。<p class="card-link"><a href="/dashboard/2026-07-16/reports/DIS.html">→ 完整 DIS 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>TEL</b> · 評分 46 · TEL 現價 $202.57 處於明確空頭排列（MA20 $201.87 &lt; MA50 $206.16 &lt; MA100 $210.69 &lt; MA200 $220.53），股價較 MA200 $220.53 低水 8.1%，確認長線熊市格局。今日波幅 3.01% 屬高波幅區間，股價由 $197.68 反彈至 $202.57 收市，帶明顯下影線，短期於 $198-$200 區間見初步買盤承接。多家投行下調目標價（JPM $260→$235、Citi $250→$230、UBS $272→$261），sell-side 情緒偏負面。建議等候反彈至 MA50 $206.16 附近做空，日內目標 $198.00，止損 $208.50。<p class="card-link"><a href="/dashboard/2026-07-16/reports/TEL.html">→ 完整 TEL 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>F</b> · 評分 45 · 福特 (F) 現價 $14.19，今日僅升 0.07%，日內 H/L 區間 $14.00-$14.27（幅度 1.87%）屬於一般波幅，未達 3% 高波幅門檻，短炒燃料不足。技術上股價站於 MA200 $13.20 之上 +7.5%，長線多頭結構未失，但 MA20 $13.89 &lt; MA50 $14.13 屬短線轉弱訊號。量比僅 0.63×，明顯低於 5 日均量，缺乏資金跟進。RSI 51.55 中性。基本面 PE TTM 為 N/A（盈利能力存疑），PB 1.51 估值中性，股息率 4.23% 提供防守性。綜合判斷：當日缺乏明確方向性機會，建議觀望等待成交量配合。<p class="card-link"><a href="/dashboard/2026-07-16/reports/F.html">→ 完整 F 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>JCI</b> · 評分 44 · JCI 現價 $141.26，今日跌 -1.05%，收市前測試全日低位 $139.25 後小幅反彈。技術上股價 ($141.26) 已跌穿 MA20 ($142.84) 及 MA50 ($141.93)，但仍守於 MA100 ($139.87) 及 MA200 ($128.83) 之上，長線牛市格局未變。估值偏貴（PE 43.20、PB 6.38），量比僅 0.81× 反映沽壓未帶量，後市需觀察 $139.25 能否守住。短炒宜等方向明確：升穿 MA20 $142.84 可追多，跌破 $139.25 則做空。<p class="card-link"><a href="/dashboard/2026-07-16/reports/JCI.html">→ 完整 JCI 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>GM</b> · 評分 43 · GM 現價 $77.72，今日僅升 0.10%，日內區間 $76.61-$77.97 僅 1.74%，波幅不足、量比 0.78× 屬縮量，無明確短炒燃料。技術上 MA20 $77.67 &lt; MA50 $78.84 呈短線弱勢排列，但股價仍守於 MA100 $77.66 及 MA200 $76.00 之上，屬區間震盪格局。RSI14 為 46.35 中性偏弱。新聞面 Q1 營收及 EPS 雙雙超預期並與美光簽署戰略協議屬利好，但 ISS 反對股票計劃修訂為雜音。整體缺乏方向性訊號，宜觀望等待放量突破 MA50 $78.84 或跌破 MA200 $76.00 再行部署。<p class="card-link"><a href="/dashboard/2026-07-16/reports/GM.html">→ 完整 GM 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>RCL</b> · 評分 43 · RCL 現價 $293.95，較昨收升 0.61%，處於近期 $320 高位回調後嘅震盪築底階段。MA20 ($300.92) &gt; MA50 ($285.75) &gt; MA100 ($282.01) 短中期仍係多頭排列，但股價已跌破 MA20 達 2.32%，RSI14 為 31.55 落入超賣區，顯示短線有反彈需求。現價仍站喺 MA200 ($287.07) 之上 2.4%，長線牛熊分界未失守。PE TTM 17.93 屬合理，但 PB 8.04 偏高，估值無太大優勢。今日成交量 178 萬股僅為 5 日均量嘅 0.81 倍，缺乏資金確認。綜合判斷為超賣反彈雛形但量能未配合，宜待量比回升至 1.2× 以上先確認方向。<p class="card-link"><a href="/dashboard/2026-07-16/reports/RCL.html">→ 完整 RCL 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>EQIX</b> · 評分 42 · EQIX 現價 $1009.14，已連續多日從 1115.94 嘅 52週高位回落，短期均線呈空頭排列（MA20 $1052.42 &lt; MA50 $1062.90 &gt; MA100 $1036.32），RSI14 跌至 30.82 進入超賣區，存在短線均值回歸博反彈機會。估值偏貴（PE TTM 69.98、PB 6.96），但長線仍守喺 MA200 $917.83 之上約 10%，未失牛市結構。量比僅 1.10× 未見明顯資金進場，宜等 RSI 反轉確認先小注做多，博反彈至 MA20 $1052.42，止損守今日低 $999.79 之下。綜合分析師頻頻升評（Jefferies $1300、BTIG $1210、Barclays $1130）對中長線有利，但日內動能偏弱，建議輕倉試多。<p class="card-link"><a href="/dashboard/2026-07-16/reports/EQIX.html">→ 完整 EQIX 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>MAR</b> · 評分 42 · Marriott (MAR) 收報 $371.14，今日微升 +0.57%，但仍受壓於 MA20 ($376.74) 及 MA50 ($374.76) 之下，短線處於回調格局。RSI14 為 43.42 屬中性偏弱。長線 MA100 ($358.31) 與 MA200 ($329.13) 仍穩步向上，年初至今累升 36.65%，長線趨勢未破。富國銀行上調目標價至 $449 (約 21% 上行空間) 提供中長期催化，但今日量比僅 0.91× 偏低，未見明顯資金入場訊號。短炒宜區間操作，留意 $368.33-$376.74 區間突破方向。<p class="card-link"><a href="/dashboard/2026-07-16/reports/MAR.html">→ 完整 MAR 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>BA</b> · 評分 32 · 波音 (BA) 現價 $214.34 已跌穿 MA200 ($218.63)、MA100 ($219.92)、MA50 ($222.58) 及 MA20 ($220.97) 全部均線，技術面呈空頭排列。今日下跌 -1.73%，收近全日低位 $214.20，但 H/L 區間僅 1.75%，波幅不足以提供短炒燃料。量比 0.91× 低於均值，賣壓無成交配合，下跌動能偏弱。RSI 14 為 46.12 屬中性偏低，估值面 PE TTM 高達 84.72、PB 28.24 反映盈利極微或虧損邊緣，質素面嚴重受壓。綜合而言跌勢明顯但缺乏量能確認，短炒可博反彈或反彈做空，長線持倉訊號欠奉。<p class="card-link"><a href="/dashboard/2026-07-16/reports/BA.html">→ 完整 BA 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>BLK</b> · 評分 54 · BLK 現價 $1087.05，較昨日收 $1093.40 微跌 0.58%，但盤中高低區間達 4.19%（$1079.45-$1125.00），波幅充沛提供短炒空間。股價站於 MA20 $1014.29、MA50 $1035.52、MA100 $1022.25 及 MA200 $1059.44 之上，長線結構偏多；然而 RSI14 為 74.56 已近超買，且現價較 MA20 偏離 7.17%（超出 5% 嚴進閾值），短線追高風險大。量比僅 1.06× 無明顯資金配合，建議等候回調至 $1060-$1080 區間（MA200 $1059.44 與日低 $1079.45 共振）再考慮短多，或反彈至 $1115-$1125 區間短空博回吐。<p class="card-link"><a href="/dashboard/2026-07-16/reports/BLK.html">→ 完整 BLK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>CME</b> · 評分 51 · CME 現價 $246.27，今日 +0.44% 升幅溫和。30 日 K 線由低位 $218.58 V 形反彈約 12.7%，但 RSI14 72.39 已進入超買區，短期回調壓力增加。股價高於 MA20 $237.49 但仍低於 MA50 $261.03 及 MA200 $279.25，整體仍屬大型跌勢後反彈結構。今日 H/L 區間 $247.23/$242.02 幅度 2.12%，量比 1.06× 無放量配合，買盤力度不足，建議區間操作或觀望。<p class="card-link"><a href="/dashboard/2026-07-16/reports/CME.html">→ 完整 CME 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>MSFT</b> · 評分 50 · MSFT 現價 $401.10，今日升 +1.38%，日內區間 $392.05-$405.99 幅度達 3.48%，屬高波短炒環境。然而 RSI14 已升至 77.52 進入超買區，且現價較 MA20 $380.41 高出 5.43%，觸發『偏離 MA20 超 5% 不追高』紀律，宜觀望等待回吐。股價仍處於 MA200 $439.95 之下 -8.83%，長線未確認轉勢。短炒兩邊皆可：做空可博 $405.99 高位回吐至 $392.05；做多需等回踩 $385-$392 區間且 RSI 回落至 65 以下方考慮。<p class="card-link"><a href="/dashboard/2026-07-16/reports/MSFT.html">→ 完整 MSFT 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>MPC</b> · 評分 49 · MPC 創 52 週新高 $305.85，今日升 2.23%，MA20 $268.60、MA50 $260.67、MA100 $243.93、MA200 $215.05 呈完美多頭排列，長線趨勢極強。但股價已偏離 MA20 達 13.9%（$305.85 vs $268.60），RSI14 為 85.74 嚴重超買，加上量比僅 0.73× 並無量能確認突破，追入風險極高。富國銀行將目標價上調至 $335 提供中長期支撐，但短線建議等待回調至 $298-$302 區間（即今日低位 $301.45 附近）才考慮做多，止損設於 $294.00，目標 $315.00。<p class="card-link"><a href="/dashboard/2026-07-16/reports/MPC.html">→ 完整 MPC 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>OXY</b> · 評分 40 · OXY 現價 $53.65，今日微跌 0.22%，日內區間 $53.53-$54.20 僅 1.24%，波幅偏低且量比 0.70× 不足，短炒燃料有限。技術上 MA20 ($51.60) &lt; MA50 ($54.94) &lt; MA100 ($56.40) 呈空頭排列，但股價站穩 MA200 ($49.64) 之上，處於 $51.60-$54.94 區間震盪。RSI 58.66 中性偏多，PE TTM 72.50 偏高反映近期盈利偏弱。巴克萊上調至超配、目標價 $72，富國亦上調目標至 $72，構成中線催化。短線建議等待方向突破，於區間兩端高賣低買。<p class="card-link"><a href="/dashboard/2026-07-16/reports/OXY.html">→ 完整 OXY 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>JPM</b> · 評分 63 · JPM 現價 $343.15，今日回吐 -1.08%，但仍站於 MA20 $334.71、MA50 $317.58、MA200 $309.64 之上，多頭排列結構完整。RSI14 為 57.59 屬健康區間，股價僅距 52 週高位 $346.91 約 1.1%，短線面臨關鍵阻力。估值 PE 14.70、PB 2.58 對優質銀行而言合理，滙豐上調目標價至 $369 屬正面催化。今日 H/L 區間 2.39%、量比 1.21× 顯示有獲利回吐但未見恐慌，建議等待回調至 MA20 $334.71-$341.11 區間再考慮做多短炒。<p class="card-link"><a href="/dashboard/2026-07-16/reports/JPM.html">→ 完整 JPM 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>TTWO</b> · 評分 51 · TTWO 現價 $239.57，今日下跌 -1.74%，收近全日低位 $238.00 附近，處於短線回調階段。中長期 MA20 $244.32 &gt; MA50 $231.99 &gt; MA100 $219.44 &gt; MA200 $230.74 全線多頭排列（股價站於 MA200 之上），長線結構仍穩。但股價自近期高位 $258.41 回落約 -7.3%，正回踩 MA20 與短期上升趨勢線交界，RSI14 50.78 中性偏弱。量比 0.95× 低於 1.5×，缺乏買盤確認。估值方面 PB 12.65 偏高且 PE TTM 無數據，估值不便宜。多家大行（富國 $289、Arete $308、BTIG $293）一致看多且上調目標價，提供中期催化劑。短線建議觀望，待 $238-$241 區間止跌訊號或放量突破 MA20 $244.32 再行操作。<p class="card-link"><a href="/dashboard/2026-07-16/reports/TTWO.html">→ 完整 TTWO 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>PH</b> · 評分 49 · Parker-Hannifin（PH）現價 $958.34，今日微升 +0.57%，處於 MA20 $960.15 下方約 -0.19%，RSI14 為 40.06 偏弱。MA 排列呈 MA20 $960.15 &gt; MA100 $926.82 &gt; MA50 $908.84 &gt; MA200 $894.78，中短期均線未形成完美多頭排列（MA50 &lt; MA100 為隱憂）。今日 H/L 區間 $947.08-$977.40 波幅 3.16% 屬高波幅，短炒燃料充足；但量比僅 1.13× 不足確認。PE TTM 35.42 與 PB 8.27 同處偏高估值區間。短線宜區間操作，留意 MA20 $960.15 攻防。<p class="card-link"><a href="/dashboard/2026-07-16/reports/PH.html">→ 完整 PH 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>SO</b> · 評分 49 · SO 報 $96.07，今日反彈 +1.55% 但收復昨日 $94.60 跌勢。技術面混雜：MA20 $95.60 &gt; MA100 $94.97 &gt; MA50 $94.04 &gt; MA200 $92.84，MA50 跌穿 MA100 唔係乾淨嘅多頭排列；股價站穩 MA200 $92.84 之上確認長線多頭格局。RSI 50.49 中性，今日 H/L 區間僅 1.39%（$94.78-$96.12）波幅偏低，量比 0.79× 偏弱無成交確認。PE 24.57、PB 2.92 對公用股而言略貴，估值唔算吸引。建議觀望等待明確方向。<p class="card-link"><a href="/dashboard/2026-07-16/reports/SO.html">→ 完整 SO 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>CMG</b> · 評分 48 · CMG 現價 $34.20，今日跌 1.24%，處於 $33.91-$34.92 區間，日內波幅 2.97% 接近高波幅門檻。股價站於 MA20 ($33.70) 之上但仍受壓於 MA200 ($35.29) 之下，YTD 累跌 36.12%，短線呈反彈後整固格局。量比 0.98× 偏弱，無增量資金配合。RSI 57.88 中性偏強。PE 31.38 與 PB 18.28 估值仍貴，內部人士減持構成負面訊號，但分析師目標價 $45-$50 暗示中線上行空間。建議日內交易者觀望，待方向突破：上破 $34.92 追多至 $35.29 (MA200)，跌破 $33.70 (MA20) 反手做空至 $32.51 (MA50)。<p class="card-link"><a href="/dashboard/2026-07-16/reports/CMG.html">→ 完整 CMG 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>MDB</b> · 評分 48 · MDB 現價 $328.60，今日下跌 -1.33%，區間 $318.12-$334.00 波幅 4.83% 屬高波幅日，但量比僅 0.74× 缺乏資金確認。技術面股價已跌破 MA20 $336.72、MA50 $332.48 及 MA200 $333.77 三大均線，RSI 62.89 偏中性偏強。中線 MA20 &gt; MA50 &gt; MA100 多頭排列仍成立，但短線明顯回調壓力大。估值 PB 9.01 偏貴，PE N/A 反映未盈利。消息面 Needham 將目標價上調至 $430、Truist 至 $400、CFRA 維持強力買入，整體偏多但股價已 YTD +50.37%，建議等待方向明朗。<p class="card-link"><a href="/dashboard/2026-07-16/reports/MDB.html">→ 完整 MDB 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>CDNS</b> · 評分 47 · CDNS 現價 $364.65，今日跌 -1.84%，收於全日低位附近，短線明顯走弱。股價已跌穿 MA20 $377.19 及 MA50 $375.36，偏離 MA20 約 -3.32%，處於 5% 嚴進區間內。長線結構未破：MA20 $377.19 &gt; MA50 $375.36 &gt; MA100 $337.07 多頭排列仍成立，股價亦守於 MA200 $328.20 之上。基本面具備支撐：高盛、羅森布拉特、Benchmark 均給予買入，目標價 $410-$470 較現價有 12%-29% 潛在升幅，惟估值面 PE 85.40、PB 15.33 偏高限制上行彈性。短炒策略：若 $358.74 今日低位守穩可博反彈至 MA20 $377.19；若反彈至 $375-$377 受壓則可短空至 $360 一線。<p class="card-link"><a href="/dashboard/2026-07-16/reports/CDNS.html">→ 完整 CDNS 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>MCD</b> · 評分 47 · MCD 現價 $273.46，今日反彈 +3.21% 從 $264.95 昨收低位修復，但 MA20 $273.55、MA50 $277.36、MA200 $302.21 形成完美空頭排列（MA20&lt;MA50&lt;MA100&lt;MA200），長線結構偏淡。今日 H/L 區間 2.78% 略低於 3% 高波幅門檻，量比 1.06× 未見放量配合，RSI 58.48 中性。52週低位 $264.54 與今日低 $266.00 形成短線支撐。今日反彈或係 dead cat bounce，建議觀望 MA20 $273.55 附近反應決定 long/short 方向。PE TTM 22.54 合理，PB -151.08 因積極回購令股東權益為負（技術上資不抵債），股息率 2.81% 提供下檔緩衝。<p class="card-link"><a href="/dashboard/2026-07-16/reports/MCD.html">→ 完整 MCD 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>UNH</b> · 評分 43 · UNH 今日出現典型 blow-off top 反轉形態：開市急升至 $461.00 後遭拋售，收 $423.38 僅升 1.16%，但幾近貼近全日低位 $420.37，全日波幅 9.60% 極為罕見。雖 MA20 $418.86 &gt; MA50 $401.64 &gt; MA100 $352.25 &gt; MA200 $341.01 維持多頭排列、現價 $423.38 仍高於 MA20 1.08%，但盤中由 $461 急挫近 $40 已構成明顯派發訊號，量比 2.02× 確認有實質沽壓。估值偏高（PE 31.91、PB 3.93），新聞面 Mizuho 將目標價下調至 $350 屬利淡。日內操作建議待反彈至 $427-$430 區間再 short，或守 $420.37-$418.86 區間博技術反彈至 $431.68。<p class="card-link"><a href="/dashboard/2026-07-16/reports/UNH.html">→ 完整 UNH 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>AMD</b> · 評分 42 · AMD 今日急挫 -5.33%，收 $500.94，跌破 MA20 ($533.86) -6.16%，但仍勉強守於 MA50 ($496.27) 之上 0.94%，短線動能明顯轉弱。今日 H/L 區間達 5.38%（高波幅）提供短炒燃料，但量比僅 1.13× 未算放量。RSI 14 報 45.20 偏弱但未到超賣。中長期 MA20 &gt; MA50 &gt; MA100 &gt; MA200 多頭排列仍成立（MA200 $295.01 仍遠低於現價），長線結構未壞。估值方面 PE 165.87、PB 12.67 雙雙極貴，估值面對獲利回吐極為脆弱。建議觀望 MA50 ($496.27) 能否守住，失守再考慮做空至 $466.38 區間。<p class="card-link"><a href="/dashboard/2026-07-16/reports/AMD.html">→ 完整 AMD 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>WFC</b> · 評分 63 · WFC 現價 $88.07，站穩 MA200 ($84.50) 之上 +4.22%，且 MA20 ($85.36) &gt; MA50 ($81.10) &gt; MA100 ($80.89) 形成完整多頭排列，長線結構向好。RSI14 為 59.83 屬健康偏多區，未見超買。惟今日已升 +0.64%、偏離 MA20 達 +3.18%（接近 5% 警戒），加上量比僅 0.84×（縮量），短炒追高值博率偏低。建議待回調至 $86.50-$87.50 區間（MA20 $85.36 之上、今日低位 $87.21 附近）再行吸納，目標 $91.00（52週高位 $96.39 前），止損 $85.20（MA20 之下）。PE 12.80 與 PB 1.66 對大型銀行股屬合理水平，股息率 2.06% 提供下檔保護。<p class="card-link"><a href="/dashboard/2026-07-16/reports/WFC.html">→ 完整 WFC 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>REGN</b> · 評分 56 · REGN 現價 $678.94，當日升 2.18%，盤中區間 $661.38-$680.09，波幅 2.76% 接近高波幅門檻。短線動能偏強（+2.18%），但 RSI14 71.49 已進入超買區，股價偏離 MA20（$642.16）達 5.73%，按嚴進策略不宜追高。MA20 $642.16 &lt; MA50 $646.34 屬短線弱勢排列，股價亦同時受壓於 MA100 $700.26 及 MA200 $703.76 之下，長線偏空。日內策略應等待回調至 $665-$670 區間再考慮做多博反彈至 $700（MA100 / 花旗目標價），或於 $680-$685 阻力區失敗時做空至 $660 之下。量比僅 1.22× 確認不足，需密切留意量能。<p class="card-link"><a href="/dashboard/2026-07-16/reports/REGN.html">→ 完整 REGN 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>UBER</b> · 評分 56 · UBER 現價 $74.04，今日反彈 +1.89%，波幅 3.75% 屬高波幅，短炒燃料充足。股價站於 MA20 ($73.15) 及 MA50 ($72.98) 之上，但 MA50 ($72.98) &lt; MA100 ($73.48)，排列未完全多頭；長線仍受 MA200 ($80.05) 壓制，距 MA200 仍有 -7.50% 空間。PE TTM 18.37、PB 6.09 估值中性，年初至今仍跌 -18.19%。量比僅 1.12× 資金參與度一般。建議嚴進策略，唔追高，等回調至 $72.62-$73.15 區間再考慮做多博反彈至 $75.40-$76.20。<p class="card-link"><a href="/dashboard/2026-07-16/reports/UBER.html">→ 完整 UBER 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>PG</b> · 評分 54 · PG (The Procter &amp; Gamble Company) 收 $151.50，全日反彈 +2.33% 並收近全日高位 $151.51 (今日低位 $148.18)。股價站穩 MA20 $149.07、MA50 $146.53、MA100 $147.86 及 MA200 $148.26 之上，但 MA50 ($146.53) 仍低於 MA100 ($147.86)，排列未算完美多頭。今日 H/L 區間 2.20% 屬中等波幅，惟量比僅 0.80×，升勢未獲成交量確認，動能稍虛。RSI14 55.29 處於中性偏好區間，PE TTM 22.15、PB 6.56 估值偏貴。整體策略以回調吸納為主，不追高，建議等回踩至 $149.50-$150.50 區間 (貼近 MA20 $149.07) 才考慮做多。<p class="card-link"><a href="/dashboard/2026-07-16/reports/PG.html">→ 完整 PG 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>CVX</b> · 評分 47 · CVX 現價 $183.86，今日升 +1.24%，但股價已偏離 MA20 ($174.20) 達 5.54%，超出 5% 嚴進閾值，追高風險大。RSI 68.18 接近超買區。MA 結構 MA20 ($174.20) &lt; MA50 ($181.97) &lt; MA100 ($187.54) 屬中期空頭排列，僅靠股價站穩 MA200 ($173.27) 之上提供長線支撐。今日 H/L 區間僅 1.56%，量比 0.92× 不足，無量配合反彈動能存疑。建議等候回踩至 $178.00-$181.00 區間（MA50 $181.97 附近）再考慮做多博反彈至 MA100 $187.54，或反之於 $186.00-$188.00 阻力區做空博回調至 $180.00。<p class="card-link"><a href="/dashboard/2026-07-16/reports/CVX.html">→ 完整 CVX 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>HLT</b> · 評分 45 · HLT 現價 $323.20，今日跌 -1.61%，收於 $322.00-$322.45 區域，短期跌破 MA20 ($336.09) 及 MA50 ($331.56)，但仍站穩 MA200 ($302.37) 之上 +6.9%，長線牛熊分界未失。RSI 14 為 35.49 處於弱勢區，PE TTM 高達 49.42 估值偏貴，PB -12.50 因大規模回購致股東權益為負。富國維持買入並將目標價上調至 $379 為正面催化。今日 H/L 區間 3.38% 波幅充足，可做短炒但方向未明，建議等待企穩 MA100 ($321.89) 或突破 MA20 ($336.09) 再順勢入場。<p class="card-link"><a href="/dashboard/2026-07-16/reports/HLT.html">→ 完整 HLT 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>TSLA</b> · 評分 43 · TSLA 現價 $391.06 跌 0.86%，處於 MA20 $398.63 之下約 1.9%，且顯著低於 MA200 $417.36（偏離 -6.3%），長線 MA 排列呈空頭結構（MA20 $398.63 &lt; MA50 $409.97 &lt; MA200 $417.36）。RSI14 為 54.76 屬中性區，無方向訊號。估值面 PE TTM 355.51、PB 17.86 極度昂貴。今日 H/L 區間 $385.32-$395.31 達 2.55%，提供短炒波幅，但量比僅 0.96× 缺乏資金確認。整體短炒以區間操作為主，留意 $385.32 支撐及 $398.63 阻力。<p class="card-link"><a href="/dashboard/2026-07-16/reports/TSLA.html">→ 完整 TSLA 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>WBD</b> · 評分 43 · WBD 現價 $27.29，今日微升 +0.07%，日內區間 $26.83-$27.30（波幅 1.70%，未達高波幅門檻 3%）。技術上呈 MA20（$26.75）&lt; MA50（$26.89）&lt; MA100（$27.22）空頭排列，但股價已升穿三條短中期均線，RSI14 處於中性 54.29。量比僅 0.54×，明顯低於 5 日均量，確認本次反彈缺乏資金支持。基本面 PE TTM 為 N/A（疑為負值）、PB 2.10，疊加董事減持 218.48 萬股（$5,946.98 萬）以及多宗反壟斷訴訟，短期難有催化。建議觀望為主，僅在 $26.63-$26.75 區間低吸做多博反彈至 $27.30，或反彈至 $27.30 遇阻做空至 $26.83。<p class="card-link"><a href="/dashboard/2026-07-16/reports/WBD.html">→ 完整 WBD 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>CVNA</b> · 評分 42 · CVNA 現價 70.66 USD，處於 MA20（66.86）之上 5.68%，已超出「嚴進策略」5% 偏離上限，不建議現價追入；股價同時受制於 MA200（72.87）長線牛熊分界下方，技術結構偏弱。今日 H/L 區間達 5.46%（72.77/68.92），高波幅提供短炒燃料，但量比僅 0.75×，成交未配合，方向確認度不足。估值方面 PE TTM 40.84、PB 13.58 屬偏高，缺乏安全邊際。建議等候價格回測 MA20 66.86-67.50 區間或反彈至 MA200 72.77-72.87 阻力區，再順勢操作。<p class="card-link"><a href="/dashboard/2026-07-16/reports/CVNA.html">→ 完整 CVNA 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>NFLX</b> · 評分 42 · NFLX 現價 $74.35，今日反彈 +0.91%，但中長期趨勢明顯向下——MA20 $74.28 &lt; MA50 $80.94 &lt; MA100 $87.93 &lt; MA200 $94.00 完全空頭排列，年初至今累跌 41.65%。短線靠 $70.90 嘅 52 週低位支持，今日反彈喺 MA20 $74.28 附近受阻，日內高位 $74.64 未能突破，RSI 59.72 中性偏好。量比 1.52× 確認有資金參與，但 PE 23.98、PB 10.06 估值仍然偏高，四間大行（MS、Oppenheimer、Citi、Bernstein）紛紛下調目標價至 $90-$100，新聞面偏負面。短炒可喺 $76.00-$76.50 阻力區做空博回調至 $72.94-$70.90 支持區。<p class="card-link"><a href="/dashboard/2026-07-16/reports/NFLX.html">→ 完整 NFLX 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>ZS</b> · 評分 41 · ZS 現價 $146.43，今日跌 1.19%，日內 H/L 區間達 4.74%（高波幅），短炒燃料充足但量比僅 0.74×（低於 1.5× 放量閾值），資金參與度不足。短線 MA20 $138.69 &lt; MA50 $143.46 ≈ MA100 $143.38，並非多頭排列，股價雖站於三條短中期均線之上但偏高（偏離 MA20 達 5.6%），有均值回歸壓力。RSI 67.85 略偏高但未超買。長線 MA200 $198.68 仍遠高於現價，YTD 累跌 48.85%，富國銀行將目標價由 $210 降至 $180，盈利前景存疑。建議日內交易者等待更明確方向。<p class="card-link"><a href="/dashboard/2026-07-16/reports/ZS.html">→ 完整 ZS 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>AXP</b> · 評分 58 · AXP 現價 361.57 USD，今日微升 0.87%，收於 361.57，略高於昨收 358.44。中長期趨勢明確向好：MA20 346.38 &gt; MA50 327.66 &gt; MA100 319.63 形成多頭排列，股價 361.57 站於 MA200 338.75 之上確認長線牛市格局，RSI14 64.08 處於健康區間。但股價已偏離 MA20 達 4.39%，略超嚴進策略 5% 警戒線；今日量比僅 0.52 倍，明顯縮量；H/L 區間僅 1.31%，缺乏短炒波幅。短線宜等待回調至 354-358 區間（即今日低位至略低於現價）企穩再考慮做多，目標 369-372，止損 344（MA20 下方）。<p class="card-link"><a href="/dashboard/2026-07-16/reports/AXP.html">→ 完整 AXP 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>NOW</b> · 評分 53 · NOW 現價 $104.01，今日區間 $99.31-$105.86，幅度 6.29% 屬高波幅交易日，短炒燃料充足。股價略高於 MA20 ($102.02)、MA50 ($103.12) 同 MA100 ($103.05)，但 MA20 &lt; MA50 &lt; MA100 排列未構成標準多頭，長線仍受 MA200 ($129.23) 壓制，年初至今跌 45.78%。RSI 14 為 68.80 接近超買區域。PE 61.91 同 PB 9.15 估值偏高，但分析師目標價 $130-$156 普遍高於現價，屬正面催化。量比 1.11× 資金參與度一般，多空均可考慮做 day-trade。<p class="card-link"><a href="/dashboard/2026-07-16/reports/NOW.html">→ 完整 NOW 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>ANET</b> · 評分 51 · ANET 收報 $168.56，今日跌 1.95%，全日高低區間 $163.97-$170.28，幅度 3.74% 屬高波幅，短炒燃料充足。MA20 $170.67 &gt; MA50 $160.70 &gt; MA100 $152.14 &gt; MA200 $144.61，中長線多頭排列未變，今日股價跌破 MA20 $170.67 約 1.24%，需觀察能否守穩於 MA50 $160.70 之上。估值 PE TTM 57.92、PB 15.74 偏高，富國及摩根大通分別上調目標價至 $200 及 $220，新聞面偏正面。建議於 $164.00-$165.50 區間分注吸納做多，止損 $161.50，目標 $170.67 (MA20)，博反彈至 $174.00 之上。<p class="card-link"><a href="/dashboard/2026-07-16/reports/ANET.html">→ 完整 ANET 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>ADBE</b> · 評分 48 · ADBE 今日急升 4.79%，收報 $235.31，盤中區間 $222.14-$235.48，振幅 5.67% 屬高波幅，短炒燃料充足。股價已突破 MA20 $211.84 及 MA50 $230.94，但 MA20 &lt; MA50 &lt; MA100 $240.68 仍屬空頭排列，且 RSI14 80.42 嚴重超買，量比僅 1.19× 未確認突破。下一阻力位為 MA100 $240.68，支持位為 MA50 $230.94。基本面 PE TTM 13.47 對科技股偏便宜，但 PB 8.15 偏高，年內仍跌 35.79%，估值修復尚未完成。建議等回調確認方向再行動。<p class="card-link"><a href="/dashboard/2026-07-16/reports/ADBE.html">→ 完整 ADBE 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>DE</b> · 評分 44 · DE 現價 $598.97，今日反彈 +1.61%，由今日低位 $583.90 回升至 $598.97，但仍受制於 MA20 $604.83 之下。技術面呈混合訊號：MA20 $604.83 &gt; MA100 $585.35 &gt; MA50 $582.02，排列未完全形成多頭（MA50 仍在 MA100 之下）。RSI 14 為 37.87，處於偏弱區域。今日 H/L 區間 $583.90-$599.74 幅度 2.64%，有一定短炒波幅，但量比 0.89× 偏弱，未獲成交確認。PE TTM 33.97、PB 5.90 估值偏貴。多間大行下調目標價（JPM $590、Citi $595、Oppenheimer $680），整體情緒偏淡。短線宜觀望 $604.83 能否突破企穩，否則或回試 MA50 $582.02 支持。<p class="card-link"><a href="/dashboard/2026-07-16/reports/DE.html">→ 完整 DE 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>BSX</b> · 評分 43 · BSX 今日 +3.67% 反彈至 $44.62，但中長期結構仍嚴重偏弱：MA20 $44.34 &lt; MA50 $48.81 &lt; MA100 $57.70 &lt; MA200 $76.02 全線空頭排列，年初至今累跌 -57.36%，股價距 52 週低位 $42.63 僅一步之遙。估值 PE 18.67、PB 2.56 不算便宜，量比僅 1.10× 未確認反彈買盤持續性，RSI 52.04 中性。日內操作不建議追多，較佳策略係喺 $45.20-$45.50（即今日高位 $45.45 附近）部署淡倉，博回測 $42.63-$43.00 區間，止損 $46.20。<p class="card-link"><a href="/dashboard/2026-07-16/reports/BSX.html">→ 完整 BSX 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>PLTR</b> · 評分 42 · PLTR 現價 $134.44，今日微漲 0.51%，盤中區間 $128.68-$134.89 達 4.62% 屬高波幅，短炒燃料充足。RSI14 82.09 嚴重超買，股價較 MA20 $125.17 偏高 7.4%（超 5% 追高警戒線），嚴進策略下不宜追價。MA 結構仍為空頭排列（MA20 $125.17 &lt; MA50 $132.55 &lt; MA100 $138.97 &lt; MA200 $155.87），現價仍處 MA200 之下 13.7%，長線弱勢未改。估值 PE TTM 149.38、PB 38.14 屬極端高位，缺乏估值安全墊。量比 0.81× 量縮配合小陽，買盤動能不足。日內操作建議：反彈至 $138-$140（MA100 $138.97 附近）做空博 $128.68；或回調至 $128-$130 區間做多博 $138.97。當前位置宜觀望。<p class="card-link"><a href="/dashboard/2026-07-16/reports/PLTR.html">→ 完整 PLTR 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>RTX</b> · 評分 60 · RTX 現價 $194.36，今日微跌 -0.78%，處於上升趨勢中嘅短線回調。股價 $194.36 仍然企穩喺 MA20 $192.12、MA50 $183.54、MA100 $189.57 同 MA200 $185.53 之上，多頭格局未破。今日 H/L 區間 $192.85-$196.72 僅 1.99%，波幅偏低；量比 0.99× 無明顯放量。RSI14 62.50 屬健康區間，估值 PE TTM 36.47 偏貴限制上行空間。CFRA 升級買入 + Q1 業績大超預期（EPS $1.78 vs 預期 $1.52）為中期催化劑，但短線宜等回調至 $192-$193 區間企穩先考慮。<p class="card-link"><a href="/dashboard/2026-07-16/reports/RTX.html">→ 完整 RTX 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>VRTX</b> · 評分 60 · VRTX 現價 $486.03，今日升 +1.88%，處於明確多頭排列（MA20 $488.34 &gt; MA50 $458.68 &gt; MA100 $455.63 &gt; MA200 $448.86），但股價正貼近 MA20 $488.34 阻力，今日 H/L 區間 $476.25-$487.30 幅度 2.27%，量比僅 1.08× 確認不足。基本面強勁（Q1 EPS $4.47 擊敗預期 $4.24，富國上調目標價至 $515），RSI14 52.47 中性偏多。日內策略建議耐心等待回踩 $480-$482 區間吸納做多，博反彈突破 MA20 $488.34 至前高 $498.43 / $496.50 阻力區。<p class="card-link"><a href="/dashboard/2026-07-16/reports/VRTX.html">→ 完整 VRTX 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>HWM</b> · 評分 58 · HWM 現價 $271.19，今日跌 -2.88%，盤中區間 $267.76-$279.20，波幅 4.22% 屬高波幅日，短炒燃料充足。技術面 MA20 $273.89 &gt; MA50 $265.63 &gt; MA100 $255.71 &gt; MA200 $231.36 維持多頭排列，但現價已跌破 MA20 並測試 MA50，RSI14 47.82 中性偏弱。估值 PE TTM 63.07、PB 19.69 屬明顯高估，限制上行空間。短線以 MA50 $265.63 為主要支持、MA20 $273.89 為即時阻力，震盪格局明顯，宜區間操作。<p class="card-link"><a href="/dashboard/2026-07-16/reports/HWM.html">→ 完整 HWM 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>TT</b> · 評分 58 · Trane Technologies (TT) 現價 $475.00，今日下跌 -1.08%，日內高低區間 $465.48-$479.06，波幅 2.86% 屬高波動範圍。長線 MA20 ($481.31) &gt; MA50 ($470.23) &gt; MA100 ($459.56) &gt; MA200 ($437.33) 維持多頭排列，價格仍站穩 MA200 之上大格局偏多，但短線跌穿 MA20 且 RSI14 35.23 偏弱，技術上係健康回調而非轉勢。基本面強勁：JPM、Oppenheimer、Citi、RBC 齊齊上調目標價（最高 Citi 睇 $570，Oppenheimer $530），為後市提供下檔保護。建議等回調至 $465.48-$470.23 (MA50 與日低共振區) 確認承接再博短多，首目標 MA20 $481.31。<p class="card-link"><a href="/dashboard/2026-07-16/reports/TT.html">→ 完整 TT 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>JNJ</b> · 評分 57 · JNJ 處於中長期上升通道，現價 $249.97 高於 MA200 $222.56 約 12.3%，MA20 ($250.88) &gt; MA50 ($238.11) &gt; MA100 ($238.13) 多頭排列完整。RSI 54 處於中性區，今日反彈 +1.19%，H/L 區間 2.85% 提供短炒空間。多家券商升級 (Argus 目標價 $290、RBC 維持 $287) 利好情緒。估值 PE TTM 29、PB 7.41 偏高，量比 1.09× 未算放量，建議回踩 $246.43-$248.00 區間分批吸納做多，博反彈至 $253.54-$258.51 (今日高位 + 近日整固區)，止損 $244.50。<p class="card-link"><a href="/dashboard/2026-07-16/reports/JNJ.html">→ 完整 JNJ 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>LIN</b> · 評分 55 · Linde plc (LIN) 收報 $520.74 USD，全日升 1.28%，呈現先跌後升格局，日內由 $510.67 反彈至 $522.11 收市附近。技術上 MA20 ($523.40) &gt; MA50 ($513.92) &gt; MA100 ($505.45) &gt; MA200 ($471.87) 維持完整多頭排列，但現價 $520.74 略低於 MA20 $523.40，受短線均線壓制。RSI 49.18 處於中性。估值偏貴，PE TTM 34.58、PB 6.25 限制上行空間。利好方面，花旗、BMO、RBC 三家券商先後上調目標價至 $600/$560/$570，券商樂觀情緒明顯。建議待回調至 $513.92-$517.00 區間 (即 MA50 附近) 吸納做多博反彈，止損 $508.00，目標先睇 $525.00，4 PM 前必須平倉。<p class="card-link"><a href="/dashboard/2026-07-16/reports/LIN.html">→ 完整 LIN 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>MDT</b> · 評分 55 · MDT 今日強彈 +3.84% 由 $80.47 收至 $83.56，盤中區間 $81.19-$84.79（振幅 4.31%）屬高波幅日，提供短炒燃料。然而量比僅 1.05× 並未明顯放量配合，技術上 MA20 $81.13 上方但卡在 MA100 $83.58 同區；MA200 $90.78 仍高懸 7.95%，長線熊市結構未改。RSI 14 = 57.04 屬健康區間。基本面 PE 22.40、PB 2.16 估值合理，股息率 3.58% 提供下檔防禦。新聞面 1 升 4 降目標價（Deutsche Bank 降至 $78 已低於現價）分歧大。嚴進策略下不追高，建議回調 $81.30-$82.30 才考慮做多博延伸至 $87.00。<p class="card-link"><a href="/dashboard/2026-07-16/reports/MDT.html">→ 完整 MDT 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>FTNT</b> · 評分 54 · FTNT 現價 $160.78，今日回調 -2.27%，仍站穩喺 MA20 $155.24 之上。長線 MA 排列呈完美多頭 (MA20 155.24 &gt; MA50 140.41 &gt; MA100 111.25 &gt; MA200 96.68)，RSI 59.73 健康，YTD 升幅 +53.24% 強勁。今日 H/L 區間 3.68% 屬高波幅，短炒空間充足，但量比僅 0.90×，資金參與度不足。現價偏離 MA20 達 3.57%，略為偏高，建議等待回調至 $155.24-$157.50 (MA20 附近) 吸納做多，止損 $151.00，目標 $165.00-$166.83 (今日高位至 52 週高位)。估值 PE 62.32、PB 119.27 偏貴，需嚴守止損。<p class="card-link"><a href="/dashboard/2026-07-16/reports/FTNT.html">→ 完整 FTNT 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>ASML</b> · 評分 53 · ASML 現價 1784.87 USD，今日跌 1.67% 但盤中 H/L 區間達 4.16%（1853.41 / 1779.12），呈高波幅日。股價略低於 MA20（1821.65）約 2.02%，仍站於 MA50（1712.39）及 MA200（1353.14）之上，多頭排列未破壞但短線轉弱。RSI14 為 46.69，中性偏弱。量比 1.08× 屬一般，未見明顯資金放量。基本面方面 PE 56.84、PB 1606.73 估值極貴，但券商 Argus、RBC 維持買入並上調目標價至 2,100 美元形成中期催化劑。今日收近全日低位，短線宜觀望下方 1779.12 支撐能否守住，再決定做多博反彈至 MA20 1821.65 或做空跌破 1779 加速下行。<p class="card-link"><a href="/dashboard/2026-07-16/reports/ASML.html">→ 完整 ASML 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>HD</b> · 評分 53 · HD 今日收報 $348.02，升 +1.93%，H/L 區間 $340.64-$350.81，幅度 2.92%，接近高波幅門檻。股價站於 MA20 ($342.01)、MA50 ($325.57)、MA100 ($333.77) 之上，但受制於 MA200 ($352.20) 下方，RSI14 為 52.42 屬中性。短線呈反彈格局，但 MA50 &lt; MA100 顯示中期均線未完全修復，多頭排列唔完整。量比 1.12× 確認資金參與一般，唔足以支持即時突破 MA200。建議等回調至 MA20 附近再考慮做多，或待放量突破 $352.20 後追入。<p class="card-link"><a href="/dashboard/2026-07-16/reports/HD.html">→ 完整 HD 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>TGT</b> · 評分 53 · TGT 現價 $140.21，今日升 1.39%，盤中最高 $141.74 已突破 52 週高位 $141.20，但收市略為回落。均線呈完美多頭排列（MA20 $133.47 &gt; MA50 $129.02 &gt; MA100 $125.01 &gt; MA200 $111.46），長線結構強勁，股價站穩 MA200 之上約 25.8%。然而現價偏離 MA20 已達 5.05%，觸及『嚴進策略』5% 上限，追入風險大。RSI14 為 51.01 屬中性，未見超買。今日 H/L 區間 1.75%、量比 1.09×，量能未配合突破，日內短炒燃料一般。建議等待回調至 MA20 附近 $132.50-$134.50 吸納做多，止損 $129.00（MA50 之下），目標 $141.74- $145.00（52 週高位之上延伸）。<p class="card-link"><a href="/dashboard/2026-07-16/reports/TGT.html">→ 完整 TGT 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>SPGI</b> · 評分 52 · SPGI 現價 $457.38，今日強升 +2.90%，收近全日高位 $457.53。股價已大幅偏離 MA20 ($413.95) 達 +10.5%，遠超「偏離 MA20 &gt; 5% 不追高」嘅嚴進門檻；RSI14 高見 83.75 處於極度超買區域，短期回調風險顯著。雖然 MA20 $413.95 &gt; MA50 $403.31 確認短中期上行結構，但 MA100 $405.26 &gt; MA50 $403.31，多頭排列唔算乾淨。基本面 PE 28.91、PB 4.34 偏貴，加上 BofA 將目標價由 $575 下調至 $550、摩根士丹利由 $557 下調至 $525，估值上行動能受限。建議等回調至 $436-$445 區間（MA200 / 昨日收）再考慮做多博反彈，唔宜喺 $457 附近高追。<p class="card-link"><a href="/dashboard/2026-07-16/reports/SPGI.html">→ 完整 SPGI 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>BX</b> · 評分 51 · BX 現價 $128.97，今日升 1.51%，區間 $125.26-$128.97 幅度 2.88%，接近高波幅門檻。短線 MA20 ($121.02) &gt; MA50 ($119.95) &gt; MA100 ($118.12) 呈多頭排列，但 RSI 76.86 已超買，且現價較 MA20 偏離 6.58% 超過 5% 嚴進門檻，不宜追入。價格仍低於 MA200 $134.06，長線未確認轉勢。估值 PE 33.07、PB 12.10 偏高，股息率 3.91% 為亮點。巴克萊將目標價由 $124 下調至 $119 屬主要利淡。建議等待回調至 $122.00-$124.00 區間（接近 MA20）再考慮吸納做多，止損 $118.50（MA50 $119.95 下方），目標 $130.00-$134.06（MA200）。<p class="card-link"><a href="/dashboard/2026-07-16/reports/BX.html">→ 完整 BX 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>ORLY</b> · 評分 48 · ORLY 今日由 52 週低位 $82.73 反彈 +4.25% 至 $86.25，日內區間 $83.74-$86.30（幅度 2.96%，接近高波幅門檻），呈現超跌反彈格局。然而均線結構全面空頭排列：MA20 $87.36、MA50 $89.21、MA100 $90.92、MA200 $93.98，現價 $86.25 仍低於全部均線，MA200 下方 -8.2%，長線趨勢偏弱。RSI14 48.87 中性自超賣區回升，估值 PE TTM 28.09、PB -67.28（股東權益為負，主因歷年大量庫藏股），券商目標價 $104-$113 仍偏多。短炒可順反彈做多至 MA20 $87.36，若受阻則反向做空，整體仍屬反彈而非趨勢反轉。<p class="card-link"><a href="/dashboard/2026-07-16/reports/ORLY.html">→ 完整 ORLY 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>TJX</b> · 評分 47 · TJX 現價 $154.79，今日反彈 +2.53%，但 MA20 ($155.38) &lt; MA50 ($156.29) &lt; MA100 ($157.32) 已形成空頭排列，量比僅 0.95× 未確認反彈力度。股價站於 MA200 ($153.64) 之上守住長線牛熊分界，但短線動能受壓。PE 30.17 與 PB 16.44 估值偏貴，股息率 N/A 削弱持有吸引力。短線策略以反彈至 MA20-MA50 ($155.38-$156.29) 區間遇阻做空為主，或回調至 $151.45-$153.64 區間（今日低位 + MA200）做多博反彈，兩個方向均需嚴控止損。<p class="card-link"><a href="/dashboard/2026-07-16/reports/TJX.html">→ 完整 TJX 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>SHW</b> · 評分 46 · SHW 現價 $338.14，今日反彈 +1.76%，但量比僅 0.58×，反彈缺乏成交配合，可信度打折。技術上股價站於 MA20 $334.69 及 MA200 $333.08 之上略為偏多，但 MA 排列並非完美多頭（MA20 $334.69 &gt; MA100 $324.62 &gt; MA50 $318.91，MA50 仍在 MA100 之下）。估值上 PE TTM 32.51、PB 18.71 屬偏高，缺乏安全邊際。RSI14 49.13 中性，未見超買超賣極端訊號。整體震盪格局，日內交易者宜觀望為主，待 $331 支撐守穩或 $339 突破確認方向。<p class="card-link"><a href="/dashboard/2026-07-16/reports/SHW.html">→ 完整 SHW 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>WMT</b> · 評分 40 · WMT 現價 $114.95，今日反彈 +2.15%，收復 MA20 ($114.41) 但仍受壓於 MA200 ($117.51) 之下，中長期均線呈空頭排列（MA20 114.41 &lt; MA50 119.97 &lt; MA100 122.92），結構偏弱。RSI 14 為 48.09 中性區域，今日 H/L 區間 1.77% 屬中等波幅，未達 3% 高波幅門檻；量比 1.26× 略高於均量但未確認強資金流入。估值面 PE TTM 40.48、PB 9.70 偏高，估值溢價限制反彈空間。短線宜在 MA200 ($117.51) 附近判斷方向：突破則短多博反彈至 MA50 ($119.97)，遇阻回落則做空至 $110 附近。<p class="card-link"><a href="/dashboard/2026-07-16/reports/WMT.html">→ 完整 WMT 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>BAC</b> · 評分 68 · BAC 現價 $61.49，較昨收 $61.59 微跌 -0.16%，正處於 52 週高位 $61.59 下方。MA20 $58.70、MA50 $54.96、MA100 $52.68、MA200 $52.95 形成完整多頭排列，年初至今 +30.77% 升幅強勁，長線確認牛市結構。RSI14 67.44 接近超買區間但未到達。今日區間 $60.99-$62.00 僅 1.64%，短炒波幅有限；量比 1.04× 顯示資金參與度一般，未有明顯放量配合。PE 14.20、PB 1.56 估值合理。當前股價偏離 MA20 已達 +4.75%，接近『不追高』5% 警戒線，建議等待回調至 $60.50-$61.00 區間（即今日低位 $60.99 上方）確認承接再考慮做多。<p class="card-link"><a href="/dashboard/2026-07-16/reports/BAC.html">→ 完整 BAC 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>TFC</b> · 評分 65 · TFC 現價 $53.25，今日升 0.85%，呈現完美 MA 多頭排列（MA20 $50.68 &gt; MA50 $49.39 &gt; MA100 $48.75 &gt; MA200 $48.35），股價站穩所有均線之上，確認中線上升趨勢。然而現價已偏離 MA20 達 5.07%（剛觸發 5% 警戒線），不宜追高。RSI14 為 66.29 接近超買區域，量比僅 1.23× 未明顯放量，配合 PE TTM 13.18、PB 1.12 估值合理但不便宜。建議等待回調至 $52.00-$52.50 區間（即昨日收 $52.80 附近 + MA20 $50.68 上方）再考慮做多，目標 $54.00-$54.50，止損 $51.00 下方。<p class="card-link"><a href="/dashboard/2026-07-16/reports/TFC.html">→ 完整 TFC 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>BMY</b> · 評分 64 · BMY 現價 $60.51，今日升 3.05%，呈現高波幅單日 (H/L 區間 3.28%)。均線呈標準多頭排列 (MA20 $57.07 &gt; MA50 $56.89 &gt; MA100 $58.17)，股價站穩 MA200 $54.61 之上，RSI14 為 63.78 屬健康偏強區間。惟量比僅 0.85× 低於 5 日均量，追買資金未見配合，加上股價正逼近 52 週高位 $62.37，技術性阻力明顯。估值 PE 16.95、PB 6.16 屬合理偏高，股息率 4.29% 提供防守性。建議回測至 $59.50-$60.00 區間分注吸納做多，博反彈至 $62.00-$62.37 (52 週高)。<p class="card-link"><a href="/dashboard/2026-07-16/reports/BMY.html">→ 完整 BMY 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>BKNG</b> · 評分 55 · BKNG 現價 $184.61，日內反彈 +0.99%，區間 $180.00-$185.92 幅度 3.21% 達高波幅門檻。股價站於 MA20 $177.85 之上 3.80%、RSI14 58.33 屬健康區，但 MA50 $169.37 &lt; MA100 $171.61 多頭排列唔完整，仍受制 MA200 $186.91 之下約 1.23%。PE 24.32 屬合理區間，PB -16.51 為負值（股東權益為負，反映持續大手回購），技術上資不抵債但行業龍頭多以負 PB 交易。綜合判斷偏向震盪向上試 MA200，但 R/R 同成交量未足以撐高信心。<p class="card-link"><a href="/dashboard/2026-07-16/reports/BKNG.html">→ 完整 BKNG 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>PANW</b> · 評分 54 · PANW 現價 $353.99，距 52 週高位 $357.53 僅 -$3.54，技術面 MA20 $323.67 &gt; MA50 $280.38 &gt; MA100 $222.46 &gt; MA200 $207.65 完美多頭排列，RSI 68.17 屬健康水平。但股價偏離 MA20 達 +9.37%，已超出 5% 不追高門檻；今日 H/L 區間 3.77% (今日低 $347.10 / 今日高 $360.44) 雖屬高波幅日，但收近平盤 -0.01% 且量比 1.02× 未見突破動能確認。基本面 PE TTM 高達 313.27、PB 10.40 估值過貴。然而 Capital One (目標價 $421) 及 Tigress Financial (目標價 $430) 等多間券商上調評級，正面催化存在。短線建議待回調至 $347.10-$350.00 (今日低位區) 觀察承接，或放量突破 $360.44 後再行跟進。<p class="card-link"><a href="/dashboard/2026-07-16/reports/PANW.html">→ 完整 PANW 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>INTU</b> · 評分 52 · INTU 現價 $294.79，今日反彈 +5.40%，全日 H/L 區間 $277.56-$298.43 達 7.08%，呈現超跌後嘅強勁反彈日格局。RSI14 70.30 已進入超買區；股價 $294.79 較 MA20 $271.36 偏高 8.6%，超出「嚴進策略」5% 追高警戒線，故此水平不建議即市追入。中線 MA20 &lt; MA50 $311.95 &lt; MA100 $363.42 &lt; MA200 $487.13 為典型空頭排列，YTD 跌 -60.97%。估值 PE 17.99、PB 3.92 屬合理偏低。策略上等回調至 $269-$275 (MA20 $271.36 附近及今日低位) 才考慮博短線反彈至 MA50 $311.95；若反彈乏力於 $300-$311 區間，可嘗試做空博新一輪下試 $260。<p class="card-link"><a href="/dashboard/2026-07-16/reports/INTU.html">→ 完整 INTU 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>MA</b> · 評分 51 · MA 今日強升 +3.05% 收 $551.54，創近期新高，但現價已較 MA20 $515.97 偏離達 6.9%，超出嚴進策略 5% 閾值，RSI14 高達 79.18 處於超買區，短線追入風險大。量比僅 0.88×，升勢欠缺成交配合，資金確認不足。中線結構仍偏多（站穩 MA200 $529.07 之上），但短炒宜等候回調至 $515-525 區間（即 MA20/MA200 附近）再部署做多，博反彈至 $570-580。PE TTM 31.90、PB 72.80 估值偏貴，限制向上空間。<p class="card-link"><a href="/dashboard/2026-07-16/reports/MA.html">→ 完整 MA 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>MMM</b> · 評分 49 · MMM 現價 $161.77，今日升 0.77%，處於 MA20 ($160.44) 之上但 RSI14 僅 36.83 顯示動能偏弱。中期均線 MA20 &gt; MA50 ($154.93) &gt; MA100 ($152.66) 形成多頭排列，股價亦企穩喺 MA200 ($158.14) 之上，長線格局未轉差。惟量比 1.24× 偏低，今日 H/L 區間 2.60% 不足以構成高波動短炒燃料，加上 PE TTM 31.17 與 PB 25.86 估值偏貴，向上空間受限。短線宜待回調至 MA20 附近 ($159.50-$160.44) 吸納博反彈至 $165.00 (近期高位 $165.91 之下)，嚴守止損 $157.50 (MA200 下方)。<p class="card-link"><a href="/dashboard/2026-07-16/reports/MMM.html">→ 完整 MMM 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>KR</b> · 評分 44 · KR 今日反彈 +3.62% 至 $58.61，H/L 區間 $56.67-$58.80 幅度 3.63%，短炒波幅充足。但中長期結構仍弱：MA20 $58.04 &lt; MA50 $62.18 &lt; MA100 $66.25 呈空頭排列，股價 $58.61 較 MA200 $65.67 低 10.8%，RSI 14 為 53.16 中性。估值偏貴（PE TTM 34.27、PB 6.33），且反彈量比 0.77× 低於 5 日均量，缺乏買盤確認。建議日內僅在 MA20 $58.04 附近試多博反彈至 $60.54 即食，不持倉過夜；若 $58.04 失守則反手做空。<p class="card-link"><a href="/dashboard/2026-07-16/reports/KR.html">→ 完整 KR 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>ISRG</b> · 評分 42 · ISRG 現價 $402.33，今日反彈 +3.43%，但中長期均線全面向下（MA20 $406.24 &lt; MA50 $419.09 &lt; MA100 $446.52 &lt; MA200 $487.03），股價仍處 MA200 下方約 17.4%，長線結構弱勢。今日反彈受阻於 MA20 $406.24（今日高位 $405.48），量比 1.41× 略為放量但未確認突破。估值仍偏高（PE TTM 48.77、PB 8.16），疊加盤後業績後股價跌 11% 反映市場對指引有疑慮，操作上以反彈至 MA20 區間做空為主，多單僅限 $393-$395 區間博區間反彈。<p class="card-link"><a href="/dashboard/2026-07-16/reports/ISRG.html">→ 完整 ISRG 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>TMUS</b> · 評分 63 · TMUS 現價 $192.85，今日強彈 +2.79%，H/L 區間 $187.75-$194.15，幅度 3.32% 屬高波幅，短炒燃料充足。股價已升穿 MA20 $181.83 及 MA50 $185.57，但仍未收復 MA100 $195.58 及 MA200 $201.68；整體 MA 排列仍呈空頭（MA20 &lt; MA50 &lt; MA100 &lt; MA200），結構偏弱。RSI14 60.66 屬健康區間。今日已大升，建議等待回調至 $189.50-$191.00 區間再考慮做多，目標博反彈至 MA100 $195.58 / MA200 $201.68。美銀維持買入目標價 $220 為中線參考。<p class="card-link"><a href="/dashboard/2026-07-16/reports/TMUS.html">→ 完整 TMUS 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>URI</b> · 評分 56 · URI 今日反彈 +2.34% 至 $1071.82，從日內低位 $1042.51 回升，盤中區間 3.17% 屬高波幅。MA20 $1088.70 &gt; MA50 $1033.28 &gt; MA100 $920.06 &gt; MA200 $897.81 維持完整多頭排列，但現價仍低於 MA20 約 1.55%，RSI 34.65 處弱勢區。量比 0.95× 略低於 5 日均量，未能確認反彈買盤強度。花旗目標價 $1,270、富國 $1,245 維持買入，估值 PE 27.36、PB 7.50 偏貴但分析師共識仍有約 16-19% 上行空間。建議等待回踩確認再部署，嚴守 $1042 止損。<p class="card-link"><a href="/dashboard/2026-07-16/reports/URI.html">→ 完整 URI 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>DHR</b> · 評分 54 · DHR 現價 $205.01，今日升 2.10%，區間 $200.37-$205.26（幅度 2.39%）。股價剛剛突破 MA200 $204.36，技術上確認長線多頭回歸，但同時股價偏離 MA20 $192.19 達 6.67%（已超過 5% 嚴進閾值），不建議追高。PE TTM 高達 39.73 反映估值偏貴，量比僅 1.07× 缺乏成交量配合，RSI 64.43 處於中性偏好區。日內策略：以 $199-202 區間（今日低位至前收 $200.79）為低吸做多區，上望 $210；如失守 $200 則反向做空至 $195。<p class="card-link"><a href="/dashboard/2026-07-16/reports/DHR.html">→ 完整 DHR 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>NKE</b> · 評分 51 · NKE 今日急彈 +4.21%，收報 $44.57，創近 30 日最大單日升幅，且今日 H/L 區間達 3.97%（高波幅），短炒燃料充足。然而 MA20 ($42.93) &lt; MA50 ($43.62) &lt; MA100 ($47.28) &lt; MA200 ($56.07) 仍屬空頭排列，價格僅站於 MA20/MA50 之上，仍受制於 MA100 ($47.28) 及 MA200 ($56.07) 下方，年初至今累跌 38.93%。RSI 14 為 67.23 屬健康偏強區域，未見超買。量比 0.89× 偏弱，+4.21% 升幅缺乏成交配合，breakout 持續性存疑。PE 21.22、PB 4.45 估值不便宜。整體短炒可做，但中期趨勢未確認轉強，宜嚴控止損。<p class="card-link"><a href="/dashboard/2026-07-16/reports/NKE.html">→ 完整 NKE 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>TMO</b> · 評分 63 · TMO 收報 $543.19，升 1.48%，創近期新高。長線站穩 MA200 $528.90 之上，YTD +27.82%，多頭格局未變。但股價已較 MA20 $507.62 偏離 7.01%（超出 5% 嚴進門檻），RSI14 71.42 逼近超買，估值 PE 29.85 / PB 3.89 並不便宜，今日量比 1.11× 配合度一般。建議避免追高，等待回調至 $528-$535 區間（MA200 / 今日低位）再考慮做多；短線若反彈乏力於 $545 之上，亦可小注做空博技術回吐。<p class="card-link"><a href="/dashboard/2026-07-16/reports/TMO.html">→ 完整 TMO 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>VLO</b> · 評分 61 · VLO今日+2.60%收300.26，逼近52週高位301.43。多頭排列完整（MA20 267.79 &gt; MA50 257.11 &gt; MA100 245.23 &gt; MA200 210.67），年內升107.55%。但RSI 74.99接近超買，股價偏離MA20達12.1%，量比僅0.70×呈量價背離。估值PE 21.92、PB 3.74對能源股偏高。建議等回調至294.00-297.00吸納做多，止損291.00，目標304.00-305.00；或於301.43-303.64遇阻做短，止損306.50，目標295.00。<p class="card-link"><a href="/dashboard/2026-07-16/reports/VLO.html">→ 完整 VLO 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>ROST</b> · 評分 54 · ROST 今日強升 +3.06% 收 $232.72，創近月新高，長線多頭排列完整（價格 $232.72 高於 MA200 $197.49），年初至今累升 78.36%，基本面獲多家券商目標價 $245-$270 買入加持。然而現價已較 MA20 $221.11 高出 5.26%，剛好觸發『不追高』紅線，RSI14 升至 70.42 接近超買區，估值 PE 32.5 / PB 11.85 偏貴。量比 0.96× 略低於 5 日均量，缺乏放量確認。短線宜等回調至 $226.71-$229.50（今日低 + MA50 $224.05 上方）再考慮做多博反彈至 $237.00 前高；如直接上衝 $240.13 失敗，亦可嘗試短空。<p class="card-link"><a href="/dashboard/2026-07-16/reports/ROST.html">→ 完整 ROST 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>SYK</b> · 評分 51 · Stryker (SYK) 今日急升 +4.66% 至 $331.20，今日 H/L 區間 $320.12-$335.86 達 4.75%（高波幅），短炒燃料充足。RSI14 為 57.26 處健康中位，股價 $331.20 略高於 MA20 $319.99（偏離 +3.50%，未觸發 5% 禁買線），亦已升穿 MA100 $326.86，但 MA50 $310.56 &lt; MA100 $326.86 形成短中期均線錯位（非標準多頭排列），加上股價仍處 MA200 $345.32 之下（年內跌 -14.84%），長線結構偏弱。量比僅 0.70×，升勢欠成交確認。估值 PE TTM 38.33、PB 5.53 偏貴，宜待回調至 $323-327 (MA20 $319.99 之上) 才考慮短多做多博反彈至 $340-345 (MA200 $345.32)。<p class="card-link"><a href="/dashboard/2026-07-16/reports/SYK.html">→ 完整 SYK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>COST</b> · 評分 50 · COST 今日強勁反彈 +3.17%，由 916.54 收市位反彈至現價 945.57 USD，升穿 MA20 941.54 但仍受制於 MA50 978.95 及 MA200 956.62 之下，中線趨勢仍偏空（MA20 &lt; MA50 &lt; MA100 空頭排列）。PE TTM 高達 47.54、PB 25.37，估值明顯偏貴，限制上方空間。RSI 50.99 處於中性，量比 0.97× 略低於 5 日均量，反彈量能未獲確認。短線宜待回調至 925-932 區間（即今日低位 921.50 之上、MA20 941.54 附近）再考慮做多博反彈至 MA200 956.62；亦可於 MA50 978.95 附近做空博回調至 950 附近。<p class="card-link"><a href="/dashboard/2026-07-16/reports/COST.html">→ 完整 COST 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>ADSK</b> · 評分 48 · ADSK 現價 $217.06 雖單日大漲 +3.87%，但中長期均線 MA20 $201.30 &lt; MA50 $219.98 &lt; MA100 $230.63 &lt; MA200 $258.95 全線空頭排列，且股價仍在 MA50 $219.98 之下、MA200 $258.95 之下大約 16.18%，長線仍處熊市。今日反彈高位 $218.52 已觸及 MA50 $219.98 阻力並遭打回，RSI 74.16 進入超買區域，PE 31.69 與 PB 14.36 估值偏貴，短炒以 MA50 阻力做空為主、嚴設止損。多單僅考慮深回調至 $201.30-$205.00 區間，按嚴進策略現價偏離 MA20 達 7.83% 不建議追買。<p class="card-link"><a href="/dashboard/2026-07-16/reports/ADSK.html">→ 完整 ADSK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>CVS</b> · 評分 65 · CVS 現價 106.50 USD，創 52 週新高 106.50，MA20 103.51 &gt; MA50 97.78 &gt; MA100 87.20 &gt; MA200 82.91 形成完美多頭排列，長線趨勢強勁。RSI14 56.77 處於健康區間。今日漲 0.56% 偏溫和，但 H/L 區間 2.81% 提供短炒空間。最大隱憂係量比僅 0.87×，突破 52 週新高缺乏成交量配合，且股價已偏離 MA20 約 2.89%，追高風險上升。PE TTM 46.71 估值偏高。基本面上 CFRA 升至買入、富國上調目標價、Q1 業績超預期 19% 並上調全年指引，新聞面全面利多。建議等待回調至 MA20 103.51 或今日低位 105.68 附近才考慮做多，避免喺 52 週高位無量追入。<p class="card-link"><a href="/dashboard/2026-07-16/reports/CVS.html">→ 完整 CVS 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>CRWD</b> · 評分 57 · CRWD 現價 203.76 美元，今日由 52 週高位 210.73 回落 -1.46%，日內區間 200.07-207.60、波幅 3.70% 屬高波幅日。中長期趨勢強勁：MA20 186.89 &gt; MA50 170.29 &gt; MA100 137.02 &gt; MA200 129.16 完全多頭排列，股價站穩全部均線之上；YTD 累升 73.48%。然而現價已偏離 MA20 達 +9.0%，RSI14 69.60 接近超買，估值昂貴（PB 44.77、PE 仍 N/A）。量比僅 0.80×，沽壓未算恐慌但缺乏買盤承接。短線建議觀望至回調至 198-202 區間再博反彈至 207.60。<p class="card-link"><a href="/dashboard/2026-07-16/reports/CRWD.html">→ 完整 CRWD 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>MDLZ</b> · 評分 56 · MDLZ 今日急升 +4.60%，收報 $61.42，今日 H/L 區間 3.64% 屬高波幅，短炒燃料充足。現價 $61.42 升穿 MA20 ($59.92) 及 MA50 ($61.01)，但 MA20 $59.92 仍低於 MA50 $61.01，均線未完全修復為多頭排列；長線價格站穩 MA200 $58.67 之上。PE TTM 30.41 偏高、PB 3.06 缺乏估值優勢；股息率 3.41% 提供部分支持。RSI14 50.67 中性。量比 1.23× 略低於 1.5× 放量門檻。鑑於今日已升 4.60%，追高不符嚴進策略，建議等待回調至 $59.95-$60.50 (MA20 附近) 試多，止損 $59.20 (今日低位下方)，目標 $62.04-$62.50 (近期高位)。<p class="card-link"><a href="/dashboard/2026-07-16/reports/MDLZ.html">→ 完整 MDLZ 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>ADP</b> · 評分 54 · ADP 今個交易日急升 3.67% 收報 256.56 美元，跑贏大市但已明顯超買。股價 256.56 高於 MA20 233.50 達 9.88%，違反嚴進策略「偏離 MA20 超過 5% 不追高」紀律；RSI14 80.63 處於超買區，短期回調壓力大。技術上 MA20 233.50 &gt; MA50 226.07 &gt; MA100 216.44 多頭排列完整，且股價 256.56 已重返 MA200 237.76 之上，長線結構轉強。當日成交量比 1.26 倍，未達放量 1.5 倍標準。短線最佳策略係觀望，等待股價回調至 MA20 $233.50 附近獲得支持後再部署做多；風險胃納大者可考慮逢反彈乏力喺 $255-257 區間小注短空博均值回歸。<p class="card-link"><a href="/dashboard/2026-07-16/reports/ADP.html">→ 完整 ADP 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>LOW</b> · 評分 51 · LOW 今日反彈 +3.10%，由 $209.66 急升至 $216.16，H/L 區間 3.06% 屬高波幅，短炒燃料充足。股價 $216.16 仍略低於 MA20 ($217.31) 0.53%，受制於 MA20/MA50 ($217.94) 雙重壓力，MA20 &lt; MA50 &lt; MA100 ($231.10) &lt; MA200 ($241.17) 為完整空頭排列，中期趨勢偏淡。RSI14 為 42.76 處於弱勢區。建議等回調至 $211.00-$213.00 區間博短線反彈至 MA20 $217.31，嚴守止損 $207.50（即 52週低 $206.64 之上）。PE TTM 18.29 屬合理但 PB -13.08 反映股東權益為負（技術上資不抵債），估值面有結構性疑慮。<p class="card-link"><a href="/dashboard/2026-07-16/reports/LOW.html">→ 完整 LOW 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>LLY</b> · 評分 65 · LLY 報 $1,169.17，今日升 1.08%，但盤中波幅達 4.09%（區間 $1,141.20-$1,189.07），屬高波幅交易日，短炒燃料充足。均線呈完美多頭排列：MA20 $1,171.25 &gt; MA50 $1,105.62 &gt; MA100 $1,026.22 &gt; MA200 $1,004.99，現價略低於 MA20 約 0.18%，未見明顯超買。RSI14 為 56.61，處於健康中性區間。估值偏貴：PE TTM 41.59、PB 33.48，需靠業績增長消化。短線可順勢做多博再試 $1,200 阻力及 $1,235.56 52週高位。<p class="card-link"><a href="/dashboard/2026-07-16/reports/LLY.html">→ 完整 LLY 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>V</b> · 評分 64 · Visa (V) 喺 $365.14 創 52 週新高，今日升 +2.82% 但量比只有 0.71×，明顯缺乏成交配合。均線呈完美多頭排列（MA20 $344.89 &gt; MA50 $332.37 &gt; MA100 $321.57），長線資金強勢，但短線 RSI14 75.07 進入超買區，股價偏離 MA20 達 5.87% 超出 5% 嚴進警戒線，應避免追高。估值 PE 31.83 / PB 19.59 偏貴且巴菲特旗下巴郡沽出持倉，但分析員 BMO 上調目標價至 $387、Clear Street 給予 $403 仍屬正面催化。建議等待回調至 $350.00-$355.00 近期整固區再考慮做多博反彈，短炒者亦可試 $367.00-$370.00 阻力位做空博均值回歸。<p class="card-link"><a href="/dashboard/2026-07-16/reports/V.html">→ 完整 V 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>KO</b> · 評分 61 · KO 今日大升 3.00% 並觸及 52 週新高 $84.92，MA20 $82.17 &gt; MA50 $81.00 &gt; MA100 $79.06 &gt; MA200 $75.09 形成標準多頭排列，長線趨勢明確向上。股價目前位於 MA20 之上 3.35%，已超出「嚴進」2% 偏離閾值，加上量比僅 1.02×（未達 1.5× 放量標準），今次突破缺乏成交配合，續漲動能存疑。RSI14 為 64.01 屬健康區間但偏向強勢，PE 26.70 與 PB 10.86 估值偏高，向上空間受制於估值天花板。建議等回調至 MA20 $82.17-$83.28 區間再行部署做多，或待放量突破 $84.95 後再追入。<p class="card-link"><a href="/dashboard/2026-07-16/reports/KO.html">→ 完整 KO 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>AAPL</b> · 評分 56 · AAPL 現價 $333.26，今日升 1.76%，處 52 週新高。均線呈完美多頭排列（MA20 $303.63 &gt; MA50 $301.66 &gt; MA100 $281.56 &gt; MA200 $273.82），中長線趨勢強勁。然而 RSI14 高達 89.86 極度超買，且股價偏離 MA20 達 9.76%（已超出 5% 嚴進門檻），加上 PE TTM 40.40、PB 45.90 估值昂貴，短期追高風險大。建議等待回調至 $310-$318 區間（近 MA20 及近期整固區）再考慮做多，短線目標 $345（JPM 目標價），嚴守止於 $300 之下。<p class="card-link"><a href="/dashboard/2026-07-16/reports/AAPL.html">→ 完整 AAPL 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>SHOP</b> · 評分 48 · SHOP 現價 $125.06，今日區間 $121.78-$127.89，振幅 4.89% 屬高波幅，具備日內短炒條件。股價相對 MA20 $117.54 偏離 +6.40%（已超 5% 嚴進閾值），不宜追高；股價仍處於 MA200 $135.06 下方約 7.41%，長線偏空。PE TTM 121.42、PB 13.01 估值貴，財報錄得淨虧損 -$5.81 億美元，基本面未改善。RSI 69.78 接近超買，配合券商下調目標價（UBS $145→$130、Oppenheimer $200→$175）消息面偏淡。建議等待回調至 MA20 附近再行部署。<p class="card-link"><a href="/dashboard/2026-07-16/reports/SHOP.html">→ 完整 SHOP 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>GILD</b> · 評分 66 · GILD 今日大升 +3.49% 至 $136.30，創近期反彈新高，今日 H/L 區間 3.76% 屬高波幅，短炒燃料充足。然而現價 $136.30 已較 MA20 $129.09 高出 5.59%，超出嚴進策略 5% 紅線，不建議現價追入。MA100 $134.96 已被突破，MA200 $130.83 仍穩守下方，長線偏多格局未變。RSI 67.60 接近超買區域，宜等待 $133-$134 回測不破再入場做多博加速段。基本面上 PE 18.54 合理、PB 7.20 偏貴，花旗、BMO、美銀三大行目標價區間 $162-$174，平均潛在上行約 23%。<p class="card-link"><a href="/dashboard/2026-07-16/reports/GILD.html">→ 完整 GILD 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>MO</b> · 評分 66 · MO Altria 今日以 +3.56% 強勢突破 $70.50-$72.50 區間上沿，收報 $73.03，創近30日新高。均線呈完美多頭排列（MA20 $71.76 &gt; MA50 $71.51 &gt; MA100 $69.26 &gt; MA200 $65.20），股價站穩 MA200 之上長線多頭格局明確。股價偏離 MA20 僅 +1.77%，未見超買延伸，符合「嚴進」條件。PE 15.25 屬合理估值，6.01% 股息率提供下檔保護，但 PB -38.00 反映負股東權益（煙草股因回購導致資不抵債屬行業特性）。量比 1.41× 配合突破屬放量確認，RSI 49.29 仍處健康區。日內交易建議逢回調至 $71.76-$72.50 區間做多，目標 $74.55（52週高位），止損 $70.50。<p class="card-link"><a href="/dashboard/2026-07-16/reports/MO.html">→ 完整 MO 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>DDOG</b> · 評分 65 · DDOG 現價 $262.32 雖處於強勢多頭排列（MA20 $248.31 &gt; MA50 $230.94 &gt; MA100 $176.63），惟股價已偏離 MA20 達 5.64%，超出嚴進策略 5% 閾值，不宜追高。日內區間 $254.54-$266.91 達 4.72%，高波幅提供短炒燃料，但量比僅 0.78× 買盤確認不足。RSI 70.83 接近超買，PE TTM 655.80、PB 23.40 估值極端。多間券商上調目標價至 $275-$330 提供中線正面催化。建議等回調至 $248-$256 區間吸納做多。<p class="card-link"><a href="/dashboard/2026-07-16/reports/DDOG.html">→ 完整 DDOG 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>UPS</b> · 評分 65 · UPS 今日強升 3.75%，收 $117.18，創近期新高並逼近 52週高 $120.00。技術面上 MA20 $109.71 &gt; MA50 $105.95 &gt; MA100 $104.60 &gt; MA200 $101.87 形成完整多頭排列，價格站穩所有均線之上，長線趨勢明確偏多。但現價已較 MA20 $109.71 偏離 6.81%（超出 5% 嚴進上限），RSI 71.54 進入超買區，量比 1.37× 僅算温和放量，未能確認突破強度。當日 H/L 區間 3.47% 屬高波幅，短炒燃料充足，惟現價追入風險回報不佳。建議等待回調至 $113.25-$114.50 區間再考慮做多，目標 $120.00（52週高），止損 $110.00（MA20 下方）。<p class="card-link"><a href="/dashboard/2026-07-16/reports/UPS.html">→ 完整 UPS 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>WELL</b> · 評分 60 · WELL 今日強升 3.51% 至 $241.49，創 52 週新高，技術上 MA20 $227.45 &gt; MA50 $217.80 &gt; MA100 $212.06 &gt; MA200 $200.25 完美多頭排列，YTD 升幅 53.20%。然而現價偏離 MA20 高達 6.17%，RSI14 已達 70.44 接近超買，今日量比僅 0.70× 無法確認升勢，屬低成交量突破型態。今日 H/L 區間 3.27%（$233.87-$241.77）提供短炒波幅，但建議等待回調至 $233-$237 區間（即今日低位附近）再考慮做多，博反彈至分析師目標價區 $248-$265。PE TTM 116.10 極高，PB 3.89 亦偏貴，估值面唔支持追高。<p class="card-link"><a href="/dashboard/2026-07-16/reports/WELL.html">→ 完整 WELL 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>COF</b> · 評分 67 · COF 現價 $211.93，今日升 1.46%，收於 $211.93，技術上呈現 MA20 ($202.76) &gt; MA50 ($192.74) &gt; MA100 ($191.53) 標準多頭排列，且站穩 MA200 ($207.73) 之上，RSI14 為 57.87 屬健康動能區。股價較 MA20 $202.76 偏離 4.52%，已逼近「嚴進策略」5% 警戒線，不建議追高。PE TTM 高達 65.01 估值偏貴，但 PB 1.22 對銀行股合理。今日 H/L 區間 2.09% 波幅中等，量比 1.41× 有資金跟進。操作上宜等候回調至 $208.89-$210.50 區間（即今日低位及略低於現價）分批吸納，博反彈至 $218.00 前高阻力。<p class="card-link"><a href="/dashboard/2026-07-16/reports/COF.html">→ 完整 COF 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>PM</b> · 評分 67 · PM 今日急升 +4.95% 收 $189.84，日高 $189.99 已極接近 52 週高 $191.86。MA 系統呈多頭格局（MA50 $181.09 &gt; MA20 $181.06 &gt; MA100 $174.29 &gt; MA200 $168.01），RSI14 61.90 屬健康區間未超買，股價偏離 MA20 $181.06 達 4.85% 接近 5% 嚴進上限。問題係量比僅 0.95×，強升缺乏成交量確認，突破可信度打折。建議等待回踩 $184.00-$186.00 區域（即現價至 MA20 $181.06 之中位）再考慮吸納，目標先睇 $191.86 52週高，破位望 $205 巴克萊目標價，止損 $180.50。<p class="card-link"><a href="/dashboard/2026-07-16/reports/PM.html">→ 完整 PM 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>AMGN</b> · 評分 71 · AMGN 今日大升 3.70% 收 $371.58，創近月新高，短線動能強勁。技術上 MA20 $358.34 &gt; MA50 $345.77 &gt; MA200 $339.19 維持多頭排列，但 MA100 $351.23 略低於 MA50 顯示中期均線未完全發散。RSI14 為 65.26 處於健康區間。今日 H/L 區間幅度 3.86% 為高波幅，提供短炒燃料，但現價已偏離 MA20 $358.34 達 3.70%（&gt;3%），接近嚴進策略 5% 上限。建議等待回調至 $358-$362 區間再考慮做多，目標劍指 52週高 $388.16。<p class="card-link"><a href="/dashboard/2026-07-16/reports/AMGN.html">→ 完整 AMGN 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>ABBV</b> · 評分 65 · ABBV 今日急升 4.21% 收 $254.39，盤中區間 $243.53-$254.52，波幅達 4.32%（高波幅），但成交量 4,492,413 股僅為 5 日均量 0.86×，出現「價升量縮」背離，資金追高意願不足。MA20 $245.17 &gt; MA50 $227.14 &gt; MA100 $220.67 多頭排列成立，但 MA200 $223.34 反高於 MA100 $220.67，長線排列不完美。RSI14 60.89 健康但未算超買。股價偏離 MA20 達 3.76%（&lt;5% 嚴進上限），接近 52 週高 $261.07。PE TTM 高達 124.09、PB -67.53（股東權益為負，反映大量回購），估值極貴。多家大行上調目標價（Wells Fargo $295、HSBC $300），情緒面有支持。建議等回調至 MA20 $245.17 附近再考慮做多，追高風險回報差。<p class="card-link"><a href="/dashboard/2026-07-16/reports/ABBV.html">→ 完整 ABBV 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>CSX</b> · 評分 64 · CSX 現價 $50.89，今日急升 +2.95% 並創 52 週新高 $50.98，觸及歷史高位。MA20 $48.11 &gt; MA50 $46.87 &gt; MA100 $44.37 &gt; MA200 $40.47 形成完美多頭排列，長線趨勢強勁。然而 RSI14 已達 78.05 嚴重超買區，且現價較 MA20 $48.11 偏離 5.78%，已超出嚴進策略 5% 追高警戒線，故不建議即市追入。量比 1.51× 確認放量突破，資金面健康，但估值偏貴（PE TTM 31.22、PB 6.96），短線宜待回調至 MA20 $48.11 附近再考慮吸納。<p class="card-link"><a href="/dashboard/2026-07-16/reports/CSX.html">→ 完整 CSX 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>MRK</b> · 評分 73 · MRK 現價 $127.63，今日大漲 +3.25%，MA20 $123.91 &gt; MA50 $119.24 &gt; MA100 $118.29 &gt; MA200 $109.25 呈完美多頭排列。股價已升穿 MA20 約 3%，並挑戰 $128.66-$129.56 前高區域，今日高低區間 3.86% 屬高波幅。RSI14 53.31 處中位，仍有上行空間。惟 PE 35.95 偏高、PB 6.87 偏高，估值不便宜；今日已升 3.25% 偏離 MA20 超過 2%，追高風險上升，建議等回調至 $124.00-$125.50 區間（即今日低位 $124.00 附近）吸納做多博挑戰 52週高位 $129.56。<p class="card-link"><a href="/dashboard/2026-07-16/reports/MRK.html">→ 完整 MRK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>MCK</b> · 評分 61 · MCK 今日大升 5.65% 收 $841.31，突破 MA100（$829.89）及 MA200（$830.89）兩條長線牛熊分界，H/L 區間 4.72% 屬高波幅日，成交 1,094,110 股、量比 1.37× 配合大陽燭，動能明顯轉強。然而現價已偏離 MA20（$782.64）達 7.5%，超出嚴進策略 5% 上限，即市追入風險高。PE TTM 21.92 屬合理區間，PB -46.48 因持續大規模回購導致股東權益為負值，並非基本面惡化。建議等待回調至 $820-$828 區間（MA100/MA200 重測區）才考慮做多博後續。<p class="card-link"><a href="/dashboard/2026-07-16/reports/MCK.html">→ 完整 MCK 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>SBUX</b> · 評分 64 · SBUX 今日大升 3.10% 至 $108.37，創 52 週新高（與 52w 高位 $108.37 完全吻合），技術上 MA20 $103.79 &gt; MA50 $102.70 &gt; MA100 $99.85 &gt; MA200 $93.70 形成完美多頭排列，RSI14 63.28 處於健康偏強區間。但股價已偏離 MA20 達 4.41%，逼近 5% 追高警戒線，加上 PE TTM 高達 82.73、PB -14.59（股東權益為負，技術上資不抵債），估值極度昂貴。建議避免喺 $108.37 現價追入，等回調至 $105.50-$106.50 區間（今日低位 + MA20 上方約 2.5%）再考慮短做多博 $110.00 目標。<p class="card-link"><a href="/dashboard/2026-07-16/reports/SBUX.html">→ 完整 SBUX 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>PLD</b> · 評分 78 · PLD 今日大升 4.63% 收 $150.06，創 52 週新高 ($104.08-$150.06 區間頂部)，成交 623.7 萬股，量比 1.56× 確認有真實買盤承接。股價 $150.06 顯著高於 MA20 $141.38 (+6.14%)、MA50 $142.98 (+4.94%)、MA200 $133.55 (+12.38%)，趨勢全面偏多但已嚴重偏離短均線，追入違反嚴進原則。RSI 68.43 接近超買區。今日 H/L 區間 3.91% 屬高波幅，提供短炒燃料。富國銀行上調目標價至 $167 為催化劑。建議等待回測 $144.19-$147.00 區間（即今日低位 + 靠近 MA20 上方）再分批做多，止損 $143.50，目標 $155 短線/Wells Fargo 目標 $167。<p class="card-link"><a href="/dashboard/2026-07-16/reports/PLD.html">→ 完整 PLD 詳細報告</a></p></div>
+<div class="card"><span style="color:var(--amber);font-weight:600;">🟡</span> <b>ABT</b> · 評分 77 · ABT 受惠於 Q2 業績超預期及上調 2026 年 EPS 指引，股價大幅高開 +10.71% 至 $98.83，盤中最高見 $101.87、最低 $94.99，日內波幅達 6.96%。現價 $98.83 高於 MA20 $92.42 及 MA50 $89.39，但仍低於 MA200 $109.99 達 10.1%，長線未確認轉勢。RSI14 60.70 處健康區，未超買。量比 1.85× 確認放量配合。惟現價偏離 MA20 已達 6.94%，超過「嚴進策略」5% 閾值，不建議追高，宜等待回調至 MA20 $92.42 附近再行部署。<p class="card-link"><a href="/dashboard/2026-07-16/reports/ABT.html">→ 完整 ABT 詳細報告</a></p></div>
+
+---
+<em>生成時間: 2026-07-17 08:56:37 · LLM: openai/MiniMax-M3</em>
+<h2>詳細表格</h2><table class="detail"><thead><tr><th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能/資金流</th><th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th><th>入場</th><th>止損</th><th>目標</th></tr></thead><tbody><tr><td><a href="/dashboard/2026-07-16/reports/PLD.html">PLD</a></td><td>78</td><td>long</td><td>35/70/85</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/ABT.html">ABT</a></td><td>77</td><td>both</td><td>42/72/76</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/MRK.html">MRK</a></td><td>73</td><td>long</td><td>25/75/80</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/AMGN.html">AMGN</a></td><td>71</td><td>long</td><td>28/62/82</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/BAC.html">BAC</a></td><td>68</td><td>both</td><td>55/62/78</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/COF.html">COF</a></td><td>67</td><td>long</td><td>28/58/75</td><td>觀望</td><td>中性偏樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/PM.html">PM</a></td><td>67</td><td>both</td><td>30/72/78</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/GILD.html">GILD</a></td><td>66</td><td>long</td><td>38/55/70</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/MO.html">MO</a></td><td>66</td><td>long</td><td>55/60/72</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/TFC.html">TFC</a></td><td>65</td><td>long</td><td>55/55/72</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/CVS.html">CVS</a></td><td>65</td><td>both</td><td>22/55/75</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/LLY.html">LLY</a></td><td>65</td><td>long</td><td>18/72/72</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/DDOG.html">DDOG</a></td><td>65</td><td>long</td><td>9/55/75</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/UPS.html">UPS</a></td><td>65</td><td>both</td><td>38/52/72</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/ABBV.html">ABBV</a></td><td>65</td><td>both</td><td>15/50/78</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/BMY.html">BMY</a></td><td>64</td><td>long</td><td>50/72/74</td><td>觀望</td><td>中性偏樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/V.html">V</a></td><td>64</td><td>both</td><td>20/75/75</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/CSX.html">CSX</a></td><td>64</td><td>both</td><td>28/63/65</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/SBUX.html">SBUX</a></td><td>64</td><td>both</td><td>12/28/80</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/JPM.html">JPM</a></td><td>63</td><td>long</td><td>55/82/65</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/WFC.html">WFC</a></td><td>63</td><td>long</td><td>58/65/70</td><td>觀望</td><td>中性偏樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/TMUS.html">TMUS</a></td><td>63</td><td>long</td><td>50/62/68</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/TMO.html">TMO</a></td><td>63</td><td>both</td><td>28/65/68</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/VLO.html">VLO</a></td><td>61</td><td>both</td><td>35/50/75</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/KO.html">KO</a></td><td>61</td><td>both</td><td>25/70/72</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/MCK.html">MCK</a></td><td>61</td><td>long</td><td>25/45/65</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/RTX.html">RTX</a></td><td>60</td><td>long</td><td>30/70/62</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/VRTX.html">VRTX</a></td><td>60</td><td>long</td><td>45/72/62</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/WELL.html">WELL</a></td><td>60</td><td>both</td><td>18/45/72</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/AXP.html">AXP</a></td><td>58</td><td>long</td><td>40/65/70</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/HWM.html">HWM</a></td><td>58</td><td>both</td><td>12/75/62</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/TT.html">TT</a></td><td>58</td><td>both</td><td>22/78/55</td><td>觀望</td><td>中性偏樂觀</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/JNJ.html">JNJ</a></td><td>57</td><td>long</td><td>28/78/58</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/CRWD.html">CRWD</a></td><td>57</td><td>both</td><td>10/55/68</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/NTAP.html">NTAP</a></td><td>56</td><td>long</td><td>40/70/58</td><td>觀望</td><td>中性偏樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/REGN.html">REGN</a></td><td>56</td><td>both</td><td>62/60/58</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/UBER.html">UBER</a></td><td>56</td><td>long</td><td>50/52/58</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/URI.html">URI</a></td><td>56</td><td>both</td><td>25/55/62</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/MDLZ.html">MDLZ</a></td><td>56</td><td>both</td><td>32/68/60</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/AAPL.html">AAPL</a></td><td>56</td><td>both</td><td>12/68/55</td><td>觀望</td><td>樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/LIN.html">LIN</a></td><td>55</td><td>long</td><td>25/72/55</td><td>觀望</td><td>中性偏樂觀</td><td>震盪偏多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/MDT.html">MDT</a></td><td>55</td><td>both</td><td>50/65/60</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/BKNG.html">BKNG</a></td><td>55</td><td>long</td><td>35/40/62</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/BLK.html">BLK</a></td><td>54</td><td>both</td><td>40/75/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/PG.html">PG</a></td><td>54</td><td>both</td><td>40/80/60</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/FTNT.html">FTNT</a></td><td>54</td><td>long</td><td>10/70/62</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/PANW.html">PANW</a></td><td>54</td><td>both</td><td>15/60/55</td><td>觀望</td><td>中性偏樂觀</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/DHR.html">DHR</a></td><td>54</td><td>both</td><td>25/65/58</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/ROST.html">ROST</a></td><td>54</td><td>both</td><td>20/60/58</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/ADP.html">ADP</a></td><td>54</td><td>both</td><td>28/65/55</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/NOW.html">NOW</a></td><td>53</td><td>both</td><td>25/65/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/ASML.html">ASML</a></td><td>53</td><td>both</td><td>15/62/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/HD.html">HD</a></td><td>53</td><td>both</td><td>38/62/57</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/TGT.html">TGT</a></td><td>53</td><td>long</td><td>35/50/60</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/AMZN.html">AMZN</a></td><td>52</td><td>both</td><td>38/70/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/COP.html">COP</a></td><td>52</td><td>long</td><td>50/55/52</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/SPGI.html">SPGI</a></td><td>52</td><td>both</td><td>38/68/55</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/INTU.html">INTU</a></td><td>52</td><td>both</td><td>50/50/55</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/UAL.html">UAL</a></td><td>51</td><td>both</td><td>55/45/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/DIS.html">DIS</a></td><td>51</td><td>both</td><td>55/65/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/CME.html">CME</a></td><td>51</td><td>both</td><td>42/68/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/TTWO.html">TTWO</a></td><td>51</td><td>both</td><td>28/55/52</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/ANET.html">ANET</a></td><td>51</td><td>long</td><td>12/65/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/BX.html">BX</a></td><td>51</td><td>both</td><td>25/65/60</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/MA.html">MA</a></td><td>51</td><td>both</td><td>18/78/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/NKE.html">NKE</a></td><td>51</td><td>both</td><td>35/40/60</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/SYK.html">SYK</a></td><td>51</td><td>long</td><td>25/55/58</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/LOW.html">LOW</a></td><td>51</td><td>both</td><td>25/35/55</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/DAL.html">DAL</a></td><td>50</td><td>long</td><td>48/55/52</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/MSFT.html">MSFT</a></td><td>50</td><td>both</td><td>40/78/48</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/COST.html">COST</a></td><td>50</td><td>both</td><td>15/70/48</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/BRK-B.html">BRK-B</a></td><td>49</td><td>both</td><td>55/80/48</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/MPC.html">MPC</a></td><td>49</td><td>both</td><td>38/68/52</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/PH.html">PH</a></td><td>49</td><td>both</td><td>28/68/48</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/SO.html">SO</a></td><td>49</td><td>both</td><td>42/58/53</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/MMM.html">MMM</a></td><td>49</td><td>long</td><td>20/50/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/CMG.html">CMG</a></td><td>48</td><td>both</td><td>25/55/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/MDB.html">MDB</a></td><td>48</td><td>both</td><td>22/58/47</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/ADBE.html">ADBE</a></td><td>48</td><td>both</td><td>55/45/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/ORLY.html">ORLY</a></td><td>48</td><td>both</td><td>40/45/45</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/ADSK.html">ADSK</a></td><td>48</td><td>both</td><td>22/62/45</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/SHOP.html">SHOP</a></td><td>48</td><td>both</td><td>12/25/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/CBOE.html">CBOE</a></td><td>47</td><td>both</td><td>45/60/48</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/CDNS.html">CDNS</a></td><td>47</td><td>both</td><td>15/65/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/MCD.html">MCD</a></td><td>47</td><td>both</td><td>42/70/45</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/CVX.html">CVX</a></td><td>47</td><td>both</td><td>30/60/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/TJX.html">TJX</a></td><td>47</td><td>both</td><td>22/60/50</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/INTC.html">INTC</a></td><td>46</td><td>both</td><td>35/50/42</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/EOG.html">EOG</a></td><td>46</td><td>both</td><td>50/65/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/PFE.html">PFE</a></td><td>46</td><td>both</td><td>55/55/48</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/SCHW.html">SCHW</a></td><td>46</td><td>both</td><td>45/65/40</td><td>觀望</td><td>中性</td><td>看多</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/TEL.html">TEL</a></td><td>46</td><td>short</td><td>50/60/45</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/SHW.html">SHW</a></td><td>46</td><td>both</td><td>22/50/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/F.html">F</a></td><td>45</td><td>both</td><td>45/42/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/HLT.html">HLT</a></td><td>45</td><td>both</td><td>18/50/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/NEE.html">NEE</a></td><td>44</td><td>both</td><td>45/75/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/AEP.html">AEP</a></td><td>44</td><td>both</td><td>50/62/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/DELL.html">DELL</a></td><td>44</td><td>both</td><td>25/42/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/DVN.html">DVN</a></td><td>44</td><td>both</td><td>55/45/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/HOOD.html">HOOD</a></td><td>44</td><td>both</td><td>15/35/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/JCI.html">JCI</a></td><td>44</td><td>both</td><td>22/50/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/DE.html">DE</a></td><td>44</td><td>both</td><td>20/55/48</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/KR.html">KR</a></td><td>44</td><td>both</td><td>18/55/50</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/NOC.html">NOC</a></td><td>43</td><td>both</td><td>55/65/35</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/FDX.html">FDX</a></td><td>43</td><td>both</td><td>50/55/40</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/APH.html">APH</a></td><td>43</td><td>both</td><td>18/62/42</td><td>觀望</td><td>中性偏悲觀</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/CMI.html">CMI</a></td><td>43</td><td>both</td><td>28/62/38</td><td>觀望</td><td>中性偏悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/GM.html">GM</a></td><td>43</td><td>both</td><td>32/52/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/RCL.html">RCL</a></td><td>43</td><td>both</td><td>38/52/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/UNH.html">UNH</a></td><td>43</td><td>both</td><td>28/72/42</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/TSLA.html">TSLA</a></td><td>43</td><td>both</td><td>12/55/42</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/WBD.html">WBD</a></td><td>43</td><td>both</td><td>30/25/55</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/BSX.html">BSX</a></td><td>43</td><td>short</td><td>35/45/42</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/ICE.html">ICE</a></td><td>42</td><td>short</td><td>52/72/38</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/XOM.html">XOM</a></td><td>42</td><td>both</td><td>38/68/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/EQIX.html">EQIX</a></td><td>42</td><td>long</td><td>20/68/38</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/MAR.html">MAR</a></td><td>42</td><td>both</td><td>25/55/42</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/AMD.html">AMD</a></td><td>42</td><td>both</td><td>5/45/40</td><td>觀望</td><td>悲觀</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/CVNA.html">CVNA</a></td><td>42</td><td>both</td><td>18/28/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/NFLX.html">NFLX</a></td><td>42</td><td>both</td><td>35/55/40</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/PLTR.html">PLTR</a></td><td>42</td><td>both</td><td>15/50/45</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/ISRG.html">ISRG</a></td><td>42</td><td>both</td><td>22/62/40</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/NEM.html">NEM</a></td><td>41</td><td>short</td><td>58/65/33</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/ZS.html">ZS</a></td><td>41</td><td>both</td><td>22/25/50</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/OXY.html">OXY</a></td><td>40</td><td>both</td><td>20/40/38</td><td>觀望</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/WMT.html">WMT</a></td><td>40</td><td>both</td><td>15/60/38</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/AKAM.html">AKAM</a></td><td>38</td><td>both</td><td>28/50/38</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/AVGO.html">AVGO</a></td><td>37</td><td>both</td><td>28/72/32</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/FLEX.html">FLEX</a></td><td>37</td><td>both</td><td>22/48/30</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/PEP.html">PEP</a></td><td>37</td><td>both</td><td>50/58/38</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/SLB.html">SLB</a></td><td>36</td><td>both</td><td>45/40/35</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/AMAT.html">AMAT</a></td><td>36</td><td>both</td><td>15/60/30</td><td>觀望</td><td>中性偏悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/HON.html">HON</a></td><td>36</td><td>both</td><td>42/55/33</td><td>觀望</td><td>中性</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/IBM.html">IBM</a></td><td>36</td><td>both</td><td>40/50/35</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/SMCI.html">SMCI</a></td><td>35</td><td>short</td><td>45/25/30</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/TER.html">TER</a></td><td>35</td><td>both</td><td>15/40/28</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/SNPS.html">SNPS</a></td><td>35</td><td>short</td><td>25/50/28</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/SNDK.html">SNDK</a></td><td>34</td><td>both</td><td>10/45/25</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/CCL.html">CCL</a></td><td>34</td><td>short</td><td>50/40/30</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/HCA.html">HCA</a></td><td>34</td><td>short</td><td>45/50/30</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/CSCO.html">CSCO</a></td><td>34</td><td>short</td><td>15/50/30</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/AZO.html">AZO</a></td><td>34</td><td>both</td><td>40/50/38</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/LITE.html">LITE</a></td><td>32</td><td>short</td><td>12/42/25</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/MCHP.html">MCHP</a></td><td>32</td><td>both</td><td>10/30/30</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/GLW.html">GLW</a></td><td>32</td><td>both</td><td>10/40/30</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/COHR.html">COHR</a></td><td>32</td><td>both</td><td>18/38/28</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/STX.html">STX</a></td><td>32</td><td>both</td><td>15/35/25</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/LMT.html">LMT</a></td><td>32</td><td>both</td><td>30/55/30</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/BA.html">BA</a></td><td>32</td><td>both</td><td>12/22/32</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/WDC.html">WDC</a></td><td>31</td><td>both</td><td>25/55/25</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/ORCL.html">ORCL</a></td><td>30</td><td>both</td><td>32/58/22</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/FSLR.html">FSLR</a></td><td>28</td><td>both</td><td>55/38/20</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/MU.html">MU</a></td><td>28</td><td>both</td><td>35/55/25</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/MPWR.html">MPWR</a></td><td>27</td><td>both</td><td>5/60/20</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/MRVL.html">MRVL</a></td><td>27</td><td>both</td><td>15/35/25</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/AMT.html">AMT</a></td><td>27</td><td>both</td><td>28/40/22</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-16/reports/CIEN.html">CIEN</a></td><td>26</td><td>short</td><td>10/35/25</td><td>觀望</td><td>悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr></tbody></table>
+<p class="last-updated">最後更新: 2026-07-17 08:56 HKT</p>
+</main>
+<footer>
+  © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>
