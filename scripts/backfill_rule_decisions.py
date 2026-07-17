@@ -20,6 +20,7 @@ import sqlite3
 from src.signal_decision import (
     apply_to_snapshot, predict_win_probability, extract_matched_rule,
 )
+from src.db import get_market_state_for_date  # ★ Phase 9 Step 2
 
 DB_PATH = "/Users/kenken/Documents/dsa-hk/data/dsa_hk.db"
 
@@ -46,6 +47,14 @@ def main():
     unchanged = 0
     op_changes = {"BUY→BUY": 0, "BUY→HOLD": 0, "HOLD→HOLD": 0, "HOLD→BUY": 0}
     rule_dist = {}
+    # ★ Phase 9 Step 2: cache market_state by date to avoid repeated DB hits
+    hsi_cache: dict[str, float | None] = {}
+
+    def _hsi_for(d: str):
+        if d not in hsi_cache:
+            ms = get_market_state_for_date(d)
+            hsi_cache[d] = ms["hsi_chg_pct"] if (ms and ms.get("hsi_chg_pct") is not None) else None
+        return hsi_cache[d]
 
     for r in rows:
         rid = r["id"]
@@ -61,6 +70,8 @@ def main():
         except Exception:
             snap = {}
         sector = (snap.get("sector") or "").strip()
+        # ★ Phase 9 Step 2: look up HSI yesterday chg for this report_date
+        hsi_chg = _hsi_for(r["report_date"])
 
         # Re-apply rule
         decision = apply_to_snapshot(
@@ -70,6 +81,7 @@ def main():
             score_breakdown=sb,
             data_snapshot=snap,
             sector=sector,
+            hsi_yesterday_chg=hsi_chg,
         )
         new_op = decision.op
         new_reason = f"[{decision.matched_rule}] {decision.reason}"

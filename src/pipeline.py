@@ -80,7 +80,13 @@ def analyze_ticker(code: str, save: bool = True, language: Optional[str] = None)
         # The LLM's operation_advice is captured in llm_original_op for audit;
         # the rule-based op is what gets shown in dashboard / detail page.
         from .signal_decision import apply_to_snapshot
+        from .db import get_market_state_for_date
         sector = (snap.get("sector") or "").strip() if snap else ""
+        # ★ Phase 9 Step 2: fetch HSI yesterday chg for regime filter
+        hsi_chg = None
+        ms = get_market_state_for_date(report_date)
+        if ms and ms.get("hsi_chg_pct") is not None:
+            hsi_chg = ms["hsi_chg_pct"]
         decision = apply_to_snapshot(
             llm_op=result.operation_advice,
             llm_sentiment=result.sentiment or "",
@@ -88,6 +94,7 @@ def analyze_ticker(code: str, save: bool = True, language: Optional[str] = None)
             score_breakdown=result.score_breakdown or {},
             data_snapshot=snap or {},
             sector=sector,
+            hsi_yesterday_chg=hsi_chg,
         )
         # Use rule-based op + reason for storage
         op_to_store = decision.op

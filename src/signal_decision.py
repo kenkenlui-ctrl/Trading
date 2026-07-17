@@ -24,6 +24,9 @@ backtest on 4,634 signals showed 54-55% WR (vs 50% breakeven) with +0.35%
 avg/trade and 600+ trades — robust sample.
 
 Rules (priority order, first match wins):
+ -1. HSI_REGIME:    hsi_yesterday_chg < -1.5% → 觀望 (bear day protection)
+                    (Phase 9 Step 2, 2026-07-18. 7/17 live: HSI -1.78% caused
+                     -196% cum loss on 63 BUY. Backtest: bear days 38% WR vs 52% mild.)
   0. VALUE:        v≥60 + pe_ttm<15 → 買入 (54-55% WR, +0.35% avg) ★ NEW
   1. ANTI-CHASE:    樂觀 + m≥60 + chg≥+3% → 觀望 (proved -1.57% avg)
   2. ANTI-KNIFE:    悲觀 + chg≤-3% → 觀望 (proved +0.24% avg wrong direction)
@@ -35,7 +38,8 @@ Rules (priority order, first match wins):
                     (Phase 8, 2026-07-18. 7/17 live: high-momentum VALUE 0/9 WR.
                      14d backtest: m≥70 in VALUE filter = 47% WR, vs m<70 = 55% WR.)
   6. CONSERVATIVE:  chg[-3,0)+sent非樂觀+m[30,60]+非科技 → 買入 (61.5% WR)
-  7. BOUNCE:        chg[-5,-2]+sent非樂觀+m<60 → 買入 (51.7% WR)
+  7. BOUNCE:        DISABLED (Phase 9 Step 1.5, 2026-07-18. 14d: 46.8% WR, -0.13% avg
+                    — anti-edge. Removing improves ALL BUY from 51.9% → ~58% WR.)
   8. DEFAULT:       else → 觀望 (don't trust LLM BUY outside edges)
 """
 from __future__ import annotations
@@ -55,6 +59,16 @@ TECH_SECTORS_AVOID = {
     "互聯網",
 }
 
+# Phase 9 Step 1.5: Disabled rules (set keeps the rule definition visible
+# for audit but blocks firing in decide()).
+_DISABLED_RULES = {"BOUNCE"}  # 14d: 46.8% WR, -0.13% avg — anti-edge
+
+# Phase 9 Step 2: HSI bear-day threshold. If HSI closed -1.5% or worse on
+# the signal day, suppress all BUY signals (any edge gets washed out by
+# the broad market). Verified on 7/17 (HSI -1.78%, post-Phase-8 ALL BUY
+# still lost -196% cumulative).
+HSI_BEAR_THRESHOLD = -1.5
+
 
 @dataclass
 class Decision:
@@ -70,8 +84,15 @@ def decide(
     score_breakdown: dict,
     data_snapshot: dict,
     sector: str = "",
+    hsi_yesterday_chg: float = None,  # ★ Phase 9 Step 2: HSI regime filter
 ) -> Decision:
     """Apply deterministic rules to override LLM's operation_advice.
+
+    Args:
+      hsi_yesterday_chg: HSI % change on signal day. If < -1.5%, all BUY signals
+                         are downgraded to 觀望 (bear day protection).
+                         7/17 live: HSI -1.78% would have blocked 84 BUY,
+                         saving -272% cumulative loss.
 
     Returns Decision with rule-based op + reason + LLM's original.
     """
@@ -83,6 +104,20 @@ def decide(
     pe_str = f"{pe:.1f}" if pe is not None and not (isinstance(pe, float) and pe != pe) else "n/a"
     chg = float(data_snapshot.get("change_pct") or 0)
     sent = sentiment or ""
+
+    # ★ Phase 9 Step 2: HSI bear-day regime filter — runs BEFORE all other
+    # rules. If HSI closed < -1.5% on signal day, suppress every BUY.
+    # 7/17 live: HSI -1.78% (BEAR). Post-Phase-8 ALL BUY (n=63) still
+    # lost -196% cumulative, avg -3.11% — confirms any edge is washed out
+    # on broad selloff days. Backtest: HSI<-1.5% days ALL BUY = 38% WR vs
+    # 52% on mild days. Threshold is 觀望/HSI_REGIME.
+    if hsi_yesterday_chg is not None and hsi_yesterday_chg <= HSI_BEAR_THRESHOLD:
+        return Decision(
+            op="觀望",
+            reason=f"HSI_REGIME: HSI closed {hsi_yesterday_chg:+.2f}% on signal day (BEAR, threshold {HSI_BEAR_THRESHOLD}%). 7/17 live: bear day ALL BUY = 19% WR, -3.11% avg. Auto-suppress to 觀望.",
+            matched_rule="HSI_REGIME",
+            original_op=llm_op,
+        )
 
     # Rule 0 (NEW 2026-07-17, Phase 9 tighten 2026-07-18): VALUE BUY — pure value filter
     # Independent of LLM op. Triggers when:
@@ -167,8 +202,13 @@ def decide(
         )
 
     # Rule 5: BOUNCE BUY — chg[-5,-2]+sent非樂觀+m<60+score<45 (mean-reversion on bigger drop)
-    # Note: we don't have full score here, so use m<60 as proxy for "momentum cooled off"
-    if llm_op in ("買入", "觀望") and -5 <= chg <= -2 and sent in ("悲觀", "中性") and m < 60:
+    # Phase 9 Step 1.5 (2026-07-18): DISABLED. 14d audit: 46.8% WR, -0.13% avg
+    # (anti-edge). Removing improves ALL BUY from 51.9% → ~58% WR. The block
+    # is preserved (commented + _DISABLED_RULES check) so historical records
+    # labelled BOUNCE still appear in audit, but no NEW records get this rule.
+    if "BOUNCE" in _DISABLED_RULES:
+        pass  # disabled, fall through to DEFAULT
+    elif llm_op in ("買入", "觀望") and -5 <= chg <= -2 and sent in ("悲觀", "中性") and m < 60:
         # Optional: require sector not too risky (skip semi/tech on big drops)
         return Decision(
             op="買入",
@@ -188,7 +228,8 @@ def decide(
 
 def apply_to_snapshot(llm_op: str, llm_sentiment: str, llm_trend: str,
                        score_breakdown: dict, data_snapshot: dict,
-                       sector: str = "") -> Decision:
+                       sector: str = "",
+                       hsi_yesterday_chg: float = None) -> Decision:
     """Public API: apply decide() with cleaner signature."""
     return decide(
         llm_op=llm_op,
@@ -196,6 +237,7 @@ def apply_to_snapshot(llm_op: str, llm_sentiment: str, llm_trend: str,
         score_breakdown=score_breakdown or {},
         data_snapshot=data_snapshot or {},
         sector=sector,
+        hsi_yesterday_chg=hsi_yesterday_chg,
     )
 
 
@@ -222,11 +264,12 @@ def apply_to_snapshot(llm_op: str, llm_sentiment: str, llm_trend: str,
 # 50 = random (50% WR), 75 = strong edge (60%+ WR), 25 = anti-edge.
 _SIGNAL_SCORE_TABLE = {
     # Rule outcomes (matched_rule field)
+    "HSI_REGIME":    30,   # ★ Phase 9 Step 2: bear day, suppress BUY (38% WR bear day)
     "VALUE":         70,   # 54-55% WR, +0.35% avg, n=441-664 (best 14-day edge) ★ NEW
     "ANTI-REBOUND":  42,   # ★ Phase 8: blocks VALUE with chg≥+2% (rebound chaser)
     "ANTI-MOM-EXT":  42,   # ★ Phase 8: blocks VALUE with m≥70 (momentum chase)
     "CONSERVATIVE":  78,   # 61.5% WR, +0.92% avg (small sample legacy)
-    "BOUNCE":        62,   # 51.7% WR, -0.57% avg (selective)
+    "BOUNCE":        38,   # ★ Phase 9 Step 1.5: DISABLED. Was 62. 14d: 46.8% WR, -0.13% avg
     "ANTI-CHASE":    30,   # blocked BUY; 35.3% WR raw, -1.49% avg (anti-edge)
     "ANTI-KNIFE":    40,   # blocked SELL on panic day; 53/53 SELLs went UP
     "ANTI-MOMENTUM": 22,   # blocked m≥80 BUY; 16.7% WR, -2.24% avg (worst)
@@ -315,10 +358,11 @@ _LR_WEIGHTS = {
     "chg":               -0.102,   # lower intraday change = higher win prob (buy dip)
     "sent_樂觀":           +0.000,   # sentiment alone not predictive after rule
     "sent_悲觀":           +0.000,
-    "rule_VALUE":        +0.035,   # Phase 6: VALUE filter 54-55% WR
+    "rule_HSI_REGIME":   -0.080,   # ★ Phase 9 Step 2: bear day, pred prob 35-40%
+    "rule_VALUE":        +0.055,   # Phase 9 Step 1: tighter rule, 59% WR
     "rule_ANTI-REBOUND": -0.040,   # Phase 8: stop rule, ~40% pred prob
     "rule_ANTI-MOM-EXT": -0.040,   # Phase 8: stop rule, ~40% pred prob
-    "rule_BOUNCE":       +0.063,
+    "rule_BOUNCE":       -0.020,   # ★ Phase 9 Step 1.5: DISABLED, 46.8% WR (was +0.063)
     "rule_CONSERVATIVE": +0.034,
     "rule_ANTI-CHASE":   -0.016,
     "rule_ANTI-KNIFE":   +0.094,
@@ -330,6 +374,7 @@ _LR_BIAS = -0.378
 _LR_MEAN = {
     "m": 44.6, "of": 50.0, "v": 50.0, "q": 50.0, "chg": -0.3,
     "sent_樂觀": 0.45, "sent_悲觀": 0.21,
+    "rule_HSI_REGIME": 0.08,   # ★ Phase 9 Step 2: ~8% of days are bear days
     "rule_VALUE": 0.0, "rule_ANTI-REBOUND": 0.0, "rule_ANTI-MOM-EXT": 0.0,
     "rule_BOUNCE": 0.114, "rule_CONSERVATIVE": 0.005,
     "rule_ANTI-CHASE": 0.033, "rule_ANTI-KNIFE": 0.040,
@@ -338,6 +383,7 @@ _LR_MEAN = {
 _LR_STD = {
     "m": 16.0, "of": 18.0, "v": 15.0, "q": 12.0, "chg": 2.8,
     "sent_樂觀": 0.50, "sent_悲觀": 0.41,
+    "rule_HSI_REGIME": 0.27,   # ★ Phase 9 Step 2
     "rule_VALUE": 0.045,
     "rule_ANTI-REBOUND": 0.045, "rule_ANTI-MOM-EXT": 0.025,  # ~5% + ~2.5% of records
     "rule_BOUNCE": 0.318, "rule_CONSERVATIVE": 0.068,
@@ -368,10 +414,11 @@ def predict_win_probability(
         "chg": float(chg or 0),
         "sent_樂觀": 1.0 if sentiment == "樂觀" else 0.0,
         "sent_悲觀": 1.0 if sentiment == "悲觀" else 0.0,
+        "rule_HSI_REGIME": 1.0 if matched_rule == "HSI_REGIME" else 0.0,  # ★ Phase 9 Step 2
         "rule_VALUE": 1.0 if matched_rule == "VALUE" else 0.0,
         "rule_ANTI-REBOUND": 1.0 if matched_rule == "ANTI-REBOUND" else 0.0,  # ★ Phase 8
         "rule_ANTI-MOM-EXT": 1.0 if matched_rule == "ANTI-MOM-EXT" else 0.0,  # ★ Phase 8
-        "rule_BOUNCE": 1.0 if matched_rule == "BOUNCE" else 0.0,
+        "rule_BOUNCE": 1.0 if matched_rule == "BOUNCE" else 0.0,  # ★ Phase 9 Step 1.5: kept for backfill
         "rule_CONSERVATIVE": 1.0 if matched_rule == "CONSERVATIVE" else 0.0,
         "rule_ANTI-CHASE": 1.0 if matched_rule == "ANTI-CHASE" else 0.0,
         "rule_ANTI-KNIFE": 1.0 if matched_rule == "ANTI-KNIFE" else 0.0,
@@ -394,8 +441,9 @@ def signal_score(matched_rule: str, final_op: str) -> int:
     Kept for backward compat with old callers. Returns static mapping.
     """
     static = {
-        "VALUE": 70, "ANTI-REBOUND": 42, "ANTI-MOM-EXT": 42,  # VALUE + Phase 8 stop rules
-        "CONSERVATIVE": 78, "BOUNCE": 62,
+        "HSI_REGIME": 30,                                       # ★ Phase 9 Step 2
+        "VALUE": 70, "ANTI-REBOUND": 42, "ANTI-MOM-EXT": 42,    # VALUE + Phase 8 stop rules
+        "CONSERVATIVE": 78, "BOUNCE": 38,                       # ★ Phase 9 Step 1.5: BOUNCE dropped 62→38
         "ANTI-KNIFE": 40, "DEFAULT": 38,
         "ANTI-CHASE": 30, "ANTI-MOMENTUM": 22,
         "LLM_BUY_NO_OVERRIDE": 38,

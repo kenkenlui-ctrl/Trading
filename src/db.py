@@ -139,6 +139,18 @@ ALTER TABLE daily_report ADD COLUMN decision_reason TEXT;
 -- confidence (訊號強度). User complained 02208 (LLM 評分 58 + 買入)
 -- and 00992 (LLM 評分 77 + 觀望) feel contradictory.
 ALTER TABLE daily_report ADD COLUMN signal_score INTEGER;
+
+-- market_state (Phase 9 Step 2, 2026-07-18): HSI daily close for regime filter.
+-- Captured per trading day. regime = BULL (HSI>0) / NEUTRAL (-1%<HSI<0)
+-- / BEAR (HSI<-1.5%) for rule-based filtering.
+CREATE TABLE IF NOT EXISTS market_state (
+    trade_date TEXT PRIMARY KEY,
+    hsi_chg_pct REAL,
+    hsi_close REAL,
+    hk_chg_pct REAL,
+    regime TEXT,
+    captured_at TEXT
+);
 """
 
 
@@ -225,6 +237,43 @@ def get_ticker(code: str) -> Optional[dict]:
 
 # ============ Daily Report ============
 
+def get_market_state_for_date(trade_date: str) -> Optional[dict]:
+    """Fetch HSI close/regime for a given trade_date (Phase 9 Step 2).
+
+    Returns dict {hsi_chg_pct, hsi_close, hk_chg_pct, regime} or None.
+    None means: no data captured yet → caller should default to None (no
+    regime filter applied) so the signal is not artificially suppressed.
+    """
+    conn = get_db()
+    try:
+        row = conn.execute(
+            "SELECT hsi_chg_pct, hsi_close, hk_chg_pct, regime FROM market_state WHERE trade_date=?",
+            (trade_date,),
+        ).fetchone()
+        return dict(row) if row else None
+    finally:
+        conn.close()
+
+
+def save_market_state(trade_date: str, hsi_chg_pct: float, hsi_close: float,
+                      hk_chg_pct: Optional[float] = None,
+                      regime: Optional[str] = None) -> None:
+    """Upsert market_state for trade_date (used by daily capture)."""
+    from datetime import datetime
+    conn = get_db()
+    try:
+        conn.execute(
+            """INSERT OR REPLACE INTO market_state
+               (trade_date, hsi_chg_pct, hsi_close, hk_chg_pct, regime, captured_at)
+               VALUES (?, ?, ?, ?, ?, ?)""",
+            (trade_date, hsi_chg_pct, hsi_close, hk_chg_pct, regime,
+             datetime.now().isoformat(timespec="seconds")),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
 def save_report(
     code: str,
     report_date: str,
@@ -248,6 +297,7 @@ def save_report(
     llm_original_op: Optional[str] = None,
     decision_reason: Optional[str] = None,
     signal_score: Optional[int] = None,
+    hsi_yesterday_chg: Optional[float] = None,  # ★ Phase 9 Step 2: HSI regime filter
 ) -> int:
     """Insert or replace today's report for code. Returns row id.
 
@@ -274,6 +324,12 @@ def save_report(
         except Exception:
             sb = {}
         sector = (data_snapshot.get("sector") or "").strip() if data_snapshot else ""
+        # ★ Phase 9 Step 2: auto-fetch HSI yesterday chg from market_state if not
+        # explicitly passed. Backfill scripts can also pass it directly.
+        if hsi_yesterday_chg is None:
+            ms = get_market_state_for_date(report_date)
+            if ms and ms.get("hsi_chg_pct") is not None:
+                hsi_yesterday_chg = ms["hsi_chg_pct"]
         decision = apply_to_snapshot(
             llm_op=operation_advice,
             llm_sentiment=sentiment or "",
@@ -281,6 +337,7 @@ def save_report(
             score_breakdown=sb,
             data_snapshot=data_snapshot or {},
             sector=sector,
+            hsi_yesterday_chg=hsi_yesterday_chg,
         )
         operation_advice = decision.op
         llm_original_op = decision.original_op
