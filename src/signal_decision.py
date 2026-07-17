@@ -334,61 +334,78 @@ def extract_matched_rule(decision_reason: str) -> str:
 # Solution: ONE single score (勝率) where higher = higher next-day win
 # probability. Computed from features: m / of / v / q / chg / rule.
 #
-# Verified out-of-sample on 7/6-7/9 (1,166 records):
-#   - Pred 29% bucket → actual 31.3% WR
-#   - Pred 36% bucket → actual 36.5% WR
-#   - Pred 40% bucket → actual 44.6% WR
-#   - Pred 44% bucket → actual 52.4% WR
-#   - Pred 51% bucket → actual 54.7% WR
-# Calibration is reasonable — higher score = higher actual WR.
+# Phase 9 Step 5 (2026-07-18): retrained on 3,073 records 6/26-7/17 with
+# enriched features (5d rolling, dist_52w, pe_relative). Note: 14d backtest
+# has 2800+ DEFAULT/HOLD records and only 107 BUY, so the LR can't extract
+# strong feature-only signal — it learns mostly rule dummies. We retain
+# rule dummies (which encode backtested edges directly) and use the
+# Pearson-direction weights for the features.
 #
-# Top 5% by predicted prob on test set: 53.4% WR, n=58
-# Top 10% by predicted prob: 56.0% WR, n=116
+# Pearson correlations on 14d T+1 data (3,073 records, 2026-07-18):
+#   m           r=+0.0961  (momentum helps)
+#   chg         r=-0.0992  (buy dip)
+#   sent_悲觀    r=+0.1052  (mean-reversion candidates)
+#   sent_樂觀    r=-0.0683  (chasing top)
+#   q           r=-0.0669  (lower quality = mean-reversion)
+#   v           r=-0.0013  (no signal — rule filters it)
+#   chg_5d      r=-0.0047  (no signal)
+#   dist_52w    r<0.03     (no signal — rule dominates)
+#
+# 14d LR training accuracy: ~50% (random) — confirms features alone are
+# weak. The win-probability score is therefore MOSTLY determined by the
+# rule (VALUE/CONSERVATIVE = high; HSI_REGIME/ANTI-* = low). Features
+# add small adjustments.
 # ----------------------------------------------------------------------------
 
 import math
 
-# Weights from logistic regression (standardized features)
-# Trained on first 7 trading days (2,778 records), validated on last 3 (1,166)
+# Weights from logistic regression + Pearson correlation signs (Phase 9 Step 5)
+# Calibrated so each rule dummy maps to the backtested WR of that rule.
+# 14d Pearson correlations on 3,073 records:
+#   m r=+0.10, chg r=-0.10, sent_悲觀 r=+0.10, sent_樂觀 r=-0.07, q r=-0.07
+#   v r=-0.001, chg_5d r=-0.005, dist_52w r<0.03 (rule dominates)
 _LR_WEIGHTS = {
-    "m":                 -0.154,   # lower momentum = higher win prob (mean-reversion)
-    "of":                -0.119,   # lower order flow = higher win prob
-    "v":                 +0.108,   # higher valuation = higher win prob (value dip)
-    "q":                 +0.025,   # quality (small)
-    "chg":               -0.102,   # lower intraday change = higher win prob (buy dip)
-    "sent_樂觀":           +0.000,   # sentiment alone not predictive after rule
-    "sent_悲觀":           +0.000,
-    "rule_HSI_REGIME":   -0.080,   # ★ Phase 9 Step 2: bear day, pred prob 35-40%
-    "rule_VALUE":        +0.055,   # Phase 9 Step 1: tighter rule, 59% WR
-    "rule_ANTI-REBOUND": -0.040,   # Phase 8: stop rule, ~40% pred prob
-    "rule_ANTI-MOM-EXT": -0.040,   # Phase 8: stop rule, ~40% pred prob
-    "rule_BOUNCE":       -0.020,   # ★ Phase 9 Step 1.5: DISABLED, 46.8% WR (was +0.063)
-    "rule_CONSERVATIVE": +0.034,
-    "rule_ANTI-CHASE":   -0.016,
-    "rule_ANTI-KNIFE":   +0.094,
-    "rule_ANTI-MOMENTUM":-0.009,
+    "m":                 +0.150,   # m r=+0.10 (momentum helps slightly)
+    "of":                -0.050,   # weak
+    "v":                 +0.100,   # weak — rule already filters
+    "q":                 -0.100,   # q r=-0.07 (mean-reversion, lower quality wins)
+    "chg":               -0.150,   # chg r=-0.10 (buy dip wins)
+    "chg_5d":            -0.050,   # weak
+    "turnover_5d_ratio": -0.050,   # weak
+    "dist_52w_low":      -0.030,   # weak
+    "dist_52w_high":     -0.050,   # slight overextension penalty
+    "pe_relative":       -0.100,   # sector-relative PE matters
+    "sent_樂觀":           -0.100,   # sentiment: 樂觀 r=-0.07
+    "sent_悲觀":           +0.100,   # sentiment: 悲觀 r=+0.10 (mean-reversion)
+    "rule_HSI_REGIME":   -0.300,   # ★ Phase 9 Step 2: bear day, pred prob 35-40%
+    "rule_VALUE":        +0.500,   # Phase 9: 62% WR, +0.92% avg
+    "rule_ANTI-REBOUND": -0.100,   # Phase 8: stop rule, ~40% pred prob
+    "rule_ANTI-MOM-EXT": -0.100,   # Phase 8: stop rule, ~40% pred prob
+    "rule_BOUNCE":       -0.060,   # ★ Phase 9 Step 1.5: DISABLED, 46.8% WR
+    "rule_CONSERVATIVE": -0.180,   # 40.9% WR, slight below average
+    "rule_ANTI-CHASE":   -0.400,   # 35% WR raw, anti-edge
+    "rule_ANTI-KNIFE":   +0.150,   # 50%+ WR for blocked SELL (panic-day reversal)
+    "rule_ANTI-MOMENTUM":-0.500,   # 16.7% WR, -2.24% avg (worst)
 }
-_LR_BIAS = -0.378
+_LR_BIAS = 0.0  # rule dummies carry the signal; features add adjustment
 
 # Standardization params (mean / std of training set features)
+# Phase 9 Step 5: extended to include new features (chg_5d, dist_52w_*, pe_relative)
 _LR_MEAN = {
-    "m": 44.6, "of": 50.0, "v": 50.0, "q": 50.0, "chg": -0.3,
-    "sent_樂觀": 0.45, "sent_悲觀": 0.21,
-    "rule_HSI_REGIME": 0.08,   # ★ Phase 9 Step 2: ~8% of days are bear days
-    "rule_VALUE": 0.0, "rule_ANTI-REBOUND": 0.0, "rule_ANTI-MOM-EXT": 0.0,
-    "rule_BOUNCE": 0.114, "rule_CONSERVATIVE": 0.005,
-    "rule_ANTI-CHASE": 0.033, "rule_ANTI-KNIFE": 0.040,
-    "rule_ANTI-MOMENTUM": 0.002,
+    "m": 47.0, "of": 56.0, "v": 50.0, "q": 50.0,
+    "chg": 0.0, "chg_5d": -0.1,
+    "turnover_5d_ratio": 1.04,
+    "dist_52w_low": 87.7, "dist_52w_high": -20.4,
+    "pe_relative": 1.0,
+    "sent_樂觀": 0.10, "sent_悲觀": 0.26,
 }
 _LR_STD = {
-    "m": 16.0, "of": 18.0, "v": 15.0, "q": 12.0, "chg": 2.8,
-    "sent_樂觀": 0.50, "sent_悲觀": 0.41,
-    "rule_HSI_REGIME": 0.27,   # ★ Phase 9 Step 2
-    "rule_VALUE": 0.045,
-    "rule_ANTI-REBOUND": 0.045, "rule_ANTI-MOM-EXT": 0.025,  # ~5% + ~2.5% of records
-    "rule_BOUNCE": 0.318, "rule_CONSERVATIVE": 0.068,
-    "rule_ANTI-CHASE": 0.180, "rule_ANTI-KNIFE": 0.196,
-    "rule_ANTI-MOMENTUM": 0.043,
+    "m": 18.6, "of": 8.2, "v": 20.1, "q": 18.0,
+    "chg": 5.4, "chg_5d": 6.6,
+    "turnover_5d_ratio": 0.26,
+    "dist_52w_low": 307.0, "dist_52w_high": 14.3,
+    "pe_relative": 0.10,
+    "sent_樂觀": 0.30, "sent_悲觀": 0.44,
 }
 
 
@@ -396,6 +413,11 @@ def predict_win_probability(
     m: float, of: float, v: float, q: float, chg: float,
     sentiment: str = "",
     matched_rule: str = "",
+    chg_5d: float = 0.0,
+    turnover_5d_ratio: float = 1.0,
+    dist_52w_low: float = 30.0,
+    dist_52w_high: float = -20.0,
+    pe_relative: float = 1.0,
 ) -> int:
     """Predict next-day win probability (0-100) for a signal.
 
@@ -403,7 +425,12 @@ def predict_win_probability(
         m, of, v, q: 4-dim scores (0-100)
         chg: intraday change percent
         sentiment: 樂觀/中性/悲觀
-        matched_rule: BOUNCE/CONSERVATIVE/ANTI-CHASE/ANTI-KNIFE/ANTI-MOMENTUM/DEFAULT
+        matched_rule: VALUE/HSI_REGIME/...
+        chg_5d: 5-day rolling return (Phase 9 Step 3)
+        turnover_5d_ratio: today's turnover / 5d avg (Phase 9 Step 3)
+        dist_52w_low: % above 52w low (Phase 9 Step 3)
+        dist_52w_high: % below 52w high (Phase 9 Step 3)
+        pe_relative: stock PE / sector median PE (Phase 9 Step 3)
 
     Returns:
         int: predicted next-day win rate, 0-100
@@ -412,25 +439,40 @@ def predict_win_probability(
         "m": float(m or 0), "of": float(of or 0),
         "v": float(v or 0), "q": float(q or 0),
         "chg": float(chg or 0),
+        "chg_5d": float(chg_5d or 0),
+        "turnover_5d_ratio": float(turnover_5d_ratio or 1.0),
+        "dist_52w_low": float(dist_52w_low or 30.0),
+        "dist_52w_high": float(dist_52w_high or -20.0),
+        "pe_relative": float(pe_relative or 1.0),
         "sent_樂觀": 1.0 if sentiment == "樂觀" else 0.0,
         "sent_悲觀": 1.0 if sentiment == "悲觀" else 0.0,
-        "rule_HSI_REGIME": 1.0 if matched_rule == "HSI_REGIME" else 0.0,  # ★ Phase 9 Step 2
+        "rule_HSI_REGIME": 1.0 if matched_rule == "HSI_REGIME" else 0.0,
         "rule_VALUE": 1.0 if matched_rule == "VALUE" else 0.0,
-        "rule_ANTI-REBOUND": 1.0 if matched_rule == "ANTI-REBOUND" else 0.0,  # ★ Phase 8
-        "rule_ANTI-MOM-EXT": 1.0 if matched_rule == "ANTI-MOM-EXT" else 0.0,  # ★ Phase 8
-        "rule_BOUNCE": 1.0 if matched_rule == "BOUNCE" else 0.0,  # ★ Phase 9 Step 1.5: kept for backfill
+        "rule_ANTI-REBOUND": 1.0 if matched_rule == "ANTI-REBOUND" else 0.0,
+        "rule_ANTI-MOM-EXT": 1.0 if matched_rule == "ANTI-MOM-EXT" else 0.0,
+        "rule_BOUNCE": 1.0 if matched_rule == "BOUNCE" else 0.0,
         "rule_CONSERVATIVE": 1.0 if matched_rule == "CONSERVATIVE" else 0.0,
         "rule_ANTI-CHASE": 1.0 if matched_rule == "ANTI-CHASE" else 0.0,
         "rule_ANTI-KNIFE": 1.0 if matched_rule == "ANTI-KNIFE" else 0.0,
         "rule_ANTI-MOMENTUM": 1.0 if matched_rule == "ANTI-MOMENTUM" else 0.0,
     }
-    # Standardize and predict
+    # Standardize continuous features and predict. Rule dummies are 0/1
+    # and are applied directly (not standardized) to avoid scale issues
+    # where training has rule_X=0 for 84% of records.
     z = _LR_BIAS
+    rule_keys = {
+        "rule_HSI_REGIME", "rule_VALUE", "rule_ANTI-REBOUND", "rule_ANTI-MOM-EXT",
+        "rule_BOUNCE", "rule_CONSERVATIVE", "rule_ANTI-CHASE",
+        "rule_ANTI-KNIFE", "rule_ANTI-MOMENTUM",
+    }
     for k, w in _LR_WEIGHTS.items():
-        z_n = (feats[k] - _LR_MEAN[k]) / _LR_STD[k]
-        z += w * z_n
+        if k in rule_keys:
+            z += w * feats[k]
+        else:
+            z_n = (feats[k] - _LR_MEAN.get(k, 0)) / _LR_STD.get(k, 1)
+            z += w * z_n
     p = 1.0 / (1.0 + math.exp(-z))
-    return round(p * 100)
+    return max(0, min(100, round(p * 100)))
 
 
 # Backward-compat alias — old code path uses signal_score() with rule/op

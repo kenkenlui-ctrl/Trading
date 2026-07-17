@@ -72,6 +72,162 @@ class AnalysisResult:
         }
 
 
+# =============== Phase 9 Step 3 Feature Helpers ===============
+# Pull 5d rolling + 52w + sector features from DB (live) to enrich
+# score_breakdown. Each helper is a quick read; on cache miss returns None.
+
+def _feat_chg_5d(code: str) -> Optional[float]:
+    """5-day rolling return for `code` from daily_report.
+
+    Returns None if <2 historical records exist.
+    """
+    import json as _json
+    import sqlite3 as _sq
+    try:
+        con = _sq.connect("/Users/kenken/Documents/dsa-hk/data/dsa_hk.db", timeout=5)
+        rows = con.execute(
+            "SELECT report_date, data_snapshot_json FROM daily_report "
+            "WHERE code=? ORDER BY report_date DESC LIMIT 5",
+            (code,),
+        ).fetchall()
+        con.close()
+        if len(rows) < 2:
+            return None
+        # Oldest → newest
+        rows.reverse()
+        try:
+            p_first = _json.loads(rows[0][1] or "{}").get("last_price")
+            p_last = _json.loads(rows[-1][1] or "{}").get("last_price")
+        except Exception:
+            return None
+        if not p_first or not p_last or p_first <= 0:
+            return None
+        return round((p_last - p_first) / p_first * 100, 2)
+    except Exception:
+        return None
+
+
+def _feat_dist_low(snap: dict) -> Optional[float]:
+    price = snap.get("last_price")
+    lo = snap.get("52w_low")
+    if not price or not lo or lo <= 0:
+        return None
+    return round((price - lo) / lo * 100, 2)
+
+
+def _feat_dist_high(snap: dict) -> Optional[float]:
+    price = snap.get("last_price")
+    hi = snap.get("52w_high")
+    if not price or not hi or hi <= 0:
+        return None
+    return round((price - hi) / hi * 100, 2)
+
+
+def _feat_pe_rel(code: str, snap: dict, name: str = "") -> Optional[float]:
+    """Stock pe / sector median pe (sector from snap or ticker table)."""
+    import json as _json
+    import sqlite3 as _sq
+    pe = snap.get("pe_ttm")
+    if not pe or pe <= 0 or pe > 200:
+        return None
+    sector = (snap.get("sector") or "").strip()
+    if not sector:
+        try:
+            con = _sq.connect("/Users/kenken/Documents/dsa-hk/data/dsa_hk.db", timeout=5)
+            row = con.execute(
+                "SELECT sector FROM ticker WHERE code=?", (code,)
+            ).fetchone()
+            con.close()
+            sector = (row[0] or "").strip() if row else ""
+        except Exception:
+            return None
+    if not sector:
+        return None
+    try:
+        con = _sq.connect("/Users/kenken/Documents/dsa-hk/data/dsa_hk.db", timeout=5)
+        rows = con.execute(
+            "SELECT data_snapshot_json FROM daily_report "
+            "WHERE code != ? AND report_date = (SELECT MAX(report_date) FROM daily_report)",
+            (code,),
+        ).fetchall()
+        con.close()
+        peers_pe = []
+        for r in rows:
+            try:
+                s = _json.loads(r[0] or "{}")
+            except Exception:
+                continue
+            if (s.get("sector") or "").strip() != sector:
+                continue
+            p = s.get("pe_ttm")
+            if p and p > 0 and p < 200:
+                peers_pe.append(p)
+        if not peers_pe:
+            return None
+        peers_pe.sort()
+        n = len(peers_pe)
+        median = peers_pe[n // 2] if n % 2 == 1 else (peers_pe[n // 2 - 1] + peers_pe[n // 2]) / 2
+        return round(pe / median, 2)
+    except Exception:
+        return None
+
+
+def _feat_to_ratio(code: str) -> Optional[float]:
+    """Today's turnover / 5d avg turnover ratio."""
+    import json as _json
+    import sqlite3 as _sq
+    try:
+        con = _sq.connect("/Users/kenken/Documents/dsa-hk/data/dsa_hk.db", timeout=5)
+        rows = con.execute(
+            "SELECT report_date, data_snapshot_json FROM daily_report "
+            "WHERE code=? ORDER BY report_date DESC LIMIT 5",
+            (code,),
+        ).fetchall()
+        con.close()
+        if len(rows) < 2:
+            return None
+        turnovers = []
+        for _, dsj in rows:
+            try:
+                t = _json.loads(dsj or "{}").get("turnover_hkd")
+            except Exception:
+                t = None
+            if t and t > 0:
+                turnovers.append(t)
+        if len(turnovers) < 2:
+            return None
+        today = turnovers[0]
+        avg = sum(turnovers[1:]) / (len(turnovers) - 1)
+        if avg <= 0:
+            return None
+        return round(today / avg, 2)
+    except Exception:
+        return None
+        return {
+            "code": self.code,
+            "score": self.score,
+            "sentiment": self.sentiment,
+            "trend": self.trend,
+            "operation_advice": self.operation_advice,
+            "confidence": self.confidence,
+            "summary": self.summary,
+            "score_breakdown": self.score_breakdown,
+            "trade_direction": self.trade_direction,
+            "entry_zone": self.entry_zone,
+            "stop_loss": self.stop_loss,
+            "target_price": self.target_price,
+            "risk_reward_ratio": self.risk_reward_ratio,
+            "support_zone": self.support_zone,
+            "resistance_zone": self.resistance_zone,
+            "key_levels": self.key_levels,
+            "catalysts": self.catalysts,
+            "risks": self.risks,
+            "strategy_tags": self.strategy_tags,
+            "reasoning": self.reasoning,
+            "llm_model": self.llm_model,
+        }
+
+
 def _extract_json(text: str) -> dict:
     """Extract JSON object from LLM response. Handles markdown wrapping."""
     text = text.strip()
@@ -238,7 +394,18 @@ temperature=0.3,
                 operation_advice=str(data.get("operation_advice", "觀望")),
                 confidence=str(data.get("confidence", "中")),
                 summary=summary_text,
-                score_breakdown=breakdown,
+                # Phase 9 Step 3 (2026-07-18): enrich score_breakdown with
+                # deterministic features (5d rolling, 52w, sector relative).
+                # LLM 4-dim scores (v/q/m/of) are kept for reference but
+                # the LR uses the deterministic features for confidence.
+                score_breakdown={
+                    **breakdown,
+                    "chg_5d": _feat_chg_5d(code),
+                    "dist_52w_low_pct": _feat_dist_low(snapshot),
+                    "dist_52w_high_pct": _feat_dist_high(snapshot),
+                    "pe_relative": _feat_pe_rel(code, snapshot, name),
+                    "turnover_5d_ratio": _feat_to_ratio(code),
+                },
                 trade_direction=str(data.get("trade_direction", "both")),
                 entry_zone=data.get("entry_zone"),
                 stop_loss=data.get("stop_loss"),

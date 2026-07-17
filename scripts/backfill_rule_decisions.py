@@ -88,6 +88,11 @@ def main():
 
         # Re-compute signal_score using latest LR
         chg = (snap or {}).get("change_pct") or 0
+        # Phase 9 Step 5: use features_json if available (5d rolling + 52w + sector)
+        try:
+            fjson = json.loads(r["features_json"] or "{}")
+        except Exception:
+            fjson = {}
         new_score = predict_win_probability(
             m=sb.get("momentum_score") or 0,
             of=sb.get("order_flow_score") or 0,
@@ -96,6 +101,11 @@ def main():
             chg=chg,
             sentiment=r["sentiment"] or "",
             matched_rule=decision.matched_rule,
+            chg_5d=fjson.get("chg_5d") or 0,
+            turnover_5d_ratio=fjson.get("turnover_5d_ratio") or 1.0,
+            dist_52w_low=fjson.get("dist_52w_low_pct") or 30.0,
+            dist_52w_high=fjson.get("dist_52w_high_pct") or -20.0,
+            pe_relative=fjson.get("pe_relative") or 1.0,
         )
 
         # Track stats
