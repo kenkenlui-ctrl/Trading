@@ -28,9 +28,15 @@ Rules (priority order, first match wins):
   1. ANTI-CHASE:    樂觀 + m≥60 + chg≥+3% → 觀望 (proved -1.57% avg)
   2. ANTI-KNIFE:    悲觀 + chg≤-3% → 觀望 (proved +0.24% avg wrong direction)
   3. ANTI-MOMENTUM: m≥80 → 觀望 (proved -2.24% avg, 16.7% WR)
-  4. CONSERVATIVE:  chg[-3,0)+sent非樂觀+m[30,60]+非科技 → 買入 (61.5% WR)
-  5. BOUNCE:        chg[-5,-2]+sent非樂觀+m<60 → 買入 (51.7% WR)
-  6. DEFAULT:       else → 觀望 (don't trust LLM BUY outside edges)
+  4. ANTI-REBOUND:  VALUE fired BUT chg≥+2% on signal day → 觀望
+                    (Phase 8, 2026-07-18. 7/17 live: rebound chasers 0/16 WR.
+                     14d backtest ANTI-REBOUND subset: 57.5% WR vs 53.9% baseline.)
+  5. ANTI-MOM-EXT:  VALUE fired BUT m≥70 on signal day → 觀望
+                    (Phase 8, 2026-07-18. 7/17 live: high-momentum VALUE 0/9 WR.
+                     14d backtest: m≥70 in VALUE filter = 47% WR, vs m<70 = 55% WR.)
+  6. CONSERVATIVE:  chg[-3,0)+sent非樂觀+m[30,60]+非科技 → 買入 (61.5% WR)
+  7. BOUNCE:        chg[-5,-2]+sent非樂觀+m<60 → 買入 (51.7% WR)
+  8. DEFAULT:       else → 觀望 (don't trust LLM BUY outside edges)
 """
 from __future__ import annotations
 
@@ -83,7 +89,29 @@ def decide(
     #   value_score >= 60  AND  pe_ttm < 15
     # 14-day audit (n=441-664): 54-55% WR, +0.35% avg, robust sample.
     # Priority 0 = fires BEFORE any LLM-derived rule (ANTI-/CONSERVATIVE/BOUNCE).
-    if v >= 60 and pe is not None and not (isinstance(pe, float) and pe != pe) and pe < 15 and pe > 0:
+    value_would_fire = (v >= 60 and pe is not None and not (isinstance(pe, float) and pe != pe)
+                        and pe < 15 and pe > 0)
+
+    if value_would_fire:
+        # ANTI-REBOUND check (Phase 8, 2026-07-18): VALUE conditions met but signal day
+        # was a rebound (chg >= +2%). 7/17 live: 0/16 such stocks won. 14d backtest:
+        # 47.5% WR with chg≥+2% vs 57.5% with chg<+2% in VALUE subset.
+        if chg is not None and not (isinstance(chg, float) and chg != chg) and chg >= 2:
+            return Decision(
+                op="觀望",
+                reason=f"ANTI-REBOUND: VALUE conditions met (v={v}, pe={pe_str}) BUT signal-day chg={chg:+.1f}% is a rebound chase. 7/17 live: 0/16 WR; 14d backtest: 47.5% vs 57.5% with chg<+2%.",
+                matched_rule="ANTI-REBOUND",
+                original_op=llm_op,
+            )
+        # ANTI-MOM-EXT check (Phase 8): VALUE conditions met but momentum too high (m>=70).
+        # 7/17 live: 0/9 such VALUE signals won. 14d backtest: 47% WR with m≥70 vs 55% with m<70.
+        if m is not None and m >= 70:
+            return Decision(
+                op="觀望",
+                reason=f"ANTI-MOM-EXT: VALUE conditions met (v={v}, pe={pe_str}) BUT m={m} ≥ 70 means stock already trending strongly (momentum play, not value). 7/17 live: 0/9 WR; 14d backtest: 47% vs 55% with m<70.",
+                matched_rule="ANTI-MOM-EXT",
+                original_op=llm_op,
+            )
         return Decision(
             op="買入",
             reason=f"VALUE BUY: value_score={v} ≥ 60 + pe_ttm={pe_str} < 15 (low-PE quality dip). 14-day audit: 54-55% WR, +0.35% avg, n=441-664. Fires regardless of LLM op.",
@@ -184,6 +212,8 @@ def apply_to_snapshot(llm_op: str, llm_sentiment: str, llm_trend: str,
 _SIGNAL_SCORE_TABLE = {
     # Rule outcomes (matched_rule field)
     "VALUE":         70,   # 54-55% WR, +0.35% avg, n=441-664 (best 14-day edge) ★ NEW
+    "ANTI-REBOUND":  42,   # ★ Phase 8: blocks VALUE with chg≥+2% (rebound chaser)
+    "ANTI-MOM-EXT":  42,   # ★ Phase 8: blocks VALUE with m≥70 (momentum chase)
     "CONSERVATIVE":  78,   # 61.5% WR, +0.92% avg (small sample legacy)
     "BOUNCE":        62,   # 51.7% WR, -0.57% avg (selective)
     "ANTI-CHASE":    30,   # blocked BUY; 35.3% WR raw, -1.49% avg (anti-edge)
@@ -274,8 +304,10 @@ _LR_WEIGHTS = {
     "chg":               -0.102,   # lower intraday change = higher win prob (buy dip)
     "sent_樂觀":           +0.000,   # sentiment alone not predictive after rule
     "sent_悲觀":           +0.000,
-    "rule_VALUE":        +0.035,   # ★ NEW Phase 6: VALUE filter 54-55% WR, calibrated to ~60% predicted prob
-    "rule_BOUNCE":       +0.063,   # small positive boost
+    "rule_VALUE":        +0.035,   # Phase 6: VALUE filter 54-55% WR
+    "rule_ANTI-REBOUND": -0.040,   # Phase 8: stop rule, ~40% pred prob
+    "rule_ANTI-MOM-EXT": -0.040,   # Phase 8: stop rule, ~40% pred prob
+    "rule_BOUNCE":       +0.063,
     "rule_CONSERVATIVE": +0.034,
     "rule_ANTI-CHASE":   -0.016,
     "rule_ANTI-KNIFE":   +0.094,
@@ -287,7 +319,7 @@ _LR_BIAS = -0.378
 _LR_MEAN = {
     "m": 44.6, "of": 50.0, "v": 50.0, "q": 50.0, "chg": -0.3,
     "sent_樂觀": 0.45, "sent_悲觀": 0.21,
-    "rule_VALUE": 0.0,   # NEW (was 0 before, no records)
+    "rule_VALUE": 0.0, "rule_ANTI-REBOUND": 0.0, "rule_ANTI-MOM-EXT": 0.0,
     "rule_BOUNCE": 0.114, "rule_CONSERVATIVE": 0.005,
     "rule_ANTI-CHASE": 0.033, "rule_ANTI-KNIFE": 0.040,
     "rule_ANTI-MOMENTUM": 0.002,
@@ -295,7 +327,8 @@ _LR_MEAN = {
 _LR_STD = {
     "m": 16.0, "of": 18.0, "v": 15.0, "q": 12.0, "chg": 2.8,
     "sent_樂觀": 0.50, "sent_悲觀": 0.41,
-    "rule_VALUE": 0.045,  # ~4.5% of records after Phase 6 (441/4634)
+    "rule_VALUE": 0.045,
+    "rule_ANTI-REBOUND": 0.045, "rule_ANTI-MOM-EXT": 0.025,  # ~5% + ~2.5% of records
     "rule_BOUNCE": 0.318, "rule_CONSERVATIVE": 0.068,
     "rule_ANTI-CHASE": 0.180, "rule_ANTI-KNIFE": 0.196,
     "rule_ANTI-MOMENTUM": 0.043,
@@ -324,7 +357,9 @@ def predict_win_probability(
         "chg": float(chg or 0),
         "sent_樂觀": 1.0 if sentiment == "樂觀" else 0.0,
         "sent_悲觀": 1.0 if sentiment == "悲觀" else 0.0,
-        "rule_VALUE": 1.0 if matched_rule == "VALUE" else 0.0,  # ★ NEW
+        "rule_VALUE": 1.0 if matched_rule == "VALUE" else 0.0,
+        "rule_ANTI-REBOUND": 1.0 if matched_rule == "ANTI-REBOUND" else 0.0,  # ★ Phase 8
+        "rule_ANTI-MOM-EXT": 1.0 if matched_rule == "ANTI-MOM-EXT" else 0.0,  # ★ Phase 8
         "rule_BOUNCE": 1.0 if matched_rule == "BOUNCE" else 0.0,
         "rule_CONSERVATIVE": 1.0 if matched_rule == "CONSERVATIVE" else 0.0,
         "rule_ANTI-CHASE": 1.0 if matched_rule == "ANTI-CHASE" else 0.0,
@@ -348,7 +383,8 @@ def signal_score(matched_rule: str, final_op: str) -> int:
     Kept for backward compat with old callers. Returns static mapping.
     """
     static = {
-        "VALUE": 70, "CONSERVATIVE": 78, "BOUNCE": 62,  # VALUE ★ NEW 2026-07-17
+        "VALUE": 70, "ANTI-REBOUND": 42, "ANTI-MOM-EXT": 42,  # VALUE + Phase 8 stop rules
+        "CONSERVATIVE": 78, "BOUNCE": 62,
         "ANTI-KNIFE": 40, "DEFAULT": 38,
         "ANTI-CHASE": 30, "ANTI-MOMENTUM": 22,
         "LLM_BUY_NO_OVERRIDE": 38,
