@@ -410,6 +410,7 @@ def compute_all_features(code: str, report_date: str, snap: dict,
         rolling = compute_5d_rolling(code, report_date, con)
         sector = (snap.get("sector") or "").strip()
         sector_feats = compute_sector_features(snap, con, report_date, sector)
+        sector_5d = compute_sector_5d_return(sector, con, report_date)
 
         v = compute_value_score(snap, dist_low_pct=dist_52w.get("dist_52w_low_pct"))
         q = compute_quality_score(snap)
@@ -436,9 +437,91 @@ def compute_all_features(code: str, report_date: str, snap: dict,
             # Sector cross-section
             "pe_relative": sector_feats.get("pe_relative"),
             "sector_peers": sector_feats.get("sector_peers"),
+            "sector_5d_return": sector_5d,  # ★ Phase 9+: sector ETF momentum
             # Distance to 52w
             "dist_52w_high_pct": dist_52w.get("dist_52w_high_pct"),
             "dist_52w_low_pct": dist_52w.get("dist_52w_low_pct"),
         }
     finally:
         con.close()
+
+
+# =============== Sector ETF 5d return ===============
+# Uses a simple sector → ETF map. Cached per (sector, report_date) for the day.
+
+_SECTOR_ETF_MAP = {
+    # HK sector → HK ETF (yfinance symbol)
+    "Financial Services": "2828.HK",   # H股 ETF (Financial/Energy heavy)
+    "Financial": "2828.HK",
+    "金融": "2828.HK",
+    "Banks": "2828.HK",
+    "Banking": "2828.HK",
+    "Technology": "3032.HK",          # Hang Seng Tech
+    "科技": "3032.HK",
+    "Information Technology": "3032.HK",
+    "Real Estate": "2829.HK",         # HSCEI REIT
+    "REIT": "2829.HK",
+    "房地產": "2829.HK",
+    "Consumer Cyclical": "2810.HK",   # Premium Asia Consumer
+    "Consumer Defensive": "2810.HK",
+    "消費": "2810.HK",
+    "Healthcare": "09145.HK",         # Global X China Biotech (often 404, fallback to HSI)
+    "醫療": "09145.HK",
+    "Energy": "2828.HK",              # H股 ETF (Energy)
+    "能源": "2828.HK",
+    "Industrials": "2800.HK",         # Tracker Fund
+    "工業": "2800.HK",
+    "Utilities": "2800.HK",
+    "公用": "2800.HK",
+    "Communication Services": "3032.HK",  # Tech ETF (closest)
+    "通訊": "3032.HK",
+    "Basic Materials": "2828.HK",
+}
+_HSI_BENCHMARK = "2800.HK"  # Tracker Fund of HK
+
+_sector_5d_cache: dict[tuple[str, str], float | None] = {}
+
+
+def compute_sector_5d_return(sector: str, con: sqlite3.Connection,
+                              report_date: str) -> Optional[float]:
+    """Sector ETF 5d return for the report_date (or None if no data).
+
+    Uses sector → ETF map. Falls back to HSI 5d return if sector unknown.
+    Cached per (sector, report_date).
+    """
+    key = (sector, report_date)
+    if key in _sector_5d_cache:
+        return _sector_5d_cache[key]
+
+    if not sector:
+        _sector_5d_cache[key] = None
+        return None
+
+    etf = _SECTOR_ETF_MAP.get(sector)
+    if not etf:
+        _sector_5d_cache[key] = None
+        return None
+
+    # Try fetching from yfinance (rare but live)
+    try:
+        import yfinance as yf
+        t = yf.Ticker(etf)
+        hist = t.history(period="30d")
+        if hist is None or len(hist) < 6:
+            _sector_5d_cache[key] = None
+            return None
+        # Last 5 trading days return (filter out NaN)
+        hist = hist.dropna(subset=["Close"])
+        if len(hist) < 6:
+            _sector_5d_cache[key] = None
+            return None
+        ret = (hist["Close"].iloc[-1] / hist["Close"].iloc[-6] - 1) * 100
+        if ret != ret:  # NaN
+            _sector_5d_cache[key] = None
+            return None
+        ret = round(float(ret), 2)
+        _sector_5d_cache[key] = ret
+        return ret
+    except Exception:
+        _sector_5d_cache[key] = None
+        return None

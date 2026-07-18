@@ -574,6 +574,39 @@ p.card-link a:hover {
     font-size: 0.95rem;
 }
 
+/* Phase 9 Step 5 (2026-07-18): 下日勝率 (signal_score) badge.
+   High-confidence (≥70) shows as gold star. 14d backtest: 70-80 bucket = 84% WR. */
+.sig-badge {
+    display: inline-block;
+    margin: 6px 0 0 0;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    border: 1px solid var(--border);
+}
+.sig-badge.sig-high {
+    background: linear-gradient(135deg, #f5c51822, #f5c51844);
+    border-color: #f5c518;
+    color: #c9a016;
+    font-weight: 700;
+    animation: pulse 2s infinite;
+}
+.sig-badge.sig-mid {
+    background: #4a9eff22;
+    border-color: #4a9eff;
+    color: #4a9eff;
+}
+.sig-badge.sig-low {
+    background: #88888811;
+    border-color: var(--border);
+    color: var(--dim);
+}
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 #f5c51844; }
+    50% { box-shadow: 0 0 0 4px #f5c51800; }
+}
+
 .levels {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -1008,7 +1041,7 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
             + signal_banner
             + filter_chips_html(date, slug)
             + f'<h1>🔬 Signal Explorer — {date} ({label})</h1>'
-            + body_md_to_html(body_md, link_inject_date=date, score_lookup={r["code"]: r["score"] for r in all_reports if r.get("score") is not None}, op_lookup={r["code"]: r.get("operation_advice") for r in all_reports if r.get("operation_advice")})
+            + body_md_to_html(body_md, link_inject_date=date, score_lookup={r["code"]: r["score"] for r in all_reports if r.get("score") is not None}, op_lookup={r["code"]: r.get("operation_advice") for r in all_reports if r.get("operation_advice")}, signal_score_lookup={r["code"]: r.get("signal_score") for r in all_reports if r.get("signal_score") is not None})
         )
 
         # Add detail table — re-apply filters manually (already in scope from loop)
@@ -1172,14 +1205,17 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
     return written, len(all_reports)
 
 
-def body_md_to_html(md: str, link_inject_date: str | None = None, score_lookup: dict | None = None, op_lookup: dict | None = None) -> str:
+def body_md_to_html(md: str, link_inject_date: str | None = None, score_lookup: dict | None = None, op_lookup: dict | None = None, signal_score_lookup: dict | None = None) -> str:
     """Convert the build_dashboard_md markdown output to HTML for static pages.
     The output already contains raw HTML <div style=...> for cards (preserved).
     If link_inject_date is set, append a '→ 完整 ... 詳細報告' link inside each card.
     If score_lookup is set, replace any "評分 <digits>" inside the first card body for
     that ticker with the current DB score (handles rescoring without re-running LLM).
     If op_lookup is set, override the leading status emoji of each card based on
-    the structured operation_advice column (trust DB over LLM-emitted ⚪)."""
+    the structured operation_advice column (trust DB over LLM-emitted ⚪).
+    If signal_score_lookup is set, append a "下日勝率 N%" badge to BUY cards
+    (Phase 9 Step 5, 2026-07-18). High-confidence (≥70) gets a special badge.
+    """
     import re
     # Card pattern: <div style="...">CARD_CONTENT</div>
     # CARD_CONTENT is single-line text with **KO** or **00700.HK** bold code prefix.
@@ -1285,7 +1321,31 @@ def body_md_to_html(md: str, link_inject_date: str | None = None, score_lookup: 
                 f'<a href="/dashboard/{link_inject_date}/reports/{code}.html">'
                 f'→ 完整 {code} 詳細報告</a></p>'
             )
-        return open_tag_new + body + link_html + close_tag
+
+        # Phase 9 Step 5 (2026-07-18): 下日勝率 (signal_score) badge on BUY cards.
+        # 14d backtest: signal_score 70-80 bucket = 84% WR (vs 50% random).
+        # High-confidence (≥70) gets gold star + bright color.
+        sig_badge_html = ''
+        if signal_score_lookup and code and code in signal_score_lookup and op_lookup and op_lookup.get(code) in ("買入", "buy"):
+            sig = signal_score_lookup[code]
+            if sig is None:
+                sig = 0
+            if sig >= 70:
+                cls = "sig-badge sig-high"
+                tag = "🎯 高信心"
+            elif sig >= 60:
+                cls = "sig-badge sig-mid"
+                tag = "中等信心"
+            else:
+                cls = "sig-badge sig-low"
+                tag = "低信心"
+            sig_badge_html = (
+                f'<div class="{cls}">'
+                f'<b>下日勝率 {sig}%</b> · {tag}'
+                f'</div>'
+            )
+
+        return open_tag_new + body + sig_badge_html + link_html + close_tag
 
     # First rewrite cards (block-aware).
     # BUGFIX 2026-07-09: re.sub only replaces the matched span (opening tag).

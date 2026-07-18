@@ -91,7 +91,7 @@ def get_signal_codes(report_date: str, preset: str) -> list[dict]:
     # For conservative-buy we need score_breakdown which isn't in the row above
     if preset == "conservative-buy":
         rows = con.execute(
-            """SELECT code, score, operation_advice, full_md, summary_md,
+            """SELECT code, score, signal_score, decision_reason, operation_advice, full_md, summary_md,
                       data_snapshot_json, score_breakdown_json
                FROM daily_report
                WHERE report_date=? AND operation_advice='買入'""",
@@ -100,15 +100,28 @@ def get_signal_codes(report_date: str, preset: str) -> list[dict]:
     elif preset == "bounce-buy":
         # Bounce BUY includes both 觀望 and 買入 (panic-sold candidates)
         rows = con.execute(
-            """SELECT code, score, sentiment, operation_advice, full_md, summary_md,
+            """SELECT code, score, signal_score, decision_reason, sentiment, operation_advice, full_md, summary_md,
                       data_snapshot_json, score_breakdown_json
                FROM daily_report
                WHERE report_date=? AND operation_advice IN ('觀望', '買入')""",
             (report_date,),
         ).fetchall()
+    elif preset == "value-buy":
+        # Phase 9 Step 5 (2026-07-18): VALUE BUY preset. Use LR confidence filter
+        # (signal_score >= 65) to only take high-confidence trades. 14d backtest:
+        # 70-80 bucket = 84% WR.
+        rows = con.execute(
+            """SELECT code, score, signal_score, decision_reason, operation_advice, full_md, summary_md,
+                      data_snapshot_json, score_breakdown_json
+               FROM daily_report
+               WHERE report_date=? AND operation_advice='買入'
+                 AND (decision_reason LIKE '%VALUE]%' OR decision_reason LIKE '%CONSERVATIVE]%')
+                 AND signal_score >= 65""",
+            (report_date,),
+        ).fetchall()
     else:
         rows = con.execute(
-            """SELECT code, score, operation_advice, full_md, summary_md, data_snapshot_json
+            """SELECT code, score, signal_score, decision_reason, operation_advice, full_md, summary_md, data_snapshot_json
                FROM daily_report
                WHERE report_date=? AND operation_advice='買入'""",
             (report_date,),
@@ -141,6 +154,11 @@ def get_signal_codes(report_date: str, preset: str) -> list[dict]:
             passes, _ = cyber_buy_passes(tk, score, day_chg, m_score, sent, last, h52)
             if passes:
                 out.append(dict(r))
+        elif preset == "value-buy":
+            # Phase 9 Step 5 (2026-07-18): VALUE BUY with LR confidence filter.
+            # SQL already filters to signal_score >= 65 + VALUE/CONSERVATIVE rules.
+            # Just pass-through here.
+            out.append(dict(r))
         elif preset == "conservative-buy":
             if code.endswith(".HK"):
                 continue  # US-only filter
@@ -231,13 +249,15 @@ def open_paper_trades(report_date: str, preset: str, dry_run: bool = False) -> i
         cur.execute(
             """INSERT INTO paper_trade
                (code, signal_date, signal_source, entry_date, entry_price,
-                position_size_usd, stop_loss, target_price, score, op_advice, status)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'open')""",
+                position_size_usd, stop_loss, target_price, score, signal_score, op_advice, status)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'open')""",
             (code, report_date, preset, report_date, entry_price,
-             POSITION_SIZE_USD, stop, target, sig["score"], sig["operation_advice"]),
+             POSITION_SIZE_USD, stop, target, sig["score"], sig.get("signal_score"), sig["operation_advice"]),
         )
         opened += 1
-        print(f"    OPEN {code} entry=${entry_price:.2f} stop=${stop:.2f} target=${target:.2f} score={sig['score']}")
+        sig_score = sig.get("signal_score") or 0
+        sig_flag = " 🎯" if sig_score >= 70 else ""
+        print(f"    OPEN {code} entry=${entry_price:.2f} stop=${stop:.2f} target=${target:.2f} LLM={sig['score']} LR_sig={sig_score}{sig_flag}")
     con.commit()
     con.close()
     return opened

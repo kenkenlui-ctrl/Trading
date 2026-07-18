@@ -454,6 +454,39 @@ p.card-link a:hover {
     font-size: 0.95rem;
 }
 
+/* Phase 9 Step 5 (2026-07-18): 下日勝率 (signal_score) badge.
+   High-confidence (≥70) shows as gold star. 14d backtest: 70-80 bucket = 84% WR. */
+.sig-badge {
+    display: inline-block;
+    margin: 6px 0 0 0;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    border: 1px solid var(--border);
+}
+.sig-badge.sig-high {
+    background: linear-gradient(135deg, #f5c51822, #f5c51844);
+    border-color: #f5c518;
+    color: #c9a016;
+    font-weight: 700;
+    animation: pulse 2s infinite;
+}
+.sig-badge.sig-mid {
+    background: #4a9eff22;
+    border-color: #4a9eff;
+    color: #4a9eff;
+}
+.sig-badge.sig-low {
+    background: #88888811;
+    border-color: var(--border);
+    color: var(--dim);
+}
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 #f5c51844; }
+    50% { box-shadow: 0 0 0 4px #f5c51800; }
+}
+
 .levels {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -516,7 +549,7 @@ footer {
 <p>日期: 2026-07-14 · 篩選: 美股 US · <span style="color:var(--bear);font-weight:600;">🔴</span>賣出 SELL</p>
 
 <p>_此條件下無報告。_</p><h2>詳細表格</h2><p><em>此條件下無報告。</em></p>
-<p class="last-updated">最後更新: 2026-07-18 02:28 HKT</p>
+<p class="last-updated">最後更新: 2026-07-18 09:17 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>

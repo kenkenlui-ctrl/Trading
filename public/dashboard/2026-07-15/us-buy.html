@@ -454,6 +454,39 @@ p.card-link a:hover {
     font-size: 0.95rem;
 }
 
+/* Phase 9 Step 5 (2026-07-18): 下日勝率 (signal_score) badge.
+   High-confidence (≥70) shows as gold star. 14d backtest: 70-80 bucket = 84% WR. */
+.sig-badge {
+    display: inline-block;
+    margin: 6px 0 0 0;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    border: 1px solid var(--border);
+}
+.sig-badge.sig-high {
+    background: linear-gradient(135deg, #f5c51822, #f5c51844);
+    border-color: #f5c518;
+    color: #c9a016;
+    font-weight: 700;
+    animation: pulse 2s infinite;
+}
+.sig-badge.sig-mid {
+    background: #4a9eff22;
+    border-color: #4a9eff;
+    color: #4a9eff;
+}
+.sig-badge.sig-low {
+    background: #88888811;
+    border-color: var(--border);
+    color: var(--dim);
+}
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 #f5c51844; }
+    50% { box-shadow: 0 0 0 4px #f5c51800; }
+}
+
 .levels {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -523,9 +556,9 @@ footer {
 <div class="card">VZ 現價 $42.83，今日反彈 +0.85%，但仍受壓於 MA20 $43.94、MA50 $45.91 及 MA100 $47.42 之下，MA200 $44.43 同樣高於現價，長線結構偏空。RSI14 報 33.41 進入超賣區，短線有技術反彈條件，但量比僅 0.95× 缺乏買盤確認，今日 H/L 區間 2.64% 接近 3% 波幅門檻，短炒燃料尚可。PE TTM 10.37 屬低估值，6.66% 息率為成熟股提供下方承接。整體趨勢偏弱、量能不足，宜嚴控倉位做短線均值回歸，逢反彈至 MA20 $43.94 一帶遇阻可短炒回吐，回落至 $41.90-$42.21 區間可博技術反彈。</div>
 
 ---
-<em>生成時間: 2026-07-18 02:28:35 · LLM: openai/MiniMax-M3</em>
+<em>生成時間: 2026-07-18 09:17:15 · LLM: openai/MiniMax-M3</em>
 <h2>詳細表格</h2><table class="detail"><thead><tr><th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能/資金流</th><th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th><th>入場</th><th>止損</th><th>目標</th></tr></thead><tbody><tr><td><a href="/dashboard/2026-07-15/reports/PGR.html">PGR</a></td><td>64</td><td>—</td><td>70/60/15</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-15/reports/CMCSA.html">CMCSA</a></td><td>51</td><td>—</td><td>88/62/35</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-15/reports/CTSH.html">CTSH</a></td><td>49</td><td>—</td><td>75/42/35</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-15/reports/VZ.html">VZ</a></td><td>48</td><td>—</td><td>75/70/35</td><td>買入</td><td>中性偏悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr></tbody></table>
-<p class="last-updated">最後更新: 2026-07-18 02:28 HKT</p>
+<p class="last-updated">最後更新: 2026-07-18 09:17 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
