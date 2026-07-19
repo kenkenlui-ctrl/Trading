@@ -68,7 +68,7 @@ def main():
 
     # Get 7/16 sample data per code (for sector, etc)
     sample_rows = con.execute(
-        "SELECT code, data_snapshot_json, score_breakdown_json, sentiment FROM daily_report WHERE report_date=?",
+        "SELECT code, data_snapshot_json, score_breakdown_json, summary_md, sentiment FROM daily_report WHERE report_date=?",
         ("2026-07-16",),
     ).fetchall()
     by_code = {r["code"]: r for r in sample_rows}
@@ -133,6 +133,20 @@ def main():
         # LLM score = 0 (no LLM was actually run; this is a synthetic backfill)
         llm_score = 0
 
+        # Per-stock summary (Phase 9+, 2026-07-20): use 7/16's summary as base
+        # + prepend a stock-specific 7/17 line so each card shows unique content.
+        # Avoids the 197-record "same message repeated" UX bug.
+        prev_summary = sample["summary_md"] or ""
+        # Strip any leading emoji+bold code prefix from prev_summary
+        import re as _re
+        prev_summary = _re.sub(r'^🟢?🔴?⚪?\s*\*\*[A-Z0-9.\-]+\.HK\*\*\s*·\s*', '', prev_summary)
+        name = snap.get("name_zh") or snap.get("name_en") or code
+        per_stock_summary = (
+            f"🟡 **{code}** · {name} · 7/17 收 ${cur:.2f} ({chg:+.2f}%) · "
+            f"HSI {HSI_CHG_PCT:+.2f}% BEAR day · HSI_REGIME auto-suppressed BUY → 觀望. "
+            f"7/16 信號睇 <a href=\"/dashboard/2026-07-16/{code}.html\">上一個 report</a>."
+        )
+
         con.execute(
             """INSERT INTO daily_report
                (code, report_date, score, sentiment, trend, operation_advice,
@@ -144,8 +158,9 @@ def main():
                 code, REPORT_DATE, llm_score,
                 sample["sentiment"] or "中性", "震盪", "觀望",
                 json.dumps(bd, ensure_ascii=False), "both", None, None, None,
-                f"7/17 BEAR day (HSI {HSI_CHG_PCT:+.2f}%) — HSI_REGIME auto-suppressed all BUY signals to 觀望. See <a href=\"/live-monitor.html\">live monitor</a> for current regime.",
-                None, "[]",
+                per_stock_summary,
+                prev_summary or per_stock_summary,  # full_md falls back to summary
+                "[]",
                 json.dumps(snap, ensure_ascii=False),
                 "synthetic-7-17-backfill",
                 now_iso,
