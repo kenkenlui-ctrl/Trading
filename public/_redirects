@@ -1,6 +1,9 @@
 # Force .html extension on report pages (so /reports/KO → /reports/KO.html)
 /dashboard/*/reports/*  /dashboard/:splat/reports/:splat.html  301
 
+# /full-results/{date} → /dashboard/{date}/all.html (Phase 9+, 2026-07-20)
+/full-results/:date  /dashboard/:date/all.html  301
+
 # Note: Cloudflare Pages _redirects doesn't support regex matching for
 # leading-zero HK alias collapsing. The build script now writes only the
 # canonical (5-digit Tencent) and all-zeros-stripped forms. Old intermediate

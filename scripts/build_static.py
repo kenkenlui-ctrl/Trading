@@ -196,6 +196,62 @@ nav.leeks-site-nav .brand {
     letter-spacing: 0.04em;
     margin-right: 8px;
 }
+/* Full Results Hub (Phase 9+, 2026-07-20) */
+.date-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin: 1rem 0;
+}
+.date-card {
+    display: block;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 10px 14px;
+    text-decoration: none;
+    color: var(--fg);
+    transition: transform 0.1s, border-color 0.2s;
+}
+.date-card:hover {
+    transform: translateX(2px);
+    border-left-color: var(--bull);
+}
+.date-card .dc-date {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 4px;
+    color: var(--accent);
+}
+.date-card .dc-hsi {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+}
+.date-card .dc-hsi.stat-bull { color: var(--bull); font-weight: 600; }
+.date-card .dc-hsi.stat-bear { color: var(--bear); font-weight: 600; }
+.date-card .dc-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    color: var(--dim);
+}
+.date-card .dc-meta .regime-tag {
+    background: var(--bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+}
+.date-card .dc-meta .regime-tag.stat-bull {
+    background: #dcfce7;
+    color: var(--bull);
+}
+.date-card .dc-meta .regime-tag.stat-bear {
+    background: #fee2e2;
+    color: var(--bear);
+}
+.date-card .dc-meta .stat-bull { color: var(--bull); font-weight: 600; }
 nav.leeks-site-nav a {
     color: var(--dim);
     text-transform: uppercase;
@@ -1895,6 +1951,72 @@ def build_robots_txt() -> str:
     )
 
 
+def build_full_results_hub(dates: list[str]) -> str:
+    """Build /full-results.html — all-dates hub for users hitting win9you.com/full-results.
+
+    Phase 9+ (2026-07-20): user noticed /full-results.html was stale (only 7/15+7/16
+    shown). Rebuilt dynamically from latest daily_report dates.
+
+    Layout: hero + grid of date cards (each links to /dashboard/{date}/all.html)
+    with quick stats per date (HSI regime, #BUY, top signal_score).
+    """
+    import sqlite3
+    db = sqlite3.connect(str(PROJECT_ROOT / "data" / "dsa_hk.db"))
+    db.row_factory = sqlite3.Row
+
+    # Per-date quick stats
+    date_cards = []
+    for d in dates[:30]:  # last 30 days
+        stats = db.execute("""
+            SELECT
+                COUNT(*) AS total,
+                SUM(CASE WHEN operation_advice='買入' THEN 1 ELSE 0 END) AS buy_n,
+                MAX(signal_score) AS top_sig
+            FROM daily_report
+            WHERE report_date=?
+        """, (d,)).fetchone()
+        ms = db.execute(
+            "SELECT hsi_chg_pct, regime FROM market_state WHERE trade_date=?",
+            (d,),
+        ).fetchone()
+        hsi_chg = ms["hsi_chg_pct"] if ms else None
+        regime = ms["regime"] if ms else "?"
+        regime_color = "stat-bull" if regime == "BULL" else "stat-bear" if regime == "BEAR" else ""
+        hsi_str = f"{hsi_chg:+.2f}%" if hsi_chg is not None else "n/a"
+        buy_str = str(stats["buy_n"] or 0)
+        top_sig = stats["top_sig"] or 0
+        sig_class = "stat-bull" if top_sig >= 70 else ""
+        date_cards.append(f'''
+        <a href="/dashboard/{d}/all.html" class="date-card">
+            <div class="dc-date">{d}</div>
+            <div class="dc-hsi {regime_color}">HSI {hsi_str}</div>
+            <div class="dc-meta">
+                <span class="regime-tag {regime_color}">{regime}</span>
+                <span>🟢 {buy_str} BUY</span>
+                <span class="{sig_class}">sig {top_sig}</span>
+            </div>
+        </a>''')
+
+    db.close()
+
+    cards_html = "".join(date_cards)
+    body_html = f'''<div class="signal-warning"><b>📅 Full Results Hub</b> · 所有交易日完整 table (last 30 dates) · click 日期入 dashboard
+        <br>· <b>Phase 9+ (2026-07-20)</b>: 此頁之前係 static 7/15 build, 已改為 dynamic 從 daily_report + market_state gen
+        <br>· <b>URL pattern</b>: <code>/full-results.html</code> (all dates) · <code>/full-results/{{date}}</code> → redirect to <code>/dashboard/{{date}}/all.html</code></div>
+        <h1>Leeks Terminal · 全部交易日 ({len(dates)} dates)</h1>
+        <p class="last-updated">最後更新: {datetime.now().strftime("%Y-%m-%d %H:%M:%S HKT")} · {len(dates)} trading days</p>
+        <div class="date-grid">
+            {cards_html}
+        </div>
+        <p class="dim" style="margin-top:1.5rem;">Direct URL pattern: <code>https://www.win9you.com/full-results/2026-07-16</code> → auto-redirects to <code>/dashboard/2026-07-16/all.html</code></p>'''
+    return shell(
+        title="Leeks Terminal · Full Results Hub",
+        body_html=body_html,
+        active_path="/full-results.html",
+        description="All trading days — quick links + HSI regime per date",
+    )
+
+
 def build_dashboard_hub(dates: list[str]) -> str:
     """Build /dashboard/index.html — hub page listing all available dates + filter variants.
     This replaces the SPA fallback to homepage when user hits /dashboard/."""
@@ -3292,6 +3414,16 @@ def main():
         hub_path.write_text(build_dashboard_hub(all_dates), encoding="utf-8")
         print(f"✅ Built dashboard/index.html (hub of {len(all_dates)} dates)")
         written.append("dashboard/index.html")
+
+        # Phase 9+ (2026-07-20): also rebuild /full-results.html with all dates
+        # so users hitting www.win9you.com/full-results.html (or
+        # /full-results/{date} via _redirects) see the latest list
+        try:
+            fr_path = PUBLIC_DIR / "full-results.html"
+            fr_path.write_text(build_full_results_hub(all_dates), encoding="utf-8")
+            written.append("full-results.html")
+        except Exception as e:
+            print(f"⚠️  full-results.html build failed (non-fatal): {type(e).__name__}: {e}")
 
     # 4. Sitemap + robots.txt (always — they need to stay in sync with dates)
     (PUBLIC_DIR / "sitemap.xml").write_text(build_sitemap_xml(all_dates), encoding="utf-8")

@@ -64,6 +64,62 @@ nav.leeks-site-nav .brand {
     letter-spacing: 0.04em;
     margin-right: 8px;
 }
+/* Full Results Hub (Phase 9+, 2026-07-20) */
+.date-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin: 1rem 0;
+}
+.date-card {
+    display: block;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 10px 14px;
+    text-decoration: none;
+    color: var(--fg);
+    transition: transform 0.1s, border-color 0.2s;
+}
+.date-card:hover {
+    transform: translateX(2px);
+    border-left-color: var(--bull);
+}
+.date-card .dc-date {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 4px;
+    color: var(--accent);
+}
+.date-card .dc-hsi {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+}
+.date-card .dc-hsi.stat-bull { color: var(--bull); font-weight: 600; }
+.date-card .dc-hsi.stat-bear { color: var(--bear); font-weight: 600; }
+.date-card .dc-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    color: var(--dim);
+}
+.date-card .dc-meta .regime-tag {
+    background: var(--bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+}
+.date-card .dc-meta .regime-tag.stat-bull {
+    background: #dcfce7;
+    color: var(--bull);
+}
+.date-card .dc-meta .regime-tag.stat-bear {
+    background: #fee2e2;
+    color: var(--bear);
+}
+.date-card .dc-meta .stat-bull { color: var(--bull); font-weight: 600; }
 nav.leeks-site-nav a {
     color: var(--dim);
     text-transform: uppercase;
@@ -610,7 +666,7 @@ footer {
 <body>
 <nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/live-monitor.html">🔴 Live</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
-<div class="signal-warning"><b>🔴 LIVE 監控</b> · 自動 refresh 每 30 秒 · 最後更新: 2026-07-20 01:15:29 HKT
+<div class="signal-warning"><b>🔴 LIVE 監控</b> · 自動 refresh 每 30 秒 · 最後更新: 2026-07-20 01:35:23 HKT
         <br>· <b>Indices</b> via yfinance (16-hr delay for HSI on weekends) · <b>Open P&L</b> via yfinance current price
         <br>· <b>Note</b>: 週末 (Sat/Sun) 冇 HSI trading, indices 顯示 7/17 (Friday) 數據 · 7/18 嗰日 closed
         <br>· <a href="/paper-trades.html">→ 完整 paper trade 歷史</a> · <a href="/dashboard/2026-07-16/hk-buy.html">→ 7/16 BUY 訊號</a></div>
@@ -639,7 +695,7 @@ footer {
         // Auto-refresh every 30 seconds (the page is a snapshot of the moment of build)
         setTimeout(function(){ location.reload(); }, 30000);
     </script>
-<p class="last-updated">最後更新: 2026-07-20 01:15 HKT</p>
+<p class="last-updated">最後更新: 2026-07-20 01:35 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
