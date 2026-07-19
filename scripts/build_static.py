@@ -38,6 +38,18 @@ from src.db import list_report_dates, list_reports, init_db  # noqa: E402
 from src.pipeline import build_dashboard_md  # noqa: E402
 from src.config import get_config  # noqa: E402
 
+# ============== Signal Score Badge Thresholds (Phase 9, 2026-07-20) ==============
+# Owner can override via env vars:
+#   DSA_SIG_HIGH=70  (gold star, 14d backtest: 70-80 bucket = 84% WR)
+#   DSA_SIG_MID=60   (blue, default)
+# Defaults are the backtest-validated buckets.
+import os as _os
+_SIG_THRESHOLDS = {
+    "high": int(_os.environ.get("DSA_SIG_HIGH", "70")),
+    "mid": int(_os.environ.get("DSA_SIG_MID", "60")),
+}
+_SIG_PAPER_FLOOR = int(_os.environ.get("DSA_SIG_PAPER_FLOOR", "65"))  # paper trader threshold
+
 PUBLIC_DIR = PROJECT_ROOT / "public"
 
 # 2026-07-10: Per-page SEO meta (T1 work). Used by build_static_pages() so the
@@ -704,6 +716,26 @@ footer {
 .index-card .idx-val.stat-bear { color: var(--bear); }
 .index-card .idx-chg.stat-bull { color: var(--bull); font-weight: 600; }
 .index-card .idx-chg.stat-bear { color: var(--bear); font-weight: 600; }
+
+/* Bucket chart (Phase 9+ 14d BUY accuracy histogram) */
+.bucket-chart {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px;
+    margin: 8px 0;
+}
+.bucket-chart svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+.chart-legend {
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-align: center;
+    margin-top: 4px;
+}
 """
 
 
@@ -1380,10 +1412,10 @@ def body_md_to_html(md: str, link_inject_date: str | None = None, score_lookup: 
             sig = signal_score_lookup[code]
             if sig is None:
                 sig = 0
-            if sig >= 70:
+            if sig >= _SIG_THRESHOLDS["high"]:
                 cls = "sig-badge sig-high"
                 tag = "🎯 高信心"
-            elif sig >= 60:
+            elif sig >= _SIG_THRESHOLDS["mid"]:
                 cls = "sig-badge sig-mid"
                 tag = "中等信心"
             else:
@@ -2928,9 +2960,9 @@ def build_paper_trades_page() -> str:
                 pnl_str = f"{pnl_pct:+.2f}%"
             sig = t["signal_score"] or 0
             sig_badge = ""
-            if sig >= 70:
+            if sig >= _SIG_THRESHOLDS["high"]:
                 sig_badge = f' 🎯<b>{sig}</b>'
-            elif sig >= 65:
+            elif sig >= _SIG_PAPER_FLOOR:
                 sig_badge = f' <b>{sig}</b>'
             cur_str = f"${cur:.2f}" if cur else "—"
             open_html += f'<tr><td>{t["entry_date"]}</td><td><b>{t["code"]}</b></td><td>{t["signal_source"]}</td><td>{sig_badge or "—"}</td><td>${entry:.2f}</td><td>{cur_str}</td><td>${t["stop_loss"]:.2f}</td><td>${t["target_price"]:.2f}</td><td class="{pnl_class}">{pnl_str}</td><td>{held}d</td></tr>'
@@ -3035,7 +3067,7 @@ def build_live_monitor_page() -> str:
             except Exception:
                 held = "?"
             sig = t["signal_score"] or 0
-            sig_str = f"🎯{sig}" if sig >= 70 else f"{sig}" if sig >= 65 else "—"
+            sig_str = f"🎯{sig}" if sig >= _SIG_THRESHOLDS["high"] else f"{sig}" if sig >= _SIG_PAPER_FLOOR else "—"
             cur_str = f"${cur:.2f}" if cur else "—"
             open_html += f'<tr><td>{t["entry_date"]}</td><td><b>{code}</b></td><td>{t["signal_source"]}</td><td>{sig_str}</td><td>${entry:.2f}</td><td>{cur_str}</td><td>${t["stop_loss"]:.2f}</td><td>${t["target_price"]:.2f}</td><td class="{pnl_class}">{pnl_str}</td><td>{held}d</td></tr>'
         open_html += '</tbody></table>'
@@ -3050,23 +3082,23 @@ def build_live_monitor_page() -> str:
         top_buys = con.execute("""
             SELECT code, signal_score, decision_reason
             FROM daily_report
-            WHERE report_date=? AND operation_advice='買入' AND signal_score >= 60
+            WHERE report_date=? AND operation_advice='買入' AND signal_score >= ?
             ORDER BY signal_score DESC LIMIT 8
-        """, (latest_date,)).fetchall()
-    top_html = f'<div class="monitor-section"><h2>🎯 最新 BUY 訊號 (signal ≥ 60) — {latest_date}</h2>'
+        """, (latest_date, _SIG_THRESHOLDS["mid"])).fetchall()
+    top_html = f'<div class="monitor-section"><h2>🎯 最新 BUY 訊號 (signal ≥ {_SIG_THRESHOLDS["mid"]}) — {latest_date}</h2>'
     if top_buys:
         top_html += '<table class="detail"><thead><tr><th>Code</th><th>Sig Score</th><th>Rule</th></tr></thead><tbody>'
         for r in top_buys:
             sig = r["signal_score"] or 0
-            sig_class = "stat-bull" if sig >= 70 else ""
+            sig_class = "stat-bull" if sig >= _SIG_THRESHOLDS["high"] else ""
             rule_text = (r["decision_reason"] or "")[:60].replace("[", "").replace("]", "")
-            if sig >= 70:
+            if sig >= _SIG_THRESHOLDS["high"]:
                 top_html += f'<tr><td><b>{r["code"]}</b></td><td class="stat-bull">🎯 <b>{sig}</b></td><td>{rule_text}</td></tr>'
             else:
                 top_html += f'<tr><td><b>{r["code"]}</b></td><td>{sig}</td><td>{rule_text}</td></tr>'
         top_html += '</tbody></table>'
     else:
-        top_html += '<p class="dim">冇 sig≥60 BUY signals</p>'
+        top_html += f'<p class="dim">冇 sig≥{_SIG_THRESHOLDS["mid"]} BUY signals</p>'
     top_html += '</div>'
 
     # 14d T+1 accuracy summary
@@ -3082,6 +3114,80 @@ def build_live_monitor_page() -> str:
     t1_n = t1_stats["n"] or 0
     t1_wr = (t1_stats["wins"] or 0) / t1_n * 100 if t1_n else 0
     t1_avg = t1_stats["avg_ret"] or 0
+
+    # Phase 9+ (2026-07-20): 14d BUY bucket chart — visual histogram
+    bucket_rows = con.execute("""
+        SELECT d.signal_score, b.forward_return_pct, b.win
+        FROM daily_report d JOIN backtest_results b
+          ON d.code=b.code AND d.report_date=b.signal_date
+        WHERE d.report_date >= '2026-06-26' AND d.report_date <= '2026-07-17'
+          AND d.operation_advice='買入'
+    """).fetchall()
+    buckets_def = [(30, 40), (40, 50), (50, 60), (60, 70), (70, 80), (80, 101)]
+    bucket_stats = []
+    max_n = 0
+    for lo, hi in buckets_def:
+        b = [r for r in bucket_rows if lo <= (r["signal_score"] or 0) < hi]
+        if not b:
+            bucket_stats.append((lo, hi, 0, 0, 0))
+            continue
+        n = len(b)
+        wr = sum(1 for r in b if r["win"]) / n * 100
+        avg = sum(r["forward_return_pct"] or 0 for r in b) / n
+        max_n = max(max_n, n)
+        bucket_stats.append((lo, hi, n, wr, avg))
+
+    # Build SVG bar chart
+    chart_w = 600
+    chart_h = 180
+    bar_w = (chart_w - 80) // len(buckets_def) - 10
+    bars_svg = []
+    for i, (lo, hi, n, wr, avg) in enumerate(bucket_stats):
+        x = 60 + i * ((chart_w - 80) // len(buckets_def))
+        h = (n / max(50, max_n)) * 120  # scale
+        y = chart_h - 40 - h
+        color = "#15803d" if wr >= 60 else "#b91c1c" if wr < 50 else "#92400e"
+        # bar fill
+        bars_svg.append(
+            f'<rect x="{x}" y="{y:.0f}" width="{bar_w}" height="{h:.0f}" '
+            f'fill="{color}" opacity="0.85" />'
+        )
+        # n label
+        bars_svg.append(
+            f'<text x="{x + bar_w//2}" y="{y - 4:.0f}" text-anchor="middle" '
+            f'font-size="11" font-weight="700" fill="{color}">{n}</text>'
+        )
+        # wr label
+        bars_svg.append(
+            f'<text x="{x + bar_w//2}" y="{chart_h - 22}" text-anchor="middle" '
+            f'font-size="10" fill="#374151">{wr:.0f}%</text>'
+        )
+        # x-axis label
+        bars_svg.append(
+            f'<text x="{x + bar_w//2}" y="{chart_h - 6}" text-anchor="middle" '
+            f'font-size="9" fill="#6b7280">{lo}-{hi if hi<101 else 100}</text>'
+        )
+    # Y-axis line
+    bars_svg.insert(0, f'<line x1="55" y1="20" x2="55" y2="{chart_h - 40}" stroke="#d1d5db" stroke-width="1" />')
+    bars_svg.insert(0, f'<line x1="55" y1="{chart_h - 40}" x2="{chart_w - 10}" y2="{chart_h - 40}" stroke="#d1d5db" stroke-width="1" />')
+
+    chart_svg = f'''<div class="bucket-chart">
+        <svg viewBox="0 0 {chart_w} {chart_h}" preserveAspectRatio="xMidYMid meet" width="100%" height="180">
+            {''.join(bars_svg)}
+        </svg>
+        <div class="chart-legend">Bar height = n records · Color = WR (🟢 ≥60% · 🟡 50-60% · 🔴 &lt;50%)</div>
+    </div>'''
+
+    # Bucket table (compact)
+    bucket_table = '<table class="detail" style="margin-top:8px;"><thead><tr><th>Score Range</th><th>n</th><th>WR</th><th>Avg</th></tr></thead><tbody>'
+    for lo, hi, n, wr, avg in bucket_stats:
+        if n == 0:
+            continue
+        wr_class = "stat-bull" if wr >= 60 else "stat-bear" if wr < 50 else ""
+        avg_class = "stat-bull" if avg > 0 else "stat-bear"
+        bucket_table += f'<tr><td>[{lo}, {hi if hi<101 else 100})</td><td>{n}</td><td class="{wr_class}">{wr:.1f}%</td><td class="{avg_class}">{avg:+.3f}%</td></tr>'
+    bucket_table += '</tbody></table>'
+
     t1_html = f'''<div class="monitor-section">
         <h2>📈 14 日 T+1 命中率 (Phase 9 Step 1.5+2)</h2>
         <div class="index-grid">
@@ -3089,7 +3195,10 @@ def build_live_monitor_page() -> str:
             <div class="index-card"><div class="idx-name">WR 命中率</div><div class="idx-val stat-bull">{t1_wr:.1f}%</div></div>
             <div class="index-card"><div class="idx-name">Avg Return</div><div class="idx-val {("stat-bull" if t1_avg>0 else "stat-bear")}">{t1_avg:+.2f}%</div></div>
         </div>
-        <p class="dim" style="margin-top:8px;">VALUE rule: 85 records 62.4% WR / +0.92% avg · Signal score 70-80 bucket: 25 records 84% WR · 14d full audit <a href="/insights.html">insights</a></p>
+        <h3 style="margin-top:1rem; font-size:0.95rem;">📊 Signal Score Bucket 分佈</h3>
+        {chart_svg}
+        {bucket_table}
+        <p class="dim" style="margin-top:8px;">VALUE rule: 85 records 62.4% WR / +0.92% avg · Score 70-80 bucket: 25 records <b>84% WR</b> · 14d full audit <a href="/insights.html">insights</a></p>
     </div>'''
 
     # Auto-refresh + last-updated timestamp

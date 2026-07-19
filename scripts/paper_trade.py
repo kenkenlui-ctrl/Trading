@@ -32,6 +32,69 @@ DB_PATH = Path("/Users/kenken/Documents/dsa-hk/data/dsa_hk.db")
 POSITION_SIZE_USD = 1000.0
 MAX_HOLD_DAYS = 3
 
+# Phase 9 (2026-07-20): user-configurable sig score thresholds via env vars
+# Defaults: high=70 (gold star), mid=60 (blue), paper floor=65 (paper trader)
+import os as _os_paper
+SIG_HIGH = int(_os_paper.environ.get("DSA_SIG_HIGH", "70"))
+SIG_PAPER_FLOOR = int(_os_paper.environ.get("DSA_SIG_PAPER_FLOOR", "65"))
+
+# ANSI color codes (Phase 9+, 2026-07-20) — disable with NO_COLOR=1
+_USE_COLOR = not _os_paper.environ.get("NO_COLOR")
+_C = {
+    "reset": "\033[0m" if _USE_COLOR else "",
+    "bold": "\033[1m" if _USE_COLOR else "",
+    "dim": "\033[2m" if _USE_COLOR else "",
+    "green": "\033[92m" if _USE_COLOR else "",
+    "red": "\033[91m" if _USE_COLOR else "",
+    "yellow": "\033[93m" if _USE_COLOR else "",
+    "blue": "\033[94m" if _USE_COLOR else "",
+    "magenta": "\033[95m" if _USE_COLOR else "",
+    "cyan": "\033[96m" if _USE_COLOR else "",
+    "white": "\033[97m" if _USE_COLOR else "",
+}
+
+
+def _colorize(text: str, color: str, bold: bool = False) -> str:
+    """Wrap text in ANSI color codes (if enabled)."""
+    if not _USE_COLOR:
+        return text
+    prefix = _C["bold"] if bold else ""
+    return f"{prefix}{_C.get(color, '')}{text}{_C['reset']}"
+
+
+def _format_pnl(pnl_pct: float) -> str:
+    """Colorized P&L with win/loss emoji."""
+    if pnl_pct > 0:
+        return _colorize(f"  WIN  +{pnl_pct:.2f}%  🟢", "green", bold=True)
+    elif pnl_pct < 0:
+        return _colorize(f"  LOSS {pnl_pct:+.2f}%  🔴", "red", bold=True)
+    else:
+        return _colorize(f"  FLAT  {pnl_pct:+.2f}%  ⚪", "dim")
+
+
+def _format_pnl_usd(pnl_usd: float) -> str:
+    if pnl_usd > 0:
+        return _colorize(f"+${pnl_usd:.2f}", "green", bold=True)
+    elif pnl_usd < 0:
+        return _colorize(f"${pnl_usd:+.2f}", "red", bold=True)
+    return f"${pnl_usd:+.2f}"
+
+
+def _format_reason(reason: str) -> str:
+    """Colorize close reason with appropriate color."""
+    if not reason:
+        return "?"
+    r = reason.lower()
+    if r == "stop":
+        return _colorize("🛑 STOP", "red", bold=True)
+    if r == "target":
+        return _colorize("🎯 TARGET", "green", bold=True)
+    if r == "eod-3day":
+        return _colorize("⏰ 3-DAY TIMEOUT", "yellow")
+    if r == "manual":
+        return _colorize("👆 MANUAL", "magenta")
+    return _colorize(reason, "cyan")
+
 # ---------- Helpers ----------
 
 def parse_stop_target(full_md: str, summary_md: str, entry_price: float) -> tuple[float | None, float | None]:
@@ -109,15 +172,15 @@ def get_signal_codes(report_date: str, preset: str) -> list[dict]:
     elif preset == "value-buy":
         # Phase 9 Step 5 (2026-07-18): VALUE BUY preset. Use LR confidence filter
         # (signal_score >= 65) to only take high-confidence trades. 14d backtest:
-        # 70-80 bucket = 84% WR.
+        # 70-80 bucket = 84% WR. Threshold via env var DSA_SIG_PAPER_FLOOR.
         rows = con.execute(
             """SELECT code, score, signal_score, decision_reason, operation_advice, full_md, summary_md,
                       data_snapshot_json, score_breakdown_json
                FROM daily_report
                WHERE report_date=? AND operation_advice='買入'
                  AND (decision_reason LIKE '%VALUE]%' OR decision_reason LIKE '%CONSERVATIVE]%')
-                 AND signal_score >= 65""",
-            (report_date,),
+                 AND signal_score >= ?""",
+            (report_date, SIG_PAPER_FLOOR),
         ).fetchall()
     else:
         rows = con.execute(
@@ -244,7 +307,8 @@ def open_paper_trades(report_date: str, preset: str, dry_run: bool = False) -> i
             continue
         stop, target = parse_stop_target(sig["full_md"] or "", sig["summary_md"] or "", entry_price)
         if dry_run:
-            print(f"    [DRY] OPEN {code} entry=${entry_price:.2f} stop=${stop:.2f} target=${target:.2f}")
+            dry_label = _colorize("[DRY]", "yellow", bold=True)
+            print(f"    {dry_label} OPEN " + _colorize(code, "white", bold=True) + f" entry=${entry_price:.2f} stop=${stop:.2f} target=${target:.2f}")
             continue
         cur.execute(
             """INSERT INTO paper_trade
@@ -256,8 +320,16 @@ def open_paper_trades(report_date: str, preset: str, dry_run: bool = False) -> i
         )
         opened += 1
         sig_score = sig.get("signal_score") or 0
-        sig_flag = " 🎯" if sig_score >= 70 else ""
-        print(f"    OPEN {code} entry=${entry_price:.2f} stop=${stop:.2f} target=${target:.2f} LLM={sig['score']} LR_sig={sig_score}{sig_flag}")
+        # Phase 9+ (2026-07-20): emoji + ANSI color
+        if sig_score >= SIG_HIGH:
+            sig_str = _colorize(f"🎯{sig_score}", "yellow", bold=True)
+        elif sig_score >= SIG_PAPER_FLOOR:
+            sig_str = _colorize(f"{sig_score}", "green")
+        else:
+            sig_str = _colorize(f"{sig_score}", "dim")
+        llm_str = _colorize(str(sig['score']), "blue")
+        code_str = _colorize(code, "white", bold=True)
+        print(f"    {code_str} entry=${entry_price:.2f} stop=${stop:.2f} target=${target:.2f} LLM={llm_str} LR_sig={sig_str}")
     con.commit()
     con.close()
     return opened
@@ -304,13 +376,16 @@ def close_paper_trades(dry_run: bool = False) -> int:
             exit_reason = "eod-3day"
             exit_price = cur_price
         if exit_reason is None:
-            print(f"    {code}: open, current=${cur_price:.2f}, hold={hold_days}d")
+            pnl_unc = (cur_price - entry_price) / entry_price * 100
+            pnl_class = "stat-bull" if pnl_unc > 0 else "stat-bear"
+            print(f"    ⏳ {code}: open, current=" + _colorize(f"${cur_price:.2f}", "white") + f" pnl=" + _colorize(f"{pnl_unc:+.2f}%", "green" if pnl_unc > 0 else "red") + f" hold={hold_days}d")
             continue
         # Calculate P&L
         pnl_pct = (exit_price - entry_price) / entry_price * 100
         pnl_usd = pnl_pct / 100 * POSITION_SIZE_USD
         if dry_run:
-            print(f"    [DRY] CLOSE {code} reason={exit_reason} exit=${exit_price:.2f} pnl={pnl_pct:+.2f}% ${pnl_usd:+.2f}")
+            dry_label = _colorize("[DRY]", "yellow", bold=True)
+            print(f"    {dry_label} CLOSE {code} reason=" + _format_reason(exit_reason) + f" entry=${entry_price:.2f} exit=${exit_price:.2f}" + _format_pnl(pnl_pct) + f" {_format_pnl_usd(pnl_usd)}")
             continue
         cur.execute(
             """UPDATE paper_trade
@@ -319,15 +394,19 @@ def close_paper_trades(dry_run: bool = False) -> int:
             (today, exit_price, exit_reason, pnl_pct, pnl_usd, t["id"]),
         )
         closed += 1
-        emoji = "✓" if pnl_pct > 0 else "✗"
-        print(f"    {emoji} CLOSE {code} reason={exit_reason} entry=${entry_price:.2f} exit=${exit_price:.2f} pnl={pnl_pct:+.2f}% ${pnl_usd:+.2f}")
+        # Phase 9+ (2026-07-20): emoji + ANSI color for win/loss
+        reason_str = _format_reason(exit_reason)
+        pnl_str = _format_pnl(pnl_pct)
+        pnl_usd_str = _format_pnl_usd(pnl_usd)
+        code_str = _colorize(code, "white", bold=True)
+        print(f"    {code_str} {reason_str} entry=${entry_price:.2f} exit=${exit_price:.2f} hold={hold_days}d {pnl_str} {pnl_usd_str}")
     con.commit()
     con.close()
     return closed
 
 
 def print_stats():
-    """Print paper-trade performance stats."""
+    """Print paper-trade performance stats (colorized)."""
     con = sqlite3.connect(str(DB_PATH))
     con.row_factory = sqlite3.Row
     cur = con.cursor()
@@ -337,15 +416,26 @@ def print_stats():
     wins = cur.execute("SELECT COUNT(*) FROM paper_trade WHERE status='closed' AND pnl_pct > 0").fetchone()[0]
     losses = cur.execute("SELECT COUNT(*) FROM paper_trade WHERE status='closed' AND pnl_pct <= 0").fetchone()[0]
     total_pnl = cur.execute("SELECT COALESCE(SUM(pnl_usd), 0) FROM paper_trade WHERE status='closed'").fetchone()[0]
-    print(f"\n=== Paper Trade Stats ===")
-    print(f"  Total: {total}, Open: {open_n}, Closed: {closed}")
+    print("\n" + _colorize("═" * 50, "cyan"))
+    print(_colorize("  📊 Paper Trade Performance Stats", "cyan", bold=True))
+    print(_colorize("═" * 50, "cyan"))
+    print(f"  Total: {_colorize(str(total), 'white', bold=True)}  |  " +
+          f"Open: {_colorize(str(open_n), 'yellow')}  |  " +
+          f"Closed: {_colorize(str(closed), 'cyan')}")
     if closed > 0:
         wr = wins / closed * 100
         avg_win = cur.execute("SELECT COALESCE(AVG(pnl_pct), 0) FROM paper_trade WHERE status='closed' AND pnl_pct > 0").fetchone()[0]
         avg_loss = cur.execute("SELECT COALESCE(AVG(pnl_pct), 0) FROM paper_trade WHERE status='closed' AND pnl_pct <= 0").fetchone()[0]
-        print(f"  Wins: {wins}, Losses: {losses}, WR: {wr:.1f}%")
-        print(f"  Avg win: +{avg_win:.2f}%, Avg loss: {avg_loss:+.2f}%")
-        print(f"  Total P&L: ${total_pnl:+.2f} (on {closed} closed × $1000 size)")
+        wr_color = "green" if wr >= 60 else "red" if wr < 50 else "yellow"
+        print(f"  Wins: {_colorize(str(wins), 'green', bold=True)} 🟢  |  " +
+              f"Losses: {_colorize(str(losses), 'red', bold=True)} 🔴  |  " +
+              f"WR: {_colorize(f'{wr:.1f}%', wr_color, bold=True)}")
+        print(f"  Avg win: {_colorize(f'+{avg_win:.2f}%', 'green', bold=True)}  |  " +
+              f"Avg loss: {_colorize(f'{avg_loss:+.2f}%', 'red', bold=True)}")
+        pnl_color = "green" if total_pnl > 0 else "red" if total_pnl < 0 else "yellow"
+        print(f"  Total P&L: {_colorize(f'${total_pnl:+.2f}', pnl_color, bold=True)} " +
+              _colorize(f"(on {closed} closed × $1000 size)", "dim"))
+    print(_colorize("═" * 50, "cyan"))
     con.close()
 
 
