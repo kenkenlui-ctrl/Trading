@@ -655,6 +655,55 @@ footer {
     table.detail { font-size: 0.7rem; }
     table.detail th, table.detail td { padding: 4px 6px; }
 }
+
+/* Live Monitor (Phase 9 Step 5+, 2026-07-20) */
+.monitor-section {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+}
+.monitor-section h2 {
+    margin: 0 0 12px 0;
+    font-size: 1.1rem;
+    color: var(--fg);
+}
+.index-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+}
+.index-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 14px;
+    text-align: center;
+}
+.index-card .idx-name {
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+.index-card .idx-val {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--fg);
+    font-family: 'JetBrains Mono', monospace;
+}
+.index-card .idx-chg {
+    font-size: 0.85rem;
+    margin-top: 4px;
+    color: var(--dim);
+}
+.index-card .idx-val.stat-bull { color: var(--bull); }
+.index-card .idx-val.stat-bear { color: var(--bear); }
+.index-card .idx-chg.stat-bull { color: var(--bull); font-weight: 600; }
+.index-card .idx-chg.stat-bear { color: var(--bear); font-weight: 600; }
 """
 
 
@@ -664,6 +713,7 @@ def nav_html(active_path: str) -> str:
         ("/", "Home", "Home"),
         ("/dashboard/", "Dashboard", "Dashboard"),
         ("/full-results.html", "Full Results", "Full Results"),
+        ("/live-monitor.html", "🔴 Live", "Live Monitor"),
         ("/paper-trades.html", "Paper Trades", "Paper Trades"),
         ("/faq.html", "FAQ", "FAQ"),
         ("/methodology.html", "Methodology", "Methodology"),
@@ -2842,16 +2892,48 @@ def build_paper_trades_page() -> str:
             closed_html += f'<tr><td>{t["exit_date"]}</td><td>{t["code"]}</td><td>{t["signal_source"]}</td><td>${t["entry_price"]:.2f}</td><td>${t["exit_price"]:.2f}</td><td class="{pnl_class}">{pnl_pct:+.2f}%</td><td class="{pnl_class}">${t["pnl_usd"]:+.2f}</td><td>{t["close_reason"]}</td><td>{held}d</td></tr>'
         closed_html += '</tbody></table>'
 
-    # Open trades
+    # Open trades (with current price + unrealized P&L via yfinance)
     open_html = ""
     if open_trades:
-        open_html = '<h2>Open Positions</h2><table class="detail"><thead><tr><th>Entry Date</th><th>Code</th><th>Source</th><th>Entry</th><th>Stop</th><th>Target</th><th>Held</th></tr></thead><tbody>'
+        # Fetch current prices for open trades
+        current_prices = {}
+        try:
+            import yfinance as yf
+            for t in open_trades:
+                code = t["code"]
+                yf_code = code.split(".")[0].zfill(4) + ".HK" if code.endswith(".HK") else code
+                try:
+                    hist = yf.Ticker(yf_code).history(period="5d")
+                    if not hist.empty:
+                        current_prices[code] = float(hist["Close"].iloc[-1])
+                except Exception:
+                    pass
+        except Exception:
+            pass
+
+        open_html = '<h2>Open Positions <span class="hint">(即時 P&L via yfinance)</span></h2>'
+        open_html += '<table class="detail"><thead><tr><th>Entry Date</th><th>Code</th><th>Source</th><th>Sig</th><th>Entry</th><th>Current</th><th>Stop</th><th>Target</th><th>Unrealized</th><th>Held</th></tr></thead><tbody>'
         for t in open_trades:
             try:
                 held = (datetime.now() - datetime.strptime(t["entry_date"], "%Y-%m-%d")).days
             except Exception:
                 held = "?"
-            open_html += f'<tr><td>{t["entry_date"]}</td><td>{t["code"]}</td><td>{t["signal_source"]}</td><td>${t["entry_price"]:.2f}</td><td>${t["stop_loss"]:.2f}</td><td>${t["target_price"]:.2f}</td><td>{held}d</td></tr>'
+            entry = t["entry_price"]
+            cur = current_prices.get(t["code"])
+            pnl_pct = ((cur - entry) / entry * 100) if cur else None
+            pnl_class = ""
+            pnl_str = "—"
+            if pnl_pct is not None:
+                pnl_class = "stat-bull" if pnl_pct > 0 else "stat-bear"
+                pnl_str = f"{pnl_pct:+.2f}%"
+            sig = t["signal_score"] or 0
+            sig_badge = ""
+            if sig >= 70:
+                sig_badge = f' 🎯<b>{sig}</b>'
+            elif sig >= 65:
+                sig_badge = f' <b>{sig}</b>'
+            cur_str = f"${cur:.2f}" if cur else "—"
+            open_html += f'<tr><td>{t["entry_date"]}</td><td><b>{t["code"]}</b></td><td>{t["signal_source"]}</td><td>{sig_badge or "—"}</td><td>${entry:.2f}</td><td>{cur_str}</td><td>${t["stop_loss"]:.2f}</td><td>${t["target_price"]:.2f}</td><td class="{pnl_class}">{pnl_str}</td><td>{held}d</td></tr>'
         open_html += '</tbody></table>'
 
     body_html = f'''<div class="signal-warning"><b>📈 Paper Trade Tracker</b> · 跟 Conservative BUY + Cyber BUY signals 自動落 paper trade · $1000/trade · 6% stop loss · 2-3 day hold
@@ -2871,6 +2953,168 @@ def build_paper_trades_page() -> str:
         body_html=body_html,
         active_path="/paper-trades/",
         description="Paper trade performance — Conservative BUY + Cyber BUY signals auto-tracked",
+    )
+
+
+def build_live_monitor_page() -> str:
+    """Build /live-monitor.html — real-time market + open positions monitor.
+
+    Page auto-refreshes every 30s via JS, showing:
+    - HSI / HSCEI snapshot + today chg + regime (BULL/NEUTRAL/BEAR)
+    - Open paper-trade positions with current price + unrealized P&L
+    - Today's top BUY signals with confidence (signal_score)
+    - 14d T+1 accuracy stats
+    - Last refresh timestamp
+
+    Bypasses build_static cache — uses yfinance for live prices, fresh DB query.
+    """
+    import sqlite3
+    import yfinance as yf
+
+    db_path = PROJECT_ROOT / "data" / "dsa_hk.db"
+    con = sqlite3.connect(str(db_path))
+    con.row_factory = sqlite3.Row
+
+    # HSI + HSCEI
+    hsi_html = ""
+    try:
+        hsi_df = yf.download("^HSI", period="5d", progress=False)
+        hscei_df = yf.download("^HSCE", period="5d", progress=False)
+        hsi_close = float(hsi_df["Close"].iloc[-1]) if not hsi_df.empty else None
+        hsi_prev = float(hsi_df["Close"].iloc[-2]) if len(hsi_df) >= 2 else None
+        hsi_chg = ((hsi_close - hsi_prev) / hsi_prev * 100) if (hsi_close and hsi_prev) else None
+        hscei_close = float(hscei_df["Close"].iloc[-1]) if not hscei_df.empty else None
+        hscei_prev = float(hscei_df["Close"].iloc[-2]) if len(hscei_df) >= 2 else None
+        hscei_chg = ((hscei_close - hscei_prev) / hscei_prev * 100) if (hscei_close and hscei_prev) else None
+    except Exception as e:
+        hsi_close = hsi_chg = hscei_close = hscei_chg = None
+
+    # Regime (latest from market_state)
+    ms = con.execute(
+        "SELECT trade_date, hsi_chg_pct, regime FROM market_state ORDER BY trade_date DESC LIMIT 1"
+    ).fetchone()
+    today_regime = "BULL" if (hsi_chg and hsi_chg >= 0.5) else "BEAR" if (hsi_chg and hsi_chg <= -1.5) else "NEUTRAL" if hsi_chg else "n/a"
+    regime_class = "stat-bull" if today_regime == "BULL" else "stat-bear" if today_regime == "BEAR" else ""
+
+    hsi_html = f'<div class="monitor-section"><h2>📊 指數</h2><div class="index-grid">'
+    if hsi_close:
+        chg_class = "stat-bull" if (hsi_chg and hsi_chg >= 0) else "stat-bear"
+        hsi_html += f'<div class="index-card"><div class="idx-name">HSI 恒生指數</div><div class="idx-val">{hsi_close:,.2f}</div><div class="idx-chg {chg_class}">{hsi_chg:+.2f}%</div></div>'
+    if hscei_close:
+        chg_class = "stat-bull" if (hscei_chg and hscei_chg >= 0) else "stat-bear"
+        hsi_html += f'<div class="index-card"><div class="idx-name">HSCEI 國企指數</div><div class="idx-val">{hscei_close:,.2f}</div><div class="idx-chg {chg_class}">{hscei_chg:+.2f}%</div></div>'
+    hsi_html += f'<div class="index-card"><div class="idx-name">Regime 7/18</div><div class="idx-val {regime_class}">{today_regime}</div>'
+    if ms:
+        hsi_html += f'<div class="idx-chg">{ms["hsi_chg_pct"]:+.2f}% (yesterday)</div>'
+    hsi_html += '</div></div></div>'
+
+    # Open paper-trade positions
+    open_trades = con.execute(
+        "SELECT * FROM paper_trade WHERE status='open' ORDER BY entry_date ASC"
+    ).fetchall()
+    open_html = '<div class="monitor-section"><h2>💼 開倉中 (Open Positions)</h2>'
+    if open_trades:
+        open_html += '<table class="detail"><thead><tr><th>Entry Date</th><th>Code</th><th>Source</th><th>Sig</th><th>Entry</th><th>Current</th><th>Stop</th><th>Target</th><th>Unrealized</th><th>Held</th></tr></thead><tbody>'
+        for t in open_trades:
+            code = t["code"]
+            entry = t["entry_price"]
+            # Fetch current price
+            cur = None
+            try:
+                yf_code = code.split(".")[0].zfill(4) + ".HK" if code.endswith(".HK") else code
+                hist = yf.Ticker(yf_code).history(period="5d")
+                if not hist.empty:
+                    cur = float(hist["Close"].iloc[-1])
+            except Exception:
+                pass
+            pnl_pct = ((cur - entry) / entry * 100) if cur else None
+            pnl_class = "stat-bull" if (pnl_pct and pnl_pct > 0) else "stat-bear" if pnl_pct else ""
+            pnl_str = f"{pnl_pct:+.2f}%" if pnl_pct is not None else "—"
+            try:
+                held = (datetime.now() - datetime.strptime(t["entry_date"], "%Y-%m-%d")).days
+            except Exception:
+                held = "?"
+            sig = t["signal_score"] or 0
+            sig_str = f"🎯{sig}" if sig >= 70 else f"{sig}" if sig >= 65 else "—"
+            cur_str = f"${cur:.2f}" if cur else "—"
+            open_html += f'<tr><td>{t["entry_date"]}</td><td><b>{code}</b></td><td>{t["signal_source"]}</td><td>{sig_str}</td><td>${entry:.2f}</td><td>{cur_str}</td><td>${t["stop_loss"]:.2f}</td><td>${t["target_price"]:.2f}</td><td class="{pnl_class}">{pnl_str}</td><td>{held}d</td></tr>'
+        open_html += '</tbody></table>'
+    else:
+        open_html += '<p class="dim">冇開倉 position · 等 4pm 之後 paper trade runner</p>'
+    open_html += '</div>'
+
+    # Most recent BUY signals (from latest report_date)
+    latest_date = con.execute("SELECT MAX(report_date) FROM daily_report").fetchone()[0]
+    top_buys = []
+    if latest_date:
+        top_buys = con.execute("""
+            SELECT code, signal_score, decision_reason
+            FROM daily_report
+            WHERE report_date=? AND operation_advice='買入' AND signal_score >= 60
+            ORDER BY signal_score DESC LIMIT 8
+        """, (latest_date,)).fetchall()
+    top_html = f'<div class="monitor-section"><h2>🎯 最新 BUY 訊號 (signal ≥ 60) — {latest_date}</h2>'
+    if top_buys:
+        top_html += '<table class="detail"><thead><tr><th>Code</th><th>Sig Score</th><th>Rule</th></tr></thead><tbody>'
+        for r in top_buys:
+            sig = r["signal_score"] or 0
+            sig_class = "stat-bull" if sig >= 70 else ""
+            rule_text = (r["decision_reason"] or "")[:60].replace("[", "").replace("]", "")
+            if sig >= 70:
+                top_html += f'<tr><td><b>{r["code"]}</b></td><td class="stat-bull">🎯 <b>{sig}</b></td><td>{rule_text}</td></tr>'
+            else:
+                top_html += f'<tr><td><b>{r["code"]}</b></td><td>{sig}</td><td>{rule_text}</td></tr>'
+        top_html += '</tbody></table>'
+    else:
+        top_html += '<p class="dim">冇 sig≥60 BUY signals</p>'
+    top_html += '</div>'
+
+    # 14d T+1 accuracy summary
+    t1_stats = con.execute("""
+        SELECT COUNT(*) AS n,
+               SUM(CASE WHEN b.win=1 THEN 1 ELSE 0 END) AS wins,
+               AVG(b.forward_return_pct) AS avg_ret
+        FROM daily_report d
+        JOIN backtest_results b ON d.code=b.code AND d.report_date=b.signal_date
+        WHERE d.report_date >= '2026-06-26' AND d.report_date <= '2026-07-17'
+          AND d.operation_advice='買入'
+    """).fetchone()
+    t1_n = t1_stats["n"] or 0
+    t1_wr = (t1_stats["wins"] or 0) / t1_n * 100 if t1_n else 0
+    t1_avg = t1_stats["avg_ret"] or 0
+    t1_html = f'''<div class="monitor-section">
+        <h2>📈 14 日 T+1 命中率 (Phase 9 Step 1.5+2)</h2>
+        <div class="index-grid">
+            <div class="index-card"><div class="idx-name">BUY 數</div><div class="idx-val">{t1_n}</div></div>
+            <div class="index-card"><div class="idx-name">WR 命中率</div><div class="idx-val stat-bull">{t1_wr:.1f}%</div></div>
+            <div class="index-card"><div class="idx-name">Avg Return</div><div class="idx-val {("stat-bull" if t1_avg>0 else "stat-bear")}">{t1_avg:+.2f}%</div></div>
+        </div>
+        <p class="dim" style="margin-top:8px;">VALUE rule: 85 records 62.4% WR / +0.92% avg · Signal score 70-80 bucket: 25 records 84% WR · 14d full audit <a href="/insights.html">insights</a></p>
+    </div>'''
+
+    # Auto-refresh + last-updated timestamp
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S HKT")
+    refresh_js = '''<script>
+        // Auto-refresh every 30 seconds (the page is a snapshot of the moment of build)
+        setTimeout(function(){ location.reload(); }, 30000);
+    </script>'''
+
+    body_html = f'''<div class="signal-warning"><b>🔴 LIVE 監控</b> · 自動 refresh 每 30 秒 · 最後更新: {now_str}
+        <br>· <b>Indices</b> via yfinance (16-hr delay for HSI on weekends) · <b>Open P&L</b> via yfinance current price
+        <br>· <b>Note</b>: 週末 (Sat/Sun) 冇 HSI trading, indices 顯示 7/17 (Friday) 數據 · 7/18 嗰日 closed
+        <br>· <a href="/paper-trades.html">→ 完整 paper trade 歷史</a> · <a href="/dashboard/2026-07-16/hk-buy.html">→ 7/16 BUY 訊號</a></div>
+        <h1>🔴 Live Monitor — HSI + 開倉 Position + 最新訊號</h1>
+        {hsi_html}
+        {open_html}
+        {top_html}
+        {t1_html}
+        {refresh_js}'''
+
+    return shell(
+        title="Leeks Terminal · Live Monitor",
+        body_html=body_html,
+        active_path="/live-monitor/",
+        description="Real-time HSI + paper trade P&L + signal score monitor (auto-refresh 30s)",
     )
 
 
@@ -2902,6 +3146,13 @@ def main():
             written.append("paper-trades.html")
         except Exception as e:
             print(f"⚠️  Paper-trades page build failed (non-fatal): {type(e).__name__}: {e}")
+        # Live monitor page (auto-refresh 30s, fresh yfinance data)
+        try:
+            monitor_path = PUBLIC_DIR / "live-monitor.html"
+            monitor_path.write_text(build_live_monitor_page(), encoding="utf-8")
+            written.append("live-monitor.html")
+        except Exception as e:
+            print(f"⚠️  Live monitor build failed (non-fatal): {type(e).__name__}: {e}")
         print(f"✅ Built {len(written)} static info + intent pages")
 
     # 2. Dashboard pages

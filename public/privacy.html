@@ -535,11 +535,60 @@ footer {
     table.detail { font-size: 0.7rem; }
     table.detail th, table.detail td { padding: 4px 6px; }
 }
+
+/* Live Monitor (Phase 9 Step 5+, 2026-07-20) */
+.monitor-section {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+}
+.monitor-section h2 {
+    margin: 0 0 12px 0;
+    font-size: 1.1rem;
+    color: var(--fg);
+}
+.index-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+}
+.index-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 14px;
+    text-align: center;
+}
+.index-card .idx-name {
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+.index-card .idx-val {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--fg);
+    font-family: 'JetBrains Mono', monospace;
+}
+.index-card .idx-chg {
+    font-size: 0.85rem;
+    margin-top: 4px;
+    color: var(--dim);
+}
+.index-card .idx-val.stat-bull { color: var(--bull); }
+.index-card .idx-val.stat-bear { color: var(--bear); }
+.index-card .idx-chg.stat-bull { color: var(--bull); font-weight: 600; }
+.index-card .idx-chg.stat-bear { color: var(--bear); font-weight: 600; }
 </style>
   
 </head>
 <body>
-<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/live-monitor.html">🔴 Live</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
 <h1>私隱政策</h1>
 <p>Leeks Terminal <b>唔收集任何個人資料</b>。冇 account、冇 analytics、冇 cookies、冇 tracking、冇 email collection。</p>
@@ -547,7 +596,7 @@ footer {
 由你 browser 開 dashboard 時主動 fetch。第三方 API 唔會收到你嘅 IP 或 browser fingerprint (除咗 fetch request 本身)。</p>
 <p>Server side: Cloudflare Pages serve static HTML。GitHub 存 source code。冇 user data 存任何地方。</p>
 
-<p class="last-updated">最後更新: 2026-07-18 09:17 HKT</p>
+<p class="last-updated">最後更新: 2026-07-20 00:24 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>

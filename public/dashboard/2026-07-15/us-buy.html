@@ -535,11 +535,60 @@ footer {
     table.detail { font-size: 0.7rem; }
     table.detail th, table.detail td { padding: 4px 6px; }
 }
+
+/* Live Monitor (Phase 9 Step 5+, 2026-07-20) */
+.monitor-section {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+}
+.monitor-section h2 {
+    margin: 0 0 12px 0;
+    font-size: 1.1rem;
+    color: var(--fg);
+}
+.index-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+}
+.index-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 14px;
+    text-align: center;
+}
+.index-card .idx-name {
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+.index-card .idx-val {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--fg);
+    font-family: 'JetBrains Mono', monospace;
+}
+.index-card .idx-chg {
+    font-size: 0.85rem;
+    margin-top: 4px;
+    color: var(--dim);
+}
+.index-card .idx-val.stat-bull { color: var(--bull); }
+.index-card .idx-val.stat-bear { color: var(--bear); }
+.index-card .idx-chg.stat-bull { color: var(--bull); font-weight: 600; }
+.index-card .idx-chg.stat-bear { color: var(--bear); font-weight: 600; }
 </style>
   
 </head>
 <body>
-<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/" class="active">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/live-monitor.html">🔴 Live</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
 <div class="disclaimer" role="note" aria-label="非投資建議免責聲明">⚠️ <b>非投資建議</b> · 本工具只係 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a></div><div class="signal-warning"><b>🔬 Signal Explorer (Rule-Based, Phase 2)</b> · operation_advice 喺 10-day audit 後改由 deterministic rules 決定 (唔再信 LLM 直接 BUY/SELL call)。
             <br>· <b>🟢 買入</b> 經 4 rules 揀：<span class="warn-strong">🛡️ Conservative</span> (61.5% WR) + <span class="warn-strong">🌊 Bounce</span> (51.7% WR) + ANTI-MOMENTUM 等
@@ -556,9 +605,9 @@ footer {
 <div class="card">VZ 現價 $42.83，今日反彈 +0.85%，但仍受壓於 MA20 $43.94、MA50 $45.91 及 MA100 $47.42 之下，MA200 $44.43 同樣高於現價，長線結構偏空。RSI14 報 33.41 進入超賣區，短線有技術反彈條件，但量比僅 0.95× 缺乏買盤確認，今日 H/L 區間 2.64% 接近 3% 波幅門檻，短炒燃料尚可。PE TTM 10.37 屬低估值，6.66% 息率為成熟股提供下方承接。整體趨勢偏弱、量能不足，宜嚴控倉位做短線均值回歸，逢反彈至 MA20 $43.94 一帶遇阻可短炒回吐，回落至 $41.90-$42.21 區間可博技術反彈。</div>
 
 ---
-<em>生成時間: 2026-07-18 09:17:15 · LLM: openai/MiniMax-M3</em>
+<em>生成時間: 2026-07-20 00:24:55 · LLM: openai/MiniMax-M3</em>
 <h2>詳細表格</h2><table class="detail"><thead><tr><th>代碼</th><th>評分</th><th>方向</th><th>估值/質素/動能/資金流</th><th>建議</th><th>情緒</th><th>趨勢</th><th>信心</th><th>入場</th><th>止損</th><th>目標</th></tr></thead><tbody><tr><td><a href="/dashboard/2026-07-15/reports/PGR.html">PGR</a></td><td>64</td><td>—</td><td>70/60/15</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-15/reports/CMCSA.html">CMCSA</a></td><td>51</td><td>—</td><td>88/62/35</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-15/reports/CTSH.html">CTSH</a></td><td>49</td><td>—</td><td>75/42/35</td><td>買入</td><td>中性</td><td>震盪</td><td></td><td>—</td><td>—</td><td>—</td></tr><tr><td><a href="/dashboard/2026-07-15/reports/VZ.html">VZ</a></td><td>48</td><td>—</td><td>75/70/35</td><td>買入</td><td>中性偏悲觀</td><td>看空</td><td></td><td>—</td><td>—</td><td>—</td></tr></tbody></table>
-<p class="last-updated">最後更新: 2026-07-18 09:17 HKT</p>
+<p class="last-updated">最後更新: 2026-07-20 00:24 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>

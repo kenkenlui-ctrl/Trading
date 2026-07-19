@@ -535,11 +535,60 @@ footer {
     table.detail { font-size: 0.7rem; }
     table.detail th, table.detail td { padding: 4px 6px; }
 }
+
+/* Live Monitor (Phase 9 Step 5+, 2026-07-20) */
+.monitor-section {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+}
+.monitor-section h2 {
+    margin: 0 0 12px 0;
+    font-size: 1.1rem;
+    color: var(--fg);
+}
+.index-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+}
+.index-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 14px;
+    text-align: center;
+}
+.index-card .idx-name {
+    font-size: 0.75rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+.index-card .idx-val {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--fg);
+    font-family: 'JetBrains Mono', monospace;
+}
+.index-card .idx-chg {
+    font-size: 0.85rem;
+    margin-top: 4px;
+    color: var(--dim);
+}
+.index-card .idx-val.stat-bull { color: var(--bull); }
+.index-card .idx-val.stat-bear { color: var(--bear); }
+.index-card .idx-chg.stat-bull { color: var(--bull); font-weight: 600; }
+.index-card .idx-chg.stat-bear { color: var(--bear); font-weight: 600; }
 </style>
   
 </head>
 <body>
-<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html" class="active">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/live-monitor.html">🔴 Live</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html" class="active">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav>
 <main>
 <h1>常見問題</h1>
 <h2>Q: 點解睇唔到 bar chart / 即時 K 線？</h2>
@@ -560,7 +609,7 @@ filter 可以 hide 其他方向。</p>
 <p>A: 個別 LLM output 唔齊全；我哋有 backfill script parse <code>full_md</code> 嘅 markdown bullets 拎返。
 如果仍然「—」表示該股真係冇明確 setup，建議觀望。</p>
 
-<p class="last-updated">最後更新: 2026-07-18 09:17 HKT</p>
+<p class="last-updated">最後更新: 2026-07-20 00:24 HKT</p>
 </main>
 <footer>
   © 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
