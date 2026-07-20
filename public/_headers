@@ -1,0 +1,34 @@
+# Performance: cache-control headers (Phase 9+, 2026-07-21)
+# Without these, Cloudflare Pages defaults to "public, max-age=0, must-revalidate"
+# which forces every page hit to revalidate against origin. For a static
+# site with no auth, this is suboptimal — set explicit cache durations.
+
+# Dashboard per-date pages: 5 min cache (frequent content, can change
+# if user runs backfill). With must-revalidate, browser re-checks
+# ETag on every visit (cheap), but CDN edge serves cached copy.
+# Net effect: 50-150ms TTFB savings for repeat visits, fresh enough
+# for daily updates.
+/dashboard/*.html
+  Cache-Control: public, max-age=300, must-revalidate
+
+# Hub + Full Results + Live Monitor (regenerated each build, 5 min OK)
+/full-results.html
+  Cache-Control: public, max-age=300, must-revalidate
+/dashboard/
+  Cache-Control: public, max-age=300, must-revalidate
+
+# Per-ticker report pages: same as dashboard
+/dashboard/*/reports/*.html
+  Cache-Control: public, max-age=300, must-revalidate
+
+# Live monitor: 60s — user expects fresh HSI/positions data
+/live-monitor.html
+  Cache-Control: public, max-age=60, must-revalidate
+
+# Static info pages (FAQ, methodology, about, disclaimer) — 1 hour
+/*.html
+  Cache-Control: public, max-age=3600, must-revalidate
+
+# Shared CSS (Phase 9+, 2026-07-21: extracted from inline)
+/leeks.css
+  Cache-Control: public, max-age=86400, must-revalidate

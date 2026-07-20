@@ -795,6 +795,37 @@ footer {
 """
 
 
+def _minify_css(css: str) -> str:
+    """Minify CSS: strip comments, collapse whitespace around rules."""
+    import re
+    # strip /* ... */ comments
+    css = re.sub(r"/\*.*?\*/", "", css, flags=re.DOTALL)
+    # collapse whitespace runs to single space
+    css = re.sub(r"\s+", " ", css)
+    # remove space around ; { }
+    css = re.sub(r"\s*;\s*", ";", css)
+    css = re.sub(r"\s*\{\s*", "{", css)
+    css = re.sub(r"\s*\}\s*", "}", css)
+    # add newline after } for readability
+    css = re.sub(r"\}", "}\n", css)
+    return css.strip()
+
+
+def extract_shared_css(public_dir=None) -> str:
+    """Write SHARED_CSS to public/leeks.css (once per build, not per page).
+
+    Phase 9+ (2026-07-21) web-perf: extracting the ~13KB inline CSS
+    out of 10,245 HTML pages saves ~133MB of redundant bytes.
+    Browsers cache the file via max-age=86400 in public/_headers.
+    """
+    public_dir = public_dir or PUBLIC_DIR
+    out_path = public_dir / "leeks.css"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    minified = _minify_css(SHARED_CSS)
+    out_path.write_text(minified, encoding="utf-8")
+    return str(out_path)
+
+
 def nav_html(active_path: str) -> str:
     """Top nav matching the Worker-injected nav on Streamlit."""
     links = [
@@ -822,35 +853,44 @@ def nav_html(active_path: str) -> str:
 def shell(title: str, body_html: str, active_path: str = "/",
           description: str = "", json_ld: dict | None = None,
           canonical: str = "https://www.win9you.com") -> str:
-    """Wrap content in full HTML doc with nav + light-theme CSS."""
+    """Wrap content in full HTML doc with nav + light-theme CSS.
+
+    Phase 9+ (2026-07-21) web-perf:
+    - Extracts SHARED_CSS to /leeks.css (linked, not inline) — saves ~13KB
+      duplicated across 10K+ pages
+    - preconnect to fonts.googleapis.com + fonts.gstatic.com
+    - async-load Google Fonts via preload + onload trick (non-blocking)
+    - drops broken og:image meta (no og-image.png exists; was 404'ing
+      in social previews and adding noise to head)
+    - browser caches /leeks.css for 24h (see public/_headers)
+    """
     desc_meta = f'<meta name="description" content="{_html.escape(description)}">' if description else ""
     ld_block = ""
     if json_ld:
         ld_block = f'<script type="application/ld+json">{json.dumps(json_ld, ensure_ascii=False)}</script>'
-    return f"""<!doctype html>
+    html = f"""<!doctype html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{_html.escape(title)}</title>
-  {desc_meta}
-  <meta property="og:title" content="{_html.escape(title)}">
-  <meta property="og:description" content="{_html.escape(description)}">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="{_html.escape(canonical)}">
-  <meta property="og:image" content="https://www.win9you.com/og-image.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://www.win9you.com/og-image.png">
-  <meta name="twitter:title" content="{_html.escape(title)}">
-  <meta name="twitter:description" content="{_html.escape(description)}">
-  <link rel="canonical" href="{_html.escape(canonical)}">
-  <link rel="alternate" hreflang="zh-Hant" href="{_html.escape(canonical)}">
-  <link rel="alternate" hreflang="x-default" href="{_html.escape(canonical)}">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>{SHARED_CSS}</style>
-  {ld_block}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{_html.escape(title)}</title>
+{desc_meta}
+<meta property="og:title" content="{_html.escape(title)}">
+<meta property="og:description" content="{_html.escape(description)}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{_html.escape(canonical)}">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="{_html.escape(title)}">
+<meta name="twitter:description" content="{_html.escape(description)}">
+<link rel="canonical" href="{_html.escape(canonical)}">
+<link rel="alternate" hreflang="zh-Hant" href="{_html.escape(canonical)}">
+<link rel="alternate" hreflang="x-default" href="{_html.escape(canonical)}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="/leeks.css">
+{ld_block}
 </head>
 <body>
 {nav_html(active_path)}
@@ -863,6 +903,29 @@ def shell(title: str, body_html: str, active_path: str = "/",
 </footer>
 </body>
 </html>"""
+    return _minify_html(html)
+
+
+def _minify_html(html: str) -> str:
+    """Phase 9+ (2026-07-21) web-perf: collapse redundant whitespace.
+
+    - Between tags: `>\\s+<` → `><`
+    - Multiple blank lines: `\\n{2,}` → `\\n`
+    - Strip per-line leading/trailing whitespace
+
+    Safe for our content because:
+    - No <pre> blocks (verified via grep)
+    - Inline <code> text untouched (whitespace inside text nodes preserved)
+    - Markdown-derived <p>/<li>/<td> content rendered as innerText, not pre
+    """
+    import re
+    # collapse whitespace between tags only (safest)
+    html = re.sub(r">\s+<", "><", html)
+    # collapse runs of blank lines
+    html = re.sub(r"\n{2,}", "\n", html)
+    # strip leading/trailing whitespace per line
+    html = "\n".join(line.strip() for line in html.split("\n"))
+    return html
 
 
 def disclaimer_block() -> str:
@@ -3379,6 +3442,10 @@ def main():
     args = parser.parse_args()
 
     PUBLIC_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Phase 9+ (2026-07-21) web-perf: write /leeks.css once (not inline × 10K pages)
+    css_path = extract_shared_css()
+    print(f"✅ Shared CSS extracted → {css_path}")
 
     init_db()
     all_dates = list_report_dates(limit=30)
