@@ -960,8 +960,16 @@ def report_page_html(report: dict, date: str) -> str:
         try: breakdown = json.loads(breakdown)
         except Exception: breakdown = {}
 
-    # Use full_md if available, fall back to summary_md
-    main_md = full_md if full_md else summary_md
+    # Use summary_md first (Phase 9+ 2026-07-21), fall back to full_md
+    # 7/17 synthetic records: full_md is the prior day's LLM narrative
+    # (no inherited levels), but summary_md has the per-stock card
+    # with appended inherited levels (Phase 9 fix). Prefer summary_md
+    # for 7/17-style records; for normal LLM-analyzed reports, summary_md
+    # is a subset of full_md so prefer full_md (richer content).
+    if "**入場區間**(7/16):" in summary_md or "**止損位**(7/16):" in summary_md:
+        main_md = summary_md
+    else:
+        main_md = full_md if full_md else summary_md
 
     # Phase 2: Replace LLM's header lines in full_md body with rule-based.
     # The LLM-generated full_md has the LLM's ORIGINAL op embedded (e.g.
@@ -1026,12 +1034,18 @@ def report_page_html(report: dict, date: str) -> str:
     # per-ticker detail pages show the LLM's concrete trade plan.
     import re as _re
     entry = stop = target = "—"
-    m = _re.search(r"\*?\*?入場區間\*?\*?[：:]\s*([^\n]+)", main_md or "")
-    if m: entry = m.group(1).strip()
-    m = _re.search(r"\*?\*?止[損蝕]位\*?\*?[：:]\s*([^\n]+)", main_md or "")
-    if m: stop = m.group(1).strip()
-    m = _re.search(r"\*?\*?目標價\*?\*?[：:]\s*([^\n]+)", main_md or "")
-    if m: target = m.group(1).strip()
+    # Phase 9+ (2026-07-21): relaxed regex to match both formats:
+    #   - 7/16 LLM:       "**入場區間**: $X-$Y"
+    #   - 7/17 inherited: "**入場區間**(7/16): $X-$Y · **止損位**(7/16): ..."
+    # Stop capture at first " · " separator (or newline) so 入場 doesn't
+    # eat the next field's value.
+    def _extract_lvl(label_re, text):
+        m = _re.search(label_re + r"\s*[：:]\s*([^·\n]+)", text or "")
+        if m: return m.group(1).strip()
+        return None
+    entry = _extract_lvl(r"\*?\*?入場區間\*?\*?(?:\([^)]*\))?", main_md) or "—"
+    stop = _extract_lvl(r"\*?\*?止[損蝕]位\*?\*?(?:\([^)]*\))?", main_md) or "—"
+    target = _extract_lvl(r"\*?\*?目標價\*?\*?(?:\([^)]*\))?", main_md) or "—"
 
     levels_html = (
         '<div class="levels">'
@@ -1447,6 +1461,13 @@ def body_md_to_html(md: str, link_inject_date: str | None = None, score_lookup: 
         # Markdown-ish transforms inside the card body
         body = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', body)
         body = re.sub(r'(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)', r'<em>\1</em>', body)
+        # Phase 9+ (2026-07-21): render markdown links [label](url) as actual <a>
+        # (7/17 backfilled summaries use this format instead of raw <a href>).
+        body = re.sub(
+            r'\[([^\]]+)\]\(([^)\s]+)\)',
+            r'<a href="\2">\1</a>',
+            body,
+        )
         body = re.sub(r'🟢', '<span style="color:var(--bull);font-weight:600;">🟢</span>', body)
         body = re.sub(r'🟡', '<span style="color:var(--amber);font-weight:600;">🟡</span>', body)
         body = re.sub(r'🔴', '<span style="color:var(--bear);font-weight:600;">🔴</span>', body)

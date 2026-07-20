@@ -245,10 +245,12 @@ def main():
         # Per-stock summary (Phase 9+, 2026-07-20)
         prev_summary = sample["summary_md"] or ""
         prev_summary = re.sub(r'^🟢?🔴?⚪?\s*\*\*[A-Z0-9.\-]+\.HK\*\*\s*·\s*', '', prev_summary)
+        # Use markdown link syntax (body_md_to_html will render as <a>)
+        # — raw <a href> would get escaped to &lt;a href&gt; by HTML escape
         per_stock_summary = (
             f"🟡 **{code}** · {name} · 7/17 收 ${cur:.2f} ({chg:+.2f}%) · "
             f"HSI {HSI_CHG_PCT:+.2f}% BEAR day · HSI_REGIME auto-suppressed BUY → 觀望. "
-            f"7/16 信號睇 <a href=\"/dashboard/2026-07-16/{code}.html\">上一個 report</a>."
+            f"7/16 信號睇 [上一個 report](/dashboard/2026-07-16/{code}.html)."
         )
 
         # Inherit trading levels from 7/16 (Phase 9+, 2026-07-21).
@@ -262,19 +264,21 @@ def main():
         inherited_resist = sample["resistance_zone"] or _parse_lvl(full_md_16, "阻力區")
         inherited_key_levels = sample["key_levels_json"]
 
-        # Append inherited levels to summary so cards show non-empty levels
+        # Append inherited levels to summary so cards show non-empty levels.
+        # Use "入場區間" (matching the 7/16 LLM format + the regex in
+        # report_page_html) so the per-stock detail page parser picks them up.
         if inherited_entry or inherited_stop or inherited_target:
             levels_str = []
             if inherited_entry:
-                levels_str.append(f"**入場**(7/16): {inherited_entry}")
+                levels_str.append(f"**入場區間**(7/16): {inherited_entry}")
             if inherited_stop:
-                levels_str.append(f"**止損**(7/16): {inherited_stop}")
+                levels_str.append(f"**止損位**(7/16): {inherited_stop}")
             if inherited_target:
-                levels_str.append(f"**目標**(7/16): {inherited_target}")
+                levels_str.append(f"**目標價**(7/16): {inherited_target}")
             if inherited_support:
-                levels_str.append(f"**支持**(7/16): {inherited_support}")
+                levels_str.append(f"**支持區**(7/16): {inherited_support}")
             if inherited_resist:
-                levels_str.append(f"**阻力**(7/16): {inherited_resist}")
+                levels_str.append(f"**阻力區**(7/16): {inherited_resist}")
             per_stock_summary += "\n\n" + " · ".join(levels_str)
 
         con.execute(
