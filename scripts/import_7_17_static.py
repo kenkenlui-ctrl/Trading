@@ -239,6 +239,30 @@ def main():
         # All 7/17 records = 觀望 with HSI_REGIME rule
         decision_reason = f"[{HSI_REGIME_RULE}] HSI closed {HSI_CHG_PCT:+.2f}% on signal day (BEAR, threshold -1.5%). 7/17 live: bear day ALL BUY = 19% WR, -3.11% avg. Auto-suppress to 觀望."
 
+        # Phase 9+ (2026-07-21): detect 7/16 signal direction (SELL vs BUY) and
+        # warn user if the inherited plan is short-biased (stop > entry for BUY)
+        # or if 7/16 was SELL (so plan won't be a LONG trade on 7/17).
+        # Use llm_original_op (raw LLM intent) NOT operation_advice (rule-overridden)
+        # because the rule often flips SELL→觀望 (ANTI-KNIFE) which would hide the
+        # original plan direction.
+        sample_op_advice_7_16 = None
+        try:
+            r7_16 = con.execute(
+                "SELECT operation_advice, llm_original_op FROM daily_report WHERE report_date=? AND code=?",
+                ("2026-07-16", code),
+            ).fetchone()
+            if r7_16:
+                # Priority: llm_original_op (raw LLM intent) > operation_advice
+                sample_op_advice_7_16 = r7_16["llm_original_op"] or r7_16["operation_advice"]
+        except Exception:
+            pass
+
+        plan_direction_note = ""
+        if sample_op_advice_7_16 == "賣出":
+            plan_direction_note = " (7/16 個 SELL 短倉 plan — 7/17 HSI BEAR 已 override 為 觀望)"
+        elif sample_op_advice_7_16 == "買入":
+            plan_direction_note = " (7/16 個 BUY plan — 7/17 HSI BEAR 已 override 為 觀望)"
+
         sig_score = 30
         llm_score = 0
 
@@ -250,7 +274,7 @@ def main():
         per_stock_summary = (
             f"🟡 **{code}** · {name} · 7/17 收 ${cur:.2f} ({chg:+.2f}%) · "
             f"HSI {HSI_CHG_PCT:+.2f}% BEAR day · HSI_REGIME auto-suppressed BUY → 觀望. "
-            f"7/16 信號睇 [上一個 report](/dashboard/2026-07-16/{code}.html)."
+            f"7/16 信號睇 [上一個 report](/dashboard/2026-07-16/{code}.html).{plan_direction_note}"
         )
 
         # Inherit trading levels from 7/16 (Phase 9+, 2026-07-21).
@@ -269,6 +293,10 @@ def main():
         # report_page_html) so the per-stock detail page parser picks them up.
         if inherited_entry or inherited_stop or inherited_target:
             levels_str = []
+            # Phase 9+ (2026-07-21): label direction (LONG vs SHORT) so user
+            # understands that stop > entry means short-biased plan.
+            dir_label = "📉 短倉" if sample_op_advice_7_16 == "賣出" else "📈 長倉"
+            levels_str.append(f"**{dir_label} plan (7/16 inherited)**:")
             if inherited_entry:
                 levels_str.append(f"**入場區間**(7/16): {inherited_entry}")
             if inherited_stop:
