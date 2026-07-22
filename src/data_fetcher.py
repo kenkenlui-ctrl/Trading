@@ -636,13 +636,95 @@ def _try_load_intraday_15m(code: str) -> list[dict]:
 
 # ============ Public API ============
 
+def _fetch_historical_close(code: str, target_date: str) -> Optional[dict]:
+    """Fetch closing price data for a specific historical date (Phase 9+ 2026-07-22).
+
+    Used when DSA_REPORT_DATE_OVERRIDE is set — replaces the live snapshot's
+    price fields with the closing price from the target date. This ensures
+    retrospective daily runs (--date YYYY-MM-DD past) use the correct
+    closing data even when run during market hours.
+
+    Returns dict {last_price, prev_close, day_high, day_low, volume, open,
+                  data_as_of, change_pct} or None if yfinance has no data.
+    """
+    import yfinance as yf
+    from datetime import datetime, timedelta
+
+    try:
+        # Convert HK codes: 02513.HK -> 02513.HK (yfinance needs 4-digit HK codes,
+        # e.g. 0700.HK works but 700.HK returns 404)
+        if code.endswith('.HK'):
+            num = code.split('.')[0]
+            # Pad to 4 digits
+            if len(num) < 4:
+                num = num.zfill(4)
+            yf_sym = f'{num}.HK'
+        else:
+            yf_sym = code
+        target = datetime.strptime(target_date, '%Y-%m-%d')
+        start = target
+        end = target + timedelta(days=2)  # +1 buffer for non-trading day
+        t = yf.Ticker(yf_sym)
+        h = t.history(start=start.strftime('%Y-%m-%d'), end=end.strftime('%Y-%m-%d'))
+        if h.empty:
+            return None
+        h.index = h.index.tz_convert('Asia/Hong_Kong') if h.index.tz else h.index
+        # Find target_date row
+        target_row = None
+        prev_row = None
+        for idx, row in h.iterrows():
+            d = idx.strftime('%Y-%m-%d')
+            if d == target_date:
+                target_row = row
+            elif prev_row is None or idx < target:
+                prev_row = row
+        if target_row is None:
+            return None
+        # Previous close = last trading day before target
+        prev_close = None
+        for idx, row in h.iterrows():
+            if idx.strftime('%Y-%m-%d') < target_date:
+                if prev_close is None or idx > prev_close[0]:
+                    prev_close = (idx, float(row['Close']))
+        last_px = float(target_row['Close'])
+        return {
+            'last_price': last_px,
+            'prev_close': prev_close[1] if prev_close else None,
+            'day_high': float(target_row['High']),
+            'day_low': float(target_row['Low']),
+            'open': float(target_row['Open']),
+            'volume': int(target_row['Volume']),
+            'data_as_of': f'{target_date} 16:00 HKT (closing)',
+        }
+    except Exception as e:
+        return None
+
+
 def fetch_snapshot(code: str, include_intraday: bool = True) -> Optional[dict]:
     """
     Fetch snapshot for a HK ticker. Try Futu first (full HKEX history); fall back to
     YFinance for history; then overlay live price from Tencent/Sina (YFinance HK is
     15-min delayed, often shows yesterday's close as "last_price").
     Returns dict or None if all sources fail.
+
+    Phase 9+ (2026-07-22): If DSA_REPORT_DATE_OVERRIDE env var is set AND points
+    to a past date, override price fields with closing data from that date via
+    yfinance history(). This prevents the "retrospective run uses today's
+    morning live data" bug. User hard rule: 永遠拎收市價.
     """
+    # Phase 9+ retrospective override: if override set + past date, force close
+    import os
+    from datetime import datetime, date
+    override_date = os.environ.get('DSA_REPORT_DATE_OVERRIDE')
+    is_retrospective = False
+    if override_date:
+        try:
+            target = datetime.strptime(override_date, '%Y-%m-%d').date()
+            if target < date.today():
+                is_retrospective = True
+        except Exception:
+            pass
+
     snapshot = _fetch_futu(code) or _fetch_yfinance(code)
     if not snapshot:
         # No YFinance history at all (rare — e.g. 0100.HK only has 1 row).
@@ -683,6 +765,27 @@ def fetch_snapshot(code: str, include_intraday: bool = True) -> Optional[dict]:
         snapshot = _overlay_live_price(snapshot, code)
     if not snapshot:
         return None
+
+    # Phase 9+ (2026-07-22): retrospective override — apply closing data
+    if is_retrospective and override_date:
+        hist = _fetch_historical_close(code, override_date)
+        if hist:
+            snapshot['last_price'] = hist['last_price']
+            if hist.get('prev_close') is not None:
+                snapshot['prev_close'] = hist['prev_close']
+            if hist.get('day_high') is not None:
+                snapshot['day_high'] = hist['day_high']
+            if hist.get('day_low') is not None:
+                snapshot['day_low'] = hist['day_low']
+            if hist.get('open') is not None:
+                snapshot['open'] = hist['open']
+            if hist.get('volume') is not None:
+                snapshot['volume'] = hist['volume']
+            if snapshot.get('prev_close') and snapshot.get('last_price'):
+                snapshot['change_pct'] = round((snapshot['last_price'] - snapshot['prev_close']) / snapshot['prev_close'] * 100, 2)
+            snapshot['data_as_of'] = hist['data_as_of']
+        # else: keep live snapshot (rare — yfinance delisted stock)
+
     if include_intraday:
         snapshot["intraday_15m"] = _try_load_intraday_15m(code)
     return snapshot
