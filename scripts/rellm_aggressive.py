@@ -42,17 +42,26 @@ if cfg.minimax_api_key:
     os.environ['MiniMax_API_KEY'] = cfg.minimax_api_key
 
 
-def load_records(target_dates, limit_per_date=0):
+def load_records(target_dates, limit_per_date=0, only_pending=True):
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     records = []
     for date in target_dates:
-        cur.execute('''
-            SELECT t.code, t.name_zh, d.data_snapshot_json, d.score, d.operation_advice
-            FROM daily_report d JOIN ticker t ON d.code = t.code
-            WHERE d.report_date = ?
-            ORDER BY d.signal_score DESC NULLS LAST, d.score DESC NULLS LAST
-        ''', (date,))
+        if only_pending:
+            # Skip records that already have LLM-generated narrative (not snapshot-derived)
+            cur.execute('''
+                SELECT t.code, t.name_zh, d.data_snapshot_json, d.score, d.operation_advice
+                FROM daily_report d JOIN ticker t ON d.code = t.code
+                WHERE d.report_date = ? AND d.full_md LIKE '%LLM narrative 暫停%'
+                ORDER BY d.signal_score DESC NULLS LAST, d.score DESC NULLS LAST
+            ''', (date,))
+        else:
+            cur.execute('''
+                SELECT t.code, t.name_zh, d.data_snapshot_json, d.score, d.operation_advice
+                FROM daily_report d JOIN ticker t ON d.code = t.code
+                WHERE d.report_date = ?
+                ORDER BY d.signal_score DESC NULLS LAST, d.score DESC NULLS LAST
+            ''', (date,))
         cnt = 0
         for code, name, snap_str, ex_score, ex_op in cur.fetchall():
             if limit_per_date and cnt >= limit_per_date:
@@ -161,10 +170,11 @@ def main():
     ap.add_argument('--dates', nargs='+', default=['2026-07-22', '2026-07-23'])
     ap.add_argument('--limit', type=int, default=0)
     ap.add_argument('--retries', type=int, default=3)
+    ap.add_argument('--all', action='store_true', help='Process all records including already-LLM-ed (default: only pending)')
     args = ap.parse_args()
 
-    log.info(f'=== AGGRESSIVE re-LLM start: dates={args.dates} workers={args.workers} retries={args.retries} ===')
-    records = load_records(args.dates, args.limit)
+    log.info(f'=== AGGRESSIVE re-LLM start: dates={args.dates} workers={args.workers} retries={args.retries} only_pending={not args.all} ===')
+    records = load_records(args.dates, args.limit, only_pending=not args.all)
     log.info(f'Loaded {len(records)} records')
 
     start = time.time()
