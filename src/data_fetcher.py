@@ -784,7 +784,14 @@ def fetch_snapshot(code: str, include_intraday: bool = True) -> Optional[dict]:
             if snapshot.get('prev_close') and snapshot.get('last_price'):
                 snapshot['change_pct'] = round((snapshot['last_price'] - snapshot['prev_close']) / snapshot['prev_close'] * 100, 2)
             snapshot['data_as_of'] = hist['data_as_of']
-        # else: keep live snapshot (rare — yfinance delisted stock)
+        else:
+            # User hard rule (2026-07-22): NEVER silently fall back to stale data when
+            # retrospective override fails. Mark snapshot as override_failed so caller
+            # knows the data is unreliable.
+            snapshot['data_as_of'] = f'{override_date} 16:00 HKT (closing, OVERRIDE_FAILED_yfinance_no_data)'
+            snapshot['override_failed'] = True
+            # Keep snapshot fields but caller should detect override_failed and
+            # treat as data error (skip save or mark as 'data unavailable')
 
     if include_intraday:
         snapshot["intraday_15m"] = _try_load_intraday_15m(code)
