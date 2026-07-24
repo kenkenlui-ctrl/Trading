@@ -686,13 +686,19 @@ def _fetch_historical_close(code: str, target_date: str) -> Optional[dict]:
             if idx.strftime('%Y-%m-%d') < target_date:
                 if prev_close is None or idx > prev_close[0]:
                     prev_close = (idx, float(row['Close']))
-        last_px = float(target_row['Close'])
+        # Round price fields to 2 decimals (USD/HKD standard) — raw yfinance
+        # doubles are e.g. 319.69000244140625 due to IEEE 754, not user-facing
+        # precision. Hard rule applied 2026-07-24 after TSLA 7/23 page rendered
+        # as "319.69000244140625 HKD" instead of "319.69 HKD".
+        def _r(x):
+            v = float(x) if x is not None else None
+            return round(v, 2) if v is not None else None
         return {
-            'last_price': last_px,
-            'prev_close': prev_close[1] if prev_close else None,
-            'day_high': float(target_row['High']),
-            'day_low': float(target_row['Low']),
-            'open': float(target_row['Open']),
+            'last_price': _r(target_row['Close']),
+            'prev_close': _r(prev_close[1]) if prev_close else None,
+            'day_high': _r(target_row['High']),
+            'day_low': _r(target_row['Low']),
+            'open': _r(target_row['Open']),
             'volume': int(target_row['Volume']),
             'data_as_of': f'{target_date} 16:00 HKT (closing)',
         }
