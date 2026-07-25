@@ -768,7 +768,11 @@ def fetch_snapshot(code: str, include_intraday: bool = True) -> Optional[dict]:
             }
     else:
         # Got history (Futu or YFinance). Overlay live price to fix HK delay.
-        snapshot = _overlay_live_price(snapshot, code)
+        # For retrospective override, SKIP the live overlay entirely to avoid
+        # `_overlay_live_price` overwriting data_as_of with today's live
+        # datetime (root cause of 7/24 stale data bug 2026-07-25 09:38 HKT).
+        if not is_retrospective:
+            snapshot = _overlay_live_price(snapshot, code)
     if not snapshot:
         return None
 

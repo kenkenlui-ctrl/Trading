@@ -27,9 +27,12 @@ _HAS_CURL = True
 
 TARGET_DATE = "2026-07-07"
 SOURCE_DATE = "2026-07-02"
-os.environ["DSA_REPORT_DATE_OVERRIDE"] = TARGET_DATE
-os.environ["DSA_LLM_MAX_TOKENS"] = "8000"
-
+# Note: setting os.environ was at module level previously — it was an import-time
+# side effect that overwrote any caller's env (including run_daily.py's
+# DSA_REPORT_DATE_OVERRIDE=2026-07-24 → 2026-07-07). This caused every 7/24 record
+# from run_daily to use 7/7 closing data. Move the env set to a function or
+# guard with __main__ check.
+import sys
 sys.path.insert(0, "/Users/kenken/Documents/dsa-hk")
 
 from src.analyzer import analyze, render_summary_md, render_report_md
