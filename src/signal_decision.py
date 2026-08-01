@@ -1,51 +1,46 @@
-"""Rule-based signal decision engine.
+"""Rule-based signal decision engine — next-day long/short.
 
-The LLM is trained on investing content (trend-following) which is the
-OPPOSITE of day-trading 1D mean-reversion. So we don't trust the LLM's
-operation_advice — we apply deterministic rules based on backtested edges.
+The LLM is trained on investing content (trend-following) which is often the
+OPPOSITE of day-trading 1D mean-reversion. Final 買入/賣出/觀望 is decided by
+deterministic rules; the LLM is a feature/narrative extractor only.
 
-Audit (14-day, 4,634 signals, 2,621 T+1 matched):
-  - LLM BUY (all):          n=319, WR=47.6%, avg=-0.11%  ← ANTI-EDGE
-  - LLM HOLD (all):         n=2302, WR=48.6%, avg=-0.01%  ← random
-  - BOUNCE:                 n=318, WR=47.5%, avg=-0.13%  ← loses
-  - ANTI-KNIFE:             n=55, WR=40.0%, avg=-0.81%  ← wrong direction
-  - ANTI-CHASE:             n=38, WR=31.6%, avg=-0.77%  ← loses
-  - DEFAULT (no rule):      n=2209, WR=49.1%, avg=+0.02% ← baseline
-  - ★ VALUE (v≥60+pe<15):   n=441, WR=55.1%, avg=+0.40%  ← +5.6% edge
-  - ★ VALUE (pe<10):        n=664, WR=54.2%, avg=+0.35%  ← +4.7% edge
+Phase 10 (2026-07-30) — next-day board for BUY *and* SHORT
+=========================================================
+Holdout-validated on backtest_results (train ≤2026-07-10, test >2026-07-10):
 
-Phase 5 (2026-07-17, 14-day audit): LLM BUY rules are confirmed net-negative
-for day-trade (T+1 open→close). The LLM operation_advice is 100% rule-
-following (no independent value) — see audit notes.
+  GOLD_LONG  (v≥70, m<40, 0<pe<12, chg<1):
+    full-sample n=44  WR=77.3%  avg=+1.92%
+    train n=36 WR=75.0% | test n=8 WR=87.5%
 
-Phase 6 (2026-07-17, NEW): VALUE rule added as priority 0. Pure
-quantitative filter on value_score + pe_ttm, independent of LLM op. 14-day
-backtest on 4,634 signals showed 54-55% WR (vs 50% breakeven) with +0.35%
-avg/trade and 600+ trades — robust sample.
+  FADE_SHORT (chg≥+3, m≥60, pe>20)  — short extended expensive names:
+    full-sample n=192 WR=62.0%  avg_short_pnl=+1.63%
+    train n=147 WR=60.5% | test n=45 WR=66.7%
 
-Rules (priority order, first match wins):
- -1. HSI_REGIME:    hsi_yesterday_chg < -1.5% → 觀望 (bear day protection)
-                    (Phase 9 Step 2, 2026-07-18. 7/17 live: HSI -1.78% caused
-                     -196% cum loss on 63 BUY. Backtest: bear days 38% WR vs 52% mild.)
-  0. VALUE:        v≥60 + pe_ttm<15 → 買入 (54-55% WR, +0.35% avg) ★ NEW
-  1. ANTI-CHASE:    樂觀 + m≥60 + chg≥+3% → 觀望 (proved -1.57% avg)
-  2. ANTI-KNIFE:    悲觀 + chg≤-3% → 觀望 (proved +0.24% avg wrong direction)
-  3. ANTI-MOMENTUM: m≥80 → 觀望 (proved -2.24% avg, 16.7% WR)
-  4. ANTI-REBOUND:  VALUE fired BUT chg≥+2% on signal day → 觀望
-                    (Phase 8, 2026-07-18. 7/17 live: rebound chasers 0/16 WR.
-                     14d backtest ANTI-REBOUND subset: 57.5% WR vs 53.9% baseline.)
-  5. ANTI-MOM-EXT:  VALUE fired BUT m≥70 on signal day → 觀望
-                    (Phase 8, 2026-07-18. 7/17 live: high-momentum VALUE 0/9 WR.
-                     14d backtest: m≥70 in VALUE filter = 47% WR, vs m<70 = 55% WR.)
-  6. CONSERVATIVE:  chg[-3,0)+sent非樂觀+m[30,60]+非科技 → 買入 (61.5% WR)
-  7. BOUNCE:        DISABLED (Phase 9 Step 1.5, 2026-07-18. 14d: 46.8% WR, -0.13% avg
-                    — anti-edge. Removing improves ALL BUY from 51.9% → ~58% WR.)
-  8. DEFAULT:       else → 觀望 (don't trust LLM BUY outside edges)
+  Anti-patterns (do NOT long these; short sleeve uses the chase cluster):
+    chg≥3 + m≥60 long WR ~40% train / short WR ~59–62%
+
+Rules (priority, first match wins):
+  1. FADE_SHORT   chg≥3 + m≥60 + pe>20 → 賣出
+  2. GOLD_LONG    v≥70 + m<40 + 0<pe<12 + chg<1 → 買入
+                  (blocked to 觀望 if HSI signal-day ≤ -1.5%)
+  3. VALUE        v≥70 + pe<15 + chg<+1.5 + m<60 → 買入 (SILVER)
+                  + ANTI-REBOUND / ANTI-MOM-EXT stops
+  4. ANTI-CHASE   (LLM BUY path) 樂觀+m≥60+chg≥3 → 觀望 if not already shorted
+  5. ANTI-KNIFE   LLM SELL + 悲觀 + chg≤-3 → 觀望 (don't short knives)
+  6. ANTI-MOMENTUM LLM BUY + m≥80 → 觀望
+  7. CONSERVATIVE slight dip mean-reversion BUY (weaker on pure 1D)
+  8. BOUNCE       DISABLED
+  9. DEFAULT      觀望
+
+Also exposes:
+  next_day_long_score / next_day_short_score / next_day_bias
+  → single 0-100 scores where higher = higher chance next day moves that way.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Optional
+import math
 
 
 # Tech sectors to AVOID for Conservative BUY (mean-reversion failed in tech/semis)
@@ -59,23 +54,78 @@ TECH_SECTORS_AVOID = {
     "互聯網",
 }
 
-# Phase 9 Step 1.5: Disabled rules (set keeps the rule definition visible
-# for audit but blocks firing in decide()).
+# Phase 9 Step 1.5: Disabled rules (kept visible for audit).
 _DISABLED_RULES = {"BOUNCE"}  # 14d: 46.8% WR, -0.13% avg — anti-edge
 
-# Phase 9 Step 2: HSI bear-day threshold. If HSI closed -1.5% or worse on
-# the signal day, suppress all BUY signals (any edge gets washed out by
-# the broad market). Verified on 7/17 (HSI -1.78%, post-Phase-8 ALL BUY
-# still lost -196% cumulative).
+# Phase 9 Step 2: HSI bear-day threshold — suppresses BUY only (shorts still OK).
 HSI_BEAR_THRESHOLD = -1.5
+
+# Phase 10 thresholds (holdout-validated)
+GOLD_LONG_V_MIN = 70
+GOLD_LONG_M_MAX = 40
+GOLD_LONG_PE_MAX = 12.0
+GOLD_LONG_CHG_MAX = 1.0
+
+FADE_SHORT_CHG_MIN = 3.0
+FADE_SHORT_M_MIN = 60
+FADE_SHORT_PE_MIN = 20.0
 
 
 @dataclass
 class Decision:
     op: str           # 買入 / 觀望 / 賣出
     reason: str       # why this op
-    matched_rule: str  # ANTI-CHASE / ANTI-KNIFE / ANTI-MOMENTUM / CONSERVATIVE / BOUNCE / DEFAULT
+    matched_rule: str  # GOLD_LONG / FADE_SHORT / VALUE / ...
     original_op: str  # what LLM said (for audit)
+
+
+def _safe_float(x, default=None):
+    if x is None:
+        return default
+    try:
+        v = float(x)
+        if math.isnan(v) or math.isinf(v):
+            return default
+        return v
+    except (TypeError, ValueError):
+        return default
+
+
+def _safe_int(x, default: int = 0) -> int:
+    v = _safe_float(x, None)
+    if v is None:
+        return default
+    return int(round(v))
+
+
+def _extract_features(score_breakdown: dict, data_snapshot: dict) -> dict:
+    sb = score_breakdown or {}
+    ds = data_snapshot or {}
+    pe = _safe_float(ds.get("pe_ttm"))
+    if pe is not None and pe <= 0:
+        pe = None
+    price = _safe_float(ds.get("last_price"))
+    hi = _safe_float(ds.get("52w_high"))
+    lo = _safe_float(ds.get("52w_low"))
+    dist_hi = _safe_float(sb.get("dist_52w_high_pct"))
+    dist_lo = _safe_float(sb.get("dist_52w_low_pct"))
+    if dist_hi is None and price and hi and hi > 0:
+        dist_hi = (price - hi) / hi * 100.0
+    if dist_lo is None and price and lo and lo > 0:
+        dist_lo = (price - lo) / lo * 100.0
+    return {
+        "m": _safe_int(sb.get("momentum_score"), 0),
+        "of": _safe_int(sb.get("order_flow_score"), 0),
+        "v": _safe_int(sb.get("value_score"), 0),
+        "q": _safe_int(sb.get("quality_score"), 0),
+        "pe": pe,
+        "chg": _safe_float(ds.get("change_pct"), 0.0) or 0.0,
+        "chg_5d": _safe_float(sb.get("chg_5d")),
+        "dist_hi": dist_hi,
+        "dist_lo": dist_lo,
+        "turnover_5d_ratio": _safe_float(sb.get("turnover_5d_ratio"), 1.0) or 1.0,
+        "pe_relative": _safe_float(sb.get("pe_relative"), 1.0) or 1.0,
+    }
 
 
 def decide(
@@ -84,152 +134,231 @@ def decide(
     score_breakdown: dict,
     data_snapshot: dict,
     sector: str = "",
-    hsi_yesterday_chg: float = None,  # ★ Phase 9 Step 2: HSI regime filter
+    hsi_yesterday_chg: float = None,
 ) -> Decision:
     """Apply deterministic rules to override LLM's operation_advice.
 
-    Args:
-      hsi_yesterday_chg: HSI % change on signal day. If < -1.5%, all BUY signals
-                         are downgraded to 觀望 (bear day protection).
-                         7/17 live: HSI -1.78% would have blocked 84 BUY,
-                         saving -272% cumulative loss.
-
     Returns Decision with rule-based op + reason + LLM's original.
     """
-    m = int(score_breakdown.get("momentum_score") or 0)
-    of = int(score_breakdown.get("order_flow_score") or 0)
-    v = int(score_breakdown.get("value_score") or 0)
-    q = int(score_breakdown.get("quality_score") or 0)
-    pe = data_snapshot.get("pe_ttm")
-    pe_str = f"{pe:.1f}" if pe is not None and not (isinstance(pe, float) and pe != pe) else "n/a"
-    chg = float(data_snapshot.get("change_pct") or 0)
+    f = _extract_features(score_breakdown, data_snapshot)
+    m, of, v, q = f["m"], f["of"], f["v"], f["q"]
+    pe, chg = f["pe"], f["chg"]
+    pe_str = f"{pe:.1f}" if pe is not None else "n/a"
     sent = sentiment or ""
+    hsi_bear = (
+        hsi_yesterday_chg is not None
+        and hsi_yesterday_chg <= HSI_BEAR_THRESHOLD
+    )
 
-    # ★ Phase 9 Step 2: HSI bear-day regime filter — runs BEFORE all other
-    # rules. If HSI closed < -1.5% on signal day, suppress every BUY.
-    # 7/17 live: HSI -1.78% (BEAR). Post-Phase-8 ALL BUY (n=63) still
-    # lost -196% cumulative, avg -3.11% — confirms any edge is washed out
-    # on broad selloff days. Backtest: HSI<-1.5% days ALL BUY = 38% WR vs
-    # 52% on mild days. Threshold is 觀望/HSI_REGIME.
-    if hsi_yesterday_chg is not None and hsi_yesterday_chg <= HSI_BEAR_THRESHOLD:
+    # ------------------------------------------------------------------
+    # 1. FADE_SHORT — short extension into expensive names (next-day fade)
+    # Holdout: test WR 66.7% (n=45), full 62.0% (n=192), avg short +1.6%
+    # Fires BEFORE anti-chase so we monetize the chase cluster instead of
+    # only blocking the long.
+    # ------------------------------------------------------------------
+    if (
+        chg >= FADE_SHORT_CHG_MIN
+        and m >= FADE_SHORT_M_MIN
+        and pe is not None
+        and pe > FADE_SHORT_PE_MIN
+    ):
         return Decision(
-            op="觀望",
-            reason=f"HSI_REGIME: HSI closed {hsi_yesterday_chg:+.2f}% on signal day (BEAR, threshold {HSI_BEAR_THRESHOLD}%). 7/17 live: bear day ALL BUY = 19% WR, -3.11% avg. Auto-suppress to 觀望.",
-            matched_rule="HSI_REGIME",
+            op="賣出",
+            reason=(
+                f"FADE_SHORT: chg={chg:+.1f}%≥+{FADE_SHORT_CHG_MIN:.0f} + m={m}≥{FADE_SHORT_M_MIN} "
+                f"+ pe={pe_str}>{FADE_SHORT_PE_MIN:.0f} (extended expensive). "
+                f"Holdout short WR≈67% (n=45), full-sample 62% (n=192). Day-trade short only."
+            ),
+            matched_rule="FADE_SHORT",
             original_op=llm_op,
         )
 
-    # Rule 0 (NEW 2026-07-17, Phase 9 tighten 2026-07-18): VALUE BUY — pure value filter
-    # Independent of LLM op. Triggers when:
-    #   value_score >= 70  AND  pe_ttm < 15
-    # Phase 9 tightening: v>=60 was too loose (47% WR on 7/17 due to chg≥+2% stocks).
-    # v>=70 + the ANTI-* checks below more closely matches the new analyzer.py
-    # score formula (40% v, 20% q, 15% m, 10% of, 5% news + chg/hi penalties).
-    # 14-day backtest on this tighter rule (n=222-301 depending on subset):
-    #   WR=58.1-72.2% (vs 53.9% baseline), avg=+0.29-1.09%.
-    value_would_fire = (v >= 70 and pe is not None and not (isinstance(pe, float) and pe != pe)
-                        and pe < 15 and pe > 0)
-
-    if value_would_fire:
-        # ANTI-REBOUND check (Phase 8, tightened to chg >= +1.5% in Phase 9):
-        # VALUE conditions met but signal day was a rebound.
-        # 7/17 live: 0/16 such stocks won. 14d backtest:
-        #   chg >= +2% : 47.5% WR (severe)
-        #   +1 to +2% : 55% WR (moderate)
-        #   <  +1% : 60% WR (good)
-        # Tightening to +1.5% catches the chg=+2% to +5% bucket too.
-        if chg is not None and not (isinstance(chg, float) and chg != chg) and chg >= 1.5:
+    # ------------------------------------------------------------------
+    # 2. GOLD_LONG — strict value + cold momentum (best next-day long)
+    # Holdout: test WR 87.5% (n=8), full 77.3% (n=44), avg +1.92%
+    # ------------------------------------------------------------------
+    gold = (
+        v >= GOLD_LONG_V_MIN
+        and m < GOLD_LONG_M_MAX
+        and pe is not None
+        and 0 < pe < GOLD_LONG_PE_MAX
+        and chg < GOLD_LONG_CHG_MAX
+    )
+    if gold:
+        if hsi_bear:
             return Decision(
                 op="觀望",
-                reason=f"ANTI-REBOUND: VALUE conditions met (v={v}, pe={pe_str}) BUT signal-day chg={chg:+.1f}% is a rebound chase. 7/17 live: 0/16 WR; 14d backtest: 47.5% with chg≥+2% vs 60% with chg<+1%.",
+                reason=(
+                    f"HSI_REGIME: GOLD_LONG blocked — HSI {hsi_yesterday_chg:+.2f}% ≤ "
+                    f"{HSI_BEAR_THRESHOLD}% (bear day washes out long edge)."
+                ),
+                matched_rule="HSI_REGIME",
+                original_op=llm_op,
+            )
+        return Decision(
+            op="買入",
+            reason=(
+                f"GOLD_LONG: v={v}≥{GOLD_LONG_V_MIN} + m={m}<{GOLD_LONG_M_MAX} "
+                f"+ pe={pe_str}<{GOLD_LONG_PE_MAX:.0f} + chg={chg:+.1f}%<{GOLD_LONG_CHG_MAX:.0f}. "
+                f"Best next-day long sleeve (full n=44 WR≈77%, +1.9% avg)."
+            ),
+            matched_rule="GOLD_LONG",
+            original_op=llm_op,
+        )
+
+    # ------------------------------------------------------------------
+    # 3. VALUE (SILVER) — looser value long with anti-chase stops
+    # ------------------------------------------------------------------
+    value_would_fire = (
+        v >= 70
+        and pe is not None
+        and pe < 15
+        and pe > 0
+    )
+    if value_would_fire:
+        if hsi_bear:
+            return Decision(
+                op="觀望",
+                reason=(
+                    f"HSI_REGIME: VALUE blocked — HSI {hsi_yesterday_chg:+.2f}% ≤ "
+                    f"{HSI_BEAR_THRESHOLD}%."
+                ),
+                matched_rule="HSI_REGIME",
+                original_op=llm_op,
+            )
+        if chg is not None and chg >= 1.5:
+            return Decision(
+                op="觀望",
+                reason=(
+                    f"ANTI-REBOUND: VALUE met (v={v}, pe={pe_str}) BUT chg={chg:+.1f}% "
+                    f"is rebound chase (7/17 live 0/16; backtest chg≥+2% ~47.5% WR)."
+                ),
                 matched_rule="ANTI-REBOUND",
                 original_op=llm_op,
             )
-        # ANTI-MOM-EXT check (Phase 8, tightened to m >= 60 in Phase 9):
-        # 7/17 live: 0/9 such VALUE signals won. 14d backtest:
-        #   m >= 70 : 47% WR
-        #   m 60-70 : 51% WR
-        #   m <  60 : 55% WR
-        # Tightening to m>=60 catches more anti-edge momentum plays.
-        if m is not None and m >= 60:
+        if m >= 60:
             return Decision(
                 op="觀望",
-                reason=f"ANTI-MOM-EXT: VALUE conditions met (v={v}, pe={pe_str}) BUT m={m} ≥ 60 means stock already trending strongly. 7/17 live: 0/9 WR with m≥70; 14d backtest: 47% with m≥70 vs 55% with m<60.",
+                reason=(
+                    f"ANTI-MOM-EXT: VALUE met (v={v}, pe={pe_str}) BUT m={m}≥60 "
+                    f"(extended; prefer GOLD m<40). Backtest m≥70 in VALUE ~47% WR."
+                ),
                 matched_rule="ANTI-MOM-EXT",
                 original_op=llm_op,
             )
         return Decision(
             op="買入",
-            reason=f"VALUE BUY: value_score={v} ≥ 70 + pe_ttm={pe_str} < 15 + chg<+1.5% + m<60 (Phase 9 tightened). 14-day backtest: 58-72% WR, +0.3 to +1.1% avg, n=222-301. Fires regardless of LLM op.",
+            reason=(
+                f"VALUE BUY (SILVER): v={v}≥70 + pe={pe_str}<15 + chg<+1.5% + m<60. "
+                f"Weaker than GOLD_LONG; full VALUE ~64% 1D WR."
+            ),
             matched_rule="VALUE",
             original_op=llm_op,
         )
 
-    # Rule 1: ANTI-CHASE — LLM is bullish on a stock that just ran up
+    # ------------------------------------------------------------------
+    # 4–6. Toxic LLM path blockers
+    # ------------------------------------------------------------------
     if llm_op == "買入" and sent == "樂觀" and m >= 60 and chg >= 3:
         return Decision(
             op="觀望",
-            reason=f"ANTI-CHASE: LLM said 買入 but 樂觀+m={m}+chg={chg:+.1f}% matches TOXIC pattern (10-day: 35.3% WR, -1.49% avg)",
+            reason=(
+                f"ANTI-CHASE: LLM 買入 but 樂觀+m={m}+chg={chg:+.1f}% toxic long "
+                f"(~35% long WR). Prefer FADE_SHORT when pe>20."
+            ),
             matched_rule="ANTI-CHASE",
             original_op=llm_op,
         )
 
-    # Rule 2: ANTI-KNIFE — LLM is bearish on a stock that just crashed (will bounce)
     if llm_op == "賣出" and sent == "悲觀" and chg <= -3:
         return Decision(
             op="觀望",
-            reason=f"ANTI-KNIFE: LLM said 賣出 but 悲觀+chg={chg:+.1f}% is panic-day, will mean-revert (10-day: 53 SELL cases went UP next day)",
+            reason=(
+                f"ANTI-KNIFE: LLM 賣出 but 悲觀+chg={chg:+.1f}% panic day — "
+                f"next day often bounces. Do not short knives."
+            ),
             matched_rule="ANTI-KNIFE",
             original_op=llm_op,
         )
 
-    # Rule 3: ANTI-MOMENTUM — LLM is buying the strongest momentum (chasing top)
     if llm_op == "買入" and m >= 80:
         return Decision(
             op="觀望",
-            reason=f"ANTI-MOMENTUM: m={m} ≥ 80 means stock already extended; buying strongest = catching reversal (10-day: 16.7% WR, -2.24% avg)",
+            reason=(
+                f"ANTI-MOMENTUM: m={m}≥80 extended; long anti-edge (~17–39% WR). "
+                f"Consider short only if pe>20 via FADE_SHORT."
+            ),
             matched_rule="ANTI-MOMENTUM",
             original_op=llm_op,
         )
 
-    # Rule 4: CONSERVATIVE BUY — chg[-3,0)+sent非樂觀+m[30,60]+非科技
-    if llm_op == "買入" and -3 < chg < 0 and sent != "樂觀" and 30 <= m <= 60 and sector not in TECH_SECTORS_AVOID:
+    # ------------------------------------------------------------------
+    # 7. CONSERVATIVE BUY — slight dip, non-tech (weaker pure-1D; OK multi-day)
+    # ------------------------------------------------------------------
+    if (
+        llm_op == "買入"
+        and -3 < chg < 0
+        and sent != "樂觀"
+        and 30 <= m <= 60
+        and sector not in TECH_SECTORS_AVOID
+    ):
+        if hsi_bear:
+            return Decision(
+                op="觀望",
+                reason=f"HSI_REGIME: CONSERVATIVE blocked — HSI {hsi_yesterday_chg:+.2f}%.",
+                matched_rule="HSI_REGIME",
+                original_op=llm_op,
+            )
         return Decision(
             op="買入",
-            reason=f"CONSERVATIVE BUY: chg={chg:+.1f}% (slight dip) + sent={sent} + m={m} + non-tech sector matches mean-reversion edge (10-day: 61.5% WR, +0.92% avg)",
+            reason=(
+                f"CONSERVATIVE BUY: chg={chg:+.1f}% dip + sent={sent} + m={m} + non-tech. "
+                f"Stronger on 2–3d hold/paper than pure 1D (1D backtest ~43%, paper ~81%)."
+            ),
             matched_rule="CONSERVATIVE",
             original_op=llm_op,
         )
 
-    # Rule 5: BOUNCE BUY — chg[-5,-2]+sent非樂觀+m<60+score<45 (mean-reversion on bigger drop)
-    # Phase 9 Step 1.5 (2026-07-18): DISABLED. 14d audit: 46.8% WR, -0.13% avg
-    # (anti-edge). Removing improves ALL BUY from 51.9% → ~58% WR. The block
-    # is preserved (commented + _DISABLED_RULES check) so historical records
-    # labelled BOUNCE still appear in audit, but no NEW records get this rule.
-    if "BOUNCE" in _DISABLED_RULES:
-        pass  # disabled, fall through to DEFAULT
-    elif llm_op in ("買入", "觀望") and -5 <= chg <= -2 and sent in ("悲觀", "中性") and m < 60:
-        # Optional: require sector not too risky (skip semi/tech on big drops)
-        return Decision(
-            op="買入",
-            reason=f"BOUNCE BUY: chg={chg:+.1f}% (pullback) + sent={sent} + m={m}<60 (momentum cooled) matches reversal edge (10-day: 51.7% WR, catches 7/2-style rebound)",
-            matched_rule="BOUNCE",
-            original_op=llm_op,
-        )
+    # ------------------------------------------------------------------
+    # 8. BOUNCE — DISABLED
+    # ------------------------------------------------------------------
+    if "BOUNCE" not in _DISABLED_RULES:
+        if (
+            llm_op in ("買入", "觀望")
+            and -5 <= chg <= -2
+            and sent in ("悲觀", "中性")
+            and m < 60
+        ):
+            return Decision(
+                op="買入",
+                reason=f"BOUNCE BUY: chg={chg:+.1f}% + sent={sent} + m={m}<60",
+                matched_rule="BOUNCE",
+                original_op=llm_op,
+            )
 
-    # Rule 6: DEFAULT — don't trust LLM's BUY outside proven edges
+    # ------------------------------------------------------------------
+    # 9. DEFAULT
+    # ------------------------------------------------------------------
     return Decision(
         op="觀望",
-        reason=f"DEFAULT: LLM said {llm_op} but signal outside any backtested edge; auto-降級去 觀望",
+        reason=(
+            f"DEFAULT: LLM said {llm_op}; outside GOLD_LONG / VALUE / FADE_SHORT / "
+            f"CONSERVATIVE edges → 觀望"
+        ),
         matched_rule="DEFAULT",
         original_op=llm_op,
     )
 
 
-def apply_to_snapshot(llm_op: str, llm_sentiment: str, llm_trend: str,
-                       score_breakdown: dict, data_snapshot: dict,
-                       sector: str = "",
-                       hsi_yesterday_chg: float = None) -> Decision:
+def apply_to_snapshot(
+    llm_op: str,
+    llm_sentiment: str,
+    llm_trend: str,
+    score_breakdown: dict,
+    data_snapshot: dict,
+    sector: str = "",
+    hsi_yesterday_chg: float = None,
+) -> Decision:
     """Public API: apply decide() with cleaner signature."""
     return decide(
         llm_op=llm_op,
@@ -242,76 +371,309 @@ def apply_to_snapshot(llm_op: str, llm_sentiment: str, llm_trend: str,
 
 
 # ----------------------------------------------------------------------------
-# Signal Score (0-100)
-# ----------------------------------------------------------------------------
-# Signal Score = edge confidence of the RULE-BASED decision, NOT the LLM
-# narrative confidence. Computed from 10-day backtested WR per rule + final op.
-#
-# The LLM "評分" is narrative confidence (how strongly the LLM wrote the
-# rationale). The Signal Score is the *trade edge* — i.e., if you took
-# every record that produced this rule outcome, how often did it actually
-# make money the next day?
-#
-# This separation is what the user complained about: 02208.HK has
-# LLM 評分 58 (low) but Signal Score 62 (BOUNCE BUY 51.7% WR).
-# 00992.HK has LLM 評分 77 (high) but Signal Score 38 (raw LLM BUY
-# outside any backtested edge).
-#
-# Source: 10-day audit on 1,913 signals (2026-07-10, see /insights.html).
+# Phase 10: Next-day directional scores (0-100)
+# Higher long_score  → higher P(next close up)
+# Higher short_score → higher P(next close down)
+# bias = long_score - short_score  (positive → lean long)
+# Calibrated from train Pearson signs + holdout rule lifts (2026-07-30).
 # ----------------------------------------------------------------------------
 
-# Each rule / final op maps to a Signal Score. Score is calibrated so
-# 50 = random (50% WR), 75 = strong edge (60%+ WR), 25 = anti-edge.
+def next_day_long_score(
+    score_breakdown: dict,
+    data_snapshot: dict,
+    sentiment: str = "",
+    matched_rule: str = "",
+) -> int:
+    """0-100 score: higher ⇒ better next-day LONG candidate."""
+    f = _extract_features(score_breakdown, data_snapshot)
+    p = 50.0
+    chg, m, v, pe = f["chg"], f["m"], f["v"], f["pe"]
+    dist_hi, dist_lo = f["dist_hi"], f["dist_lo"]
+    sent = sentiment or ""
+
+    # Day change (mean-reversion long)
+    if -3 <= chg <= -0.5:
+        p += 12
+    elif -5 <= chg < -3:
+        p += 6
+    elif chg >= 3:
+        p -= 18
+    elif chg >= 2:
+        p -= 12
+    elif chg >= 1:
+        p -= 6
+
+    # Momentum: cold helps longs
+    if m < 40:
+        p += 12
+    elif m < 50:
+        p += 6
+    elif m >= 80:
+        p -= 18
+    elif m >= 60:
+        p -= 10
+
+    # Value / PE
+    if v >= 70:
+        p += 10
+    elif v < 40:
+        p -= 6
+    if pe is not None:
+        if 0 < pe < 12:
+            p += 10
+        elif pe < 15:
+            p += 4
+        elif pe > 30:
+            p -= 8
+
+    # Sentiment
+    if sent == "悲觀":
+        p += 8
+    elif sent == "樂觀":
+        p -= 10
+
+    # 52w context
+    if dist_hi is not None and dist_hi > -5:
+        p -= 12
+    elif dist_hi is not None and dist_hi > -10:
+        p -= 5
+    if dist_lo is not None and dist_lo <= 15:
+        p += 6
+
+    # Rule bump (if already decided)
+    rule_bump = {
+        "GOLD_LONG": 18,
+        "VALUE": 10,
+        "CONSERVATIVE": 4,
+        "FADE_SHORT": -25,
+        "ANTI-CHASE": -15,
+        "ANTI-MOMENTUM": -18,
+        "HSI_REGIME": -12,
+        "BOUNCE": -5,
+    }
+    p += rule_bump.get(matched_rule or "", 0)
+
+    return int(max(0, min(100, round(p))))
+
+
+def next_day_short_score(
+    score_breakdown: dict,
+    data_snapshot: dict,
+    sentiment: str = "",
+    matched_rule: str = "",
+) -> int:
+    """0-100 score: higher ⇒ better next-day SHORT candidate."""
+    f = _extract_features(score_breakdown, data_snapshot)
+    p = 50.0
+    chg, m, v, pe = f["chg"], f["m"], f["v"], f["pe"]
+    dist_hi = f["dist_hi"]
+    sent = sentiment or ""
+
+    # Extension
+    if chg >= 4:
+        p += 16
+    elif chg >= 3:
+        p += 14
+    elif chg >= 2:
+        p += 8
+    elif chg <= -3:
+        p -= 16  # knife — do not short
+    elif chg <= -1:
+        p -= 8
+
+    if m >= 80:
+        p += 14
+    elif m >= 65:
+        p += 10
+    elif m >= 60:
+        p += 6
+    elif m < 40:
+        p -= 12
+
+    if pe is not None:
+        if pe > 25:
+            p += 8
+        elif pe > 20:
+            p += 6
+        elif 0 < pe < 12:
+            p -= 10  # don't short cheap value
+
+    if v >= 70:
+        p -= 10
+    elif v < 40:
+        p += 4
+
+    if sent == "樂觀":
+        p += 8
+    elif sent == "悲觀":
+        p -= 8
+
+    if dist_hi is not None and dist_hi > -5:
+        p += 8
+    elif dist_hi is not None and dist_hi > -8:
+        p += 4
+
+    rule_bump = {
+        "FADE_SHORT": 20,
+        "ANTI-CHASE": 8,       # chase cluster = short research interest
+        "ANTI-MOMENTUM": 10,
+        "GOLD_LONG": -25,
+        "VALUE": -15,
+        "ANTI-KNIFE": -20,     # blocked short
+        "CONSERVATIVE": -8,
+    }
+    p += rule_bump.get(matched_rule or "", 0)
+
+    return int(max(0, min(100, round(p))))
+
+
+def direction_score(
+    score_breakdown: dict,
+    data_snapshot: dict,
+    sentiment: str = "",
+    matched_rule: str = "",
+) -> int:
+    """Single 0–100 next-day direction confidence (THE score to look at).
+
+    Scale (by design):
+      0   → high chance SHORT wins next day
+      50  → no clear edge (hold / skip)
+      100 → high chance LONG wins next day
+
+    Built from long_score vs short_score mass, then anchored by matched rule
+    so GOLD_LONG clusters high and FADE_SHORT clusters low.
+    """
+    lg = float(next_day_long_score(score_breakdown, data_snapshot, sentiment, matched_rule))
+    sh = float(next_day_short_score(score_breakdown, data_snapshot, sentiment, matched_rule))
+    total = lg + sh
+    if total <= 1e-6:
+        raw = 50.0
+    else:
+        # Share of "long mass" → 0..100. Equal long/short → 50.
+        raw = 100.0 * lg / total
+
+    rule = matched_rule or ""
+    # Hard anchors so actionable rules are unambiguous on the dial
+    if rule == "GOLD_LONG":
+        raw = max(raw, 88.0)
+    elif rule == "VALUE":
+        raw = max(raw, 72.0)
+    elif rule == "CONSERVATIVE":
+        raw = max(min(raw, 80.0), 62.0)
+    elif rule == "FADE_SHORT":
+        raw = min(raw, 12.0)
+    elif rule in ("ANTI-CHASE", "ANTI-MOMENTUM"):
+        # Chase cluster: lean short / avoid long (not a hard short unless FADE)
+        raw = min(raw, 32.0)
+    elif rule == "ANTI-KNIFE":
+        # Do not short panic — pin near neutral
+        raw = max(min(raw, 58.0), 42.0)
+    elif rule == "HSI_REGIME":
+        # Bear day: suppress long confidence toward neutral
+        raw = min(raw, 48.0)
+    elif rule == "ANTI-REBOUND" or rule == "ANTI-MOM-EXT":
+        raw = min(max(raw, 35.0), 55.0)
+
+    return int(max(0, min(100, round(raw))))
+
+
+def direction_label(score: int) -> str:
+    """Human band for direction_score."""
+    # IMPORTANT: score 0 is valid (strong short). Do not use `score or 50`.
+    s = 50 if score is None else int(score)
+    if s >= 85:
+        return "STRONG_LONG"
+    if s >= 70:
+        return "LEAN_LONG"
+    if s <= 15:
+        return "STRONG_SHORT"
+    if s <= 30:
+        return "LEAN_SHORT"
+    return "NEUTRAL"
+
+
+def direction_action(score: int) -> str:
+    """Suggested side from direction_score alone."""
+    # IMPORTANT: score 0 is valid (strong short). Do not use `score or 50`.
+    s = 50 if score is None else int(score)
+    if s >= 70:
+        return "BUY"
+    if s <= 30:
+        return "SHORT"
+    return "HOLD"
+
+
+def next_day_bias(
+    score_breakdown: dict,
+    data_snapshot: dict,
+    sentiment: str = "",
+    matched_rule: str = "",
+) -> dict:
+    """Return long/short poles + single direction_score for the board."""
+    lg = next_day_long_score(score_breakdown, data_snapshot, sentiment, matched_rule)
+    sh = next_day_short_score(score_breakdown, data_snapshot, sentiment, matched_rule)
+    d = direction_score(score_breakdown, data_snapshot, sentiment, matched_rule)
+    return {
+        "long_score": lg,
+        "short_score": sh,
+        "bias": lg - sh,  # >0 lean long, <0 lean short
+        "direction_score": d,  # 0=short … 100=long  ← primary
+        "label": direction_label(d),
+        "action": direction_action(d),
+    }
+
+
+# ----------------------------------------------------------------------------
+# signal_score column / badge — NOW = direction_score semantics
+# 0=short … 50=neutral … 100=long
+# ----------------------------------------------------------------------------
+
 _SIGNAL_SCORE_TABLE = {
-    # Rule outcomes (matched_rule field)
-    "HSI_REGIME":    30,   # ★ Phase 9 Step 2: bear day, suppress BUY (38% WR bear day)
-    "VALUE":         70,   # 54-55% WR, +0.35% avg, n=441-664 (best 14-day edge) ★ NEW
-    "ANTI-REBOUND":  42,   # ★ Phase 8: blocks VALUE with chg≥+2% (rebound chaser)
-    "ANTI-MOM-EXT":  42,   # ★ Phase 8: blocks VALUE with m≥70 (momentum chase)
-    "CONSERVATIVE":  78,   # 61.5% WR, +0.92% avg (small sample legacy)
-    "BOUNCE":        38,   # ★ Phase 9 Step 1.5: DISABLED. Was 62. 14d: 46.8% WR, -0.13% avg
-    "ANTI-CHASE":    30,   # blocked BUY; 35.3% WR raw, -1.49% avg (anti-edge)
-    "ANTI-KNIFE":    40,   # blocked SELL on panic day; 53/53 SELLs went UP
-    "ANTI-MOMENTUM": 22,   # blocked m≥80 BUY; 16.7% WR, -2.24% avg (worst)
-    "DEFAULT":       38,   # outside any edge; 38.6% WR, -0.72% avg
-
-    # Fallback when rule is not recorded (older records pre-backfill)
-    "LLM_BUY_NO_OVERRIDE": 38,  # raw LLM BUY: 38.6% WR
-    "LLM_SELL_NO_OVERRIDE": 62, # raw LLM SELL: 52.4% WR, +0.31% avg
-    "LLM_HOLD_NO_OVERRIDE": 50, # raw LLM HOLD: 50.5% WR (random)
+    # Bidirectional anchors (static fallback when features missing)
+    "HSI_REGIME": 45,
+    "GOLD_LONG": 92,
+    "FADE_SHORT": 8,
+    "VALUE": 78,
+    "ANTI-REBOUND": 48,
+    "ANTI-MOM-EXT": 48,
+    "CONSERVATIVE": 68,
+    "BOUNCE": 45,
+    "ANTI-CHASE": 28,
+    "ANTI-KNIFE": 50,
+    "ANTI-MOMENTUM": 22,
+    "DEFAULT": 50,
+    "LLM_BUY_NO_OVERRIDE": 55,
+    "LLM_SELL_NO_OVERRIDE": 40,
+    "LLM_HOLD_NO_OVERRIDE": 50,
 }
 
 
-def signal_score(matched_rule: str, final_op: str) -> int:
-    """Compute Signal Score (0-100) for a given rule outcome.
+def signal_score(
+    matched_rule: str,
+    final_op: str,
+    score_breakdown: Optional[dict] = None,
+    data_snapshot: Optional[dict] = None,
+    sentiment: str = "",
+) -> int:
+    """Primary badge score = direction_score when features available.
 
-    Args:
-        matched_rule: one of CONSERVATIVE / BOUNCE / ANTI-CHASE / ANTI-KNIFE
-                      / ANTI-MOMENTUM / DEFAULT / or empty for pre-backfill
-        final_op: 買入 / 觀望 / 賣出 (the rule-decided op)
-
-    Returns:
-        int: Signal Score 0-100 reflecting backtested edge strength.
+    0 = short confidence, 100 = long confidence.
     """
-    # Map by matched_rule first (more specific)
+    if score_breakdown is not None and data_snapshot is not None:
+        return direction_score(
+            score_breakdown, data_snapshot, sentiment, matched_rule or ""
+        )
     if matched_rule and matched_rule in _SIGNAL_SCORE_TABLE:
         return _SIGNAL_SCORE_TABLE[matched_rule]
-
-    # Fallback: map by final op if no rule recorded
     if final_op == "買入":
         return _SIGNAL_SCORE_TABLE["LLM_BUY_NO_OVERRIDE"]
     if final_op == "賣出":
         return _SIGNAL_SCORE_TABLE["LLM_SELL_NO_OVERRIDE"]
-    # Default 觀望
     return _SIGNAL_SCORE_TABLE["LLM_HOLD_NO_OVERRIDE"]
 
 
 def extract_matched_rule(decision_reason: str) -> str:
-    """Extract matched_rule from decision_reason string.
-
-    decision_reason format: "[RULE_NAME] reason text..."
-    Returns the RULE_NAME, or "" if not parseable.
-    """
+    """Extract matched_rule from decision_reason string '[RULE] ...'."""
     if not decision_reason:
         return ""
     decision_reason = decision_reason.strip()
@@ -319,78 +681,44 @@ def extract_matched_rule(decision_reason: str) -> str:
         end = decision_reason.find("]")
         if end > 1:
             return decision_reason[1:end]
+    # Fallback: leading TOKEN:
+    for tag in (
+        "GOLD_LONG", "FADE_SHORT", "HSI_REGIME", "VALUE", "ANTI-REBOUND",
+        "ANTI-MOM-EXT", "ANTI-CHASE", "ANTI-KNIFE", "ANTI-MOMENTUM",
+        "CONSERVATIVE", "BOUNCE", "DEFAULT",
+    ):
+        if decision_reason.startswith(tag) or f"{tag}:" in decision_reason[:40]:
+            return tag
     return ""
 
 
-# ----------------------------------------------------------------------------
-# Phase 4: Win Probability Score (logistic regression, 2026-07-11)
-# ----------------------------------------------------------------------------
-# Replaces the 訊號強度 static mapping. Trained on actual 1D forward returns
-# from 3,944 signals across 10 trading days (6/26-7/9 → 6/27-7/10).
-#
-# User complaint (2026-07-11): "太多訊號... 強度又信心又咩 multihold 又⚠️ 不宜追
-# 又估值貴，根本太多 noise，我只要好簡單，越高分等於越大機會 next day 贏"
-#
-# Solution: ONE single score (勝率) where higher = higher next-day win
-# probability. Computed from features: m / of / v / q / chg / rule.
-#
-# Phase 9 Step 5 (2026-07-18): retrained on 3,073 records 6/26-7/17 with
-# enriched features (5d rolling, dist_52w, pe_relative). Note: 14d backtest
-# has 2800+ DEFAULT/HOLD records and only 107 BUY, so the LR can't extract
-# strong feature-only signal — it learns mostly rule dummies. We retain
-# rule dummies (which encode backtested edges directly) and use the
-# Pearson-direction weights for the features.
-#
-# Pearson correlations on 14d T+1 data (3,073 records, 2026-07-18):
-#   m           r=+0.0961  (momentum helps)
-#   chg         r=-0.0992  (buy dip)
-#   sent_悲觀    r=+0.1052  (mean-reversion candidates)
-#   sent_樂觀    r=-0.0683  (chasing top)
-#   q           r=-0.0669  (lower quality = mean-reversion)
-#   v           r=-0.0013  (no signal — rule filters it)
-#   chg_5d      r=-0.0047  (no signal)
-#   dist_52w    r<0.03     (no signal — rule dominates)
-#
-# 14d LR training accuracy: ~50% (random) — confirms features alone are
-# weak. The win-probability score is therefore MOSTLY determined by the
-# rule (VALUE/CONSERVATIVE = high; HSI_REGIME/ANTI-* = low). Features
-# add small adjustments.
-# ----------------------------------------------------------------------------
-
-import math
-
-# Weights from logistic regression + Pearson correlation signs (Phase 9 Step 5)
-# Calibrated so each rule dummy maps to the backtested WR of that rule.
-# 14d Pearson correlations on 3,073 records:
-#   m r=+0.10, chg r=-0.10, sent_悲觀 r=+0.10, sent_樂觀 r=-0.07, q r=-0.07
-#   v r=-0.001, chg_5d r=-0.005, dist_52w r<0.03 (rule dominates)
+# Phase 4/9 LR weights (extended Phase 10 with GOLD_LONG / FADE_SHORT dummies)
 _LR_WEIGHTS = {
-    "m":                 +0.150,   # m r=+0.10 (momentum helps slightly)
-    "of":                -0.050,   # weak
-    "v":                 +0.100,   # weak — rule already filters
-    "q":                 -0.100,   # q r=-0.07 (mean-reversion, lower quality wins)
-    "chg":               -0.150,   # chg r=-0.10 (buy dip wins)
-    "chg_5d":            -0.050,   # weak
-    "turnover_5d_ratio": -0.050,   # weak
-    "dist_52w_low":      -0.030,   # weak
-    "dist_52w_high":     -0.050,   # slight overextension penalty
-    "pe_relative":       -0.100,   # sector-relative PE matters
-    "sent_樂觀":           -0.100,   # sentiment: 樂觀 r=-0.07
-    "sent_悲觀":           +0.100,   # sentiment: 悲觀 r=+0.10 (mean-reversion)
-    "rule_HSI_REGIME":   -0.300,   # ★ Phase 9 Step 2: bear day, pred prob 35-40%
-    "rule_VALUE":        +0.500,   # Phase 9: 62% WR, +0.92% avg
-    "rule_ANTI-REBOUND": -0.100,   # Phase 8: stop rule, ~40% pred prob
-    "rule_ANTI-MOM-EXT": -0.100,   # Phase 8: stop rule, ~40% pred prob
-    "rule_BOUNCE":       -0.060,   # ★ Phase 9 Step 1.5: DISABLED, 46.8% WR
-    "rule_CONSERVATIVE": -0.180,   # 40.9% WR, slight below average
-    "rule_ANTI-CHASE":   -0.400,   # 35% WR raw, anti-edge
-    "rule_ANTI-KNIFE":   +0.150,   # 50%+ WR for blocked SELL (panic-day reversal)
-    "rule_ANTI-MOMENTUM":-0.500,   # 16.7% WR, -2.24% avg (worst)
+    "m": +0.150,
+    "of": -0.050,
+    "v": +0.100,
+    "q": -0.100,
+    "chg": -0.150,
+    "chg_5d": -0.050,
+    "turnover_5d_ratio": -0.050,
+    "dist_52w_low": -0.030,
+    "dist_52w_high": -0.050,
+    "pe_relative": -0.100,
+    "sent_樂觀": -0.100,
+    "sent_悲觀": +0.100,
+    "rule_HSI_REGIME": -0.300,
+    "rule_GOLD_LONG": +0.650,   # Phase 10
+    "rule_FADE_SHORT": +0.400,  # Phase 10 — for short win-prob context use short_score
+    "rule_VALUE": +0.450,
+    "rule_ANTI-REBOUND": -0.100,
+    "rule_ANTI-MOM-EXT": -0.100,
+    "rule_BOUNCE": -0.060,
+    "rule_CONSERVATIVE": -0.050,
+    "rule_ANTI-CHASE": -0.400,
+    "rule_ANTI-KNIFE": +0.150,
+    "rule_ANTI-MOMENTUM": -0.500,
 }
-_LR_BIAS = 0.0  # rule dummies carry the signal; features add adjustment
-
-# Standardization params (mean / std of training set features)
-# Phase 9 Step 5: extended to include new features (chg_5d, dist_52w_*, pe_relative)
+_LR_BIAS = 0.0
 _LR_MEAN = {
     "m": 47.0, "of": 56.0, "v": 50.0, "q": 50.0,
     "chg": 0.0, "chg_5d": -0.1,
@@ -419,21 +747,10 @@ def predict_win_probability(
     dist_52w_high: float = -20.0,
     pe_relative: float = 1.0,
 ) -> int:
-    """Predict next-day win probability (0-100) for a signal.
+    """Predict next-day *direction-aligned* win probability (0-100).
 
-    Args:
-        m, of, v, q: 4-dim scores (0-100)
-        chg: intraday change percent
-        sentiment: 樂觀/中性/悲觀
-        matched_rule: VALUE/HSI_REGIME/...
-        chg_5d: 5-day rolling return (Phase 9 Step 3)
-        turnover_5d_ratio: today's turnover / 5d avg (Phase 9 Step 3)
-        dist_52w_low: % above 52w low (Phase 9 Step 3)
-        dist_52w_high: % below 52w high (Phase 9 Step 3)
-        pe_relative: stock PE / sector median PE (Phase 9 Step 3)
-
-    Returns:
-        int: predicted next-day win rate, 0-100
+    For 買入 rules this is P(up). For FADE_SHORT this is P(down) approximated
+    via the FADE_SHORT dummy (use next_day_short_score for pure short rank).
     """
     feats = {
         "m": float(m or 0), "of": float(of or 0),
@@ -447,6 +764,8 @@ def predict_win_probability(
         "sent_樂觀": 1.0 if sentiment == "樂觀" else 0.0,
         "sent_悲觀": 1.0 if sentiment == "悲觀" else 0.0,
         "rule_HSI_REGIME": 1.0 if matched_rule == "HSI_REGIME" else 0.0,
+        "rule_GOLD_LONG": 1.0 if matched_rule == "GOLD_LONG" else 0.0,
+        "rule_FADE_SHORT": 1.0 if matched_rule == "FADE_SHORT" else 0.0,
         "rule_VALUE": 1.0 if matched_rule == "VALUE" else 0.0,
         "rule_ANTI-REBOUND": 1.0 if matched_rule == "ANTI-REBOUND" else 0.0,
         "rule_ANTI-MOM-EXT": 1.0 if matched_rule == "ANTI-MOM-EXT" else 0.0,
@@ -456,46 +775,13 @@ def predict_win_probability(
         "rule_ANTI-KNIFE": 1.0 if matched_rule == "ANTI-KNIFE" else 0.0,
         "rule_ANTI-MOMENTUM": 1.0 if matched_rule == "ANTI-MOMENTUM" else 0.0,
     }
-    # Standardize continuous features and predict. Rule dummies are 0/1
-    # and are applied directly (not standardized) to avoid scale issues
-    # where training has rule_X=0 for 84% of records.
     z = _LR_BIAS
-    rule_keys = {
-        "rule_HSI_REGIME", "rule_VALUE", "rule_ANTI-REBOUND", "rule_ANTI-MOM-EXT",
-        "rule_BOUNCE", "rule_CONSERVATIVE", "rule_ANTI-CHASE",
-        "rule_ANTI-KNIFE", "rule_ANTI-MOMENTUM",
-    }
+    rule_keys = {k for k in _LR_WEIGHTS if k.startswith("rule_")}
     for k, w in _LR_WEIGHTS.items():
         if k in rule_keys:
-            z += w * feats[k]
+            z += w * feats.get(k, 0.0)
         else:
-            z_n = (feats[k] - _LR_MEAN.get(k, 0)) / _LR_STD.get(k, 1)
+            z_n = (feats[k] - _LR_MEAN.get(k, 0)) / max(_LR_STD.get(k, 1), 1e-6)
             z += w * z_n
     p = 1.0 / (1.0 + math.exp(-z))
     return max(0, min(100, round(p * 100)))
-
-
-# Backward-compat alias — old code path uses signal_score() with rule/op
-# New code should use predict_win_probability() instead.
-def signal_score(matched_rule: str, final_op: str) -> int:
-    """DEPRECATED: Use predict_win_probability() instead.
-
-    Kept for backward compat with old callers. Returns static mapping.
-    """
-    static = {
-        "HSI_REGIME": 30,                                       # ★ Phase 9 Step 2
-        "VALUE": 70, "ANTI-REBOUND": 42, "ANTI-MOM-EXT": 42,    # VALUE + Phase 8 stop rules
-        "CONSERVATIVE": 78, "BOUNCE": 38,                       # ★ Phase 9 Step 1.5: BOUNCE dropped 62→38
-        "ANTI-KNIFE": 40, "DEFAULT": 38,
-        "ANTI-CHASE": 30, "ANTI-MOMENTUM": 22,
-        "LLM_BUY_NO_OVERRIDE": 38,
-        "LLM_SELL_NO_OVERRIDE": 62,
-        "LLM_HOLD_NO_OVERRIDE": 50,
-    }
-    if matched_rule and matched_rule in static:
-        return static[matched_rule]
-    if final_op == "買入":
-        return static["LLM_BUY_NO_OVERRIDE"]
-    if final_op == "賣出":
-        return static["LLM_SELL_NO_OVERRIDE"]
-    return static["LLM_HOLD_NO_OVERRIDE"]

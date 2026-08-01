@@ -173,8 +173,16 @@ def get_cached_snapshot(code: str, source_date: str) -> dict | None:
         return None
 
 
-def build_today_snapshot(code: str, cached: dict, live: dict) -> dict:
-    """Merge today's live price into cached snapshot."""
+def build_today_snapshot(code: str, cached: dict, live: dict, target_date: str = None) -> dict:
+    """Merge today's live price into cached snapshot.
+
+    target_date (2026-07-25): accept target_date from caller instead of using
+    hardcoded TARGET_DATE constant. This is critical for retrospective runs
+    where run_daily.py passes args.date — otherwise today's live data
+    (e.g. 7/28 11:59:59) would be written into a 7/27 record.
+    """
+    if target_date is None:
+        target_date = TARGET_DATE
     snap = dict(cached)  # copy
 
     # Update live fields
@@ -198,11 +206,11 @@ def build_today_snapshot(code: str, cached: dict, live: dict) -> dict:
     if live.get("52w_low"):
         snap["52w_low"] = live["52w_low"]
 
-    # Append today as new bar in kline_30d, recompute MAs
+    # Append target_date as new bar in kline_30d, recompute MAs
     kline = list(snap.get("kline_30d", []))
     last_bar = kline[-1] if kline else None
     today_bar = {
-        "date": TARGET_DATE,
+        "date": target_date,
         "open": live.get("open") or live.get("current"),
         "high": live.get("high") or live.get("current"),
         "low": live.get("low") or live.get("current"),
@@ -211,7 +219,7 @@ def build_today_snapshot(code: str, cached: dict, live: dict) -> dict:
     }
 
     # Only append if it's a new bar (different date)
-    if not last_bar or last_bar.get("date") != TARGET_DATE:
+    if not last_bar or last_bar.get("date") != target_date:
         kline.append(today_bar)
 
     # Keep last 30 bars
@@ -227,9 +235,115 @@ def build_today_snapshot(code: str, cached: dict, live: dict) -> dict:
         snap["rsi14"] = compute_rsi(closes, 14)
 
     # Update data_as_of
-    snap["data_as_of"] = live.get("datetime") or f"{TARGET_DATE} 16:08 HKT"
+    snap["data_as_of"] = live.get("datetime") or f"{target_date} 16:08 HKT"
     snap["source"] = "sina+tencent+cached-yfinance"
 
+    return snap
+
+
+def _futu_kline_row(futu_code: str, target_date: str):
+    """Fetch a single kline row from futu OpenD for target_date.
+    Returns dict {open, high, low, close, volume, prev_close} or None.
+    Uses single shared connection (per-call).
+    """
+    try:
+        from futu import OpenQuoteContext, KLType, RET_OK
+        import pandas as pd
+        from datetime import datetime, timedelta
+        ctx = OpenQuoteContext(host='127.0.0.1', port=11111)
+        try:
+            end = (datetime.strptime(target_date, '%Y-%m-%d') + timedelta(days=1)).strftime('%Y-%m-%d')
+            start = (datetime.strptime(target_date, '%Y-%m-%d') - timedelta(days=10)).strftime('%Y-%m-%d')
+            ret, klines, *_ = ctx.request_history_kline(futu_code, start=start, end=end, ktype=KLType.K_DAY)
+            if ret != RET_OK or not isinstance(klines, pd.DataFrame) or klines.empty:
+                return None
+            target_row = None
+            for _, row in klines.iterrows():
+                tk = row.get('time_key', '')
+                if isinstance(tk, str) and tk.startswith(target_date):
+                    target_row = row
+                    break
+            if target_row is None:
+                return None
+            # Previous trading day row
+            pos = list(klines.index).index(target_row.name) if hasattr(target_row, 'name') else None
+            prev_close = None
+            if pos is not None and pos > 0:
+                prev_close = float(klines.iloc[pos - 1]['close'])
+            return {
+                'open': float(target_row.get('open', 0)),
+                'high': float(target_row.get('high', 0)),
+                'low': float(target_row.get('low', 0)),
+                'close': float(target_row.get('close', 0)),
+                'volume': int(target_row.get('volume', 0)),
+                'prev_close': prev_close,
+            }
+        finally:
+            try:
+                ctx.close()
+            except Exception:
+                pass
+    except Exception:
+        return None
+
+
+def build_hk_retrospective_snapshot(code: str, target_date: str, source_date: str) -> dict | None:
+    """Build snapshot for retrospective HK daily run (e.g. 7/27 daily on 7/28).
+
+    Uses futu kline for target_date close (truth source) + cached snapshot for
+    non-price fields (PE/PB/market_cap/sector/52w). Replaces build_today_snapshot
+    for retrospective runs to prevent 7/28 morning live quote leaking into 7/27
+    records (root cause of 7/27 HK stale data bug 2026-07-28 13:00 HKT).
+    """
+    cached = get_cached_snapshot(code, source_date)
+    if not cached:
+        return None
+    digits = code.split('.')[0].zfill(5)
+    futu_code = f'HK.{digits}'
+    kline = _futu_kline_row(futu_code, target_date)
+    if not kline or kline.get('close') is None:
+        return None
+    snap = dict(cached)  # copy
+    snap['last_price'] = round(kline['close'], 2)
+    snap['prev_close'] = round(kline['prev_close'], 2) if kline.get('prev_close') is not None else snap.get('prev_close')
+    if snap.get('prev_close') and snap.get('last_price'):
+        snap['change_pct'] = round(
+            (snap['last_price'] - snap['prev_close']) / snap['prev_close'] * 100, 2
+        )
+    snap['day_high'] = round(kline['high'], 2)
+    snap['day_low'] = round(kline['low'], 2)
+    snap['open'] = round(kline['open'], 2)
+    snap['volume'] = kline['volume']
+    snap['data_as_of'] = f'{target_date} 16:00 HKT (closing)'
+    snap['source'] = 'futu-history-retrospective'
+
+    # Append target_date as new bar in kline_30d, recompute MA20/RSI14
+    kline_30d = list(snap.get('kline_30d', []))
+    if not kline_30d or kline_30d[-1].get('date') != target_date:
+        kline_30d.append({
+            'date': target_date,
+            'open': round(kline['open'], 2),
+            'high': round(kline['high'], 2),
+            'low': round(kline['low'], 2),
+            'close': round(kline['close'], 2),
+            'volume': kline['volume'],
+        })
+        kline_30d = kline_30d[-30:]
+        snap['kline_30d'] = kline_30d
+    closes = [b['close'] for b in kline_30d if b.get('close')]
+    if len(closes) >= 20:
+        snap['ma20'] = round(sum(closes[-20:]) / 20, 2)
+    if len(closes) >= 14:
+        gains, losses = [], []
+        for i in range(-14, 0):
+            d = closes[i] - closes[i - 1]
+            gains.append(max(d, 0))
+            losses.append(max(-d, 0))
+        avg_g = sum(gains) / 14
+        avg_l = sum(losses) / 14
+        if avg_l > 0:
+            rs = avg_g / avg_l
+            snap['rsi14'] = round(100 - 100 / (1 + rs), 2)
     return snap
 
 

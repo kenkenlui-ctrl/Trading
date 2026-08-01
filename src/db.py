@@ -304,16 +304,16 @@ def save_report(
     Phase 2 (2026-07-10): operation_advice is RULE-BASED (overrides LLM).
     LLM's original op is preserved in llm_original_op for audit.
     decision_reason explains why the rule was applied.
-    signal_score (0-100) is the rule-based edge confidence (Phase 3 UX fix
-    to separate LLM narrative confidence from trade edge).
+    signal_score (0-100) is the SINGLE next-day direction dial:
+      0 = high chance SHORT wins, 50 = neutral, 100 = high chance LONG wins.
+      (Phase 10.1 — direction_score; replaces old "win rate of rule" LR.)
 
     If llm_original_op is None, save_report auto-applies the rule using
     the passed operation_advice as the LLM's op. This means existing
     callers get the new behavior without code changes.
     """
     from .signal_decision import (
-        apply_to_snapshot, extract_matched_rule,
-        predict_win_probability,
+        apply_to_snapshot, extract_matched_rule, direction_score,
     )
 
     matched_rule = ""
@@ -344,24 +344,19 @@ def save_report(
         decision_reason = f"[{decision.matched_rule}] {decision.reason}"
         matched_rule = decision.matched_rule
 
-    # Compute Signal Score if not provided
-    # Note: parameter renamed to avoid shadowing the imported function name.
+    # Compute direction_score (0=short … 100=long) if not provided
     if signal_score is None:
-        # If we just applied the rule, use the matched_rule directly
         if not matched_rule and decision_reason:
             matched_rule = extract_matched_rule(decision_reason)
-        # Phase 4 (2026-07-11): use logistic-regression-based win probability
-        # instead of static mapping. Falls back to static for missing features.
         try:
             sb = json.loads(score_breakdown_json or "{}") if score_breakdown_json else {}
         except Exception:
             sb = {}
-        signal_score_val = predict_win_probability(
-            m=sb.get("momentum_score") or 0,
-            of=sb.get("order_flow_score") or 0,
-            v=sb.get("value_score") or 0,
-            q=sb.get("quality_score") or 0,
-            chg=(data_snapshot or {}).get("change_pct") or 0,
+        # Merge 52w / 5d features from score_breakdown if present
+        snap = data_snapshot or {}
+        signal_score_val = direction_score(
+            score_breakdown=sb,
+            data_snapshot=snap,
             sentiment=sentiment or "",
             matched_rule=matched_rule,
         )

@@ -49,7 +49,7 @@ def main():
     from src.ticker_loader import load_hk_tickers, load_us_tickers
     from rerun_hk_sina_tencent import (
         fetch_tencent_hk, fetch_sina_hk,
-        build_today_snapshot, get_cached_snapshot,
+        build_today_snapshot, build_hk_retrospective_snapshot, get_cached_snapshot,
     )
 
     init_db()
@@ -101,10 +101,24 @@ def main():
             cached = get_cached_snapshot(code, args.source)
             if not cached:
                 return code, "no-cached"
-            live = fetch_tencent_hk(code) or fetch_sina_hk(code)
-            if not live or not live.get("current"):
-                return code, "no-live"
-            snap = build_today_snapshot(code, cached, live)
+            # Phase 9+ (2026-07-28): for retrospective runs (args.date < today),
+            # use cached kline to fetch 7/27 close directly via futu instead of
+            # today's live quote. Otherwise the 7/27 record gets 7/28 morning
+            # live price (root cause of 7/27 HK stale data bug 2026-07-28 13:00).
+            from datetime import datetime as _dt, date as _date
+            target_dt = _dt.strptime(args.date, '%Y-%m-%d').date()
+            is_retrospective = target_dt < _date.today()
+            if is_retrospective:
+                # Retrospective: skip live fetch, use futu kline for target_date close
+                snap = build_hk_retrospective_snapshot(code, args.date, args.source)
+                if snap is None:
+                    return code, "no-futu-history"
+            else:
+                # Live run: use Tencent/Sina live quote + cached snapshot
+                live = fetch_tencent_hk(code) or fetch_sina_hk(code)
+                if not live or not live.get("current"):
+                    return code, "no-live"
+                snap = build_today_snapshot(code, cached, live, target_date=args.date)
             result = analyze(code=code, name=snap.get("name_zh") or code,
                               snapshot=snap, news=None, language="zh-Hant")
             if result is None:

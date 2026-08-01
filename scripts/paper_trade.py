@@ -97,10 +97,18 @@ def _format_reason(reason: str) -> str:
 
 # ---------- Helpers ----------
 
-def parse_stop_target(full_md: str, summary_md: str, entry_price: float) -> tuple[float | None, float | None]:
-    """Extract stop_loss + target_price from LLM markdown. Returns (stop, target) or (None, None)."""
+def parse_stop_target(
+    full_md: str,
+    summary_md: str,
+    entry_price: float,
+    side: str = "long",
+) -> tuple[float | None, float | None]:
+    """Extract stop_loss + target_price from LLM markdown. Returns (stop, target).
+
+    side='long': stop below entry, target above (default 6%/6%).
+    side='short': stop above entry, target below (fade-short day-trades).
+    """
     text = (full_md or "") + "\n" + (summary_md or "")
-    # Pattern: "止損位: 534.00" or "止蝕位: $X"
     stop_match = re.search(r"止[損蝕]位[^:：]*[:：]\s*\$?([\d,.]+)", text)
     target_match = re.search(r"目標價[^:：]*[:：]\s*\$?([\d,.]+)", text)
     stop = None
@@ -115,11 +123,17 @@ def parse_stop_target(full_md: str, summary_md: str, entry_price: float) -> tupl
             target = float(target_match.group(1).replace(",", ""))
         except ValueError:
             pass
-    # Fallback defaults if either missing
-    if stop is None:
-        stop = round(entry_price * 0.94, 2)
-    if target is None:
-        target = round(entry_price * 1.06, 2)
+    if side == "short":
+        # Defaults + sanitize orientation for shorts
+        if stop is None or stop <= entry_price:
+            stop = round(entry_price * 1.06, 2)
+        if target is None or target >= entry_price:
+            target = round(entry_price * 0.94, 2)
+    else:
+        if stop is None:
+            stop = round(entry_price * 0.94, 2)
+        if target is None:
+            target = round(entry_price * 1.06, 2)
     return stop, target
 
 
@@ -175,12 +189,21 @@ def get_signal_codes(report_date: str, preset: str) -> list[dict]:
         # 70-80 bucket = 84% WR. Threshold via env var DSA_SIG_PAPER_FLOOR.
         rows = con.execute(
             """SELECT code, score, signal_score, decision_reason, operation_advice, full_md, summary_md,
-                      data_snapshot_json, score_breakdown_json
+                      data_snapshot_json, score_breakdown_json, sentiment, llm_original_op, trend
                FROM daily_report
                WHERE report_date=? AND operation_advice='買入'
                  AND (decision_reason LIKE '%VALUE]%' OR decision_reason LIKE '%CONSERVATIVE]%')
                  AND signal_score >= ?""",
             (report_date, SIG_PAPER_FLOOR),
+        ).fetchall()
+    elif preset in ("gold-long", "fade-short"):
+        # Phase 10: re-run decide() so paper works even before DB backfill.
+        rows = con.execute(
+            """SELECT code, score, signal_score, decision_reason, operation_advice, full_md, summary_md,
+                      data_snapshot_json, score_breakdown_json, sentiment, llm_original_op, trend
+               FROM daily_report
+               WHERE report_date=?""",
+            (report_date,),
         ).fetchall()
     else:
         rows = con.execute(
@@ -193,7 +216,33 @@ def get_signal_codes(report_date: str, preset: str) -> list[dict]:
     out = []
     for r in rows:
         code = r["code"]
-        if preset == "cyber-buy":
+        if preset in ("gold-long", "fade-short"):
+            from src.signal_decision import apply_to_snapshot
+            try:
+                snap = json.loads(r["data_snapshot_json"] or "{}")
+            except Exception:
+                snap = {}
+            try:
+                bd = json.loads(r["score_breakdown_json"] or "{}")
+            except Exception:
+                bd = {}
+            llm_op = r["llm_original_op"] if "llm_original_op" in r.keys() else None
+            llm_op = llm_op or r["operation_advice"] or "觀望"
+            sent = r["sentiment"] if "sentiment" in r.keys() else ""
+            trend = r["trend"] if "trend" in r.keys() else ""
+            d = apply_to_snapshot(
+                llm_op=llm_op,
+                llm_sentiment=sent or "",
+                llm_trend=trend or "",
+                score_breakdown=bd,
+                data_snapshot=snap,
+                sector=(snap.get("sector") or ""),
+            )
+            if preset == "gold-long" and d.matched_rule == "GOLD_LONG" and d.op == "買入":
+                out.append(dict(r))
+            elif preset == "fade-short" and d.matched_rule == "FADE_SHORT" and d.op == "賣出":
+                out.append(dict(r))
+        elif preset == "cyber-buy":
             # Cyber BUY v2: whitelist + anti-gapup + 52w high avoidance
             tk = code.split(".")[0]
             if tk not in CYBER_TICKERS:
@@ -305,7 +354,10 @@ def open_paper_trades(report_date: str, preset: str, dry_run: bool = False) -> i
         if not entry_price or entry_price <= 0:
             print(f"    {code}: no entry price, skip")
             continue
-        stop, target = parse_stop_target(sig["full_md"] or "", sig["summary_md"] or "", entry_price)
+        side = "short" if preset == "fade-short" else "long"
+        stop, target = parse_stop_target(
+            sig["full_md"] or "", sig["summary_md"] or "", entry_price, side=side
+        )
         if dry_run:
             dry_label = _colorize("[DRY]", "yellow", bold=True)
             print(f"    {dry_label} OPEN " + _colorize(code, "white", bold=True) + f" entry=${entry_price:.2f} stop=${stop:.2f} target=${target:.2f}")
@@ -363,25 +415,43 @@ def close_paper_trades(dry_run: bool = False) -> int:
         if cur_price is None:
             print(f"    {code}: no current price, skip")
             continue
-        # Check exit conditions
+        # Check exit conditions (long vs short)
         exit_reason = None
         exit_price = cur_price
-        if cur_price <= stop:
-            exit_reason = "stop"
-            exit_price = stop
-        elif cur_price >= target:
-            exit_reason = "target"
-            exit_price = target
-        elif hold_days >= MAX_HOLD_DAYS:
-            exit_reason = "eod-3day"
-            exit_price = cur_price
+        is_short = (t["signal_source"] or "") == "fade-short"
+        if is_short:
+            # Short: stop above entry, target below
+            if stop and cur_price >= stop:
+                exit_reason = "stop"
+                exit_price = stop
+            elif target and cur_price <= target:
+                exit_reason = "target"
+                exit_price = target
+            elif hold_days >= MAX_HOLD_DAYS:
+                exit_reason = "eod-3day"
+                exit_price = cur_price
+        else:
+            if stop and cur_price <= stop:
+                exit_reason = "stop"
+                exit_price = stop
+            elif target and cur_price >= target:
+                exit_reason = "target"
+                exit_price = target
+            elif hold_days >= MAX_HOLD_DAYS:
+                exit_reason = "eod-3day"
+                exit_price = cur_price
         if exit_reason is None:
-            pnl_unc = (cur_price - entry_price) / entry_price * 100
-            pnl_class = "stat-bull" if pnl_unc > 0 else "stat-bear"
+            if is_short:
+                pnl_unc = (entry_price - cur_price) / entry_price * 100
+            else:
+                pnl_unc = (cur_price - entry_price) / entry_price * 100
             print(f"    ⏳ {code}: open, current=" + _colorize(f"${cur_price:.2f}", "white") + f" pnl=" + _colorize(f"{pnl_unc:+.2f}%", "green" if pnl_unc > 0 else "red") + f" hold={hold_days}d")
             continue
         # Calculate P&L
-        pnl_pct = (exit_price - entry_price) / entry_price * 100
+        if is_short:
+            pnl_pct = (entry_price - exit_price) / entry_price * 100
+        else:
+            pnl_pct = (exit_price - entry_price) / entry_price * 100
         pnl_usd = pnl_pct / 100 * POSITION_SIZE_USD
         if dry_run:
             dry_label = _colorize("[DRY]", "yellow", bold=True)
@@ -442,7 +512,19 @@ def print_stats():
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--report-date", default=None, help="signal report_date (default: latest in DB)")
-    ap.add_argument("--preset", default="conservative-buy", choices=["conservative-buy", "cyber-buy", "all-buy", "bounce-buy"])
+    ap.add_argument(
+        "--preset",
+        default="gold-long",
+        choices=[
+            "gold-long",      # Phase 10: best next-day long (~77% 1D WR)
+            "fade-short",     # Phase 10: next-day short fade (~62% WR)
+            "conservative-buy",
+            "value-buy",
+            "cyber-buy",
+            "all-buy",
+            "bounce-buy",
+        ],
+    )
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--close-only", action="store_true", help="only close existing trades, don't open new")
     args = ap.parse_args()
