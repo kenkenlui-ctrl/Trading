@@ -1,0 +1,2929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HK Top 200 S/R Chart Radar — 2026-08-01</title>
+<meta name="description" content="Daily S/R analysis for top 200 HK stocks by 5-day average turnover. Generated 2026-08-02 01:42 HKT.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d0f12; color: #e0e3e8; padding: 20px; line-height: 1.5; }
+  .container { max-width: 1400px; margin: 0 auto; }
+  header { background: #161a1f; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #1f2429; }
+  h1 { font-size: 1.6em; margin-bottom: 6px; }
+  .meta { color: #8a929b; font-size: 0.9em; margin-bottom: 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .chip { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.85em; background: #1f2429; }
+  .chip-uptrend { background: #1b4d2c; color: #4ade80; }
+  .chip-base_building { background: #4d3a1b; color: #fbbf24; }
+  .chip-downtrend_active { background: #4d1b1b; color: #f87171; }
+  .chip-downtrend_recovery { background: #4d3a1b; color: #fb923c; }
+  .chip-range { background: #2a2f37; color: #8a929b; }
+
+  .filter-bar { background: #161a1f; padding: 12px; border-radius: 8px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .filter-bar input, .filter-bar select { background: #0d0f12; color: #e0e3e8; border: 1px solid #1f2429; padding: 6px 10px; border-radius: 4px; font-size: 0.9em; }
+  .filter-bar input { min-width: 200px; }
+  .filter-bar label { font-size: 0.85em; color: #8a929b; }
+
+  table { width: 100%; border-collapse: collapse; background: #161a1f; border-radius: 8px; overflow: hidden; }
+  thead { background: #1f2429; }
+  th { padding: 10px 8px; text-align: left; font-size: 0.85em; color: #8a929b; text-transform: uppercase; cursor: pointer; user-select: none; }
+  th:hover { color: #e0e3e8; }
+  th::after { content: ' ↕'; opacity: 0.4; font-size: 0.7em; }
+  td { padding: 8px; border-top: 1px solid #1f2429; font-size: 0.9em; }
+  tr:hover { background: #1a1f25; }
+  .rank { color: #8a929b; font-size: 0.85em; }
+  .ticker a { color: #64b5f6; text-decoration: none; font-weight: 500; }
+  .ticker a:hover { text-decoration: underline; }
+  .name { color: #b0b8c0; font-size: 0.85em; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .chg.pos { color: #4ade80; }
+  .chg.neg { color: #f87171; }
+  .phase { font-size: 0.85em; }
+  .phase-uptrend { color: #4ade80; }
+  .phase-base_building { color: #fbbf24; }
+  .phase-downtrend_active { color: #f87171; }
+  .phase-downtrend_recovery { color: #fb923c; }
+  .kline { font-size: 0.8em; color: #8a929b; }
+  .bias { font-size: 0.8em; color: #b0b8c0; }
+
+  footer { margin-top: 30px; text-align: center; color: #8a929b; font-size: 0.85em; padding: 20px; }
+  footer a { color: #64b5f6; text-decoration: none; }
+  .disclaimer { background: #1f2429; padding: 12px; border-radius: 4px; margin-top: 12px; font-size: 0.85em; color: #8a929b; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>📊 HK Top 200 S/R Chart Radar</h1>
+    <div class="meta">
+      Data: <strong>2026-08-01 (HK close)</strong> • Generated 2026-08-02 01:42 HKT • Source: yfinance (Futu OpenD fallback) • Method: 10-step price action framework
+    </div>
+    <div class="chips">
+      <span class="chip chip-downtrend_active">Downtrend: 154</span> <span class="chip chip-base_building">Base: 18</span> <span class="chip chip-uptrend">Uptrend: 12</span> <span class="chip chip-downtrend_recovery">Recovery: 1</span>
+    </div>
+  </header>
+
+  <div class="filter-bar">
+    <label>Filter:</label>
+    <input type="text" id="searchInput" placeholder="Search ticker or name..." onkeyup="filterTable()">
+    <label>Phase:</label>
+    <select id="phaseFilter" onchange="filterTable()">
+      <option value="">All</option>
+      <option value="uptrend">🟢 Uptrend</option>
+      <option value="base_building">🟡 Base</option>
+      <option value="downtrend_recovery">🟠 Recovery</option>
+      <option value="downtrend_active">🔴 Downtrend</option>
+      <option value="range">⚪ Range</option>
+    </select>
+    <label style="margin-left:auto;color:#8a929b;">185 of 200 stocks</label>
+  </div>
+
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th onclick="sortTable(0)">#</th>
+        <th onclick="sortTable(1)">Ticker</th>
+        <th onclick="sortTable(2)">Name</th>
+        <th onclick="sortTable(3)">Last</th>
+        <th onclick="sortTable(4)">Chg%</th>
+        <th onclick="sortTable(5)">Phase</th>
+        <th onclick="sortTable(6)">Drop%</th>
+        <th onclick="sortTable(7)">InBox%</th>
+        <th onclick="sortTable(8)">S1</th>
+        <th onclick="sortTable(9)">R1</th>
+        <th onclick="sortTable(10)">R3</th>
+        <th onclick="sortTable(11)">K-line</th>
+        <th onclick="sortTable(12)">Bias</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+    <tr data-phase="base_building" data-ticker="09866.HK">
+      <td class="rank">178</td>
+      <td class="ticker"><a href="charts/09866_HK.png" target="_blank">09866.HK</a></td>
+      <td class="name">NIO-SW</td>
+      <td class="num">38.82</td>
+      <td class="chg pos">+3.52%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+33.60%</td>
+      <td class="num">+14.90%</td>
+      <td class="num">36.00</td>
+      <td class="num">39.24</td>
+      <td class="num">54.95</td>
+      <td class="kline">neutral</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="06613.HK">
+      <td class="rank">136</td>
+      <td class="ticker"><a href="charts/06613_HK.png" target="_blank">06613.HK</a></td>
+      <td class="name">LENS</td>
+      <td class="num">20.64</td>
+      <td class="chg pos">+3.20%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+36.60%</td>
+      <td class="num">+29.40%</td>
+      <td class="num">20.00</td>
+      <td class="num">21.40</td>
+      <td class="num">31.80</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="00763.HK">
+      <td class="rank">119</td>
+      <td class="ticker"><a href="charts/00763_HK.png" target="_blank">00763.HK</a></td>
+      <td class="name">ZTE</td>
+      <td class="num">24.86</td>
+      <td class="chg pos">+2.14%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+41.40%</td>
+      <td class="num">+31.60%</td>
+      <td class="num">24.00</td>
+      <td class="num">25.66</td>
+      <td class="num">32.10</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="02268.HK">
+      <td class="rank">195</td>
+      <td class="ticker"><a href="charts/02268_HK.png" target="_blank">02268.HK</a></td>
+      <td class="name">WUXI XDC</td>
+      <td class="num">51.80</td>
+      <td class="chg pos">+1.47%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+32.90%</td>
+      <td class="num">+34.80%</td>
+      <td class="num">48.00</td>
+      <td class="num">52.50</td>
+      <td class="num">66.40</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="09992.HK">
+      <td class="rank">30</td>
+      <td class="ticker"><a href="charts/09992_HK.png" target="_blank">09992.HK</a></td>
+      <td class="name">POP MART</td>
+      <td class="num">162.60</td>
+      <td class="chg neg">-0.37%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+40.70%</td>
+      <td class="num">+47.90%</td>
+      <td class="num">160.00</td>
+      <td class="num">163.90</td>
+      <td class="num">187.10</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="01801.HK">
+      <td class="rank">54</td>
+      <td class="ticker"><a href="charts/01801_HK.png" target="_blank">01801.HK</a></td>
+      <td class="name">INNOVENT BIO</td>
+      <td class="num">86.70</td>
+      <td class="chg neg">-1.59%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+17.40%</td>
+      <td class="num">+51.80%</td>
+      <td class="num">80.00</td>
+      <td class="num">88.60</td>
+      <td class="num">100.40</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="06030.HK">
+      <td class="rank">173</td>
+      <td class="ticker"><a href="charts/06030_HK.png" target="_blank">06030.HK</a></td>
+      <td class="name">CITIC SEC</td>
+      <td class="num">27.32</td>
+      <td class="chg neg">+0.00%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+15.90%</td>
+      <td class="num">+60.60%</td>
+      <td class="num">28.00</td>
+      <td class="num">27.68</td>
+      <td class="num">29.48</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="00823.HK">
+      <td class="rank">148</td>
+      <td class="ticker"><a href="charts/00823_HK.png" target="_blank">00823.HK</a></td>
+      <td class="name">LINK REIT</td>
+      <td class="num">39.12</td>
+      <td class="chg neg">-0.96%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+7.90%</td>
+      <td class="num">+62.30%</td>
+      <td class="num">36.00</td>
+      <td class="num">39.68</td>
+      <td class="num">42.14</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="03696.HK">
+      <td class="rank">51</td>
+      <td class="ticker"><a href="charts/03696_HK.png" target="_blank">03696.HK</a></td>
+      <td class="name">INSILICO</td>
+      <td class="num">45.70</td>
+      <td class="chg pos">+8.65%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+43.50%</td>
+      <td class="num">+64.50%</td>
+      <td class="num">44.00</td>
+      <td class="num">47.40</td>
+      <td class="num">53.90</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="02628.HK">
+      <td class="rank">42</td>
+      <td class="ticker"><a href="charts/02628_HK.png" target="_blank">02628.HK</a></td>
+      <td class="name">CHINA LIFE</td>
+      <td class="num">29.20</td>
+      <td class="chg pos">+1.04%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+19.20%</td>
+      <td class="num">+66.60%</td>
+      <td class="num">28.00</td>
+      <td class="num">29.34</td>
+      <td class="num">31.84</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="03908.HK">
+      <td class="rank">104</td>
+      <td class="ticker"><a href="charts/03908_HK.png" target="_blank">03908.HK</a></td>
+      <td class="name">CICC</td>
+      <td class="num">21.60</td>
+      <td class="chg pos">+0.56%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+8.90%</td>
+      <td class="num">+77.50%</td>
+      <td class="num">20.00</td>
+      <td class="num">21.80</td>
+      <td class="num">22.96</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="09999.HK">
+      <td class="rank">33</td>
+      <td class="ticker"><a href="charts/09999_HK.png" target="_blank">09999.HK</a></td>
+      <td class="name">NTES</td>
+      <td class="num">207.80</td>
+      <td class="chg pos">+0.58%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+15.10%</td>
+      <td class="num">+81.60%</td>
+      <td class="num">200.00</td>
+      <td class="num">208.00</td>
+      <td class="num">216.60</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="02269.HK">
+      <td class="rank">53</td>
+      <td class="ticker"><a href="charts/02269_HK.png" target="_blank">02269.HK</a></td>
+      <td class="name">WUXI BIO</td>
+      <td class="num">38.74</td>
+      <td class="chg pos">+2.49%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+12.00%</td>
+      <td class="num">+81.90%</td>
+      <td class="num">36.00</td>
+      <td class="num">39.08</td>
+      <td class="num">41.00</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="06160.HK">
+      <td class="rank">85</td>
+      <td class="ticker"><a href="charts/06160_HK.png" target="_blank">06160.HK</a></td>
+      <td class="name">BEONE MEDICINES</td>
+      <td class="num">194.00</td>
+      <td class="chg neg">-1.07%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+15.40%</td>
+      <td class="num">+82.00%</td>
+      <td class="num">188.00</td>
+      <td class="num">197.00</td>
+      <td class="num">203.00</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="03888.HK">
+      <td class="rank">77</td>
+      <td class="ticker"><a href="charts/03888_HK.png" target="_blank">03888.HK</a></td>
+      <td class="name">KINGSOFT</td>
+      <td class="num">26.76</td>
+      <td class="chg pos">+5.44%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+23.10%</td>
+      <td class="num">+88.90%</td>
+      <td class="num">24.00</td>
+      <td class="num">27.60</td>
+      <td class="num">—</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="06690.HK">
+      <td class="rank">100</td>
+      <td class="ticker"><a href="charts/06690_HK.png" target="_blank">06690.HK</a></td>
+      <td class="name">HAIER SMARTHOME</td>
+      <td class="num">22.60</td>
+      <td class="chg neg">-0.53%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+19.90%</td>
+      <td class="num">+89.70%</td>
+      <td class="num">20.00</td>
+      <td class="num">22.64</td>
+      <td class="num">22.90</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="01519.HK">
+      <td class="rank">88</td>
+      <td class="ticker"><a href="charts/01519_HK.png" target="_blank">01519.HK</a></td>
+      <td class="name">J&T EXPRESS-W</td>
+      <td class="num">10.09</td>
+      <td class="chg neg">-0.49%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+17.30%</td>
+      <td class="num">+92.10%</td>
+      <td class="num">8.00</td>
+      <td class="num">10.18</td>
+      <td class="num">10.31</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="01913.HK">
+      <td class="rank">163</td>
+      <td class="ticker"><a href="charts/01913_HK.png" target="_blank">01913.HK</a></td>
+      <td class="name">PRADA</td>
+      <td class="num">43.26</td>
+      <td class="chg pos">+14.14%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+16.80%</td>
+      <td class="num">+94.50%</td>
+      <td class="num">40.00</td>
+      <td class="num">43.28</td>
+      <td class="num">43.68</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="06990.HK">
+      <td class="rank">142</td>
+      <td class="ticker"><a href="charts/06990_HK.png" target="_blank">06990.HK</a></td>
+      <td class="name">SKB BIO</td>
+      <td class="num">483.80</td>
+      <td class="chg pos">+0.58%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">+2.30%</td>
+      <td class="num">+65.40%</td>
+      <td class="num">468.00</td>
+      <td class="num">500.50</td>
+      <td class="num">560.00</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="06823.HK">
+      <td class="rank">164</td>
+      <td class="ticker"><a href="charts/06823_HK.png" target="_blank">06823.HK</a></td>
+      <td class="name">HKT-SS</td>
+      <td class="num">13.27</td>
+      <td class="chg neg">-1.70%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">+1.70%</td>
+      <td class="num">+84.70%</td>
+      <td class="num">12.00</td>
+      <td class="num">13.30</td>
+      <td class="num">13.50</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="01398.HK">
+      <td class="rank">29</td>
+      <td class="ticker"><a href="charts/01398_HK.png" target="_blank">01398.HK</a></td>
+      <td class="name">ICBC</td>
+      <td class="num">7.51</td>
+      <td class="chg neg">-1.70%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">+2.00%</td>
+      <td class="num">+89.10%</td>
+      <td class="num">8.00</td>
+      <td class="num">7.59</td>
+      <td class="num">7.66</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="01288.HK">
+      <td class="rank">56</td>
+      <td class="ticker"><a href="charts/01288_HK.png" target="_blank">01288.HK</a></td>
+      <td class="name">ABC</td>
+      <td class="num">6.31</td>
+      <td class="chg neg">-3.07%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">+3.20%</td>
+      <td class="num">+91.70%</td>
+      <td class="num">4.00</td>
+      <td class="num">6.40</td>
+      <td class="num">6.52</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="00939.HK">
+      <td class="rank">20</td>
+      <td class="ticker"><a href="charts/00939_HK.png" target="_blank">00939.HK</a></td>
+      <td class="name">CCB</td>
+      <td class="num">9.21</td>
+      <td class="chg neg">-1.60%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">+1.60%</td>
+      <td class="num">+91.70%</td>
+      <td class="num">8.00</td>
+      <td class="num">9.32</td>
+      <td class="num">—</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="01548.HK">
+      <td class="rank">73</td>
+      <td class="ticker"><a href="charts/01548_HK.png" target="_blank">01548.HK</a></td>
+      <td class="name">GENSCRIPT BIO</td>
+      <td class="num">18.06</td>
+      <td class="chg pos">+5.00%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">-2.80%</td>
+      <td class="num">+93.70%</td>
+      <td class="num">12.00</td>
+      <td class="num">18.58</td>
+      <td class="num">—</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="02888.HK">
+      <td class="rank">129</td>
+      <td class="ticker"><a href="charts/02888_HK.png" target="_blank">02888.HK</a></td>
+      <td class="name">STANCHART</td>
+      <td class="num">237.60</td>
+      <td class="chg pos">+2.86%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">+1.00%</td>
+      <td class="num">+95.70%</td>
+      <td class="num">224.00</td>
+      <td class="num">240.00</td>
+      <td class="num">—</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="00005.HK">
+      <td class="rank">16</td>
+      <td class="ticker"><a href="charts/00005_HK.png" target="_blank">00005.HK</a></td>
+      <td class="name">HSBC HOLDINGS</td>
+      <td class="num">168.20</td>
+      <td class="chg pos">+2.25%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">+0.40%</td>
+      <td class="num">+95.90%</td>
+      <td class="num">160.00</td>
+      <td class="num">168.90</td>
+      <td class="num">—</td>
+      <td class="kline">bullish_reclaim</td>
+      <td class="bias">bullish_trying</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="00001.HK">
+      <td class="rank">82</td>
+      <td class="ticker"><a href="charts/00001_HK.png" target="_blank">00001.HK</a></td>
+      <td class="name">CKH HOLDINGS</td>
+      <td class="num">73.60</td>
+      <td class="chg pos">+0.89%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">+1.00%</td>
+      <td class="num">+96.00%</td>
+      <td class="num">72.00</td>
+      <td class="num">74.00</td>
+      <td class="num">—</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="03988.HK">
+      <td class="rank">37</td>
+      <td class="ticker"><a href="charts/03988_HK.png" target="_blank">03988.HK</a></td>
+      <td class="name">BANK OF CHINA</td>
+      <td class="num">5.51</td>
+      <td class="chg neg">-0.54%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">+1.80%</td>
+      <td class="num">+97.40%</td>
+      <td class="num">4.00</td>
+      <td class="num">5.52</td>
+      <td class="num">5.55</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="02388.HK">
+      <td class="rank">83</td>
+      <td class="ticker"><a href="charts/02388_HK.png" target="_blank">02388.HK</a></td>
+      <td class="name">BOC HONG KONG</td>
+      <td class="num">52.20</td>
+      <td class="chg neg">-0.29%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">+0.50%</td>
+      <td class="num">+98.20%</td>
+      <td class="num">48.00</td>
+      <td class="num">52.35</td>
+      <td class="num">—</td>
+      <td class="kline">bullish_reclaim</td>
+      <td class="bias">bullish_trying</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="00300.HK">
+      <td class="rank">80</td>
+      <td class="ticker"><a href="charts/00300_HK.png" target="_blank">00300.HK</a></td>
+      <td class="name">MIDEA GROUP</td>
+      <td class="num">99.35</td>
+      <td class="chg pos">+0.46%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">+0.40%</td>
+      <td class="num">+99.30%</td>
+      <td class="num">96.00</td>
+      <td class="num">99.50</td>
+      <td class="num">—</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_recovery" data-ticker="01530.HK">
+      <td class="rank">93</td>
+      <td class="ticker"><a href="charts/01530_HK.png" target="_blank">01530.HK</a></td>
+      <td class="name">3SBIO</td>
+      <td class="num">16.72</td>
+      <td class="chg neg">-3.69%</td>
+      <td class="phase phase-downtrend_recovery">🟠 Recovery</td>
+      <td class="num">+52.80%</td>
+      <td class="num">+31.40%</td>
+      <td class="num">16.00</td>
+      <td class="num">17.26</td>
+      <td class="num">20.90</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00148.HK">
+      <td class="rank">19</td>
+      <td class="ticker"><a href="charts/00148_HK.png" target="_blank">00148.HK</a></td>
+      <td class="name">KINGBOARD HLDG</td>
+      <td class="num">39.20</td>
+      <td class="chg neg">-2.20%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+74.20%</td>
+      <td class="num">+0.00%</td>
+      <td class="num">40.00</td>
+      <td class="num">47.30</td>
+      <td class="num">151.80</td>
+      <td class="kline">neutral</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01888.HK">
+      <td class="rank">12</td>
+      <td class="ticker"><a href="charts/01888_HK.png" target="_blank">01888.HK</a></td>
+      <td class="name">KB LAMINATES</td>
+      <td class="num">29.42</td>
+      <td class="chg pos">+0.96%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+72.60%</td>
+      <td class="num">+1.80%</td>
+      <td class="num">28.00</td>
+      <td class="num">36.50</td>
+      <td class="num">107.20</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="06869.HK">
+      <td class="rank">15</td>
+      <td class="ticker"><a href="charts/06869_HK.png" target="_blank">06869.HK</a></td>
+      <td class="name">YOFC</td>
+      <td class="num">96.75</td>
+      <td class="chg pos">+5.16%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+68.30%</td>
+      <td class="num">+2.20%</td>
+      <td class="num">92.00</td>
+      <td class="num">109.90</td>
+      <td class="num">305.00</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02685.HK">
+      <td class="rank">107</td>
+      <td class="ticker"><a href="charts/02685_HK.png" target="_blank">02685.HK</a></td>
+      <td class="name">QUANTGROUP</td>
+      <td class="num">4.13</td>
+      <td class="chg pos">+4.56%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+90.50%</td>
+      <td class="num">+2.50%</td>
+      <td class="num">4.00</td>
+      <td class="num">4.43</td>
+      <td class="num">22.00</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00189.HK">
+      <td class="rank">160</td>
+      <td class="ticker"><a href="charts/00189_HK.png" target="_blank">00189.HK</a></td>
+      <td class="name">DONGYUE GROUP</td>
+      <td class="num">11.86</td>
+      <td class="chg pos">+2.07%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+50.00%</td>
+      <td class="num">+3.90%</td>
+      <td class="num">12.00</td>
+      <td class="num">12.47</td>
+      <td class="num">23.74</td>
+      <td class="kline">neutral</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01347.HK">
+      <td class="rank">10</td>
+      <td class="ticker"><a href="charts/01347_HK.png" target="_blank">01347.HK</a></td>
+      <td class="name">HUA HONG GRACE</td>
+      <td class="num">128.30</td>
+      <td class="chg pos">+2.23%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+41.60%</td>
+      <td class="num">+4.50%</td>
+      <td class="num">124.00</td>
+      <td class="num">145.30</td>
+      <td class="num">219.60</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="03200.HK">
+      <td class="rank">103</td>
+      <td class="ticker"><a href="charts/03200_HK.png" target="_blank">03200.HK</a></td>
+      <td class="name">HANS CNC</td>
+      <td class="num">94.30</td>
+      <td class="chg pos">+11.93%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+54.20%</td>
+      <td class="num">+5.30%</td>
+      <td class="num">88.00</td>
+      <td class="num">99.95</td>
+      <td class="num">205.80</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="06166.HK">
+      <td class="rank">44</td>
+      <td class="ticker"><a href="charts/06166_HK.png" target="_blank">06166.HK</a></td>
+      <td class="name">CIG</td>
+      <td class="num">66.85</td>
+      <td class="chg pos">+8.17%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+61.40%</td>
+      <td class="num">+5.60%</td>
+      <td class="num">64.00</td>
+      <td class="num">73.75</td>
+      <td class="num">173.00</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02513.HK">
+      <td class="rank">6</td>
+      <td class="ticker"><a href="charts/02513_HK.png" target="_blank">02513.HK</a></td>
+      <td class="name">Z.AI</td>
+      <td class="num">987.50</td>
+      <td class="chg pos">+14.56%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+66.90%</td>
+      <td class="num">+6.90%</td>
+      <td class="num">956.00</td>
+      <td class="num">1,125.00</td>
+      <td class="num">2,980.00</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="03986.HK">
+      <td class="rank">11</td>
+      <td class="ticker"><a href="charts/03986_HK.png" target="_blank">03986.HK</a></td>
+      <td class="name">GIGADEVICE</td>
+      <td class="num">459.00</td>
+      <td class="chg pos">+7.19%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+63.20%</td>
+      <td class="num">+7.10%</td>
+      <td class="num">444.00</td>
+      <td class="num">577.00</td>
+      <td class="num">1,248.00</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02476.HK">
+      <td class="rank">38</td>
+      <td class="ticker"><a href="charts/02476_HK.png" target="_blank">02476.HK</a></td>
+      <td class="name">VGT</td>
+      <td class="num">184.40</td>
+      <td class="chg pos">+9.57%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+61.20%</td>
+      <td class="num">+7.10%</td>
+      <td class="num">180.00</td>
+      <td class="num">193.80</td>
+      <td class="num">431.00</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02577.HK">
+      <td class="rank">127</td>
+      <td class="ticker"><a href="charts/02577_HK.png" target="_blank">02577.HK</a></td>
+      <td class="name">INNOSCIENCE</td>
+      <td class="num">39.06</td>
+      <td class="chg pos">+5.74%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+56.50%</td>
+      <td class="num">+7.40%</td>
+      <td class="num">36.00</td>
+      <td class="num">40.84</td>
+      <td class="num">77.20</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="06082.HK">
+      <td class="rank">65</td>
+      <td class="ticker"><a href="charts/06082_HK.png" target="_blank">06082.HK</a></td>
+      <td class="name">BIREN TECH</td>
+      <td class="num">31.18</td>
+      <td class="chg pos">+11.20%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+55.90%</td>
+      <td class="num">+7.40%</td>
+      <td class="num">28.00</td>
+      <td class="num">33.26</td>
+      <td class="num">70.75</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09880.HK">
+      <td class="rank">76</td>
+      <td class="ticker"><a href="charts/09880_HK.png" target="_blank">09880.HK</a></td>
+      <td class="name">UBTECH ROBOTICS</td>
+      <td class="num">81.55</td>
+      <td class="chg pos">+4.95%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+47.90%</td>
+      <td class="num">+7.50%</td>
+      <td class="num">76.00</td>
+      <td class="num">83.35</td>
+      <td class="num">—</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02715.HK">
+      <td class="rank">151</td>
+      <td class="ticker"><a href="charts/02715_HK.png" target="_blank">02715.HK</a></td>
+      <td class="name">ESTUN</td>
+      <td class="num">16.80</td>
+      <td class="chg pos">+5.20%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+35.80%</td>
+      <td class="num">+7.90%</td>
+      <td class="num">16.00</td>
+      <td class="num">17.65</td>
+      <td class="num">26.18</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="06809.HK">
+      <td class="rank">22</td>
+      <td class="ticker"><a href="charts/06809_HK.png" target="_blank">06809.HK</a></td>
+      <td class="name">MONTAGE TECH</td>
+      <td class="num">269.00</td>
+      <td class="chg pos">+7.00%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+50.50%</td>
+      <td class="num">+9.10%</td>
+      <td class="num">256.00</td>
+      <td class="num">305.80</td>
+      <td class="num">480.00</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02718.HK">
+      <td class="rank">81</td>
+      <td class="ticker"><a href="charts/02718_HK.png" target="_blank">02718.HK</a></td>
+      <td class="name">MININGLAMP-W</td>
+      <td class="num">45.84</td>
+      <td class="chg neg">-31.12%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+87.20%</td>
+      <td class="num">+9.60%</td>
+      <td class="num">44.00</td>
+      <td class="num">56.60</td>
+      <td class="num">253.60</td>
+      <td class="kline">neutral</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00981.HK">
+      <td class="rank">8</td>
+      <td class="ticker"><a href="charts/00981_HK.png" target="_blank">00981.HK</a></td>
+      <td class="name">SMIC</td>
+      <td class="num">63.25</td>
+      <td class="chg pos">+2.02%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+32.00%</td>
+      <td class="num">+10.30%</td>
+      <td class="num">60.00</td>
+      <td class="num">67.50</td>
+      <td class="num">91.55</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09903.HK">
+      <td class="rank">31</td>
+      <td class="ticker"><a href="charts/09903_HK.png" target="_blank">09903.HK</a></td>
+      <td class="name">ILUVATAR COREX</td>
+      <td class="num">425.40</td>
+      <td class="chg pos">+12.84%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+52.10%</td>
+      <td class="num">+11.90%</td>
+      <td class="num">412.00</td>
+      <td class="num">467.20</td>
+      <td class="num">887.50</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01729.HK">
+      <td class="rank">162</td>
+      <td class="ticker"><a href="charts/01729_HK.png" target="_blank">01729.HK</a></td>
+      <td class="name">TIME INTERCON</td>
+      <td class="num">13.19</td>
+      <td class="chg pos">+9.92%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+46.60%</td>
+      <td class="num">+13.00%</td>
+      <td class="num">12.00</td>
+      <td class="num">13.96</td>
+      <td class="num">21.12</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01989.HK">
+      <td class="rank">114</td>
+      <td class="ticker"><a href="charts/01989_HK.png" target="_blank">01989.HK</a></td>
+      <td class="name">DELTON</td>
+      <td class="num">100.40</td>
+      <td class="chg pos">+20.46%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+54.80%</td>
+      <td class="num">+13.70%</td>
+      <td class="num">96.00</td>
+      <td class="num">104.90</td>
+      <td class="num">216.00</td>
+      <td class="kline">neutral</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09630.HK">
+      <td class="rank">141</td>
+      <td class="ticker"><a href="charts/09630_HK.png" target="_blank">09630.HK</a></td>
+      <td class="name">CFMEE</td>
+      <td class="num">276.20</td>
+      <td class="chg pos">+20.61%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+50.20%</td>
+      <td class="num">+14.70%</td>
+      <td class="num">268.00</td>
+      <td class="num">303.60</td>
+      <td class="num">555.00</td>
+      <td class="kline">neutral</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01772.HK">
+      <td class="rank">91</td>
+      <td class="ticker"><a href="charts/01772_HK.png" target="_blank">01772.HK</a></td>
+      <td class="name">GANFENGLITHIUM</td>
+      <td class="num">36.82</td>
+      <td class="chg neg">-2.49%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+59.60%</td>
+      <td class="num">+14.90%</td>
+      <td class="num">36.00</td>
+      <td class="num">38.50</td>
+      <td class="num">41.52</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="06181.HK">
+      <td class="rank">59</td>
+      <td class="ticker"><a href="charts/06181_HK.png" target="_blank">06181.HK</a></td>
+      <td class="name">LAOPU GOLD</td>
+      <td class="num">324.80</td>
+      <td class="chg pos">+10.10%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+63.80%</td>
+      <td class="num">+19.60%</td>
+      <td class="num">292.00</td>
+      <td class="num">324.80</td>
+      <td class="num">459.20</td>
+      <td class="kline">neutral</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09606.HK">
+      <td class="rank">123</td>
+      <td class="ticker"><a href="charts/09606_HK.png" target="_blank">09606.HK</a></td>
+      <td class="name">DUALITYBIO-B</td>
+      <td class="num">181.80</td>
+      <td class="chg neg">-4.77%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+51.80%</td>
+      <td class="num">+20.60%</td>
+      <td class="num">164.00</td>
+      <td class="num">197.50</td>
+      <td class="num">250.60</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00522.HK">
+      <td class="rank">47</td>
+      <td class="ticker"><a href="charts/00522_HK.png" target="_blank">00522.HK</a></td>
+      <td class="name">ASMPT</td>
+      <td class="num">151.30</td>
+      <td class="chg pos">+11.99%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+38.10%</td>
+      <td class="num">+21.40%</td>
+      <td class="num">148.00</td>
+      <td class="num">165.00</td>
+      <td class="num">244.40</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02228.HK">
+      <td class="rank">109</td>
+      <td class="ticker"><a href="charts/02228_HK.png" target="_blank">02228.HK</a></td>
+      <td class="name">XTALPI</td>
+      <td class="num">6.84</td>
+      <td class="chg pos">+6.21%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+52.10%</td>
+      <td class="num">+24.00%</td>
+      <td class="num">8.00</td>
+      <td class="num">7.01</td>
+      <td class="num">8.55</td>
+      <td class="kline">neutral</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="06651.HK">
+      <td class="rank">75</td>
+      <td class="ticker"><a href="charts/06651_HK.png" target="_blank">06651.HK</a></td>
+      <td class="name">51WORLD</td>
+      <td class="num">65.60</td>
+      <td class="chg pos">+11.95%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+55.40%</td>
+      <td class="num">+24.60%</td>
+      <td class="num">64.00</td>
+      <td class="num">70.85</td>
+      <td class="num">110.40</td>
+      <td class="kline">neutral</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00100.HK">
+      <td class="rank">25</td>
+      <td class="ticker"><a href="charts/00100_HK.png" target="_blank">00100.HK</a></td>
+      <td class="name">MINIMAX-W</td>
+      <td class="num">230.60</td>
+      <td class="chg pos">+13.15%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+82.70%</td>
+      <td class="num">+28.00%</td>
+      <td class="num">208.00</td>
+      <td class="num">244.80</td>
+      <td class="num">—</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02050.HK">
+      <td class="rank">113</td>
+      <td class="ticker"><a href="charts/02050_HK.png" target="_blank">02050.HK</a></td>
+      <td class="name">SANHUA</td>
+      <td class="num">26.18</td>
+      <td class="chg pos">+5.65%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+40.00%</td>
+      <td class="num">+30.10%</td>
+      <td class="num">24.00</td>
+      <td class="num">26.36</td>
+      <td class="num">31.24</td>
+      <td class="kline">bullish_reclaim</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00179.HK">
+      <td class="rank">150</td>
+      <td class="ticker"><a href="charts/00179_HK.png" target="_blank">00179.HK</a></td>
+      <td class="name">JOHNSON ELEC H</td>
+      <td class="num">18.59</td>
+      <td class="chg pos">+8.40%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+51.20%</td>
+      <td class="num">+30.50%</td>
+      <td class="num">16.00</td>
+      <td class="num">18.99</td>
+      <td class="num">24.50</td>
+      <td class="kline">bullish_reclaim</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="03328.HK">
+      <td class="rank">138</td>
+      <td class="ticker"><a href="charts/03328_HK.png" target="_blank">03328.HK</a></td>
+      <td class="name">BANKCOMM</td>
+      <td class="num">7.56</td>
+      <td class="chg neg">-1.43%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+3.40%</td>
+      <td class="num">+30.50%</td>
+      <td class="num">8.00</td>
+      <td class="num">7.65</td>
+      <td class="num">—</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02477.HK">
+      <td class="rank">168</td>
+      <td class="ticker"><a href="charts/02477_HK.png" target="_blank">02477.HK</a></td>
+      <td class="name">WELLCELL HOLD</td>
+      <td class="num">0.18</td>
+      <td class="chg pos">+9.52%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+98.70%</td>
+      <td class="num">+30.70%</td>
+      <td class="num">0.00</td>
+      <td class="num">0.19</td>
+      <td class="num">0.60</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09888.HK">
+      <td class="rank">35</td>
+      <td class="ticker"><a href="charts/09888_HK.png" target="_blank">09888.HK</a></td>
+      <td class="name">BIDU-SW</td>
+      <td class="num">105.90</td>
+      <td class="chg pos">+3.72%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+34.30%</td>
+      <td class="num">+30.70%</td>
+      <td class="num">104.00</td>
+      <td class="num">107.90</td>
+      <td class="num">119.20</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="03317.HK">
+      <td class="rank">110</td>
+      <td class="ticker"><a href="charts/03317_HK.png" target="_blank">03317.HK</a></td>
+      <td class="name">XUNCE</td>
+      <td class="num">103.50</td>
+      <td class="chg pos">+5.83%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+73.00%</td>
+      <td class="num">+33.80%</td>
+      <td class="num">100.00</td>
+      <td class="num">109.70</td>
+      <td class="num">147.20</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01876.HK">
+      <td class="rank">115</td>
+      <td class="ticker"><a href="charts/01876_HK.png" target="_blank">01876.HK</a></td>
+      <td class="name">BUD APAC</td>
+      <td class="num">6.58</td>
+      <td class="chg neg">-6.67%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+22.40%</td>
+      <td class="num">+35.40%</td>
+      <td class="num">8.00</td>
+      <td class="num">7.00</td>
+      <td class="num">7.64</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02706.HK">
+      <td class="rank">66</td>
+      <td class="ticker"><a href="charts/02706_HK.png" target="_blank">02706.HK</a></td>
+      <td class="name">HAIZHI TECH GP</td>
+      <td class="num">39.16</td>
+      <td class="chg pos">+82.65%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+59.20%</td>
+      <td class="num">+38.90%</td>
+      <td class="num">36.00</td>
+      <td class="num">42.50</td>
+      <td class="num">67.00</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00568.HK">
+      <td class="rank">133</td>
+      <td class="ticker"><a href="charts/00568_HK.png" target="_blank">00568.HK</a></td>
+      <td class="name">SHANDONG MOLONG</td>
+      <td class="num">5.04</td>
+      <td class="chg neg">-1.95%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+69.10%</td>
+      <td class="num">+39.00%</td>
+      <td class="num">4.00</td>
+      <td class="num">5.10</td>
+      <td class="num">6.67</td>
+      <td class="kline">bullish_reclaim</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09926.HK">
+      <td class="rank">87</td>
+      <td class="ticker"><a href="charts/09926_HK.png" target="_blank">09926.HK</a></td>
+      <td class="name">AKESO</td>
+      <td class="num">93.95</td>
+      <td class="chg pos">+0.80%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+39.80%</td>
+      <td class="num">+41.80%</td>
+      <td class="num">92.00</td>
+      <td class="num">96.20</td>
+      <td class="num">107.80</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02382.HK">
+      <td class="rank">40</td>
+      <td class="ticker"><a href="charts/02382_HK.png" target="_blank">02382.HK</a></td>
+      <td class="name">SUNNY OPTICAL</td>
+      <td class="num">56.05</td>
+      <td class="chg neg">-2.01%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+36.00%</td>
+      <td class="num">+42.90%</td>
+      <td class="num">56.00</td>
+      <td class="num">59.10</td>
+      <td class="num">61.45</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02018.HK">
+      <td class="rank">139</td>
+      <td class="ticker"><a href="charts/02018_HK.png" target="_blank">02018.HK</a></td>
+      <td class="name">AAC TECH</td>
+      <td class="num">38.54</td>
+      <td class="chg pos">+1.58%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+23.50%</td>
+      <td class="num">+43.80%</td>
+      <td class="num">36.00</td>
+      <td class="num">39.88</td>
+      <td class="num">41.80</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="03750.HK">
+      <td class="rank">45</td>
+      <td class="ticker"><a href="charts/03750_HK.png" target="_blank">03750.HK</a></td>
+      <td class="name">CATL</td>
+      <td class="num">622.50</td>
+      <td class="chg pos">+0.24%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+21.60%</td>
+      <td class="num">+45.00%</td>
+      <td class="num">608.00</td>
+      <td class="num">638.50</td>
+      <td class="num">650.00</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01024.HK">
+      <td class="rank">27</td>
+      <td class="ticker"><a href="charts/01024_HK.png" target="_blank">01024.HK</a></td>
+      <td class="name">KUAISHOU-W</td>
+      <td class="num">43.70</td>
+      <td class="chg pos">+1.77%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+48.70%</td>
+      <td class="num">+45.20%</td>
+      <td class="num">44.00</td>
+      <td class="num">44.44</td>
+      <td class="num">48.18</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="03898.HK">
+      <td class="rank">194</td>
+      <td class="ticker"><a href="charts/03898_HK.png" target="_blank">03898.HK</a></td>
+      <td class="name">TIMES ELECTRIC</td>
+      <td class="num">33.66</td>
+      <td class="chg pos">+1.08%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+28.20%</td>
+      <td class="num">+45.40%</td>
+      <td class="num">32.00</td>
+      <td class="num">34.34</td>
+      <td class="num">35.66</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09868.HK">
+      <td class="rank">74</td>
+      <td class="ticker"><a href="charts/09868_HK.png" target="_blank">09868.HK</a></td>
+      <td class="name">XPENG-W</td>
+      <td class="num">50.60</td>
+      <td class="chg pos">+0.20%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+54.30%</td>
+      <td class="num">+45.60%</td>
+      <td class="num">48.00</td>
+      <td class="num">51.45</td>
+      <td class="num">56.90</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01787.HK">
+      <td class="rank">116</td>
+      <td class="ticker"><a href="charts/01787_HK.png" target="_blank">01787.HK</a></td>
+      <td class="name">SD GOLD</td>
+      <td class="num">20.16</td>
+      <td class="chg pos">+1.66%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+63.00%</td>
+      <td class="num">+46.20%</td>
+      <td class="num">20.00</td>
+      <td class="num">20.96</td>
+      <td class="num">—</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01276.HK">
+      <td class="rank">188</td>
+      <td class="ticker"><a href="charts/01276_HK.png" target="_blank">01276.HK</a></td>
+      <td class="name">HENGRUI PHARMA</td>
+      <td class="num">57.10</td>
+      <td class="chg neg">-0.52%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+25.60%</td>
+      <td class="num">+47.20%</td>
+      <td class="num">56.00</td>
+      <td class="num">57.90</td>
+      <td class="num">62.80</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01196.HK">
+      <td class="rank">70</td>
+      <td class="ticker"><a href="charts/01196_HK.png" target="_blank">01196.HK</a></td>
+      <td class="name">REALORD TECH</td>
+      <td class="num">7.02</td>
+      <td class="chg pos">+56.70%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+61.70%</td>
+      <td class="num">+48.50%</td>
+      <td class="num">4.00</td>
+      <td class="num">7.14</td>
+      <td class="num">11.42</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09698.HK">
+      <td class="rank">153</td>
+      <td class="ticker"><a href="charts/09698_HK.png" target="_blank">09698.HK</a></td>
+      <td class="name">GDS-SW</td>
+      <td class="num">31.10</td>
+      <td class="chg pos">+9.51%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+33.70%</td>
+      <td class="num">+50.30%</td>
+      <td class="num">28.00</td>
+      <td class="num">31.98</td>
+      <td class="num">34.16</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="03323.HK">
+      <td class="rank">167</td>
+      <td class="ticker"><a href="charts/03323_HK.png" target="_blank">03323.HK</a></td>
+      <td class="name">CNBM</td>
+      <td class="num">3.73</td>
+      <td class="chg pos">+0.81%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+48.60%</td>
+      <td class="num">+53.50%</td>
+      <td class="num">4.00</td>
+      <td class="num">3.93</td>
+      <td class="num">—</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00168.HK">
+      <td class="rank">147</td>
+      <td class="ticker"><a href="charts/00168_HK.png" target="_blank">00168.HK</a></td>
+      <td class="name">TSINGTAO BREW</td>
+      <td class="num">46.60</td>
+      <td class="chg neg">-4.04%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+16.80%</td>
+      <td class="num">+54.40%</td>
+      <td class="num">44.00</td>
+      <td class="num">48.00</td>
+      <td class="num">48.78</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09995.HK">
+      <td class="rank">182</td>
+      <td class="ticker"><a href="charts/09995_HK.png" target="_blank">09995.HK</a></td>
+      <td class="name">REMEGEN</td>
+      <td class="num">81.75</td>
+      <td class="chg pos">+2.96%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+33.60%</td>
+      <td class="num">+58.20%</td>
+      <td class="num">76.00</td>
+      <td class="num">82.90</td>
+      <td class="num">94.50</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="03692.HK">
+      <td class="rank">111</td>
+      <td class="ticker"><a href="charts/03692_HK.png" target="_blank">03692.HK</a></td>
+      <td class="name">HANSOH PHARMA</td>
+      <td class="num">32.18</td>
+      <td class="chg neg">-0.49%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+27.20%</td>
+      <td class="num">+59.40%</td>
+      <td class="num">28.00</td>
+      <td class="num">32.74</td>
+      <td class="num">35.04</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01318.HK">
+      <td class="rank">187</td>
+      <td class="ticker"><a href="charts/01318_HK.png" target="_blank">01318.HK</a></td>
+      <td class="name">MAO GEPING</td>
+      <td class="num">58.75</td>
+      <td class="chg neg">-4.16%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+37.00%</td>
+      <td class="num">+60.80%</td>
+      <td class="num">56.00</td>
+      <td class="num">61.00</td>
+      <td class="num">65.00</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02057.HK">
+      <td class="rank">121</td>
+      <td class="ticker"><a href="charts/02057_HK.png" target="_blank">02057.HK</a></td>
+      <td class="name">ZTO EXPRESS-W</td>
+      <td class="num">186.80</td>
+      <td class="chg neg">-1.48%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+9.10%</td>
+      <td class="num">+61.20%</td>
+      <td class="num">180.00</td>
+      <td class="num">187.50</td>
+      <td class="num">196.20</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00992.HK">
+      <td class="rank">18</td>
+      <td class="ticker"><a href="charts/00992_HK.png" target="_blank">00992.HK</a></td>
+      <td class="name">LENOVO GROUP</td>
+      <td class="num">23.86</td>
+      <td class="chg pos">+9.75%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+13.00%</td>
+      <td class="num">+61.90%</td>
+      <td class="num">24.00</td>
+      <td class="num">24.32</td>
+      <td class="num">26.24</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02533.HK">
+      <td class="rank">198</td>
+      <td class="ticker"><a href="charts/02533_HK.png" target="_blank">02533.HK</a></td>
+      <td class="name">BLACK SESAME</td>
+      <td class="num">11.81</td>
+      <td class="chg pos">+5.35%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+55.20%</td>
+      <td class="num">+62.60%</td>
+      <td class="num">12.00</td>
+      <td class="num">12.19</td>
+      <td class="num">12.69</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="06682.HK">
+      <td class="rank">166</td>
+      <td class="ticker"><a href="charts/06682_HK.png" target="_blank">06682.HK</a></td>
+      <td class="name">PHANCY</td>
+      <td class="num">29.28</td>
+      <td class="chg pos">+5.93%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+52.70%</td>
+      <td class="num">+63.20%</td>
+      <td class="num">28.00</td>
+      <td class="num">30.68</td>
+      <td class="num">32.36</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09633.HK">
+      <td class="rank">117</td>
+      <td class="ticker"><a href="charts/09633_HK.png" target="_blank">09633.HK</a></td>
+      <td class="name">NONGFU SPRING</td>
+      <td class="num">43.78</td>
+      <td class="chg neg">-3.91%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+22.20%</td>
+      <td class="num">+63.20%</td>
+      <td class="num">40.00</td>
+      <td class="num">45.10</td>
+      <td class="num">45.98</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00285.HK">
+      <td class="rank">96</td>
+      <td class="ticker"><a href="charts/00285_HK.png" target="_blank">00285.HK</a></td>
+      <td class="name">BYD ELECTRONIC</td>
+      <td class="num">23.48</td>
+      <td class="chg neg">-2.25%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+35.80%</td>
+      <td class="num">+64.20%</td>
+      <td class="num">20.00</td>
+      <td class="num">24.32</td>
+      <td class="num">25.42</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="03808.HK">
+      <td class="rank">177</td>
+      <td class="ticker"><a href="charts/03808_HK.png" target="_blank">03808.HK</a></td>
+      <td class="name">SINOTRUK</td>
+      <td class="num">40.64</td>
+      <td class="chg pos">+0.40%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+16.00%</td>
+      <td class="num">+64.40%</td>
+      <td class="num">40.00</td>
+      <td class="num">41.72</td>
+      <td class="num">43.20</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00288.HK">
+      <td class="rank">79</td>
+      <td class="ticker"><a href="charts/00288_HK.png" target="_blank">00288.HK</a></td>
+      <td class="name">WH GROUP</td>
+      <td class="num">8.45</td>
+      <td class="chg neg">-1.97%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+22.00%</td>
+      <td class="num">+66.20%</td>
+      <td class="num">8.00</td>
+      <td class="num">8.62</td>
+      <td class="num">8.68</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02423.HK">
+      <td class="rank">118</td>
+      <td class="ticker"><a href="charts/02423_HK.png" target="_blank">02423.HK</a></td>
+      <td class="name">BEKE-W</td>
+      <td class="num">43.42</td>
+      <td class="chg pos">+0.05%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+17.50%</td>
+      <td class="num">+66.20%</td>
+      <td class="num">40.00</td>
+      <td class="num">44.24</td>
+      <td class="num">47.20</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01810.HK">
+      <td class="rank">7</td>
+      <td class="ticker"><a href="charts/01810_HK.png" target="_blank">01810.HK</a></td>
+      <td class="name">XIAOMI-W</td>
+      <td class="num">28.78</td>
+      <td class="chg neg">-7.28%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+35.50%</td>
+      <td class="num">+67.40%</td>
+      <td class="num">28.00</td>
+      <td class="num">29.50</td>
+      <td class="num">32.40</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02498.HK">
+      <td class="rank">186</td>
+      <td class="ticker"><a href="charts/02498_HK.png" target="_blank">02498.HK</a></td>
+      <td class="name">ROBOSENSE</td>
+      <td class="num">23.82</td>
+      <td class="chg pos">+7.98%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+40.20%</td>
+      <td class="num">+69.20%</td>
+      <td class="num">24.00</td>
+      <td class="num">24.06</td>
+      <td class="num">25.52</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02333.HK">
+      <td class="rank">200</td>
+      <td class="ticker"><a href="charts/02333_HK.png" target="_blank">02333.HK</a></td>
+      <td class="name">GWMOTOR</td>
+      <td class="num">9.08</td>
+      <td class="chg neg">-2.89%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+35.50%</td>
+      <td class="num">+70.10%</td>
+      <td class="num">8.00</td>
+      <td class="num">9.30</td>
+      <td class="num">9.54</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="03993.HK">
+      <td class="rank">97</td>
+      <td class="ticker"><a href="charts/03993_HK.png" target="_blank">03993.HK</a></td>
+      <td class="name">CMOC</td>
+      <td class="num">16.89</td>
+      <td class="chg pos">+3.81%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+33.10%</td>
+      <td class="num">+70.10%</td>
+      <td class="num">16.00</td>
+      <td class="num">16.94</td>
+      <td class="num">18.05</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01177.HK">
+      <td class="rank">144</td>
+      <td class="ticker"><a href="charts/01177_HK.png" target="_blank">01177.HK</a></td>
+      <td class="name">SBP GROUP</td>
+      <td class="num">5.03</td>
+      <td class="chg neg">-0.59%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+31.00%</td>
+      <td class="num">+70.10%</td>
+      <td class="num">4.00</td>
+      <td class="num">5.11</td>
+      <td class="num">5.47</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01171.HK">
+      <td class="rank">124</td>
+      <td class="ticker"><a href="charts/01171_HK.png" target="_blank">01171.HK</a></td>
+      <td class="name">YANKUANG ENERGY</td>
+      <td class="num">11.86</td>
+      <td class="chg neg">-1.66%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+31.90%</td>
+      <td class="num">+70.60%</td>
+      <td class="num">12.00</td>
+      <td class="num">12.02</td>
+      <td class="num">12.48</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02331.HK">
+      <td class="rank">135</td>
+      <td class="ticker"><a href="charts/02331_HK.png" target="_blank">02331.HK</a></td>
+      <td class="name">LI NING</td>
+      <td class="num">15.15</td>
+      <td class="chg neg">-0.72%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+35.30%</td>
+      <td class="num">+70.70%</td>
+      <td class="num">16.00</td>
+      <td class="num">15.26</td>
+      <td class="num">15.54</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01860.HK">
+      <td class="rank">146</td>
+      <td class="ticker"><a href="charts/01860_HK.png" target="_blank">01860.HK</a></td>
+      <td class="name">MOBVISTA</td>
+      <td class="num">11.15</td>
+      <td class="chg pos">+5.99%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+46.00%</td>
+      <td class="num">+71.80%</td>
+      <td class="num">12.00</td>
+      <td class="num">11.74</td>
+      <td class="num">—</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00016.HK">
+      <td class="rank">72</td>
+      <td class="ticker"><a href="charts/00016_HK.png" target="_blank">00016.HK</a></td>
+      <td class="name">SHK PPT</td>
+      <td class="num">123.20</td>
+      <td class="chg pos">+1.07%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+17.20%</td>
+      <td class="num">+71.80%</td>
+      <td class="num">120.00</td>
+      <td class="num">123.90</td>
+      <td class="num">127.60</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01109.HK">
+      <td class="rank">78</td>
+      <td class="ticker"><a href="charts/01109_HK.png" target="_blank">01109.HK</a></td>
+      <td class="name">CHINA RES LAND</td>
+      <td class="num">33.20</td>
+      <td class="chg neg">-2.35%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+16.80%</td>
+      <td class="num">+72.20%</td>
+      <td class="num">32.00</td>
+      <td class="num">34.02</td>
+      <td class="num">35.20</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02525.HK">
+      <td class="rank">192</td>
+      <td class="ticker"><a href="charts/02525_HK.png" target="_blank">02525.HK</a></td>
+      <td class="name">HESAI-W-NEW</td>
+      <td class="num">16.86</td>
+      <td class="chg pos">+5.51%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+41.60%</td>
+      <td class="num">+72.60%</td>
+      <td class="num">16.00</td>
+      <td class="num">16.90</td>
+      <td class="num">17.84</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00291.HK">
+      <td class="rank">122</td>
+      <td class="ticker"><a href="charts/00291_HK.png" target="_blank">00291.HK</a></td>
+      <td class="name">CHINA RES BEER</td>
+      <td class="num">23.66</td>
+      <td class="chg neg">-3.59%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+18.70%</td>
+      <td class="num">+73.20%</td>
+      <td class="num">24.00</td>
+      <td class="num">24.42</td>
+      <td class="num">25.00</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02313.HK">
+      <td class="rank">184</td>
+      <td class="ticker"><a href="charts/02313_HK.png" target="_blank">02313.HK</a></td>
+      <td class="name">SHENZHOU INTL</td>
+      <td class="num">44.58</td>
+      <td class="chg pos">+0.91%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+37.90%</td>
+      <td class="num">+73.40%</td>
+      <td class="num">44.00</td>
+      <td class="num">44.60</td>
+      <td class="num">46.24</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00688.HK">
+      <td class="rank">155</td>
+      <td class="ticker"><a href="charts/00688_HK.png" target="_blank">00688.HK</a></td>
+      <td class="name">CHINA OVERSEAS</td>
+      <td class="num">13.51</td>
+      <td class="chg neg">-2.10%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+19.10%</td>
+      <td class="num">+74.00%</td>
+      <td class="num">12.00</td>
+      <td class="num">13.84</td>
+      <td class="num">14.04</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01088.HK">
+      <td class="rank">92</td>
+      <td class="ticker"><a href="charts/01088_HK.png" target="_blank">01088.HK</a></td>
+      <td class="name">CHINA SHENHUA</td>
+      <td class="num">43.46</td>
+      <td class="chg neg">-0.59%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+12.40%</td>
+      <td class="num">+74.20%</td>
+      <td class="num">40.00</td>
+      <td class="num">43.72</td>
+      <td class="num">44.66</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09863.HK">
+      <td class="rank">131</td>
+      <td class="ticker"><a href="charts/09863_HK.png" target="_blank">09863.HK</a></td>
+      <td class="name">LEAPMOTOR</td>
+      <td class="num">39.96</td>
+      <td class="chg neg">-0.45%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+32.40%</td>
+      <td class="num">+74.30%</td>
+      <td class="num">36.00</td>
+      <td class="num">40.40</td>
+      <td class="num">42.72</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="03939.HK">
+      <td class="rank">180</td>
+      <td class="ticker"><a href="charts/03939_HK.png" target="_blank">03939.HK</a></td>
+      <td class="name">WANGUO GOLD GP</td>
+      <td class="num">10.53</td>
+      <td class="chg pos">+4.99%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+43.70%</td>
+      <td class="num">+74.70%</td>
+      <td class="num">8.00</td>
+      <td class="num">10.94</td>
+      <td class="num">11.64</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09987.HK">
+      <td class="rank">95</td>
+      <td class="ticker"><a href="charts/09987_HK.png" target="_blank">09987.HK</a></td>
+      <td class="name">YUM CHINA</td>
+      <td class="num">372.80</td>
+      <td class="chg pos">+1.91%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+17.40%</td>
+      <td class="num">+74.90%</td>
+      <td class="num">360.00</td>
+      <td class="num">393.60</td>
+      <td class="num">—</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02015.HK">
+      <td class="rank">63</td>
+      <td class="ticker"><a href="charts/02015_HK.png" target="_blank">02015.HK</a></td>
+      <td class="name">LI AUTO-W</td>
+      <td class="num">53.40</td>
+      <td class="chg neg">-1.57%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+32.30%</td>
+      <td class="num">+75.10%</td>
+      <td class="num">48.00</td>
+      <td class="num">53.80</td>
+      <td class="num">56.10</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01209.HK">
+      <td class="rank">197</td>
+      <td class="ticker"><a href="charts/01209_HK.png" target="_blank">01209.HK</a></td>
+      <td class="name">CHINA RES MIXC</td>
+      <td class="num">39.92</td>
+      <td class="chg neg">-1.77%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+22.00%</td>
+      <td class="num">+75.40%</td>
+      <td class="num">40.00</td>
+      <td class="num">40.78</td>
+      <td class="num">41.20</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="06055.HK">
+      <td class="rank">191</td>
+      <td class="ticker"><a href="charts/06055_HK.png" target="_blank">06055.HK</a></td>
+      <td class="name">CTIHK</td>
+      <td class="num">24.16</td>
+      <td class="chg neg">-3.75%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+48.00%</td>
+      <td class="num">+76.20%</td>
+      <td class="num">20.00</td>
+      <td class="num">24.96</td>
+      <td class="num">25.92</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00358.HK">
+      <td class="rank">112</td>
+      <td class="ticker"><a href="charts/00358_HK.png" target="_blank">00358.HK</a></td>
+      <td class="name">JIANGXI COPPER</td>
+      <td class="num">35.18</td>
+      <td class="chg pos">+4.02%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+34.50%</td>
+      <td class="num">+76.20%</td>
+      <td class="num">32.00</td>
+      <td class="num">35.28</td>
+      <td class="num">37.42</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01336.HK">
+      <td class="rank">149</td>
+      <td class="ticker"><a href="charts/01336_HK.png" target="_blank">01336.HK</a></td>
+      <td class="name">NCI</td>
+      <td class="num">48.36</td>
+      <td class="chg neg">-0.37%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+26.50%</td>
+      <td class="num">+76.20%</td>
+      <td class="num">48.00</td>
+      <td class="num">48.78</td>
+      <td class="num">49.72</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00700.HK">
+      <td class="rank">4</td>
+      <td class="ticker"><a href="charts/00700_HK.png" target="_blank">00700.HK</a></td>
+      <td class="name">TENCENT</td>
+      <td class="num">475.20</td>
+      <td class="chg pos">+0.72%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+25.60%</td>
+      <td class="num">+76.60%</td>
+      <td class="num">464.00</td>
+      <td class="num">479.80</td>
+      <td class="num">494.80</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09980.HK">
+      <td class="rank">172</td>
+      <td class="ticker"><a href="charts/09980_HK.png" target="_blank">09980.HK</a></td>
+      <td class="name">EASTROC</td>
+      <td class="num">125.00</td>
+      <td class="chg pos">+0.81%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+39.30%</td>
+      <td class="num">+76.90%</td>
+      <td class="num">112.00</td>
+      <td class="num">126.00</td>
+      <td class="num">131.30</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01113.HK">
+      <td class="rank">154</td>
+      <td class="ticker"><a href="charts/01113_HK.png" target="_blank">01113.HK</a></td>
+      <td class="name">CK ASSET</td>
+      <td class="num">47.84</td>
+      <td class="chg neg">-1.44%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+8.60%</td>
+      <td class="num">+77.10%</td>
+      <td class="num">44.00</td>
+      <td class="num">48.62</td>
+      <td class="num">48.98</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00762.HK">
+      <td class="rank">159</td>
+      <td class="ticker"><a href="charts/00762_HK.png" target="_blank">00762.HK</a></td>
+      <td class="name">CHINA UNICOM</td>
+      <td class="num">6.72</td>
+      <td class="chg neg">-0.88%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+32.30%</td>
+      <td class="num">+77.50%</td>
+      <td class="num">8.00</td>
+      <td class="num">6.81</td>
+      <td class="num">6.92</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00175.HK">
+      <td class="rank">43</td>
+      <td class="ticker"><a href="charts/00175_HK.png" target="_blank">00175.HK</a></td>
+      <td class="name">GEELY AUTO</td>
+      <td class="num">19.80</td>
+      <td class="chg neg">-3.23%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+22.70%</td>
+      <td class="num">+77.60%</td>
+      <td class="num">20.00</td>
+      <td class="num">20.20</td>
+      <td class="num">20.90</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00669.HK">
+      <td class="rank">57</td>
+      <td class="ticker"><a href="charts/00669_HK.png" target="_blank">00669.HK</a></td>
+      <td class="name">TECHTRONIC IND</td>
+      <td class="num">132.00</td>
+      <td class="chg pos">+1.38%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+3.10%</td>
+      <td class="num">+77.70%</td>
+      <td class="num">128.00</td>
+      <td class="num">132.90</td>
+      <td class="num">134.30</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01208.HK">
+      <td class="rank">132</td>
+      <td class="ticker"><a href="charts/01208_HK.png" target="_blank">01208.HK</a></td>
+      <td class="name">MMG</td>
+      <td class="num">8.39</td>
+      <td class="chg pos">+4.22%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+29.80%</td>
+      <td class="num">+78.50%</td>
+      <td class="num">8.00</td>
+      <td class="num">8.42</td>
+      <td class="num">8.90</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02338.HK">
+      <td class="rank">90</td>
+      <td class="ticker"><a href="charts/02338_HK.png" target="_blank">02338.HK</a></td>
+      <td class="name">WEICHAI POWER</td>
+      <td class="num">32.94</td>
+      <td class="chg pos">+7.58%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+27.50%</td>
+      <td class="num">+78.70%</td>
+      <td class="num">32.00</td>
+      <td class="num">33.80</td>
+      <td class="num">34.28</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02319.HK">
+      <td class="rank">84</td>
+      <td class="ticker"><a href="charts/02319_HK.png" target="_blank">02319.HK</a></td>
+      <td class="name">MENGNIU DAIRY</td>
+      <td class="num">18.90</td>
+      <td class="chg neg">-2.68%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+3.90%</td>
+      <td class="num">+79.00%</td>
+      <td class="num">16.00</td>
+      <td class="num">19.03</td>
+      <td class="num">19.67</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01044.HK">
+      <td class="rank">169</td>
+      <td class="ticker"><a href="charts/01044_HK.png" target="_blank">01044.HK</a></td>
+      <td class="name">HENGAN INT'L</td>
+      <td class="num">24.76</td>
+      <td class="chg neg">-4.33%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+17.40%</td>
+      <td class="num">+79.30%</td>
+      <td class="num">24.00</td>
+      <td class="num">25.86</td>
+      <td class="num">26.00</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09901.HK">
+      <td class="rank">105</td>
+      <td class="ticker"><a href="charts/09901_HK.png" target="_blank">09901.HK</a></td>
+      <td class="name">NEW ORIENTAL-S</td>
+      <td class="num">45.28</td>
+      <td class="chg neg">-4.55%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+11.30%</td>
+      <td class="num">+79.30%</td>
+      <td class="num">40.00</td>
+      <td class="num">46.62</td>
+      <td class="num">47.70</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02556.HK">
+      <td class="rank">36</td>
+      <td class="ticker"><a href="charts/02556_HK.png" target="_blank">02556.HK</a></td>
+      <td class="name">MARKETINGFORCE</td>
+      <td class="num">44.00</td>
+      <td class="chg pos">+13.40%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+25.40%</td>
+      <td class="num">+79.90%</td>
+      <td class="num">40.00</td>
+      <td class="num">48.00</td>
+      <td class="num">—</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02600.HK">
+      <td class="rank">179</td>
+      <td class="ticker"><a href="charts/02600_HK.png" target="_blank">02600.HK</a></td>
+      <td class="name">CHALCO</td>
+      <td class="num">8.46</td>
+      <td class="chg pos">+1.44%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+45.60%</td>
+      <td class="num">+80.10%</td>
+      <td class="num">8.00</td>
+      <td class="num">8.58</td>
+      <td class="num">8.75</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00006.HK">
+      <td class="rank">193</td>
+      <td class="ticker"><a href="charts/00006_HK.png" target="_blank">00006.HK</a></td>
+      <td class="name">POWER ASSETS</td>
+      <td class="num">59.05</td>
+      <td class="chg neg">-0.08%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+11.90%</td>
+      <td class="num">+80.30%</td>
+      <td class="num">56.00</td>
+      <td class="num">59.20</td>
+      <td class="num">59.80</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01138.HK">
+      <td class="rank">174</td>
+      <td class="ticker"><a href="charts/01138_HK.png" target="_blank">01138.HK</a></td>
+      <td class="name">COSCO SHIP ENGY</td>
+      <td class="num">13.91</td>
+      <td class="chg neg">-0.43%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+37.90%</td>
+      <td class="num">+80.60%</td>
+      <td class="num">12.00</td>
+      <td class="num">13.98</td>
+      <td class="num">14.37</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00003.HK">
+      <td class="rank">190</td>
+      <td class="ticker"><a href="charts/00003_HK.png" target="_blank">00003.HK</a></td>
+      <td class="name">HK & CHINA GAS</td>
+      <td class="num">7.03</td>
+      <td class="chg neg">-1.95%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+9.40%</td>
+      <td class="num">+80.80%</td>
+      <td class="num">8.00</td>
+      <td class="num">7.18</td>
+      <td class="num">—</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02601.HK">
+      <td class="rank">98</td>
+      <td class="ticker"><a href="charts/02601_HK.png" target="_blank">02601.HK</a></td>
+      <td class="name">CPIC</td>
+      <td class="num">30.56</td>
+      <td class="chg neg">-2.49%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+24.50%</td>
+      <td class="num">+81.50%</td>
+      <td class="num">28.00</td>
+      <td class="num">31.48</td>
+      <td class="num">—</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09678.HK">
+      <td class="rank">165</td>
+      <td class="ticker"><a href="charts/09678_HK.png" target="_blank">09678.HK</a></td>
+      <td class="name">UNISOUND</td>
+      <td class="num">75.45</td>
+      <td class="chg pos">+13.29%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+88.50%</td>
+      <td class="num">+81.80%</td>
+      <td class="num">68.00</td>
+      <td class="num">75.70</td>
+      <td class="num">78.00</td>
+      <td class="kline">bullish_reclaim</td>
+      <td class="bias">bullish_trying</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02259.HK">
+      <td class="rank">50</td>
+      <td class="ticker"><a href="charts/02259_HK.png" target="_blank">02259.HK</a></td>
+      <td class="name">ZIJIN GOLD INTL</td>
+      <td class="num">118.20</td>
+      <td class="chg neg">+0.00%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+55.90%</td>
+      <td class="num">+81.90%</td>
+      <td class="num">112.00</td>
+      <td class="num">123.80</td>
+      <td class="num">125.70</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00883.HK">
+      <td class="rank">41</td>
+      <td class="ticker"><a href="charts/00883_HK.png" target="_blank">00883.HK</a></td>
+      <td class="name">CNOOC</td>
+      <td class="num">23.82</td>
+      <td class="chg neg">-1.49%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+23.10%</td>
+      <td class="num">+82.30%</td>
+      <td class="num">24.00</td>
+      <td class="num">24.12</td>
+      <td class="num">24.64</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02359.HK">
+      <td class="rank">71</td>
+      <td class="ticker"><a href="charts/02359_HK.png" target="_blank">02359.HK</a></td>
+      <td class="name">WUXI APPTEC</td>
+      <td class="num">160.70</td>
+      <td class="chg pos">+1.90%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+4.10%</td>
+      <td class="num">+82.30%</td>
+      <td class="num">156.00</td>
+      <td class="num">163.10</td>
+      <td class="num">164.30</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01357.HK">
+      <td class="rank">52</td>
+      <td class="ticker"><a href="charts/01357_HK.png" target="_blank">01357.HK</a></td>
+      <td class="name">MEITU</td>
+      <td class="num">4.72</td>
+      <td class="chg pos">+10.28%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+49.40%</td>
+      <td class="num">+83.50%</td>
+      <td class="num">4.00</td>
+      <td class="num">4.95</td>
+      <td class="num">—</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01928.HK">
+      <td class="rank">156</td>
+      <td class="ticker"><a href="charts/01928_HK.png" target="_blank">01928.HK</a></td>
+      <td class="name">SANDS CHINA LTD</td>
+      <td class="num">14.72</td>
+      <td class="chg neg">-2.65%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+23.30%</td>
+      <td class="num">+84.00%</td>
+      <td class="num">12.00</td>
+      <td class="num">15.06</td>
+      <td class="num">15.24</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01818.HK">
+      <td class="rank">145</td>
+      <td class="ticker"><a href="charts/01818_HK.png" target="_blank">01818.HK</a></td>
+      <td class="name">ZHAOJIN MINING</td>
+      <td class="num">21.20</td>
+      <td class="chg pos">+0.66%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+50.00%</td>
+      <td class="num">+84.10%</td>
+      <td class="num">20.00</td>
+      <td class="num">22.18</td>
+      <td class="num">—</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="03330.HK">
+      <td class="rank">126</td>
+      <td class="ticker"><a href="charts/03330_HK.png" target="_blank">03330.HK</a></td>
+      <td class="name">LINGBAO GOLD</td>
+      <td class="num">19.30</td>
+      <td class="chg pos">+5.75%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+38.10%</td>
+      <td class="num">+84.90%</td>
+      <td class="num">20.00</td>
+      <td class="num">19.67</td>
+      <td class="num">20.60</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02020.HK">
+      <td class="rank">61</td>
+      <td class="ticker"><a href="charts/02020_HK.png" target="_blank">02020.HK</a></td>
+      <td class="name">ANTA SPORTS</td>
+      <td class="num">78.95</td>
+      <td class="chg neg">-0.82%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+14.70%</td>
+      <td class="num">+84.90%</td>
+      <td class="num">76.00</td>
+      <td class="num">79.90</td>
+      <td class="num">80.90</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="06618.HK">
+      <td class="rank">152</td>
+      <td class="ticker"><a href="charts/06618_HK.png" target="_blank">06618.HK</a></td>
+      <td class="name">JD HEALTH</td>
+      <td class="num">39.40</td>
+      <td class="chg pos">+0.31%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+45.00%</td>
+      <td class="num">+85.10%</td>
+      <td class="num">36.00</td>
+      <td class="num">40.02</td>
+      <td class="num">40.70</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02328.HK">
+      <td class="rank">62</td>
+      <td class="ticker"><a href="charts/02328_HK.png" target="_blank">02328.HK</a></td>
+      <td class="name">PICC P&C</td>
+      <td class="num">16.40</td>
+      <td class="chg neg">-2.38%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+16.90%</td>
+      <td class="num">+85.10%</td>
+      <td class="num">16.00</td>
+      <td class="num">16.61</td>
+      <td class="num">16.88</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="06693.HK">
+      <td class="rank">130</td>
+      <td class="ticker"><a href="charts/06693_HK.png" target="_blank">06693.HK</a></td>
+      <td class="name">CHIFENG GOLD</td>
+      <td class="num">33.38</td>
+      <td class="chg pos">+2.33%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+33.10%</td>
+      <td class="num">+85.50%</td>
+      <td class="num">32.00</td>
+      <td class="num">35.26</td>
+      <td class="num">—</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00941.HK">
+      <td class="rank">26</td>
+      <td class="ticker"><a href="charts/00941_HK.png" target="_blank">00941.HK</a></td>
+      <td class="name">CHINA MOBILE</td>
+      <td class="num">83.65</td>
+      <td class="chg neg">-1.36%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+5.90%</td>
+      <td class="num">+85.50%</td>
+      <td class="num">80.00</td>
+      <td class="num">84.95</td>
+      <td class="num">—</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09660.HK">
+      <td class="rank">55</td>
+      <td class="ticker"><a href="charts/09660_HK.png" target="_blank">09660.HK</a></td>
+      <td class="name">HORIZONROBOT-W</td>
+      <td class="num">5.17</td>
+      <td class="chg neg">-0.96%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+47.20%</td>
+      <td class="num">+85.80%</td>
+      <td class="num">4.00</td>
+      <td class="num">5.36</td>
+      <td class="num">5.43</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00728.HK">
+      <td class="rank">137</td>
+      <td class="ticker"><a href="charts/00728_HK.png" target="_blank">00728.HK</a></td>
+      <td class="name">CHINA TELECOM</td>
+      <td class="num">4.74</td>
+      <td class="chg neg">-0.42%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+22.00%</td>
+      <td class="num">+86.00%</td>
+      <td class="num">4.00</td>
+      <td class="num">4.78</td>
+      <td class="num">4.86</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00857.HK">
+      <td class="rank">64</td>
+      <td class="ticker"><a href="charts/00857_HK.png" target="_blank">00857.HK</a></td>
+      <td class="name">PETROCHINA</td>
+      <td class="num">9.94</td>
+      <td class="chg neg">-2.07%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+18.70%</td>
+      <td class="num">+86.20%</td>
+      <td class="num">8.00</td>
+      <td class="num">10.15</td>
+      <td class="num">10.25</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02899.HK">
+      <td class="rank">23</td>
+      <td class="ticker"><a href="charts/02899_HK.png" target="_blank">02899.HK</a></td>
+      <td class="name">ZIJIN MINING</td>
+      <td class="num">33.24</td>
+      <td class="chg pos">+2.21%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+29.20%</td>
+      <td class="num">+86.70%</td>
+      <td class="num">32.00</td>
+      <td class="num">33.82</td>
+      <td class="num">34.26</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09988.HK">
+      <td class="rank">2</td>
+      <td class="ticker"><a href="charts/09988_HK.png" target="_blank">09988.HK</a></td>
+      <td class="name">BABA-W</td>
+      <td class="num">117.00</td>
+      <td class="chg pos">+4.65%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+32.80%</td>
+      <td class="num">+87.60%</td>
+      <td class="num">112.00</td>
+      <td class="num">119.30</td>
+      <td class="num">121.00</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02099.HK">
+      <td class="rank">89</td>
+      <td class="ticker"><a href="charts/02099_HK.png" target="_blank">02099.HK</a></td>
+      <td class="name">CHINAGOLDINTL</td>
+      <td class="num">175.90</td>
+      <td class="chg pos">+0.34%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+29.10%</td>
+      <td class="num">+87.60%</td>
+      <td class="num">168.00</td>
+      <td class="num">181.00</td>
+      <td class="num">185.20</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01093.HK">
+      <td class="rank">94</td>
+      <td class="ticker"><a href="charts/01093_HK.png" target="_blank">01093.HK</a></td>
+      <td class="name">CSPC PHARMA</td>
+      <td class="num">8.58</td>
+      <td class="chg pos">+0.35%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+21.70%</td>
+      <td class="num">+88.00%</td>
+      <td class="num">8.00</td>
+      <td class="num">8.69</td>
+      <td class="num">8.86</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00354.HK">
+      <td class="rank">101</td>
+      <td class="ticker"><a href="charts/00354_HK.png" target="_blank">00354.HK</a></td>
+      <td class="name">CHINASOFT INT'L</td>
+      <td class="num">3.93</td>
+      <td class="chg pos">+6.50%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+35.00%</td>
+      <td class="num">+88.10%</td>
+      <td class="num">4.00</td>
+      <td class="num">4.04</td>
+      <td class="num">4.07</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00966.HK">
+      <td class="rank">189</td>
+      <td class="ticker"><a href="charts/00966_HK.png" target="_blank">00966.HK</a></td>
+      <td class="name">CHINA TAIPING</td>
+      <td class="num">22.02</td>
+      <td class="chg neg">-1.34%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+15.20%</td>
+      <td class="num">+88.20%</td>
+      <td class="num">20.00</td>
+      <td class="num">22.58</td>
+      <td class="num">—</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09626.HK">
+      <td class="rank">86</td>
+      <td class="ticker"><a href="charts/09626_HK.png" target="_blank">09626.HK</a></td>
+      <td class="name">BILIBILI-W</td>
+      <td class="num">147.70</td>
+      <td class="chg neg">-0.34%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+48.30%</td>
+      <td class="num">+88.40%</td>
+      <td class="num">136.00</td>
+      <td class="num">150.00</td>
+      <td class="num">150.80</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02688.HK">
+      <td class="rank">67</td>
+      <td class="ticker"><a href="charts/02688_HK.png" target="_blank">02688.HK</a></td>
+      <td class="name">ENN ENERGY</td>
+      <td class="num">46.94</td>
+      <td class="chg pos">+0.95%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+34.80%</td>
+      <td class="num">+88.70%</td>
+      <td class="num">44.00</td>
+      <td class="num">47.82</td>
+      <td class="num">—</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01299.HK">
+      <td class="rank">24</td>
+      <td class="ticker"><a href="charts/01299_HK.png" target="_blank">01299.HK</a></td>
+      <td class="name">AIA</td>
+      <td class="num">79.25</td>
+      <td class="chg neg">-0.50%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+14.00%</td>
+      <td class="num">+89.00%</td>
+      <td class="num">76.00</td>
+      <td class="num">79.55</td>
+      <td class="num">80.15</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="03896.HK">
+      <td class="rank">32</td>
+      <td class="ticker"><a href="charts/03896_HK.png" target="_blank">03896.HK</a></td>
+      <td class="name">KINGSOFT CLOUD</td>
+      <td class="num">5.81</td>
+      <td class="chg pos">+15.74%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+40.40%</td>
+      <td class="num">+89.60%</td>
+      <td class="num">4.00</td>
+      <td class="num">6.02</td>
+      <td class="num">—</td>
+      <td class="kline">bullish_reclaim</td>
+      <td class="bias">bullish_trying</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00066.HK">
+      <td class="rank">170</td>
+      <td class="ticker"><a href="charts/00066_HK.png" target="_blank">00066.HK</a></td>
+      <td class="name">MTR CORPORATION</td>
+      <td class="num">33.12</td>
+      <td class="chg neg">-0.78%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+12.60%</td>
+      <td class="num">+89.60%</td>
+      <td class="num">32.00</td>
+      <td class="num">33.46</td>
+      <td class="num">—</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00268.HK">
+      <td class="rank">68</td>
+      <td class="ticker"><a href="charts/00268_HK.png" target="_blank">00268.HK</a></td>
+      <td class="name">KINGDEE INT'L</td>
+      <td class="num">8.33</td>
+      <td class="chg pos">+3.22%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+51.20%</td>
+      <td class="num">+89.70%</td>
+      <td class="num">8.00</td>
+      <td class="num">8.64</td>
+      <td class="num">—</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00241.HK">
+      <td class="rank">125</td>
+      <td class="ticker"><a href="charts/00241_HK.png" target="_blank">00241.HK</a></td>
+      <td class="name">ALI HEALTH</td>
+      <td class="num">3.59</td>
+      <td class="chg pos">+1.70%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+54.60%</td>
+      <td class="num">+90.20%</td>
+      <td class="num">4.00</td>
+      <td class="num">3.63</td>
+      <td class="num">3.65</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00836.HK">
+      <td class="rank">161</td>
+      <td class="ticker"><a href="charts/00836_HK.png" target="_blank">00836.HK</a></td>
+      <td class="name">CHINA RES POWER</td>
+      <td class="num">19.34</td>
+      <td class="chg neg">-0.41%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+12.70%</td>
+      <td class="num">+90.30%</td>
+      <td class="num">20.00</td>
+      <td class="num">19.44</td>
+      <td class="num">19.70</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="03606.HK">
+      <td class="rank">158</td>
+      <td class="ticker"><a href="charts/03606_HK.png" target="_blank">03606.HK</a></td>
+      <td class="name">FUYAO GLASS</td>
+      <td class="num">59.40</td>
+      <td class="chg pos">+0.76%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+25.40%</td>
+      <td class="num">+91.60%</td>
+      <td class="num">56.00</td>
+      <td class="num">60.45</td>
+      <td class="num">—</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01211.HK">
+      <td class="rank">21</td>
+      <td class="ticker"><a href="charts/01211_HK.png" target="_blank">01211.HK</a></td>
+      <td class="name">BYD COMPANY</td>
+      <td class="num">94.15</td>
+      <td class="chg neg">-0.69%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+17.00%</td>
+      <td class="num">+91.90%</td>
+      <td class="num">88.00</td>
+      <td class="num">94.55</td>
+      <td class="num">96.15</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00012.HK">
+      <td class="rank">181</td>
+      <td class="ticker"><a href="charts/00012_HK.png" target="_blank">00012.HK</a></td>
+      <td class="name">HENDERSON LAND</td>
+      <td class="num">28.40</td>
+      <td class="chg neg">-1.32%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+20.40%</td>
+      <td class="num">+92.10%</td>
+      <td class="num">28.00</td>
+      <td class="num">28.78</td>
+      <td class="num">—</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00390.HK">
+      <td class="rank">199</td>
+      <td class="ticker"><a href="charts/00390_HK.png" target="_blank">00390.HK</a></td>
+      <td class="name">CHINA RAILWAY</td>
+      <td class="num">3.61</td>
+      <td class="chg neg">-1.10%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+31.60%</td>
+      <td class="num">+92.30%</td>
+      <td class="num">4.00</td>
+      <td class="num">3.64</td>
+      <td class="num">—</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="03968.HK">
+      <td class="rank">58</td>
+      <td class="ticker"><a href="charts/03968_HK.png" target="_blank">03968.HK</a></td>
+      <td class="name">CM BANK</td>
+      <td class="num">50.90</td>
+      <td class="chg neg">-0.59%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+5.20%</td>
+      <td class="num">+92.60%</td>
+      <td class="num">48.00</td>
+      <td class="num">51.45</td>
+      <td class="num">—</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00386.HK">
+      <td class="rank">120</td>
+      <td class="ticker"><a href="charts/00386_HK.png" target="_blank">00386.HK</a></td>
+      <td class="name">SINOPEC CORP</td>
+      <td class="num">4.43</td>
+      <td class="chg neg">-0.67%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+22.30%</td>
+      <td class="num">+93.50%</td>
+      <td class="num">4.00</td>
+      <td class="num">4.46</td>
+      <td class="num">—</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="03690.HK">
+      <td class="rank">14</td>
+      <td class="ticker"><a href="charts/03690_HK.png" target="_blank">03690.HK</a></td>
+      <td class="name">MEITUAN-W</td>
+      <td class="num">92.50</td>
+      <td class="chg neg">-0.16%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+14.40%</td>
+      <td class="num">+93.50%</td>
+      <td class="num">88.00</td>
+      <td class="num">93.60</td>
+      <td class="num">94.50</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09618.HK">
+      <td class="rank">28</td>
+      <td class="ticker"><a href="charts/09618_HK.png" target="_blank">09618.HK</a></td>
+      <td class="name">JD-SW</td>
+      <td class="num">127.10</td>
+      <td class="chg neg">-1.24%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+8.80%</td>
+      <td class="num">+93.70%</td>
+      <td class="num">120.00</td>
+      <td class="num">128.00</td>
+      <td class="num">129.20</td>
+      <td class="kline">bullish_reclaim</td>
+      <td class="bias">bullish_trying</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="09961.HK">
+      <td class="rank">48</td>
+      <td class="ticker"><a href="charts/09961_HK.png" target="_blank">09961.HK</a></td>
+      <td class="name">TRIP.COM-S</td>
+      <td class="num">366.40</td>
+      <td class="chg neg">-0.16%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+40.20%</td>
+      <td class="num">+93.90%</td>
+      <td class="num">352.00</td>
+      <td class="num">370.80</td>
+      <td class="num">—</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01766.HK">
+      <td class="rank">185</td>
+      <td class="ticker"><a href="charts/01766_HK.png" target="_blank">01766.HK</a></td>
+      <td class="name">CRRC</td>
+      <td class="num">5.26</td>
+      <td class="chg neg">-1.31%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+22.20%</td>
+      <td class="num">+94.70%</td>
+      <td class="num">4.00</td>
+      <td class="num">5.33</td>
+      <td class="num">—</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00027.HK">
+      <td class="rank">99</td>
+      <td class="ticker"><a href="charts/00027_HK.png" target="_blank">00027.HK</a></td>
+      <td class="name">GALAXY ENT</td>
+      <td class="num">34.20</td>
+      <td class="chg neg">-0.52%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+22.70%</td>
+      <td class="num">+94.80%</td>
+      <td class="num">32.00</td>
+      <td class="num">34.54</td>
+      <td class="num">—</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01378.HK">
+      <td class="rank">49</td>
+      <td class="ticker"><a href="charts/01378_HK.png" target="_blank">01378.HK</a></td>
+      <td class="name">CHINAHONGQIAO</td>
+      <td class="num">24.54</td>
+      <td class="chg pos">+2.08%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+40.70%</td>
+      <td class="num">+95.40%</td>
+      <td class="num">24.00</td>
+      <td class="num">24.76</td>
+      <td class="num">—</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01919.HK">
+      <td class="rank">176</td>
+      <td class="ticker"><a href="charts/01919_HK.png" target="_blank">01919.HK</a></td>
+      <td class="name">COSCO SHIP HOLD</td>
+      <td class="num">15.77</td>
+      <td class="chg neg">-0.32%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+5.00%</td>
+      <td class="num">+95.40%</td>
+      <td class="num">16.00</td>
+      <td class="num">15.80</td>
+      <td class="num">15.95</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00020.HK">
+      <td class="rank">46</td>
+      <td class="ticker"><a href="charts/00020_HK.png" target="_blank">00020.HK</a></td>
+      <td class="name">SENSETIME-W</td>
+      <td class="num">1.45</td>
+      <td class="chg pos">+2.84%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+48.20%</td>
+      <td class="num">+96.00%</td>
+      <td class="num">0.00</td>
+      <td class="num">1.51</td>
+      <td class="num">—</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01658.HK">
+      <td class="rank">134</td>
+      <td class="ticker"><a href="charts/01658_HK.png" target="_blank">01658.HK</a></td>
+      <td class="name">PSBC</td>
+      <td class="num">5.08</td>
+      <td class="chg neg">-0.59%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+12.10%</td>
+      <td class="num">+97.30%</td>
+      <td class="num">4.00</td>
+      <td class="num">5.08</td>
+      <td class="num">5.11</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00002.HK">
+      <td class="rank">102</td>
+      <td class="ticker"><a href="charts/00002_HK.png" target="_blank">00002.HK</a></td>
+      <td class="name">CLP HOLDINGS</td>
+      <td class="num">78.10</td>
+      <td class="chg neg">-0.13%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+0.40%</td>
+      <td class="num">+97.60%</td>
+      <td class="num">76.00</td>
+      <td class="num">78.25</td>
+      <td class="num">—</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="01997.HK">
+      <td class="rank">196</td>
+      <td class="ticker"><a href="charts/01997_HK.png" target="_blank">01997.HK</a></td>
+      <td class="name">WHARF REIC</td>
+      <td class="num">26.58</td>
+      <td class="chg pos">+0.83%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+9.50%</td>
+      <td class="num">+98.20%</td>
+      <td class="num">24.00</td>
+      <td class="num">26.70</td>
+      <td class="num">—</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00788.HK">
+      <td class="rank">108</td>
+      <td class="ticker"><a href="charts/00788_HK.png" target="_blank">00788.HK</a></td>
+      <td class="name">CHINA TOWER</td>
+      <td class="num">10.03</td>
+      <td class="chg neg">-0.20%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+21.90%</td>
+      <td class="num">+98.50%</td>
+      <td class="num">8.00</td>
+      <td class="num">10.06</td>
+      <td class="num">—</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00388.HK">
+      <td class="rank">39</td>
+      <td class="ticker"><a href="charts/00388_HK.png" target="_blank">00388.HK</a></td>
+      <td class="name">HKEX</td>
+      <td class="num">408.60</td>
+      <td class="chg pos">+0.34%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+11.20%</td>
+      <td class="num">+99.20%</td>
+      <td class="num">396.00</td>
+      <td class="num">409.00</td>
+      <td class="num">—</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="02318.HK">
+      <td class="rank">34</td>
+      <td class="ticker"><a href="charts/02318_HK.png" target="_blank">02318.HK</a></td>
+      <td class="name">PING AN</td>
+      <td class="num">58.65</td>
+      <td class="chg neg">-0.09%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+20.90%</td>
+      <td class="num">+99.30%</td>
+      <td class="num">56.00</td>
+      <td class="num">58.70</td>
+      <td class="num">—</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="00576.HK">
+      <td class="rank">183</td>
+      <td class="ticker"><a href="charts/00576_HK.png" target="_blank">00576.HK</a></td>
+      <td class="name">ZHEJIANGEXPRESS</td>
+      <td class="num">6.95</td>
+      <td class="chg pos">+3.89%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+14.80%</td>
+      <td class="num">+100.00%</td>
+      <td class="num">8.00</td>
+      <td class="num">6.95</td>
+      <td class="num">—</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="disclaimer">
+    <strong>⚠️ Disclaimer:</strong> All content is for informational and educational purposes only. Not investment advice.
+    The 10-step price action framework (phase → S/R ladder → bias → scenarios) is technical analysis, not financial recommendation.
+    Click any ticker to view the full candlestick chart with S/R levels.
+  </div>
+
+  <footer>
+    <a href="/">← win9you.com home</a> • <a href="/dashboard">Dashboard</a> • <a href="/full-results">Full Results</a><br>
+    Generated by Mavis daily-sr-chart skill • <a href="https://github.com/kenkenlui-ctrl/Trading">Source</a>
+  </footer>
+</div>
+
+<script>
+  function filterTable() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const phase = document.getElementById('phaseFilter').value;
+    const rows = document.querySelectorAll('#dataTable tbody tr');
+    let visible = 0;
+    rows.forEach(row => {
+      const ticker = row.cells[1].textContent.toLowerCase();
+      const name = row.cells[2].textContent.toLowerCase();
+      const rowPhase = row.getAttribute('data-phase');
+      const matchSearch = !search || ticker.includes(search) || name.includes(search);
+      const matchPhase = !phase || rowPhase === phase;
+      const show = matchSearch && matchPhase;
+      row.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    document.querySelector('.filter-bar label:last-child').textContent = visible + ' of 200 stocks';
+  }
+
+  function sortTable(n) {
+    const table = document.getElementById('dataTable');
+    const rows = Array.from(table.tbody.querySelectorAll('tr'));
+    const dir = table.getAttribute('data-sort-' + n) === 'asc' ? 'desc' : 'asc';
+    table.setAttribute('data-sort-' + n, dir);
+    rows.sort((a, b) => {
+      const av = a.cells[n].textContent.trim();
+      const bv = b.cells[n].textContent.trim();
+      const an = parseFloat(av.replace(/[+%,\s]/g, ''));
+      const bn = parseFloat(bv.replace(/[+%,\s]/g, ''));
+      const isNum = !isNaN(an) && !isNaN(bn);
+      if (isNum) return dir === 'asc' ? an - bn : bn - an;
+      return dir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+    });
+    rows.forEach(r => table.tbody.appendChild(r));
+  }
+</script>
+</body>
+</html>
