@@ -1,0 +1,3147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>US Top 200 S/R Chart Radar — 2026-08-01</title>
+<meta name="description" content="Daily S/R analysis for top 200 US stocks by 5-day average turnover. Generated 2026-08-02 02:19 HKT.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d0f12; color: #e0e3e8; padding: 20px; line-height: 1.5; }
+  .container { max-width: 1400px; margin: 0 auto; }
+  header { background: #161a1f; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #1f2429; }
+  h1 { font-size: 1.6em; margin-bottom: 6px; }
+  .meta { color: #8a929b; font-size: 0.9em; margin-bottom: 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .chip { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.85em; background: #1f2429; }
+  .chip-uptrend { background: #1b4d2c; color: #4ade80; }
+  .chip-base_building { background: #4d3a1b; color: #fbbf24; }
+  .chip-downtrend_active { background: #4d1b1b; color: #f87171; }
+  .chip-downtrend_recovery { background: #4d3a1b; color: #fb923c; }
+  .chip-range { background: #2a2f37; color: #8a929b; }
+
+  .filter-bar { background: #161a1f; padding: 12px; border-radius: 8px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .filter-bar input, .filter-bar select { background: #0d0f12; color: #e0e3e8; border: 1px solid #1f2429; padding: 6px 10px; border-radius: 4px; font-size: 0.9em; }
+  .filter-bar input { min-width: 200px; }
+  .filter-bar label { font-size: 0.85em; color: #8a929b; }
+
+  table { width: 100%; border-collapse: collapse; background: #161a1f; border-radius: 8px; overflow: hidden; }
+  thead { background: #1f2429; }
+  th { padding: 10px 8px; text-align: left; font-size: 0.85em; color: #8a929b; text-transform: uppercase; cursor: pointer; user-select: none; }
+  th:hover { color: #e0e3e8; }
+  th::after { content: ' ↕'; opacity: 0.4; font-size: 0.7em; }
+  td { padding: 8px; border-top: 1px solid #1f2429; font-size: 0.9em; }
+  tr:hover { background: #1a1f25; }
+  .rank { color: #8a929b; font-size: 0.85em; }
+  .ticker a { color: #64b5f6; text-decoration: none; font-weight: 500; }
+  .ticker a:hover { text-decoration: underline; }
+  .name { color: #b0b8c0; font-size: 0.85em; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .chg.pos { color: #4ade80; }
+  .chg.neg { color: #f87171; }
+  .phase { font-size: 0.85em; }
+  .phase-uptrend { color: #4ade80; }
+  .phase-base_building { color: #fbbf24; }
+  .phase-downtrend_active { color: #f87171; }
+  .phase-downtrend_recovery { color: #fb923c; }
+  .kline { font-size: 0.8em; color: #8a929b; }
+  .bias { font-size: 0.8em; color: #b0b8c0; }
+
+  footer { margin-top: 30px; text-align: center; color: #8a929b; font-size: 0.85em; padding: 20px; }
+  footer a { color: #64b5f6; text-decoration: none; }
+  .disclaimer { background: #1f2429; padding: 12px; border-radius: 4px; margin-top: 12px; font-size: 0.85em; color: #8a929b; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>🇺🇸 US Top 200 S/R Chart Radar</h1>
+    <div class="meta">
+      Data: <strong>2026-08-01 (US close)</strong> • Generated 2026-08-02 02:19 HKT • Source: yfinance • Method: 10-step price action framework
+    </div>
+    <div class="chips">
+      <span class="chip chip-downtrend_active">Downtrend: 142</span> <span class="chip chip-base_building">Base: 38</span> <span class="chip chip-uptrend">Uptrend: 17</span> <span class="chip chip-downtrend_recovery">Recovery: 2</span>
+    </div>
+    <nav class="site-nav" style="margin-top:12px;padding-top:12px;border-top:1px solid #1f2429;font-size:0.9em;">
+      <a href="/" style="color:#8a929b;text-decoration:none;margin-right:14px;">Home</a>
+      <a href="/dashboard/" style="color:#8a929b;text-decoration:none;margin-right:14px;">Dashboard</a>
+      <a href="/full-results.html" style="color:#8a929b;text-decoration:none;margin-right:14px;">Full Results</a>
+      <a href="/hk200/" style="color:#8a929b;text-decoration:none;margin-right:14px;">📊 HK200 S/R</a>
+      <a href="/us200/" style="color:#64b5f6;text-decoration:none;margin-right:14px;font-weight:600;">🇺🇸 US200 S/R</a>
+      <a href="/methodology.html" style="color:#8a929b;text-decoration:none;margin-right:14px;">Methodology</a>
+    </nav>
+  </header>
+
+  <div class="filter-bar">
+    <label>Filter:</label>
+    <input type="text" id="searchInput" placeholder="Search ticker or name..." onkeyup="filterTable()">
+    <label>Phase:</label>
+    <select id="phaseFilter" onchange="filterTable()">
+      <option value="">All</option>
+      <option value="uptrend">🟢 Uptrend</option>
+      <option value="base_building">🟡 Base</option>
+      <option value="downtrend_recovery">🟠 Recovery</option>
+      <option value="downtrend_active">🔴 Downtrend</option>
+      <option value="range">⚪ Range</option>
+    </select>
+    <label style="margin-left:auto;color:#8a929b;">199 of 200 stocks</label>
+  </div>
+
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th onclick="sortTable(0)">#</th>
+        <th onclick="sortTable(1)">Ticker</th>
+        <th onclick="sortTable(2)">Name</th>
+        <th onclick="sortTable(3)">Last</th>
+        <th onclick="sortTable(4)">Chg%</th>
+        <th onclick="sortTable(5)">Phase</th>
+        <th onclick="sortTable(6)">Drop%</th>
+        <th onclick="sortTable(7)">InBox%</th>
+        <th onclick="sortTable(8)">S1</th>
+        <th onclick="sortTable(9)">R1</th>
+        <th onclick="sortTable(10)">R3</th>
+        <th onclick="sortTable(11)">K-line</th>
+        <th onclick="sortTable(12)">Bias</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+    <tr data-phase="base_building" data-ticker="CVNA">
+      <td class="rank">109</td>
+      <td class="ticker"><a href="charts/CVNA.png" target="_blank">CVNA</a></td>
+      <td class="name">Carvana Co.</td>
+      <td class="num">$62.36</td>
+      <td class="chg pos">+1.50%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+36.00%</td>
+      <td class="num">+22.80%</td>
+      <td class="num">$60.00</td>
+      <td class="num">$63.28</td>
+      <td class="num">$83.91</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="SWKS">
+      <td class="rank">192</td>
+      <td class="ticker"><a href="charts/SWKS.png" target="_blank">SWKS</a></td>
+      <td class="name">Skyworks Solutions, Inc.</td>
+      <td class="num">$62.28</td>
+      <td class="chg neg">-0.32%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+31.50%</td>
+      <td class="num">+31.10%</td>
+      <td class="num">$60.00</td>
+      <td class="num">$63.34</td>
+      <td class="num">$85.18</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="VST">
+      <td class="rank">166</td>
+      <td class="ticker"><a href="charts/VST.png" target="_blank">VST</a></td>
+      <td class="name">Vistra Corp.</td>
+      <td class="num">$148.19</td>
+      <td class="chg neg">-0.29%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+31.70%</td>
+      <td class="num">+40.10%</td>
+      <td class="num">$144.00</td>
+      <td class="num">$153.13</td>
+      <td class="num">$171.35</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="HOOD">
+      <td class="rank">50</td>
+      <td class="ticker"><a href="charts/HOOD.png" target="_blank">HOOD</a></td>
+      <td class="name">Robinhood Markets, Inc.</td>
+      <td class="num">$86.56</td>
+      <td class="chg neg">-0.05%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+42.50%</td>
+      <td class="num">+40.80%</td>
+      <td class="num">$84.00</td>
+      <td class="num">$89.50</td>
+      <td class="num">$120.05</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="NEE">
+      <td class="rank">115</td>
+      <td class="ticker"><a href="charts/NEE.png" target="_blank">NEE</a></td>
+      <td class="name">NextEra Energy, Inc.</td>
+      <td class="num">$86.92</td>
+      <td class="chg neg">-1.15%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+12.00%</td>
+      <td class="num">+41.80%</td>
+      <td class="num">$84.00</td>
+      <td class="num">$88.11</td>
+      <td class="num">$90.99</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="UPS">
+      <td class="rank">144</td>
+      <td class="ticker"><a href="charts/UPS.png" target="_blank">UPS</a></td>
+      <td class="name">United Parcel Service, Inc.</td>
+      <td class="num">$104.22</td>
+      <td class="chg neg">-1.00%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+14.90%</td>
+      <td class="num">+42.20%</td>
+      <td class="num">$100.00</td>
+      <td class="num">$105.99</td>
+      <td class="num">$118.42</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="PGR">
+      <td class="rank">198</td>
+      <td class="ticker"><a href="charts/PGR.png" target="_blank">PGR</a></td>
+      <td class="name">Progressive Corporation (The)</td>
+      <td class="num">$211.42</td>
+      <td class="chg neg">-0.87%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+12.30%</td>
+      <td class="num">+44.30%</td>
+      <td class="num">$204.00</td>
+      <td class="num">$213.82</td>
+      <td class="num">$239.38</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="AVGO">
+      <td class="rank">12</td>
+      <td class="ticker"><a href="charts/AVGO.png" target="_blank">AVGO</a></td>
+      <td class="name">Broadcom Inc.</td>
+      <td class="num">$389.28</td>
+      <td class="chg pos">+0.37%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+6.10%</td>
+      <td class="num">+48.40%</td>
+      <td class="num">$380.00</td>
+      <td class="num">$399.92</td>
+      <td class="num">$495.00</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="CCL">
+      <td class="rank">184</td>
+      <td class="ticker"><a href="charts/CCL.png" target="_blank">CCL</a></td>
+      <td class="name">Carnival Corporation Ltd.</td>
+      <td class="num">$27.81</td>
+      <td class="chg pos">+0.14%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+18.30%</td>
+      <td class="num">+50.10%</td>
+      <td class="num">$28.00</td>
+      <td class="num">$27.99</td>
+      <td class="num">$31.60</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="SPGI">
+      <td class="rank">84</td>
+      <td class="ticker"><a href="charts/SPGI.png" target="_blank">SPGI</a></td>
+      <td class="name">S&P Global Inc.</td>
+      <td class="num">$411.93</td>
+      <td class="chg neg">-0.74%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+21.20%</td>
+      <td class="num">+50.40%</td>
+      <td class="num">$400.00</td>
+      <td class="num">$417.29</td>
+      <td class="num">$462.02</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="BA">
+      <td class="rank">59</td>
+      <td class="ticker"><a href="charts/BA.png" target="_blank">BA</a></td>
+      <td class="name">Boeing Company (The)</td>
+      <td class="num">$216.14</td>
+      <td class="chg neg">-2.15%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+15.00%</td>
+      <td class="num">+50.40%</td>
+      <td class="num">$212.00</td>
+      <td class="num">$221.50</td>
+      <td class="num">$244.07</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="NOW">
+      <td class="rank">24</td>
+      <td class="ticker"><a href="charts/NOW.png" target="_blank">NOW</a></td>
+      <td class="name">ServiceNow, Inc.</td>
+      <td class="num">$111.23</td>
+      <td class="chg pos">+1.05%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+42.40%</td>
+      <td class="num">+51.70%</td>
+      <td class="num">$104.00</td>
+      <td class="num">$112.39</td>
+      <td class="num">$139.20</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="SHOP">
+      <td class="rank">86</td>
+      <td class="ticker"><a href="charts/SHOP.png" target="_blank">SHOP</a></td>
+      <td class="name">Shopify Inc.</td>
+      <td class="num">$117.15</td>
+      <td class="chg neg">-4.29%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+35.70%</td>
+      <td class="num">+57.90%</td>
+      <td class="num">$112.00</td>
+      <td class="num">$122.25</td>
+      <td class="num">$133.99</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="CI">
+      <td class="rank">195</td>
+      <td class="ticker"><a href="charts/CI.png" target="_blank">CI</a></td>
+      <td class="name">The Cigna Group</td>
+      <td class="num">$279.05</td>
+      <td class="chg neg">-2.99%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+10.40%</td>
+      <td class="num">+60.00%</td>
+      <td class="num">$272.00</td>
+      <td class="num">$287.35</td>
+      <td class="num">$305.44</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="DE">
+      <td class="rank">161</td>
+      <td class="ticker"><a href="charts/DE.png" target="_blank">DE</a></td>
+      <td class="name">Deere & Company</td>
+      <td class="num">$592.67</td>
+      <td class="chg neg">-1.13%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+12.10%</td>
+      <td class="num">+60.20%</td>
+      <td class="num">$580.00</td>
+      <td class="num">$602.99</td>
+      <td class="num">$643.99</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="HD">
+      <td class="rank">67</td>
+      <td class="ticker"><a href="charts/HD.png" target="_blank">HD</a></td>
+      <td class="name">Home Depot, Inc. (The)</td>
+      <td class="num">$331.96</td>
+      <td class="chg neg">-0.42%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+16.50%</td>
+      <td class="num">+61.40%</td>
+      <td class="num">$324.00</td>
+      <td class="num">$334.00</td>
+      <td class="num">$358.85</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="SYK">
+      <td class="rank">118</td>
+      <td class="ticker"><a href="charts/SYK.png" target="_blank">SYK</a></td>
+      <td class="name">Stryker Corporation</td>
+      <td class="num">$325.70</td>
+      <td class="chg neg">-6.42%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+17.00%</td>
+      <td class="num">+62.50%</td>
+      <td class="num">$320.00</td>
+      <td class="num">$334.46</td>
+      <td class="num">$352.49</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="AXP">
+      <td class="rank">107</td>
+      <td class="ticker"><a href="charts/AXP.png" target="_blank">AXP</a></td>
+      <td class="name">American Express Company</td>
+      <td class="num">$336.25</td>
+      <td class="chg neg">-0.38%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+13.20%</td>
+      <td class="num">+62.70%</td>
+      <td class="num">$328.00</td>
+      <td class="num">$340.30</td>
+      <td class="num">$363.14</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="MCK">
+      <td class="rank">132</td>
+      <td class="ticker"><a href="charts/MCK.png" target="_blank">MCK</a></td>
+      <td class="name">McKesson Corporation</td>
+      <td class="num">$856.19</td>
+      <td class="chg neg">-1.08%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+14.30%</td>
+      <td class="num">+65.40%</td>
+      <td class="num">$808.00</td>
+      <td class="num">$863.55</td>
+      <td class="num">$907.00</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="DHR">
+      <td class="rank">89</td>
+      <td class="ticker"><a href="charts/DHR.png" target="_blank">DHR</a></td>
+      <td class="name">Danaher Corporation</td>
+      <td class="num">$194.98</td>
+      <td class="chg neg">-0.61%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+19.70%</td>
+      <td class="num">+69.50%</td>
+      <td class="num">$192.00</td>
+      <td class="num">$198.58</td>
+      <td class="num">$209.90</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="ITW">
+      <td class="rank">182</td>
+      <td class="ticker"><a href="charts/ITW.png" target="_blank">ITW</a></td>
+      <td class="name">Illinois Tool Works Inc.</td>
+      <td class="num">$286.95</td>
+      <td class="chg pos">+1.15%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+5.30%</td>
+      <td class="num">+75.00%</td>
+      <td class="num">$272.00</td>
+      <td class="num">$287.99</td>
+      <td class="num">$301.92</td>
+      <td class="kline">bullish_reclaim</td>
+      <td class="bias">bullish_trying</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="SHW">
+      <td class="rank">121</td>
+      <td class="ticker"><a href="charts/SHW.png" target="_blank">SHW</a></td>
+      <td class="name">Sherwin-Williams Company (The)</td>
+      <td class="num">$340.85</td>
+      <td class="chg neg">-1.16%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+9.80%</td>
+      <td class="num">+75.60%</td>
+      <td class="num">$332.00</td>
+      <td class="num">$343.18</td>
+      <td class="num">$357.27</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="WFC">
+      <td class="rank">87</td>
+      <td class="ticker"><a href="charts/WFC.png" target="_blank">WFC</a></td>
+      <td class="name">Wells Fargo & Company</td>
+      <td class="num">$86.45</td>
+      <td class="chg pos">+1.19%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+11.60%</td>
+      <td class="num">+75.80%</td>
+      <td class="num">$84.00</td>
+      <td class="num">$86.74</td>
+      <td class="num">$89.79</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="MDT">
+      <td class="rank">157</td>
+      <td class="ticker"><a href="charts/MDT.png" target="_blank">MDT</a></td>
+      <td class="name">Medtronic plc.</td>
+      <td class="num">$85.39</td>
+      <td class="chg neg">-0.37%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+19.10%</td>
+      <td class="num">+77.10%</td>
+      <td class="num">$80.00</td>
+      <td class="num">$85.97</td>
+      <td class="num">$88.98</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="BX">
+      <td class="rank">155</td>
+      <td class="ticker"><a href="charts/BX.png" target="_blank">BX</a></td>
+      <td class="name">Blackstone Inc.</td>
+      <td class="num">$127.75</td>
+      <td class="chg neg">-0.25%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+22.60%</td>
+      <td class="num">+77.20%</td>
+      <td class="num">$124.00</td>
+      <td class="num">$129.09</td>
+      <td class="num">$135.44</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="BKNG">
+      <td class="rank">81</td>
+      <td class="ticker"><a href="charts/BKNG.png" target="_blank">BKNG</a></td>
+      <td class="name">Booking Holdings Inc. Common St</td>
+      <td class="num">$192.90</td>
+      <td class="chg neg">-0.18%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+12.60%</td>
+      <td class="num">+78.50%</td>
+      <td class="num">$180.00</td>
+      <td class="num">$194.96</td>
+      <td class="num">$204.61</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="CMG">
+      <td class="rank">170</td>
+      <td class="ticker"><a href="charts/CMG.png" target="_blank">CMG</a></td>
+      <td class="name">Chipotle Mexican Grill, Inc.</td>
+      <td class="num">$37.22</td>
+      <td class="chg neg">-3.37%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+7.90%</td>
+      <td class="num">+83.10%</td>
+      <td class="num">$36.00</td>
+      <td class="num">$38.45</td>
+      <td class="num">$39.09</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="BLK">
+      <td class="rank">136</td>
+      <td class="ticker"><a href="charts/BLK.png" target="_blank">BLK</a></td>
+      <td class="name">BlackRock, Inc.</td>
+      <td class="num">$1,090.39</td>
+      <td class="chg neg">-0.73%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+10.60%</td>
+      <td class="num">+83.30%</td>
+      <td class="num">$1,064.00</td>
+      <td class="num">$1,104.19</td>
+      <td class="num">$1,125.00</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="ABT">
+      <td class="rank">101</td>
+      <td class="ticker"><a href="charts/ABT.png" target="_blank">ABT</a></td>
+      <td class="name">Abbott Laboratories</td>
+      <td class="num">$105.70</td>
+      <td class="chg pos">+0.09%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+18.50%</td>
+      <td class="num">+84.50%</td>
+      <td class="num">$100.00</td>
+      <td class="num">$106.39</td>
+      <td class="num">$110.04</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="ADP">
+      <td class="rank">143</td>
+      <td class="ticker"><a href="charts/ADP.png" target="_blank">ADP</a></td>
+      <td class="name">Automatic Data Processing, Inc.</td>
+      <td class="num">$266.46</td>
+      <td class="chg pos">+0.98%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+7.40%</td>
+      <td class="num">+84.70%</td>
+      <td class="num">$252.00</td>
+      <td class="num">$266.93</td>
+      <td class="num">$280.59</td>
+      <td class="kline">bullish_reclaim</td>
+      <td class="bias">bullish_trying</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="RCL">
+      <td class="rank">125</td>
+      <td class="ticker"><a href="charts/RCL.png" target="_blank">RCL</a></td>
+      <td class="name">Royal Caribbean Cruises Ltd.</td>
+      <td class="num">$318.30</td>
+      <td class="chg neg">-1.13%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+10.70%</td>
+      <td class="num">+85.10%</td>
+      <td class="num">$308.00</td>
+      <td class="num">$321.13</td>
+      <td class="num">$333.39</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="PH">
+      <td class="rank">194</td>
+      <td class="ticker"><a href="charts/PH.png" target="_blank">PH</a></td>
+      <td class="name">Parker-Hannifin Corporation</td>
+      <td class="num">$976.53</td>
+      <td class="chg pos">+1.43%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+5.60%</td>
+      <td class="num">+85.60%</td>
+      <td class="num">$948.00</td>
+      <td class="num">$980.44</td>
+      <td class="num">$1,003.79</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="NU">
+      <td class="rank">154</td>
+      <td class="ticker"><a href="charts/NU.png" target="_blank">NU</a></td>
+      <td class="name">Nu Holdings Ltd.</td>
+      <td class="num">$14.33</td>
+      <td class="chg neg">-1.10%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+24.50%</td>
+      <td class="num">+85.80%</td>
+      <td class="num">$12.00</td>
+      <td class="num">$14.57</td>
+      <td class="num">$14.85</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="COF">
+      <td class="rank">122</td>
+      <td class="ticker"><a href="charts/COF.png" target="_blank">COF</a></td>
+      <td class="name">Capital One Financial Corporati</td>
+      <td class="num">$209.01</td>
+      <td class="chg neg">-0.54%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+19.50%</td>
+      <td class="num">+89.00%</td>
+      <td class="num">$204.00</td>
+      <td class="num">$210.89</td>
+      <td class="num">$213.32</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="PYPL">
+      <td class="rank">127</td>
+      <td class="ticker"><a href="charts/PYPL.png" target="_blank">PYPL</a></td>
+      <td class="name">PayPal Holdings, Inc.</td>
+      <td class="num">$57.21</td>
+      <td class="chg neg">-0.76%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+27.80%</td>
+      <td class="num">+89.20%</td>
+      <td class="num">$56.00</td>
+      <td class="num">$57.57</td>
+      <td class="num">$59.47</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="TMO">
+      <td class="rank">80</td>
+      <td class="ticker"><a href="charts/TMO.png" target="_blank">TMO</a></td>
+      <td class="name">Thermo Fisher Scientific Inc</td>
+      <td class="num">$574.30</td>
+      <td class="chg neg">-0.43%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+10.80%</td>
+      <td class="num">+90.70%</td>
+      <td class="num">$532.00</td>
+      <td class="num">$577.59</td>
+      <td class="num">$588.56</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="MELI">
+      <td class="rank">177</td>
+      <td class="ticker"><a href="charts/MELI.png" target="_blank">MELI</a></td>
+      <td class="name">MercadoLibre, Inc.</td>
+      <td class="num">$1,877.95</td>
+      <td class="chg neg">-0.41%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+22.70%</td>
+      <td class="num">+93.30%</td>
+      <td class="num">$1,840.00</td>
+      <td class="num">$1,889.22</td>
+      <td class="num">$1,905.49</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="base_building" data-ticker="DASH">
+      <td class="rank">172</td>
+      <td class="ticker"><a href="charts/DASH.png" target="_blank">DASH</a></td>
+      <td class="name">DoorDash, Inc.</td>
+      <td class="num">$196.16</td>
+      <td class="chg neg">-0.69%</td>
+      <td class="phase phase-base_building">🟡 Base</td>
+      <td class="num">+17.90%</td>
+      <td class="num">+93.40%</td>
+      <td class="num">$188.00</td>
+      <td class="num">$198.47</td>
+      <td class="num">$199.89</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="HUM">
+      <td class="rank">134</td>
+      <td class="ticker"><a href="charts/HUM.png" target="_blank">HUM</a></td>
+      <td class="name">Humana Inc.</td>
+      <td class="num">$363.86</td>
+      <td class="chg neg">-0.76%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">-21.40%</td>
+      <td class="num">+75.50%</td>
+      <td class="num">$356.00</td>
+      <td class="num">$372.15</td>
+      <td class="num">$428.88</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="UNH">
+      <td class="rank">51</td>
+      <td class="ticker"><a href="charts/UNH.png" target="_blank">UNH</a></td>
+      <td class="name">UnitedHealth Group Incorporated</td>
+      <td class="num">$414.40</td>
+      <td class="chg neg">-1.68%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">-8.80%</td>
+      <td class="num">+77.00%</td>
+      <td class="num">$404.00</td>
+      <td class="num">$422.81</td>
+      <td class="num">$461.62</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="CRWD">
+      <td class="rank">76</td>
+      <td class="ticker"><a href="charts/CRWD.png" target="_blank">CRWD</a></td>
+      <td class="name">CrowdStrike Holdings, Inc.</td>
+      <td class="num">$190.86</td>
+      <td class="chg pos">+3.05%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">-34.70%</td>
+      <td class="num">+79.80%</td>
+      <td class="num">$184.00</td>
+      <td class="num">$191.65</td>
+      <td class="num">$217.50</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="DELL">
+      <td class="rank">41</td>
+      <td class="ticker"><a href="charts/DELL.png" target="_blank">DELL</a></td>
+      <td class="name">Dell Technologies Inc.</td>
+      <td class="num">$405.37</td>
+      <td class="chg pos">+0.14%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">-141.20%</td>
+      <td class="num">+82.20%</td>
+      <td class="num">$392.00</td>
+      <td class="num">$431.43</td>
+      <td class="num">$469.47</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="PANW">
+      <td class="rank">54</td>
+      <td class="ticker"><a href="charts/PANW.png" target="_blank">PANW</a></td>
+      <td class="name">Palo Alto Networks, Inc.</td>
+      <td class="num">$331.83</td>
+      <td class="chg pos">+1.89%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">-48.40%</td>
+      <td class="num">+83.90%</td>
+      <td class="num">$320.00</td>
+      <td class="num">$333.98</td>
+      <td class="num">$368.80</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="BAC">
+      <td class="rank">53</td>
+      <td class="ticker"><a href="charts/BAC.png" target="_blank">BAC</a></td>
+      <td class="name">Bank of America Corporation</td>
+      <td class="num">$61.95</td>
+      <td class="chg pos">+0.36%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">+1.70%</td>
+      <td class="num">+85.10%</td>
+      <td class="num">$60.00</td>
+      <td class="num">$62.24</td>
+      <td class="num">$62.99</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="ANET">
+      <td class="rank">85</td>
+      <td class="ticker"><a href="charts/ANET.png" target="_blank">ANET</a></td>
+      <td class="name">Arista Networks, Inc.</td>
+      <td class="num">$180.35</td>
+      <td class="chg pos">+5.46%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">-9.30%</td>
+      <td class="num">+87.40%</td>
+      <td class="num">$168.00</td>
+      <td class="num">$183.52</td>
+      <td class="num">$189.82</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="MPC">
+      <td class="rank">188</td>
+      <td class="ticker"><a href="charts/MPC.png" target="_blank">MPC</a></td>
+      <td class="name">Marathon Petroleum Corporation</td>
+      <td class="num">$316.47</td>
+      <td class="chg pos">+0.76%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">+3.20%</td>
+      <td class="num">+88.20%</td>
+      <td class="num">$308.00</td>
+      <td class="num">$317.40</td>
+      <td class="num">$326.92</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="NET">
+      <td class="rank">135</td>
+      <td class="ticker"><a href="charts/NET.png" target="_blank">NET</a></td>
+      <td class="name">Cloudflare, Inc.</td>
+      <td class="num">$278.98</td>
+      <td class="chg neg">-1.56%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">-7.30%</td>
+      <td class="num">+89.00%</td>
+      <td class="num">$268.00</td>
+      <td class="num">$293.80</td>
+      <td class="num">$—</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="ROST">
+      <td class="rank">183</td>
+      <td class="ticker"><a href="charts/ROST.png" target="_blank">ROST</a></td>
+      <td class="name">Ross Stores, Inc.</td>
+      <td class="num">$251.07</td>
+      <td class="chg neg">-0.59%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">+1.70%</td>
+      <td class="num">+91.40%</td>
+      <td class="num">$232.00</td>
+      <td class="num">$252.82</td>
+      <td class="num">$255.30</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="VLO">
+      <td class="rank">165</td>
+      <td class="ticker"><a href="charts/VLO.png" target="_blank">VLO</a></td>
+      <td class="name">Valero Energy Corporation</td>
+      <td class="num">$312.90</td>
+      <td class="chg pos">+0.38%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">+2.30%</td>
+      <td class="num">+91.60%</td>
+      <td class="num">$308.00</td>
+      <td class="num">$315.00</td>
+      <td class="num">$320.24</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="MA">
+      <td class="rank">47</td>
+      <td class="ticker"><a href="charts/MA.png" target="_blank">MA</a></td>
+      <td class="name">Mastercard Incorporated</td>
+      <td class="num">$573.10</td>
+      <td class="chg neg">-0.74%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">+2.80%</td>
+      <td class="num">+91.90%</td>
+      <td class="num">$540.00</td>
+      <td class="num">$575.42</td>
+      <td class="num">$582.62</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="SCHW">
+      <td class="rank">148</td>
+      <td class="ticker"><a href="charts/SCHW.png" target="_blank">SCHW</a></td>
+      <td class="name">Charles Schwab Corporation (The</td>
+      <td class="num">$105.24</td>
+      <td class="chg pos">+0.87%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">+2.10%</td>
+      <td class="num">+92.00%</td>
+      <td class="num">$100.00</td>
+      <td class="num">$105.69</td>
+      <td class="num">$106.73</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="DDOG">
+      <td class="rank">95</td>
+      <td class="ticker"><a href="charts/DDOG.png" target="_blank">DDOG</a></td>
+      <td class="name">Datadog, Inc.</td>
+      <td class="num">$267.97</td>
+      <td class="chg neg">-0.22%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">-32.90%</td>
+      <td class="num">+94.00%</td>
+      <td class="num">$256.00</td>
+      <td class="num">$278.76</td>
+      <td class="num">$—</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="SNOW">
+      <td class="rank">56</td>
+      <td class="ticker"><a href="charts/SNOW.png" target="_blank">SNOW</a></td>
+      <td class="name">Snowflake Inc.</td>
+      <td class="num">$293.28</td>
+      <td class="chg neg">-1.62%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">-4.50%</td>
+      <td class="num">+94.10%</td>
+      <td class="num">$268.00</td>
+      <td class="num">$304.17</td>
+      <td class="num">$—</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="BMY">
+      <td class="rank">131</td>
+      <td class="ticker"><a href="charts/BMY.png" target="_blank">BMY</a></td>
+      <td class="name">Bristol-Myers Squibb Company</td>
+      <td class="num">$65.31</td>
+      <td class="chg pos">+0.69%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">+0.50%</td>
+      <td class="num">+96.40%</td>
+      <td class="num">$64.00</td>
+      <td class="num">$65.66</td>
+      <td class="num">$—</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="uptrend" data-ticker="AMZN">
+      <td class="rank">6</td>
+      <td class="ticker"><a href="charts/AMZN.png" target="_blank">AMZN</a></td>
+      <td class="name">Amazon.com, Inc.</td>
+      <td class="num">$271.58</td>
+      <td class="chg pos">+15.32%</td>
+      <td class="phase phase-uptrend">🟢 Uptrend</td>
+      <td class="num">+2.50%</td>
+      <td class="num">+96.50%</td>
+      <td class="num">$248.00</td>
+      <td class="num">$273.23</td>
+      <td class="num">$—</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_recovery" data-ticker="APP">
+      <td class="rank">29</td>
+      <td class="ticker"><a href="charts/APP.png" target="_blank">APP</a></td>
+      <td class="name">Applovin Corporation</td>
+      <td class="num">$395.90</td>
+      <td class="chg neg">-1.97%</td>
+      <td class="phase phase-downtrend_recovery">🟠 Recovery</td>
+      <td class="num">+46.40%</td>
+      <td class="num">+11.00%</td>
+      <td class="num">$376.00</td>
+      <td class="num">$398.16</td>
+      <td class="num">$622.00</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_recovery" data-ticker="RDDT">
+      <td class="rank">61</td>
+      <td class="ticker"><a href="charts/RDDT.png" target="_blank">RDDT</a></td>
+      <td class="name">Reddit, Inc.</td>
+      <td class="num">$140.67</td>
+      <td class="chg neg">-20.99%</td>
+      <td class="phase phase-downtrend_recovery">🟠 Recovery</td>
+      <td class="num">+46.60%</td>
+      <td class="num">+24.10%</td>
+      <td class="num">$136.00</td>
+      <td class="num">$151.38</td>
+      <td class="num">$208.05</td>
+      <td class="kline">neutral</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="ALNY">
+      <td class="rank">140</td>
+      <td class="ticker"><a href="charts/ALNY.png" target="_blank">ALNY</a></td>
+      <td class="name">Alnylam Pharmaceuticals, Inc.</td>
+      <td class="num">$205.52</td>
+      <td class="chg pos">+0.02%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+57.20%</td>
+      <td class="num">+3.10%</td>
+      <td class="num">$200.00</td>
+      <td class="num">$207.99</td>
+      <td class="num">$380.00</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="ON">
+      <td class="rank">141</td>
+      <td class="ticker"><a href="charts/ON.png" target="_blank">ON</a></td>
+      <td class="name">ON Semiconductor Corporation</td>
+      <td class="num">$81.61</td>
+      <td class="chg neg">-2.54%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+39.50%</td>
+      <td class="num">+3.10%</td>
+      <td class="num">$80.00</td>
+      <td class="num">$86.70</td>
+      <td class="num">$132.42</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="MO">
+      <td class="rank">142</td>
+      <td class="ticker"><a href="charts/MO.png" target="_blank">MO</a></td>
+      <td class="name">Altria Group, Inc.</td>
+      <td class="num">$68.33</td>
+      <td class="chg pos">+0.57%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+11.30%</td>
+      <td class="num">+3.60%</td>
+      <td class="num">$68.00</td>
+      <td class="num">$69.77</td>
+      <td class="num">$77.06</td>
+      <td class="kline">neutral</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="QCOM">
+      <td class="rank">36</td>
+      <td class="ticker"><a href="charts/QCOM.png" target="_blank">QCOM</a></td>
+      <td class="name">QUALCOMM Incorporated</td>
+      <td class="num">$147.61</td>
+      <td class="chg neg">-2.63%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+43.20%</td>
+      <td class="num">+4.00%</td>
+      <td class="num">$144.00</td>
+      <td class="num">$153.73</td>
+      <td class="num">$233.44</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="NXPI">
+      <td class="rank">63</td>
+      <td class="ticker"><a href="charts/NXPI.png" target="_blank">NXPI</a></td>
+      <td class="name">NXP Semiconductors N.V.</td>
+      <td class="num">$229.16</td>
+      <td class="chg neg">-6.53%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+32.60%</td>
+      <td class="num">+5.00%</td>
+      <td class="num">$224.00</td>
+      <td class="num">$251.72</td>
+      <td class="num">$327.50</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="SPCX">
+      <td class="rank">14</td>
+      <td class="ticker"><a href="charts/SPCX.png" target="_blank">SPCX</a></td>
+      <td class="name">Space Exploration Technologies </td>
+      <td class="num">$108.37</td>
+      <td class="chg neg">-3.41%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+37.10%</td>
+      <td class="num">+5.10%</td>
+      <td class="num">$104.00</td>
+      <td class="num">$113.64</td>
+      <td class="num">$190.00</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="MCHP">
+      <td class="rank">117</td>
+      <td class="ticker"><a href="charts/MCHP.png" target="_blank">MCHP</a></td>
+      <td class="name">Microchip Technology Incorporat</td>
+      <td class="num">$74.29</td>
+      <td class="chg neg">-0.96%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+29.90%</td>
+      <td class="num">+7.10%</td>
+      <td class="num">$72.00</td>
+      <td class="num">$77.67</td>
+      <td class="num">$104.03</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="CAT">
+      <td class="rank">31</td>
+      <td class="ticker"><a href="charts/CAT.png" target="_blank">CAT</a></td>
+      <td class="name">Caterpillar, Inc.</td>
+      <td class="num">$814.81</td>
+      <td class="chg pos">+0.70%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+24.10%</td>
+      <td class="num">+8.10%</td>
+      <td class="num">$792.00</td>
+      <td class="num">$845.00</td>
+      <td class="num">$1,073.46</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="TSLA">
+      <td class="rank">9</td>
+      <td class="ticker"><a href="charts/TSLA.png" target="_blank">TSLA</a></td>
+      <td class="name">Tesla, Inc.</td>
+      <td class="num">$311.21</td>
+      <td class="chg pos">+0.76%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+37.60%</td>
+      <td class="num">+8.40%</td>
+      <td class="num">$300.00</td>
+      <td class="num">$315.50</td>
+      <td class="num">$432.86</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="RKLB">
+      <td class="rank">106</td>
+      <td class="ticker"><a href="charts/RKLB.png" target="_blank">RKLB</a></td>
+      <td class="name">Rocket Lab Corporation</td>
+      <td class="num">$64.95</td>
+      <td class="chg pos">+0.42%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+57.00%</td>
+      <td class="num">+10.00%</td>
+      <td class="num">$64.00</td>
+      <td class="num">$67.84</td>
+      <td class="num">$109.55</td>
+      <td class="kline">neutral</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="KLAC">
+      <td class="rank">32</td>
+      <td class="ticker"><a href="charts/KLAC.png" target="_blank">KLAC</a></td>
+      <td class="name">KLA Corporation</td>
+      <td class="num">$182.82</td>
+      <td class="chg pos">+1.38%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+40.50%</td>
+      <td class="num">+10.60%</td>
+      <td class="num">$176.00</td>
+      <td class="num">$190.00</td>
+      <td class="num">$307.37</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="INTC">
+      <td class="rank">10</td>
+      <td class="ticker"><a href="charts/INTC.png" target="_blank">INTC</a></td>
+      <td class="name">Intel Corporation</td>
+      <td class="num">$90.20</td>
+      <td class="chg neg">-1.02%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+36.60%</td>
+      <td class="num">+10.60%</td>
+      <td class="num">$84.00</td>
+      <td class="num">$97.90</td>
+      <td class="num">$142.35</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="META">
+      <td class="rank">8</td>
+      <td class="ticker"><a href="charts/META.png" target="_blank">META</a></td>
+      <td class="name">Meta Platforms, Inc.</td>
+      <td class="num">$556.71</td>
+      <td class="chg pos">+3.28%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+25.20%</td>
+      <td class="num">+11.00%</td>
+      <td class="num">$540.00</td>
+      <td class="num">$558.33</td>
+      <td class="num">$691.52</td>
+      <td class="kline">neutral</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="TXN">
+      <td class="rank">37</td>
+      <td class="ticker"><a href="charts/TXN.png" target="_blank">TXN</a></td>
+      <td class="name">Texas Instruments Incorporated</td>
+      <td class="num">$275.74</td>
+      <td class="chg neg">-1.08%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+17.50%</td>
+      <td class="num">+11.70%</td>
+      <td class="num">$268.00</td>
+      <td class="num">$285.11</td>
+      <td class="num">$334.03</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="ADI">
+      <td class="rank">57</td>
+      <td class="ticker"><a href="charts/ADI.png" target="_blank">ADI</a></td>
+      <td class="name">Analog Devices, Inc.</td>
+      <td class="num">$367.41</td>
+      <td class="chg pos">+0.20%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+17.60%</td>
+      <td class="num">+12.70%</td>
+      <td class="num">$356.00</td>
+      <td class="num">$376.73</td>
+      <td class="num">$445.91</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="ARM">
+      <td class="rank">52</td>
+      <td class="ticker"><a href="charts/ARM.png" target="_blank">ARM</a></td>
+      <td class="name">Arm Holdings plc</td>
+      <td class="num">$239.69</td>
+      <td class="chg neg">-0.77%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+47.10%</td>
+      <td class="num">+13.00%</td>
+      <td class="num">$212.00</td>
+      <td class="num">$261.90</td>
+      <td class="num">$452.70</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="MRVL">
+      <td class="rank">17</td>
+      <td class="ticker"><a href="charts/MRVL.png" target="_blank">MRVL</a></td>
+      <td class="name">Marvell Technology, Inc.</td>
+      <td class="num">$187.56</td>
+      <td class="chg pos">+2.32%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+43.10%</td>
+      <td class="num">+14.20%</td>
+      <td class="num">$176.00</td>
+      <td class="num">$201.35</td>
+      <td class="num">$329.88</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="CMI">
+      <td class="rank">168</td>
+      <td class="ticker"><a href="charts/CMI.png" target="_blank">CMI</a></td>
+      <td class="name">Cummins Inc.</td>
+      <td class="num">$634.20</td>
+      <td class="chg pos">+0.19%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+14.00%</td>
+      <td class="num">+14.90%</td>
+      <td class="num">$616.00</td>
+      <td class="num">$651.73</td>
+      <td class="num">$737.76</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="VRT">
+      <td class="rank">33</td>
+      <td class="ticker"><a href="charts/VRT.png" target="_blank">VRT</a></td>
+      <td class="name">Vertiv Holdings, LLC</td>
+      <td class="num">$241.57</td>
+      <td class="chg pos">+6.18%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+36.40%</td>
+      <td class="num">+15.00%</td>
+      <td class="num">$236.00</td>
+      <td class="num">$251.71</td>
+      <td class="num">$358.54</td>
+      <td class="kline">neutral</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="GLW">
+      <td class="rank">30</td>
+      <td class="ticker"><a href="charts/GLW.png" target="_blank">GLW</a></td>
+      <td class="name">Corning Incorporated</td>
+      <td class="num">$138.25</td>
+      <td class="chg pos">+2.24%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+49.10%</td>
+      <td class="num">+15.10%</td>
+      <td class="num">$136.00</td>
+      <td class="num">$147.00</td>
+      <td class="num">$271.78</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="COIN">
+      <td class="rank">72</td>
+      <td class="ticker"><a href="charts/COIN.png" target="_blank">COIN</a></td>
+      <td class="name">Coinbase Global, Inc.</td>
+      <td class="num">$146.26</td>
+      <td class="chg neg">-10.59%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+48.60%</td>
+      <td class="num">+15.10%</td>
+      <td class="num">$140.00</td>
+      <td class="num">$153.68</td>
+      <td class="num">$181.49</td>
+      <td class="kline">neutral</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="TMUS">
+      <td class="rank">103</td>
+      <td class="ticker"><a href="charts/TMUS.png" target="_blank">TMUS</a></td>
+      <td class="name">T-Mobile US, Inc.</td>
+      <td class="num">$172.71</td>
+      <td class="chg neg">-0.36%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+25.10%</td>
+      <td class="num">+15.30%</td>
+      <td class="num">$168.00</td>
+      <td class="num">$173.52</td>
+      <td class="num">$198.86</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="FLEX">
+      <td class="rank">120</td>
+      <td class="ticker"><a href="charts/FLEX.png" target="_blank">FLEX</a></td>
+      <td class="name">Flex Ltd.</td>
+      <td class="num">$113.75</td>
+      <td class="chg pos">+1.64%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+31.80%</td>
+      <td class="num">+15.80%</td>
+      <td class="num">$104.00</td>
+      <td class="num">$119.39</td>
+      <td class="num">$165.89</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="SNDK">
+      <td class="rank">2</td>
+      <td class="ticker"><a href="charts/SNDK.png" target="_blank">SNDK</a></td>
+      <td class="name">Sandisk Corporation</td>
+      <td class="num">$1,214.83</td>
+      <td class="chg neg">-5.09%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+48.40%</td>
+      <td class="num">+16.00%</td>
+      <td class="num">$1,180.00</td>
+      <td class="num">$1,404.99</td>
+      <td class="num">$2,354.39</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="MU">
+      <td class="rank">1</td>
+      <td class="ticker"><a href="charts/MU.png" target="_blank">MU</a></td>
+      <td class="name">Micron Technology, Inc.</td>
+      <td class="num">$823.03</td>
+      <td class="chg neg">-5.90%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+34.40%</td>
+      <td class="num">+16.50%</td>
+      <td class="num">$788.00</td>
+      <td class="num">$930.88</td>
+      <td class="num">$1,255.00</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="LIN">
+      <td class="rank">82</td>
+      <td class="ticker"><a href="charts/LIN.png" target="_blank">LIN</a></td>
+      <td class="name">Linde plc</td>
+      <td class="num">$478.38</td>
+      <td class="chg neg">-5.95%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+12.70%</td>
+      <td class="num">+17.10%</td>
+      <td class="num">$464.00</td>
+      <td class="num">$483.95</td>
+      <td class="num">$548.20</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="HLT">
+      <td class="rank">138</td>
+      <td class="ticker"><a href="charts/HLT.png" target="_blank">HLT</a></td>
+      <td class="name">Hilton Worldwide Holdings Inc.</td>
+      <td class="num">$320.49</td>
+      <td class="chg neg">-0.48%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+10.50%</td>
+      <td class="num">+19.20%</td>
+      <td class="num">$312.00</td>
+      <td class="num">$324.97</td>
+      <td class="num">$356.15</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="ORCL">
+      <td class="rank">21</td>
+      <td class="ticker"><a href="charts/ORCL.png" target="_blank">ORCL</a></td>
+      <td class="name">Oracle Corporation</td>
+      <td class="num">$129.87</td>
+      <td class="chg pos">+1.81%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+48.10%</td>
+      <td class="num">+19.30%</td>
+      <td class="num">$124.00</td>
+      <td class="num">$132.40</td>
+      <td class="num">$187.99</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="COHR">
+      <td class="rank">64</td>
+      <td class="ticker"><a href="charts/COHR.png" target="_blank">COHR</a></td>
+      <td class="name">Coherent Corp.</td>
+      <td class="num">$262.89</td>
+      <td class="chg pos">+5.55%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+40.30%</td>
+      <td class="num">+19.30%</td>
+      <td class="num">$256.00</td>
+      <td class="num">$281.99</td>
+      <td class="num">$439.68</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="GEV">
+      <td class="rank">27</td>
+      <td class="ticker"><a href="charts/GEV.png" target="_blank">GEV</a></td>
+      <td class="name">GE Vernova Inc.</td>
+      <td class="num">$990.29</td>
+      <td class="chg pos">+0.85%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+17.20%</td>
+      <td class="num">+19.60%</td>
+      <td class="num">$952.00</td>
+      <td class="num">$1,042.85</td>
+      <td class="num">$1,195.94</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="ASML">
+      <td class="rank">23</td>
+      <td class="ticker"><a href="charts/ASML.png" target="_blank">ASML</a></td>
+      <td class="name">ASML Holding N.V. - New York Re</td>
+      <td class="num">$1,629.00</td>
+      <td class="chg neg">-1.36%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+18.50%</td>
+      <td class="num">+20.70%</td>
+      <td class="num">$1,532.00</td>
+      <td class="num">$1,692.15</td>
+      <td class="num">$1,999.96</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="LRCX">
+      <td class="rank">19</td>
+      <td class="ticker"><a href="charts/LRCX.png" target="_blank">LRCX</a></td>
+      <td class="name">Lam Research Corporation</td>
+      <td class="num">$293.02</td>
+      <td class="chg neg">-1.58%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+33.20%</td>
+      <td class="num">+22.60%</td>
+      <td class="num">$276.00</td>
+      <td class="num">$318.40</td>
+      <td class="num">$438.50</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="DIS">
+      <td class="rank">90</td>
+      <td class="ticker"><a href="charts/DIS.png" target="_blank">DIS</a></td>
+      <td class="name">Walt Disney Company (The)</td>
+      <td class="num">$96.19</td>
+      <td class="chg pos">+0.03%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+17.80%</td>
+      <td class="num">+22.70%</td>
+      <td class="num">$92.00</td>
+      <td class="num">$96.59</td>
+      <td class="num">$110.48</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="TT">
+      <td class="rank">123</td>
+      <td class="ticker"><a href="charts/TT.png" target="_blank">TT</a></td>
+      <td class="name">Trane Technologies plc</td>
+      <td class="num">$454.95</td>
+      <td class="chg pos">+3.33%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+10.10%</td>
+      <td class="num">+22.70%</td>
+      <td class="num">$444.00</td>
+      <td class="num">$459.49</td>
+      <td class="num">$505.87</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="AEP">
+      <td class="rank">190</td>
+      <td class="ticker"><a href="charts/AEP.png" target="_blank">AEP</a></td>
+      <td class="name">American Electric Power Company</td>
+      <td class="num">$127.85</td>
+      <td class="chg pos">+0.05%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+9.10%</td>
+      <td class="num">+23.20%</td>
+      <td class="num">$124.00</td>
+      <td class="num">$129.14</td>
+      <td class="num">$140.58</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="AMAT">
+      <td class="rank">18</td>
+      <td class="ticker"><a href="charts/AMAT.png" target="_blank">AMAT</a></td>
+      <td class="name">Applied Materials, Inc.</td>
+      <td class="num">$507.67</td>
+      <td class="chg pos">+1.18%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+31.40%</td>
+      <td class="num">+23.60%</td>
+      <td class="num">$468.00</td>
+      <td class="num">$536.54</td>
+      <td class="num">$739.67</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="EQIX">
+      <td class="rank">167</td>
+      <td class="ticker"><a href="charts/EQIX.png" target="_blank">EQIX</a></td>
+      <td class="name">Equinix, Inc.</td>
+      <td class="num">$1,019.28</td>
+      <td class="chg neg">-2.70%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+9.70%</td>
+      <td class="num">+24.10%</td>
+      <td class="num">$996.00</td>
+      <td class="num">$1,066.13</td>
+      <td class="num">$1,104.99</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="LLY">
+      <td class="rank">34</td>
+      <td class="ticker"><a href="charts/LLY.png" target="_blank">LLY</a></td>
+      <td class="name">Eli Lilly and Company</td>
+      <td class="num">$1,148.84</td>
+      <td class="chg neg">-0.53%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+8.10%</td>
+      <td class="num">+24.60%</td>
+      <td class="num">$1,116.00</td>
+      <td class="num">$1,150.63</td>
+      <td class="num">$1,249.45</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="BE">
+      <td class="rank">16</td>
+      <td class="ticker"><a href="charts/BE.png" target="_blank">BE</a></td>
+      <td class="name">Bloom Energy Corporation</td>
+      <td class="num">$205.81</td>
+      <td class="chg neg">-0.63%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+41.40%</td>
+      <td class="num">+25.50%</td>
+      <td class="num">$196.00</td>
+      <td class="num">$235.49</td>
+      <td class="num">$351.28</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="URI">
+      <td class="rank">196</td>
+      <td class="ticker"><a href="charts/URI.png" target="_blank">URI</a></td>
+      <td class="name">United Rentals, Inc.</td>
+      <td class="num">$1,079.26</td>
+      <td class="chg pos">+0.99%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+8.40%</td>
+      <td class="num">+26.40%</td>
+      <td class="num">$1,056.00</td>
+      <td class="num">$1,089.00</td>
+      <td class="num">$1,177.67</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="SOFI">
+      <td class="rank">68</td>
+      <td class="ticker"><a href="charts/SOFI.png" target="_blank">SOFI</a></td>
+      <td class="name">SoFi Technologies, Inc.</td>
+      <td class="num">$16.31</td>
+      <td class="chg neg">-0.97%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+50.20%</td>
+      <td class="num">+29.40%</td>
+      <td class="num">$16.00</td>
+      <td class="num">$16.50</td>
+      <td class="num">$19.74</td>
+      <td class="kline">neutral</td>
+      <td class="bias">defensive</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="ISRG">
+      <td class="rank">97</td>
+      <td class="ticker"><a href="charts/ISRG.png" target="_blank">ISRG</a></td>
+      <td class="name">Intuitive Surgical, Inc.</td>
+      <td class="num">$353.33</td>
+      <td class="chg pos">+0.10%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+41.50%</td>
+      <td class="num">+30.40%</td>
+      <td class="num">$344.00</td>
+      <td class="num">$355.09</td>
+      <td class="num">$374.70</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="CIEN">
+      <td class="rank">124</td>
+      <td class="ticker"><a href="charts/CIEN.png" target="_blank">CIEN</a></td>
+      <td class="name">Ciena Corporation</td>
+      <td class="num">$377.05</td>
+      <td class="chg pos">+1.34%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+40.90%</td>
+      <td class="num">+31.40%</td>
+      <td class="num">$360.00</td>
+      <td class="num">$401.00</td>
+      <td class="num">$494.53</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="PG">
+      <td class="rank">65</td>
+      <td class="ticker"><a href="charts/PG.png" target="_blank">PG</a></td>
+      <td class="name">Procter & Gamble Company (The)</td>
+      <td class="num">$144.49</td>
+      <td class="chg pos">+0.37%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+13.60%</td>
+      <td class="num">+31.40%</td>
+      <td class="num">$140.00</td>
+      <td class="num">$144.70</td>
+      <td class="num">$154.32</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="LYV">
+      <td class="rank">199</td>
+      <td class="ticker"><a href="charts/LYV.png" target="_blank">LYV</a></td>
+      <td class="name">Live Nation Entertainment, Inc.</td>
+      <td class="num">$174.13</td>
+      <td class="chg neg">-5.14%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+7.40%</td>
+      <td class="num">+31.90%</td>
+      <td class="num">$168.00</td>
+      <td class="num">$187.20</td>
+      <td class="num">$—</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="AMD">
+      <td class="rank">7</td>
+      <td class="ticker"><a href="charts/AMD.png" target="_blank">AMD</a></td>
+      <td class="name">Advanced Micro Devices, Inc.</td>
+      <td class="num">$476.15</td>
+      <td class="chg neg">-1.90%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+18.60%</td>
+      <td class="num">+32.40%</td>
+      <td class="num">$460.00</td>
+      <td class="num">$515.62</td>
+      <td class="num">$584.73</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="WDC">
+      <td class="rank">20</td>
+      <td class="ticker"><a href="charts/WDC.png" target="_blank">WDC</a></td>
+      <td class="name">Western Digital Corporation</td>
+      <td class="num">$544.84</td>
+      <td class="chg pos">+2.21%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+31.90%</td>
+      <td class="num">+32.50%</td>
+      <td class="num">$532.00</td>
+      <td class="num">$580.00</td>
+      <td class="num">$799.87</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="NKE">
+      <td class="rank">146</td>
+      <td class="ticker"><a href="charts/NKE.png" target="_blank">NKE</a></td>
+      <td class="name">Nike, Inc.</td>
+      <td class="num">$41.71</td>
+      <td class="chg neg">-1.37%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+39.70%</td>
+      <td class="num">+33.90%</td>
+      <td class="num">$40.00</td>
+      <td class="num">$42.08</td>
+      <td class="num">$45.04</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="MDLZ">
+      <td class="rank">137</td>
+      <td class="ticker"><a href="charts/MDLZ.png" target="_blank">MDLZ</a></td>
+      <td class="name">Mondelez International, Inc.</td>
+      <td class="num">$62.31</td>
+      <td class="chg neg">-1.22%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+6.50%</td>
+      <td class="num">+34.70%</td>
+      <td class="num">$60.00</td>
+      <td class="num">$63.16</td>
+      <td class="num">$66.65</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="STX">
+      <td class="rank">15</td>
+      <td class="ticker"><a href="charts/STX.png" target="_blank">STX</a></td>
+      <td class="name">Seagate Technology Holdings PLC</td>
+      <td class="num">$856.13</td>
+      <td class="chg pos">+0.52%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+25.20%</td>
+      <td class="num">+35.20%</td>
+      <td class="num">$836.00</td>
+      <td class="num">$921.78</td>
+      <td class="num">$1,145.00</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="C">
+      <td class="rank">75</td>
+      <td class="ticker"><a href="charts/C.png" target="_blank">C</a></td>
+      <td class="name">Citigroup, Inc.</td>
+      <td class="num">$132.45</td>
+      <td class="chg pos">+0.10%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+10.50%</td>
+      <td class="num">+35.30%</td>
+      <td class="num">$128.00</td>
+      <td class="num">$135.44</td>
+      <td class="num">$147.96</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="GS">
+      <td class="rank">42</td>
+      <td class="ticker"><a href="charts/GS.png" target="_blank">GS</a></td>
+      <td class="name">Goldman Sachs Group, Inc. (The)</td>
+      <td class="num">$1,018.38</td>
+      <td class="chg neg">-0.63%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+11.80%</td>
+      <td class="num">+36.60%</td>
+      <td class="num">$976.00</td>
+      <td class="num">$1,042.98</td>
+      <td class="num">$1,153.99</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="TER">
+      <td class="rank">49</td>
+      <td class="ticker"><a href="charts/TER.png" target="_blank">TER</a></td>
+      <td class="name">Teradyne, Inc.</td>
+      <td class="num">$367.69</td>
+      <td class="chg pos">+0.60%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+24.60%</td>
+      <td class="num">+36.70%</td>
+      <td class="num">$344.00</td>
+      <td class="num">$392.00</td>
+      <td class="num">$—</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="GILD">
+      <td class="rank">133</td>
+      <td class="ticker"><a href="charts/GILD.png" target="_blank">GILD</a></td>
+      <td class="name">Gilead Sciences, Inc.</td>
+      <td class="num">$130.21</td>
+      <td class="chg neg">-0.82%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+17.20%</td>
+      <td class="num">+37.40%</td>
+      <td class="num">$124.00</td>
+      <td class="num">$130.89</td>
+      <td class="num">$140.61</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="PEP">
+      <td class="rank">92</td>
+      <td class="ticker"><a href="charts/PEP.png" target="_blank">PEP</a></td>
+      <td class="name">Pepsico, Inc.</td>
+      <td class="num">$139.56</td>
+      <td class="chg neg">-0.46%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+18.60%</td>
+      <td class="num">+37.80%</td>
+      <td class="num">$136.00</td>
+      <td class="num">$140.16</td>
+      <td class="num">$145.43</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="LITE">
+      <td class="rank">25</td>
+      <td class="ticker"><a href="charts/LITE.png" target="_blank">LITE</a></td>
+      <td class="name">Lumentum Holdings Inc.</td>
+      <td class="num">$713.94</td>
+      <td class="chg pos">+2.99%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+34.20%</td>
+      <td class="num">+38.30%</td>
+      <td class="num">$692.00</td>
+      <td class="num">$772.60</td>
+      <td class="num">$906.18</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="LOW">
+      <td class="rank">173</td>
+      <td class="ticker"><a href="charts/LOW.png" target="_blank">LOW</a></td>
+      <td class="name">Lowe's Companies, Inc.</td>
+      <td class="num">$207.81</td>
+      <td class="chg neg">-1.08%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+29.10%</td>
+      <td class="num">+38.50%</td>
+      <td class="num">$204.00</td>
+      <td class="num">$210.09</td>
+      <td class="num">$220.29</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="NVDA">
+      <td class="rank">3</td>
+      <td class="ticker"><a href="charts/NVDA.png" target="_blank">NVDA</a></td>
+      <td class="name">NVIDIA Corporation</td>
+      <td class="num">$200.75</td>
+      <td class="chg pos">+2.93%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+15.10%</td>
+      <td class="num">+39.10%</td>
+      <td class="num">$196.00</td>
+      <td class="num">$202.00</td>
+      <td class="num">$214.39</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="WMT">
+      <td class="rank">38</td>
+      <td class="ticker"><a href="charts/WMT.png" target="_blank">WMT</a></td>
+      <td class="name">Walmart Inc.</td>
+      <td class="num">$111.20</td>
+      <td class="chg pos">+0.09%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+17.70%</td>
+      <td class="num">+39.90%</td>
+      <td class="num">$108.00</td>
+      <td class="num">$111.91</td>
+      <td class="num">$116.03</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="FIX">
+      <td class="rank">113</td>
+      <td class="ticker"><a href="charts/FIX.png" target="_blank">FIX</a></td>
+      <td class="name">Comfort Systems USA, Inc.</td>
+      <td class="num">$1,729.69</td>
+      <td class="chg pos">+1.88%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+16.60%</td>
+      <td class="num">+41.00%</td>
+      <td class="num">$1,652.00</td>
+      <td class="num">$1,803.35</td>
+      <td class="num">$2,072.31</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="CVS">
+      <td class="rank">152</td>
+      <td class="ticker"><a href="charts/CVS.png" target="_blank">CVS</a></td>
+      <td class="name">CVS Health Corporation</td>
+      <td class="num">$104.43</td>
+      <td class="chg neg">-0.75%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+5.60%</td>
+      <td class="num">+41.50%</td>
+      <td class="num">$104.00</td>
+      <td class="num">$105.77</td>
+      <td class="num">$110.68</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="CDNS">
+      <td class="rank">102</td>
+      <td class="ticker"><a href="charts/CDNS.png" target="_blank">CDNS</a></td>
+      <td class="name">Cadence Design Systems, Inc.</td>
+      <td class="num">$340.02</td>
+      <td class="chg pos">+2.16%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+18.40%</td>
+      <td class="num">+43.60%</td>
+      <td class="num">$328.00</td>
+      <td class="num">$344.77</td>
+      <td class="num">$355.59</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="MSTR">
+      <td class="rank">69</td>
+      <td class="ticker"><a href="charts/MSTR.png" target="_blank">MSTR</a></td>
+      <td class="name">Strategy Inc</td>
+      <td class="num">$93.28</td>
+      <td class="chg neg">-4.56%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+53.00%</td>
+      <td class="num">+44.70%</td>
+      <td class="num">$92.00</td>
+      <td class="num">$95.20</td>
+      <td class="num">$104.78</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="AAPL">
+      <td class="rank">5</td>
+      <td class="ticker"><a href="charts/AAPL.png" target="_blank">AAPL</a></td>
+      <td class="name">Apple Inc.</td>
+      <td class="num">$308.91</td>
+      <td class="chg neg">-7.35%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+10.30%</td>
+      <td class="num">+44.80%</td>
+      <td class="num">$296.00</td>
+      <td class="num">$310.69</td>
+      <td class="num">$344.57</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="MS">
+      <td class="rank">96</td>
+      <td class="ticker"><a href="charts/MS.png" target="_blank">MS</a></td>
+      <td class="name">Morgan Stanley</td>
+      <td class="num">$210.42</td>
+      <td class="chg pos">+0.17%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+9.40%</td>
+      <td class="num">+45.80%</td>
+      <td class="num">$204.00</td>
+      <td class="num">$213.46</td>
+      <td class="num">$232.25</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">bearish_cautious</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="PM">
+      <td class="rank">105</td>
+      <td class="ticker"><a href="charts/PM.png" target="_blank">PM</a></td>
+      <td class="name">Philip Morris International Inc</td>
+      <td class="num">$190.82</td>
+      <td class="chg neg">-0.61%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+8.20%</td>
+      <td class="num">+46.70%</td>
+      <td class="num">$180.00</td>
+      <td class="num">$193.46</td>
+      <td class="num">$207.76</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="COST">
+      <td class="rank">48</td>
+      <td class="ticker"><a href="charts/COST.png" target="_blank">COST</a></td>
+      <td class="name">Costco Wholesale Corporation</td>
+      <td class="num">$951.89</td>
+      <td class="chg neg">-0.24%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+13.20%</td>
+      <td class="num">+47.20%</td>
+      <td class="num">$932.00</td>
+      <td class="num">$955.56</td>
+      <td class="num">$987.55</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="BABA">
+      <td class="rank">100</td>
+      <td class="ticker"><a href="charts/BABA.png" target="_blank">BABA</a></td>
+      <td class="name">Alibaba Group Holding Limited</td>
+      <td class="num">$122.25</td>
+      <td class="chg pos">+5.10%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+32.50%</td>
+      <td class="num">+48.60%</td>
+      <td class="num">$116.00</td>
+      <td class="num">$122.58</td>
+      <td class="num">$—</td>
+      <td class="kline">bullish_reclaim</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="PLTR">
+      <td class="rank">22</td>
+      <td class="ticker"><a href="charts/PLTR.png" target="_blank">PLTR</a></td>
+      <td class="name">Palantir Technologies Inc.</td>
+      <td class="num">$123.06</td>
+      <td class="chg pos">+0.65%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+40.70%</td>
+      <td class="num">+48.70%</td>
+      <td class="num">$120.00</td>
+      <td class="num">$123.39</td>
+      <td class="num">$138.90</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="MPWR">
+      <td class="rank">60</td>
+      <td class="ticker"><a href="charts/MPWR.png" target="_blank">MPWR</a></td>
+      <td class="name">Monolithic Power Systems, Inc.</td>
+      <td class="num">$1,426.03</td>
+      <td class="chg pos">+8.35%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+16.80%</td>
+      <td class="num">+50.00%</td>
+      <td class="num">$1,360.00</td>
+      <td class="num">$1,568.21</td>
+      <td class="num">$—</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="UNP">
+      <td class="rank">108</td>
+      <td class="ticker"><a href="charts/UNP.png" target="_blank">UNP</a></td>
+      <td class="name">Union Pacific Corporation</td>
+      <td class="num">$292.13</td>
+      <td class="chg pos">+0.92%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+7.60%</td>
+      <td class="num">+50.30%</td>
+      <td class="num">$284.00</td>
+      <td class="num">$293.94</td>
+      <td class="num">$315.99</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="TEL">
+      <td class="rank">185</td>
+      <td class="ticker"><a href="charts/TEL.png" target="_blank">TEL</a></td>
+      <td class="name">TE Connectivity plc</td>
+      <td class="num">$205.69</td>
+      <td class="chg neg">-0.43%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+18.60%</td>
+      <td class="num">+50.90%</td>
+      <td class="num">$200.00</td>
+      <td class="num">$211.40</td>
+      <td class="num">$215.03</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="SMCI">
+      <td class="rank">112</td>
+      <td class="ticker"><a href="charts/SMCI.png" target="_blank">SMCI</a></td>
+      <td class="name">Super Micro Computer, Inc.</td>
+      <td class="num">$28.40</td>
+      <td class="chg pos">+2.42%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+44.70%</td>
+      <td class="num">+51.20%</td>
+      <td class="num">$28.00</td>
+      <td class="num">$29.30</td>
+      <td class="num">$32.59</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="MAR">
+      <td class="rank">187</td>
+      <td class="ticker"><a href="charts/MAR.png" target="_blank">MAR</a></td>
+      <td class="name">Marriott International</td>
+      <td class="num">$372.83</td>
+      <td class="chg neg">-0.71%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+9.30%</td>
+      <td class="num">+53.00%</td>
+      <td class="num">$364.00</td>
+      <td class="num">$377.93</td>
+      <td class="num">$384.23</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="APH">
+      <td class="rank">74</td>
+      <td class="ticker"><a href="charts/APH.png" target="_blank">APH</a></td>
+      <td class="name">Amphenol Corporation</td>
+      <td class="num">$160.70</td>
+      <td class="chg pos">+0.55%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+10.00%</td>
+      <td class="num">+54.10%</td>
+      <td class="num">$156.00</td>
+      <td class="num">$167.23</td>
+      <td class="num">$178.52</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="MCD">
+      <td class="rank">94</td>
+      <td class="ticker"><a href="charts/MCD.png" target="_blank">MCD</a></td>
+      <td class="name">McDonald's Corporation</td>
+      <td class="num">$270.64</td>
+      <td class="chg pos">+0.82%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+20.80%</td>
+      <td class="num">+56.90%</td>
+      <td class="num">$264.00</td>
+      <td class="num">$271.07</td>
+      <td class="num">$278.70</td>
+      <td class="kline">bullish_reclaim</td>
+      <td class="bias">bullish_trying</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="AMT">
+      <td class="rank">162</td>
+      <td class="ticker"><a href="charts/AMT.png" target="_blank">AMT</a></td>
+      <td class="name">American Tower Corporation (REI</td>
+      <td class="num">$173.36</td>
+      <td class="chg neg">-0.63%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+11.60%</td>
+      <td class="num">+57.20%</td>
+      <td class="num">$168.00</td>
+      <td class="num">$174.17</td>
+      <td class="num">$180.37</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="ORLY">
+      <td class="rank">119</td>
+      <td class="ticker"><a href="charts/ORLY.png" target="_blank">ORLY</a></td>
+      <td class="name">O'Reilly Automotive, Inc.</td>
+      <td class="num">$89.35</td>
+      <td class="chg pos">+2.28%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+14.10%</td>
+      <td class="num">+57.90%</td>
+      <td class="num">$88.00</td>
+      <td class="num">$89.55</td>
+      <td class="num">$93.24</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="HWM">
+      <td class="rank">171</td>
+      <td class="ticker"><a href="charts/HWM.png" target="_blank">HWM</a></td>
+      <td class="name">Howmet Aerospace Inc.</td>
+      <td class="num">$282.26</td>
+      <td class="chg pos">+1.80%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+4.40%</td>
+      <td class="num">+58.40%</td>
+      <td class="num">$272.00</td>
+      <td class="num">$285.14</td>
+      <td class="num">$295.28</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="SNPS">
+      <td class="rank">126</td>
+      <td class="ticker"><a href="charts/SNPS.png" target="_blank">SNPS</a></td>
+      <td class="name">Synopsys, Inc.</td>
+      <td class="num">$388.76</td>
+      <td class="chg pos">+4.41%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+27.90%</td>
+      <td class="num">+59.80%</td>
+      <td class="num">$376.00</td>
+      <td class="num">$389.64</td>
+      <td class="num">$402.72</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="PWR">
+      <td class="rank">99</td>
+      <td class="ticker"><a href="charts/PWR.png" target="_blank">PWR</a></td>
+      <td class="name">Quanta Services, Inc.</td>
+      <td class="num">$667.36</td>
+      <td class="chg pos">+1.43%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+15.40%</td>
+      <td class="num">+60.00%</td>
+      <td class="num">$652.00</td>
+      <td class="num">$687.18</td>
+      <td class="num">$742.73</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="WELL">
+      <td class="rank">145</td>
+      <td class="ticker"><a href="charts/WELL.png" target="_blank">WELL</a></td>
+      <td class="name">Welltower Inc.</td>
+      <td class="num">$234.44</td>
+      <td class="chg neg">-0.51%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+8.10%</td>
+      <td class="num">+60.30%</td>
+      <td class="num">$228.00</td>
+      <td class="num">$237.10</td>
+      <td class="num">$255.20</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="SLB">
+      <td class="rank">169</td>
+      <td class="ticker"><a href="charts/SLB.png" target="_blank">SLB</a></td>
+      <td class="name">SLB Limited</td>
+      <td class="num">$49.59</td>
+      <td class="chg pos">+1.39%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+15.70%</td>
+      <td class="num">+60.80%</td>
+      <td class="num">$48.00</td>
+      <td class="num">$49.95</td>
+      <td class="num">$53.20</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="CSX">
+      <td class="rank">149</td>
+      <td class="ticker"><a href="charts/CSX.png" target="_blank">CSX</a></td>
+      <td class="name">CSX Corporation</td>
+      <td class="num">$50.40</td>
+      <td class="chg pos">+0.42%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+6.00%</td>
+      <td class="num">+60.80%</td>
+      <td class="num">$48.00</td>
+      <td class="num">$50.57</td>
+      <td class="num">$53.60</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="JNJ">
+      <td class="rank">46</td>
+      <td class="ticker"><a href="charts/JNJ.png" target="_blank">JNJ</a></td>
+      <td class="name">Johnson & Johnson</td>
+      <td class="num">$256.35</td>
+      <td class="chg pos">+0.21%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+6.70%</td>
+      <td class="num">+60.90%</td>
+      <td class="num">$252.00</td>
+      <td class="num">$258.48</td>
+      <td class="num">$274.90</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="T">
+      <td class="rank">70</td>
+      <td class="ticker"><a href="charts/T.png" target="_blank">T</a></td>
+      <td class="name">AT&T Inc.</td>
+      <td class="num">$23.25</td>
+      <td class="chg pos">+0.17%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+21.00%</td>
+      <td class="num">+61.10%</td>
+      <td class="num">$24.00</td>
+      <td class="num">$23.46</td>
+      <td class="num">$25.32</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="PFE">
+      <td class="rank">111</td>
+      <td class="ticker"><a href="charts/PFE.png" target="_blank">PFE</a></td>
+      <td class="name">Pfizer, Inc.</td>
+      <td class="num">$25.01</td>
+      <td class="chg pos">+0.40%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+13.00%</td>
+      <td class="num">+61.20%</td>
+      <td class="num">$24.00</td>
+      <td class="num">$25.18</td>
+      <td class="num">$25.65</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="TJX">
+      <td class="rank">158</td>
+      <td class="ticker"><a href="charts/TJX.png" target="_blank">TJX</a></td>
+      <td class="name">TJX Companies, Inc. (The)</td>
+      <td class="num">$157.34</td>
+      <td class="chg neg">-1.21%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+7.40%</td>
+      <td class="num">+62.10%</td>
+      <td class="num">$152.00</td>
+      <td class="num">$159.06</td>
+      <td class="num">$163.04</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="F">
+      <td class="rank">114</td>
+      <td class="ticker"><a href="charts/F.png" target="_blank">F</a></td>
+      <td class="name">Ford Motor Company</td>
+      <td class="num">$14.68</td>
+      <td class="chg neg">-1.21%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+17.40%</td>
+      <td class="num">+62.50%</td>
+      <td class="num">$16.00</td>
+      <td class="num">$15.03</td>
+      <td class="num">$16.29</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="NEM">
+      <td class="rank">186</td>
+      <td class="ticker"><a href="charts/NEM.png" target="_blank">NEM</a></td>
+      <td class="name">Newmont Corporation</td>
+      <td class="num">$93.71</td>
+      <td class="chg neg">-2.14%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+30.50%</td>
+      <td class="num">+63.90%</td>
+      <td class="num">$92.00</td>
+      <td class="num">$94.90</td>
+      <td class="num">$96.94</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="SBUX">
+      <td class="rank">88</td>
+      <td class="ticker"><a href="charts/SBUX.png" target="_blank">SBUX</a></td>
+      <td class="name">Starbucks Corporation</td>
+      <td class="num">$105.25</td>
+      <td class="chg neg">-0.57%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+3.60%</td>
+      <td class="num">+64.30%</td>
+      <td class="num">$104.00</td>
+      <td class="num">$108.16</td>
+      <td class="num">$—</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="NFLX">
+      <td class="rank">28</td>
+      <td class="ticker"><a href="charts/NFLX.png" target="_blank">NFLX</a></td>
+      <td class="name">Netflix, Inc.</td>
+      <td class="num">$71.71</td>
+      <td class="chg neg">-2.00%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+38.60%</td>
+      <td class="num">+64.40%</td>
+      <td class="num">$68.00</td>
+      <td class="num">$72.75</td>
+      <td class="num">$73.76</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="PLD">
+      <td class="rank">178</td>
+      <td class="ticker"><a href="charts/PLD.png" target="_blank">PLD</a></td>
+      <td class="name">Prologis, Inc.</td>
+      <td class="num">$144.61</td>
+      <td class="chg neg">-1.08%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+5.70%</td>
+      <td class="num">+65.40%</td>
+      <td class="num">$140.00</td>
+      <td class="num">$146.00</td>
+      <td class="num">$149.16</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="PCAR">
+      <td class="rank">191</td>
+      <td class="ticker"><a href="charts/PCAR.png" target="_blank">PCAR</a></td>
+      <td class="name">PACCAR Inc.</td>
+      <td class="num">$132.68</td>
+      <td class="chg neg">-0.81%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+4.70%</td>
+      <td class="num">+65.90%</td>
+      <td class="num">$124.00</td>
+      <td class="num">$136.21</td>
+      <td class="num">$139.24</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="VRTX">
+      <td class="rank">174</td>
+      <td class="ticker"><a href="charts/VRTX.png" target="_blank">VRTX</a></td>
+      <td class="name">Vertex Pharmaceuticals Incorpor</td>
+      <td class="num">$477.10</td>
+      <td class="chg neg">-0.95%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+10.60%</td>
+      <td class="num">+66.70%</td>
+      <td class="num">$464.00</td>
+      <td class="num">$480.67</td>
+      <td class="num">$493.61</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="CEG">
+      <td class="rank">164</td>
+      <td class="ticker"><a href="charts/CEG.png" target="_blank">CEG</a></td>
+      <td class="name">Constellation Energy Corporatio</td>
+      <td class="num">$262.75</td>
+      <td class="chg neg">-0.31%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+35.30%</td>
+      <td class="num">+66.90%</td>
+      <td class="num">$256.00</td>
+      <td class="num">$269.86</td>
+      <td class="num">$279.60</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="IBM">
+      <td class="rank">45</td>
+      <td class="ticker"><a href="charts/IBM.png" target="_blank">IBM</a></td>
+      <td class="name">International Business Machines</td>
+      <td class="num">$223.65</td>
+      <td class="chg pos">+0.86%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+32.70%</td>
+      <td class="num">+68.10%</td>
+      <td class="num">$216.00</td>
+      <td class="num">$224.76</td>
+      <td class="num">$230.97</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="FTNT">
+      <td class="rank">93</td>
+      <td class="ticker"><a href="charts/FTNT.png" target="_blank">FTNT</a></td>
+      <td class="name">Fortinet, Inc.</td>
+      <td class="num">$161.95</td>
+      <td class="chg pos">+4.99%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+4.90%</td>
+      <td class="num">+68.10%</td>
+      <td class="num">$156.00</td>
+      <td class="num">$162.57</td>
+      <td class="num">$170.35</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="ABBV">
+      <td class="rank">62</td>
+      <td class="ticker"><a href="charts/ABBV.png" target="_blank">ABBV</a></td>
+      <td class="name">AbbVie Inc.</td>
+      <td class="num">$250.94</td>
+      <td class="chg neg">-2.51%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+6.20%</td>
+      <td class="num">+68.30%</td>
+      <td class="num">$244.00</td>
+      <td class="num">$255.52</td>
+      <td class="num">$267.47</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="HPE">
+      <td class="rank">151</td>
+      <td class="ticker"><a href="charts/HPE.png" target="_blank">HPE</a></td>
+      <td class="name">Hewlett Packard Enterprise Comp</td>
+      <td class="num">$47.90</td>
+      <td class="chg pos">+1.61%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+25.40%</td>
+      <td class="num">+69.30%</td>
+      <td class="num">$44.00</td>
+      <td class="num">$49.89</td>
+      <td class="num">$51.08</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="KO">
+      <td class="rank">55</td>
+      <td class="ticker"><a href="charts/KO.png" target="_blank">KO</a></td>
+      <td class="name">Coca-Cola Company (The)</td>
+      <td class="num">$87.59</td>
+      <td class="chg neg">-1.02%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+3.70%</td>
+      <td class="num">+69.50%</td>
+      <td class="num">$84.00</td>
+      <td class="num">$88.00</td>
+      <td class="num">$90.92</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="MMM">
+      <td class="rank">163</td>
+      <td class="ticker"><a href="charts/MMM.png" target="_blank">MMM</a></td>
+      <td class="name">3M Company</td>
+      <td class="num">$176.28</td>
+      <td class="chg pos">+0.12%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+4.70%</td>
+      <td class="num">+70.20%</td>
+      <td class="num">$168.00</td>
+      <td class="num">$177.14</td>
+      <td class="num">$184.90</td>
+      <td class="kline">bearish_rejection</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="FCX">
+      <td class="rank">130</td>
+      <td class="ticker"><a href="charts/FCX.png" target="_blank">FCX</a></td>
+      <td class="name">Freeport-McMoRan, Inc.</td>
+      <td class="num">$62.63</td>
+      <td class="chg neg">-1.28%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+13.40%</td>
+      <td class="num">+70.30%</td>
+      <td class="num">$60.00</td>
+      <td class="num">$63.65</td>
+      <td class="num">$65.43</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="HON">
+      <td class="rank">147</td>
+      <td class="ticker"><a href="charts/HON.png" target="_blank">HON</a></td>
+      <td class="name">Honeywell International Inc.</td>
+      <td class="num">$243.05</td>
+      <td class="chg pos">+0.47%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+6.60%</td>
+      <td class="num">+72.00%</td>
+      <td class="num">$236.00</td>
+      <td class="num">$246.00</td>
+      <td class="num">$252.00</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="GD">
+      <td class="rank">189</td>
+      <td class="ticker"><a href="charts/GD.png" target="_blank">GD</a></td>
+      <td class="name">General Dynamics Corporation</td>
+      <td class="num">$383.42</td>
+      <td class="chg pos">+0.32%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+4.10%</td>
+      <td class="num">+72.00%</td>
+      <td class="num">$372.00</td>
+      <td class="num">$384.67</td>
+      <td class="num">$400.00</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="HCA">
+      <td class="rank">159</td>
+      <td class="ticker"><a href="charts/HCA.png" target="_blank">HCA</a></td>
+      <td class="name">HCA Healthcare, Inc.</td>
+      <td class="num">$402.59</td>
+      <td class="chg pos">+1.72%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+27.70%</td>
+      <td class="num">+72.20%</td>
+      <td class="num">$392.00</td>
+      <td class="num">$404.52</td>
+      <td class="num">$421.31</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="JPM">
+      <td class="rank">39</td>
+      <td class="ticker"><a href="charts/JPM.png" target="_blank">JPM</a></td>
+      <td class="name">JP Morgan Chase & Co.</td>
+      <td class="num">$351.79</td>
+      <td class="chg pos">+0.27%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+2.10%</td>
+      <td class="num">+72.50%</td>
+      <td class="num">$344.00</td>
+      <td class="num">$354.47</td>
+      <td class="num">$359.30</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="ETN">
+      <td class="rank">79</td>
+      <td class="ticker"><a href="charts/ETN.png" target="_blank">ETN</a></td>
+      <td class="name">Eaton Corporation, PLC</td>
+      <td class="num">$415.20</td>
+      <td class="chg pos">+7.32%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+4.90%</td>
+      <td class="num">+72.60%</td>
+      <td class="num">$404.00</td>
+      <td class="num">$420.00</td>
+      <td class="num">$436.74</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="VZ">
+      <td class="rank">78</td>
+      <td class="ticker"><a href="charts/VZ.png" target="_blank">VZ</a></td>
+      <td class="name">Verizon Communications Inc.</td>
+      <td class="num">$46.81</td>
+      <td class="chg pos">+1.52%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+9.40%</td>
+      <td class="num">+73.30%</td>
+      <td class="num">$44.00</td>
+      <td class="num">$46.91</td>
+      <td class="num">$49.01</td>
+      <td class="kline">bullish_reclaim</td>
+      <td class="bias">bullish_trying</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="TTWO">
+      <td class="rank">200</td>
+      <td class="ticker"><a href="charts/TTWO.png" target="_blank">TTWO</a></td>
+      <td class="name">Take-Two Interactive Software, </td>
+      <td class="num">$242.92</td>
+      <td class="chg neg">-1.82%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+8.70%</td>
+      <td class="num">+74.10%</td>
+      <td class="num">$236.00</td>
+      <td class="num">$247.08</td>
+      <td class="num">$250.93</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="CMCSA">
+      <td class="rank">139</td>
+      <td class="ticker"><a href="charts/CMCSA.png" target="_blank">CMCSA</a></td>
+      <td class="name">Comcast Corporation</td>
+      <td class="num">$23.96</td>
+      <td class="chg pos">+1.23%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+27.10%</td>
+      <td class="num">+74.40%</td>
+      <td class="num">$24.00</td>
+      <td class="num">$24.15</td>
+      <td class="num">$24.88</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="TRV">
+      <td class="rank">129</td>
+      <td class="ticker"><a href="charts/TRV.png" target="_blank">TRV</a></td>
+      <td class="name">The Travelers Companies, Inc.</td>
+      <td class="num">$374.36</td>
+      <td class="chg neg">-0.43%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+6.10%</td>
+      <td class="num">+74.90%</td>
+      <td class="num">$364.00</td>
+      <td class="num">$379.58</td>
+      <td class="num">$398.70</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="GE">
+      <td class="rank">91</td>
+      <td class="ticker"><a href="charts/GE.png" target="_blank">GE</a></td>
+      <td class="name">GE Aerospace</td>
+      <td class="num">$360.07</td>
+      <td class="chg pos">+1.42%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+6.00%</td>
+      <td class="num">+75.00%</td>
+      <td class="num">$352.00</td>
+      <td class="num">$362.42</td>
+      <td class="num">$366.77</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="INTU">
+      <td class="rank">73</td>
+      <td class="ticker"><a href="charts/INTU.png" target="_blank">INTU</a></td>
+      <td class="name">Intuit Inc.</td>
+      <td class="num">$316.07</td>
+      <td class="chg pos">+0.18%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+53.70%</td>
+      <td class="num">+75.20%</td>
+      <td class="num">$304.00</td>
+      <td class="num">$317.53</td>
+      <td class="num">$336.94</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="CSCO">
+      <td class="rank">40</td>
+      <td class="ticker"><a href="charts/CSCO.png" target="_blank">CSCO</a></td>
+      <td class="name">Cisco Systems, Inc.</td>
+      <td class="num">$115.99</td>
+      <td class="chg pos">+2.14%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+11.00%</td>
+      <td class="num">+76.00%</td>
+      <td class="num">$112.00</td>
+      <td class="num">$117.25</td>
+      <td class="num">$—</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="ADSK">
+      <td class="rank">181</td>
+      <td class="ticker"><a href="charts/ADSK.png" target="_blank">ADSK</a></td>
+      <td class="name">Autodesk, Inc.</td>
+      <td class="num">$234.20</td>
+      <td class="chg neg">-0.33%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+26.80%</td>
+      <td class="num">+76.50%</td>
+      <td class="num">$212.00</td>
+      <td class="num">$235.07</td>
+      <td class="num">$249.14</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="MRK">
+      <td class="rank">110</td>
+      <td class="ticker"><a href="charts/MRK.png" target="_blank">MRK</a></td>
+      <td class="name">Merck & Company, Inc.</td>
+      <td class="num">$130.20</td>
+      <td class="chg pos">+0.32%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+3.60%</td>
+      <td class="num">+79.00%</td>
+      <td class="num">$128.00</td>
+      <td class="num">$131.04</td>
+      <td class="num">$135.05</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="ADBE">
+      <td class="rank">58</td>
+      <td class="ticker"><a href="charts/ADBE.png" target="_blank">ADBE</a></td>
+      <td class="name">Adobe Inc.</td>
+      <td class="num">$250.41</td>
+      <td class="chg pos">+1.01%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+31.10%</td>
+      <td class="num">+79.20%</td>
+      <td class="num">$224.00</td>
+      <td class="num">$250.71</td>
+      <td class="num">$266.28</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="AMGN">
+      <td class="rank">104</td>
+      <td class="ticker"><a href="charts/AMGN.png" target="_blank">AMGN</a></td>
+      <td class="name">Amgen Inc.</td>
+      <td class="num">$385.16</td>
+      <td class="chg neg">-0.64%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+3.20%</td>
+      <td class="num">+79.90%</td>
+      <td class="num">$364.00</td>
+      <td class="num">$386.82</td>
+      <td class="num">$398.00</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="XOM">
+      <td class="rank">44</td>
+      <td class="ticker"><a href="charts/XOM.png" target="_blank">XOM</a></td>
+      <td class="name">ExxonMobil Holdings Corporation</td>
+      <td class="num">$155.44</td>
+      <td class="chg neg">-0.97%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+11.90%</td>
+      <td class="num">+81.00%</td>
+      <td class="num">$152.00</td>
+      <td class="num">$156.16</td>
+      <td class="num">$159.07</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="GM">
+      <td class="rank">153</td>
+      <td class="ticker"><a href="charts/GM.png" target="_blank">GM</a></td>
+      <td class="name">General Motors Company</td>
+      <td class="num">$88.86</td>
+      <td class="chg pos">+0.52%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+3.30%</td>
+      <td class="num">+81.10%</td>
+      <td class="num">$88.00</td>
+      <td class="num">$89.11</td>
+      <td class="num">$91.85</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="UBER">
+      <td class="rank">98</td>
+      <td class="ticker"><a href="charts/UBER.png" target="_blank">UBER</a></td>
+      <td class="name">Uber Technologies, Inc.</td>
+      <td class="num">$70.36</td>
+      <td class="chg neg">-0.01%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+29.90%</td>
+      <td class="num">+81.60%</td>
+      <td class="num">$68.00</td>
+      <td class="num">$70.50</td>
+      <td class="num">$71.79</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="ACN">
+      <td class="rank">66</td>
+      <td class="ticker"><a href="charts/ACN.png" target="_blank">ACN</a></td>
+      <td class="name">Accenture plc</td>
+      <td class="num">$165.92</td>
+      <td class="chg pos">+1.61%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+43.00%</td>
+      <td class="num">+82.00%</td>
+      <td class="num">$160.00</td>
+      <td class="num">$166.94</td>
+      <td class="num">$176.40</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="WDAY">
+      <td class="rank">116</td>
+      <td class="ticker"><a href="charts/WDAY.png" target="_blank">WDAY</a></td>
+      <td class="name">Workday, Inc.</td>
+      <td class="num">$160.34</td>
+      <td class="chg pos">+1.41%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+32.30%</td>
+      <td class="num">+83.20%</td>
+      <td class="num">$140.00</td>
+      <td class="num">$160.89</td>
+      <td class="num">$170.40</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="ICE">
+      <td class="rank">128</td>
+      <td class="ticker"><a href="charts/ICE.png" target="_blank">ICE</a></td>
+      <td class="name">Intercontinental Exchange Inc.</td>
+      <td class="num">$152.48</td>
+      <td class="chg neg">-2.43%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+13.40%</td>
+      <td class="num">+83.50%</td>
+      <td class="num">$144.00</td>
+      <td class="num">$155.69</td>
+      <td class="num">$158.55</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="V">
+      <td class="rank">26</td>
+      <td class="ticker"><a href="charts/V.png" target="_blank">V</a></td>
+      <td class="name">Visa Inc.</td>
+      <td class="num">$366.13</td>
+      <td class="chg neg">-0.04%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+2.10%</td>
+      <td class="num">+83.70%</td>
+      <td class="num">$356.00</td>
+      <td class="num">$366.88</td>
+      <td class="num">$373.97</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="JCI">
+      <td class="rank">175</td>
+      <td class="ticker"><a href="charts/JCI.png" target="_blank">JCI</a></td>
+      <td class="name">Johnson Controls International </td>
+      <td class="num">$146.66</td>
+      <td class="chg pos">+1.93%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+3.00%</td>
+      <td class="num">+84.70%</td>
+      <td class="num">$140.00</td>
+      <td class="num">$147.86</td>
+      <td class="num">$—</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="RTX">
+      <td class="rank">77</td>
+      <td class="ticker"><a href="charts/RTX.png" target="_blank">RTX</a></td>
+      <td class="name">RTX Corporation</td>
+      <td class="num">$215.22</td>
+      <td class="chg pos">+0.39%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+2.80%</td>
+      <td class="num">+84.80%</td>
+      <td class="num">$208.00</td>
+      <td class="num">$215.82</td>
+      <td class="num">$221.34</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="CRM">
+      <td class="rank">35</td>
+      <td class="ticker"><a href="charts/CRM.png" target="_blank">CRM</a></td>
+      <td class="name">Salesforce, Inc.</td>
+      <td class="num">$184.02</td>
+      <td class="chg pos">+1.83%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+31.60%</td>
+      <td class="num">+86.00%</td>
+      <td class="num">$176.00</td>
+      <td class="num">$184.45</td>
+      <td class="num">$190.18</td>
+      <td class="kline">bullish_reclaim</td>
+      <td class="bias">bullish_trying</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="BSX">
+      <td class="rank">83</td>
+      <td class="ticker"><a href="charts/BSX.png" target="_blank">BSX</a></td>
+      <td class="name">Boston Scientific Corporation</td>
+      <td class="num">$46.73</td>
+      <td class="chg pos">+1.59%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+55.80%</td>
+      <td class="num">+86.40%</td>
+      <td class="num">$44.00</td>
+      <td class="num">$46.80</td>
+      <td class="num">$47.16</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="COP">
+      <td class="rank">156</td>
+      <td class="ticker"><a href="charts/COP.png" target="_blank">COP</a></td>
+      <td class="name">ConocoPhillips</td>
+      <td class="num">$120.48</td>
+      <td class="chg pos">+1.22%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+11.30%</td>
+      <td class="num">+86.80%</td>
+      <td class="num">$116.00</td>
+      <td class="num">$120.84</td>
+      <td class="num">$122.38</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="DAL">
+      <td class="rank">197</td>
+      <td class="ticker"><a href="charts/DAL.png" target="_blank">DAL</a></td>
+      <td class="name">Delta Air Lines, Inc.</td>
+      <td class="num">$87.44</td>
+      <td class="chg neg">-1.30%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+8.60%</td>
+      <td class="num">+87.30%</td>
+      <td class="num">$84.00</td>
+      <td class="num">$88.58</td>
+      <td class="num">$89.69</td>
+      <td class="kline">bearish_pullback</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="LMT">
+      <td class="rank">150</td>
+      <td class="ticker"><a href="charts/LMT.png" target="_blank">LMT</a></td>
+      <td class="name">Lockheed Martin Corporation</td>
+      <td class="num">$582.74</td>
+      <td class="chg pos">+1.50%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+15.80%</td>
+      <td class="num">+89.70%</td>
+      <td class="num">$528.00</td>
+      <td class="num">$583.89</td>
+      <td class="num">$593.77</td>
+      <td class="kline">bullish_reclaim</td>
+      <td class="bias">bullish_trying</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="CTSH">
+      <td class="rank">180</td>
+      <td class="ticker"><a href="charts/CTSH.png" target="_blank">CTSH</a></td>
+      <td class="name">Cognizant Technology Solutions </td>
+      <td class="num">$55.35</td>
+      <td class="chg pos">+2.69%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+36.40%</td>
+      <td class="num">+91.40%</td>
+      <td class="num">$44.00</td>
+      <td class="num">$55.53</td>
+      <td class="num">$57.06</td>
+      <td class="kline">bullish_reclaim</td>
+      <td class="bias">bullish_trying</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="GOOGL">
+      <td class="rank">11</td>
+      <td class="ticker"><a href="charts/GOOGL.png" target="_blank">GOOGL</a></td>
+      <td class="name">Alphabet Inc.</td>
+      <td class="num">$356.13</td>
+      <td class="chg pos">+6.73%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+12.80%</td>
+      <td class="num">+92.90%</td>
+      <td class="num">$340.00</td>
+      <td class="num">$358.58</td>
+      <td class="num">$—</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="PDD">
+      <td class="rank">193</td>
+      <td class="ticker"><a href="charts/PDD.png" target="_blank">PDD</a></td>
+      <td class="name">PDD Holdings Inc.</td>
+      <td class="num">$88.56</td>
+      <td class="chg pos">+1.28%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+36.30%</td>
+      <td class="num">+93.50%</td>
+      <td class="num">$84.00</td>
+      <td class="num">$88.67</td>
+      <td class="num">$89.71</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="GOOG">
+      <td class="rank">13</td>
+      <td class="ticker"><a href="charts/GOOG.png" target="_blank">GOOG</a></td>
+      <td class="name">Alphabet Inc.</td>
+      <td class="num">$356.65</td>
+      <td class="chg pos">+6.88%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+11.80%</td>
+      <td class="num">+93.60%</td>
+      <td class="num">$348.00</td>
+      <td class="num">$358.88</td>
+      <td class="num">$—</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="WBD">
+      <td class="rank">179</td>
+      <td class="ticker"><a href="charts/WBD.png" target="_blank">WBD</a></td>
+      <td class="name">Warner Bros. Discovery, Inc. - </td>
+      <td class="num">$26.30</td>
+      <td class="chg pos">+3.26%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+12.30%</td>
+      <td class="num">+93.90%</td>
+      <td class="num">$24.00</td>
+      <td class="num">$26.45</td>
+      <td class="num">$—</td>
+      <td class="kline">bullish_reclaim</td>
+      <td class="bias">bullish_trying</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="CME">
+      <td class="rank">176</td>
+      <td class="ticker"><a href="charts/CME.png" target="_blank">CME</a></td>
+      <td class="name">CME Group Inc.</td>
+      <td class="num">$267.79</td>
+      <td class="chg pos">+0.21%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+18.60%</td>
+      <td class="num">+95.80%</td>
+      <td class="num">$244.00</td>
+      <td class="num">$269.94</td>
+      <td class="num">$—</td>
+      <td class="kline">neutral</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="CVX">
+      <td class="rank">71</td>
+      <td class="ticker"><a href="charts/CVX.png" target="_blank">CVX</a></td>
+      <td class="name">Chevron Corporation</td>
+      <td class="num">$196.83</td>
+      <td class="chg pos">+2.35%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+8.30%</td>
+      <td class="num">+97.80%</td>
+      <td class="num">$192.00</td>
+      <td class="num">$197.55</td>
+      <td class="num">$—</td>
+      <td class="kline">bullish_hold</td>
+      <td class="bias">neutral</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="MSFT">
+      <td class="rank">4</td>
+      <td class="ticker"><a href="charts/MSFT.png" target="_blank">MSFT</a></td>
+      <td class="name">Microsoft Corporation</td>
+      <td class="num">$464.72</td>
+      <td class="chg pos">+3.02%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+16.10%</td>
+      <td class="num">+98.20%</td>
+      <td class="num">$388.00</td>
+      <td class="num">$466.84</td>
+      <td class="num">$—</td>
+      <td class="kline">bullish_reclaim</td>
+      <td class="bias">bullish_trying</td>
+    </tr>
+    <tr data-phase="downtrend_active" data-ticker="REGN">
+      <td class="rank">160</td>
+      <td class="ticker"><a href="charts/REGN.png" target="_blank">REGN</a></td>
+      <td class="name">Regeneron Pharmaceuticals, Inc.</td>
+      <td class="num">$762.63</td>
+      <td class="chg pos">+3.29%</td>
+      <td class="phase phase-downtrend_active">🔴 Downtrend</td>
+      <td class="num">+7.10%</td>
+      <td class="num">+98.80%</td>
+      <td class="num">$668.00</td>
+      <td class="num">$764.75</td>
+      <td class="num">$—</td>
+      <td class="kline">bullish_reclaim</td>
+      <td class="bias">bullish_trying</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="disclaimer">
+    <strong>⚠️ Disclaimer:</strong> All content is for informational and educational purposes only. Not investment advice.
+    The 10-step price action framework (phase → S/R ladder → bias → scenarios) is technical analysis, not financial recommendation.
+    Click any ticker to view the full candlestick chart with S/R levels.
+  </div>
+
+  <footer>
+    <a href="/">← win9you.com home</a> • <a href="/hk200/">📊 HK200 S/R</a> • <a href="/dashboard">Dashboard</a><br>
+    Generated by Mavis daily-sr-chart skill • <a href="https://github.com/kenkenlui-ctrl/Trading">Source</a>
+  </footer>
+</div>
+
+<script>
+  function filterTable() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const phase = document.getElementById('phaseFilter').value;
+    const rows = document.querySelectorAll('#dataTable tbody tr');
+    let visible = 0;
+    rows.forEach(row => {
+      const ticker = row.cells[1].textContent.toLowerCase();
+      const name = row.cells[2].textContent.toLowerCase();
+      const rowPhase = row.getAttribute('data-phase');
+      const matchSearch = !search || ticker.includes(search) || name.includes(search);
+      const matchPhase = !phase || rowPhase === phase;
+      const show = matchSearch && matchPhase;
+      row.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    document.querySelector('.filter-bar label:last-child').textContent = visible + ' of 200 stocks';
+  }
+
+  function sortTable(n) {
+    const table = document.getElementById('dataTable');
+    const rows = Array.from(table.tbody.querySelectorAll('tr'));
+    const dir = table.getAttribute('data-sort-' + n) === 'asc' ? 'desc' : 'asc';
+    table.setAttribute('data-sort-' + n, dir);
+    rows.sort((a, b) => {
+      const av = a.cells[n].textContent.trim();
+      const bv = b.cells[n].textContent.trim();
+      const an = parseFloat(av.replace(/[+%,\s$]/g, ''));
+      const bn = parseFloat(bv.replace(/[+%,\s$]/g, ''));
+      const isNum = !isNaN(an) && !isNaN(bn);
+      if (isNum) return dir === 'asc' ? an - bn : bn - an;
+      return dir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+    });
+    rows.forEach(r => table.tbody.appendChild(r));
+  }
+</script>
+</body>
+</html>
