@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pair Trade Screen — 2026-08-02</title>
+<title>Pair Trade Screen v2 — 2026-08-02</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d0f12; color: #e0e3e8; padding: 20px; line-height: 1.5; }
@@ -17,6 +17,11 @@
   nav.site-nav a { color:#8a929b;text-decoration:none;margin-right:14px; }
   nav.site-nav a.active { color:#64b5f6;font-weight:600; }
 
+  .stat-row { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .stat { background: #161a1f; padding: 12px 16px; border-radius: 8px; border: 1px solid #1f2429; flex: 1; min-width: 160px; }
+  .stat .label { color: #8a929b; font-size: 0.8em; text-transform: uppercase; }
+  .stat .value { color: #e0e3e8; font-size: 1.5em; font-weight: 600; }
+
   .top-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
   .top-card { background: #161a1f; padding: 16px; border-radius: 8px; border: 1px solid #1f2429; }
   .top-card .rank { font-size: 0.85em; color: #8a929b; margin-bottom: 8px; }
@@ -24,6 +29,9 @@
   .top-card .pair .short-side { color: #f87171; font-size: 1.05em; }
   .top-card .pair .vs { color: #8a929b; font-size: 0.85em; margin: 4px 0; }
   .top-card .pair .sector { color: #b0b8c0; font-size: 0.85em; margin-top: 8px; }
+  .top-card .pair .metrics { display: flex; gap: 10px; margin-top: 10px; font-size: 0.85em; flex-wrap: wrap; }
+  .top-card .pair .metrics span { color: #8a929b; }
+  .top-card .pair .metrics b { color: #e0e3e8; }
   .top-card .market { color: #8a929b; font-size: 0.7em; margin-left: 4px; }
 
   .filter-bar { background: #161a1f; padding: 12px; border-radius: 8px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
@@ -33,10 +41,10 @@
 
   table { width: 100%; border-collapse: collapse; background: #161a1f; border-radius: 8px; overflow: hidden; font-size: 0.85em; }
   thead { background: #1f2429; }
-  th { padding: 8px; text-align: left; font-size: 0.85em; color: #8a929b; text-transform: uppercase; }
+  th { padding: 8px; text-align: left; font-size: 0.8em; color: #8a929b; text-transform: uppercase; }
   td { padding: 6px 8px; border-top: 1px solid #1f2429; }
   tr:hover { background: #1a1f25; }
-  .sector { color: #b0b8c0; }
+  .sector { color: #b0b8c0; font-size: 0.85em; }
   .ticker.long { color: #4ade80; font-weight: 500; }
   .ticker.short { color: #f87171; font-weight: 500; }
   .ticker .mkt { color: #8a929b; font-size: 0.7em; margin-left: 4px; }
@@ -48,10 +56,18 @@
   .chg.pos { color: #4ade80; }
   .chg.neg { color: #f87171; }
   .num { text-align: right; font-variant-numeric: tabular-nums; }
-  .div { font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
-  .div.pos { color: #4ade80; }
-  .div.neg { color: #f87171; }
-  .arrow { text-align: center; color: #8a929b; }
+  .score { font-weight: 600; color: #64b5f6; }
+  .corr.strong { color: #4ade80; font-weight: 600; }
+  .corr.medium { color: #fbbf24; }
+  .corr.weak { color: #8a929b; }
+  .coint { font-weight: 500; }
+  .beta, .ls { font-family: monospace; }
+
+  .glossary { background: #1f2429; padding: 16px; border-radius: 8px; margin-top: 20px; font-size: 0.85em; color: #b0b8c0; }
+  .glossary h3 { color: #e0e3e8; font-size: 1em; margin-bottom: 8px; }
+  .glossary dl { display: grid; grid-template-columns: 120px 1fr; gap: 8px 16px; }
+  .glossary dt { color: #64b5f6; font-weight: 600; }
+  .glossary dd { color: #b0b8c0; }
 
   footer { margin-top: 30px; text-align: center; color: #8a929b; font-size: 0.85em; padding: 20px; }
   footer a { color: #64b5f6; text-decoration: none; }
@@ -61,47 +77,83 @@
 <body>
 <div class="container">
   <header>
-    <h1>⚖️ Pair Trade Screen</h1>
+    <h1>⚖️ Pair Trade Screen v2</h1>
     <div class="meta">
-      Generated 2026-08-02 02:26 HKT • Source: yfinance 5d return • 140 pairs across HK+US 400 universe
+      Generated 2026-08-02 10:32 HKT • Enhanced with 20d correlation + ADF cointegration test + vol-based L/S ratio • 125 pairs
     </div>
     <div class="chips">
-      <span class="chip">AI/Tech: 9</span> <span class="chip">Other: 9</span> <span class="chip">Pharma/Biotech: 9</span> <span class="chip">Energy/Oil: 9</span> <span class="chip">Semiconductor: 9</span> <span class="chip">Consumer/Retail: 9</span> <span class="chip">Bank: 9</span> <span class="chip">Real Estate: 9</span> <span class="chip">Industrial: 9</span> <span class="chip">Healthcare/Medtech: 9</span> <span class="chip">Insurance: 9</span> <span class="chip">Internet/Software: 8</span>
+      <span class="chip">Other: 9</span> <span class="chip">Utility: 9</span> <span class="chip">Crypto / Fintech: 9</span> <span class="chip">Internet / Software: 9</span> <span class="chip">Gold / Precious Metals: 9</span> <span class="chip">Industrial / Defense: 9</span> <span class="chip">AI Infrastructure: 9</span> <span class="chip">Insurance: 9</span> <span class="chip">Pharma / Biotech: 9</span> <span class="chip">Semiconductor: 6</span> <span class="chip">Consumer / Retail: 6</span> <span class="chip">Media / Entertainment: 6</span>
     </div>
     <nav class="site-nav">
       <a href="/">Home</a> • <a href="/dashboard/">Dashboard</a> • <a href="/hk200/">📊 HK200 S/R</a> • <a href="/us200/">🇺🇸 US200 S/R</a> • <a href="/pair-trades/" class="active">⚖️ Pair Trades</a> • <a href="/methodology.html">Methodology</a>
     </nav>
   </header>
 
-  <h2 style="font-size:1.1em;margin:20px 0 12px;color:#e0e3e8;">Top 3 pairs (highest 5d divergence)</h2>
+  <div class="stat-row">
+    <div class="stat"><div class="label">Total pairs</div><div class="value">125</div></div>
+    <div class="stat"><div class="label">Cross-market</div><div class="value">51</div></div>
+    <div class="stat"><div class="label">Cointegrated (p&lt;0.05)</div><div class="value" style="color:#4ade80;">13</div></div>
+    <div class="stat"><div class="label">Strong |corr| &gt; 0.7</div><div class="value" style="color:#4ade80;">28</div></div>
+  </div>
+
+  <h2 style="font-size:1.1em;margin:20px 0 12px;color:#e0e3e8;">Top 3 (highest composite score)</h2>
   <div class="top-cards">
     <div class="top-card">
-      <div class="rank">#1</div>
+      <div class="rank">#1 · score 73.3</div>
       <div class="pair">
-        <div class="long-side">↑ LONG <strong>REGN</strong> <span class="market">US</span></div>
+        <div class="long-side">↑ LONG <strong>02706.HK</strong> <span class="market">HK</span></div>
         <div class="vs">vs</div>
-        <div class="short-side">↓ SHORT <strong>ALNY</strong> <span class="market">US</span></div>
-        <div class="sector">AI/Tech · div +40.6%</div>
+        <div class="short-side">↓ SHORT <strong>02718.HK</strong> <span class="market">HK</span></div>
+        <div class="sector">Other</div>
+        <div class="metrics">
+          <span>corr <b>+0.74</b></span>
+          <span>coint 🟡 <b>+0.10</b></span>
+          <span>β <b>+0.21</b></span>
+          <span>L/S <b>+9.95</b></span>
+        </div>
       </div>
     </div>
     <div class="top-card">
-      <div class="rank">#2</div>
+      <div class="rank">#2 · score 61.37</div>
       <div class="pair">
-        <div class="long-side">↑ LONG <strong>AMZN</strong> <span class="market">US</span></div>
+        <div class="long-side">↑ LONG <strong>02706.HK</strong> <span class="market">HK</span></div>
         <div class="vs">vs</div>
-        <div class="short-side">↓ SHORT <strong>VRT</strong> <span class="market">US</span></div>
-        <div class="sector">Other · div +33.8%</div>
+        <div class="short-side">↓ SHORT <strong>AAPL</strong> <span class="market">US</span></div>
+        <div class="sector">Other</div>
+        <div class="metrics">
+          <span>corr <b>-0.80</b></span>
+          <span>coint 🟡 <b>+0.16</b></span>
+          <span>β <b>-0.68</b></span>
+          <span>L/S <b>+12.91</b></span>
+        </div>
       </div>
     </div>
     <div class="top-card">
-      <div class="rank">#3</div>
+      <div class="rank">#3 · score 59.51</div>
       <div class="pair">
-        <div class="long-side">↑ LONG <strong>SNOW</strong> <span class="market">US</span></div>
+        <div class="long-side">↑ LONG <strong>01196.HK</strong> <span class="market">HK</span></div>
         <div class="vs">vs</div>
-        <div class="short-side">↓ SHORT <strong>ALNY</strong> <span class="market">US</span></div>
-        <div class="sector">AI/Tech · div +33.8%</div>
+        <div class="short-side">↓ SHORT <strong>02718.HK</strong> <span class="market">HK</span></div>
+        <div class="sector">Other</div>
+        <div class="metrics">
+          <span>corr <b>+0.61</b></span>
+          <span>coint 🟢 <b>+0.05</b></span>
+          <span>β <b>+0.01</b></span>
+          <span>L/S <b>+143.47</b></span>
+        </div>
       </div>
     </div></div>
+
+  <div class="glossary">
+    <h3>📖 Metrics</h3>
+    <dl>
+      <dt>Score</dt><dd>Composite: |corr|×10 + (1-coint_p)×10 + phase_bonus + |1d_div|/2 (higher = better)</dd>
+      <dt>Corr (20d)</dt><dd>Pearson correlation over last 20 trading days. |corr|&gt;0.7 = strong, 0.4-0.7 = medium, &lt;0.4 = weak. Negative = inverse (also tradeable).</dd>
+      <dt>Coint (p)</dt><dd>Engle-Granger cointegration p-value. &lt;0.05 = statistically mean-reverting pair (🟢), &lt;0.20 = weak (🟡), &gt;0.20 = no cointegration (⚪).</dd>
+      <dt>β (beta)</dt><dd>OLS hedge ratio. For dollar-neutral pair: short_dollars/long_dollars = β. β&gt;0 = same direction, β&lt;0 = inverse.</dd>
+      <dt>L/S ratio</dt><dd>Volatility-adjusted long/short ratio. For $1 long, short $L/S in the other leg. = vol_long / (vol_short × |β|). Higher = more short exposure needed.</dd>
+    </dl>
+  </div>
 
   <div class="filter-bar">
     <label>Filter:</label>
@@ -113,9 +165,11 @@
       <option value="US-US">US internal</option>
       <option value="HK-HK">HK internal</option>
     </select>
-    <label>Min |5d div|:</label>
-    <input type="number" id="minDiv" value="0" step="1" onchange="filterTable()" style="width:80px;">
-    <label style="margin-left:auto;color:#8a929b;">140 pairs</label>
+    <label>Min |corr|:</label>
+    <input type="number" id="minCorr" value="0" step="0.1" onchange="filterTable()" style="width:70px;">
+    <label>Max coint p:</label>
+    <input type="number" id="maxCoint" value="1" step="0.05" onchange="filterTable()" style="width:70px;">
+    <label style="margin-left:auto;color:#8a929b;">125 pairs</label>
   </div>
 
   <table id="dataTable">
@@ -123,1994 +177,1912 @@
       <tr>
         <th>Score</th>
         <th>Sector</th>
-        <th colspan="4" style="text-align:center;background:#1a3a1a;color:#4ade80;">↑ LONG</th>
+        <th colspan="3" style="text-align:center;background:#1a3a1a;color:#4ade80;">↑ LONG</th>
         <th></th>
-        <th colspan="4" style="text-align:center;background:#3a1a1a;color:#f87171;">↓ SHORT</th>
-        <th>5d Div</th>
+        <th colspan="3" style="text-align:center;background:#3a1a1a;color:#f87171;">↓ SHORT</th>
+        <th>Corr(20d)</th>
+        <th>Coint(p)</th>
+        <th>β</th>
+        <th>L/S</th>
       </tr>
       <tr>
         <th></th>
         <th></th>
-        <th>Ticker</th><th>Phase</th><th>1d%</th><th>5d%</th>
+        <th>Ticker</th><th>Phase</th><th>1d%</th>
         <th></th>
-        <th>Ticker</th><th>Phase</th><th>1d%</th><th>5d%</th>
-        <th></th>
+        <th>Ticker</th><th>Phase</th><th>1d%</th>
+        <th></th><th></th><th></th><th></th>
       </tr>
     </thead>
     <tbody>
       
-    <tr data-sector="AI/Tech" data-div="40.63002615555149">
-      <td class="num">40.63002615555149</td>
-      <td class="sector">AI/Tech</td>
-      <td class="ticker long">REGN <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+3.3</td>
-      <td class="chg pos">+16.3</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">ALNY <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.0</td>
-      <td class="chg neg">-24.4</td>
-      <td class="div pos">+40.6%</td>
-    </tr>
-    <tr data-sector="Other" data-div="33.80813425747641">
-      <td class="num">33.80813425747641</td>
+    <tr data-sector="Other" data-score="73.3" data-corr="0.741">
+      <td class="num score">73.3</td>
       <td class="sector">Other</td>
-      <td class="ticker long">AMZN <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg pos">+15.3</td>
-      <td class="chg pos">+17.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">VRT <span class="mkt">US</span></td>
+      <td class="ticker long">02706.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+6.2</td>
-      <td class="chg neg">-16.8</td>
-      <td class="div pos">+33.8%</td>
-    </tr>
-    <tr data-sector="AI/Tech" data-div="33.7855680746157">
-      <td class="num">33.7855680746157</td>
-      <td class="sector">AI/Tech</td>
-      <td class="ticker long">SNOW <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg neg">-1.6</td>
-      <td class="chg pos">+9.4</td>
+      <td class="chg pos">+82.65</td>
       <td class="arrow">↑</td>
-      <td class="ticker short">ALNY <span class="mkt">US</span></td>
+      <td class="ticker short">02718.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.0</td>
-      <td class="chg neg">-24.4</td>
-      <td class="div pos">+33.8%</td>
+      <td class="chg neg">-31.12</td>
+      <td class="corr strong">+0.74</td>
+      <td class="coint">🟡 +0.10</td>
+      <td class="num beta">+0.21</td>
+      <td class="num ls">+9.95</td>
     </tr>
-    <tr data-sector="Other" data-div="33.63498038801869">
-      <td class="num">33.63498038801869</td>
+    <tr data-sector="Other" data-score="61.37" data-corr="0.796">
+      <td class="num score">61.37</td>
       <td class="sector">Other</td>
-      <td class="ticker long">AMZN <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg pos">+15.3</td>
-      <td class="chg pos">+17.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">RDDT <span class="mkt">US</span></td>
-      <td class="phase downtrend_recovery">🟠 Recov</td>
-      <td class="chg neg">-21.0</td>
-      <td class="chg neg">-16.6</td>
-      <td class="div pos">+33.6%</td>
-    </tr>
-    <tr data-sector="AI/Tech" data-div="33.39274302967516">
-      <td class="num">33.39274302967516</td>
-      <td class="sector">AI/Tech</td>
-      <td class="ticker long">BABA <span class="mkt">US</span></td>
+      <td class="ticker long">02706.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+5.1</td>
-      <td class="chg pos">+9.0</td>
+      <td class="chg pos">+82.65</td>
       <td class="arrow">↑</td>
-      <td class="ticker short">ALNY <span class="mkt">US</span></td>
+      <td class="ticker short">AAPL <span class="mkt">US</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.0</td>
-      <td class="chg neg">-24.4</td>
-      <td class="div pos">+33.4%</td>
+      <td class="chg neg">-7.35</td>
+      <td class="corr strong">-0.80</td>
+      <td class="coint">🟡 +0.16</td>
+      <td class="num beta">-0.68</td>
+      <td class="num ls">+12.91</td>
     </tr>
-    <tr data-sector="Other" data-div="31.891204595119824">
-      <td class="num">31.891204595119824</td>
+    <tr data-sector="Other" data-score="59.51" data-corr="0.607">
+      <td class="num score">59.51</td>
       <td class="sector">Other</td>
-      <td class="ticker long">AMZN <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg pos">+15.3</td>
-      <td class="chg pos">+17.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">NXPI <span class="mkt">US</span></td>
+      <td class="ticker long">01196.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-6.5</td>
-      <td class="chg neg">-14.9</td>
-      <td class="div pos">+31.9%</td>
+      <td class="chg pos">+56.70</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">02718.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-31.12</td>
+      <td class="corr medium">+0.61</td>
+      <td class="coint">🟢 +0.05</td>
+      <td class="num beta">+0.01</td>
+      <td class="num ls">+143.47</td>
     </tr>
-    <tr data-sector="Other" data-div="30.24957322822558">
-      <td class="num">30.24957322822558</td>
+    <tr data-sector="Other" data-score="55.96" data-corr="0.821">
+      <td class="num score">55.96</td>
       <td class="sector">Other</td>
-      <td class="ticker long">DASH <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.7</td>
-      <td class="chg pos">+13.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">VRT <span class="mkt">US</span></td>
+      <td class="ticker long">02706.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+6.2</td>
-      <td class="chg neg">-16.8</td>
-      <td class="div pos">+30.2%</td>
+      <td class="chg pos">+82.65</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">01810.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-7.28</td>
+      <td class="corr strong">-0.82</td>
+      <td class="coint">⚪ +0.72</td>
+      <td class="num beta">-2.61</td>
+      <td class="num ls">+1.81</td>
     </tr>
-    <tr data-sector="Other" data-div="30.076419358767854">
-      <td class="num">30.076419358767854</td>
+    <tr data-sector="Other" data-score="45.1" data-corr="0.503">
+      <td class="num score">45.1</td>
       <td class="sector">Other</td>
-      <td class="ticker long">DASH <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.7</td>
-      <td class="chg pos">+13.4</td>
+      <td class="ticker long">01196.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+56.70</td>
       <td class="arrow">↑</td>
-      <td class="ticker short">RDDT <span class="mkt">US</span></td>
-      <td class="phase downtrend_recovery">🟠 Recov</td>
-      <td class="chg neg">-21.0</td>
-      <td class="chg neg">-16.6</td>
-      <td class="div pos">+30.1%</td>
+      <td class="ticker short">01810.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-7.28</td>
+      <td class="corr medium">-0.50</td>
+      <td class="coint">🟡 +0.19</td>
+      <td class="num beta">-0.20</td>
+      <td class="num ls">+21.72</td>
     </tr>
-    <tr data-sector="Other" data-div="29.681693608657">
-      <td class="num">29.681693608657</td>
+    <tr data-sector="Other" data-score="44.59" data-corr="0.882">
+      <td class="num score">44.59</td>
       <td class="sector">Other</td>
-      <td class="ticker long">ACN <span class="mkt">US</span></td>
+      <td class="ticker long">09630.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.6</td>
-      <td class="chg pos">+12.9</td>
+      <td class="chg pos">+20.61</td>
       <td class="arrow">↑</td>
-      <td class="ticker short">VRT <span class="mkt">US</span></td>
+      <td class="ticker short">02718.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+6.2</td>
-      <td class="chg neg">-16.8</td>
-      <td class="div pos">+29.7%</td>
+      <td class="chg neg">-31.12</td>
+      <td class="corr strong">+0.88</td>
+      <td class="coint">🟢 +0.01</td>
+      <td class="num beta">+1.65</td>
+      <td class="num ls">+0.68</td>
     </tr>
-    <tr data-sector="Other" data-div="29.508539739199275">
-      <td class="num">29.508539739199275</td>
+    <tr data-sector="Other" data-score="41.15" data-corr="0.013">
+      <td class="num score">41.15</td>
       <td class="sector">Other</td>
-      <td class="ticker long">ACN <span class="mkt">US</span></td>
+      <td class="ticker long">01196.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.6</td>
-      <td class="chg pos">+12.9</td>
+      <td class="chg pos">+56.70</td>
       <td class="arrow">↑</td>
-      <td class="ticker short">RDDT <span class="mkt">US</span></td>
-      <td class="phase downtrend_recovery">🟠 Recov</td>
-      <td class="chg neg">-21.0</td>
-      <td class="chg neg">-16.6</td>
-      <td class="div pos">+29.5%</td>
+      <td class="ticker short">AAPL <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-7.35</td>
+      <td class="corr weak">+0.01</td>
+      <td class="coint">🟡 +0.10</td>
+      <td class="num beta">-0.03</td>
+      <td class="num ls">+308.97</td>
     </tr>
-    <tr data-sector="Other" data-div="28.33264356586899">
-      <td class="num">28.33264356586899</td>
+    <tr data-sector="Other" data-score="31.4" data-corr="0.775">
+      <td class="num score">31.4</td>
       <td class="sector">Other</td>
-      <td class="ticker long">DASH <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.7</td>
-      <td class="chg pos">+13.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">NXPI <span class="mkt">US</span></td>
+      <td class="ticker long">09630.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-6.5</td>
-      <td class="chg neg">-14.9</td>
-      <td class="div pos">+28.3%</td>
+      <td class="chg pos">+20.61</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">01810.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-7.28</td>
+      <td class="corr strong">-0.78</td>
+      <td class="coint">🟢 +0.03</td>
+      <td class="num beta">-25.32</td>
+      <td class="num ls">+0.10</td>
     </tr>
-    <tr data-sector="Other" data-div="27.764763946300413">
-      <td class="num">27.764763946300413</td>
+    <tr data-sector="Other" data-score="27.75" data-corr="0.575">
+      <td class="num score">27.75</td>
       <td class="sector">Other</td>
-      <td class="ticker long">ACN <span class="mkt">US</span></td>
+      <td class="ticker long">09630.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.6</td>
-      <td class="chg pos">+12.9</td>
+      <td class="chg pos">+20.61</td>
       <td class="arrow">↑</td>
-      <td class="ticker short">NXPI <span class="mkt">US</span></td>
+      <td class="ticker short">AAPL <span class="mkt">US</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-6.5</td>
-      <td class="chg neg">-14.9</td>
-      <td class="div pos">+27.8%</td>
+      <td class="chg neg">-7.35</td>
+      <td class="corr medium">-0.57</td>
+      <td class="coint">🟡 +0.20</td>
+      <td class="num beta">-4.19</td>
+      <td class="num ls">+1.14</td>
     </tr>
-    <tr data-sector="Pharma/Biotech" data-div="25.028619217304126">
-      <td class="num">25.028619217304126</td>
-      <td class="sector">Pharma/Biotech</td>
-      <td class="ticker long">CTSH <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+2.7</td>
-      <td class="chg pos">+21.8</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">ABBV <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-2.5</td>
-      <td class="chg neg">-3.2</td>
-      <td class="div pos">+25.0%</td>
-    </tr>
-    <tr data-sector="AI/Tech" data-div="24.067886596713343">
-      <td class="num">24.067886596713343</td>
-      <td class="sector">AI/Tech</td>
-      <td class="ticker long">REGN <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+3.3</td>
-      <td class="chg pos">+16.3</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">ARM <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.8</td>
-      <td class="chg neg">-7.8</td>
-      <td class="div pos">+24.1%</td>
-    </tr>
-    <tr data-sector="Pharma/Biotech" data-div="22.44594814805177">
-      <td class="num">22.44594814805177</td>
-      <td class="sector">Pharma/Biotech</td>
-      <td class="ticker long">CTSH <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+2.7</td>
-      <td class="chg pos">+21.8</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">MRK <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.3</td>
-      <td class="chg neg">-0.7</td>
-      <td class="div pos">+22.4%</td>
-    </tr>
-    <tr data-sector="Pharma/Biotech" data-div="21.7821728162747">
-      <td class="num">21.7821728162747</td>
-      <td class="sector">Pharma/Biotech</td>
-      <td class="ticker long">CTSH <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+2.7</td>
-      <td class="chg pos">+21.8</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">01530.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_recovery">🟠 Recov</td>
-      <td class="chg neg">-3.7</td>
-      <td class="chg neg">+0.0</td>
-      <td class="div pos">+21.8%</td>
-    </tr>
-    <tr data-sector="Energy/Oil" data-div="20.56878761794679">
-      <td class="num">20.56878761794679</td>
-      <td class="sector">Energy/Oil</td>
-      <td class="ticker long">GOOG <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+6.9</td>
-      <td class="chg pos">+11.8</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">HOOD <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.1</td>
-      <td class="chg neg">-8.8</td>
-      <td class="div pos">+20.6%</td>
-    </tr>
-    <tr data-sector="Energy/Oil" data-div="20.17894163221434">
-      <td class="num">20.17894163221434</td>
-      <td class="sector">Energy/Oil</td>
-      <td class="ticker long">GOOGL <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+6.7</td>
-      <td class="chg pos">+11.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">HOOD <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.1</td>
-      <td class="chg neg">-8.8</td>
-      <td class="div pos">+20.2%</td>
-    </tr>
-    <tr data-sector="Semiconductor" data-div="19.333041738553355">
-      <td class="num">19.333041738553355</td>
-      <td class="sector">Semiconductor</td>
-      <td class="ticker long">BKNG <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.2</td>
-      <td class="chg pos">+8.7</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">MU <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-5.9</td>
-      <td class="chg neg">-10.6</td>
-      <td class="div pos">+19.3%</td>
-    </tr>
-    <tr data-sector="Energy/Oil" data-div="18.236132153540986">
-      <td class="num">18.236132153540986</td>
-      <td class="sector">Energy/Oil</td>
-      <td class="ticker long">GOOG <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+6.9</td>
-      <td class="chg pos">+11.8</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">META <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+3.3</td>
-      <td class="chg neg">-6.5</td>
-      <td class="div pos">+18.2%</td>
-    </tr>
-    <tr data-sector="AI/Tech" data-div="18.00748324391144">
-      <td class="num">18.00748324391144</td>
-      <td class="sector">AI/Tech</td>
-      <td class="ticker long">REGN <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+3.3</td>
-      <td class="chg pos">+16.3</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">LYV <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-5.1</td>
-      <td class="chg neg">-1.8</td>
-      <td class="div pos">+18.0%</td>
-    </tr>
-    <tr data-sector="Energy/Oil" data-div="17.84628616780854">
-      <td class="num">17.84628616780854</td>
-      <td class="sector">Energy/Oil</td>
-      <td class="ticker long">GOOGL <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+6.7</td>
-      <td class="chg pos">+11.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">META <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+3.3</td>
-      <td class="chg neg">-6.5</td>
-      <td class="div pos">+17.8%</td>
-    </tr>
-    <tr data-sector="Semiconductor" data-div="17.546522787981917">
-      <td class="num">17.546522787981917</td>
-      <td class="sector">Semiconductor</td>
-      <td class="ticker long">MPWR <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+8.3</td>
-      <td class="chg pos">+6.9</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">MU <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-5.9</td>
-      <td class="chg neg">-10.6</td>
-      <td class="div pos">+17.5%</td>
-    </tr>
-    <tr data-sector="Consumer/Retail" data-div="17.387174060131137">
-      <td class="num">17.387174060131137</td>
-      <td class="sector">Consumer/Retail</td>
-      <td class="ticker long">CMG <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-3.4</td>
-      <td class="chg pos">+17.1</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">HD <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.4</td>
-      <td class="chg neg">-0.3</td>
-      <td class="div pos">+17.4%</td>
-    </tr>
-    <tr data-sector="AI/Tech" data-div="17.223428515777556">
-      <td class="num">17.223428515777556</td>
-      <td class="sector">AI/Tech</td>
-      <td class="ticker long">SNOW <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg neg">-1.6</td>
-      <td class="chg pos">+9.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">ARM <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.8</td>
-      <td class="chg neg">-7.8</td>
-      <td class="div pos">+17.2%</td>
-    </tr>
-    <tr data-sector="Energy/Oil" data-div="17.16967226609723">
-      <td class="num">17.16967226609723</td>
-      <td class="sector">Energy/Oil</td>
-      <td class="ticker long">GOOG <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+6.9</td>
-      <td class="chg pos">+11.8</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">SLB <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.4</td>
-      <td class="chg neg">-5.4</td>
-      <td class="div pos">+17.2%</td>
-    </tr>
-    <tr data-sector="Consumer/Retail" data-div="17.080843500459228">
-      <td class="num">17.080843500459228</td>
-      <td class="sector">Consumer/Retail</td>
-      <td class="ticker long">CMG <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-3.4</td>
-      <td class="chg pos">+17.1</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">09987.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.9</td>
-      <td class="chg neg">+0.0</td>
-      <td class="div pos">+17.1%</td>
-    </tr>
-    <tr data-sector="Consumer/Retail" data-div="17.080843500459228">
-      <td class="num">17.080843500459228</td>
-      <td class="sector">Consumer/Retail</td>
-      <td class="ticker long">CMG <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-3.4</td>
-      <td class="chg pos">+17.1</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">00300.HK <span class="mkt">HK</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg pos">+0.5</td>
-      <td class="chg neg">+0.0</td>
-      <td class="div pos">+17.1%</td>
-    </tr>
-    <tr data-sector="AI/Tech" data-div="16.830603470837012">
-      <td class="num">16.830603470837012</td>
-      <td class="sector">AI/Tech</td>
-      <td class="ticker long">BABA <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+5.1</td>
-      <td class="chg pos">+9.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">ARM <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.8</td>
-      <td class="chg neg">-7.8</td>
-      <td class="div pos">+16.8%</td>
-    </tr>
-    <tr data-sector="Energy/Oil" data-div="16.779826280364787">
-      <td class="num">16.779826280364787</td>
-      <td class="sector">Energy/Oil</td>
-      <td class="ticker long">GOOGL <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+6.7</td>
-      <td class="chg pos">+11.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">SLB <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.4</td>
-      <td class="chg neg">-5.4</td>
-      <td class="div pos">+16.8%</td>
-    </tr>
-    <tr data-sector="Semiconductor" data-div="16.25346001008422">
-      <td class="num">16.25346001008422</td>
-      <td class="sector">Semiconductor</td>
-      <td class="ticker long">CCL <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg pos">+0.1</td>
-      <td class="chg pos">+5.6</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">MU <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-5.9</td>
-      <td class="chg neg">-10.6</td>
-      <td class="div pos">+16.3%</td>
-    </tr>
-    <tr data-sector="Semiconductor" data-div="15.990436968073716">
-      <td class="num">15.990436968073716</td>
-      <td class="sector">Semiconductor</td>
-      <td class="ticker long">BKNG <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.2</td>
-      <td class="chg pos">+8.7</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">ASML <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.4</td>
-      <td class="chg neg">-7.3</td>
-      <td class="div pos">+16.0%</td>
-    </tr>
-    <tr data-sector="Internet/Software" data-div="15.08856236251948">
-      <td class="num">15.08856236251948</td>
-      <td class="sector">Internet/Software</td>
-      <td class="ticker long">MSFT <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+3.0</td>
-      <td class="chg pos">+21.8</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">INTU <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.2</td>
-      <td class="chg pos">+6.7</td>
-      <td class="div pos">+15.1%</td>
-    </tr>
-    <tr data-sector="Semiconductor" data-div="14.690634645506954">
-      <td class="num">14.690634645506954</td>
-      <td class="sector">Semiconductor</td>
-      <td class="ticker long">BKNG <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.2</td>
-      <td class="chg pos">+8.7</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">ON <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-2.5</td>
-      <td class="chg neg">-6.0</td>
-      <td class="div pos">+14.7%</td>
-    </tr>
-    <tr data-sector="Semiconductor" data-div="14.203918017502279">
-      <td class="num">14.203918017502279</td>
-      <td class="sector">Semiconductor</td>
-      <td class="ticker long">MPWR <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+8.3</td>
-      <td class="chg pos">+6.9</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">ASML <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.4</td>
-      <td class="chg neg">-7.3</td>
-      <td class="div pos">+14.2%</td>
-    </tr>
-    <tr data-sector="Bank" data-div="13.779602362862976">
-      <td class="num">13.779602362862976</td>
-      <td class="sector">Bank</td>
-      <td class="ticker long">SHW <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-1.2</td>
-      <td class="chg pos">+7.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">LITE <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+3.0</td>
-      <td class="chg neg">-6.4</td>
-      <td class="div pos">+13.8%</td>
-    </tr>
-    <tr data-sector="Real Estate" data-div="13.639890340913437">
-      <td class="num">13.639890340913437</td>
-      <td class="sector">Real Estate</td>
-      <td class="ticker long">TTWO <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.8</td>
-      <td class="chg pos">+4.9</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">AMD <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.9</td>
-      <td class="chg neg">-8.8</td>
-      <td class="div pos">+13.6%</td>
-    </tr>
-    <tr data-sector="Industrial" data-div="13.577194760778887">
-      <td class="num">13.577194760778887</td>
-      <td class="sector">Industrial</td>
-      <td class="ticker long">APH <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.6</td>
-      <td class="chg pos">+5.3</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">CAT <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.7</td>
-      <td class="chg neg">-8.3</td>
-      <td class="div pos">+13.6%</td>
-    </tr>
-    <tr data-sector="Real Estate" data-div="13.19142555238849">
-      <td class="num">13.19142555238849</td>
-      <td class="sector">Real Estate</td>
-      <td class="ticker long">IBM <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.9</td>
-      <td class="chg pos">+4.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">AMD <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.9</td>
-      <td class="chg neg">-8.8</td>
-      <td class="div pos">+13.2%</td>
-    </tr>
-    <tr data-sector="Bank" data-div="13.02454653904978">
-      <td class="num">13.02454653904978</td>
-      <td class="sector">Bank</td>
-      <td class="ticker long">SHW <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-1.2</td>
-      <td class="chg pos">+7.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">AEP <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.1</td>
-      <td class="chg neg">-5.7</td>
-      <td class="div pos">+13.0%</td>
-    </tr>
-    <tr data-sector="Bank" data-div="12.974295877690244">
-      <td class="num">12.974295877690244</td>
-      <td class="sector">Bank</td>
-      <td class="ticker long">ADP <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg pos">+1.0</td>
-      <td class="chg pos">+6.5</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">LITE <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+3.0</td>
-      <td class="chg neg">-6.4</td>
-      <td class="div pos">+13.0%</td>
-    </tr>
-    <tr data-sector="Semiconductor" data-div="12.910855239604581">
-      <td class="num">12.910855239604581</td>
-      <td class="sector">Semiconductor</td>
-      <td class="ticker long">CCL <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg pos">+0.1</td>
-      <td class="chg pos">+5.6</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">ASML <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.4</td>
-      <td class="chg neg">-7.3</td>
-      <td class="div pos">+12.9%</td>
-    </tr>
-    <tr data-sector="Industrial" data-div="12.906278994745119">
-      <td class="num">12.906278994745119</td>
-      <td class="sector">Industrial</td>
-      <td class="ticker long">ICE <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-2.4</td>
-      <td class="chg pos">+4.6</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">CAT <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.7</td>
-      <td class="chg neg">-8.3</td>
-      <td class="div pos">+12.9%</td>
-    </tr>
-    <tr data-sector="Semiconductor" data-div="12.904115694935516">
-      <td class="num">12.904115694935516</td>
-      <td class="sector">Semiconductor</td>
-      <td class="ticker long">MPWR <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+8.3</td>
-      <td class="chg pos">+6.9</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">ON <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-2.5</td>
-      <td class="chg neg">-6.0</td>
-      <td class="div pos">+12.9%</td>
-    </tr>
-    <tr data-sector="Bank" data-div="12.219240053877048">
-      <td class="num">12.219240053877048</td>
-      <td class="sector">Bank</td>
-      <td class="ticker long">ADP <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg pos">+1.0</td>
-      <td class="chg pos">+6.5</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">AEP <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.1</td>
-      <td class="chg neg">-5.7</td>
-      <td class="div pos">+12.2%</td>
-    </tr>
-    <tr data-sector="Real Estate" data-div="12.212804671097613">
-      <td class="num">12.212804671097613</td>
-      <td class="sector">Real Estate</td>
-      <td class="ticker long">VLO <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg pos">+0.4</td>
-      <td class="chg pos">+3.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">AMD <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.9</td>
-      <td class="chg neg">-8.8</td>
-      <td class="div pos">+12.2%</td>
-    </tr>
-    <tr data-sector="Industrial" data-div="11.877188955959152">
-      <td class="num">11.877188955959152</td>
-      <td class="sector">Industrial</td>
-      <td class="ticker long">APH <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.6</td>
-      <td class="chg pos">+5.3</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">LIN <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-6.0</td>
-      <td class="chg neg">-6.6</td>
-      <td class="div pos">+11.9%</td>
-    </tr>
-    <tr data-sector="Real Estate" data-div="11.859190858461364">
-      <td class="num">11.859190858461364</td>
-      <td class="sector">Real Estate</td>
-      <td class="ticker long">TTWO <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.8</td>
-      <td class="chg pos">+4.9</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">WELL <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.5</td>
-      <td class="chg neg">-7.0</td>
-      <td class="div pos">+11.9%</td>
-    </tr>
-    <tr data-sector="Internet/Software" data-div="11.810497393103772">
-      <td class="num">11.810497393103772</td>
-      <td class="sector">Internet/Software</td>
-      <td class="ticker long">WDAY <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.4</td>
-      <td class="chg pos">+18.5</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">INTU <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.2</td>
-      <td class="chg pos">+6.7</td>
-      <td class="div pos">+11.8%</td>
-    </tr>
-    <tr data-sector="Semiconductor" data-div="11.611052917037819">
-      <td class="num">11.611052917037819</td>
-      <td class="sector">Semiconductor</td>
-      <td class="ticker long">CCL <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg pos">+0.1</td>
-      <td class="chg pos">+5.6</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">ON <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-2.5</td>
-      <td class="chg neg">-6.0</td>
-      <td class="div pos">+11.6%</td>
-    </tr>
-    <tr data-sector="Telecom" data-div="11.54189110503476">
-      <td class="num">11.54189110503476</td>
-      <td class="sector">Telecom</td>
-      <td class="ticker long">CMCSA <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.2</td>
-      <td class="chg pos">+7.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">TMUS <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.4</td>
-      <td class="chg neg">-4.1</td>
-      <td class="div pos">+11.5%</td>
-    </tr>
-    <tr data-sector="Industrial" data-div="11.477085517561289">
-      <td class="num">11.477085517561289</td>
-      <td class="sector">Industrial</td>
-      <td class="ticker long">BA <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-2.1</td>
-      <td class="chg pos">+3.2</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">CAT <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.7</td>
-      <td class="chg neg">-8.3</td>
-      <td class="div pos">+11.5%</td>
-    </tr>
-    <tr data-sector="EV/Auto" data-div="11.472181439338197">
-      <td class="num">11.472181439338197</td>
-      <td class="sector">EV/Auto</td>
-      <td class="ticker long">GM <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.5</td>
-      <td class="chg pos">+7.5</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">LLY <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.5</td>
-      <td class="chg neg">-3.9</td>
-      <td class="div pos">+11.5%</td>
-    </tr>
-    <tr data-sector="Real Estate" data-div="11.410726069936416">
-      <td class="num">11.410726069936416</td>
-      <td class="sector">Real Estate</td>
-      <td class="ticker long">IBM <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.9</td>
-      <td class="chg pos">+4.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">WELL <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.5</td>
-      <td class="chg neg">-7.0</td>
-      <td class="div pos">+11.4%</td>
-    </tr>
-    <tr data-sector="Healthcare/Medtech" data-div="11.229979433414147">
-      <td class="num">11.229979433414147</td>
-      <td class="sector">Healthcare/Medtech</td>
-      <td class="ticker long">ISRG <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.1</td>
-      <td class="chg pos">+4.7</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">HUM <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg neg">-0.8</td>
-      <td class="chg neg">-6.5</td>
-      <td class="div pos">+11.2%</td>
-    </tr>
-    <tr data-sector="Industrial" data-div="11.206273189925382">
-      <td class="num">11.206273189925382</td>
-      <td class="sector">Industrial</td>
-      <td class="ticker long">ICE <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-2.4</td>
-      <td class="chg pos">+4.6</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">LIN <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-6.0</td>
-      <td class="chg neg">-6.6</td>
-      <td class="div pos">+11.2%</td>
-    </tr>
-    <tr data-sector="AI/Tech" data-div="11.16302516297565">
-      <td class="num">11.16302516297565</td>
-      <td class="sector">AI/Tech</td>
-      <td class="ticker long">SNOW <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg neg">-1.6</td>
-      <td class="chg pos">+9.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">LYV <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-5.1</td>
-      <td class="chg neg">-1.8</td>
-      <td class="div pos">+11.2%</td>
-    </tr>
-    <tr data-sector="Telecom" data-div="11.090854964620867">
-      <td class="num">11.090854964620867</td>
-      <td class="sector">Telecom</td>
-      <td class="ticker long">CMCSA <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.2</td>
-      <td class="chg pos">+7.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">T <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.2</td>
-      <td class="chg neg">-3.6</td>
-      <td class="div pos">+11.1%</td>
-    </tr>
-    <tr data-sector="Industrial" data-div="10.909542874174793">
-      <td class="num">10.909542874174793</td>
-      <td class="sector">Industrial</td>
-      <td class="ticker long">APH <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.6</td>
-      <td class="chg pos">+5.3</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">DE <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-1.1</td>
-      <td class="chg neg">-5.6</td>
-      <td class="div pos">+10.9%</td>
-    </tr>
-    <tr data-sector="AI/Tech" data-div="10.77020011803511">
-      <td class="num">10.77020011803511</td>
-      <td class="sector">AI/Tech</td>
-      <td class="ticker long">BABA <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+5.1</td>
-      <td class="chg pos">+9.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">LYV <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-5.1</td>
-      <td class="chg neg">-1.8</td>
-      <td class="div pos">+10.8%</td>
-    </tr>
-    <tr data-sector="Real Estate" data-div="10.512943175716913">
-      <td class="num">10.512943175716913</td>
-      <td class="sector">Real Estate</td>
-      <td class="ticker long">TTWO <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.8</td>
-      <td class="chg pos">+4.9</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">SMCI <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+2.4</td>
-      <td class="chg neg">-5.6</td>
-      <td class="div pos">+10.5%</td>
-    </tr>
-    <tr data-sector="Internet/Software" data-div="10.51111075067564">
-      <td class="num">10.51111075067564</td>
-      <td class="sector">Internet/Software</td>
-      <td class="ticker long">MSFT <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+3.0</td>
-      <td class="chg pos">+21.8</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">ADBE <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.0</td>
-      <td class="chg pos">+11.2</td>
-      <td class="div pos">+10.5%</td>
-    </tr>
-    <tr data-sector="Real Estate" data-div="10.43210518864554">
-      <td class="num">10.43210518864554</td>
-      <td class="sector">Real Estate</td>
-      <td class="ticker long">VLO <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg pos">+0.4</td>
-      <td class="chg pos">+3.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">WELL <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.5</td>
-      <td class="chg neg">-7.0</td>
-      <td class="div pos">+10.4%</td>
-    </tr>
-    <tr data-sector="Energy/Oil" data-div="10.425098383321291">
-      <td class="num">10.425098383321291</td>
-      <td class="sector">Energy/Oil</td>
-      <td class="ticker long">RKLB <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.4</td>
-      <td class="chg pos">+1.6</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">HOOD <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.1</td>
-      <td class="chg neg">-8.8</td>
-      <td class="div pos">+10.4%</td>
-    </tr>
-    <tr data-sector="Industrial" data-div="10.238627108141023">
-      <td class="num">10.238627108141023</td>
-      <td class="sector">Industrial</td>
-      <td class="ticker long">ICE <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-2.4</td>
-      <td class="chg pos">+4.6</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">DE <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-1.1</td>
-      <td class="chg neg">-5.6</td>
-      <td class="div pos">+10.2%</td>
-    </tr>
-    <tr data-sector="Internet/Software" data-div="10.093329170178896">
-      <td class="num">10.093329170178896</td>
-      <td class="sector">Internet/Software</td>
-      <td class="ticker long">MSFT <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+3.0</td>
-      <td class="chg pos">+21.8</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">ADSK <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.3</td>
-      <td class="chg pos">+11.7</td>
-      <td class="div pos">+10.1%</td>
-    </tr>
-    <tr data-sector="Real Estate" data-div="10.064478387191965">
-      <td class="num">10.064478387191965</td>
-      <td class="sector">Real Estate</td>
-      <td class="ticker long">IBM <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.9</td>
-      <td class="chg pos">+4.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">SMCI <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+2.4</td>
-      <td class="chg neg">-5.6</td>
-      <td class="div pos">+10.1%</td>
-    </tr>
-    <tr data-sector="Industrial" data-div="9.777079712741553">
-      <td class="num">9.777079712741553</td>
-      <td class="sector">Industrial</td>
-      <td class="ticker long">BA <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-2.1</td>
-      <td class="chg pos">+3.2</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">LIN <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-6.0</td>
-      <td class="chg neg">-6.6</td>
-      <td class="div pos">+9.8%</td>
-    </tr>
-    <tr data-sector="Luxury/Consumer Brand" data-div="9.208118834847436">
-      <td class="num">9.208118834847436</td>
-      <td class="sector">Luxury/Consumer Brand</td>
-      <td class="ticker long">03896.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+15.7</td>
-      <td class="chg neg">+0.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">UPS <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-1.0</td>
-      <td class="chg neg">-9.2</td>
-      <td class="div pos">+9.2%</td>
-    </tr>
-    <tr data-sector="Luxury/Consumer Brand" data-div="9.208118834847436">
-      <td class="num">9.208118834847436</td>
-      <td class="sector">Luxury/Consumer Brand</td>
-      <td class="ticker long">06651.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+11.9</td>
-      <td class="chg neg">+0.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">UPS <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-1.0</td>
-      <td class="chg neg">-9.2</td>
-      <td class="div pos">+9.2%</td>
-    </tr>
-    <tr data-sector="Luxury/Consumer Brand" data-div="9.208118834847436">
-      <td class="num">9.208118834847436</td>
-      <td class="sector">Luxury/Consumer Brand</td>
-      <td class="ticker long">00002.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.1</td>
-      <td class="chg neg">+0.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">UPS <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-1.0</td>
-      <td class="chg neg">-9.2</td>
-      <td class="div pos">+9.2%</td>
-    </tr>
-    <tr data-sector="Real Estate" data-div="9.085857505901089">
-      <td class="num">9.085857505901089</td>
-      <td class="sector">Real Estate</td>
-      <td class="ticker long">VLO <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg pos">+0.4</td>
-      <td class="chg pos">+3.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">SMCI <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+2.4</td>
-      <td class="chg neg">-5.6</td>
-      <td class="div pos">+9.1%</td>
-    </tr>
-    <tr data-sector="Bank" data-div="9.048531980106777">
-      <td class="num">9.048531980106777</td>
-      <td class="sector">Bank</td>
-      <td class="ticker long">MDT <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.4</td>
-      <td class="chg pos">+2.6</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">LITE <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+3.0</td>
-      <td class="chg neg">-6.4</td>
-      <td class="div pos">+9.0%</td>
-    </tr>
-    <tr data-sector="Industrial" data-div="8.809433630957194">
-      <td class="num">8.809433630957194</td>
-      <td class="sector">Industrial</td>
-      <td class="ticker long">BA <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-2.1</td>
-      <td class="chg pos">+3.2</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">DE <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-1.1</td>
-      <td class="chg neg">-5.6</td>
-      <td class="div pos">+8.8%</td>
-    </tr>
-    <tr data-sector="Healthcare/Medtech" data-div="8.356843186560754">
-      <td class="num">8.356843186560754</td>
-      <td class="sector">Healthcare/Medtech</td>
-      <td class="ticker long">DHR <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.6</td>
-      <td class="chg pos">+1.8</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">HUM <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg neg">-0.8</td>
-      <td class="chg neg">-6.5</td>
-      <td class="div pos">+8.4%</td>
-    </tr>
-    <tr data-sector="Bank" data-div="8.306727460751773">
-      <td class="num">8.306727460751773</td>
-      <td class="sector">Bank</td>
-      <td class="ticker long">SHW <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-1.2</td>
-      <td class="chg pos">+7.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">XOM <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.0</td>
-      <td class="chg neg">-1.0</td>
-      <td class="div pos">+8.3%</td>
-    </tr>
-    <tr data-sector="Bank" data-div="8.293476156293579">
-      <td class="num">8.293476156293579</td>
-      <td class="sector">Bank</td>
-      <td class="ticker long">MDT <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.4</td>
-      <td class="chg pos">+2.6</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">AEP <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.1</td>
-      <td class="chg neg">-5.7</td>
-      <td class="div pos">+8.3%</td>
-    </tr>
-    <tr data-sector="EV/Auto" data-div="8.10803928756347">
-      <td class="num">8.10803928756347</td>
-      <td class="sector">EV/Auto</td>
-      <td class="ticker long">GM <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.5</td>
-      <td class="chg pos">+7.5</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">TSLA <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.8</td>
-      <td class="chg neg">-0.6</td>
-      <td class="div pos">+8.1%</td>
-    </tr>
-    <tr data-sector="Energy/Oil" data-div="8.092442918915491">
-      <td class="num">8.092442918915491</td>
-      <td class="sector">Energy/Oil</td>
-      <td class="ticker long">RKLB <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.4</td>
-      <td class="chg pos">+1.6</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">META <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+3.3</td>
-      <td class="chg neg">-6.5</td>
-      <td class="div pos">+8.1%</td>
-    </tr>
-    <tr data-sector="Healthcare/Medtech" data-div="7.762575064720227">
-      <td class="num">7.762575064720227</td>
-      <td class="sector">Healthcare/Medtech</td>
-      <td class="ticker long">ISRG <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.1</td>
-      <td class="chg pos">+4.7</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">CVS <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.8</td>
-      <td class="chg neg">-3.1</td>
-      <td class="div pos">+7.8%</td>
-    </tr>
-    <tr data-sector="EV/Auto" data-div="7.687780920948572">
-      <td class="num">7.687780920948572</td>
-      <td class="sector">EV/Auto</td>
-      <td class="ticker long">GM <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.5</td>
-      <td class="chg pos">+7.5</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">BAC <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg pos">+0.4</td>
-      <td class="chg neg">-0.2</td>
-      <td class="div pos">+7.7%</td>
-    </tr>
-    <tr data-sector="Insurance" data-div="7.5999742810973885">
-      <td class="num">7.5999742810973885</td>
-      <td class="sector">Insurance</td>
-      <td class="ticker long">02628.HK <span class="mkt">HK</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg pos">+1.0</td>
-      <td class="chg neg">+0.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">COIN <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-10.6</td>
-      <td class="chg neg">-7.6</td>
-      <td class="div pos">+7.6%</td>
-    </tr>
-    <tr data-sector="Insurance" data-div="7.5999742810973885">
-      <td class="num">7.5999742810973885</td>
-      <td class="sector">Insurance</td>
-      <td class="ticker long">02318.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.1</td>
-      <td class="chg neg">+0.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">COIN <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-10.6</td>
-      <td class="chg neg">-7.6</td>
-      <td class="div pos">+7.6%</td>
-    </tr>
-    <tr data-sector="Insurance" data-div="7.5999742810973885">
-      <td class="num">7.5999742810973885</td>
-      <td class="sector">Insurance</td>
-      <td class="ticker long">02718.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-31.1</td>
-      <td class="chg neg">+0.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">COIN <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-10.6</td>
-      <td class="chg neg">-7.6</td>
-      <td class="div pos">+7.6%</td>
-    </tr>
-    <tr data-sector="Bank" data-div="7.501420975579042">
-      <td class="num">7.501420975579042</td>
-      <td class="sector">Bank</td>
-      <td class="ticker long">ADP <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg pos">+1.0</td>
-      <td class="chg pos">+6.5</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">XOM <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.0</td>
-      <td class="chg neg">-1.0</td>
-      <td class="div pos">+7.5%</td>
-    </tr>
-    <tr data-sector="Telecom" data-div="7.4439457587664055">
-      <td class="num">7.4439457587664055</td>
-      <td class="sector">Telecom</td>
-      <td class="ticker long">CMCSA <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.2</td>
-      <td class="chg pos">+7.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">06823.HK <span class="mkt">HK</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg neg">-1.7</td>
-      <td class="chg neg">+0.0</td>
-      <td class="div pos">+7.4%</td>
-    </tr>
-    <tr data-sector="Internet/Software" data-div="7.23304578125993">
-      <td class="num">7.23304578125993</td>
-      <td class="sector">Internet/Software</td>
-      <td class="ticker long">WDAY <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.4</td>
-      <td class="chg pos">+18.5</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">ADBE <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.0</td>
-      <td class="chg pos">+11.2</td>
-      <td class="div pos">+7.2%</td>
-    </tr>
-    <tr data-sector="Energy/Oil" data-div="7.025983031471736">
-      <td class="num">7.025983031471736</td>
-      <td class="sector">Energy/Oil</td>
-      <td class="ticker long">RKLB <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.4</td>
-      <td class="chg pos">+1.6</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">SLB <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.4</td>
-      <td class="chg neg">-5.4</td>
-      <td class="div pos">+7.0%</td>
-    </tr>
-    <tr data-sector="Consumer/Retail" data-div="6.940607166221133">
-      <td class="num">6.940607166221133</td>
-      <td class="sector">Consumer/Retail</td>
-      <td class="ticker long">PWR <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.4</td>
-      <td class="chg pos">+6.6</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">HD <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.4</td>
-      <td class="chg neg">-0.3</td>
-      <td class="div pos">+6.9%</td>
-    </tr>
-    <tr data-sector="Internet/Software" data-div="6.8152642007631865">
-      <td class="num">6.8152642007631865</td>
-      <td class="sector">Internet/Software</td>
-      <td class="ticker long">WDAY <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.4</td>
-      <td class="chg pos">+18.5</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">ADSK <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.3</td>
-      <td class="chg pos">+11.7</td>
-      <td class="div pos">+6.8%</td>
-    </tr>
-    <tr data-sector="Pharma/Biotech" data-div="6.68441306155051">
-      <td class="num">6.68441306155051</td>
-      <td class="sector">Pharma/Biotech</td>
-      <td class="ticker long">SWKS <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.3</td>
-      <td class="chg pos">+3.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">ABBV <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-2.5</td>
-      <td class="chg neg">-3.2</td>
-      <td class="div pos">+6.7%</td>
-    </tr>
-    <tr data-sector="Consumer/Retail" data-div="6.634276606549225">
-      <td class="num">6.634276606549225</td>
-      <td class="sector">Consumer/Retail</td>
-      <td class="ticker long">PWR <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.4</td>
-      <td class="chg pos">+6.6</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">09987.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.9</td>
-      <td class="chg neg">+0.0</td>
-      <td class="div pos">+6.6%</td>
-    </tr>
-    <tr data-sector="Consumer/Retail" data-div="6.634276606549225">
-      <td class="num">6.634276606549225</td>
-      <td class="sector">Consumer/Retail</td>
-      <td class="ticker long">PWR <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.4</td>
-      <td class="chg pos">+6.6</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">00300.HK <span class="mkt">HK</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg pos">+0.5</td>
-      <td class="chg neg">+0.0</td>
-      <td class="div pos">+6.6%</td>
-    </tr>
-    <tr data-sector="Healthcare/Medtech" data-div="6.539613041631739">
-      <td class="num">6.539613041631739</td>
-      <td class="sector">Healthcare/Medtech</td>
-      <td class="ticker long">09901.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-4.5</td>
-      <td class="chg neg">+0.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">HUM <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg neg">-0.8</td>
-      <td class="chg neg">-6.5</td>
-      <td class="div pos">+6.5%</td>
-    </tr>
-    <tr data-sector="Internet/Software" data-div="6.278753966165475">
-      <td class="num">6.278753966165475</td>
-      <td class="sector">Internet/Software</td>
-      <td class="ticker long">ORCL <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.8</td>
-      <td class="chg pos">+12.9</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">INTU <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.2</td>
-      <td class="chg pos">+6.7</td>
-      <td class="div pos">+6.3%</td>
-    </tr>
-    <tr data-sector="Healthcare/Medtech" data-div="6.197234406481677">
-      <td class="num">6.197234406481677</td>
-      <td class="sector">Healthcare/Medtech</td>
-      <td class="ticker long">ISRG <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.1</td>
-      <td class="chg pos">+4.7</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">UNH <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg neg">-1.7</td>
-      <td class="chg neg">-1.5</td>
-      <td class="div pos">+6.2%</td>
-    </tr>
-    <tr data-sector="Utility" data-div="6.111779395670865">
-      <td class="num">6.111779395670865</td>
+    <tr data-sector="Utility" data-score="24.45" data-corr="0.639">
+      <td class="num score">24.45</td>
       <td class="sector">Utility</td>
-      <td class="ticker long">NEE <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-1.1</td>
-      <td class="chg neg">-3.2</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">VST <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.3</td>
-      <td class="chg neg">-9.3</td>
-      <td class="div pos">+6.1%</td>
-    </tr>
-    <tr data-sector="EV/Auto" data-div="6.102833447722338">
-      <td class="num">6.102833447722338</td>
-      <td class="sector">EV/Auto</td>
-      <td class="ticker long">F <span class="mkt">US</span></td>
+      <td class="ticker long">CEG <span class="mkt">US</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.2</td>
-      <td class="chg pos">+2.2</td>
+      <td class="chg neg">-0.31</td>
       <td class="arrow">↑</td>
-      <td class="ticker short">LLY <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.5</td>
-      <td class="chg neg">-3.9</td>
-      <td class="div pos">+6.1%</td>
+      <td class="ticker short">RDDT <span class="mkt">US</span></td>
+      <td class="phase downtrend_recovery">🟠 Recov</td>
+      <td class="chg neg">-20.99</td>
+      <td class="corr medium">-0.64</td>
+      <td class="coint">⚪ +0.23</td>
+      <td class="num beta">-0.41</td>
+      <td class="num ls">+0.93</td>
     </tr>
-    <tr data-sector="Crypto/Fintech" data-div="6.097313957219376">
-      <td class="num">6.097313957219376</td>
-      <td class="sector">Crypto/Fintech</td>
-      <td class="ticker long">BMY <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg pos">+0.7</td>
-      <td class="chg pos">+5.2</td>
+    <tr data-sector="Crypto / Fintech" data-score="24.24" data-corr="0.889">
+      <td class="num score">24.24</td>
+      <td class="sector">Crypto / Fintech</td>
+      <td class="ticker long">HOOD <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-0.05</td>
       <td class="arrow">↑</td>
       <td class="ticker short">SOFI <span class="mkt">US</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.0</td>
-      <td class="chg neg">-0.9</td>
-      <td class="div pos">+6.1%</td>
+      <td class="chg neg">-0.97</td>
+      <td class="corr strong">+0.89</td>
+      <td class="coint">🟢 +0.01</td>
+      <td class="num beta">+10.03</td>
+      <td class="num ls">+0.10</td>
     </tr>
-    <tr data-sector="Pharma/Biotech" data-div="5.671718954467853">
-      <td class="num">5.671718954467853</td>
-      <td class="sector">Pharma/Biotech</td>
-      <td class="ticker long">AMGN <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.6</td>
-      <td class="chg pos">+2.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">ABBV <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-2.5</td>
-      <td class="chg neg">-3.2</td>
-      <td class="div pos">+5.7%</td>
-    </tr>
-    <tr data-sector="Crypto/Fintech" data-div="5.613333928293102">
-      <td class="num">5.613333928293102</td>
-      <td class="sector">Crypto/Fintech</td>
-      <td class="ticker long">BMY <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg pos">+0.7</td>
-      <td class="chg pos">+5.2</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">MAR <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.7</td>
-      <td class="chg neg">-0.4</td>
-      <td class="div pos">+5.6%</td>
-    </tr>
-    <tr data-sector="Consumer/Retail" data-div="5.404914830963968">
-      <td class="num">5.404914830963968</td>
-      <td class="sector">Consumer/Retail</td>
-      <td class="ticker long">ROST <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg neg">-0.6</td>
-      <td class="chg pos">+5.1</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">HD <span class="mkt">US</span></td>
+    <tr data-sector="Energy / Oil" data-score="23.82" data-corr="0.02">
+      <td class="num score">23.82</td>
+      <td class="sector">Energy / Oil</td>
+      <td class="ticker long">01913.HK <span class="mkt">HK</span></td>
       <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.4</td>
-      <td class="chg neg">-0.3</td>
-      <td class="div pos">+5.4%</td>
-    </tr>
-    <tr data-sector="Consumer/Retail" data-div="5.09858427129206">
-      <td class="num">5.09858427129206</td>
-      <td class="sector">Consumer/Retail</td>
-      <td class="ticker long">ROST <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg neg">-0.6</td>
-      <td class="chg pos">+5.1</td>
+      <td class="chg pos">+14.14</td>
       <td class="arrow">↑</td>
-      <td class="ticker short">09987.HK <span class="mkt">HK</span></td>
+      <td class="ticker short">09633.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.9</td>
-      <td class="chg neg">+0.0</td>
-      <td class="div pos">+5.1%</td>
+      <td class="chg neg">-3.91</td>
+      <td class="corr weak">+0.02</td>
+      <td class="coint">🟢 +0.04</td>
+      <td class="num beta">+0.04</td>
+      <td class="num ls">+30.00</td>
     </tr>
-    <tr data-sector="Consumer/Retail" data-div="5.09858427129206">
-      <td class="num">5.09858427129206</td>
-      <td class="sector">Consumer/Retail</td>
-      <td class="ticker long">ROST <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg neg">-0.6</td>
-      <td class="chg pos">+5.1</td>
+    <tr data-sector="Semiconductor" data-score="23.22" data-corr="0.734">
+      <td class="num score">23.22</td>
+      <td class="sector">Semiconductor</td>
+      <td class="ticker long">03986.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+7.19</td>
       <td class="arrow">↑</td>
-      <td class="ticker short">00300.HK <span class="mkt">HK</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg pos">+0.5</td>
-      <td class="chg neg">+0.0</td>
-      <td class="div pos">+5.1%</td>
+      <td class="ticker short">MU <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-5.90</td>
+      <td class="corr strong">+0.73</td>
+      <td class="coint">🟡 +0.07</td>
+      <td class="num beta">+1.67</td>
+      <td class="num ls">+0.90</td>
     </tr>
-    <tr data-sector="Healthcare/Medtech" data-div="4.889438817866835">
-      <td class="num">4.889438817866835</td>
-      <td class="sector">Healthcare/Medtech</td>
+    <tr data-sector="Consumer / Retail" data-score="22.91" data-corr="0.16">
+      <td class="num score">22.91</td>
+      <td class="sector">Consumer / Retail</td>
+      <td class="ticker long">AMZN <span class="mkt">US</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg pos">+15.32</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">NKE <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-1.37</td>
+      <td class="corr weak">+0.16</td>
+      <td class="coint">⚪ +0.20</td>
+      <td class="num beta">+1.78</td>
+      <td class="num ls">+1.13</td>
+    </tr>
+    <tr data-sector="Utility" data-score="22.89" data-corr="0.132">
+      <td class="num score">22.89</td>
+      <td class="sector">Utility</td>
+      <td class="ticker long">VST <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-0.29</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">RDDT <span class="mkt">US</span></td>
+      <td class="phase downtrend_recovery">🟠 Recov</td>
+      <td class="chg neg">-20.99</td>
+      <td class="corr weak">+0.13</td>
+      <td class="coint">⚪ +0.38</td>
+      <td class="num beta">-0.02</td>
+      <td class="num ls">+24.27</td>
+    </tr>
+    <tr data-sector="Semiconductor" data-score="22.1" data-corr="0.857">
+      <td class="num score">22.1</td>
+      <td class="sector">Semiconductor</td>
+      <td class="ticker long">03986.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+7.19</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">SNDK <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-5.09</td>
+      <td class="corr strong">+0.86</td>
+      <td class="coint">⚪ +0.26</td>
+      <td class="num beta">+0.55</td>
+      <td class="num ls">+1.89</td>
+    </tr>
+    <tr data-sector="Consumer / Retail" data-score="22.05" data-corr="0.391">
+      <td class="num score">22.05</td>
+      <td class="sector">Consumer / Retail</td>
+      <td class="ticker long">AMZN <span class="mkt">US</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg pos">+15.32</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">CMG <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-3.37</td>
+      <td class="corr weak">+0.39</td>
+      <td class="coint">🟡 +0.12</td>
+      <td class="num beta">+0.85</td>
+      <td class="num ls">+1.16</td>
+    </tr>
+    <tr data-sector="Utility" data-score="20.7" data-corr="0.769">
+      <td class="num score">20.7</td>
+      <td class="sector">Utility</td>
+      <td class="ticker long">GLW <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+2.24</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">RDDT <span class="mkt">US</span></td>
+      <td class="phase downtrend_recovery">🟠 Recov</td>
+      <td class="chg neg">-20.99</td>
+      <td class="corr strong">+0.77</td>
+      <td class="coint">⚪ +0.86</td>
+      <td class="num beta">+0.17</td>
+      <td class="num ls">+5.46</td>
+    </tr>
+    <tr data-sector="Internet / Software" data-score="20.39" data-corr="0.942">
+      <td class="num score">20.39</td>
+      <td class="sector">Internet / Software</td>
+      <td class="ticker long">CRM <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+1.83</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">ADSK <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-0.33</td>
+      <td class="corr strong">+0.94</td>
+      <td class="coint">🟢 +0.01</td>
+      <td class="num beta">+0.67</td>
+      <td class="num ls">+1.57</td>
+    </tr>
+    <tr data-sector="Gold / Precious Metals" data-score="20.11" data-corr="0.943">
+      <td class="num score">20.11</td>
+      <td class="sector">Gold / Precious Metals</td>
+      <td class="ticker long">06693.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+2.33</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">02099.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+0.34</td>
+      <td class="corr strong">+0.94</td>
+      <td class="coint">🟢 +0.03</td>
+      <td class="num beta">+0.16</td>
+      <td class="num ls">+7.46</td>
+    </tr>
+    <tr data-sector="Internet / Software" data-score="19.95" data-corr="0.958">
+      <td class="num score">19.95</td>
+      <td class="sector">Internet / Software</td>
+      <td class="ticker long">CRM <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+1.83</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">ADBE <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+1.01</td>
+      <td class="corr strong">+0.96</td>
+      <td class="coint">🟢 +0.00</td>
+      <td class="num beta">+0.53</td>
+      <td class="num ls">+1.70</td>
+    </tr>
+    <tr data-sector="Semiconductor" data-score="19.89" data-corr="0.504">
+      <td class="num score">19.89</td>
+      <td class="sector">Semiconductor</td>
+      <td class="ticker long">MPWR <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+8.35</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">MU <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-5.90</td>
+      <td class="corr medium">+0.50</td>
+      <td class="coint">⚪ +0.23</td>
+      <td class="num beta">+0.37</td>
+      <td class="num ls">+1.57</td>
+    </tr>
+    <tr data-sector="Industrial / Defense" data-score="19.84" data-corr="0.553">
+      <td class="num score">19.84</td>
+      <td class="sector">Industrial / Defense</td>
+      <td class="ticker long">ETN <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+7.32</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">ICE <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-2.43</td>
+      <td class="corr medium">-0.55</td>
+      <td class="coint">🟡 +0.06</td>
+      <td class="num beta">-0.87</td>
+      <td class="num ls">+2.65</td>
+    </tr>
+    <tr data-sector="Industrial / Defense" data-score="19.81" data-corr="0.091">
+      <td class="num score">19.81</td>
+      <td class="sector">Industrial / Defense</td>
+      <td class="ticker long">09698.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+9.51</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">COIN <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-10.59</td>
+      <td class="corr weak">-0.09</td>
+      <td class="coint">🟡 +0.12</td>
+      <td class="num beta">+0.03</td>
+      <td class="num ls">+25.43</td>
+    </tr>
+    <tr data-sector="Media / Entertainment" data-score="19.4" data-corr="0.45">
+      <td class="num score">19.4</td>
+      <td class="sector">Media / Entertainment</td>
+      <td class="ticker long">09999.HK <span class="mkt">HK</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg pos">+0.58</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">LYV <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-5.14</td>
+      <td class="corr medium">+0.45</td>
+      <td class="coint">⚪ +0.30</td>
+      <td class="num beta">+0.77</td>
+      <td class="num ls">+2.21</td>
+    </tr>
+    <tr data-sector="Gold / Precious Metals" data-score="19.3" data-corr="0.968">
+      <td class="num score">19.3</td>
+      <td class="sector">Gold / Precious Metals</td>
+      <td class="ticker long">02899.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+2.21</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">02099.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+0.34</td>
+      <td class="corr strong">+0.97</td>
+      <td class="coint">🟡 +0.13</td>
+      <td class="num beta">+0.10</td>
+      <td class="num ls">+6.55</td>
+    </tr>
+    <tr data-sector="Industrial / Defense" data-score="19.0" data-corr="0.465">
+      <td class="num score">19.0</td>
+      <td class="sector">Industrial / Defense</td>
+      <td class="ticker long">09698.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+9.51</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">ICE <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-2.43</td>
+      <td class="corr medium">-0.47</td>
+      <td class="coint">🟡 +0.16</td>
+      <td class="num beta">+0.06</td>
+      <td class="num ls">+44.22</td>
+    </tr>
+    <tr data-sector="Internet / Software" data-score="18.73" data-corr="0.888">
+      <td class="num score">18.73</td>
+      <td class="sector">Internet / Software</td>
+      <td class="ticker long">CRM <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+1.83</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">INTU <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+0.18</td>
+      <td class="corr strong">+0.89</td>
+      <td class="coint">🟡 +0.10</td>
+      <td class="num beta">+0.53</td>
+      <td class="num ls">+1.89</td>
+    </tr>
+    <tr data-sector="Crypto / Fintech" data-score="18.57" data-corr="0.875">
+      <td class="num score">18.57</td>
+      <td class="sector">Crypto / Fintech</td>
+      <td class="ticker long">06082.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+11.20</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">PYPL <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-0.76</td>
+      <td class="corr strong">-0.88</td>
+      <td class="coint">🟡 +0.12</td>
+      <td class="num beta">-1.51</td>
+      <td class="num ls">+1.02</td>
+    </tr>
+    <tr data-sector="Industrial / Defense" data-score="18.16" data-corr="0.253">
+      <td class="num score">18.16</td>
+      <td class="sector">Industrial / Defense</td>
+      <td class="ticker long">06682.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+5.93</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">COIN <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-10.59</td>
+      <td class="corr weak">-0.25</td>
+      <td class="coint">⚪ +0.26</td>
+      <td class="num beta">+0.07</td>
+      <td class="num ls">+14.10</td>
+    </tr>
+    <tr data-sector="Bank" data-score="17.78" data-corr="0.659">
+      <td class="num score">17.78</td>
+      <td class="sector">Bank</td>
+      <td class="ticker long">WBD <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+3.26</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">02328.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-2.38</td>
+      <td class="corr medium">-0.66</td>
+      <td class="coint">🟡 +0.16</td>
+      <td class="num beta">-0.42</td>
+      <td class="num ls">+1.42</td>
+    </tr>
+    <tr data-sector="Industrial / Defense" data-score="17.76" data-corr="0.238">
+      <td class="num score">17.76</td>
+      <td class="sector">Industrial / Defense</td>
+      <td class="ticker long">06682.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+5.93</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">LIN <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-5.95</td>
+      <td class="corr weak">-0.24</td>
+      <td class="coint">🟡 +0.06</td>
+      <td class="num beta">-0.05</td>
+      <td class="num ls">+64.05</td>
+    </tr>
+    <tr data-sector="AI Infrastructure" data-score="17.71" data-corr="0.379">
+      <td class="num score">17.71</td>
+      <td class="sector">AI Infrastructure</td>
+      <td class="ticker long">CRWD <span class="mkt">US</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg pos">+3.05</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">APP <span class="mkt">US</span></td>
+      <td class="phase downtrend_recovery">🟠 Recov</td>
+      <td class="chg neg">-1.97</td>
+      <td class="corr weak">+0.38</td>
+      <td class="coint">⚪ +0.36</td>
+      <td class="num beta">-0.05</td>
+      <td class="num ls">+20.46</td>
+    </tr>
+    <tr data-sector="Semiconductor" data-score="17.21" data-corr="0.782">
+      <td class="num score">17.21</td>
+      <td class="sector">Semiconductor</td>
+      <td class="ticker long">03986.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+7.19</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">NXPI <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-6.53</td>
+      <td class="corr strong">+0.78</td>
+      <td class="coint">⚪ +0.75</td>
+      <td class="num beta">+5.23</td>
+      <td class="num ls">+0.65</td>
+    </tr>
+    <tr data-sector="Internet / Software" data-score="17.17" data-corr="0.557">
+      <td class="num score">17.17</td>
+      <td class="sector">Internet / Software</td>
+      <td class="ticker long">MSFT <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+3.02</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">ADSK <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-0.33</td>
+      <td class="corr medium">+0.56</td>
+      <td class="coint">🟢 +0.01</td>
+      <td class="num beta">+1.03</td>
+      <td class="num ls">+1.20</td>
+    </tr>
+    <tr data-sector="Industrial / Defense" data-score="16.68" data-corr="0.089">
+      <td class="num score">16.68</td>
+      <td class="sector">Industrial / Defense</td>
+      <td class="ticker long">09698.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+9.51</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">LIN <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-5.95</td>
+      <td class="corr weak">-0.09</td>
+      <td class="coint">🟡 +0.19</td>
+      <td class="num beta">-0.03</td>
+      <td class="num ls">+71.87</td>
+    </tr>
+    <tr data-sector="Internet / Software" data-score="16.6" data-corr="0.541">
+      <td class="num score">16.6</td>
+      <td class="sector">Internet / Software</td>
+      <td class="ticker long">MSFT <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+3.02</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">INTU <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+0.18</td>
+      <td class="corr medium">+0.54</td>
+      <td class="coint">🟢 +0.02</td>
+      <td class="num beta">+0.85</td>
+      <td class="num ls">+1.38</td>
+    </tr>
+    <tr data-sector="Healthcare / Medtech" data-score="16.3" data-corr="0.065">
+      <td class="num score">16.3</td>
+      <td class="sector">Healthcare / Medtech</td>
       <td class="ticker long">DHR <span class="mkt">US</span></td>
       <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.6</td>
-      <td class="chg pos">+1.8</td>
+      <td class="chg neg">-0.61</td>
       <td class="arrow">↑</td>
-      <td class="ticker short">CVS <span class="mkt">US</span></td>
+      <td class="ticker short">09901.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.8</td>
-      <td class="chg neg">-3.1</td>
-      <td class="div pos">+4.9%</td>
+      <td class="chg neg">-4.55</td>
+      <td class="corr weak">+0.07</td>
+      <td class="coint">🟡 +0.13</td>
+      <td class="num beta">+1.46</td>
+      <td class="num ls">+0.51</td>
     </tr>
-    <tr data-sector="Gold/Precious Metals" data-div="4.595761438495378">
-      <td class="num">4.595761438495378</td>
-      <td class="sector">Gold/Precious Metals</td>
-      <td class="ticker long">NEM <span class="mkt">US</span></td>
+    <tr data-sector="Crypto / Fintech" data-score="16.21" data-corr="0.86">
+      <td class="num score">16.21</td>
+      <td class="sector">Crypto / Fintech</td>
+      <td class="ticker long">06082.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-2.1</td>
-      <td class="chg pos">+0.6</td>
+      <td class="chg pos">+11.20</td>
       <td class="arrow">↑</td>
-      <td class="ticker short">GS <span class="mkt">US</span></td>
+      <td class="ticker short">SOFI <span class="mkt">US</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.6</td>
-      <td class="chg neg">-4.0</td>
-      <td class="div pos">+4.6%</td>
+      <td class="chg neg">-0.97</td>
+      <td class="corr strong">+0.86</td>
+      <td class="coint">⚪ +0.85</td>
+      <td class="num beta">+3.26</td>
+      <td class="num ls">+0.51</td>
     </tr>
-    <tr data-sector="Pharma/Biotech" data-div="4.101741992298152">
-      <td class="num">4.101741992298152</td>
-      <td class="sector">Pharma/Biotech</td>
-      <td class="ticker long">SWKS <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.3</td>
-      <td class="chg pos">+3.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">MRK <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.3</td>
-      <td class="chg neg">-0.7</td>
-      <td class="div pos">+4.1%</td>
-    </tr>
-    <tr data-sector="Telecom" data-div="4.097945346268354">
-      <td class="num">4.097945346268354</td>
-      <td class="sector">Telecom</td>
-      <td class="ticker long">00941.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.4</td>
-      <td class="chg neg">+0.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">TMUS <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.4</td>
-      <td class="chg neg">-4.1</td>
-      <td class="div pos">+4.1%</td>
-    </tr>
-    <tr data-sector="Telecom" data-div="4.097945346268354">
-      <td class="num">4.097945346268354</td>
-      <td class="sector">Telecom</td>
-      <td class="ticker long">00728.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.4</td>
-      <td class="chg neg">+0.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">TMUS <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.4</td>
-      <td class="chg neg">-4.1</td>
-      <td class="div pos">+4.1%</td>
-    </tr>
-    <tr data-sector="Gold/Precious Metals" data-div="4.037765269975738">
-      <td class="num">4.037765269975738</td>
-      <td class="sector">Gold/Precious Metals</td>
-      <td class="ticker long">02259.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">+0.0</td>
-      <td class="chg neg">+0.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">GS <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.6</td>
-      <td class="chg neg">-4.0</td>
-      <td class="div pos">+4.0%</td>
-    </tr>
-    <tr data-sector="Gold/Precious Metals" data-div="4.037765269975738">
-      <td class="num">4.037765269975738</td>
-      <td class="sector">Gold/Precious Metals</td>
+    <tr data-sector="Gold / Precious Metals" data-score="16.12" data-corr="0.291">
+      <td class="num score">16.12</td>
+      <td class="sector">Gold / Precious Metals</td>
       <td class="ticker long">06181.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+10.1</td>
-      <td class="chg neg">+0.0</td>
+      <td class="chg pos">+10.10</td>
       <td class="arrow">↑</td>
-      <td class="ticker short">GS <span class="mkt">US</span></td>
+      <td class="ticker short">NEM <span class="mkt">US</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.6</td>
-      <td class="chg neg">-4.0</td>
-      <td class="div pos">+4.0%</td>
+      <td class="chg neg">-2.14</td>
+      <td class="corr weak">+0.29</td>
+      <td class="coint">⚪ +0.29</td>
+      <td class="num beta">+8.52</td>
+      <td class="num ls">+0.33</td>
     </tr>
-    <tr data-sector="EV/Auto" data-div="3.945558415812077">
-      <td class="num">3.945558415812077</td>
-      <td class="sector">EV/Auto</td>
-      <td class="ticker long">01211.HK <span class="mkt">HK</span></td>
+    <tr data-sector="Insurance" data-score="16.08" data-corr="0.844">
+      <td class="num score">16.08</td>
+      <td class="sector">Insurance</td>
+      <td class="ticker long">03200.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.7</td>
-      <td class="chg neg">+0.0</td>
+      <td class="chg pos">+11.93</td>
       <td class="arrow">↑</td>
-      <td class="ticker short">LLY <span class="mkt">US</span></td>
+      <td class="ticker short">02601.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.5</td>
-      <td class="chg neg">-3.9</td>
-      <td class="div pos">+3.9%</td>
+      <td class="chg neg">-2.49</td>
+      <td class="corr strong">-0.84</td>
+      <td class="coint">⚪ +0.96</td>
+      <td class="num beta">-2.49</td>
+      <td class="num ls">+1.58</td>
     </tr>
-    <tr data-sector="Telecom" data-div="3.6469092058544614">
-      <td class="num">3.6469092058544614</td>
-      <td class="sector">Telecom</td>
-      <td class="ticker long">00941.HK <span class="mkt">HK</span></td>
+    <tr data-sector="Internet / Software" data-score="16.02" data-corr="0.555">
+      <td class="num score">16.02</td>
+      <td class="sector">Internet / Software</td>
+      <td class="ticker long">MSFT <span class="mkt">US</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.4</td>
-      <td class="chg neg">+0.0</td>
+      <td class="chg pos">+3.02</td>
       <td class="arrow">↑</td>
-      <td class="ticker short">T <span class="mkt">US</span></td>
+      <td class="ticker short">ADBE <span class="mkt">US</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.2</td>
-      <td class="chg neg">-3.6</td>
-      <td class="div pos">+3.6%</td>
+      <td class="chg pos">+1.01</td>
+      <td class="corr medium">+0.56</td>
+      <td class="coint">🟡 +0.05</td>
+      <td class="num beta">+0.80</td>
+      <td class="num ls">+1.32</td>
     </tr>
-    <tr data-sector="Telecom" data-div="3.6469092058544614">
-      <td class="num">3.6469092058544614</td>
-      <td class="sector">Telecom</td>
-      <td class="ticker long">00728.HK <span class="mkt">HK</span></td>
+    <tr data-sector="Gold / Precious Metals" data-score="15.92" data-corr="0.962">
+      <td class="num score">15.92</td>
+      <td class="sector">Gold / Precious Metals</td>
+      <td class="ticker long">02899.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.4</td>
-      <td class="chg neg">+0.0</td>
+      <td class="chg pos">+2.21</td>
       <td class="arrow">↑</td>
-      <td class="ticker short">T <span class="mkt">US</span></td>
+      <td class="ticker short">02259.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.2</td>
-      <td class="chg neg">-3.6</td>
-      <td class="div pos">+3.6%</td>
+      <td class="chg neg">+0.00</td>
+      <td class="corr strong">+0.96</td>
+      <td class="coint">⚪ +0.48</td>
+      <td class="num beta">+0.19</td>
+      <td class="num ls">+3.21</td>
     </tr>
-    <tr data-sector="Bank" data-div="3.575657077995575">
-      <td class="num">3.575657077995575</td>
+    <tr data-sector="Bank" data-score="15.59" data-corr="0.606">
+      <td class="num score">15.59</td>
       <td class="sector">Bank</td>
-      <td class="ticker long">MDT <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.4</td>
-      <td class="chg pos">+2.6</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">XOM <span class="mkt">US</span></td>
+      <td class="ticker long">LITE <span class="mkt">US</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.0</td>
-      <td class="chg neg">-1.0</td>
-      <td class="div pos">+3.6%</td>
-    </tr>
-    <tr data-sector="Pharma/Biotech" data-div="3.437966660521082">
-      <td class="num">3.437966660521082</td>
-      <td class="sector">Pharma/Biotech</td>
-      <td class="ticker long">SWKS <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.3</td>
-      <td class="chg pos">+3.4</td>
+      <td class="chg pos">+2.99</td>
       <td class="arrow">↑</td>
-      <td class="ticker short">01530.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_recovery">🟠 Recov</td>
-      <td class="chg neg">-3.7</td>
-      <td class="chg neg">+0.0</td>
-      <td class="div pos">+3.4%</td>
-    </tr>
-    <tr data-sector="Crypto/Fintech" data-div="3.4297156307687815">
-      <td class="num">3.4297156307687815</td>
-      <td class="sector">Crypto/Fintech</td>
-      <td class="ticker long">BMY <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg pos">+0.7</td>
-      <td class="chg pos">+5.2</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">MSTR <span class="mkt">US</span></td>
+      <td class="ticker short">02328.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-4.6</td>
-      <td class="chg pos">+1.8</td>
-      <td class="div pos">+3.4%</td>
+      <td class="chg neg">-2.38</td>
+      <td class="corr medium">-0.61</td>
+      <td class="coint">⚪ +0.32</td>
+      <td class="num beta">-29.18</td>
+      <td class="num ls">+0.09</td>
     </tr>
-    <tr data-sector="Insurance" data-div="3.3935275393591953">
-      <td class="num">3.3935275393591953</td>
+    <tr data-sector="Healthcare / Medtech" data-score="15.48" data-corr="0.349">
+      <td class="num score">15.48</td>
+      <td class="sector">Healthcare / Medtech</td>
+      <td class="ticker long">ISRG <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+0.10</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">09901.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-4.55</td>
+      <td class="corr weak">-0.35</td>
+      <td class="coint">🟢 +0.03</td>
+      <td class="num beta">-6.78</td>
+      <td class="num ls">+0.13</td>
+    </tr>
+    <tr data-sector="Internet / Software" data-score="15.26" data-corr="0.433">
+      <td class="num score">15.26</td>
+      <td class="sector">Internet / Software</td>
+      <td class="ticker long">ORCL <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+1.81</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">ADSK <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-0.33</td>
+      <td class="corr medium">-0.43</td>
+      <td class="coint">🟢 +0.01</td>
+      <td class="num beta">-0.17</td>
+      <td class="num ls">+7.67</td>
+    </tr>
+    <tr data-sector="Gold / Precious Metals" data-score="15.21" data-corr="0.503">
+      <td class="num score">15.21</td>
+      <td class="sector">Gold / Precious Metals</td>
+      <td class="ticker long">06181.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+10.10</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">02099.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+0.34</td>
+      <td class="corr medium">-0.50</td>
+      <td class="coint">⚪ +0.47</td>
+      <td class="num beta">-0.53</td>
+      <td class="num ls">+3.11</td>
+    </tr>
+    <tr data-sector="Media / Entertainment" data-score="15.17" data-corr="0.477">
+      <td class="num score">15.17</td>
+      <td class="sector">Media / Entertainment</td>
+      <td class="ticker long">09999.HK <span class="mkt">HK</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg pos">+0.58</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">NFLX <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-2.00</td>
+      <td class="corr medium">+0.48</td>
+      <td class="coint">⚪ +0.59</td>
+      <td class="num beta">-0.32</td>
+      <td class="num ls">+3.99</td>
+    </tr>
+    <tr data-sector="Media / Entertainment" data-score="15.0" data-corr="0.432">
+      <td class="num score">15.0</td>
+      <td class="sector">Media / Entertainment</td>
+      <td class="ticker long">DIS <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+0.03</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">LYV <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-5.14</td>
+      <td class="corr medium">+0.43</td>
+      <td class="coint">🟡 +0.19</td>
+      <td class="num beta">-0.16</td>
+      <td class="num ls">+6.08</td>
+    </tr>
+    <tr data-sector="Insurance" data-score="14.98" data-corr="0.876">
+      <td class="num score">14.98</td>
       <td class="sector">Insurance</td>
-      <td class="ticker long">02628.HK <span class="mkt">HK</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg pos">+1.0</td>
-      <td class="chg neg">+0.0</td>
+      <td class="ticker long">06166.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+8.17</td>
       <td class="arrow">↑</td>
-      <td class="ticker short">SPGI <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.7</td>
-      <td class="chg neg">-3.4</td>
-      <td class="div pos">+3.4%</td>
+      <td class="ticker short">02601.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-2.49</td>
+      <td class="corr strong">-0.88</td>
+      <td class="coint">⚪ +0.91</td>
+      <td class="num beta">-2.96</td>
+      <td class="num ls">+1.63</td>
     </tr>
-    <tr data-sector="Insurance" data-div="3.3935275393591953">
-      <td class="num">3.3935275393591953</td>
-      <td class="sector">Insurance</td>
-      <td class="ticker long">02318.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.1</td>
-      <td class="chg neg">+0.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">SPGI <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.7</td>
-      <td class="chg neg">-3.4</td>
-      <td class="div pos">+3.4%</td>
-    </tr>
-    <tr data-sector="Insurance" data-div="3.3935275393591953">
-      <td class="num">3.3935275393591953</td>
-      <td class="sector">Insurance</td>
-      <td class="ticker long">02718.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-31.1</td>
-      <td class="chg neg">+0.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">SPGI <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.7</td>
-      <td class="chg neg">-3.4</td>
-      <td class="div pos">+3.4%</td>
-    </tr>
-    <tr data-sector="Insurance" data-div="3.3311016084180163">
-      <td class="num">3.3311016084180163</td>
-      <td class="sector">Insurance</td>
-      <td class="ticker long">02628.HK <span class="mkt">HK</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg pos">+1.0</td>
-      <td class="chg neg">+0.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">TRV <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.4</td>
-      <td class="chg neg">-3.3</td>
-      <td class="div pos">+3.3%</td>
-    </tr>
-    <tr data-sector="Insurance" data-div="3.3311016084180163">
-      <td class="num">3.3311016084180163</td>
-      <td class="sector">Insurance</td>
-      <td class="ticker long">02318.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.1</td>
-      <td class="chg neg">+0.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">TRV <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.4</td>
-      <td class="chg neg">-3.3</td>
-      <td class="div pos">+3.3%</td>
-    </tr>
-    <tr data-sector="Insurance" data-div="3.3311016084180163">
-      <td class="num">3.3311016084180163</td>
-      <td class="sector">Insurance</td>
-      <td class="ticker long">02718.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-31.1</td>
-      <td class="chg neg">+0.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">TRV <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.4</td>
-      <td class="chg neg">-3.3</td>
-      <td class="div pos">+3.3%</td>
-    </tr>
-    <tr data-sector="Healthcare/Medtech" data-div="3.3240981596282833">
-      <td class="num">3.3240981596282833</td>
-      <td class="sector">Healthcare/Medtech</td>
+    <tr data-sector="Healthcare / Medtech" data-score="14.72" data-corr="0.318">
+      <td class="num score">14.72</td>
+      <td class="sector">Healthcare / Medtech</td>
       <td class="ticker long">DHR <span class="mkt">US</span></td>
       <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.6</td>
-      <td class="chg pos">+1.8</td>
+      <td class="chg neg">-0.61</td>
       <td class="arrow">↑</td>
-      <td class="ticker short">UNH <span class="mkt">US</span></td>
+      <td class="ticker short">SYK <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-6.42</td>
+      <td class="corr weak">+0.32</td>
+      <td class="coint">🟡 +0.14</td>
+      <td class="num beta">+0.43</td>
+      <td class="num ls">+2.64</td>
+    </tr>
+    <tr data-sector="Pharma / Biotech" data-score="14.7" data-corr="0.504">
+      <td class="num score">14.7</td>
+      <td class="sector">Pharma / Biotech</td>
+      <td class="ticker long">01548.HK <span class="mkt">HK</span></td>
       <td class="phase uptrend">🟢 Up</td>
-      <td class="chg neg">-1.7</td>
-      <td class="chg neg">-1.5</td>
-      <td class="div pos">+3.3%</td>
-    </tr>
-    <tr data-sector="Pharma/Biotech" data-div="3.089047885215495">
-      <td class="num">3.089047885215495</td>
-      <td class="sector">Pharma/Biotech</td>
-      <td class="ticker long">AMGN <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.6</td>
-      <td class="chg pos">+2.4</td>
+      <td class="chg pos">+5.00</td>
       <td class="arrow">↑</td>
-      <td class="ticker short">MRK <span class="mkt">US</span></td>
+      <td class="ticker short">ABBV <span class="mkt">US</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.3</td>
-      <td class="chg neg">-0.7</td>
-      <td class="div pos">+3.1%</td>
+      <td class="chg neg">-2.51</td>
+      <td class="corr medium">+0.50</td>
+      <td class="coint">⚪ +0.91</td>
+      <td class="num beta">+0.10</td>
+      <td class="num ls">+24.82</td>
     </tr>
-    <tr data-sector="Healthcare/Medtech" data-div="3.0722086729378204">
-      <td class="num">3.0722086729378204</td>
-      <td class="sector">Healthcare/Medtech</td>
-      <td class="ticker long">09901.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-4.5</td>
-      <td class="chg neg">+0.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">CVS <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.8</td>
-      <td class="chg neg">-3.1</td>
-      <td class="div pos">+3.1%</td>
-    </tr>
-    <tr data-sector="Crypto/Fintech" data-div="2.799093989612893">
-      <td class="num">2.799093989612893</td>
-      <td class="sector">Crypto/Fintech</td>
-      <td class="ticker long">PYPL <span class="mkt">US</span></td>
+    <tr data-sector="Media / Entertainment" data-score="14.36" data-corr="0.416">
+      <td class="num score">14.36</td>
+      <td class="sector">Media / Entertainment</td>
+      <td class="ticker long">09999.HK <span class="mkt">HK</span></td>
       <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.8</td>
-      <td class="chg pos">+1.9</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">SOFI <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.0</td>
-      <td class="chg neg">-0.9</td>
-      <td class="div pos">+2.8%</td>
-    </tr>
-    <tr data-sector="EV/Auto" data-div="2.7386912959476115">
-      <td class="num">2.7386912959476115</td>
-      <td class="sector">EV/Auto</td>
-      <td class="ticker long">F <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.2</td>
-      <td class="chg pos">+2.2</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">TSLA <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+0.8</td>
-      <td class="chg neg">-0.6</td>
-      <td class="div pos">+2.7%</td>
-    </tr>
-    <tr data-sector="Crypto/Fintech" data-div="2.6675983264505945">
-      <td class="num">2.6675983264505945</td>
-      <td class="sector">Crypto/Fintech</td>
-      <td class="ticker long">MSTR <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-4.6</td>
-      <td class="chg pos">+1.8</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">SOFI <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.0</td>
-      <td class="chg neg">-0.9</td>
-      <td class="div pos">+2.7%</td>
-    </tr>
-    <tr data-sector="Pharma/Biotech" data-div="2.4252725534384254">
-      <td class="num">2.4252725534384254</td>
-      <td class="sector">Pharma/Biotech</td>
-      <td class="ticker long">AMGN <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.6</td>
-      <td class="chg pos">+2.4</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">01530.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_recovery">🟠 Recov</td>
-      <td class="chg neg">-3.7</td>
-      <td class="chg neg">+0.0</td>
-      <td class="div pos">+2.4%</td>
-    </tr>
-    <tr data-sector="EV/Auto" data-div="2.3184329293327126">
-      <td class="num">2.3184329293327126</td>
-      <td class="sector">EV/Auto</td>
-      <td class="ticker long">F <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.2</td>
-      <td class="chg pos">+2.2</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">BAC <span class="mkt">US</span></td>
-      <td class="phase uptrend">🟢 Up</td>
-      <td class="chg pos">+0.4</td>
-      <td class="chg neg">-0.2</td>
-      <td class="div pos">+2.3%</td>
-    </tr>
-    <tr data-sector="Crypto/Fintech" data-div="2.315113960686619">
-      <td class="num">2.315113960686619</td>
-      <td class="sector">Crypto/Fintech</td>
-      <td class="ticker long">PYPL <span class="mkt">US</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg neg">-0.8</td>
-      <td class="chg pos">+1.9</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">MAR <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.7</td>
-      <td class="chg neg">-0.4</td>
-      <td class="div pos">+2.3%</td>
-    </tr>
-    <tr data-sector="Luxury/Consumer Brand" data-div="2.296363467926751">
-      <td class="num">2.296363467926751</td>
-      <td class="sector">Luxury/Consumer Brand</td>
-      <td class="ticker long">03896.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+15.7</td>
-      <td class="chg neg">+0.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">INTC <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.0</td>
-      <td class="chg neg">-2.3</td>
-      <td class="div pos">+2.3%</td>
-    </tr>
-    <tr data-sector="Luxury/Consumer Brand" data-div="2.296363467926751">
-      <td class="num">2.296363467926751</td>
-      <td class="sector">Luxury/Consumer Brand</td>
-      <td class="ticker long">06651.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+11.9</td>
-      <td class="chg neg">+0.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">INTC <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.0</td>
-      <td class="chg neg">-2.3</td>
-      <td class="div pos">+2.3%</td>
-    </tr>
-    <tr data-sector="Luxury/Consumer Brand" data-div="2.296363467926751">
-      <td class="num">2.296363467926751</td>
-      <td class="sector">Luxury/Consumer Brand</td>
-      <td class="ticker long">00002.HK <span class="mkt">HK</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.1</td>
-      <td class="chg neg">+0.0</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">INTC <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-1.0</td>
-      <td class="chg neg">-2.3</td>
-      <td class="div pos">+2.3%</td>
-    </tr>
-    <tr data-sector="Crypto/Fintech" data-div="2.1836182975243204">
-      <td class="num">2.1836182975243204</td>
-      <td class="sector">Crypto/Fintech</td>
-      <td class="ticker long">MSTR <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-4.6</td>
-      <td class="chg pos">+1.8</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">MAR <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.7</td>
-      <td class="chg neg">-0.4</td>
-      <td class="div pos">+2.2%</td>
-    </tr>
-    <tr data-sector="Media/Entertainment" data-div="2.056650251774456">
-      <td class="num">2.056650251774456</td>
-      <td class="sector">Media/Entertainment</td>
-      <td class="ticker long">WBD <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+3.3</td>
-      <td class="chg pos">+2.1</td>
-      <td class="arrow">↑</td>
-      <td class="ticker short">09999.HK <span class="mkt">HK</span></td>
-      <td class="phase base_building">🟡 Base</td>
-      <td class="chg pos">+0.6</td>
-      <td class="chg neg">+0.0</td>
-      <td class="div pos">+2.1%</td>
-    </tr>
-    <tr data-sector="Media/Entertainment" data-div="2.056650251774456">
-      <td class="num">2.056650251774456</td>
-      <td class="sector">Media/Entertainment</td>
-      <td class="ticker long">WBD <span class="mkt">US</span></td>
-      <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+3.3</td>
-      <td class="chg pos">+2.1</td>
+      <td class="chg pos">+0.58</td>
       <td class="arrow">↑</td>
       <td class="ticker short">09626.HK <span class="mkt">HK</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-0.3</td>
-      <td class="chg neg">+0.0</td>
-      <td class="div pos">+2.1%</td>
+      <td class="chg neg">-0.34</td>
+      <td class="corr medium">+0.42</td>
+      <td class="coint">⚪ +0.53</td>
+      <td class="num beta">+0.76</td>
+      <td class="num ls">+1.12</td>
     </tr>
-    <tr data-sector="Internet/Software" data-div="1.7013023543216335">
-      <td class="num">1.7013023543216335</td>
-      <td class="sector">Internet/Software</td>
+    <tr data-sector="Industrial / Defense" data-score="14.25" data-corr="0.1">
+      <td class="num score">14.25</td>
+      <td class="sector">Industrial / Defense</td>
+      <td class="ticker long">06682.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+5.93</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">ICE <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-2.43</td>
+      <td class="corr weak">-0.10</td>
+      <td class="coint">🟡 +0.09</td>
+      <td class="num beta">+0.12</td>
+      <td class="num ls">+26.67</td>
+    </tr>
+    <tr data-sector="Insurance" data-score="14.22" data-corr="0.844">
+      <td class="num score">14.22</td>
+      <td class="sector">Insurance</td>
+      <td class="ticker long">02577.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+5.74</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">02601.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-2.49</td>
+      <td class="corr strong">-0.84</td>
+      <td class="coint">⚪ +0.83</td>
+      <td class="num beta">-0.24</td>
+      <td class="num ls">+10.79</td>
+    </tr>
+    <tr data-sector="Crypto / Fintech" data-score="14.11" data-corr="0.205">
+      <td class="num score">14.11</td>
+      <td class="sector">Crypto / Fintech</td>
+      <td class="ticker long">HOOD <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-0.05</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">MSTR <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-4.56</td>
+      <td class="corr weak">+0.20</td>
+      <td class="coint">⚪ +0.52</td>
+      <td class="num beta">-0.29</td>
+      <td class="num ls">+3.38</td>
+    </tr>
+    <tr data-sector="Real Estate" data-score="13.81" data-corr="0.271">
+      <td class="num score">13.81</td>
+      <td class="sector">Real Estate</td>
+      <td class="ticker long">02477.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+9.52</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">EQIX <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-2.70</td>
+      <td class="corr weak">-0.27</td>
+      <td class="coint">⚪ +0.50</td>
+      <td class="num beta">+0.00</td>
+      <td class="num ls">+1171.27</td>
+    </tr>
+    <tr data-sector="Gold / Precious Metals" data-score="13.73" data-corr="0.935">
+      <td class="num score">13.73</td>
+      <td class="sector">Gold / Precious Metals</td>
+      <td class="ticker long">06693.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+2.33</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">02259.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">+0.00</td>
+      <td class="corr strong">+0.94</td>
+      <td class="coint">⚪ +0.68</td>
+      <td class="num beta">+0.25</td>
+      <td class="num ls">+4.52</td>
+    </tr>
+    <tr data-sector="Real Estate" data-score="13.55" data-corr="0.559">
+      <td class="num score">13.55</td>
+      <td class="sector">Real Estate</td>
+      <td class="ticker long">02477.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+9.52</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">01318.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-4.16</td>
+      <td class="corr medium">-0.56</td>
+      <td class="coint">⚪ +0.89</td>
+      <td class="num beta">+0.01</td>
+      <td class="num ls">+98.56</td>
+    </tr>
+    <tr data-sector="Real Estate" data-score="13.17" data-corr="0.728">
+      <td class="num score">13.17</td>
+      <td class="sector">Real Estate</td>
+      <td class="ticker long">03330.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+5.75</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">01318.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-4.16</td>
+      <td class="corr strong">+0.73</td>
+      <td class="coint">⚪ +0.91</td>
+      <td class="num beta">+0.20</td>
+      <td class="num ls">+7.33</td>
+    </tr>
+    <tr data-sector="Semiconductor" data-score="13.14" data-corr="0.372">
+      <td class="num score">13.14</td>
+      <td class="sector">Semiconductor</td>
+      <td class="ticker long">MPWR <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+8.35</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">SNDK <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-5.09</td>
+      <td class="corr weak">+0.37</td>
+      <td class="coint">⚪ +0.73</td>
+      <td class="num beta">+0.15</td>
+      <td class="num ls">+2.70</td>
+    </tr>
+    <tr data-sector="Crypto / Fintech" data-score="12.99" data-corr="0.799">
+      <td class="num score">12.99</td>
+      <td class="sector">Crypto / Fintech</td>
+      <td class="ticker long">HOOD <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-0.05</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">PYPL <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-0.76</td>
+      <td class="corr strong">-0.80</td>
+      <td class="coint">⚪ +0.54</td>
+      <td class="num beta">+0.01</td>
+      <td class="num ls">+110.87</td>
+    </tr>
+    <tr data-sector="AI Infrastructure" data-score="12.85" data-corr="0.716">
+      <td class="num score">12.85</td>
+      <td class="sector">AI Infrastructure</td>
+      <td class="ticker long">WDAY <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+1.41</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">SNOW <span class="mkt">US</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg neg">-1.62</td>
+      <td class="corr strong">+0.72</td>
+      <td class="coint">🟡 +0.08</td>
+      <td class="num beta">+0.53</td>
+      <td class="num ls">+3.89</td>
+    </tr>
+    <tr data-sector="Crypto / Fintech" data-score="12.61" data-corr="0.121">
+      <td class="num score">12.61</td>
+      <td class="sector">Crypto / Fintech</td>
+      <td class="ticker long">MAR <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-0.71</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">MSTR <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-4.56</td>
+      <td class="corr weak">+0.12</td>
+      <td class="coint">🟡 +0.05</td>
+      <td class="num beta">+0.68</td>
+      <td class="num ls">+0.61</td>
+    </tr>
+    <tr data-sector="Energy / Oil" data-score="12.54" data-corr="0.075">
+      <td class="num score">12.54</td>
+      <td class="sector">Energy / Oil</td>
+      <td class="ticker long">GOOG <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+6.88</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">09633.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-3.91</td>
+      <td class="corr weak">-0.07</td>
+      <td class="coint">⚪ +0.36</td>
+      <td class="num beta">+1.05</td>
+      <td class="num ls">+1.00</td>
+    </tr>
+    <tr data-sector="Energy / Oil" data-score="12.3" data-corr="0.106">
+      <td class="num score">12.3</td>
+      <td class="sector">Energy / Oil</td>
+      <td class="ticker long">GOOGL <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+6.73</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">09633.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-3.91</td>
+      <td class="corr weak">-0.11</td>
+      <td class="coint">⚪ +0.41</td>
+      <td class="num beta">+0.84</td>
+      <td class="num ls">+1.23</td>
+    </tr>
+    <tr data-sector="Bank" data-score="12.27" data-corr="0.603">
+      <td class="num score">12.27</td>
+      <td class="sector">Bank</td>
+      <td class="ticker long">WBD <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+3.26</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">01288.HK <span class="mkt">HK</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg neg">-3.07</td>
+      <td class="corr medium">-0.60</td>
+      <td class="coint">🟡 +0.19</td>
+      <td class="num beta">-0.92</td>
+      <td class="num ls">+0.77</td>
+    </tr>
+    <tr data-sector="Utility" data-score="12.02" data-corr="0.732">
+      <td class="num score">12.02</td>
+      <td class="sector">Utility</td>
+      <td class="ticker long">VST <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-0.29</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">UPS <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-1.00</td>
+      <td class="corr strong">+0.73</td>
+      <td class="coint">⚪ +0.57</td>
+      <td class="num beta">+0.74</td>
+      <td class="num ls">+1.71</td>
+    </tr>
+    <tr data-sector="Pharma / Biotech" data-score="11.97" data-corr="0.256">
+      <td class="num score">11.97</td>
+      <td class="sector">Pharma / Biotech</td>
+      <td class="ticker long">01548.HK <span class="mkt">HK</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg pos">+5.00</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">01530.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_recovery">🟠 Recov</td>
+      <td class="chg neg">-3.69</td>
+      <td class="corr weak">-0.26</td>
+      <td class="coint">⚪ +0.99</td>
+      <td class="num beta">+0.87</td>
+      <td class="num ls">+1.13</td>
+    </tr>
+    <tr data-sector="EV / Auto" data-score="11.65" data-corr="0.017">
+      <td class="num score">11.65</td>
+      <td class="sector">EV / Auto</td>
+      <td class="ticker long">09866.HK <span class="mkt">HK</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg pos">+3.52</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">02015.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-1.57</td>
+      <td class="corr weak">+0.02</td>
+      <td class="coint">⚪ +0.61</td>
+      <td class="num beta">+0.42</td>
+      <td class="num ls">+2.67</td>
+    </tr>
+    <tr data-sector="AI Infrastructure" data-score="11.49" data-corr="0.263">
+      <td class="num score">11.49</td>
+      <td class="sector">AI Infrastructure</td>
+      <td class="ticker long">PANW <span class="mkt">US</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg pos">+1.89</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">APP <span class="mkt">US</span></td>
+      <td class="phase downtrend_recovery">🟠 Recov</td>
+      <td class="chg neg">-1.97</td>
+      <td class="corr weak">+0.26</td>
+      <td class="coint">⚪ +0.81</td>
+      <td class="num beta">-0.17</td>
+      <td class="num ls">+5.09</td>
+    </tr>
+    <tr data-sector="Industrial / Defense" data-score="11.38" data-corr="0.096">
+      <td class="num score">11.38</td>
+      <td class="sector">Industrial / Defense</td>
+      <td class="ticker long">ETN <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+7.32</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">COIN <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-10.59</td>
+      <td class="corr weak">-0.10</td>
+      <td class="coint">⚪ +0.85</td>
+      <td class="num beta">-0.15</td>
+      <td class="num ls">+5.37</td>
+    </tr>
+    <tr data-sector="Bank" data-score="10.77" data-corr="0.551">
+      <td class="num score">10.77</td>
+      <td class="sector">Bank</td>
+      <td class="ticker long">WBD <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+3.26</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">01398.HK <span class="mkt">HK</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg neg">-1.70</td>
+      <td class="corr medium">-0.55</td>
+      <td class="coint">⚪ +0.22</td>
+      <td class="num beta">-0.92</td>
+      <td class="num ls">+0.95</td>
+    </tr>
+    <tr data-sector="Media / Entertainment" data-score="10.64" data-corr="0.393">
+      <td class="num score">10.64</td>
+      <td class="sector">Media / Entertainment</td>
+      <td class="ticker long">DIS <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+0.03</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">NFLX <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-2.00</td>
+      <td class="corr weak">+0.39</td>
+      <td class="coint">⚪ +0.43</td>
+      <td class="num beta">+0.29</td>
+      <td class="num ls">+2.59</td>
+    </tr>
+    <tr data-sector="Internet / Software" data-score="10.59" data-corr="0.659">
+      <td class="num score">10.59</td>
+      <td class="sector">Internet / Software</td>
       <td class="ticker long">ORCL <span class="mkt">US</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.8</td>
-      <td class="chg pos">+12.9</td>
+      <td class="chg pos">+1.81</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">INTU <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+0.18</td>
+      <td class="corr medium">-0.66</td>
+      <td class="coint">⚪ +0.68</td>
+      <td class="num beta">-0.30</td>
+      <td class="num ls">+4.13</td>
+    </tr>
+    <tr data-sector="Luxury / Brand" data-score="10.47" data-corr="0.123">
+      <td class="num score">10.47</td>
+      <td class="sector">Luxury / Brand</td>
+      <td class="ticker long">03896.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+15.74</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">06651.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+11.95</td>
+      <td class="corr weak">+0.12</td>
+      <td class="coint">⚪ +0.27</td>
+      <td class="num beta">+0.01</td>
+      <td class="num ls">+99.72</td>
+    </tr>
+    <tr data-sector="Media / Entertainment" data-score="10.41" data-corr="0.36">
+      <td class="num score">10.41</td>
+      <td class="sector">Media / Entertainment</td>
+      <td class="ticker long">DIS <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+0.03</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">09626.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-0.34</td>
+      <td class="corr weak">+0.36</td>
+      <td class="coint">⚪ +0.34</td>
+      <td class="num beta">-0.13</td>
+      <td class="num ls">+3.98</td>
+    </tr>
+    <tr data-sector="Gold / Precious Metals" data-score="10.21" data-corr="0.358">
+      <td class="num score">10.21</td>
+      <td class="sector">Gold / Precious Metals</td>
+      <td class="ticker long">06181.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+10.10</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">02259.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">+0.00</td>
+      <td class="corr weak">-0.36</td>
+      <td class="coint">⚪ +0.84</td>
+      <td class="num beta">+1.43</td>
+      <td class="num ls">+1.09</td>
+    </tr>
+    <tr data-sector="Internet China ADR" data-score="10.18" data-corr="0.755">
+      <td class="num score">10.18</td>
+      <td class="sector">Internet China ADR</td>
+      <td class="ticker long">02228.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+6.21</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">09888.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+3.72</td>
+      <td class="corr strong">+0.76</td>
+      <td class="coint">⚪ +0.86</td>
+      <td class="num beta">+0.02</td>
+      <td class="num ls">+56.02</td>
+    </tr>
+    <tr data-sector="Semiconductor" data-score="10.06" data-corr="0.159">
+      <td class="num score">10.06</td>
+      <td class="sector">Semiconductor</td>
+      <td class="ticker long">MPWR <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+8.35</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">NXPI <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-6.53</td>
+      <td class="corr weak">+0.16</td>
+      <td class="coint">⚪ +0.90</td>
+      <td class="num beta">+4.07</td>
+      <td class="num ls">+0.32</td>
+    </tr>
+    <tr data-sector="Internet / Software" data-score="10.02" data-corr="0.443">
+      <td class="num score">10.02</td>
+      <td class="sector">Internet / Software</td>
+      <td class="ticker long">ORCL <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+1.81</td>
       <td class="arrow">↑</td>
       <td class="ticker short">ADBE <span class="mkt">US</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg pos">+1.0</td>
-      <td class="chg pos">+11.2</td>
-      <td class="div pos">+1.7%</td>
+      <td class="chg pos">+1.01</td>
+      <td class="corr medium">-0.44</td>
+      <td class="coint">⚪ +0.48</td>
+      <td class="num beta">-0.13</td>
+      <td class="num ls">+8.46</td>
     </tr>
-    <tr data-sector="Healthcare/Medtech" data-div="1.506868014699269">
-      <td class="num">1.506868014699269</td>
-      <td class="sector">Healthcare/Medtech</td>
-      <td class="ticker long">09901.HK <span class="mkt">HK</span></td>
+    <tr data-sector="AI Infrastructure" data-score="9.89" data-corr="0.086">
+      <td class="num score">9.89</td>
+      <td class="sector">AI Infrastructure</td>
+      <td class="ticker long">PANW <span class="mkt">US</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg pos">+1.89</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">NET <span class="mkt">US</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg neg">-1.56</td>
+      <td class="corr weak">+0.09</td>
+      <td class="coint">⚪ +0.27</td>
+      <td class="num beta">+1.02</td>
+      <td class="num ls">+1.13</td>
+    </tr>
+    <tr data-sector="Telecom" data-score="9.61" data-corr="0.546">
+      <td class="num score">9.61</td>
+      <td class="sector">Telecom</td>
+      <td class="ticker long">TMUS <span class="mkt">US</span></td>
       <td class="phase downtrend_active">🔴 Down</td>
-      <td class="chg neg">-4.5</td>
-      <td class="chg neg">+0.0</td>
+      <td class="chg neg">-0.36</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">06823.HK <span class="mkt">HK</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg neg">-1.70</td>
+      <td class="corr medium">-0.55</td>
+      <td class="coint">🟡 +0.15</td>
+      <td class="num beta">-1.76</td>
+      <td class="num ls">+1.52</td>
+    </tr>
+    <tr data-sector="AI Infrastructure" data-score="9.54" data-corr="0.35">
+      <td class="num score">9.54</td>
+      <td class="sector">AI Infrastructure</td>
+      <td class="ticker long">WDAY <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+1.41</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">APP <span class="mkt">US</span></td>
+      <td class="phase downtrend_recovery">🟠 Recov</td>
+      <td class="chg neg">-1.97</td>
+      <td class="corr weak">-0.35</td>
+      <td class="coint">⚪ +0.56</td>
+      <td class="num beta">-0.06</td>
+      <td class="num ls">+18.82</td>
+    </tr>
+    <tr data-sector="Bank" data-score="9.53" data-corr="0.475">
+      <td class="num score">9.53</td>
+      <td class="sector">Bank</td>
+      <td class="ticker long">LITE <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+2.99</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">01288.HK <span class="mkt">HK</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg neg">-3.07</td>
+      <td class="corr medium">-0.47</td>
+      <td class="coint">⚪ +0.33</td>
+      <td class="num beta">-38.48</td>
+      <td class="num ls">+0.08</td>
+    </tr>
+    <tr data-sector="Crypto / Fintech" data-score="9.39" data-corr="0.043">
+      <td class="num score">9.39</td>
+      <td class="sector">Crypto / Fintech</td>
+      <td class="ticker long">06082.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+11.20</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">MSTR <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-4.56</td>
+      <td class="corr weak">+0.04</td>
+      <td class="coint">⚪ +0.89</td>
+      <td class="num beta">+0.29</td>
+      <td class="num ls">+5.74</td>
+    </tr>
+    <tr data-sector="EV / Auto" data-score="8.71" data-corr="0.675">
+      <td class="num score">8.71</td>
+      <td class="sector">EV / Auto</td>
+      <td class="ticker long">TSLA <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+0.76</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">02015.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-1.57</td>
+      <td class="corr medium">-0.68</td>
+      <td class="coint">⚪ +0.92</td>
+      <td class="num beta">+0.09</td>
+      <td class="num ls">+14.02</td>
+    </tr>
+    <tr data-sector="Telecom" data-score="8.71" data-corr="0.856">
+      <td class="num score">8.71</td>
+      <td class="sector">Telecom</td>
+      <td class="ticker long">T <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+0.17</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">06823.HK <span class="mkt">HK</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg neg">-1.70</td>
+      <td class="corr strong">+0.86</td>
+      <td class="coint">⚪ +0.58</td>
+      <td class="num beta">+1.28</td>
+      <td class="num ls">+1.18</td>
+    </tr>
+    <tr data-sector="Industrial / Defense" data-score="8.36" data-corr="0.002">
+      <td class="num score">8.36</td>
+      <td class="sector">Industrial / Defense</td>
+      <td class="ticker long">ETN <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+7.32</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">LIN <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-5.95</td>
+      <td class="corr weak">+0.00</td>
+      <td class="coint">⚪ +0.83</td>
+      <td class="num beta">+0.03</td>
+      <td class="num ls">+74.55</td>
+    </tr>
+    <tr data-sector="Real Estate" data-score="8.26" data-corr="0.29">
+      <td class="num score">8.26</td>
+      <td class="sector">Real Estate</td>
+      <td class="ticker long">03330.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+5.75</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">EQIX <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-2.70</td>
+      <td class="corr weak">+0.29</td>
+      <td class="coint">⚪ +0.89</td>
+      <td class="num beta">-0.02</td>
+      <td class="num ls">+108.74</td>
+    </tr>
+    <tr data-sector="Pharma / Biotech" data-score="8.09" data-corr="0.367">
+      <td class="num score">8.09</td>
+      <td class="sector">Pharma / Biotech</td>
+      <td class="ticker long">CTSH <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+2.69</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">01530.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_recovery">🟠 Recov</td>
+      <td class="chg neg">-3.69</td>
+      <td class="corr weak">-0.37</td>
+      <td class="coint">⚪ +0.88</td>
+      <td class="num beta">-1.98</td>
+      <td class="num ls">+0.51</td>
+    </tr>
+    <tr data-sector="Pharma / Biotech" data-score="8.02" data-corr="0.49">
+      <td class="num score">8.02</td>
+      <td class="sector">Pharma / Biotech</td>
+      <td class="ticker long">CTSH <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+2.69</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">ABBV <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-2.51</td>
+      <td class="corr medium">+0.49</td>
+      <td class="coint">⚪ +0.95</td>
+      <td class="num beta">-0.13</td>
+      <td class="num ls">+18.99</td>
+    </tr>
+    <tr data-sector="Consumer / Retail" data-score="7.49" data-corr="0.125">
+      <td class="num score">7.49</td>
+      <td class="sector">Consumer / Retail</td>
+      <td class="ticker long">09988.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+4.65</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">NKE <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-1.37</td>
+      <td class="corr weak">-0.12</td>
+      <td class="coint">⚪ +0.68</td>
+      <td class="num beta">+1.98</td>
+      <td class="num ls">+0.90</td>
+    </tr>
+    <tr data-sector="AI Infrastructure" data-score="7.49" data-corr="0.143">
+      <td class="num score">7.49</td>
+      <td class="sector">AI Infrastructure</td>
+      <td class="ticker long">CRWD <span class="mkt">US</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg pos">+3.05</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">SNOW <span class="mkt">US</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg neg">-1.62</td>
+      <td class="corr weak">-0.14</td>
+      <td class="coint">⚪ +0.63</td>
+      <td class="num beta">+0.51</td>
+      <td class="num ls">+3.42</td>
+    </tr>
+    <tr data-sector="Bank" data-score="7.47" data-corr="0.363">
+      <td class="num score">7.47</td>
+      <td class="sector">Bank</td>
+      <td class="ticker long">LITE <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+2.99</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">01398.HK <span class="mkt">HK</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg neg">-1.70</td>
+      <td class="corr weak">-0.36</td>
+      <td class="coint">⚪ +0.35</td>
+      <td class="num beta">-59.66</td>
+      <td class="num ls">+0.07</td>
+    </tr>
+    <tr data-sector="Pharma / Biotech" data-score="7.3" data-corr="0.364">
+      <td class="num score">7.3</td>
+      <td class="sector">Pharma / Biotech</td>
+      <td class="ticker long">REGN <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+3.29</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">01530.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_recovery">🟠 Recov</td>
+      <td class="chg neg">-3.69</td>
+      <td class="corr weak">-0.36</td>
+      <td class="coint">⚪ +0.98</td>
+      <td class="num beta">+18.66</td>
+      <td class="num ls">+0.03</td>
+    </tr>
+    <tr data-sector="Crypto / Fintech" data-score="6.99" data-corr="0.265">
+      <td class="num score">6.99</td>
+      <td class="sector">Crypto / Fintech</td>
+      <td class="ticker long">MAR <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-0.71</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">SOFI <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-0.97</td>
+      <td class="corr weak">-0.27</td>
+      <td class="coint">⚪ +0.58</td>
+      <td class="num beta">-4.83</td>
+      <td class="num ls">+0.09</td>
+    </tr>
+    <tr data-sector="Pharma / Biotech" data-score="6.8" data-corr="0.21">
+      <td class="num score">6.8</td>
+      <td class="sector">Pharma / Biotech</td>
+      <td class="ticker long">REGN <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+3.29</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">ABBV <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-2.51</td>
+      <td class="corr weak">+0.21</td>
+      <td class="coint">⚪ +0.82</td>
+      <td class="num beta">+1.75</td>
+      <td class="num ls">+0.80</td>
+    </tr>
+    <tr data-sector="Consumer / Retail" data-score="6.64" data-corr="0.158">
+      <td class="num score">6.64</td>
+      <td class="sector">Consumer / Retail</td>
+      <td class="ticker long">BABA <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+5.10</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">NKE <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-1.37</td>
+      <td class="corr weak">-0.16</td>
+      <td class="coint">⚪ +0.82</td>
+      <td class="num beta">+2.06</td>
+      <td class="num ls">+0.80</td>
+    </tr>
+    <tr data-sector="Utility" data-score="6.57" data-corr="0.508">
+      <td class="num score">6.57</td>
+      <td class="sector">Utility</td>
+      <td class="ticker long">CEG <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-0.31</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">NEE <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-1.15</td>
+      <td class="corr medium">+0.51</td>
+      <td class="coint">⚪ +0.39</td>
+      <td class="num beta">+1.46</td>
+      <td class="num ls">+1.67</td>
+    </tr>
+    <tr data-sector="AI Infrastructure" data-score="6.56" data-corr="0.292">
+      <td class="num score">6.56</td>
+      <td class="sector">AI Infrastructure</td>
+      <td class="ticker long">CRWD <span class="mkt">US</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg pos">+3.05</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">NET <span class="mkt">US</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg neg">-1.56</td>
+      <td class="corr weak">+0.29</td>
+      <td class="coint">⚪ +0.87</td>
+      <td class="num beta">+0.48</td>
+      <td class="num ls">+2.74</td>
+    </tr>
+    <tr data-sector="Telecom" data-score="6.38" data-corr="0.008">
+      <td class="num score">6.38</td>
+      <td class="sector">Telecom</td>
+      <td class="ticker long">CMCSA <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+1.23</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">06823.HK <span class="mkt">HK</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg neg">-1.70</td>
+      <td class="corr weak">+0.01</td>
+      <td class="coint">🟢 +0.02</td>
+      <td class="num beta">+0.07</td>
+      <td class="num ls">+31.33</td>
+    </tr>
+    <tr data-sector="Gold / Precious Metals" data-score="6.08" data-corr="0.156">
+      <td class="num score">6.08</td>
+      <td class="sector">Gold / Precious Metals</td>
+      <td class="ticker long">02899.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+2.21</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">NEM <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-2.14</td>
+      <td class="corr weak">+0.16</td>
+      <td class="coint">⚪ +0.77</td>
+      <td class="num beta">+0.16</td>
+      <td class="num ls">+7.18</td>
+    </tr>
+    <tr data-sector="Utility" data-score="6.07" data-corr="0.376">
+      <td class="num score">6.07</td>
+      <td class="sector">Utility</td>
+      <td class="ticker long">VST <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-0.29</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">NEE <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-1.15</td>
+      <td class="corr weak">+0.38</td>
+      <td class="coint">⚪ +0.81</td>
+      <td class="num beta">+2.14</td>
+      <td class="num ls">+1.50</td>
+    </tr>
+    <tr data-sector="Insurance" data-score="5.82" data-corr="0.274">
+      <td class="num score">5.82</td>
+      <td class="sector">Insurance</td>
+      <td class="ticker long">03200.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+11.93</td>
       <td class="arrow">↑</td>
       <td class="ticker short">UNH <span class="mkt">US</span></td>
       <td class="phase uptrend">🟢 Up</td>
-      <td class="chg neg">-1.7</td>
-      <td class="chg neg">-1.5</td>
-      <td class="div pos">+1.5%</td>
+      <td class="chg neg">-1.68</td>
+      <td class="corr weak">+0.27</td>
+      <td class="coint">⚪ +0.87</td>
+      <td class="num beta">-1.93</td>
+      <td class="num ls">+2.21</td>
+    </tr>
+    <tr data-sector="Gold / Precious Metals" data-score="5.65" data-corr="0.238">
+      <td class="num score">5.65</td>
+      <td class="sector">Gold / Precious Metals</td>
+      <td class="ticker long">06693.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+2.33</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">NEM <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-2.14</td>
+      <td class="corr weak">+0.24</td>
+      <td class="coint">⚪ +0.90</td>
+      <td class="num beta">+0.02</td>
+      <td class="num ls">+115.13</td>
+    </tr>
+    <tr data-sector="AI Infrastructure" data-score="5.5" data-corr="0.157">
+      <td class="num score">5.5</td>
+      <td class="sector">AI Infrastructure</td>
+      <td class="ticker long">PANW <span class="mkt">US</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg pos">+1.89</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">SNOW <span class="mkt">US</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg neg">-1.62</td>
+      <td class="corr weak">-0.16</td>
+      <td class="coint">⚪ +0.78</td>
+      <td class="num beta">+1.23</td>
+      <td class="num ls">+1.24</td>
+    </tr>
+    <tr data-sector="AI Infrastructure" data-score="5.27" data-corr="0.313">
+      <td class="num score">5.27</td>
+      <td class="sector">AI Infrastructure</td>
+      <td class="ticker long">WDAY <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+1.41</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">NET <span class="mkt">US</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg neg">-1.56</td>
+      <td class="corr weak">+0.31</td>
+      <td class="coint">⚪ +0.43</td>
+      <td class="num beta">+0.48</td>
+      <td class="num ls">+3.25</td>
+    </tr>
+    <tr data-sector="Insurance" data-score="4.54" data-corr="0.288">
+      <td class="num score">4.54</td>
+      <td class="sector">Insurance</td>
+      <td class="ticker long">02577.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+5.74</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">UNH <span class="mkt">US</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg neg">-1.68</td>
+      <td class="corr weak">+0.29</td>
+      <td class="coint">⚪ +0.71</td>
+      <td class="num beta">-0.70</td>
+      <td class="num ls">+3.97</td>
+    </tr>
+    <tr data-sector="Utility" data-score="3.88" data-corr="0.099">
+      <td class="num score">3.88</td>
+      <td class="sector">Utility</td>
+      <td class="ticker long">CEG <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-0.31</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">UPS <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-1.00</td>
+      <td class="corr weak">+0.10</td>
+      <td class="coint">⚪ +0.25</td>
+      <td class="num beta">-0.03</td>
+      <td class="num ls">+29.12</td>
+    </tr>
+    <tr data-sector="Insurance" data-score="3.76" data-corr="0.287">
+      <td class="num score">3.76</td>
+      <td class="sector">Insurance</td>
+      <td class="ticker long">06166.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+8.17</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">CI <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-2.99</td>
+      <td class="corr weak">+0.29</td>
+      <td class="coint">⚪ +0.97</td>
+      <td class="num beta">-1.15</td>
+      <td class="num ls">+3.42</td>
+    </tr>
+    <tr data-sector="Pharma / Biotech" data-score="3.48" data-corr="0.011">
+      <td class="num score">3.48</td>
+      <td class="sector">Pharma / Biotech</td>
+      <td class="ticker long">01548.HK <span class="mkt">HK</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg pos">+5.00</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">01801.HK <span class="mkt">HK</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-1.59</td>
+      <td class="corr weak">-0.01</td>
+      <td class="coint">⚪ +0.99</td>
+      <td class="num beta">+0.20</td>
+      <td class="num ls">+6.36</td>
+    </tr>
+    <tr data-sector="Insurance" data-score="3.32" data-corr="0.067">
+      <td class="num score">3.32</td>
+      <td class="sector">Insurance</td>
+      <td class="ticker long">03200.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+11.93</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">CI <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-2.99</td>
+      <td class="corr weak">+0.07</td>
+      <td class="coint">⚪ +0.98</td>
+      <td class="num beta">-1.58</td>
+      <td class="num ls">+2.03</td>
+    </tr>
+    <tr data-sector="Insurance" data-score="3.28" data-corr="0.212">
+      <td class="num score">3.28</td>
+      <td class="sector">Insurance</td>
+      <td class="ticker long">06166.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+8.17</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">UNH <span class="mkt">US</span></td>
+      <td class="phase uptrend">🟢 Up</td>
+      <td class="chg neg">-1.68</td>
+      <td class="corr weak">+0.21</td>
+      <td class="coint">⚪ +0.88</td>
+      <td class="num beta">-1.51</td>
+      <td class="num ls">+3.46</td>
+    </tr>
+    <tr data-sector="Pharma / Biotech" data-score="3.19" data-corr="0.28">
+      <td class="num score">3.19</td>
+      <td class="sector">Pharma / Biotech</td>
+      <td class="ticker long">CTSH <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+2.69</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">01801.HK <span class="mkt">HK</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-1.59</td>
+      <td class="corr weak">-0.28</td>
+      <td class="coint">⚪ +0.68</td>
+      <td class="num beta">-0.15</td>
+      <td class="num ls">+8.65</td>
+    </tr>
+    <tr data-sector="Healthcare / Medtech" data-score="3.06" data-corr="0.032">
+      <td class="num score">3.06</td>
+      <td class="sector">Healthcare / Medtech</td>
+      <td class="ticker long">ISRG <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+0.10</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">SYK <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-6.42</td>
+      <td class="corr weak">+0.03</td>
+      <td class="coint">⚪ +0.55</td>
+      <td class="num beta">-0.82</td>
+      <td class="num ls">+1.73</td>
+    </tr>
+    <tr data-sector="Consumer / Retail" data-score="2.33" data-corr="0.001">
+      <td class="num score">2.33</td>
+      <td class="sector">Consumer / Retail</td>
+      <td class="ticker long">09988.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+4.65</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">CMG <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-3.37</td>
+      <td class="corr weak">+0.00</td>
+      <td class="coint">⚪ +0.67</td>
+      <td class="num beta">-0.69</td>
+      <td class="num ls">+1.26</td>
+    </tr>
+    <tr data-sector="Healthcare / Medtech" data-score="2.21" data-corr="0.333">
+      <td class="num score">2.21</td>
+      <td class="sector">Healthcare / Medtech</td>
+      <td class="ticker long">09901.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-4.55</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">SYK <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-6.42</td>
+      <td class="corr weak">+0.33</td>
+      <td class="coint">⚪ +0.70</td>
+      <td class="num beta">+0.11</td>
+      <td class="num ls">+14.25</td>
+    </tr>
+    <tr data-sector="Utility" data-score="1.41" data-corr="0.359">
+      <td class="num score">1.41</td>
+      <td class="sector">Utility</td>
+      <td class="ticker long">GLW <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+2.24</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">UPS <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-1.00</td>
+      <td class="corr weak">+0.36</td>
+      <td class="coint">⚪ +0.88</td>
+      <td class="num beta">-1.19</td>
+      <td class="num ls">+1.90</td>
+    </tr>
+    <tr data-sector="Consumer / Retail" data-score="1.03" data-corr="0.099">
+      <td class="num score">1.03</td>
+      <td class="sector">Consumer / Retail</td>
+      <td class="ticker long">BABA <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+5.10</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">CMG <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-3.37</td>
+      <td class="corr weak">+0.10</td>
+      <td class="coint">⚪ +0.92</td>
+      <td class="num beta">-0.61</td>
+      <td class="num ls">+1.32</td>
+    </tr>
+    <tr data-sector="Pharma / Biotech" data-score="0.92" data-corr="0.334">
+      <td class="num score">0.92</td>
+      <td class="sector">Pharma / Biotech</td>
+      <td class="ticker long">REGN <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+3.29</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">01801.HK <span class="mkt">HK</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-1.59</td>
+      <td class="corr weak">-0.33</td>
+      <td class="coint">⚪ +0.99</td>
+      <td class="num beta">+3.58</td>
+      <td class="num ls">+0.22</td>
+    </tr>
+    <tr data-sector="Insurance" data-score="0.68" data-corr="0.093">
+      <td class="num score">0.68</td>
+      <td class="sector">Insurance</td>
+      <td class="ticker long">02577.HK <span class="mkt">HK</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+5.74</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">CI <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-2.99</td>
+      <td class="corr weak">+0.09</td>
+      <td class="coint">⚪ +0.96</td>
+      <td class="num beta">-0.47</td>
+      <td class="num ls">+4.48</td>
+    </tr>
+    <tr data-sector="Crypto / Fintech" data-score="0.66" data-corr="0.046">
+      <td class="num score">0.66</td>
+      <td class="sector">Crypto / Fintech</td>
+      <td class="ticker long">MAR <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg neg">-0.71</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">PYPL <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-0.76</td>
+      <td class="corr weak">+0.05</td>
+      <td class="coint">⚪ +0.48</td>
+      <td class="num beta">-0.97</td>
+      <td class="num ls">+0.39</td>
+    </tr>
+    <tr data-sector="Utility" data-score="0.4" data-corr="0.261">
+      <td class="num score">0.4</td>
+      <td class="sector">Utility</td>
+      <td class="ticker long">GLW <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+2.24</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">NEE <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-1.15</td>
+      <td class="corr weak">-0.26</td>
+      <td class="coint">⚪ +0.89</td>
+      <td class="num beta">-4.31</td>
+      <td class="num ls">+1.33</td>
+    </tr>
+    <tr data-sector="Healthcare / Medtech" data-score="0.18" data-corr="0.25">
+      <td class="num score">0.18</td>
+      <td class="sector">Healthcare / Medtech</td>
+      <td class="ticker long">ISRG <span class="mkt">US</span></td>
+      <td class="phase downtrend_active">🔴 Down</td>
+      <td class="chg pos">+0.10</td>
+      <td class="arrow">↑</td>
+      <td class="ticker short">DHR <span class="mkt">US</span></td>
+      <td class="phase base_building">🟡 Base</td>
+      <td class="chg neg">-0.61</td>
+      <td class="corr weak">+0.25</td>
+      <td class="coint">⚪ +0.77</td>
+      <td class="num beta">-0.89</td>
+      <td class="num ls">+1.40</td>
     </tr>
     </tbody>
   </table>
 
   <div class="disclaimer">
-    <strong>⚠️ Disclaimer:</strong> All content is for informational and educational purposes only. Not investment advice.
-    Pair trade screen based on 5d return divergence within sectors. Real correlation / cointegration not yet computed.
-    Use with proper risk management. Long/short ratios not shown — assume dollar-neutral for simplicity.
+    <strong>⚠️ Disclaimer:</strong> Educational only. Not investment advice. Pairs trading involves significant risk.
+    Cointegration tests are statistical — past mean reversion doesn't guarantee future.
+    Use proper position sizing and stop-losses. Cross-market pairs have currency risk (HKD/USD).
   </div>
 
   <footer>
     <a href="/">← win9you.com home</a> • <a href="/hk200/">📊 HK200 S/R</a> • <a href="/us200/">🇺🇸 US200 S/R</a><br>
-    Generated by Mavis pair-trade screen • <a href="https://github.com/kenkenlui-ctrl/Trading">Source</a>
+    Generated by Mavis pair-trade screen v2 (corr + coint + L/S) • <a href="https://github.com/kenkenlui-ctrl/Trading">Source</a>
   </footer>
 </div>
 
@@ -2118,23 +2090,27 @@
   function filterTable() {
     const search = document.getElementById('searchInput').value.toLowerCase();
     const market = document.getElementById('marketFilter').value;
-    const minDiv = parseFloat(document.getElementById('minDiv').value) || 0;
+    const minCorr = parseFloat(document.getElementById('minCorr').value) || 0;
+    const maxCoint = parseFloat(document.getElementById('maxCoint').value) || 1;
     const rows = document.querySelectorAll('#dataTable tbody tr');
     let visible = 0;
     rows.forEach(row => {
       const sector = row.getAttribute('data-sector').toLowerCase();
+      const score = parseFloat(row.getAttribute('data-score')) || 0;
+      const corr = parseFloat(row.getAttribute('data-corr')) || 0;
       const longT = row.cells[2].textContent.toLowerCase();
-      const shortT = row.cells[7].textContent.toLowerCase();
+      const shortT = row.cells[6].textContent.toLowerCase();
       const longM = row.cells[2].querySelector('.mkt')?.textContent || '';
-      const shortM = row.cells[7].querySelector('.mkt')?.textContent || '';
-      const div = Math.abs(parseFloat(row.getAttribute('data-div')) || 0);
+      const shortM = row.cells[6].querySelector('.mkt')?.textContent || '';
+      const cointP = parseFloat(row.cells[10].textContent) || 1;
       const matchSearch = !search || sector.includes(search) || longT.includes(search) || shortT.includes(search);
       let matchMarket = !market;
       if (market === 'US-HK') matchMarket = (longM === 'US' && shortM === 'HK');
       else if (market === 'US-US') matchMarket = (longM === 'US' && shortM === 'US');
       else if (market === 'HK-HK') matchMarket = (longM === 'HK' && shortM === 'HK');
-      const matchDiv = div >= minDiv;
-      const show = matchSearch && matchMarket && matchDiv;
+      const matchCorr = corr >= minCorr;
+      const matchCoint = cointP <= maxCoint;
+      const show = matchSearch && matchMarket && matchCorr && matchCoint;
       row.style.display = show ? '' : 'none';
       if (show) visible++;
     });
