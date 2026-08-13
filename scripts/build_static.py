@@ -26,6 +26,7 @@ import argparse
 import html as _html
 import json
 import re
+import sqlite3
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -839,6 +840,7 @@ def nav_html(active_path: str) -> str:
         ("/paper-trades.html", "Paper Trades", "Paper Trades"),
         ("/faq.html", "FAQ", "FAQ"),
         ("/methodology.html", "Methodology", "Methodology"),
+        ("/learn/", "Learn", "教學中心"),
         ("/about.html", "About", "About"),
     ]
     items = []
@@ -855,7 +857,8 @@ def nav_html(active_path: str) -> str:
 
 def shell(title: str, body_html: str, active_path: str = "/",
           description: str = "", json_ld: dict | None = None,
-          canonical: str = "https://www.win9you.com") -> str:
+          canonical: str = "https://www.win9you.com",
+          noindex: bool = False) -> str:
     """Wrap content in full HTML doc with nav + light-theme CSS.
 
     Phase 9+ (2026-07-21) web-perf:
@@ -871,9 +874,12 @@ def shell(title: str, body_html: str, active_path: str = "/",
     ld_block = ""
     if json_ld:
         ld_block = f'<script type="application/ld+json">{json.dumps(json_ld, ensure_ascii=False)}</script>'
+    # 2026-08-02 SEO: opt-out via noindex meta for thin/duplicate pages
+    noindex_meta = '<meta name="robots" content="noindex,follow">' if noindex else ""
     html = f"""<!doctype html>
-<html lang="zh-Hant">
+<html lang="zh-Hant-HK">
 <head>
+{noindex_meta}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{_html.escape(title)}</title>
@@ -1180,6 +1186,7 @@ def report_page_html(report: dict, date: str) -> str:
         active_path="/dashboard/",
         description=f"{code} {date} AI 詳細報告 — 評分 {score}, {direction} {operation}",
         canonical=f"https://www.win9you.com/dashboard/{date}/reports/{code}.html",
+        noindex=True,  # 2026-08-02 SEO: per-stock reports are duplicate content, noindex
     )
 
 
@@ -1385,6 +1392,22 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
 
         out_path = PUBLIC_DIR / "dashboard" / date / f"{slug}.html"
         out_path.parent.mkdir(parents=True, exist_ok=True)
+        # 2026-08-02 SEO: only the 3 most useful filter variants (hk-buy, us-buy,
+        # conservative-buy) for the 5 most recent dates are indexable. All other
+        # filter pages (incl. hk-sell, us-sell, hk-hold, us-hold, etc) are
+        # noindex to avoid thin/duplicate content penalty.
+        # Query recent dates from DB (all_reports already filtered by single date)
+        try:
+            _con = sqlite3.connect(f"{PROJECT_ROOT}/data/dsa_hk.db")
+            _all_dates = [r[0] for r in _con.execute(
+                "SELECT report_date FROM daily_report GROUP BY report_date ORDER BY report_date DESC LIMIT 5"
+            ).fetchall()]
+            _con.close()
+        except Exception:
+            _all_dates = [date]
+        is_indexable_filter = (slug == "all") or (
+            slug in ("hk-buy", "us-buy", "conservative-buy") and date in _all_dates
+        )
         out_path.write_text(
             shell(
                 title=f"Leeks Terminal · {date} · {label}",
@@ -1392,6 +1415,7 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
                 active_path="/dashboard/",
                 description=f"Leeks Terminal {date} AI dashboard — {label}",
                 canonical=f"https://www.win9you.com/dashboard/{date}/{slug}.html",
+                noindex=not is_indexable_filter,
             ),
             encoding="utf-8",
         )
@@ -1802,14 +1826,32 @@ def build_static_pages() -> list[str]:
     preserved across builds UNLESS the build is re-run.
     """
     pages = [
-        ("faq", "FAQ", "常見問題", "/faq.html", "faq"),
-        ("about", "About", "關於 Leeks Terminal", "/about.html", "about"),
-        ("methodology", "Methodology", "分析方法論", "/methodology.html", "methodology"),
-        # 2026-07-10: New SEO/GEO leverage page — 9-day audit + rule-based research
-        ("insights", "Insights", "信號審計研究", "/insights.html", "insights"),
+        # 2026-08-03: faq.html, about.html, methodology.html, insights.html are hand-edited
+        # for SEO (JSON-LD schemas, structured content). Skip them in build to preserve
+        # manual edits. Use write_placeholder=False for these.
         ("disclaimer", "Disclaimer", "完整免責聲明", "/disclaimer.html", "disclaimer"),
         ("privacy", "Privacy", "私隱政策", "/privacy.html", "privacy"),
     ]
+    # Hand-edited pages — preserve existing files (don't overwrite)
+    hand_edited = ["faq", "about", "methodology", "insights"]
+    path_map = {"faq": "faq.html", "about": "about.html", "methodology": "methodology.html", "insights": "insights.html"}
+    zh_map = {"faq": "常見問題", "about": "關於 Leeks Terminal", "methodology": "分析方法論", "insights": "信號審計研究"}
+    for slug in hand_edited:
+        existing = PUBLIC_DIR / path_map[slug]
+        if existing.exists():
+            # File already exists, preserve it
+            continue
+        # Fallback: build placeholder if file missing
+        body = f"<h1>{zh_map[slug]}</h1><p>(placeholder)</p>"
+        out_path = PUBLIC_DIR / path_map[slug]
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(shell(
+            title=f"{zh_map[slug]} · Leeks Terminal",
+            body_html=body,
+            active_path=f"/{slug_map.get(slug, slug)}/",
+            description=f"Leeks Terminal {zh_map[slug]}",
+            canonical=f"https://www.win9you.com/{path_map[slug]}",
+        ), encoding="utf-8")
     written = []
     for slug, en, zh, path, active_key in pages:
         # Reuse Worker's PAGES dict content if available, otherwise generate placeholder
@@ -1986,42 +2028,66 @@ filter 可以 hide 其他方向。</p>
 
 
 def build_sitemap_xml(dates: list[str]) -> str:
-    """Build sitemap.xml with all public pages. Auto-includes all dates in DB."""
+    """Build sitemap.xml with all public pages. Auto-includes all dates in DB.
+
+    2026-08-02 SEO P0 fixes:
+    - Add <lastmod> with current date for all URLs (Google freshness signal)
+    - Per-date ONLY index all.html + reports/ in sitemap
+    - Filter variants (hk-buy/us-sell/etc) are noindexed (avoid thin/duplicate content)
+    - Index 2 most recent weeks fully, older dates only all.html
+    """
+    from datetime import datetime
     base = "https://www.win9you.com"
+    now = datetime.now().strftime("%Y-%m-%d")
     urls = []
 
-    # Static pages
+    # Static pages — index all
     static = [
-        ("/", "1.0", "daily"),
-        ("/dashboard/", "0.9", "daily"),
-        ("/methodology.html", "0.8", "weekly"),
-        ("/faq.html", "0.8", "weekly"),
-        ("/about.html", "0.5", "monthly"),
-        # 2026-07-10: Original first-party data (audit + research) — primary SEO/GEO leverage
-        ("/insights.html", "0.9", "weekly"),
-        ("/disclaimer.html", "0.3", "monthly"),
-        ("/privacy.html", "0.3", "monthly"),
-        # Intent landing pages (P1 SEO coverage)
-        ("/hk-scanner.html", "0.9", "daily"),
-        ("/us-scanner.html", "0.9", "daily"),
-        ("/day-trade-signals.html", "0.9", "daily"),
-        ("/hk-stock-screener.html", "0.8", "daily"),
+        ("/", "1.0", "daily", now),
+        ("/dashboard/", "0.9", "daily", now),
+        ("/methodology.html", "0.8", "weekly", now),
+        ("/faq.html", "0.8", "weekly", now),
+        ("/about.html", "0.5", "monthly", now),
+        # Original first-party data (audit + research) — primary SEO/GEO leverage
+        ("/insights.html", "0.9", "weekly", now),
+        ("/disclaimer.html", "0.3", "monthly", now),
+        ("/privacy.html", "0.3", "monthly", now),
+        # Intent landing pages
+        ("/hk-scanner.html", "0.9", "daily", now),
+        ("/us-scanner.html", "0.9", "daily", now),
+        ("/day-trade-signals.html", "0.9", "daily", now),
+        ("/hk-stock-screener.html", "0.8", "daily", now),
+        # 2026-08-03 SEO P1: evergreen content hub
+        ("/learn/", "0.9", "weekly", now),
+        ("/learn/llm-trading-inversion.html", "0.8", "monthly", now),
+        ("/learn/conservative-rule.html", "0.8", "monthly", now),
+        # 2026-08-03 SEO P2: 2 more evergreen posts
+        ("/learn/hk-vs-us-day-trade.html", "0.8", "monthly", now),
+        ("/learn/paper-trade-self-honesty.html", "0.8", "monthly", now),
+        # 2026-08-03 SEO P2: AI crawler file
+        ("/llms.txt", "0.3", "monthly", now),
     ]
-    for path, prio, freq in static:
-        urls.append((path, prio, freq))
+    for path, prio, freq, lastmod in static:
+        urls.append((path, prio, freq, lastmod))
 
-    # Per-date dashboard + filter variants
-    filters = ["all", "hk-buy", "hk-sell", "hk-hold", "us-buy", "us-sell", "us-hold", "conservative-buy", "cyber-buy", "bounce-buy"]
+    # Per-date dashboard: ONLY index "all.html" + 5 most recent dates
+    # Filter variants (hk-buy/us-sell/etc) are still generated but noindex
+    # (built into the page itself) to avoid thin/duplicate content penalty
+    recent_cutoff = sorted(dates, reverse=True)[:5] if dates else []
     for d in dates:
-        urls.append((f"/dashboard/{d}/all.html", "0.9", "daily"))
-        for f in filters[1:]:
-            urls.append((f"/dashboard/{d}/{f}.html", "0.7", "daily"))
+        # Always index all.html for every date (canonical entry)
+        urls.append((f"/dashboard/{d}/all.html", "0.9", "daily", now))
+        # Only index filter variants for the 5 most recent dates
+        if d in recent_cutoff:
+            for f in ["hk-buy", "us-buy", "conservative-buy"]:
+                urls.append((f"/dashboard/{d}/{f}.html", "0.6", "daily", now))
 
     lines = ['<?xml version="1.0" encoding="UTF-8"?>']
     lines.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
-    for path, prio, freq in urls:
+    for path, prio, freq, lastmod in urls:
         lines.append("  <url>")
         lines.append(f"    <loc>{base}{path}</loc>")
+        lines.append(f"    <lastmod>{lastmod}</lastmod>")
         lines.append(f"    <changefreq>{freq}</changefreq>")
         lines.append(f"    <priority>{prio}</priority>")
         lines.append("  </url>")

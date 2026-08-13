@@ -1,8 +1,163 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Leeks Terminal 常見問題 · 4-Dim 評分 + Conservative BUY Filter 教學</title><meta name="description" content="Leeks Terminal 常見問題 — 4-dim 評分模型、Conservative BUY filter、AI 信心 chips 教學。200 港股 + 200 美股 9:30 自動掃描。"><meta property="og:title" content="Leeks Terminal 常見問題 · 4-Dim 評分 + Conservative BUY Filter 教學"><meta property="og:description" content="Leeks Terminal 常見問題 — 4-dim 評分模型、Conservative BUY filter、AI 信心 chips 教學。200 港股 + 200 美股 9:30 自動掃描。"><meta property="og:type" content="website"><meta property="og:url" content="https://www.win9you.com"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Leeks Terminal 常見問題 · 4-Dim 評分 + Conservative BUY Filter 教學"><meta name="twitter:description" content="Leeks Terminal 常見問題 — 4-dim 評分模型、Conservative BUY filter、AI 信心 chips 教學。200 港股 + 200 美股 9:30 自動掃描。"><link rel="canonical" href="https://www.win9you.com"><link rel="alternate" hreflang="zh-Hant" href="https://www.win9you.com"><link rel="alternate" hreflang="x-default" href="https://www.win9you.com"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'"><noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript><link rel="stylesheet" href="/leeks.css"></head><body><nav class="leeks-site-nav" role="navigation" aria-label="Site navigation"><span class="brand">◆ Leeks Terminal</span><a href="/" class="active">Home</a><a href="/dashboard/">Dashboard</a><a href="/full-results.html">Full Results</a><a href="/hk200/">📊 HK200 S/R</a><a href="/us200/">🇺🇸 US200 S/R</a><a href="/pair-trades/">⚖️ Pair Trades</a><a href="/live-monitor.html">🔴 Live</a><a href="/paper-trades.html">Paper Trades</a><a href="/faq.html" class="active">FAQ</a><a href="/methodology.html">Methodology</a><a href="/about.html">About</a></nav><main><h1>常見問題</h1><h2>Q: 點解睇唔到 bar chart / 即時 K 線？</h2><p>A: 本工具係 <b>決策輔助</b> 而唔係 trading platform。你嘅 broker (Futu / IBKR / SC) 已經有完整即時圖表。
-我哋只提供每日 2 次嘅 AI 評分 + 方向信號 + 入場/止損/目標 區間。</p><h2>Q: 個 score 點樣計？</h2><p>A: <b>四維</b>評分 (0–100)，Python-side 確定性加權 (非 LLM 自評)：
-<br>· <b>估值</b> (PE/PB，5%) · <b>質素</b> (ROE/margin，5%) · <b>動能</b> (MA/RSI/deviation，70%) · <b>資金流</b> (量比/大單/Relative Volume，20%)。
-<br>公式：<code>score = 0.05 × value + 0.05 × quality + 0.70 × momentum + 0.20 × order_flow</code>。
-<br>Day-trade 完全偏重 momentum + order flow；估值/質素只係 tiebreaker。</p><h2>Q: trade_direction 點解有時「雙向」？</h2><p>A: 「雙向」代表波動率足夠，long 同 short setup 都有，用戶自己揀邊個方向做。
-filter 可以 hide 其他方向。</p><h2>Q: 點解 entry / stop / target 有時顯示「—」？</h2><p>A: 個別 LLM output 唔齊全；我哋有 backfill script parse <code>full_md</code> 嘅 markdown bullets 拎返。
-如果仍然「—」表示該股真係冇明確 setup，建議觀望。</p><p class="last-updated">最後更新: 2026-08-02 10:25 HKT</p></main><footer>
-© 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a></footer></body></html>
+<!doctype html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leeks Terminal 常見問題 · 4-Dim 評分 + Conservative BUY Filter 教學 | win9you</title>
+<meta name="description" content="Leeks Terminal FAQ: 4-dim 評分模型、Conservative BUY filter、AI 信心 chips、HK vs US day-trade 差異、LLM 反指、paper trade 教學。200 港股 + 200 美股 9:30 自動掃描。">
+<meta name="keywords" content="Leeks Terminal FAQ, day trade, mean reversion, AI trading, Conservative BUY, LLM 反指, win9you">
+<meta name="author" content="Leeks Terminal Research">
+<meta property="og:title" content="Leeks Terminal 常見問題 · 4-Dim 評分 + Conservative BUY Filter 教學">
+<meta property="og:description" content="Leeks Terminal FAQ: 4-dim 評分模型、Conservative BUY filter、HK vs US day-trade 差異、LLM 反指、paper trade 教學。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.win9you.com/faq.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Leeks Terminal FAQ · 4-Dim 評分教學">
+<meta name="twitter:description" content="4-dim 評分、Conservative BUY filter、LLM 反指、HK vs US day-trade">
+<link rel="canonical" href="https://www.win9you.com/faq.html">
+<link rel="alternate" hreflang="zh-Hant-HK" href="https://www.win9you.com/faq.html">
+<link rel="alternate" hreflang="x-default" href="https://www.win9you.com/faq.html">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+{"@type": "Question", "name": "Leeks Terminal 係咩？同 win9you 有咩關係？", "acceptedAnswer": {"@type": "Answer", "text": "Leeks Terminal 係一個 HK+US 即日鮮 AI 交易決策儀表板，由散戶自建、自用、自負盈虧。我哋喺 win9you.com 域名底下運作。Leeks Terminal 係產品名，win9you 係 domain。每日自動掃描 200 隻港股 + 200 隻美股，4 維度評分 + Rule-based decision 引擎。200 港股 (turnover ≥ 50M HKD) + 200 美股 (S&P 500 + Nasdaq-100 樣本)。"}},
+{"@type": "Question", "name": "個 score 點樣計？", "acceptedAnswer": {"@type": "Answer", "text": "四維評分 (0-100)，Python-side 確定性加權 (非 LLM 自評)：估值 (PE/PB 5%)、質素 (ROE/margin 5%)、動能 (MA/RSI/deviation 70%)、資金流 (量比/大單/Relative Volume 20%)。公式：score = 0.05 × value + 0.05 × quality + 0.70 × momentum + 0.20 × order_flow。Day-trade 完全偏重 momentum + order flow；估值/質素只係 tiebreaker。"}},
+{"@type": "Question", "name": "Conservative BUY 係咩？點解只有少數信號？", "acceptedAnswer": {"@type": "Answer", "text": "Conservative BUY 係 Leeks Terminal 唯一 live 嘅 mean-reversion 規則，6 個 filter 條件 AND：前日 -3% to 0% (超賣起點)、m_score 30-70 (非極端)、sentiment ≠ 樂觀 (避免追頂)、score < 70、sector ∉ Tech/Comms、US only。所以大部分日子只有 0-3 隻通過。14d audit bucket [70,80) 達 84% WR，paper trade n=16 達 81% WR。"}},
+{"@type": "Question", "name": "點解 LLM 交易會反指？", "acceptedAnswer": {"@type": "Answer", "text": "9-day audit 1,913 信號：LLM 樂觀 BUY 30.4% WR (反指 -1.4% avg)、m≥80 BUY 16.7% WR (追頂)、悲觀 SELL 37.7% WR (接刀)。LLM 訓練數據偏向 trend-continuation narrative，day-trade alpha 反而係 mean-reversion。我哋用 Anti-Chase / Anti-Knife rule override 呢類反指 pattern。完整教學：/learn/llm-trading-inversion.html"}},
+{"@type": "Question", "name": "HK 同 US day-trade 有咩唔同？", "acceptedAnswer": {"@type": "Answer", "text": "(1) 數據延遲：HK Tencent qtimg 1-15 分鐘，US YFinance 15-20 分鐘。Day-trade 用 delayed print 做 entry 經常被 open auction 走晒。(2) 成本：HK stamp ~0.1% 買入 + 佣金 + levy + slip，US 0 佣金但 5-10bp/side slip。(3) 覆蓋：HK 200 隻 (turnover ≥ 50M HKD)，US 200 隻 (S&P 500 + Nasdaq-100 樣本)。(4) Regime：HSI 影響 HK 信號，SPX 影響 US 信號。詳見 /learn/hk-vs-us-day-trade.html。"}},
+{"@type": "Question", "name": "Paper trade 點樣先唔自欺？", "acceptedAnswer": {"@type": "Answer", "text": "(1) 至少 30-60 個 trade 樣本先睇 edge (n<30 完全 random 範圍)。(2) 區分 WR vs EV (expectancy)：WR 50% 但 avg_win < avg_loss = 長期輸錢。(3) 加 slippage + 佣金 + 港股 stamp 入 backtest。(4) Walk-forward：train 20 日 → test 5 日，唔好用同一段數據。(5) Out-of-sample 半年 live trades 先擴規模。"}},
+{"@type": "Question", "name": "我可以用真錢跟單嗎？", "acceptedAnswer": {"@type": "Answer", "text": "Leeks Terminal 純粹 AI 輔助決策參考，唔構成任何買賣建議。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問 (見 disclaimer.html)。我哋自己 paper trade 都仲跑緊獨立 OOS 驗證，未敢開真槓桿。"}},
+{"@type": "Question", "name": "trade_direction 點解有時「雙向」？", "acceptedAnswer": {"@type": "Answer", "text": "「雙向」(both) 代表波動率足夠，long 同 short setup 都有。LLM 同時偵測到 long 入場區同 short 反彈區，user 自己揀邊個方向做。Filter (e.g. hk-buy / hk-sell / us-buy / us-sell) 可以 hide 其他方向。"}},
+{"@type": "Question", "name": "點解 entry / stop / target 有時顯示「—」？", "acceptedAnswer": {"@type": "Answer", "text": "個別 LLM output 唔齊全；我哋有 backfill script parse full_md 嘅 markdown bullets 拎返。如果仍然「—」表示該股真係冇明確 setup，建議觀望。詳細可去 /dashboard/{date}/reports/{code}.html 睇原始 LLM narrative。"}},
+{"@type": "Question", "name": "幾耐更新一次？數據延遲幾多？", "acceptedAnswer": {"@type": "Answer", "text": "每日每個交易日 16:00 HKT (港股收市) + 16:00 ET (美股收市) 自動更新一次。HK 用 Tencent qtimg API (1-15 分鐘延遲，唔係 Level-2)。US 用 YFinance / Alpaca (15-20 分鐘延遲)。新聞：Futu / Yahoo Finance RSS。"}}
+]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.win9you.com/"}, {"@type": "ListItem", "position": 2, "name": "FAQ", "item": "https://www.win9you.com/faq.html"}]}</script>
+<link rel="stylesheet" href="/leeks.css">
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation">
+<span class="brand">◆ Leeks Terminal</span>
+<a href="/">Home</a>
+<a href="/dashboard/">Dashboard</a>
+<a href="/full-results.html">Full Results</a>
+<a href="/hk200/">📊 HK200 S/R</a>
+<a href="/us200/">🇺🇸 US200 S/R</a>
+<a href="/paper-trades.html">Paper Trades</a>
+<a href="/methodology.html">Methodology</a>
+<a href="/insights.html">Insights</a>
+<a href="/learn/">Learn</a>
+<a href="/faq.html" class="active">FAQ</a>
+<a href="/about.html">About</a>
+</nav>
+
+<main>
+<nav class="breadcrumb" aria-label="Breadcrumb">
+<a href="/">Home</a> › <span>FAQ</span>
+</nav>
+
+<article>
+<header>
+<h1>常見問題 · FAQ</h1>
+<p class="lede">Leeks Terminal 同 win9you 嘅關係、評分模型、Conservative BUY 規則、LLM 反指、HK vs US day-trade、紙上交易、風險聲明 — 10 條最常見問題。</p>
+<p class="meta">📅 2026-08-03 更新 · 🏷️ 教學 · 8 分鐘閱讀</p>
+</header>
+
+<section>
+<h2>🏢 關於 Leeks Terminal</h2>
+
+<h3>Q: Leeks Terminal 係咩？同 win9you 有咩關係？</h3>
+<p>A: Leeks Terminal 係一個 <b>HK+US 即日鮮 AI 交易決策儀表板</b>，由散戶自建、自用、自負盈虧。我哋喺 <b>win9you.com</b> 域名底下運作。<b>Leeks Terminal 係產品名，win9you 係 domain</b>。每日自動掃描 200 隻港股 + 200 隻美股，4 維度評分 + Rule-based decision 引擎。HK 200 隻 (turnover ≥ 50M HKD) + US 200 隻 (S&amp;P 500 + Nasdaq-100 樣本)。</p>
+
+<h3>Q: 數據延遲幾多？幾耐更新？</h3>
+<p>A: 每日每個交易日 <b>16:00 HKT (港股收市) + 16:00 ET (美股收市)</b> 自動更新一次。HK 用 Tencent qtimg API (1-15 分鐘延遲，唔係 Level-2)。US 用 YFinance / Alpaca (15-20 分鐘延遲)。新聞：Futu / Yahoo Finance RSS。</p>
+</section>
+
+<section>
+<h2>📊 評分 + 信號</h2>
+
+<h3>Q: 個 score 點樣計？</h3>
+<p>A: <b>四維</b>評分 (0-100)，Python-side 確定性加權 (非 LLM 自評)：</p>
+<ul>
+<li><b>估值</b> (PE/PB · 5%)</li>
+<li><b>質素</b> (ROE/margin · 5%)</li>
+<li><b>動能</b> (MA/RSI/deviation · 70%)</li>
+<li><b>資金流</b> (量比/大單/Relative Volume · 20%)</li>
+</ul>
+<p>公式：<code>score = 0.05 × value + 0.05 × quality + 0.70 × momentum + 0.20 × order_flow</code>。<br>
+Day-trade 完全偏重 momentum + order flow；估值/質素只係 tiebreaker。</p>
+
+<h3>Q: Conservative BUY 係咩？點解只有少數信號？</h3>
+<p>A: Conservative BUY 係 Leeks Terminal <b>唯一 live 嘅 mean-reversion 規則</b>，6 個 filter 條件 AND：</p>
+<ol>
+<li>前日 -3% to 0% (超賣起點)</li>
+<li>m_score 30-70 (非極端)</li>
+<li>sentiment ≠ 樂觀 (避免追頂)</li>
+<li>score &lt; 70</li>
+<li>sector ∉ Tech/Comms</li>
+<li>US only (HK 數據延遲 + yfinance 覆蓋唔齊)</li>
+</ol>
+<p>所以大部分日子只有 <b>0-3 隻</b> 通過。14d audit bucket [70,80) 達 <b>84% WR</b>，paper trade n=16 達 <b>81% WR</b>。詳見 <a href="/learn/conservative-rule.html">Conservative 規則教學 →</a></p>
+
+<h3>Q: trade_direction 點解有時「雙向」？</h3>
+<p>A: 「雙向」(both) 代表波動率足夠，long 同 short setup 都有。LLM 同時偵測到 long 入場區同 short 反彈區，user 自己揀邊個方向做。Filter (e.g. hk-buy / hk-sell / us-buy / us-sell) 可以 hide 其他方向。</p>
+
+<h3>Q: 點解 entry / stop / target 有時顯示「—」？</h3>
+<p>A: 個別 LLM output 唔齊全；我哋有 backfill script parse <code>full_md</code> 嘅 markdown bullets 拎返。如果仍然「—」表示該股真係冇明確 setup，建議觀望。詳細可去 <code>/dashboard/{date}/reports/{code}.html</code> 睇原始 LLM narrative。</p>
+</section>
+
+<section>
+<h2>🧠 LLM + 規則</h2>
+
+<h3>Q: 點解 LLM 交易會反指？</h3>
+<p>A: 9-day audit 1,913 信號：<b>LLM 樂觀 BUY 30.4% WR</b> (反指 -1.4% avg)、<b>m≥80 BUY 16.7% WR</b> (追頂)、<b>悲觀 SELL 37.7% WR</b> (接刀)。LLM 訓練數據偏向 trend-continuation narrative，day-trade alpha 反而係 mean-reversion。我哋用 Anti-Chase / Anti-Knife rule override 呢類反指 pattern。詳見 <a href="/learn/llm-trading-inversion.html">完整教學 →</a></p>
+</section>
+
+<section>
+<h2>🌏 HK vs US</h2>
+
+<h3>Q: HK 同 US day-trade 有咩唔同？</h3>
+<ol>
+<li><b>數據延遲</b>：HK Tencent qtimg 1-15 分鐘，US YFinance 15-20 分鐘。Day-trade 用 delayed print 做 entry 經常被 open auction 走晒。</li>
+<li><b>成本</b>：HK stamp ~0.1% 買入 + 佣金 + levy + slip，US 0 佣金但 5-10bp/side slip。即日鮮雙邊摩擦好傷。</li>
+<li><b>覆蓋</b>：HK 200 隻 (turnover ≥ 50M HKD)，US 200 隻 (S&amp;P 500 + Nasdaq-100 樣本)。</li>
+<li><b>Regime</b>：HSI 影響 HK 信號，SPX 影響 US 信號。唔好跨市場 blindly 跟單。</li>
+</ol>
+</section>
+
+<section>
+<h2>📝 Paper trade + 風險</h2>
+
+<h3>Q: Paper trade 點樣先唔自欺？</h3>
+<ol>
+<li>至少 <b>30-60 個 trade</b> 樣本先睇 edge (n&lt;30 完全 random 範圍)</li>
+<li>區分 <b>WR vs EV (expectancy)</b>：WR 50% 但 avg_win &lt; avg_loss = 長期輸錢</li>
+<li>加 <b>slippage + 佣金 + 港股 stamp</b> 入 backtest</li>
+<li><b>Walk-forward</b>：train 20 日 → test 5 日，唔好用同一段數據</li>
+<li>Out-of-sample <b>半年 live trades</b> 先擴規模</li>
+</ol>
+
+<h3>Q: 我可以用真錢跟單嗎？</h3>
+<p>A: <b>Leeks Terminal 純粹 AI 輔助決策參考，唔構成任何買賣建議</b>。Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問 (<a href="/disclaimer.html">完整免責聲明</a>)。我哋自己 paper trade 都仲跑緊獨立 OOS 驗證，未敢開真槓桿。</p>
+</section>
+
+<section>
+<h2>📚 延伸閱讀</h2>
+<ul>
+<li><a href="/learn/llm-trading-inversion.html">點解 LLM 交易會反指 · 9-day audit 公開</a></li>
+<li><a href="/learn/conservative-rule.html">Conservative mean-reversion 規則教學</a></li>
+<li><a href="/methodology.html">完整 4-dim 評分模型</a></li>
+<li><a href="/insights.html">9-day audit 1,913 信號全結果</a></li>
+<li><a href="/paper-trades.html">即時 paper trade tracker</a></li>
+<li><a href="/about.html">關於 Leeks Terminal 同 win9you 關係</a></li>
+</ul>
+</section>
+
+<aside class="disclaimer">
+⚠️ <b>非投資建議</b> · Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a>
+</aside>
+</article>
+</main>
+
+<footer>
+© 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>

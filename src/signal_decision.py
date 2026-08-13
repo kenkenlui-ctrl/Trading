@@ -151,6 +151,27 @@ def decide(
     )
 
     # ------------------------------------------------------------------
+    # 0. Data quality gate (2026-08-02 P0 fix)
+    # If critical technical indicators are all missing, force HOLD.
+    # Otherwise we get "MA missing + RS missing + 高信心 100% 下日勝率"
+    # which is dangerous miscalibration (Grok audit 2026-08-02).
+    # ------------------------------------------------------------------
+    ma20 = data_snapshot.get("ma20") if data_snapshot else None
+    ma50 = data_snapshot.get("ma50") if data_snapshot else None
+    rsi14 = data_snapshot.get("rsi14") if data_snapshot else None
+    if ma20 is None and ma50 is None and rsi14 is None:
+        return Decision(
+            op="觀望",
+            reason=(
+                "DATA_GUARD: MA20/MA50/RSI14 全部缺失，禁止 actionable signal。"
+                "避免 LLM 喺冇技術指標嘅情況下標記高信心。"
+                "等下次有完整 snapshot 先再 trade。"
+            ),
+            matched_rule="DATA_GUARD",
+            original_op=llm_op,
+        )
+
+    # ------------------------------------------------------------------
     # 1. FADE_SHORT — short extension into expensive names (next-day fade)
     # Holdout: test WR 66.7% (n=45), full 62.0% (n=192), avg short +1.6%
     # Fires BEFORE anti-chase so we monetize the chase cluster instead of

@@ -1,0 +1,63 @@
+# Leeks Terminal
+
+> HK + US day-trade AI decision dashboard. 200 HK stocks + 200 US stocks, 4-dim scoring + rule-based decision engine. Self-built, self-used, self-funded. Day trading requires high risk, past performance does not guarantee future returns.
+
+## Core Pages
+- [Home](https://www.win9you.com/): Daily dashboard index, latest 14 dates
+- [Dashboard Hub](https://www.win9you.com/dashboard/): Filter by date / market / operation
+- [Methodology](https://www.win9you.com/methodology.html): 4-dim scoring + rule engine + backtest
+- [FAQ](https://www.win9you.com/faq.html): 10 common questions
+- [Insights](https://www.win9you.com/insights.html): 9-day audit of 1,913 signals
+- [Paper Trades](https://www.win9you.com/paper-trades.html): Live paper trade tracker
+- [About](https://www.win9you.com/about.html): Story and mission
+- [Learn Hub](https://www.win9you.com/learn/): Educational articles
+
+## Learn Articles (Evergreen Content)
+- [Why LLM Trading Inverts](https://www.win9you.com/learn/llm-trading-inversion.html): 9-day audit reveals 3 dangerous LLM anti-patterns
+- [Conservative Mean-Reversion Rule](https://www.win9you.com/learn/conservative-rule.html): 6-filter mean-reversion rule, 14d backtest 84% WR
+- [HK vs US Day-Trade Differences](https://www.win9you.com/learn/hk-vs-us-day-trade.html): Data delay, costs, coverage, regime
+- [Paper Trade Self-Honesty](https://www.win9you.com/learn/paper-trade-self-honesty.html): 5 self-deception traps + checklist
+
+## Per-Date Dashboards
+Format: `/dashboard/YYYY-MM-DD/{filter}.html` where filter is one of: all, hk-buy, hk-sell, hk-hold, us-buy, us-sell, us-hold, conservative-buy, cyber-buy
+
+Recent dates (last 5 fully indexed):
+- /dashboard/2026-07-31/all.html
+- /dashboard/2026-07-30/all.html
+- /dashboard/2026-07-29/all.html
+- /dashboard/2026-07-28/all.html
+- /dashboard/2026-07-27/all.html
+
+## HK S/R Chart Pages
+- HK200: /hk200/ (200 HK stocks daily S/R analysis)
+- US200: /us200/ (200 US stocks daily S/R analysis)
+
+## Data Sources
+- HK live: Tencent qtimg (1-15 min delay)
+- US live: YFinance / Alpaca (15-20 min delay)
+- News: Futu / Yahoo Finance RSS
+- Fundamentals: YFinance (PE/PB/ROE/market cap)
+
+## Operating Window
+- Daily auto-update: 16:00 HKT (HK close) + 16:00 ET (US close)
+- Day-trade only: 4 PM HKT / 4 PM ET close by, no overnight holds (3-day timeout enforced)
+- Universe refresh: every 5 trading days (200 HK + 200 US)
+
+## Operating Rules (Active)
+- Anti-Chase: BLOCK BUY + m≥60 + optimistic + today≥+3%
+- Anti-Knife: BLOCK SELL + pessimistic + today≤-3%
+- Conservative BUY: 6-filter mean-reversion (US only, n=16, 81% WR paper)
+- HSI Bear Gate: HSI chg ≤ -1.5% suppresses BUY signals
+- 3-day timeout: force close any position held >3 days
+- Data Guard (2026-08-02): if MA20/MA50/RSI14 all missing, force HOLD
+
+## Operating Rules (PAUSED 2026-08-02)
+- Bounce preset: 67 closed trades at 43.3% WR, -0.24% avg (-$160)
+- Cyber BUY preset: 5 trades at -2.97% avg
+- SELL signals: 1D hit rate 52.9% but mean-reverts avg +0.86% (wrong direction)
+
+## Disclaimer
+Leeks Terminal is an AI-assisted decision support tool, NOT investment advice. Day trading involves high risk. Past performance does not guarantee future returns. Users should evaluate risk themselves and consult licensed advisors. [Full disclaimer](https://www.win9you.com/disclaimer.html)
+
+## Contact
+Email: team@win9you.com

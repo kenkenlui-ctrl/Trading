@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HK vs US day-trade 差異 · 數據延遲 / 成本 / 覆蓋 / Regime · Leeks Terminal | win9you</title>
+<meta name="description" content="港股 vs 美股 day-trade 4 個關鍵差異：數據延遲 (Tencent 1-15 min vs YFinance 15-20 min)、成本 (港 stamp 0.1% vs 美 0 佣金但 slip)、覆蓋 (200+200)、Regime gate。Leeks Terminal 教學。">
+<meta name="keywords" content="HK day trade, US day trade, Tencent qtimg, YFinance, HSI regime, SPX regime, Leeks Terminal, win9you">
+<meta name="author" content="Leeks Terminal Research">
+<meta property="og:title" content="HK vs US day-trade 差異 · 數據延遲 / 成本 / 覆蓋 / Regime">
+<meta property="og:description" content="港股 vs 美股 day-trade 4 個關鍵差異：數據延遲、成本、覆蓋、Regime gate">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.win9you.com/learn/hk-vs-us-day-trade.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HK vs US day-trade 差異 · 4 個關鍵差異">
+<meta name="twitter:description" content="Tencent vs YFinance 延遲、stamp vs 0 佣金、覆蓋、Regime">
+<link rel="canonical" href="https://www.win9you.com/learn/hk-vs-us-day-trade.html">
+<link rel="alternate" hreflang="zh-Hant-HK" href="https://www.win9you.com/learn/hk-vs-us-day-trade.html">
+<link rel="alternate" hreflang="x-default" href="https://www.win9you.com/learn/hk-vs-us-day-trade.html">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "HK vs US day-trade 差異 · 數據延遲 / 成本 / 覆蓋 / Regime", "author": {"@type": "Organization", "name": "Leeks Terminal"}, "publisher": {"@type": "Organization", "name": "Leeks Terminal", "url": "https://www.win9you.com"}, "datePublished": "2026-08-03", "dateModified": "2026-08-03", "description": "港股 vs 美股 day-trade 完整差異", "inLanguage": "zh-Hant-HK", "mainEntityOfPage": "https://www.win9you.com/learn/hk-vs-us-day-trade.html"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.win9you.com/"}, {"@type": "ListItem", "position": 2, "name": "Learn", "item": "https://www.win9you.com/learn/"}, {"@type": "ListItem", "position": 3, "name": "HK vs US day-trade 差異", "item": "https://www.win9you.com/learn/hk-vs-us-day-trade.html"}]}</script>
+<link rel="stylesheet" href="/leeks.css">
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation">
+<span class="brand">◆ Leeks Terminal</span>
+<a href="/">Home</a>
+<a href="/dashboard/">Dashboard</a>
+<a href="/full-results.html">Full Results</a>
+<a href="/hk200/">📊 HK200 S/R</a>
+<a href="/us200/">🇺🇸 US200 S/R</a>
+<a href="/paper-trades.html">Paper Trades</a>
+<a href="/methodology.html">Methodology</a>
+<a href="/insights.html">Insights</a>
+<a href="/learn/">Learn</a>
+<a href="/faq.html">FAQ</a>
+<a href="/about.html">About</a>
+</nav>
+
+<main>
+<nav class="breadcrumb" aria-label="Breadcrumb">
+<a href="/">Home</a> › <a href="/learn/">教學</a> › <span>HK vs US day-trade 差異</span>
+</nav>
+
+<article>
+<header>
+<h1>HK vs US day-trade 差異</h1>
+<p class="lede">港股同美股即日鮮睇落似，但 4 個維度都唔同：數據延遲、成本、覆蓋、Regime。盲目跨市場跟單 = 慢性失血。</p>
+<p class="meta">📅 2026-08-03 · 📖 6 分鐘 · 🎯 適合 cross-market trader</p>
+</header>
+
+<section>
+<h2>1. 數據延遲 (Data latency)</h2>
+<table>
+<thead><tr><th>市場</th><th>數據源</th><th>延遲</th><th>影響</th></tr></thead>
+<tbody>
+<tr><td><b>HK</b></td><td>Tencent qtimg (qt.gtimg.cn)</td><td><b>1-15 分鐘</b></td><td>Day-trade 用 delayed print 做 entry 經常被 open auction 走晒</td></tr>
+<tr><td><b>US</b></td><td>YFinance / Alpaca</td><td><b>15-20 分鐘</b></td><td>Pre-market 4 AM ET 信號實際上係 3:40 AM 數據</td></tr>
+</tbody>
+</table>
+<p><b>實戰 impact</b>：我哋 dashboard 嘅 entry zone 通常 4 PM HKT/ET 入，但 LLM narrative 嘅「目前」指 4 PM 收市 15-20 分鐘前。對 short 影響細（方向不變），對 long 入場影響大（追貴 1-2% 機會高）。</p>
+</section>
+
+<section>
+<h2>2. 成本 (Cost of trading)</h2>
+<table>
+<thead><tr><th>項目</th><th>HK (港股)</th><th>US (美股)</th></tr></thead>
+<tbody>
+<tr><td><b>佣金</b></td><td>~0.03% (最低 HK$18-30)</td><td>$0 (Robinhood / IBKR Lite)</td></tr>
+<tr><td><b>Stamp duty</b></td><td><b>0.1% 買入</b></td><td>0%</td></tr>
+<tr><td><b>Trading levy</b></td><td>0.0027%</td><td>0% (有 SEC fee 0.00278% 賣)</td></tr>
+<tr><td><b>Slippage</b></td><td>5-15 bp/單邊 (細股 20+bp)</td><td>2-5 bp/單邊 (大型股) / 5-15 bp (mid-cap)</td></tr>
+<tr><td><b>即日鮮雙邊總成本</b></td><td><b>~0.20%</b> 來回</td><td><b>~0.10%</b> 來回</td></tr>
+</tbody>
+</table>
+<p><b>實戰 impact</b>：港股成本係美股 2 倍。即日鮮食少少利潤（0.5%）就會被 cost 食埋。Conservative BUY 嘅 EV 計算一定要扣咗成本先有意義。</p>
+</section>
+
+<section>
+<h2>3. 覆蓋 (Universe coverage)</h2>
+<table>
+<thead><tr><th>市場</th><th>股票數</th><th>揀股標準</th><th>覆蓋率</th></tr></thead>
+<tbody>
+<tr><td><b>HK</b></td><td>200</td><td>5-day avg turnover ≥ 50M HKD</td><td>~80% 大盤成交額</td></tr>
+<tr><td><b>US</b></td><td>200</td><td>S&amp;P 500 + Nasdaq-100 樣本</td><td>~50% 大盤成交額</td></tr>
+</tbody>
+</table>
+<p><b>HK yfinance 缺口</b>：Tencent 對細股 (e.g. 07709 / 09961 / 09888) 覆蓋齊全但 yfinance 對呢啲 code 經常返 0 rows。Leeks Terminal HK 200 入面約 60-100 隻可以喺 retrospective 模式 (7+ 日前) 拎到完整 kline。</p>
+<p><b>US 缺口</b>：yfinance 對美股覆蓋 99%+，但 PE/PB 數據對小型股未必齊全。</p>
+</section>
+
+<section>
+<h2>4. Regime gate</h2>
+<table>
+<thead><tr><th>指標</th><th>HK</th><th>US</th></tr></thead>
+<tbody>
+<tr><td><b>Index</b></td><td>HSI (恒生指數)</td><td>SPX (S&amp;P 500) / NDX (Nasdaq 100)</td></tr>
+<tr><td><b>BEAR threshold</b></td><td>HSI chg ≤ -1.5%</td><td>SPX chg ≤ -1.5%</td></tr>
+<tr><td><b>Effect</b></td><td>HK 跌市 stop 所有 BUY，short 仍可開</td><td>US 跌市 stop 所有 BUY，short 仍可開</td></tr>
+</tbody>
+</table>
+<p><b>Regime 唔對齊</b>：HSI 同 SPX 同步跌 (-2%) 嘅日子好少 (2020/03、2022/09 之類)。多數日子只有一邊跌，我哋 dashboard 應該分開睇：</p>
+<ol>
+<li>HSI bear day → HK 信號 suppress，但 US 信號可能仲 work (separate session)</li>
+<li>SPX bear day → US 信號 suppress，但 HK 信號可能仲 work (隔夜 gap 風險大)</li>
+<li>兩邊都 bear → 全市場避險</li>
+</ol>
+</section>
+
+<section>
+<h2>5. 操作差異 checklist</h2>
+<p>如果你 trade 兩個市場，記住呢 4 點：</p>
+<ol>
+<li><b>唔好盲目跟單</b> — Leeks Terminal 嘅 US BUY 信號唔代表 HK 信號，反之亦然。</li>
+<li><b>唔好隔夜 cross-market</b> — 16:00 HKT 收市 → 21:30 ET 開市，HSI 跌 -2% 會令 US pre-market 開低 1-2%。</li>
+<li><b>成本加倍</b> — US 開倉 + HK 開倉 = 兩邊 stamp / commission / slip。風控 size 減半。</li>
+<li><b>Regime 確認</b> — Leeks Terminal dashboard 頂部有 HSI / SPX chg 顯示，唔好忽視。</li>
+</ol>
+</section>
+
+<section>
+<h2>6. Leeks Terminal 嘅做法</h2>
+<p>我哋 dashboard 已經將呢 4 個維度反映：</p>
+<ul>
+<li><b>HK / US 分開 dashboard</b> — /dashboard/{date}/hk-buy.html vs us-buy.html</li>
+<li><b>Regime banner</b> — 跌市日子 display "Regime: BEAR" 提示</li>
+<li><b>Anti-Chase / Anti-Knife</b> — 唔理邊個市場都 apply 同一條 rule</li>
+<li><b>Conservative BUY (US only)</b> — 因為 HK 數據延遲 + 成本 2x，paper trade 仲未開 HK mean-reversion</li>
+</ul>
+</section>
+
+<section>
+<h2>延伸閱讀</h2>
+<ul>
+<li><a href="/learn/conservative-rule.html">Conservative mean-reversion 規則教學</a> (US only，n=16 達 81% WR)</li>
+<li><a href="/learn/llm-trading-inversion.html">點解 LLM 交易會反指 · 9-day audit 公開</a></li>
+<li><a href="/methodology.html">完整 4-dim 評分模型</a></li>
+<li><a href="/paper-trades.html">即時 paper trade tracker</a></li>
+</ul>
+</section>
+
+<aside class="disclaimer">
+⚠️ <b>非投資建議</b> · Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a>
+</aside>
+</article>
+</main>
+
+<footer>
+© 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>

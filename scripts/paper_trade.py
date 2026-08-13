@@ -413,7 +413,20 @@ def close_paper_trades(dry_run: bool = False) -> int:
         # Fetch current price
         cur_price = get_current_price(code)
         if cur_price is None:
-            print(f"    {code}: no current price, skip")
+            # 2026-08-02 P0 fix: if held >7 days with no price (delisted/data
+            # gap), force close at entry price (P&L=0) to clean up ghost positions.
+            # Otherwise these pile up and pollute stats forever.
+            if hold_days >= 7:
+                cur.execute(
+                    """UPDATE paper_trade
+                       SET exit_date=?, exit_price=?, close_reason=?, pnl_pct=0, pnl_usd=0, status='closed'
+                       WHERE id=?""",
+                    (today, entry_price, "delisted-no-price", t["id"]),
+                )
+                closed += 1
+                print(f"    {code}: held {hold_days}d no-price → force close (delisted/no-price)")
+                continue
+            print(f"    {code}: no current price, hold={hold_days}d skip")
             continue
         # Check exit conditions (long vs short)
         exit_reason = None
@@ -520,9 +533,12 @@ def main():
             "fade-short",     # Phase 10: next-day short fade (~62% WR)
             "conservative-buy",
             "value-buy",
-            "cyber-buy",
             "all-buy",
-            "bounce-buy",
+            # 2026-08-02 P0 fix: bounce-buy PAUSED — 67 closed trades at 43.3% WR
+            # (-0.24% avg, -$160). Re-enable only after independent OOS validation
+            # with n>30 trades AND positive EV. See Grok analysis 2026-08-02.
+            # "bounce-buy",
+            # "cyber-buy",  # also paused — 5 trades at -2.97% avg, too small n
         ],
     )
     ap.add_argument("--dry-run", action="store_true")

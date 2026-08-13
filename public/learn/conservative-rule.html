@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conservative mean-reversion 規則教學 · 點解 LLM 學唔到 · Leeks Terminal | win9you</title>
+<meta name="description" content="Conservative mean-reversion 規則完整教學：條件 (前日 -3 to 0%、m 30-70、non-tech、score<70) + 14d backtest 84% WR + paper 81% WR + 何時停用。Leeks Terminal 教學。">
+<meta name="keywords" content="mean reversion, conservative buy, day trade, momentum, anti-chase, Leeks Terminal, paper trade">
+<meta name="author" content="Leeks Terminal Research">
+<meta property="og:title" content="Conservative mean-reversion 規則教學 · 點解 LLM 學唔到">
+<meta property="og:description" content="完整教學：條件 + 14d backtest 84% WR + paper 81% WR + 何時停用">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.win9you.com/learn/conservative-rule.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Conservative mean-reversion 規則教學">
+<meta name="twitter:description" content="條件 + backtest + paper 結果 + 何時停用">
+<link rel="canonical" href="https://www.win9you.com/learn/conservative-rule.html">
+<link rel="alternate" hreflang="zh-Hant-HK" href="https://www.win9you.com/learn/conservative-rule.html">
+<link rel="alternate" hreflang="x-default" href="https://www.win9you.com/learn/conservative-rule.html">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Conservative mean-reversion 規則教學", "author": {"@type": "Organization", "name": "Leeks Terminal"}, "publisher": {"@type": "Organization", "name": "Leeks Terminal", "url": "https://www.win9you.com"}, "datePublished": "2026-08-03", "dateModified": "2026-08-03", "description": "Conservative mean-reversion 完整教學", "inLanguage": "zh-Hant-HK", "mainEntityOfPage": "https://www.win9you.com/learn/conservative-rule.html"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.win9you.com/"}, {"@type": "ListItem", "position": 2, "name": "Learn", "item": "https://www.win9you.com/learn/"}, {"@type": "ListItem", "position": 3, "name": "Conservative mean-reversion 規則教學", "item": "https://www.win9you.com/learn/conservative-rule.html"}]}</script>
+<link rel="stylesheet" href="/leeks.css">
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation">
+<span class="brand">◆ Leeks Terminal</span>
+<a href="/">Home</a>
+<a href="/dashboard/">Dashboard</a>
+<a href="/full-results.html">Full Results</a>
+<a href="/hk200/">📊 HK200 S/R</a>
+<a href="/us200/">🇺🇸 US200 S/R</a>
+<a href="/paper-trades.html">Paper Trades</a>
+<a href="/faq.html">FAQ</a>
+<a href="/methodology.html">Methodology</a>
+<a href="/insights.html">Insights</a>
+<a href="/about.html">About</a>
+</nav>
+
+<main>
+<nav class="breadcrumb" aria-label="Breadcrumb">
+<a href="/">Home</a> › <a href="/learn/">教學</a> › <span>Conservative mean-reversion 規則</span>
+</nav>
+
+<article>
+<header>
+<h1>Conservative mean-reversion 規則教學</h1>
+<p class="lede">Leeks Terminal 唯一 live 嘅 mean-reversion 規則 — 條件、backtest 結果、paper 表現、何時停用，全部公開。</p>
+<p class="meta">📅 2026-08-03 · 📖 6 分鐘閱讀 · 🏷️ 教學 · 規則細節</p>
+</header>
+
+<section>
+<h2>點解叫「Conservative」？</h2>
+<p>Day-trade 嘅 alpha 多數嚟自 <b>mean-reversion</b>（超賣反彈）多過 trend-following（追趨勢）。LLM 學唔到 mean-reversion，因為：</p>
+<ol>
+<li>訓練數據偏向「趨勢延續」嘅 narrative（財經新聞常用 "rally continues"）</li>
+<li>Mean-reversion 喺長線 hold 唔 work（diversion away from fundamentals），LLM 學壞咗</li>
+<li>短炒 alpha 需要 intraday microstructure，LLM 冇呢個 training data</li>
+</ol>
+<p>所以我哋寫死 Conservative 規則：6 個條件 ALL pass 先標買入。</p>
+</section>
+
+<section>
+<h2>規則條件（6 個 filter）</h2>
+<table>
+<thead><tr><th>#</th><th>條件</th><th>理由</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><b>前日 -3% to 0%</b></td><td>超賣起點（跌咗 1-3% 但未崩）</td></tr>
+<tr><td>2</td><td><b>m_score 30-70</b>（唔極端）</td><td>避開超買同超賣兩邊</td></tr>
+<tr><td>3</td><td><b>sentiment ≠ 樂觀</b></td><td>樂觀 narrative 通常代表追頂</td></tr>
+<tr><td>4</td><td><b>score &lt; 70</b></td><td>高 score 通常代表超買（m≥60 + 樂觀 已自動觸發 Anti-Chase）</td></tr>
+<tr><td>5</td><td><b>sector ∉ Tech/Comms</b></td><td>Tech 高 beta 唔適合 mean-reversion</td></tr>
+<tr><td>6</td><td><b>US only</b>（暫時）</td><td>HK 數據延遲 + yfinance 覆蓋唔齊，paper 未夠樣本</td></tr>
+</tbody>
+</table>
+<p>6 個條件 AND — 大部分日子 <b>0-3 隻</b> 通過（不是高頻信號）</p>
+</section>
+
+<section>
+<h2>Backtest 結果 (14-day audit, n=25)</h2>
+<table>
+<thead><tr><th>Bucket</th><th>n</th><th>WR</th><th>Avg</th></tr></thead>
+<tbody>
+<tr><td><b>Score [70, 80)</b></td><td>25</td><td><b>84%</b></td><td><b>+2.82%</b></td></tr>
+<tr><td>Score [60, 70)</td><td>57</td><td>50.9%</td><td>+0.11%</td></tr>
+<tr><td>Score [50, 60)</td><td>4</td><td>75%</td><td>+0.29%</td></tr>
+<tr><td>Score [40, 50)</td><td>20</td><td>45%</td><td>-0.33%</td></tr>
+</tbody>
+</table>
+<p>Bucket [70, 80) 84% WR + +2.82% avg 係 audit 入面最 sharp 嘅 edge。但要小心：</p>
+<ul>
+<li>n=25 太細，95% CI 係 ±15%</li>
+<li>樣本期 14 日，regime 可能特殊（e.g. 跌市 mean-revert 強）</li>
+<li>未做 walk-forward 驗證</li>
+</ul>
+</section>
+
+<section>
+<h2>Paper trade 結果 (n=16, 截至 2026-08-02)</h2>
+<table>
+<thead><tr><th>指標</th><th>數值</th></tr></thead>
+<tbody>
+<tr><td>Total trades</td><td>16</td></tr>
+<tr><td><b>Wins / Losses</b></td><td><b>13 / 3</b></td></tr>
+<tr><td><b>WR</b></td><td><b>81.2%</b></td></tr>
+<tr><td>Avg P&amp;L / trade</td><td>+1.05%</td></tr>
+<tr><td><b>Total P&amp;L</b></td><td><b>+$168</b></td></tr>
+</tbody>
+</table>
+<p>Paper 跑出嚟都係 <b>positive EV</b>，吻合 backtest。但 n=16 仲係 <b>統計脆弱</b> — 一個 regime 變化（持續升市）可以完全翻面。</p>
+</section>
+
+<section>
+<h2>Anti-Chase / Anti-Knife 點解重要</h2>
+<p>Conservative 規則本身已經避開超買，但 anti-chase / anti-knife 係獨立嘅 <b>第二道防線</b>：</p>
+<table>
+<thead><tr><th>Rule</th><th>條件</th><th>防邊個 anti-pattern</th></tr></thead>
+<tbody>
+<tr><td><b>Anti-Chase</b></td><td>BLOCK BUY + m≥60 + 樂觀 + 今日≥+3%</td><td>追頂（9-day audit: 16.7% WR）</td></tr>
+<tr><td><b>Anti-Knife</b></td><td>BLOCK SELL + 悲觀 + 今日≤-3%</td><td>接刀（9-day audit: 37.7% WR）</td></tr>
+</tbody>
+</table>
+<p>兩條 rule 互補：Anti-Chase 防 BUY 變蠢，Anti-Knife 防 SELL 變蠢。Conservative 規則本身唔會觸發呢兩條（佢要求 m 30-70 + sentiment 中性）。</p>
+</section>
+
+<section>
+<h2>點用 Conservative 信號</h2>
+<ol>
+<li><b>睇 dashboard 揀「🛡️ Conservative BUY」filter</b> — 6 條件 ALL pass 嘅股票</li>
+<li><b>睇 R:R</b> — R:R ≥ 2 先入場，否則 skip</li>
+<li><b>確認當日大市 regime</b> — HSI 大跌 / SPY 跌 &gt; 1% 嗰日 mean-revert 強，信號可入</li>
+<li><b>hold 1-3 日</b> — 3 日後自動 close（3-DAY TIMEOUT）</li>
+<li><b>唔 chase 入市價</b> — Conservative 信號一定要喺 setup 範圍入面入場，否則 R:R 變差</li>
+</ol>
+</section>
+
+<section>
+<h2>何時停用 / 暫停</h2>
+<p>Conservative rule <b>唔係永遠 work</b>。以下情況要暫停或減碼：</p>
+<ul>
+<li><b>持續升市</b>（HSI 5 日連升）— mean-reversion 失效，追趨勢先 work</li>
+<li><b>paper 連續 5 單 loss</b> — edge 可能消失</li>
+<li><b>regime 由 NEUTRAL 變 BULL 強勢</b>（SPX 連創新高）— mean-reversion 機會率降</li>
+<li><b>Macro 事件前</b>（FOMC、CPI、NFP）— 暫停 day-trade 1-2 日</li>
+</ul>
+</section>
+
+<section>
+<h2>延伸閱讀</h2>
+<ul>
+<li><a href="/insights.html">9-day audit 1,913 信號全結果</a></li>
+<li><a href="/methodology.html">完整 4-dim 評分模型</a></li>
+<li><a href="/learn/llm-trading-inversion.html">點解 LLM 交易會反指</a></li>
+<li><a href="/paper-trades.html">即時 paper trade tracker</a></li>
+</ul>
+</section>
+
+<aside class="disclaimer">
+⚠️ <b>非投資建議</b> · Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a>
+</aside>
+</article>
+</main>
+
+<footer>
+© 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>

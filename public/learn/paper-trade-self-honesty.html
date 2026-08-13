@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paper trade 點樣先唔自欺 · n / EV / walk-forward / OOS · Leeks Terminal | win9you</title>
+<meta name="description" content="Paper trade 5 大自欺陷阱：n&lt;30 隨機、WR vs EV 唔等於賺錢、唔扣成本、in-sample leak、short sample period。Leeks Terminal 自己都中過招。">
+<meta name="keywords" content="paper trade, backtest, walk-forward, expectancy, OOS, day trade, Leeks Terminal">
+<meta name="author" content="Leeks Terminal Research">
+<meta property="og:title" content="Paper trade 點樣先唔自欺 · 5 大陷阱">
+<meta property="og:description" content="n&lt;30 隨機、WR vs EV、唔扣成本、in-sample leak、short sample">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.win9you.com/learn/paper-trade-self-honesty.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Paper trade 點樣先唔自欺 · 5 大陷阱">
+<meta name="twitter:description" content="n / EV / walk-forward / OOS / 短樣本">
+<link rel="canonical" href="https://www.win9you.com/learn/paper-trade-self-honesty.html">
+<link rel="alternate" hreflang="zh-Hant-HK" href="https://www.win9you.com/learn/paper-trade-self-honesty.html">
+<link rel="alternate" hreflang="x-default" href="https://www.win9you.com/learn/paper-trade-self-honesty.html">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Paper trade 點樣先唔自欺 · 5 大陷阱", "author": {"@type": "Organization", "name": "Leeks Terminal"}, "publisher": {"@type": "Organization", "name": "Leeks Terminal", "url": "https://www.win9you.com"}, "datePublished": "2026-08-03", "dateModified": "2026-08-03", "description": "Paper trade 5 大自欺陷阱", "inLanguage": "zh-Hant-HK", "mainEntityOfPage": "https://www.win9you.com/learn/paper-trade-self-honesty.html"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.win9you.com/"}, {"@type": "ListItem", "position": 2, "name": "Learn", "item": "https://www.win9you.com/learn/"}, {"@type": "ListItem", "position": 3, "name": "Paper trade 點樣先唔自欺", "item": "https://www.win9you.com/learn/paper-trade-self-honesty.html"}]}</script>
+<link rel="stylesheet" href="/leeks.css">
+</head>
+<body>
+<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation">
+<span class="brand">◆ Leeks Terminal</span>
+<a href="/">Home</a>
+<a href="/dashboard/">Dashboard</a>
+<a href="/full-results.html">Full Results</a>
+<a href="/hk200/">📊 HK200 S/R</a>
+<a href="/us200/">🇺🇸 US200 S/R</a>
+<a href="/paper-trades.html">Paper Trades</a>
+<a href="/methodology.html">Methodology</a>
+<a href="/insights.html">Insights</a>
+<a href="/learn/">Learn</a>
+<a href="/faq.html">FAQ</a>
+<a href="/about.html">About</a>
+</nav>
+
+<main>
+<nav class="breadcrumb" aria-label="Breadcrumb">
+<a href="/">Home</a> › <a href="/learn/">教學</a> › <span>Paper trade 點樣先唔自欺</span>
+</nav>
+
+<article>
+<header>
+<h1>Paper trade 點樣先唔自欺</h1>
+<p class="lede">Paper trade 係 trade 之前嘅必要步驟，但做得唔好會自欺欺人。Leeks Terminal 自己都中過招。呢篇講 5 個最常見嘅自欺陷阱 + 點避開。</p>
+<p class="meta">📅 2026-08-03 · 📖 5 分鐘 · 🎯 適合所有 paper / backtest 階段 trader</p>
+</header>
+
+<section>
+<h2>陷阱 1：n &lt; 30 完全 random 範圍</h2>
+<p>如果你 paper trade 只有 5-10 單見到 80% WR，<b>唔代表 edge</b>。30 單以下嘅樣本，95% 信賴區間太大，WR 50% ± 20% 都有可能。</p>
+<p><b>Leeks Terminal 嘅現實</b>：Conservative BUY paper n=16，81% WR 聽落勁，但 95% CI 係 60-95%。一單 loss 就跌到 75%。</p>
+<p><b>正確做法</b>：</p>
+<ul>
+<li>至少 30 單先睇 trend</li>
+<li>50 單以上先有 5% 統計顯著</li>
+<li>100 單 + 半年 live 先開真錢</li>
+</ul>
+</section>
+
+<section>
+<h2>陷阱 2：WR ≠ 賺錢 (Expectancy)</h2>
+<p>Win rate 50% 都可以長期輸錢 — 如果 avg_win &lt; avg_loss：</p>
+<pre><code>EV = WR × avg_win + (1 - WR) × avg_loss
+   = 0.5 × 1% + 0.5 × (-2%)
+   = -0.5% per trade ❌
+</code></pre>
+<p><b>Leeks Terminal 嘅現實</b>：整體 paper 50% WR，但 avg_win +2.19% vs avg_loss -2.51% = <b>-0.32% per trade</b>。如果用 100 萬本金，1 年 100 單 = -32% 虧損。</p>
+<p><b>正確做法</b>：</p>
+<ul>
+<li>永遠計 <b>expectancy (EV)</b>，唔好只睇 WR</li>
+<li>目標：EV &gt; 0.3% per trade (扣成本後)</li>
+<li>如果 EV &lt; 0，再靚嘅 WR 都冇用</li>
+</ul>
+</section>
+
+<section>
+<h2>陷阱 3：唔扣成本</h2>
+<p>backtest 跑出 +1% avg 唔代表真錢賺 1%。要扣：</p>
+<table>
+<thead><tr><th>市場</th><th>成本</th><th>影響</th></tr></thead>
+<tbody>
+<tr><td>HK 即日鮮</td><td>stamp 0.1% + 佣金 + slip 5-10bp = <b>0.20% 雙邊</b></td><td>0.5% 利潤直接變 0.3%</td></tr>
+<tr><td>US 即日鮮</td><td>佣金 0 + slip 2-5bp = <b>0.10% 雙邊</b></td><td>0.5% 利潤變 0.4%</td></tr>
+</tbody>
+</table>
+<p><b>Leeks Terminal 嘅現實</b>：paper 用 mid-price 做 entry / exit，<b>未計 slippage</b>。如果加 5-10bp slip 兩邊 = 0.10-0.20%，paper EV 由 +0.32% 變 +0.12-0.22% 仲係正但 margin 縮咗一半。</p>
+<p><b>正確做法</b>：</p>
+<ul>
+<li>backtest 入 slippage（最保守用 5-10bp 兩邊）</li>
+<li>paper trade 記錄實際 fill price，唔好用 mid</li>
+<li>真實 trade 預 0.10-0.20% 兩邊成本</li>
+</ul>
+</section>
+
+<section>
+<h2>陷阱 4：In-sample leak</h2>
+<p>用同一段數據做 (1) 揀 rule + (2) 驗證 WR = leakage。揀 rule 時一定會 overfit，所以再用同一段報 WR 一定高過 OOS 表現。</p>
+<p><b>Leeks Terminal 嘅現實</b>：</p>
+<ul>
+<li>9-day audit (1,913 信號) 係 in-sample 揀 rule (Conservative BUY)</li>
+<li>14-day backtest bucket [70,80) 84% WR — 仲係 in-sample</li>
+<li>Paper trade n=16 — 算 out-of-sample 但樣本超細</li>
+</ul>
+<p><b>正確做法</b>：</p>
+<ul>
+<li><b>Walk-forward</b>：train 20 日 → test 5 日，滾動</li>
+<li><b>Embargo</b>：研發用嘅日子永遠唔好再計入實盤預期</li>
+<li>分 regim 跑（升 / 跌 / 高波 / 低波）</li>
+</ul>
+</section>
+
+<section>
+<h2>陷阱 5：短樣本 + 特殊 regime</h2>
+<p>如果 backtest 嗰 14 日係大跌市，mean-reversion 規則一定 work。但呢唔代表未來任何 regime 都 work。</p>
+<p><b>Leeks Terminal 嘅現實</b>：</p>
+<ul>
+<li>14-day audit 包含 7/15-7/29 期間 — 包括若干跌市日，mean-reversion 利好</li>
+<li>持續升市日子（5 日連升）mean-reversion 失效，Conservative BUY 可能 0 信號或信號 quality 下降</li>
+</ul>
+<p><b>正確做法</b>：</p>
+<ul>
+<li>每季 re-validate 規則（regime 變咗要調整）</li>
+<li>持續升市 / FOMC 之前 / 高 VIX 日子要 <b>減碼</b> 或暫停</li>
+<li>Rule 文件要 freeze + git tag，唔好 silent drift</li>
+</ul>
+</section>
+
+<section>
+<h2>Leeks Terminal 嘅自律 checklist</h2>
+<p>我哋 paper trade 嘅自我審查：</p>
+<ol>
+<li>✅ n &gt; 30 先報有意義嘅 WR（n=16 仲細，所以保守寫）</li>
+<li>✅ 報 EV + 扣成本估算（唔好淨 WR）</li>
+<li>✅ Embargo：研發用嘅 audit 數據永久唔重用做 backtest</li>
+<li>⚠️ Walk-forward 仲未做（roadmap 2026 Q3）</li>
+<li>⚠️ 真錢 out-of-sample 仲未開（保守策略）</li>
+</ol>
+</section>
+
+<section>
+<h2>給 paper trade 嘅你</h2>
+<ol>
+<li>最少 30 單</li>
+<li>永遠報 EV 而唔只係 WR</li>
+<li>扣晒成本 (slippage / 佣金 / stamp)</li>
+<li>分 regime 跑 backtest</li>
+<li>Walk-forward 唔好 in-sample leak</li>
+<li>持續 5 loss → 暫停 + 反省</li>
+</ol>
+</section>
+
+<section>
+<h2>延伸閱讀</h2>
+<ul>
+<li><a href="/paper-trades.html">Leeks Terminal 即時 paper trade tracker</a> · 睇下我哋而家跑成點</li>
+<li><a href="/insights.html">9-day audit 1,913 信號全結果</a></li>
+<li><a href="/learn/conservative-rule.html">Conservative mean-reversion 規則教學</a></li>
+<li><a href="/learn/llm-trading-inversion.html">點解 LLM 交易會反指 · 9-day audit 公開</a></li>
+</ul>
+</section>
+
+<aside class="disclaimer">
+⚠️ <b>非投資建議</b> · Day trading 涉及高風險，過去表現唔代表未來回報。請自行評估風險並諮詢持牌顧問。<a href="/disclaimer.html">完整免責聲明 →</a>
+</aside>
+</article>
+</main>
+
+<footer>
+© 2026 Leeks Terminal · For informational purposes only · Not investment advice · <a href="/disclaimer.html">Disclaimer</a>
+</footer>
+</body>
+</html>
