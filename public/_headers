@@ -32,3 +32,10 @@
 # Shared CSS (Phase 9+, 2026-07-21: extracted from inline)
 /leeks.css
   Cache-Control: public, max-age=86400, must-revalidate
+
+# Chart PNGs — short cache so browser/CDN always revalidates after deploy
+# (user reported stale charts showing old dates; cache-bust query string also added)
+/hk200/charts/*.png
+  Cache-Control: public, max-age=300, must-revalidate
+/us200/charts/*.png
+  Cache-Control: public, max-age=300, must-revalidate
