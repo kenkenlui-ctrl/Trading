@@ -1,12 +1,29 @@
-# Force .html extension on report pages (so /reports/KO → /reports/KO.html)
-/dashboard/*/reports/*  /dashboard/:splat/reports/:splat.html  301
+# =========================================================
+# LEEKS TERMINAL — URL rewrites & legacy redirects
+# v2.0 (2026-08-24 redesign)
+# =========================================================
 
-# /full-results/{date} → /dashboard/{date}/all.html (Phase 9+, 2026-07-20)
-/full-results/:date  /dashboard/:date/all.html  301
+# Ticker detail clean URLs (no .html)
+/hk200/ticker/*    /hk200/ticker/:splat.html    200
+/us200/ticker/*    /us200/ticker/:splat.html    200
 
-# Note: Cloudflare Pages _redirects doesn't support regex matching for
-# leading-zero HK alias collapsing. The build script now writes only the
-# canonical (5-digit Tencent) and all-zeros-stripped forms. Old intermediate
-# files (0005.HK, 005.HK, 05.HK, 988.HK) persist in the CDN until natural
-# expiry; they fall back to the homepage if accessed directly.
-# Use either canonical (00005.HK) or all-stripped (5.HK) for clean URLs.
+# New clean URLs (no .html)
+/methodology       /methodology.html            200
+/disclaimer        /disclaimer.html             200
+
+# Legacy redirects (preserves bookmarks)
+/day-trade-signals.html    /    301
+/about.html                /    301
+/faq.html                  /    301
+/full-results              /    301
+/full-results/             /    301
+/paper-trades.html         /    301
+/insights.html             /    301
+/live-monitor.html         /    301
+/hk-scanner.html           /hk200/    301
+/hk-stock-screener.html    /hk200/    301
+/us-scanner.html           /us200/    301
+/learn                     /    301
+/learn/                    /    301
+/dashboard                 /    301
+/dashboard/                /    301
