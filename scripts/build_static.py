@@ -898,7 +898,7 @@ def shell(title: str, body_html: str, active_path: str = "/",
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
-<link rel="stylesheet" href="/leeks.css">
+<link rel="stylesheet" href="/leeks.css?v=2026-08-25">
 {ld_block}
 </head>
 <body>

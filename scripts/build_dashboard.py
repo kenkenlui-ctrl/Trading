@@ -208,7 +208,7 @@ def build_dashboard_page(
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/leeks.css">
+<link rel="stylesheet" href="/leeks.css?v=2026-08-25">
 <script>
 (function(){{
   const t = localStorage.getItem('leeks-theme') || 'dark';
@@ -479,7 +479,7 @@ def render_detail_page(t: dict) -> str:
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/leeks.css">
+<link rel="stylesheet" href="/leeks.css?v=2026-08-25">
 </head>
 <body>
 <header class="site-header">
