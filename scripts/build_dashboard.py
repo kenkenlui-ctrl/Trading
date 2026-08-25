@@ -179,6 +179,83 @@ def render_action_row(t: dict) -> str:
     </tr>"""
 
 
+ENHANCED_TABLE_JS = r"""
+<script>
+const TOTAL_ROWS = document.querySelectorAll('#tableBody tr[data-action]').length;
+let currentAction = '';
+let currentPhase = '';
+document.querySelectorAll('.filter-chip[data-action]').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip[data-action]').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    currentAction = c.dataset.action;
+    filterTable();
+  });
+});
+document.querySelectorAll('.filter-chip[data-phase]').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip[data-phase]').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    currentPhase = c.dataset.phase;
+    filterTable();
+  });
+});
+
+function filterTable() {
+  const search = document.getElementById('search').value.toLowerCase();
+  const rows = document.querySelectorAll('#tableBody tr[data-action]');
+  let visible = 0;
+  rows.forEach(row => {
+    const ticker = row.cells[0]?.textContent.toLowerCase() || '';
+    const name = row.cells[1]?.textContent.toLowerCase() || '';
+    const action = row.dataset.action;
+    const phase = row.dataset.phase;
+    const matchSearch = !search || ticker.includes(search) || name.includes(search);
+    const matchAction = !currentAction || action === currentAction;
+    const matchPhase = !currentPhase || phase === currentPhase;
+    const show = matchSearch && matchAction && matchPhase;
+    row.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('rowCount').textContent = visible + ' of ' + TOTAL_ROWS;
+  const empty = document.getElementById('emptyState');
+  if (empty) empty.hidden = visible !== 0;
+}
+
+document.querySelectorAll('th[data-col]').forEach(th => {
+  th.setAttribute('tabindex', '0');
+  const runSort = () => {
+    const idx = Array.from(th.parentNode.children).indexOf(th);
+    const dir = th.classList.contains('sorted-asc') ? 'desc' : 'asc';
+    document.querySelectorAll('th').forEach(x => {
+      x.classList.remove('sorted-asc','sorted-desc');
+      x.removeAttribute('aria-sort');
+    });
+    th.classList.add('sorted-' + dir);
+    th.setAttribute('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
+    const tbody = document.getElementById('tableBody');
+    const rows = Array.from(tbody.querySelectorAll('tr[data-action]'));
+    rows.sort((a, b) => {
+      const av = a.cells[idx]?.textContent.trim() || '';
+      const bv = b.cells[idx]?.textContent.trim() || '';
+      const an = parseFloat(av.replace(/[+%,$ HKD\s]/g, ''));
+      const bn = parseFloat(bv.replace(/[+%,$ HKD\s]/g, ''));
+      const isNum = !isNaN(an) && !isNaN(bn);
+      if (isNum) return dir === 'asc' ? an - bn : bn - an;
+      return dir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+    });
+    rows.forEach(r => tbody.appendChild(r));
+  };
+  th.addEventListener('click', runSort);
+  th.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); runSort(); }
+  });
+});
+document.getElementById('rowCount').textContent = TOTAL_ROWS + ' of ' + TOTAL_ROWS;
+</script>
+"""
+
+
 def build_dashboard_page(
     market: str,
     universe: list[str],
@@ -223,6 +300,9 @@ def build_dashboard_page(
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <title>{title_main} · Leeks Terminal</title>
 <meta name="description" content="{title_lede}">
 <meta name="theme-color" content="#0a0e1a">
@@ -243,7 +323,7 @@ def build_dashboard_page(
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/leeks.css?v=2026-08-25">
+<link rel="stylesheet" href="/leeks.css?v=2026-08-25b">
 <script>
 (function(){{
   const t = localStorage.getItem('leeks-theme') || 'dark';
@@ -305,24 +385,24 @@ function toggleTheme(){{
     <input type="text" id="search" placeholder="Search ticker or name..." onkeyup="filterTable()">
     <label>Action</label>
     <div style="display: flex; gap: 6px;">
-      <span class="filter-chip active" data-action="">All</span>
-      <span class="filter-chip" data-action="BUY">🟢 BUY</span>
-      <span class="filter-chip" data-action="SELL">🔴 SELL</span>
-      <span class="filter-chip" data-action="WAIT">⚪ WAIT</span>
+      <button type="button" class="filter-chip active" data-action="">All</button>
+      <button type="button" class="filter-chip" data-action="BUY">🟢 BUY</button>
+      <button type="button" class="filter-chip" data-action="SELL">🔴 SELL</button>
+      <button type="button" class="filter-chip" data-action="WAIT">⚪ WAIT</button>
     </div>
     <label>Phase</label>
     <div style="display: flex; gap: 6px;">
-      <span class="filter-chip active" data-phase="">All</span>
-      <span class="filter-chip" data-phase="uptrend">Uptrend</span>
-      <span class="filter-chip" data-phase="base_building">Base</span>
-      <span class="filter-chip" data-phase="downtrend_recovery">Recovery</span>
-      <span class="filter-chip" data-phase="downtrend_active">Down</span>
-      <span class="filter-chip" data-phase="range">Range</span>
+      <button type="button" class="filter-chip active" data-phase="">All</button>
+      <button type="button" class="filter-chip" data-phase="uptrend">Uptrend</button>
+      <button type="button" class="filter-chip" data-phase="base_building">Base</button>
+      <button type="button" class="filter-chip" data-phase="downtrend_recovery">Recovery</button>
+      <button type="button" class="filter-chip" data-phase="downtrend_active">Down</button>
+      <button type="button" class="filter-chip" data-phase="range">Range</button>
     </div>
     <label style="margin-left: auto;" id="rowCount">{len(universe)} of {len(universe)}</label>
   </div>
 
-  <div style="overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-lg);">
+  <div style="overflow: auto; max-height: calc(100vh - 76px); overscroll-behavior: contain; border: 1px solid var(--border); border-radius: var(--radius-lg);">
   <table class="data-table" id="dataTable">
   <thead>
   <tr>
@@ -342,6 +422,9 @@ function toggleTheme(){{
   <tbody id="tableBody">{rows_html}
   </tbody>
   </table>
+  <div id="emptyState" hidden style="padding: var(--sp-7); text-align: center; color: var(--dim); font-family: var(--font-mono); font-size: var(--text-sm);">
+    0 results — clear the search or filters to see all rows.
+  </div>
   </div>
 
   <div class="disclaimer mt-5">
@@ -358,66 +441,7 @@ function toggleTheme(){{
   </div>
 </footer>
 
-<script>
-let currentAction = '';
-let currentPhase = '';
-document.querySelectorAll('.filter-chip[data-action]').forEach(c => {{
-  c.addEventListener('click', () => {{
-    document.querySelectorAll('.filter-chip[data-action]').forEach(x => x.classList.remove('active'));
-    c.classList.add('active');
-    currentAction = c.dataset.action;
-    filterTable();
-  }});
-}});
-document.querySelectorAll('.filter-chip[data-phase]').forEach(c => {{
-  c.addEventListener('click', () => {{
-    document.querySelectorAll('.filter-chip[data-phase]').forEach(x => x.classList.remove('active'));
-    c.classList.add('active');
-    currentPhase = c.dataset.phase;
-    filterTable();
-  }});
-}});
-
-function filterTable() {{
-  const search = document.getElementById('search').value.toLowerCase();
-  const rows = document.querySelectorAll('#tableBody tr[data-action]');
-  let visible = 0;
-  rows.forEach(row => {{
-    const ticker = row.cells[0]?.textContent.toLowerCase() || '';
-    const name = row.cells[1]?.textContent.toLowerCase() || '';
-    const action = row.dataset.action;
-    const phase = row.dataset.phase;
-    const matchSearch = !search || ticker.includes(search) || name.includes(search);
-    const matchAction = !currentAction || action === currentAction;
-    const matchPhase = !currentPhase || phase === currentPhase;
-    const show = matchSearch && matchAction && matchPhase;
-    row.style.display = show ? '' : 'none';
-    if (show) visible++;
-  }});
-  document.getElementById('rowCount').textContent = visible + ' of {len(universe)}';
-}}
-
-document.querySelectorAll('th[data-col]').forEach(th => {{
-  th.addEventListener('click', () => {{
-    const idx = Array.from(th.parentNode.children).indexOf(th);
-    const dir = th.classList.contains('sorted-asc') ? 'desc' : 'asc';
-    document.querySelectorAll('th').forEach(x => x.classList.remove('sorted-asc','sorted-desc'));
-    th.classList.add('sorted-' + dir);
-    const tbody = document.getElementById('tableBody');
-    const rows = Array.from(tbody.querySelectorAll('tr[data-action]'));
-    rows.sort((a, b) => {{
-      const av = a.cells[idx]?.textContent.trim() || '';
-      const bv = b.cells[idx]?.textContent.trim() || '';
-      const an = parseFloat(av.replace(/[+%,$ HKD\\s]/g, ''));
-      const bn = parseFloat(bv.replace(/[+%,$ HKD\\s]/g, ''));
-      const isNum = !isNaN(an) && !isNaN(bn);
-      if (isNum) return dir === 'asc' ? an - bn : bn - an;
-      return dir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
-    }});
-    rows.forEach(r => tbody.appendChild(r));
-  }});
-}});
-</script>
+{ENHANCED_TABLE_JS}
 </body>
 </html>"""
 
@@ -565,6 +589,9 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <title>{ticker} {name} · Action Plan · Leeks Terminal</title>
 <meta name="description" content="{meta_desc}">
 <meta name="theme-color" content="#0a0e1a">
@@ -585,7 +612,13 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/leeks.css?v=2026-08-25">
+<link rel="stylesheet" href="/leeks.css?v=2026-08-25b">
+<script>
+(function(){{
+  const t = localStorage.getItem('leeks-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+}})();
+</script>
 </head>
 <body>
 <header class="site-header">
@@ -601,9 +634,34 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
     <div class="nav-meta">
       <span class="live-dot"></span>
       T-1 · {t_minus_1().isoformat()}
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span class="icon" id="themeIcon">●</span>
+        <span id="themeLabel">DARK</span>
+      </button>
     </div>
   </nav>
 </header>
+<script>
+function toggleTheme(){{
+  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('leeks-theme', next);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = next === 'dark' ? '#0a0e1a' : '#fafbfc';
+  const lbl = document.getElementById('themeLabel');
+  const ic = document.getElementById('themeIcon');
+  if (lbl) lbl.textContent = next.toUpperCase();
+  if (ic) ic.textContent = next === 'dark' ? '●' : '○';
+}}
+(function(){{
+  const t = document.documentElement.getAttribute('data-theme') || 'dark';
+  const lbl = document.getElementById('themeLabel');
+  const ic = document.getElementById('themeIcon');
+  if (lbl) lbl.textContent = t.toUpperCase();
+  if (ic) ic.textContent = t === 'dark' ? '●' : '○';
+}})();
+</script>
 
 <div class="page-head">
   <div class="container">

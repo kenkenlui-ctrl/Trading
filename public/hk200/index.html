@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <title>港股 200 · Leeks Terminal</title>
 <meta name="description" content="Top 200 港股 by 5-day 平均成交額。即日鮮信號 — 一表答晒：邊隻做、邊隻唔做、trigger/target/stop 喺邊。">
 <meta name="theme-color" content="#0a0e1a">
@@ -41,7 +44,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/leeks.css?v=2026-08-25">
+<link rel="stylesheet" href="/leeks.css?v=2026-08-25b">
 <script>
 (function(){
   const t = localStorage.getItem('leeks-theme') || 'dark';
@@ -101,7 +104,7 @@ function toggleTheme(){
       
       <span>Universe: <b>200 HK names</b></span>
       <span>T-1 data: <b>2026-08-24</b></span>
-      <span>Updated: <b>12:51 HKT</b></span>
+      <span>Updated: <b>13:49 HKT</b></span>
       <span>Regime: <b style="color: var(--bear);">Down 102 · Base 81 · Recov 8 · Up 9</b></span>
     
     </div>
@@ -114,24 +117,24 @@ function toggleTheme(){
     <input type="text" id="search" placeholder="Search ticker or name..." onkeyup="filterTable()">
     <label>Action</label>
     <div style="display: flex; gap: 6px;">
-      <span class="filter-chip active" data-action="">All</span>
-      <span class="filter-chip" data-action="BUY">🟢 BUY</span>
-      <span class="filter-chip" data-action="SELL">🔴 SELL</span>
-      <span class="filter-chip" data-action="WAIT">⚪ WAIT</span>
+      <button type="button" class="filter-chip active" data-action="">All</button>
+      <button type="button" class="filter-chip" data-action="BUY">🟢 BUY</button>
+      <button type="button" class="filter-chip" data-action="SELL">🔴 SELL</button>
+      <button type="button" class="filter-chip" data-action="WAIT">⚪ WAIT</button>
     </div>
     <label>Phase</label>
     <div style="display: flex; gap: 6px;">
-      <span class="filter-chip active" data-phase="">All</span>
-      <span class="filter-chip" data-phase="uptrend">Uptrend</span>
-      <span class="filter-chip" data-phase="base_building">Base</span>
-      <span class="filter-chip" data-phase="downtrend_recovery">Recovery</span>
-      <span class="filter-chip" data-phase="downtrend_active">Down</span>
-      <span class="filter-chip" data-phase="range">Range</span>
+      <button type="button" class="filter-chip active" data-phase="">All</button>
+      <button type="button" class="filter-chip" data-phase="uptrend">Uptrend</button>
+      <button type="button" class="filter-chip" data-phase="base_building">Base</button>
+      <button type="button" class="filter-chip" data-phase="downtrend_recovery">Recovery</button>
+      <button type="button" class="filter-chip" data-phase="downtrend_active">Down</button>
+      <button type="button" class="filter-chip" data-phase="range">Range</button>
     </div>
     <label style="margin-left: auto;" id="rowCount">200 of 200</label>
   </div>
 
-  <div style="overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-lg);">
+  <div style="overflow: auto; max-height: calc(100vh - 76px); overscroll-behavior: contain; border: 1px solid var(--border); border-radius: var(--radius-lg);">
   <table class="data-table" id="dataTable">
   <thead>
   <tr>
@@ -2751,6 +2754,9 @@ function toggleTheme(){
     </tr>
   </tbody>
   </table>
+  <div id="emptyState" hidden style="padding: var(--sp-7); text-align: center; color: var(--dim); font-family: var(--font-mono); font-size: var(--text-sm);">
+    0 results — clear the search or filters to see all rows.
+  </div>
   </div>
 
   <div class="disclaimer mt-5">
@@ -2767,7 +2773,9 @@ function toggleTheme(){
   </div>
 </footer>
 
+
 <script>
+const TOTAL_ROWS = document.querySelectorAll('#tableBody tr[data-action]').length;
 let currentAction = '';
 let currentPhase = '';
 document.querySelectorAll('.filter-chip[data-action]').forEach(c => {
@@ -2803,15 +2811,22 @@ function filterTable() {
     row.style.display = show ? '' : 'none';
     if (show) visible++;
   });
-  document.getElementById('rowCount').textContent = visible + ' of 200';
+  document.getElementById('rowCount').textContent = visible + ' of ' + TOTAL_ROWS;
+  const empty = document.getElementById('emptyState');
+  if (empty) empty.hidden = visible !== 0;
 }
 
 document.querySelectorAll('th[data-col]').forEach(th => {
-  th.addEventListener('click', () => {
+  th.setAttribute('tabindex', '0');
+  const runSort = () => {
     const idx = Array.from(th.parentNode.children).indexOf(th);
     const dir = th.classList.contains('sorted-asc') ? 'desc' : 'asc';
-    document.querySelectorAll('th').forEach(x => x.classList.remove('sorted-asc','sorted-desc'));
+    document.querySelectorAll('th').forEach(x => {
+      x.classList.remove('sorted-asc','sorted-desc');
+      x.removeAttribute('aria-sort');
+    });
     th.classList.add('sorted-' + dir);
+    th.setAttribute('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
     const tbody = document.getElementById('tableBody');
     const rows = Array.from(tbody.querySelectorAll('tr[data-action]'));
     rows.sort((a, b) => {
@@ -2824,8 +2839,14 @@ document.querySelectorAll('th[data-col]').forEach(th => {
       return dir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
     });
     rows.forEach(r => tbody.appendChild(r));
+  };
+  th.addEventListener('click', runSort);
+  th.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); runSort(); }
   });
 });
+document.getElementById('rowCount').textContent = TOTAL_ROWS + ' of ' + TOTAL_ROWS;
 </script>
+
 </body>
 </html>

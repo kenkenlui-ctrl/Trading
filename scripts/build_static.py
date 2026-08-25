@@ -882,6 +882,9 @@ def shell(title: str, body_html: str, active_path: str = "/",
 {noindex_meta}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <title>{_html.escape(title)}</title>
 {desc_meta}
 <meta property="og:title" content="{_html.escape(title)}">
@@ -898,7 +901,7 @@ def shell(title: str, body_html: str, active_path: str = "/",
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
-<link rel="stylesheet" href="/leeks.css?v=2026-08-25">
+<link rel="stylesheet" href="/leeks.css?v=2026-08-25b">
 {ld_block}
 </head>
 <body>

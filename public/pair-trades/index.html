@@ -6,77 +6,141 @@
 <title>Pair Trades · 相關性配對交易 Screen · Leeks Terminal</title>
 <meta name="description" content="港股＋美股相關性配對交易（pair trade）篩選：同板塊長短腿、價差 z-score、入場/平倉閾值。T-1 數據 · 教育用途非投資建議。">
 <link rel="canonical" href="https://www.win9you.com/pair-trades/">
+<meta name="theme-color" content="#0a0e1a">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:site_name" content="Leeks Terminal">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pair Trades · 相關性配對交易 Screen · Leeks Terminal">
+<meta property="og:description" content="港股＋美股相關性配對交易（pair trade）篩選：同板塊長短腿、價差 z-score、入場/平倉閾值。T-1 數據 · 教育用途非投資建議。">
+<meta property="og:url" content="https://www.win9you.com/pair-trades/">
+<meta property="og:image" content="https://www.win9you.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/leeks.css?v=2026-08-25b">
+<script>
+(function(){
+  const t = localStorage.getItem('leeks-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d0f12; color: #e0e3e8; padding: 20px; line-height: 1.5; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--fg); padding: 20px; line-height: 1.5; }
   .container { max-width: 1500px; margin: 0 auto; }
-  header { background: #161a1f; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #1f2429; }
-  h1 { font-size: 1.6em; margin-bottom: 6px; }
-  .meta { color: #8a929b; font-size: 0.9em; margin-bottom: 12px; }
+  header { background: var(--panel); padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border); }
+  h1 { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.01em; font-variation-settings: "opsz" 60; font-size: 1.6em; margin-bottom: 6px; }
+  .meta { color: var(--dim); font-size: 0.9em; margin-bottom: 12px; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-  .chip { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.85em; background: #1f2429; }
-  nav.site-nav { margin-top:12px;padding-top:12px;border-top:1px solid #1f2429;font-size:0.9em; }
-  nav.site-nav a { color:#8a929b;text-decoration:none;margin-right:14px; }
-  nav.site-nav a.active { color:#64b5f6;font-weight:600; }
+  .chip { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.85em; background: var(--border); }
+  nav.site-nav { margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:0.9em; }
+  nav.site-nav a { color:var(--dim);text-decoration:none;margin-right:14px; }
+  nav.site-nav a.active { color:var(--blue);font-weight:600; }
 
   .stat-row { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-  .stat { background: #161a1f; padding: 12px 16px; border-radius: 8px; border: 1px solid #1f2429; flex: 1; min-width: 160px; }
-  .stat .label { color: #8a929b; font-size: 0.8em; text-transform: uppercase; }
-  .stat .value { color: #e0e3e8; font-size: 1.5em; font-weight: 600; }
+  .stat { background: var(--panel); padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border); flex: 1; min-width: 160px; }
+  .stat .label { color: var(--dim); font-size: 0.8em; text-transform: uppercase; }
+  .stat .value { color: var(--fg); font-size: 1.5em; font-weight: 600; }
 
   .top-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-  .top-card { background: #161a1f; padding: 16px; border-radius: 8px; border: 1px solid #1f2429; }
-  .top-card .rank { font-size: 0.85em; color: #8a929b; margin-bottom: 8px; }
-  .top-card .pair .long-side { color: #4ade80; font-size: 1.05em; }
-  .top-card .pair .short-side { color: #f87171; font-size: 1.05em; }
-  .top-card .pair .vs { color: #8a929b; font-size: 0.85em; margin: 4px 0; }
-  .top-card .pair .sector { color: #b0b8c0; font-size: 0.85em; margin-top: 8px; }
+  .top-card { background: var(--panel); padding: 16px; border-radius: 8px; border: 1px solid var(--border); }
+  .top-card .rank { font-size: 0.85em; color: var(--dim); margin-bottom: 8px; }
+  .top-card .pair .long-side { color: var(--bull); font-size: 1.05em; }
+  .top-card .pair .short-side { color: var(--bear); font-size: 1.05em; }
+  .top-card .pair .vs { color: var(--dim); font-size: 0.85em; margin: 4px 0; }
+  .top-card .pair .sector { color: var(--fg-2); font-size: 0.85em; margin-top: 8px; }
   .top-card .pair .metrics { display: flex; gap: 10px; margin-top: 10px; font-size: 0.85em; flex-wrap: wrap; }
-  .top-card .pair .metrics span { color: #8a929b; }
-  .top-card .pair .metrics b { color: #e0e3e8; }
-  .top-card .market { color: #8a929b; font-size: 0.7em; margin-left: 4px; }
+  .top-card .pair .metrics span { color: var(--dim); }
+  .top-card .pair .metrics b { color: var(--fg); }
+  .top-card .market { color: var(--dim); font-size: 0.7em; margin-left: 4px; }
 
-  .filter-bar { background: #161a1f; padding: 12px; border-radius: 8px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-  .filter-bar input, .filter-bar select { background: #0d0f12; color: #e0e3e8; border: 1px solid #1f2429; padding: 6px 10px; border-radius: 4px; font-size: 0.9em; }
+  .filter-bar { background: var(--panel); padding: 12px; border-radius: 8px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .filter-bar input, .filter-bar select { background: var(--bg); color: var(--fg); border: 1px solid var(--border); padding: 6px 10px; border-radius: 4px; font-size: 0.9em; }
   .filter-bar input { min-width: 200px; }
-  .filter-bar label { font-size: 0.85em; color: #8a929b; }
+  .filter-bar label { font-size: 0.85em; color: var(--dim); }
 
-  table { width: 100%; border-collapse: collapse; background: #161a1f; border-radius: 8px; overflow: hidden; font-size: 0.85em; }
-  thead { background: #1f2429; }
-  th { padding: 8px; text-align: left; font-size: 0.8em; color: #8a929b; text-transform: uppercase; }
-  td { padding: 6px 8px; border-top: 1px solid #1f2429; }
-  tr:hover { background: #1a1f25; }
-  .sector { color: #b0b8c0; font-size: 0.85em; }
-  .ticker.long { color: #4ade80; font-weight: 500; }
-  .ticker.short { color: #f87171; font-weight: 500; }
-  .ticker .mkt { color: #8a929b; font-size: 0.7em; margin-left: 4px; }
+  table { width: 100%; border-collapse: collapse; background: var(--panel); border-radius: 8px; overflow: hidden; font-size: 0.85em; }
+  thead { background: var(--border); }
+  th { padding: 8px; text-align: left; font-size: 0.8em; color: var(--dim); text-transform: uppercase; }
+  td { padding: 6px 8px; border-top: 1px solid var(--border); }
+  tr:hover { background: var(--panel-2); }
+  .sector { color: var(--fg-2); font-size: 0.85em; }
+  .ticker.long { color: var(--bull); font-weight: 500; }
+  .ticker.short { color: var(--bear); font-weight: 500; }
+  .ticker .mkt { color: var(--dim); font-size: 0.7em; margin-left: 4px; }
   .phase { font-size: 0.85em; }
-  .phase-uptrend { color: #4ade80; }
-  .phase-base_building { color: #fbbf24; }
-  .phase-downtrend_active { color: #f87171; }
-  .phase-downtrend_recovery { color: #fb923c; }
-  .chg.pos { color: #4ade80; }
-  .chg.neg { color: #f87171; }
+  .phase-uptrend { color: var(--bull); }
+  .phase-base_building { color: var(--amber); }
+  .phase-downtrend_active { color: var(--bear); }
+  .phase-downtrend_recovery { color: var(--amber); }
+  .chg.pos { color: var(--bull); }
+  .chg.neg { color: var(--bear); }
   .num { text-align: right; font-variant-numeric: tabular-nums; }
-  .score { font-weight: 600; color: #64b5f6; }
-  .corr.strong { color: #4ade80; font-weight: 600; }
-  .corr.medium { color: #fbbf24; }
-  .corr.weak { color: #8a929b; }
+  .score { font-weight: 600; color: var(--blue); }
+  .corr.strong { color: var(--bull); font-weight: 600; }
+  .corr.medium { color: var(--amber); }
+  .corr.weak { color: var(--dim); }
   .coint { font-weight: 500; }
-  .beta, .ls { font-family: monospace; }
+  .beta, .ls { font-family: var(--font-mono); }
 
-  .glossary { background: #1f2429; padding: 16px; border-radius: 8px; margin-top: 20px; font-size: 0.85em; color: #b0b8c0; }
-  .glossary h3 { color: #e0e3e8; font-size: 1em; margin-bottom: 8px; }
+  .glossary { background: var(--border); padding: 16px; border-radius: 8px; margin-top: 20px; font-size: 0.85em; color: var(--fg-2); }
+  .glossary h3 { color: var(--fg); font-size: 1em; margin-bottom: 8px; }
   .glossary dl { display: grid; grid-template-columns: 120px 1fr; gap: 8px 16px; }
-  .glossary dt { color: #64b5f6; font-weight: 600; }
-  .glossary dd { color: #b0b8c0; }
+  .glossary dt { color: var(--blue); font-weight: 600; }
+  .glossary dd { color: var(--fg-2); }
 
-  footer { margin-top: 30px; text-align: center; color: #8a929b; font-size: 0.85em; padding: 20px; }
-  footer a { color: #64b5f6; text-decoration: none; }
-  .disclaimer { background: #1f2429; padding: 12px; border-radius: 4px; margin-top: 12px; font-size: 0.85em; color: #8a929b; }
+  footer { margin-top: 30px; text-align: center; color: var(--dim); font-size: 0.85em; padding: 20px; }
+  footer a { color: var(--blue); text-decoration: none; }
+  .disclaimer { background: var(--border); padding: 12px; border-radius: 4px; margin-top: 12px; font-size: 0.85em; color: var(--dim); }
 </style>
 </head>
 <body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="/" class="nav-brand"><span class="leek">L</span>eeks <em class="italic">Terminal</em></a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/hk200/">HK Signals</a>
+      <a href="/us200/">US Signals</a>
+      <a href="/pair-trades/" class="active">Pair Trades</a>
+      <a href="/methodology">Methodology</a>
+    </div>
+    <div class="nav-meta">
+      <span class="live-dot"></span>
+      T-1 · 2026-08-24
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span class="icon" id="themeIcon">●</span>
+        <span id="themeLabel">DARK</span>
+      </button>
+    </div>
+  </nav>
+</header>
+<script>
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('leeks-theme', next);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = next === 'dark' ? '#0a0e1a' : '#fafbfc';
+  const lbl = document.getElementById('themeLabel');
+  const ic = document.getElementById('themeIcon');
+  if (lbl) lbl.textContent = next.toUpperCase();
+  if (ic) ic.textContent = next === 'dark' ? '●' : '○';
+}
+(function(){
+  const t = document.documentElement.getAttribute('data-theme') || 'dark';
+  const lbl = document.getElementById('themeLabel');
+  const ic = document.getElementById('themeIcon');
+  if (lbl) lbl.textContent = t.toUpperCase();
+  if (ic) ic.textContent = t === 'dark' ? '●' : '○';
+})();
+</script>
+
 <div class="container">
   <header>
     <h1>⚖️ Pair Trade Screen v2</h1>
@@ -86,19 +150,16 @@
     <div class="chips">
       <span class="chip">Insurance: 9</span> <span class="chip">Pharma / Biotech: 9</span> <span class="chip">AI Infrastructure: 9</span> <span class="chip">Gold / Precious Metals: 9</span> <span class="chip">Semiconductor: 9</span> <span class="chip">Real Estate: 9</span> <span class="chip">Crypto / Fintech: 9</span> <span class="chip">Bank: 9</span> <span class="chip">Internet / Software: 8</span> <span class="chip">Energy / Oil: 6</span> <span class="chip">Consumer / Retail: 6</span> <span class="chip">Industrial / Defense: 6</span>
     </div>
-    <nav class="site-nav">
-      <a href="/">Home</a> • <a href="/dashboard/">Dashboard</a> • <a href="/hk200/">📊 HK200 S/R</a> • <a href="/us200/">🇺🇸 US200 S/R</a> • <a href="/pair-trades/" class="active">⚖️ Pair Trades</a> • <a href="/methodology.html">Methodology</a>
-    </nav>
   </header>
 
   <div class="stat-row">
     <div class="stat"><div class="label">Total pairs</div><div class="value">125</div></div>
     <div class="stat"><div class="label">Cross-market</div><div class="value">47</div></div>
-    <div class="stat"><div class="label">Cointegrated (p&lt;0.05)</div><div class="value" style="color:#4ade80;">13</div></div>
-    <div class="stat"><div class="label">Strong |corr| &gt; 0.7</div><div class="value" style="color:#4ade80;">32</div></div>
+    <div class="stat"><div class="label">Cointegrated (p&lt;0.05)</div><div class="value" style="color:var(--bull);">13</div></div>
+    <div class="stat"><div class="label">Strong |corr| &gt; 0.7</div><div class="value" style="color:var(--bull);">32</div></div>
   </div>
 
-  <h2 style="font-size:1.1em;margin:20px 0 12px;color:#e0e3e8;">Top 3 (highest composite score)</h2>
+  <h2 style="font-size:1.1em;margin:20px 0 12px;color:var(--fg);">Top 3 (highest composite score)</h2>
   <div class="top-cards">
     <div class="top-card">
       <div class="rank">#1 · score 24.96</div>
@@ -171,17 +232,18 @@
     <input type="number" id="minCorr" value="0" step="0.1" onchange="filterTable()" style="width:70px;">
     <label>Max coint p:</label>
     <input type="number" id="maxCoint" value="1" step="0.05" onchange="filterTable()" style="width:70px;">
-    <label style="margin-left:auto;color:#8a929b;">125 pairs</label>
+    <label style="margin-left:auto;color:var(--dim);">125 pairs</label>
   </div>
 
+  <div style="overflow: auto; border: 1px solid var(--border); border-radius: var(--radius-lg);">
   <table id="dataTable">
     <thead>
       <tr>
         <th>Score</th>
         <th>Sector</th>
-        <th colspan="3" style="text-align:center;background:#1a3a1a;color:#4ade80;">↑ LONG</th>
+        <th colspan="3" style="text-align:center;background:var(--bull-dim);color:var(--bull);">↑ LONG</th>
         <th></th>
-        <th colspan="3" style="text-align:center;background:#3a1a1a;color:#f87171;">↓ SHORT</th>
+        <th colspan="3" style="text-align:center;background:var(--bear-dim);color:var(--bear);">↓ SHORT</th>
         <th>Corr(20d)</th>
         <th>Coint(p)</th>
         <th>β</th>
@@ -2075,6 +2137,7 @@
     </tr>
     </tbody>
   </table>
+  </div>
 
   <div class="disclaimer">
     <strong>⚠️ Disclaimer:</strong> Educational only. Not investment advice. Pairs trading involves significant risk.
@@ -2082,10 +2145,14 @@
     Use proper position sizing and stop-losses. Cross-market pairs have currency risk (HKD/USD).
   </div>
 
-  <footer>
-    <a href="/">← win9you.com home</a> • <a href="/hk200/">📊 HK200 S/R</a> • <a href="/us200/">🇺🇸 US200 S/R</a><br>
-    Generated by Mavis pair-trade screen v2 (corr + coint + L/S) • <a href="https://github.com/kenkenlui-ctrl/Trading">Source</a>
-  </footer>
+<footer class="site-footer">
+  <div class="container">
+    <div class="row">
+      <div>© 2026 Leeks Terminal · win9you.com · <a href="/methodology">Methodology</a> · <a href="/disclaimer">Disclaimer</a></div>
+      <div class="mono text-dim">Pair screen v2 · 20d corr + ADF coint + vol L/S · 125 pairs</div>
+    </div>
+  </div>
+</footer>
 </div>
 
 <script>
