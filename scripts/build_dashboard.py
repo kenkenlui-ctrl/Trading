@@ -21,6 +21,19 @@ import shutil
 from datetime import datetime, date, timedelta
 from pathlib import Path
 
+
+def t_minus_1() -> date:
+    """Return T-1 = last trading day (skip Sat/Sun)."""
+    today = date.today()
+    if today.weekday() == 0:  # Monday
+        return today - timedelta(days=3)  # Friday
+    elif today.weekday() == 6:  # Sunday
+        return today - timedelta(days=2)  # Friday
+    elif today.weekday() == 5:  # Saturday
+        return today - timedelta(days=1)  # Friday
+    else:
+        return today - timedelta(days=1)
+
 # Repo paths
 REPO = Path("/Users/kenken/Documents/dsa-hk")
 PUBLIC = REPO / "public"
@@ -204,7 +217,7 @@ def build_dashboard_page(
     <div class="nav-links">{nav_links}</div>
     <div class="nav-meta">
       <span class="live-dot"></span>
-      T-1 · {date.today().isoformat()}
+      T-1 · {t_minus_1().isoformat()}
     </div>
   </nav>
 </header>
@@ -274,7 +287,7 @@ def build_dashboard_page(
   <div class="container">
     <div class="row">
       <div>© 2026 Leeks Terminal · win9you.com · <a href="/methodology">Methodology</a> · <a href="/disclaimer">Disclaimer</a></div>
-      <div class="mono text-dim">T-1 · {date.today().isoformat()}</div>
+      <div class="mono text-dim">T-1 · {t_minus_1().isoformat()}</div>
     </div>
   </div>
 </footer>
@@ -450,7 +463,7 @@ def render_detail_page(t: dict) -> str:
     </div>
     <div class="nav-meta">
       <span class="live-dot"></span>
-      T-1 · {date.today().isoformat()}
+      T-1 · {t_minus_1().isoformat()}
     </div>
   </nav>
 </header>
@@ -480,7 +493,7 @@ def render_detail_page(t: dict) -> str:
   <div class="detail-grid">
     <div>
       <div class="chart-frame fade-in">
-        <img src="{chart_url}?v={date.today().isoformat()}" alt="{ticker} daily K" style="width: 100%; border-radius: var(--radius);">
+        <img src="{chart_url}?v={t_minus_1().isoformat()}" alt="{ticker} daily K" style="width: 100%; border-radius: var(--radius);">
       </div>
 
       <div class="info-card mt-4 fade-in fade-in-2">
@@ -586,7 +599,7 @@ def render_detail_page(t: dict) -> str:
   <div class="container">
     <div class="row">
       <div>© 2026 Leeks Terminal · win9you.com · <a href="/methodology">Methodology</a> · <a href="/disclaimer">Disclaimer</a></div>
-      <div class="mono text-dim">T-1 · {date.today().isoformat()}</div>
+      <div class="mono text-dim">T-1 · {t_minus_1().isoformat()}</div>
     </div>
   </div>
 </footer>
@@ -714,7 +727,7 @@ def build_for_market(market: str):
 
     hero_meta_extra = f'''
       <span>Universe: <b>{len(universe)} {market} names</b></span>
-      <span>T-1 data: <b>{date.today().isoformat()}</b></span>
+      <span>T-1 data: <b>{t_minus_1().isoformat()}</b></span>
       <span>Updated: <b>{datetime.now().strftime('%H:%M HKT')}</b></span>
       <span>Regime: <b style="color: {reg_color};">{phase_str}</b></span>
     '''
@@ -742,7 +755,7 @@ def build_for_market(market: str):
 
 
 def main():
-    print(f"=== build_dashboard.py · T-1 = {date.today().isoformat()} ===")
+    print(f"=== build_dashboard.py · T-1 = {t_minus_1().isoformat()} ===")
     build_for_market("HK")
     build_for_market("US")
     print("\nDone.")

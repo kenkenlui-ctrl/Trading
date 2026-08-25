@@ -10,8 +10,21 @@ Output: /Users/kenken/Documents/dsa-hk/public/index.html
 from __future__ import annotations
 import json
 import shutil
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from pathlib import Path
+
+
+def t_minus_1() -> date:
+    """Return T-1 = last trading day (skip Sat/Sun)."""
+    today = date.today()
+    if today.weekday() == 0:  # Monday
+        return today - timedelta(days=3)  # Friday
+    elif today.weekday() == 6:  # Sunday
+        return today - timedelta(days=2)  # Friday
+    elif today.weekday() == 5:  # Saturday
+        return today - timedelta(days=1)  # Friday
+    else:
+        return today - timedelta(days=1)
 
 REPO = Path("/Users/kenken/Documents/dsa-hk")
 PUBLIC = REPO / "public"
@@ -159,7 +172,7 @@ def render_signal_card(row):
 
 
 def build_home_page():
-    today = date.today()
+    today = t_minus_1()
     hk_top = collect_actionables("HK", top_n=3)
     us_top = collect_actionables("US", top_n=2)
     actionable = hk_top + us_top
