@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Disclaimer · Leeks Terminal</title>
+<meta name="description" content="Leeks Terminal Disclaimer · Educational only · Not investment advice.">
+<meta name="theme-color" content="#0a0e1a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/leeks.css">
+<script>
+(function(){
+  const t = localStorage.getItem('leeks-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="/" class="nav-brand"><span class="leek">L</span>eeks <em class="italic">Terminal</em></a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/hk200/">HK Signals</a>
+      <a href="/us200/">US Signals</a>
+      <a href="/pair-trades/">Pair Trades</a>
+      <a href="/methodology">Methodology</a>
+    </div>
+    <div class="nav-meta">
+      <span class="live-dot"></span>
+      T-1 · 2026-08-24
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span class="icon" id="themeIcon">●</span>
+        <span id="themeLabel">DARK</span>
+      </button>
+    </div>
+  </nav>
+</header>
+<script>
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('leeks-theme', next);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = next === 'dark' ? '#0a0e1a' : '#fafbfc';
+  const lbl = document.getElementById('themeLabel');
+  const ic = document.getElementById('themeIcon');
+  if (lbl) lbl.textContent = next.toUpperCase();
+  if (ic) ic.textContent = next === 'dark' ? '●' : '○';
+}
+(function(){
+  const t = document.documentElement.getAttribute('data-theme') || 'dark';
+  const lbl = document.getElementById('themeLabel');
+  const ic = document.getElementById('themeIcon');
+  if (lbl) lbl.textContent = t.toUpperCase();
+  if (ic) ic.textContent = t === 'dark' ? '●' : '○';
+})();
+</script>
+
+<div class="page-head">
+  <div class="container">
+    <div class="kicker">Legal</div>
+    <h1>Disclaimer</h1>
+  </div>
+</div>
+
+<div class="container" style="max-width: 760px; line-height: 1.8;">
+
+<h3>1. Educational purpose only</h3>
+<p>Leeks Terminal 提供嘅所有內容、數據、信號、backtest 結果只供 <b>教育及資訊用途</b>，唔係投資建議，亦唔係購買或出售任何證券的招攬。</p>
+
+<h3>2. Not investment advice</h3>
+<p>本網站作者 <b>唔係 registered investment advisor</b>。網站上嘅任何 signal、action plan、if-then scenario 都係基於歷史 OHLC 數據嘅算法輸出，唔構成個人化投資建議。</p>
+
+<h3>3. Past performance ≠ future results</h3>
+<p>Backtest 嘅 win %、total PnL、strategy 表現都係 <b>歷史數據</b>。市場 regime 變、liquidity 變、macro 變都會令過去 strategy 失效。唔可以假設 backtest 表現會延續到 live trading。</p>
+
+<h3>4. Day-trade 高風險</h3>
+<ul style="margin-left: var(--sp-5); line-height: 2;">
+  <li>高 leverage 易放大 loss</li>
+  <li>短時間內情緒化決策</li>
+  <li>Slippage、broker fee、stamp duty 食 PnL</li>
+  <li>Reg T pattern day trader rules 限制</li>
+</ul>
+<p>你必須自己承擔 100% loss 風險。</p>
+
+<h3>5. T-1 data</h3>
+<p>所有 signal 都係基於 T-1（昨日收市）數據。Live trading 嘅 execution、slippage、broker 限制、personal risk tolerance 都唔喺呢個 framework 計算範圍。</p>
+
+<h3>6. No warranty</h3>
+<p>本網站按 "as is" 提供，<b>不保證</b> 數據準確性、signal 盈利能力、可用性、及時性。作者唔負責任何因使用本網站而引起嘅損失。</p>
+
+<h3>7. Broker fees / tax</h3>
+<ul style="margin-left: var(--sp-5); line-height: 2;">
+  <li>港股：佣金、印花稅 (0.13%)、SFC levy (0.0027%)、HKEX trading fee (0.00565%)、FRC levy (0.00015%)</li>
+  <li>美股：SEC fee (varies)、FINRA TAF (~$0.000119/share)、broker commission</li>
+</ul>
+<p>呢啲 fee 唔包喺 backtest PnL 計算內。</p>
+
+<h3>8. Jurisdiction</h3>
+<p>本網站由 Hong Kong 運作。香港證監會 (SFC) Type 4 (Advising on Securities) 受規管活動需要牌照。本網站作者唔持有呢類牌照。</p>
+
+<div class="disclaimer mt-5">
+  <b>Bottom line</b> · Treat this as a learning tool, not a money machine. Always do your own research. Never trade money you can't afford to lose.
+</div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="row">
+      <div>© 2026 Leeks Terminal · win9you.com</div>
+      <div class="mono text-dim">v2.0 · 2026-08-25 redesign</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

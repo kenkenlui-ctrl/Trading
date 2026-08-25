@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Methodology · 10-step 框架 · Leeks Terminal</title>
+<meta name="description" content="10 步價格行為框架 · OHLC-only · 零 LLM 幻覺 · 4 種 S/R strategy + 4 windows backtest。">
+<meta name="theme-color" content="#0a0e1a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/leeks.css">
+<script>
+(function(){
+  const t = localStorage.getItem('leeks-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="/" class="nav-brand"><span class="leek">L</span>eeks <em class="italic">Terminal</em></a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/hk200/">HK Signals</a>
+      <a href="/us200/">US Signals</a>
+      <a href="/pair-trades/">Pair Trades</a>
+      <a href="/methodology" class="active">Methodology</a>
+    </div>
+    <div class="nav-meta">
+      <span class="live-dot"></span>
+      T-1 · 2026-08-24
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span class="icon" id="themeIcon">●</span>
+        <span id="themeLabel">DARK</span>
+      </button>
+    </div>
+  </nav>
+</header>
+<script>
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('leeks-theme', next);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = next === 'dark' ? '#0a0e1a' : '#fafbfc';
+  const lbl = document.getElementById('themeLabel');
+  const ic = document.getElementById('themeIcon');
+  if (lbl) lbl.textContent = next.toUpperCase();
+  if (ic) ic.textContent = next === 'dark' ? '●' : '○';
+}
+(function(){
+  const t = document.documentElement.getAttribute('data-theme') || 'dark';
+  const lbl = document.getElementById('themeLabel');
+  const ic = document.getElementById('themeIcon');
+  if (lbl) lbl.textContent = t.toUpperCase();
+  if (ic) ic.textContent = t === 'dark' ? '●' : '○';
+})();
+</script>
+
+<div class="page-head">
+  <div class="container">
+    <div class="kicker">Methodology</div>
+    <h1>10-step 價格行為 <em class="italic">framework</em></h1>
+    <p class="lede">
+      純 OHLC 數據驅動，零 LLM 幻覺。每一個 signal、每一個 trigger/target/stop 都係由 Python 確定性計出。
+    </p>
+  </div>
+</div>
+
+<div class="container" style="max-width: 900px;">
+
+<h2 class="mt-5">① Phase 分類</h2>
+<p>5 種 phase，基於 20-day rolling high/low + 60-day trend：</p>
+<ul style="line-height: 2; margin-left: var(--sp-5);">
+  <li><b>Uptrend</b> — close > 20d MA, 20d low rising, structure HH/HL</li>
+  <li><b>Base building</b> — 區間 20d box, close 中段, low 未破前低</li>
+  <li><b>Downtrend active</b> — close &lt; 20d MA, lower lows, 50d MA 下彎</li>
+  <li><b>Downtrend recovery</b> — 從 S4 反彈，close 升穿 20d mid，未破前高</li>
+  <li><b>Range</b> — 收縮波幅，5d ATR &lt; 20d ATR × 0.5</li>
+</ul>
+
+<h2 class="mt-5">② S/R Ladder</h2>
+<p>4-tier support / resistance levels，rolling pivots：</p>
+<ul style="line-height: 2; margin-left: var(--sp-5);">
+  <li><b>S1 / R1</b> — 20-day rolling low / high</li>
+  <li><b>S2 / R2</b> — 60-day</li>
+  <li><b>S3 / R3</b> — 120-day</li>
+  <li><b>S4</b> — 200-day crash low</li>
+</ul>
+
+<h2 class="mt-5">③ 4 種 Strategy</h2>
+<ul style="line-height: 2; margin-left: var(--sp-5);">
+  <li><b>SELL_R1</b> — open 喺 box 內，high 觸及 R1 → short 至 mid，stop = R1 × 1.02</li>
+  <li><b>BUY_S1</b> — open 喺 box 內，low 觸及 S1 → long 至 mid，stop = S1 × 0.98</li>
+  <li><b>BREAK_LONG</b> — open &gt; R1 → long breakout，target = R2，stop = R1 × 0.99</li>
+  <li><b>BREAK_SHORT</b> — open &lt; S1 → short breakdown，target = S2，stop = S1 × 1.01</li>
+</ul>
+
+<h2 class="mt-5">④ Backtest 4 Windows</h2>
+<p>每隻 stock 跑 30 / 60 / 90 / 197-day backtest × 4 strategy。</p>
+<p>然後搵「recent regime 30-90d」最強 edge 配 strategy。</p>
+
+<h2 class="mt-5">⑤ Action Plan</h2>
+<p>結合 phase + position + best strategy → verdict (BUY / SELL / WAIT) + 具體價位：</p>
+<ul style="line-height: 2; margin-left: var(--sp-5);">
+  <li><b>Trigger</b> — 入場價</li>
+  <li><b>Target</b> — 目標價</li>
+  <li><b>Stop</b> — 止蝕價</li>
+  <li><b>Risk</b> / <b>Reward</b> / <b>R:R ratio</b></li>
+</ul>
+
+<h2 class="mt-5">⑥ 點解唔用 LLM 出 signal</h2>
+<p>LLM 容易 hallucinate 數字 — 特別係 trigger / target / stop 呢啲具體價位。我哋用：</p>
+<ul style="line-height: 2; margin-left: var(--sp-5);">
+  <li>Python 確定性計 OHLC、S/R、backtest、action plan</li>
+  <li>LLM 只出 narrative 解釋（if-then scenarios, common misjudgments）— 唔可以出數字</li>
+  <li>所有 raw OHLC 都係 futu OpenD 即時 data，T-1 截尾</li>
+</ul>
+
+<h2 class="mt-5">⑦ Reliability 分級</h2>
+<ul style="line-height: 2; margin-left: var(--sp-5);">
+  <li><b>HIGH</b> — n ≥ 10 AND win% ≥ 60%</li>
+  <li><b>MED</b> — n ≥ 5 AND win% ≥ 50%</li>
+  <li><b>LOW</b> — 其他（建議 skip）</li>
+</ul>
+
+<h2 class="mt-5">⑧ T-1 Hard Rule</h2>
+<ul style="line-height: 2; margin-left: var(--sp-5);">
+  <li>永遠用 yesterday's close 計 signal</li>
+  <li>9:30 開市前 5 分鐘先睇 signal，唔可以 live trade</li>
+  <li>所有 backtest 都係 T-1 data 對齊，無 survivorship</li>
+</ul>
+
+<h2 class="mt-5">⑨ Risk Management</h2>
+<ul style="line-height: 2; margin-left: var(--sp-5);">
+  <li>每筆止損 1-2% 帳戶</li>
+  <li>持倉 30-40% 上限</li>
+  <li>16:00 HKT / 16:00 ET 前必須平倉</li>
+  <li>唔過夜，唔留倉</li>
+</ul>
+
+<h2 class="mt-5">⑩ 點解 multi-window</h2>
+<ul style="line-height: 2; margin-left: var(--sp-5);">
+  <li>短期 30-90d = 近期 regime 真實表現</li>
+  <li>長期 197d = 大方向確認</li>
+  <li>兩個 window 一致 → 信號強</li>
+  <li>兩個 window 矛盾 → skip</li>
+</ul>
+
+<div class="disclaimer mt-5">
+  <b>⚠ Disclaimer</b> · Educational only. Backtest 唔等於 live 表現。Day-trade 高風險，loss of capital possible.
+</div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="row">
+      <div>© 2026 Leeks Terminal · win9you.com</div>
+      <div class="mono text-dim">T-1 · 2026-08-24</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

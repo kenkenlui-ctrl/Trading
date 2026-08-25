@@ -196,6 +196,12 @@ def build_home_page():
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="/leeks.css">
+<script>
+(function(){{
+  const t = localStorage.getItem('leeks-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+}})();
+</script>
 </head>
 <body>
 
@@ -212,9 +218,34 @@ def build_home_page():
     <div class="nav-meta">
       <span class="live-dot"></span>
       T-1 · {today.isoformat()}
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span class="icon" id="themeIcon">●</span>
+        <span id="themeLabel">DARK</span>
+      </button>
     </div>
   </nav>
 </header>
+<script>
+function toggleTheme(){{
+  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('leeks-theme', next);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = next === 'dark' ? '#0a0e1a' : '#fafbfc';
+  const lbl = document.getElementById('themeLabel');
+  const ic = document.getElementById('themeIcon');
+  if (lbl) lbl.textContent = next.toUpperCase();
+  if (ic) ic.textContent = next === 'dark' ? '●' : '○';
+}}
+(function(){{
+  const t = document.documentElement.getAttribute('data-theme') || 'dark';
+  const lbl = document.getElementById('themeLabel');
+  const ic = document.getElementById('themeIcon');
+  if (lbl) lbl.textContent = t.toUpperCase();
+  if (ic) ic.textContent = t === 'dark' ? '●' : '○';
+}})();
+</script>
 
 <section class="hero">
   <div class="container">

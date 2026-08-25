@@ -209,6 +209,12 @@ def build_dashboard_page(
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="/leeks.css">
+<script>
+(function(){{
+  const t = localStorage.getItem('leeks-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+}})();
+</script>
 </head>
 <body>
 <header class="site-header">
@@ -218,9 +224,34 @@ def build_dashboard_page(
     <div class="nav-meta">
       <span class="live-dot"></span>
       T-1 · {t_minus_1().isoformat()}
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span class="icon" id="themeIcon">●</span>
+        <span id="themeLabel">DARK</span>
+      </button>
     </div>
   </nav>
 </header>
+<script>
+function toggleTheme(){{
+  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('leeks-theme', next);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = next === 'dark' ? '#0a0e1a' : '#fafbfc';
+  const lbl = document.getElementById('themeLabel');
+  const ic = document.getElementById('themeIcon');
+  if (lbl) lbl.textContent = next.toUpperCase();
+  if (ic) ic.textContent = next === 'dark' ? '●' : '○';
+}}
+(function(){{
+  const t = document.documentElement.getAttribute('data-theme') || 'dark';
+  const lbl = document.getElementById('themeLabel');
+  const ic = document.getElementById('themeIcon');
+  if (lbl) lbl.textContent = t.toUpperCase();
+  if (ic) ic.textContent = t === 'dark' ? '●' : '○';
+}})();
+</script>
 
 <div class="page-head">
   <div class="container">
@@ -493,7 +524,8 @@ def render_detail_page(t: dict) -> str:
   <div class="detail-grid">
     <div>
       <div class="chart-frame fade-in">
-        <img src="{chart_url}?v={t_minus_1().isoformat()}" alt="{ticker} daily K" style="width: 100%; border-radius: var(--radius);">
+        <div class="skeleton" id="chartSkel_{safe}"></div>
+        <img src="{chart_url}?v={t_minus_1().isoformat()}" alt="{ticker} daily K" loading="eager" onload="document.getElementById('chartSkel_{safe}')?.remove()" onerror="this.parentElement.innerHTML='<div class=&quot;text-dim&quot; style=&quot;padding:var(--sp-7);text-align:center&quot;>Chart unavailable · try refresh</div>'">
       </div>
 
       <div class="info-card mt-4 fade-in fade-in-2">
