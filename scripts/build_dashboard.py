@@ -197,6 +197,27 @@ def build_dashboard_page(
       <a href="/methodology">Methodology</a>
     '''
 
+    canon_url = f"https://www.win9you.com/{market.lower()}200/"
+    jsonld = f"""{{
+  "@context": "https://schema.org",
+  "@graph": [
+    {{
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.win9you.com/"}},
+        {{"@type": "ListItem", "position": 2, "name": "{market} Signals", "item": "{canon_url}"}}
+      ]
+    }},
+    {{
+      "@type": "CollectionPage",
+      "name": "{title_main} Action Plan",
+      "url": "{canon_url}",
+      "inLanguage": "zh-Hant-HK",
+      "isPartOf": {{"@type": "WebSite", "name": "Leeks Terminal", "url": "https://www.win9you.com/"}}
+    }}
+  ]
+}}"""
+
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant-HK">
 <head>
@@ -205,6 +226,20 @@ def build_dashboard_page(
 <title>{title_main} · Leeks Terminal</title>
 <meta name="description" content="{title_lede}">
 <meta name="theme-color" content="#0a0e1a">
+<link rel="canonical" href="{canon_url}">
+<meta property="og:site_name" content="Leeks Terminal">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{title_main} · Leeks Terminal">
+<meta property="og:description" content="{title_lede}">
+<meta property="og:url" content="{canon_url}">
+<meta property="og:image" content="https://www.win9you.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="zh_HK">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{jsonld}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
@@ -373,8 +408,8 @@ document.querySelectorAll('th[data-col]').forEach(th => {{
     rows.sort((a, b) => {{
       const av = a.cells[idx]?.textContent.trim() || '';
       const bv = b.cells[idx]?.textContent.trim() || '';
-      const an = parseFloat(av.replace(/[+%,$ HKD\s]/g, ''));
-      const bn = parseFloat(bv.replace(/[+%,$ HKD\s]/g, ''));
+      const an = parseFloat(av.replace(/[+%,$ HKD\\s]/g, ''));
+      const bn = parseFloat(bv.replace(/[+%,$ HKD\\s]/g, ''));
       const isNum = !isNaN(an) && !isNaN(bn);
       if (isNum) return dir === 'asc' ? an - bn : bn - an;
       return dir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
@@ -387,7 +422,7 @@ document.querySelectorAll('th[data-col]').forEach(th => {{
 </html>"""
 
 
-def render_detail_page(t: dict) -> str:
+def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | None = None) -> str:
     """Render a single ticker detail page."""
     ticker = t["ticker"]
     safe = ticker.replace(".", "_")
@@ -468,14 +503,85 @@ def render_detail_page(t: dict) -> str:
         <li><b>IF</b> 跌穿 {fmt(s4) if s4 else "S4"} (crash low), <b>THEN</b> 中期 bear confirm，avoid</li>
     '''
 
+    # SEO/GEO: canonical URL (Cloudflare Pages pretty URL = extensionless, no
+    # trailing slash — verified live 2026-08-25: both .html and trailing-slash
+    # variants 308 to this form).
+    canon_url = f"https://www.win9you.com/{market.lower()}200/ticker/{safe}"
+
+    # SEO/GEO: description carries the concrete verdict + levels so search
+    # engines and AI answer engines can quote a self-contained answer.
+    desc_parts = [f"{ticker} {name} 即日鮮 Action Plan", f"Phase: {phase_label}", f"{verdict}"]
+    if verdict != "WAIT" and trigger is not None and target is not None and stop is not None:
+        desc_parts.append(f"trigger {fmt(trigger)} / target {fmt(target)} / stop {fmt(stop)}")
+    desc_parts.append(f"T-{1}收市數據 · 教育用途非投資建議")
+    meta_desc = " · ".join(desc_parts)
+
+    t1_iso = t_minus_1().isoformat()
+    detail_jsonld = f"""{{
+  "@context": "https://schema.org",
+  "@graph": [
+    {{
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.win9you.com/"}},
+        {{"@type": "ListItem", "position": 2, "name": "{market} Signals", "item": "https://www.win9you.com/{market.lower()}200/"}},
+        {{"@type": "ListItem", "position": 3, "name": "{ticker} {name}", "item": "{canon_url}"}}
+      ]
+    }},
+    {{
+      "@type": "Article",
+      "headline": "{ticker} {name} 即日鮮 Action Plan ({verdict})",
+      "url": "{canon_url}",
+      "mainEntityOfPage": "{canon_url}",
+      "inLanguage": "zh-Hant-HK",
+      "dateModified": "{t1_iso}",
+      "author": {{"@type": "Organization", "name": "Leeks Terminal"}},
+      "publisher": {{"@type": "Organization", "name": "Leeks Terminal", "url": "https://www.win9you.com/"}}
+    }}
+  ]
+}}"""
+
+    def _nb(r: dict | None, direction: str) -> str:
+        if not r:
+            return "<span></span>"
+        rsafe = r["ticker"].replace(".", "_")
+        arrow = "←" if direction == "prev" else "→"
+        return f'<a href="/{r["market"].lower()}200/ticker/{rsafe}" class="btn btn-ghost">{arrow} {r["ticker"]} {r.get("name", "")}</a>'
+
+    prevnext_html = f"""
+  <div style="display: flex; justify-content: space-between; gap: var(--sp-2); margin-top: var(--sp-4);">
+    {_nb(prev_row, "prev")}
+    {_nb(next_row, "next")}
+  </div>"""
+
+    edge_note_html = (
+        f'''<p class="text-dim" style="font-size: var(--text-xs); margin-top: var(--sp-3); max-width: 640px;">
+      註：Backtest win% 係「{edge["strategy"]}」策略喺過去 {edge["window"]} 日嘅歷史表現（edge），
+      唔等於今日 {verdict} 嘅預測成功率；今日決策以下方 Action Plan 為準。
+    </p>''' if edge else '')
+
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant-HK">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{ticker} {name} · Action Plan · Leeks Terminal</title>
-<meta name="description" content="{ticker} {name} 即日鮮信號 · T-1 數據 · 10 步框架。">
+<meta name="description" content="{meta_desc}">
 <meta name="theme-color" content="#0a0e1a">
+<link rel="canonical" href="{canon_url}">
+<meta property="og:site_name" content="Leeks Terminal">
+<meta property="og:type" content="article">
+<meta property="og:title" content="{ticker} {name} · Action Plan · Leeks Terminal">
+<meta property="og:description" content="{meta_desc}">
+<meta property="og:url" content="{canon_url}">
+<meta property="og:image" content="https://www.win9you.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="zh_HK">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{detail_jsonld}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
@@ -517,6 +623,7 @@ def render_detail_page(t: dict) -> str:
       <span>Strategy: <b>{edge["strategy"] if edge else "—"}</b></span>
       <span>Reliability: <b style="color: {rel_color};">{reliability}</b></span>
     </div>
+    {edge_note_html}
   </div>
 </div>
 
@@ -625,6 +732,7 @@ def render_detail_page(t: dict) -> str:
     <a href="{back_url}" class="btn btn-ghost">← Back to {market} Signals</a>
     <a href="/methodology" class="btn btn-ghost" style="margin-left: var(--sp-2);">Methodology</a>
   </div>
+  {prevnext_html}
 </div>
 
 <footer class="site-footer">
@@ -673,7 +781,6 @@ def build_for_market(market: str):
     phase_counts = {}
     action_counts = {"BUY": 0, "SELL": 0, "WAIT": 0}
     rows = []
-    detail_pages = []
     chart_copied = 0
 
     for i, ticker in enumerate(universe):
@@ -716,7 +823,9 @@ def build_for_market(market: str):
             "phase": phase,
             "action_plan": ap,
             "edge": edge,
-            "detail_url": f"/{market.lower()}200/ticker/{safe}/",
+            # Canonical pretty URL: extensionless, NO trailing slash
+            # (.html and trailing-slash forms both 308 here — SEO audit 2026-08-25)
+            "detail_url": f"/{market.lower()}200/ticker/{safe}",
             "chart_url": chart_url,
             "market": market_name,
         }
@@ -730,16 +839,8 @@ def build_for_market(market: str):
             shutil.copy2(src_png, chart_dir / f"{safe}.png")
             chart_copied += 1
 
-        # Render detail page
-        detail_html = render_detail_page(row)
-        detail_path = ticker_dir / f"{safe}.html"
-        detail_path.write_text(detail_html, encoding="utf-8")
-        detail_pages.append(detail_path)
-
         if (i + 1) % 20 == 0:
             print(f"  [{i+1}/{len(universe)}] {ticker} ...")
-
-    print(f"  {len(rows)} tickers with JSON, {chart_copied} charts copied, {len(detail_pages)} detail pages")
 
     # Sort rows: actionable first, then by win%, then by ticker
     def row_sort_key(r):
@@ -752,6 +853,20 @@ def build_for_market(market: str):
     rows_sorted = sorted(rows, key=row_sort_key)
 
     rows_html = "".join(render_action_row(r) for r in rows_sorted)
+
+    # Render detail pages AFTER sorting so prev/next links follow the same
+    # ordering the hub table displays (SEO audit: tickers had zero cross-links)
+    detail_pages = []
+    for idx, row in enumerate(rows_sorted):
+        prev_row = rows_sorted[idx - 1] if idx > 0 else None
+        next_row = rows_sorted[idx + 1] if idx + 1 < len(rows_sorted) else None
+        safe = row["ticker"].replace(".", "_")
+        detail_html = render_detail_page(row, prev_row=prev_row, next_row=next_row)
+        detail_path = ticker_dir / f"{safe}.html"
+        detail_path.write_text(detail_html, encoding="utf-8")
+        detail_pages.append(detail_path)
+
+    print(f"  {len(rows)} tickers with JSON, {chart_copied} charts copied, {len(detail_pages)} detail pages")
 
     # Hero meta
     phase_str = f"Down {phase_counts.get('downtrend_active', 0)} · Base {phase_counts.get('base_building', 0)} · Recov {phase_counts.get('downtrend_recovery', 0)} · Up {phase_counts.get('uptrend', 0)}"

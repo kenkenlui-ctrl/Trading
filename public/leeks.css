@@ -14,7 +14,7 @@
   --border-2: #2a3447;
   --fg: #e8eaf0;
   --fg-2: #c5cad6;
-  --dim: #6b7280;
+  --dim: #8892a4; /* v2.1: lifted from #6b7280 for WCAG AA on panels (5.6:1) */
   --dim-2: #4b5563;
   --theme-color: #0a0e1a;
 }
@@ -43,6 +43,10 @@
   --theme-color: #fafbfc;
 }
 
+/* Root tokens — signal palette + type scale + spacing
+   (v2.1 fix 2026-08-25: these declarations were orphaned outside any
+   selector, which silently disabled the entire token system) */
+:root {
   /* Signal colors */
   --bull: #10b981;
   --bull-dim: rgba(16, 185, 129, 0.12);
@@ -192,6 +196,10 @@ h1, .h1 { font-family: var(--font-display); font-size: var(--text-5xl); font-wei
 h2, .h2 { font-family: var(--font-display); font-size: var(--text-3xl); font-weight: 500; line-height: 1.15; letter-spacing: -0.015em; font-variation-settings: "opsz" 80; }
 h3, .h3 { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 500; line-height: 1.2; font-variation-settings: "opsz" 40; }
 h4, .h4 { font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--dim); }
+
+/* Card label: h3 semantics (heading hierarchy fix) with the old h4 look.
+   SEO audit 2026-08-25: homepage cards used h2→h4 skips. */
+.card-label { font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--dim); margin: 0 0 var(--sp-2); }
 
 .italic { font-style: italic; font-variation-settings: "opsz" 144, "SOFT" 100; }
 
@@ -445,6 +453,7 @@ h4, .h4 { font-family: var(--font-mono); font-size: var(--text-xs); font-weight:
 
 .filter-chip {
   display: inline-block;
+  appearance: none; -webkit-appearance: none; /* v2.1: render as <button> */
   padding: 4px 10px;
   border-radius: 3px;
   font-size: var(--text-xs);
@@ -687,4 +696,39 @@ section h2 .em { font-style: italic; color: var(--blue); font-variation-settings
   .hero-grid { grid-template-columns: 1fr; gap: var(--sp-5); }
   .signal-card { grid-template-columns: 1fr; gap: var(--sp-2); }
   .signal-detail { text-align: left; }
+}
+
+/* =========================================================
+   v2.1 fixes (2026-08-25 design audit)
+   ========================================================= */
+
+/* Mobile reading order: verdict column (Action Plan / Key levels)
+   stacks ABOVE chart + framework on narrow screens */
+@media (max-width: 1000px) {
+  .detail-grid > div:last-child { order: -1; }
+}
+
+/* Chart frame: shorter reserve height on mobile */
+@media (max-width: 800px) {
+  .chart-frame { min-height: 420px; }
+  .chart-frame .skeleton { height: 420px; }
+}
+
+/* Keyboard focus visibility */
+.filter-chip:focus-visible,
+.theme-toggle:focus-visible,
+.data-table th:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+.data-table th:focus-visible { color: var(--fg); }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

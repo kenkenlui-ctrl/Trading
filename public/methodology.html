@@ -6,6 +6,60 @@
 <title>Methodology · 10-step 框架 · Leeks Terminal</title>
 <meta name="description" content="10 步價格行為框架 · OHLC-only · 零 LLM 幻覺 · 4 種 S/R strategy + 4 windows backtest。">
 <meta name="theme-color" content="#0a0e1a">
+<link rel="canonical" href="https://www.win9you.com/methodology">
+<meta property="og:site_name" content="Leeks Terminal">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Methodology · 10-step 框架 · Leeks Terminal">
+<meta property="og:description" content="10 步價格行為框架 · OHLC-only · 零 LLM 幻覺 · 4 種 S/R strategy + 4 windows backtest。">
+<meta property="og:url" content="https://www.win9you.com/methodology">
+<meta property="og:image" content="https://www.win9you.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="zh_HK">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Leeks Terminal 10-step 價格行為框架 Methodology",
+      "url": "https://www.win9you.com/methodology",
+      "mainEntityOfPage": "https://www.win9you.com/methodology",
+      "inLanguage": "zh-Hant-HK",
+      "datePublished": "2026-08-24",
+      "dateModified": "2026-08-25",
+      "author": {"@type": "Organization", "name": "Leeks Terminal"},
+      "publisher": {"@type": "Organization", "name": "Leeks Terminal", "url": "https://www.win9you.com/"}
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Leeks Terminal 嘅信號係點計出嚟嘅？",
+          "acceptedAnswer": {"@type": "Answer", "text": "全部由 Python 對 T-1 日線 OHLC 確定性計算：先分 5 種 phase，再疊 20/60/120/200 日 S/R ladder，跑 30/60/90/197 日 backtest 揀出最強 edge，最後輸出 BUY/SELL/WAIT 加 trigger/target/stop。LLM 只負責解釋文字，唔會產生任何數字。"}
+        },
+        {
+          "@type": "Question",
+          "name": "Backtest win% 可以當幾準？",
+          "acceptedAnswer": {"@type": "Answer", "text": "win% 是歷史統計而非預測。可靠性分三級：HIGH（n≥10 且 win%≥60）、MED（n≥5 且 win%≥50）、LOW（建議跳過）。樣本愈大、近期 regime 愈一致，參考價值愈高。"}
+        },
+        {
+          "@type": "Question",
+          "name": "數據幾時更新？用即市價定收市價？",
+          "acceptedAnswer": {"@type": "Answer", "text": "永遠使用 T-1 收市價（hard rule）。港股與美股各自在收市後重建全站，開市前查看訊號即可，不會使用 live intraday 數據計算。"}
+        },
+        {
+          "@type": "Question",
+          "name": "呢個站係投資建議嗎？",
+          "acceptedAnswer": {"@type": "Answer", "text": "不是。全部內容屬教育用途並附免責聲明；即日鮮交易風險極高，過往表現不代表將來回報。"}
+        }
+      ]
+    }
+  ]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
@@ -68,6 +122,11 @@ function toggleTheme(){
     <p class="lede">
       純 OHLC 數據驅動，零 LLM 幻覺。每一個 signal、每一個 trigger/target/stop 都係由 Python 確定性計出。
     </p>
+    <div class="hero-meta">
+      <span>Author: <b>Leeks Terminal</b>（rule-based engine）</span>
+      <span>Last updated: <b><time datetime="2026-08-25">2026-08-25</time></b></span>
+      <span>Data: <b>Futu OpenD · T-1 OHLC only</b></span>
+    </div>
   </div>
 </div>
 
@@ -150,6 +209,20 @@ function toggleTheme(){
   <li>兩個 window 一致 → 信號強</li>
   <li>兩個 window 矛盾 → skip</li>
 </ul>
+
+<h2 class="mt-5">FAQ</h2>
+
+<h3>Leeks Terminal 嘅信號係點計出嚟嘅？</h3>
+<p>全部由 Python 對 T-1 日線 OHLC 確定性計算：先分 5 種 phase，再疊 20/60/120/200 日 S/R ladder，跑 30/60/90/197 日 backtest 揀出最強 edge，最後輸出 BUY/SELL/WAIT 加 trigger/target/stop。LLM 只負責解釋文字，唔會產生任何數字。</p>
+
+<h3>Backtest win% 可以當幾準？</h3>
+<p>win% 是歷史統計而非預測。可靠性分三級：HIGH（n≥10 且 win%≥60）、MED（n≥5 且 win%≥50）、LOW（建議跳過）。樣本愈大、近期 regime 愈一致，參考價值愈高。</p>
+
+<h3>數據幾時更新？用即市價定收市價？</h3>
+<p>永遠使用 T-1 收市價（hard rule）。港股與美股各自在收市後重建全站，開市前查看訊號即可，不會使用 live intraday 數據計算。</p>
+
+<h3>呢個站係投資建議嗎？</h3>
+<p>不是。全部內容屬教育用途並附免責聲明；即日鮮交易風險極高，過往表現不代表將來回報。</p>
 
 <div class="disclaimer mt-5">
   <b>⚠ Disclaimer</b> · Educational only. Backtest 唔等於 live 表現。Day-trade 高風險，loss of capital possible.

@@ -1,37 +1,33 @@
-# Performance: cache-control headers (Phase 9+, 2026-07-21)
-# Static HTML pages: 5 min cache (frequent content, can change
-# if user runs backfill). With must-revalidate, browser re-checks
-# ETag on every visit (cheap), but CDN edge serves cached copy.
+# =========================================================
+# LEEKS TERMINAL — Cache-Control policy
+# v3 (2026-08-25 SEO pass)
+#
+# Policy:
+#   HTML  → max-age=0 must-revalidate (content changes daily after close;
+#           Cloudflare Pages' built-in default already sends max-age=0 for
+#           assets without a matching rule — incl. pretty URLs like
+#           /hk200/ticker/00700_HK — so we only pin what needs overriding)
+#   CSS   → 300s; cache-busted via ?v= query param on every deploy
+#   PNGs  → 300s; cache-busted via ?v=T-1-date query param
+#
+# Removed in v3: rules for /dashboard/*, /full-results.html,
+# /live-monitor.html — pages deleted in the 2026-08-24 v2.0 redesign.
+# =========================================================
 
-# Dashboard per-date pages: 5 min cache
-/dashboard/*.html
-  Cache-Control: public, max-age=300, must-revalidate
-
-# Hub + Full Results + Live Monitor (regenerated each build, 5 min OK)
-/full-results.html
-  Cache-Control: public, max-age=300, must-revalidate
-/dashboard/
-  Cache-Control: public, max-age=300, must-revalidate
-
-# Per-ticker report pages
-/dashboard/*/reports/*.html
-  Cache-Control: public, max-age=300, must-revalidate
-
-# Live monitor
-/live-monitor.html
-  Cache-Control: public, max-age=60, must-revalidate
-
-# Static info pages
+# Direct .html requests (incl. the 308 pretty-URL redirect responses)
 /*.html
-  Cache-Control: public, max-age=3600, must-revalidate
+  Cache-Control: public, max-age=0, must-revalidate
 
-# Shared CSS — short cache so theme updates roll out fast
+# Shared CSS — short cache so theme updates roll out fast (?v= busting)
 /leeks.css
   Cache-Control: public, max-age=300, must-revalidate
 
-# Chart PNGs — short cache so browser/CDN always revalidates after deploy
-# (cache-bust query string also added)
+# Chart PNGs — short cache; pages reference them with ?v=<T-1 date>
 /hk200/charts/*.png
   Cache-Control: public, max-age=300, must-revalidate
 /us200/charts/*.png
   Cache-Control: public, max-age=300, must-revalidate
+
+# OG image — rarely changes
+/og-image.png
+  Cache-Control: public, max-age=86400, must-revalidate

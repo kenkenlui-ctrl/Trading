@@ -155,7 +155,7 @@ def render_signal_card(row):
     action_cls = "bull" if verdict == "BUY" else "bear"
     safe = row["ticker"].replace(".", "_")
     market = row["market"]
-    detail_url = f"/{market.lower()}200/ticker/{safe}/"
+    detail_url = f"/{market.lower()}200/ticker/{safe}"
     edge = row["edge"]
     return f'''
       <a href="{detail_url}" class="signal-card {cls}">
@@ -164,7 +164,7 @@ def render_signal_card(row):
           <div class="signal-name">{row["name"]}</div>
         </div>
         <div>
-          <div class="signal-name">{edge["strategy"]} · {edge["win_pct"]:.0f}% win ({edge["window"]}d, n={edge["n"]})</div>
+          <div class="signal-name">Backtest edge: {edge["strategy"]} · {edge["win_pct"]:.0f}% win ({edge["window"]}d, n={edge["n"]})</div>
         </div>
         <div class="signal-action {action_cls}">{verdict}</div>
         <div class="signal-detail">{fmt(row["trigger"])} → <b>{fmt(row["target"])}</b> · stop {fmt(row["stop"])}</div>
@@ -192,6 +192,32 @@ def build_home_page():
 <title>Leeks Terminal · 港美股即日鮮交易信號</title>
 <meta name="description" content="AI 港美股即日鮮交易信號儀表板 · 200+200 隻主流股票 · T-1 數據 · 10 步價格行為框架 · 開市前 5 分鐘決策。">
 <meta name="theme-color" content="#0a0e1a">
+<link rel="canonical" href="https://www.win9you.com/">
+<meta property="og:site_name" content="Leeks Terminal">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Leeks Terminal · 港美股即日鮮交易信號">
+<meta property="og:description" content="AI 港美股即日鮮交易信號儀表板 · 200+200 隻主流股票 · T-1 數據 · 10 步價格行為框架 · 開市前 5 分鐘決策。">
+<meta property="og:url" content="https://www.win9you.com/">
+<meta property="og:image" content="https://www.win9you.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="zh_HK">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Leeks Terminal",
+  "url": "https://www.win9you.com/",
+  "inLanguage": "zh-Hant-HK",
+  "description": "HK + US day-trade decision dashboard. 200 HK + 200 US stocks, daily 10-step price-action signals from T-1 OHLC data. Educational use only.",
+  "publisher": {{
+    "@type": "Organization",
+    "name": "Leeks Terminal",
+    "url": "https://www.win9you.com/"
+  }}
+}}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
@@ -275,7 +301,7 @@ function toggleTheme(){{
 
       <div class="fade-in fade-in-2">
         <div class="card mb-3">
-          <h4>Today · {today.isoformat()} (T-1 close)</h4>
+          <h3 class="card-label">Today · {today.isoformat()} (T-1 close)</h3>
           <div class="hero-stat mt-3">
             <div class="label">Actionable signals</div>
             <div class="value text-bull">{stats.get("BUY", 0) + stats.get("SELL", 0)}</div>
@@ -315,7 +341,7 @@ function toggleTheme(){{
     </div>
     <div class="card-grid card-grid-3">
       <div class="card fade-in fade-in-1">
-        <h4>Phase distribution</h4>
+        <h3 class="card-label">Phase distribution</h3>
         <div style="margin-top: var(--sp-4); display: grid; gap: var(--sp-3);">
           <div class="flex justify-between"><span class="text-dim">Downtrend active</span><span class="mono text-bear">{phase_dist.get("downtrend_active", 0)}</span></div>
           <div class="flex justify-between"><span class="text-dim">Base building</span><span class="mono text-amber">{phase_dist.get("base_building", 0)}</span></div>
@@ -326,7 +352,7 @@ function toggleTheme(){{
       </div>
 
       <div class="card fade-in fade-in-2">
-        <h4>Action distribution</h4>
+        <h3 class="card-label">Action distribution</h3>
         <div style="margin-top: var(--sp-4); display: grid; gap: var(--sp-3);">
           <div class="flex justify-between"><span class="text-dim">BUY</span><span class="mono text-bull">{stats.get("BUY", 0)}</span></div>
           <div class="flex justify-between"><span class="text-dim">SELL</span><span class="mono text-bear">{stats.get("SELL", 0)}</span></div>
@@ -335,7 +361,7 @@ function toggleTheme(){{
       </div>
 
       <div class="card fade-in fade-in-3">
-        <h4>How it works</h4>
+        <h3 class="card-label">How it works</h3>
         <div style="margin-top: var(--sp-4); display: grid; gap: var(--sp-3); font-size: var(--text-sm); color: var(--fg-2);">
           <div>① Phase 分類 (5 種) — 20d rolling</div>
           <div>② S/R ladder (4-tier)</div>
