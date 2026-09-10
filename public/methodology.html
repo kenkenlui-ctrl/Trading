@@ -15,7 +15,10 @@
 <meta property="og:title" content="Methodology · 10-step 框架 · Leeks Terminal">
 <meta property="og:description" content="10 步價格行為框架 · OHLC-only · 零 LLM 幻覺 · 4 種 S/R strategy + 4 windows backtest。">
 <meta property="og:url" content="https://www.win9you.com/methodology">
-<meta property="og:image" content="https://www.win9you.com/og-image.png">
+<meta property="og:image" content="https://www.win9you.com/og-image.svg">
+<meta property="og:image:type" content="image/svg+xml">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="zh_HK">
@@ -46,7 +49,7 @@
         {
           "@type": "Question",
           "name": "Backtest win% 可以當幾準？",
-          "acceptedAnswer": {"@type": "Answer", "text": "win% 是歷史統計而非預測。可靠性分三級：HIGH（n≥10 且 win%≥60）、MED（n≥5 且 win%≥50）、LOW（建議跳過）。樣本愈大、近期 regime 愈一致，參考價值愈高。"}
+          "acceptedAnswer": {"@type": "Answer", "text": "win% 是歷史統計而非預測。可靠性分三級：HIGH（n≥20 且 win%≥60）、MED（n≥5 且 win%≥50）、LOW（建議跳過）。樣本愈大、近期 regime 愈一致，參考價值愈高。"}
         },
         {
           "@type": "Question",
@@ -56,17 +59,29 @@
         {
           "@type": "Question",
           "name": "呢個站係投資建議嗎？",
-          "acceptedAnswer": {"@type": "Answer", "text": "不是。全部內容屬教育用途並附免責聲明；即日鮮交易風險極高，過往表現不代表將來回報。"}
+          "acceptedAnswer": {"@type": "Answer", "text": "不是。全部內容屬教育用途並附免責聲明；多週期短線交易風險極高（每筆持倉可長達 5 日），過往表現不代表將來回報。"}
         }
       ]
     }
   ]
 }
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="alternate" hreflang="zh-Hant-HK" href="https://www.win9you.com/methodology">
+<link rel="alternate" hreflang="x-default" href="https://www.win9you.com/methodology"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/manrope/v20/xn7_YHE41ni1AdIRqAuZuw1Bx9mbZk79FN_P-bnTfc7AGraJwA.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/manrope/v20/xn7_YHE41ni1AdIRqAuZuw1Bx9mbZk79FN_G-bnTfc7AGraJwA.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/fraunces/v38/6NUh8FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0K7iN7hzFUPJH58nib1603gg7S2nfgRYIctxuTBv7Tp05GNyXkb24.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxTN1OVk6OThhvAWV8.woff2">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/leeks.css?v=2026-08-25b">
+<link rel="stylesheet" href="/leeks.css?v=2026-08-28">
+<script>
+(function(){
+  const t = localStorage.getItem('leeks-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
 <script>
 (function(){
   const t = localStorage.getItem('leeks-theme') || 'dark';
@@ -80,21 +95,29 @@
   <nav class="nav">
     <a href="/" class="nav-brand"><span class="leek">L</span>eeks <em class="italic">Terminal</em></a>
     <div class="nav-links">
-      <a href="/">Home</a>
-      <a href="/hk200/">HK Signals</a>
-      <a href="/us200/">US Signals</a>
-      <a href="/pair-trades/">Pair Trades</a>
-      <a href="/methodology" class="active">Methodology</a>
+      <a href="/" >Home</a>
+      <a href="/hk200/" ><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg> HK Signals</a>
+      <a href="/us200/" ><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="vertical-align:-2px" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.6 3 14.4 0 18M12 3c-3 3.6-3 14.4 0 18"/></svg> US Signals</a>
+      <a href="/jp200/" ><span style="display: inline-block; width: 14px; height: 14px; background: radial-gradient(circle at 50% 50%, #bc002d 30%, #fff 30%); border-radius: 50%; vertical-align: -2px; margin-right: 4px;" title="Japan"></span>JP Signals</a>
+      <a href="/methodology.html" class="active">Methodology</a>
+      <a href="/backtest.html" >Backtest</a>
+      <a href="/insights.html" >Insights</a>
+      <a href="/faq.html" >FAQ</a>
+      <a href="/disclaimer/" >Disclaimer</a>
+      <a href="/privacy.html" >Privacy</a>
     </div>
     <div class="nav-meta">
       <span class="live-dot"></span>
-      T-1 · 2026-08-24
-      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-        <span class="icon" id="themeIcon">●</span>
-        <span id="themeLabel">DARK</span>
+      T-1 · 2026-08-28
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme, currently DARK mode">
+
+        <span class="icon" id="themeIcon" aria-hidden="true">●</span>
+
+        <span id="themeLabel" aria-hidden="true">DARK</span>
+
       </button>
     </div>
-  </nav>
+   <a class="lang-switch" href="/en/methodology/" title="View in English" aria-label="View in English">🌐&nbsp;EN →</a></nav>
 </header>
 <script>
 function toggleTheme(){
@@ -106,18 +129,23 @@ function toggleTheme(){
   if (meta) meta.content = next === 'dark' ? '#0a0e1a' : '#fafbfc';
   const lbl = document.getElementById('themeLabel');
   const ic = document.getElementById('themeIcon');
+  const btn = document.querySelector('.theme-toggle');
   if (lbl) lbl.textContent = next.toUpperCase();
   if (ic) ic.textContent = next === 'dark' ? '●' : '○';
+  if (btn) btn.setAttribute('aria-label', `Toggle theme, currently ${next.toUpperCase()} mode`);
 }
 (function(){
   const t = document.documentElement.getAttribute('data-theme') || 'dark';
   const lbl = document.getElementById('themeLabel');
   const ic = document.getElementById('themeIcon');
+  const btn = document.querySelector('.theme-toggle');
   if (lbl) lbl.textContent = t.toUpperCase();
   if (ic) ic.textContent = t === 'dark' ? '●' : '○';
+  if (btn) btn.setAttribute('aria-label', `Toggle theme, currently ${t.toUpperCase()} mode`);
 })();
 </script>
 
+<main>
 <div class="page-head">
   <div class="container">
     <div class="kicker">Methodology</div>
@@ -142,29 +170,45 @@ function toggleTheme(){
   <li><b>Base building</b> — 區間 20d box, close 中段, low 未破前低</li>
   <li><b>Downtrend active</b> — close &lt; 20d MA, lower lows, 50d MA 下彎</li>
   <li><b>Downtrend recovery</b> — 從 S4 反彈，close 升穿 20d mid，未破前高</li>
-  <li><b>Range</b> — 收縮波幅，5d ATR &lt; 20d ATR × 0.5</li>
+  <li><b>Range</b> — 上述條件都唔符合嘅 fallback（介乎 0.15–0.85 range position）</li>
 </ul>
 
 <h2 class="mt-5">② S/R Ladder</h2>
 <p>4-tier support / resistance levels，rolling pivots：</p>
 <ul style="line-height: 2; margin-left: var(--sp-5);">
-  <li><b>S1 / R1</b> — 20-day rolling low / high</li>
-  <li><b>S2 / R2</b> — 60-day</li>
-  <li><b>S3 / R3</b> — 120-day</li>
-  <li><b>S4</b> — 200-day crash low</li>
+  <li><b>S1 / R1</b> — 最近 20 交易日 low / high</li>
+  <li><b>S2 / R2</b> — 第 21–60 交易日（唔包最近 20 日，分層唔重疊）</li>
+  <li><b>S3 / R3</b> — 第 61–120 交易日</li>
+  <li><b>S4</b> — 第 121 日以前嘅最低 low（crash low）</li>
 </ul>
 
 <h2 class="mt-5">③ 4 種 Strategy</h2>
 <ul style="line-height: 2; margin-left: var(--sp-5);">
-  <li><b>SELL_R1</b> — open 喺 box 內，high 觸及 R1 → short 至 mid，stop = R1 × 1.02</li>
-  <li><b>BUY_S1</b> — open 喺 box 內，low 觸及 S1 → long 至 mid，stop = S1 × 0.98</li>
+  <li><b>SELL_R1</b> — open 喺 box 內，high 觸及 R1 → short 至 mid，stop = R1 × (1 + max(2%, 1.5×ATR))</li>
+  <li><b>BUY_S1</b> — open 喺 box 內，low 觸及 S1 → long 至 mid，stop = S1 × (1 − max(2%, 1.5×ATR))</li>
   <li><b>BREAK_LONG</b> — open &gt; R1 → long breakout，target = R2，stop = R1 × 0.99</li>
   <li><b>BREAK_SHORT</b> — open &lt; S1 → short breakdown，target = S2，stop = S1 × 1.01</li>
+  <li class="text-dim">Guard rails（2026-08-25）：ATR ≥ 6% 或 20 日 box ≥ 35% → 降級 WAIT；R:R &lt; 1.2 → 降級 WAIT；target 同方向矛盾 → 降級 WAIT。</li>
 </ul>
 
 <h2 class="mt-5">④ Backtest 4 Windows</h2>
-<p>每隻 stock 跑 30 / 60 / 90 / 197-day backtest × 4 strategy。</p>
-<p>然後搵「recent regime 30-90d」最強 edge 配 strategy。</p>
+<p>每隻 stock 跑 30 / 60 / 90 / 197-day backtest × 4 strategy。成本模型：<b>HK 0.25%</b> / US 0.10% round-trip（用戶實際注碼 HK$100k + Futu 一世免佣賬戶：HK = 平台費 HK$15/筆 + 印花稅 0.1%/邊 + SFC 0.0027% + FRC 0.00015% + 港交所交易費 0.00565% + 交收費 0.0042% = <b>實算 0.258%</b>）；US 佣金 0.0049/股 + 平台 0.005/股 + SEC/TAF ≈ 0.10% round-trip。同日 target/stop 都觸及 → 悲觀計 stop 先。<br><b>Net return（HK$100k）：</b>T+1 +0.12% · T+3 +0.56% · T+5 +0.85% · T+10 +2.79%。</p>
+<p>Win% 呈現規則：表格顯示「今日建議策略本身」嘅歷史勝率；近期最強 edge（可能係另一策略）只作 detail page 參考，唔會同今日 plan 混埋顯示。</p>
+
+<div class="callout" style="margin: var(--sp-5) 0; padding: var(--sp-4); border-left: 4px solid var(--blue); background: var(--blue-dim); border-radius: 4px;">
+  <h3 style="margin-top: 0; font-size: var(--text-md);">📊 Backtest 整合更新（2026-09-09）</h3>
+  <p style="margin: var(--sp-2) 0; font-size: var(--text-sm);">
+    公開 <a href="/backtest.html">/backtest.html</a> 嘅 monthly 報告由呢日起改用 <b>live signal 嗰日 DB 儲存嘅 stop_loss / target_price</b> 取代舊 hardcoded −10% / +15% 模擬。
+    51% 訊號用 live stop/target（avg −2.45% / +4.07%，比舊 hardcoded 緊好多），其餘因 DB 缺值或 sanity bounds 外而 fall back 去 hardcoded。
+  </p>
+  <p style="margin: var(--sp-2) 0; font-size: var(--text-sm);">
+    新加 <b>portfolio sim</b>：1.5% risk/trade、8 concurrent cap、30% deploy cap，計 compounding total return + max drawdown + Sortino / Calmar。
+    新加 <b>walk-forward OOS</b>：80/20 train/test split，monthly 自動重跑累積更多 OOS data 去驗證 in-sample edge 唔係 overfit。
+  </p>
+  <p style="margin: var(--sp-2) 0 0; font-size: var(--text-sm); color: var(--text-dim);">
+    T+10 headline 由舊 +3.05% 收緊到新 +1.67% — 差異主要因為 live stop 較緊，停損 hit 早咗。Portfolio sim 顯示 proper sizing 下 edge 仲存（+55% 6mo, MaxDD 1.96%）。
+  </p>
+</div>
 
 <h2 class="mt-5">⑤ Action Plan</h2>
 <p>結合 phase + position + best strategy → verdict (BUY / SELL / WAIT) + 具體價位：</p>
@@ -180,21 +224,23 @@ function toggleTheme(){
 <ul style="line-height: 2; margin-left: var(--sp-5);">
   <li>Python 確定性計 OHLC、S/R、backtest、action plan</li>
   <li>LLM 只出 narrative 解釋（if-then scenarios, common misjudgments）— 唔可以出數字</li>
-  <li>所有 raw OHLC 都係 futu OpenD 即時 data，T-1 截尾</li>
+  <li>所有 raw OHLC data 來自：<cite><a href="https://github.com/ranaroussi/yfinance" rel="noopener noreferrer" target="_blank">yfinance</a></cite>（primary）+ <cite><a href="https://www.futunn.com/" rel="noopener noreferrer" target="_blank">Futu OpenD</a></cite>（HK intraday），T-1 截尾</li>
 </ul>
 
 <h2 class="mt-5">⑦ Reliability 分級</h2>
 <ul style="line-height: 2; margin-left: var(--sp-5);">
-  <li><b>HIGH</b> — n ≥ 10 AND win% ≥ 60%</li>
+  <li><b>HIGH</b> — n ≥ 20 AND win% ≥ 60%（2026-08-25 收緊：n=10 嘅 95% 信心區間太闊，容易係隨機）</li>
   <li><b>MED</b> — n ≥ 5 AND win% ≥ 50%</li>
   <li><b>LOW</b> — 其他（建議 skip）</li>
+  <li class="text-dim">表格顯示嘅 Win% 永遠係「今日 plan 同一策略」嘅自身歷史勝率（n≥5 先顯示）；近期最強 edge（可能係另一策略）只喺 detail page 參考區顯示。</li>
 </ul>
 
 <h2 class="mt-5">⑧ T-1 Hard Rule</h2>
 <ul style="line-height: 2; margin-left: var(--sp-5);">
   <li>永遠用 yesterday's close 計 signal</li>
   <li>9:30 開市前 5 分鐘先睇 signal，唔可以 live trade</li>
-  <li>所有 backtest 都係 T-1 data 對齊，無 survivorship</li>
+  <li>所有 backtest 都係 T-1 data 對齊：S/R 用前一日 rolling 窗、今日 open 入場 — 無 look-ahead</li>
+  <li class="text-dim">注意：universe 係「今日成交額 top-200」，對過去 window 有輕度 selection bias（今日活躍 ≠ 當時活躍）。月份 swing backtest 另有 effective window 標註。</li>
 </ul>
 
 <h2 class="mt-5">⑨ Risk Management</h2>
@@ -215,23 +261,28 @@ function toggleTheme(){
 
 <h2 class="mt-5">FAQ</h2>
 
+<h3>🌿 Swing (T+10) paper-trade side project</h3>
+<p>2026-08-28 開始 <b>3 個月 parallel paper-trade test</b>：每個 BUY signal 同時跑 T+1 / T+3 / T+5 短線 trade + T+10 swing paper-trade（<b style="color: var(--amber);">T+10 僅作追蹤，唔落實倉</b> — 違反 day-trade discipline）。目的：驗證 6 個月 backtest 顯示嘅 T+1 / T+3 / T+5 短線 net return 喺 forward live data 都 work，同時追蹤 T+10 swing 嘅 paper-trade performance。3 個月後 (約 11/28) 決定點樣 mix 三個 horizon — <b>recommend T+3 為主，T+1 補強 frequency，T+10 paper only</b>。</p>
+
 <h3>Leeks Terminal 嘅信號係點計出嚟嘅？</h3>
 <p>全部由 Python 對 T-1 日線 OHLC 確定性計算：先分 5 種 phase，再疊 20/60/120/200 日 S/R ladder，跑 30/60/90/197 日 backtest 揀出最強 edge，最後輸出 BUY/SELL/WAIT 加 trigger/target/stop。LLM 只負責解釋文字，唔會產生任何數字。</p>
 
 <h3>Backtest win% 可以當幾準？</h3>
-<p>win% 是歷史統計而非預測。可靠性分三級：HIGH（n≥10 且 win%≥60）、MED（n≥5 且 win%≥50）、LOW（建議跳過）。樣本愈大、近期 regime 愈一致，參考價值愈高。</p>
+<p>win% 是歷史統計而非預測。可靠性分三級：HIGH（n≥20 且 win%≥60）、MED（n≥5 且 win%≥50）、LOW（建議跳過）。樣本愈大、近期 regime 愈一致，參考價值愈高。</p>
 
 <h3>數據幾時更新？用即市價定收市價？</h3>
 <p>永遠使用 T-1 收市價（hard rule）。港股與美股各自在收市後重建全站，開市前查看訊號即可，不會使用 live intraday 數據計算。</p>
 
 <h3>呢個站係投資建議嗎？</h3>
-<p>不是。全部內容屬教育用途並附免責聲明；即日鮮交易風險極高，過往表現不代表將來回報。</p>
+<p>不是。全部內容屬教育用途並附免責聲明；多週期短線交易風險極高（每筆持倉可長達 5 日），過往表現不代表將來回報。</p>
 
 <div class="disclaimer mt-5">
   <b>⚠ Disclaimer</b> · Educational only. Backtest 唔等於 live 表現。Day-trade 高風險，loss of capital possible.
 </div>
 
 </div>
+
+</main>
 
 <footer class="site-footer">
   <div class="container">
