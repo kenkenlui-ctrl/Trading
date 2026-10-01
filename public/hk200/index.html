@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="alternate icon" href="/favicon.ico" sizes="any">
+<link rel="manifest" href="/manifest.json">
 <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <title>港股 200 · Leeks Terminal</title>
@@ -38,14 +40,14 @@
       "inLanguage": "zh-Hant-HK",
       "isPartOf": {"@type": "WebSite", "name": "Leeks Terminal", "url": "https://www.win9you.com/"}
     },
-    {{
+    {
       "@type": "FAQPage",
       "mainEntity": [
-        {{"@type": "Question", "name": "港股 200 點樣揀？", "acceptedAnswer": {{"@type": "Answer", "text": "用 5-day 平均成交額排序頭 200 隻，全部 T-1 收市 data，每日 refresh。"}}},
-        {{"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {{"@type": "Answer", "text": "10-step 價格行為 framework，分 phase + S/R ladder + 4 strategies (SELL_R1 / BUY_S1 / BREAK_LONG / BREAK_SHORT)。T-1 OHLC 純 Python deterministic 計算。"}}},
-        {{"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {{"@type": "Answer", "text": "已扣 Futu 免佣 + 0.25% round-trip (HK)，純 signal + backtest 結果。"}}}}
+        {"@type": "Question", "name": "港股 200 點樣揀？", "acceptedAnswer": {"@type": "Answer", "text": "用 5-day 平均成交額排序頭 200 隻，全部 T-1 收市 data，每日 refresh。"}},
+        {"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {"@type": "Answer", "text": "10-step 價格行為 framework，分 phase + S/R ladder + 4 strategies (SELL_R1 / BUY_S1 / BREAK_LONG / BREAK_SHORT)。T-1 OHLC 純 Python deterministic 計算。"}},
+        {"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {"@type": "Answer", "text": "已扣 Futu 免佣 + 0.25% round-trip (HK)，純 signal + backtest 結果。"}}
       ]
-    }}
+    }
   ]
 }
 </script>
@@ -85,6 +87,15 @@
     </div>
   </nav>
 </header>
+
+<nav class="mobile-bottom-nav" aria-label="Mobile">
+  <a href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home</a>
+  <a href="/hk200/" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg>HK</a>
+  <a href="/us200/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 4-5"/></svg>US</a>
+  <a href="/jp200/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg>JP</a>
+  <a href="/methodology">EN<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>Method</a>
+</nav>
+
 <script>
 function toggleTheme(){
   const cur = document.documentElement.getAttribute('data-theme') || 'dark';
@@ -117,12 +128,19 @@ function toggleTheme(){
       
       <span>Universe: <b>200 HK names</b></span>
       <span>T-1 data: <b>2026-09-29</b></span>
-      <span>Updated: <b>10:47 HKT</b></span>
+      <span>Updated: <b>02:23 HKT</b></span>
       <span>Regime: <b style="color: var(--bear);">Down 87 · Base 76 · Recov 31 · Up 6</b></span>
     
     </div>
   </div>
 </div>
+
+<!-- 2026-10-02: v2 limit-buy plan. The 10-year audit of the four published
+     strategies found no positive edge, so v2 (long-only, BUY at S1 next
+     session, 3xATR stop, no target, 10-session exit, trend + market filter)
+     is published as the primary plan. Its setup statistics are the study's
+     out-of-sample figures and are labelled as third-party in the block. -->
+
 
 <div class="container">
   <div class="filter-bar">
@@ -165,33 +183,7 @@ function toggleTheme(){
   </tr>
   </thead>
   <tbody id="tableBody">
-    <tr data-action="SELL" data-phase="base_building" data-detail="~100% · n=5 (ref)" class="row-bear">
-      <td><a href="/hk200/ticker/00836_HK" class="mono" style="color: var(--fg);">00836.HK</a></td>
-      <td>CHINA RES POWER</td>
-      <td class="cell-right mono">19.67</td>
-      <td class="cell-right mono ">+0.00%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action bear">SELL</span></td>
-      <td class="cell-right mono">19.85</td>
-      <td class="cell-right mono text-bull">19.11</td>
-      <td class="cell-right mono text-bear">20.43</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
-    </tr>
-    <tr data-action="SELL" data-phase="base_building" data-detail="~100% · n=5 (ref)" class="row-bear">
-      <td><a href="/hk200/ticker/09926_HK" class="mono" style="color: var(--fg);">09926.HK</a></td>
-      <td>AKESO</td>
-      <td class="cell-right mono">106.30</td>
-      <td class="cell-right mono text-bull">+15.54%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action bear">SELL</span></td>
-      <td class="cell-right mono">107.80</td>
-      <td class="cell-right mono text-bull">96.7</td>
-      <td class="cell-right mono text-bear">115.2</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">BUY_S1</td>
-    </tr>
-    <tr data-action="SELL" data-phase="base_building" data-detail="~15% · n=13 (ref)" class="row-bear">
+    <tr data-action="SELL" data-phase="base_building" data-detail="—" class="row-bear">
       <td><a href="/hk200/ticker/07552_HK" class="mono" style="color: var(--fg);">07552.HK</a></td>
       <td>XI2CSOPHSTECH</td>
       <td class="cell-right mono">1.98</td>
@@ -204,7 +196,7 @@ function toggleTheme(){
       <td class="cell-right mono">15%</td>
       <td class="mono text-dim">SELL_R1</td>
     </tr>
-    <tr data-action="SELL" data-phase="downtrend_active" data-detail="~100% · n=2 (ref)" class="row-bear">
+    <tr data-action="SELL" data-phase="downtrend_active" data-detail="—" class="row-bear">
       <td><a href="/hk200/ticker/00688_HK" class="mono" style="color: var(--fg);">00688.HK</a></td>
       <td>CHINA OVERSEAS</td>
       <td class="cell-right mono">13.37</td>
@@ -214,8 +206,21 @@ function toggleTheme(){
       <td class="cell-right mono">13.59</td>
       <td class="cell-right mono text-bull">12.67</td>
       <td class="cell-right mono text-bear">14.25</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="SELL" data-phase="base_building" data-detail="—" class="row-bear">
+      <td><a href="/hk200/ticker/00836_HK" class="mono" style="color: var(--fg);">00836.HK</a></td>
+      <td>CHINA RES POWER</td>
+      <td class="cell-right mono">19.67</td>
+      <td class="cell-right mono ">+0.00%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">19.85</td>
+      <td class="cell-right mono text-bull">19.11</td>
+      <td class="cell-right mono text-bear">20.43</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
     </tr>
     <tr data-action="SELL" data-phase="downtrend_active" data-detail="—" class="row-bear">
       <td><a href="/hk200/ticker/00902_HK" class="mono" style="color: var(--fg);">00902.HK</a></td>
@@ -256,7 +261,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">—</td>
     </tr>
-    <tr data-action="SELL" data-phase="base_building" data-detail="~100% · n=1 (ref)" class="row-bear">
+    <tr data-action="SELL" data-phase="base_building" data-detail="—" class="row-bear">
       <td><a href="/hk200/ticker/02631_HK" class="mono" style="color: var(--fg);">02631.HK</a></td>
       <td>SICC</td>
       <td class="cell-right mono">69.00</td>
@@ -266,10 +271,10 @@ function toggleTheme(){
       <td class="cell-right mono">72.80</td>
       <td class="cell-right mono text-bull">65.45</td>
       <td class="cell-right mono text-bear">78.66</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">BUY_S1</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
     </tr>
-    <tr data-action="SELL" data-phase="downtrend_active" data-detail="~100% · n=1 (ref)" class="row-bear">
+    <tr data-action="SELL" data-phase="downtrend_active" data-detail="—" class="row-bear">
       <td><a href="/hk200/ticker/07500_HK" class="mono" style="color: var(--fg);">07500.HK</a></td>
       <td>FI2 CSOP HSI</td>
       <td class="cell-right mono">1.76</td>
@@ -279,47 +284,21 @@ function toggleTheme(){
       <td class="cell-right mono">1.82</td>
       <td class="cell-right mono text-bull">1.72</td>
       <td class="cell-right mono text-bear">1.88</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
     </tr>
-    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="~100% · n=9 (ref)" class="row-bull">
-      <td><a href="/hk200/ticker/00179_HK" class="mono" style="color: var(--fg);">00179.HK</a></td>
-      <td></td>
-      <td class="cell-right mono">17.75</td>
-      <td class="cell-right mono text-bull">+1.54%</td>
-      <td><span class="tag tag-amber">Recov</span></td>
-      <td><span class="cell-action bull">BUY</span></td>
-      <td class="cell-right mono">17.15</td>
-      <td class="cell-right mono text-bull">18.60</td>
-      <td class="cell-right mono text-bear">16.09</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
-    </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~100% · n=3 (ref)" class="row-bull">
-      <td><a href="/hk200/ticker/00285_HK" class="mono" style="color: var(--fg);">00285.HK</a></td>
-      <td>BYD ELECTRONIC</td>
-      <td class="cell-right mono">23.36</td>
-      <td class="cell-right mono text-bull">+2.28%</td>
+    <tr data-action="SELL" data-phase="base_building" data-detail="—" class="row-bear">
+      <td><a href="/hk200/ticker/09926_HK" class="mono" style="color: var(--fg);">09926.HK</a></td>
+      <td>AKESO</td>
+      <td class="cell-right mono">106.30</td>
+      <td class="cell-right mono text-bull">+15.54%</td>
       <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action bull">BUY</span></td>
-      <td class="cell-right mono">22.22</td>
-      <td class="cell-right mono text-bull">24.67</td>
-      <td class="cell-right mono text-bear">21.08</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
-    </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~100% · n=6 (ref)" class="row-bull">
-      <td><a href="/hk200/ticker/00966_HK" class="mono" style="color: var(--fg);">00966.HK</a></td>
-      <td></td>
-      <td class="cell-right mono">19.84</td>
-      <td class="cell-right mono text-bull">+0.51%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action bull">BUY</span></td>
-      <td class="cell-right mono">19.57</td>
-      <td class="cell-right mono text-bull">21.47</td>
-      <td class="cell-right mono text-bear">18.66</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">107.80</td>
+      <td class="cell-right mono text-bull">96.7</td>
+      <td class="cell-right mono text-bear">115.2</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
     </tr>
     <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="~100% · n=5 (ref)" class="row-bull">
       <td><a href="/hk200/ticker/02318_HK" class="mono" style="color: var(--fg);">02318.HK</a></td>
@@ -332,150 +311,20 @@ function toggleTheme(){
       <td class="cell-right mono text-bull">55.20</td>
       <td class="cell-right mono text-bear">50.90</td>
       <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
-    </tr>
-    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="~100% · n=5 (ref)" class="row-bull">
-      <td><a href="/hk200/ticker/02601_HK" class="mono" style="color: var(--fg);">02601.HK</a></td>
-      <td>CPIC</td>
-      <td class="cell-right mono">28.18</td>
-      <td class="cell-right mono text-bull">+0.07%</td>
-      <td><span class="tag tag-amber">Recov</span></td>
-      <td><span class="cell-action bull">BUY</span></td>
-      <td class="cell-right mono">27.84</td>
-      <td class="cell-right mono text-bull">29.90</td>
-      <td class="cell-right mono text-bear">26.91</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
-    </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~100% · n=6 (ref)" class="row-bull">
-      <td><a href="/hk200/ticker/02628_HK" class="mono" style="color: var(--fg);">02628.HK</a></td>
-      <td></td>
-      <td class="cell-right mono">28.80</td>
-      <td class="cell-right mono text-bull">+2.56%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action bull">BUY</span></td>
-      <td class="cell-right mono">27.94</td>
-      <td class="cell-right mono text-bull">29.77</td>
-      <td class="cell-right mono text-bear">26.51</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
-    </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~100% · n=3 (ref)" class="row-bull">
-      <td><a href="/hk200/ticker/03692_HK" class="mono" style="color: var(--fg);">03692.HK</a></td>
-      <td>HANSOH PHARMA</td>
-      <td class="cell-right mono">33.52</td>
-      <td class="cell-right mono text-bull">+0.36%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action bull">BUY</span></td>
-      <td class="cell-right mono">32.28</td>
-      <td class="cell-right mono text-bull">34.72</td>
-      <td class="cell-right mono text-bear">30.45</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
-    </tr>
-    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="~100% · n=4 (ref)" class="row-bull">
-      <td><a href="/hk200/ticker/03993_HK" class="mono" style="color: var(--fg);">03993.HK</a></td>
-      <td>CMOC</td>
-      <td class="cell-right mono">15.13</td>
-      <td class="cell-right mono text-bull">+1.68%</td>
-      <td><span class="tag tag-amber">Recov</span></td>
-      <td><span class="cell-action bull">BUY</span></td>
-      <td class="cell-right mono">14.60</td>
-      <td class="cell-right mono text-bull">16.27</td>
-      <td class="cell-right mono text-bear">13.64</td>
-      <td class="cell-right mono">100%</td>
       <td class="mono text-dim">BUY_S1</td>
     </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~100% · n=7 (ref)" class="row-bull">
-      <td><a href="/hk200/ticker/06066_HK" class="mono" style="color: var(--fg);">06066.HK</a></td>
-      <td>CSC</td>
-      <td class="cell-right mono">11.28</td>
-      <td class="cell-right mono text-bull">+0.89%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action bull">BUY</span></td>
-      <td class="cell-right mono">10.99</td>
-      <td class="cell-right mono text-bull">11.74</td>
-      <td class="cell-right mono text-bear">10.57</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
-    </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~100% · n=11 (ref)" class="row-bull">
-      <td><a href="/hk200/ticker/06613_HK" class="mono" style="color: var(--fg);">06613.HK</a></td>
-      <td>LENS</td>
-      <td class="cell-right mono">21.04</td>
-      <td class="cell-right mono text-bull">+0.48%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action bull">BUY</span></td>
-      <td class="cell-right mono">20.66</td>
-      <td class="cell-right mono text-bull">22.78</td>
-      <td class="cell-right mono text-bear">19.32</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
-    </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~100% · n=5 (ref)" class="row-bull">
-      <td><a href="/hk200/ticker/06886_HK" class="mono" style="color: var(--fg);">06886.HK</a></td>
+    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="—" class="row-bull">
+      <td><a href="/hk200/ticker/00179_HK" class="mono" style="color: var(--fg);">00179.HK</a></td>
       <td></td>
-      <td class="cell-right mono">16.57</td>
-      <td class="cell-right mono text-bull">+0.79%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action bull">BUY</span></td>
-      <td class="cell-right mono">16.34</td>
-      <td class="cell-right mono text-bull">17.23</td>
-      <td class="cell-right mono text-bear">15.83</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
-    </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~100% · n=3 (ref)" class="row-bull">
-      <td><a href="/hk200/ticker/09988_HK" class="mono" style="color: var(--fg);">09988.HK</a></td>
-      <td>BABA-W</td>
-      <td class="cell-right mono">106.20</td>
-      <td class="cell-right mono text-bear">-1.39%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action bull">BUY</span></td>
-      <td class="cell-right mono">104.20</td>
-      <td class="cell-right mono text-bull">111.2</td>
-      <td class="cell-right mono text-bear">99.0</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
-    </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~88% · n=16 (ref)" class="row-bull">
-      <td><a href="/hk200/ticker/00883_HK" class="mono" style="color: var(--fg);">00883.HK</a></td>
-      <td>CNOOC</td>
-      <td class="cell-right mono">23.70</td>
-      <td class="cell-right mono text-bull">+0.08%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action bull">BUY</span></td>
-      <td class="cell-right mono">23.26</td>
-      <td class="cell-right mono text-bull">24.63</td>
-      <td class="cell-right mono text-bear">22.31</td>
-      <td class="cell-right mono">88%</td>
-      <td class="mono text-dim">SELL_R1</td>
-    </tr>
-    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="~60% · n=5 (ref)" class="row-bull">
-      <td><a href="/hk200/ticker/01898_HK" class="mono" style="color: var(--fg);">01898.HK</a></td>
-      <td>CHINA COAL</td>
-      <td class="cell-right mono">10.51</td>
-      <td class="cell-right mono text-bear">-1.41%</td>
+      <td class="cell-right mono">17.75</td>
+      <td class="cell-right mono text-bull">+1.54%</td>
       <td><span class="tag tag-amber">Recov</span></td>
       <td><span class="cell-action bull">BUY</span></td>
-      <td class="cell-right mono">10.21</td>
-      <td class="cell-right mono text-bull">11.16</td>
-      <td class="cell-right mono text-bear">9.73</td>
-      <td class="cell-right mono">60%</td>
-      <td class="mono text-dim">SELL_R1</td>
-    </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~14% · n=7 (ref)" class="row-bull">
-      <td><a href="/hk200/ticker/02382_HK" class="mono" style="color: var(--fg);">02382.HK</a></td>
-      <td>SUNNY OPTICAL</td>
-      <td class="cell-right mono">62.70</td>
-      <td class="cell-right mono text-bull">+0.64%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action bull">BUY</span></td>
-      <td class="cell-right mono">61.40</td>
-      <td class="cell-right mono text-bull">67.03</td>
-      <td class="cell-right mono text-bear">58.03</td>
-      <td class="cell-right mono">14%</td>
-      <td class="mono text-dim">SELL_R1</td>
+      <td class="cell-right mono">17.15</td>
+      <td class="cell-right mono text-bull">18.60</td>
+      <td class="cell-right mono text-bear">16.09</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
     </tr>
     <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
       <td><a href="/hk200/ticker/00268_HK" class="mono" style="color: var(--fg);">00268.HK</a></td>
@@ -490,7 +339,20 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">—</td>
     </tr>
-    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="~100% · n=2 (ref)" class="row-bull">
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
+      <td><a href="/hk200/ticker/00285_HK" class="mono" style="color: var(--fg);">00285.HK</a></td>
+      <td>BYD ELECTRONIC</td>
+      <td class="cell-right mono">23.36</td>
+      <td class="cell-right mono text-bull">+2.28%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">22.22</td>
+      <td class="cell-right mono text-bull">24.67</td>
+      <td class="cell-right mono text-bear">21.08</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="—" class="row-bull">
       <td><a href="/hk200/ticker/00358_HK" class="mono" style="color: var(--fg);">00358.HK</a></td>
       <td></td>
       <td class="cell-right mono">32.44</td>
@@ -500,10 +362,36 @@ function toggleTheme(){
       <td class="cell-right mono">31.46</td>
       <td class="cell-right mono text-bull">35.72</td>
       <td class="cell-right mono text-bear">29.33</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
     </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~100% · n=1 (ref)" class="row-bull">
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
+      <td><a href="/hk200/ticker/00883_HK" class="mono" style="color: var(--fg);">00883.HK</a></td>
+      <td>CNOOC</td>
+      <td class="cell-right mono">23.70</td>
+      <td class="cell-right mono text-bull">+0.08%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">23.26</td>
+      <td class="cell-right mono text-bull">24.63</td>
+      <td class="cell-right mono text-bear">22.31</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
+      <td><a href="/hk200/ticker/00966_HK" class="mono" style="color: var(--fg);">00966.HK</a></td>
+      <td></td>
+      <td class="cell-right mono">19.84</td>
+      <td class="cell-right mono text-bull">+0.51%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">19.57</td>
+      <td class="cell-right mono text-bull">21.47</td>
+      <td class="cell-right mono text-bear">18.66</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
       <td><a href="/hk200/ticker/01208_HK" class="mono" style="color: var(--fg);">01208.HK</a></td>
       <td>MMG</td>
       <td class="cell-right mono">8.56</td>
@@ -513,8 +401,8 @@ function toggleTheme(){
       <td class="cell-right mono">8.14</td>
       <td class="cell-right mono text-bull">9.05</td>
       <td class="cell-right mono text-bear">7.58</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
     </tr>
     <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="—" class="row-bull">
       <td><a href="/hk200/ticker/01336_HK" class="mono" style="color: var(--fg);">01336.HK</a></td>
@@ -529,7 +417,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">—</td>
     </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~0% · n=3 (ref)" class="row-bull">
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
       <td><a href="/hk200/ticker/01339_HK" class="mono" style="color: var(--fg);">01339.HK</a></td>
       <td></td>
       <td class="cell-right mono">5.70</td>
@@ -539,8 +427,8 @@ function toggleTheme(){
       <td class="cell-right mono">5.53</td>
       <td class="cell-right mono text-bull">6.00</td>
       <td class="cell-right mono text-bear">5.30</td>
-      <td class="cell-right mono">0%</td>
-      <td class="mono text-dim">SELL_R1</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
     </tr>
     <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="—" class="row-bull">
       <td><a href="/hk200/ticker/01378_HK" class="mono" style="color: var(--fg);">01378.HK</a></td>
@@ -555,7 +443,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">—</td>
     </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~0% · n=1 (ref)" class="row-bull">
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
       <td><a href="/hk200/ticker/01415_HK" class="mono" style="color: var(--fg);">01415.HK</a></td>
       <td>COWELL</td>
       <td class="cell-right mono">22.08</td>
@@ -565,8 +453,8 @@ function toggleTheme(){
       <td class="cell-right mono">21.26</td>
       <td class="cell-right mono text-bull">23.28</td>
       <td class="cell-right mono text-bear">20.06</td>
-      <td class="cell-right mono">0%</td>
-      <td class="mono text-dim">SELL_R1</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
     </tr>
     <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
       <td><a href="/hk200/ticker/01810_HK" class="mono" style="color: var(--fg);">01810.HK</a></td>
@@ -581,7 +469,20 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">—</td>
     </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~100% · n=2 (ref)" class="row-bull">
+    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="—" class="row-bull">
+      <td><a href="/hk200/ticker/01898_HK" class="mono" style="color: var(--fg);">01898.HK</a></td>
+      <td>CHINA COAL</td>
+      <td class="cell-right mono">10.51</td>
+      <td class="cell-right mono text-bear">-1.41%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">10.21</td>
+      <td class="cell-right mono text-bull">11.16</td>
+      <td class="cell-right mono text-bear">9.73</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
       <td><a href="/hk200/ticker/02018_HK" class="mono" style="color: var(--fg);">02018.HK</a></td>
       <td>AAC TECH</td>
       <td class="cell-right mono">39.98</td>
@@ -591,8 +492,8 @@ function toggleTheme(){
       <td class="cell-right mono">38.00</td>
       <td class="cell-right mono text-bull">41.50</td>
       <td class="cell-right mono text-bear">35.85</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
     </tr>
     <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
       <td><a href="/hk200/ticker/02259_HK" class="mono" style="color: var(--fg);">02259.HK</a></td>
@@ -604,6 +505,19 @@ function toggleTheme(){
       <td class="cell-right mono">135.30</td>
       <td class="cell-right mono text-bull">151.5</td>
       <td class="cell-right mono text-bear">124.6</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
+      <td><a href="/hk200/ticker/02382_HK" class="mono" style="color: var(--fg);">02382.HK</a></td>
+      <td>SUNNY OPTICAL</td>
+      <td class="cell-right mono">62.70</td>
+      <td class="cell-right mono text-bull">+0.64%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">61.40</td>
+      <td class="cell-right mono text-bull">67.03</td>
+      <td class="cell-right mono text-bear">58.03</td>
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">—</td>
     </tr>
@@ -620,7 +534,33 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">—</td>
     </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~100% · n=1 (ref)" class="row-bull">
+    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="—" class="row-bull">
+      <td><a href="/hk200/ticker/02601_HK" class="mono" style="color: var(--fg);">02601.HK</a></td>
+      <td>CPIC</td>
+      <td class="cell-right mono">28.18</td>
+      <td class="cell-right mono text-bull">+0.07%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">27.84</td>
+      <td class="cell-right mono text-bull">29.90</td>
+      <td class="cell-right mono text-bear">26.91</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
+      <td><a href="/hk200/ticker/02628_HK" class="mono" style="color: var(--fg);">02628.HK</a></td>
+      <td></td>
+      <td class="cell-right mono">28.80</td>
+      <td class="cell-right mono text-bull">+2.56%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">27.94</td>
+      <td class="cell-right mono text-bull">29.77</td>
+      <td class="cell-right mono text-bear">26.51</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
       <td><a href="/hk200/ticker/02800_HK" class="mono" style="color: var(--fg);">02800.HK</a></td>
       <td>TRACKER FUND</td>
       <td class="cell-right mono">25.30</td>
@@ -630,10 +570,10 @@ function toggleTheme(){
       <td class="cell-right mono">24.90</td>
       <td class="cell-right mono text-bull">25.65</td>
       <td class="cell-right mono text-bear">24.40</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
     </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~100% · n=2 (ref)" class="row-bull">
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
       <td><a href="/hk200/ticker/02828_HK" class="mono" style="color: var(--fg);">02828.HK</a></td>
       <td>HSCEI ETF</td>
       <td class="cell-right mono">84.36</td>
@@ -643,8 +583,8 @@ function toggleTheme(){
       <td class="cell-right mono">82.84</td>
       <td class="cell-right mono text-bull">85.77</td>
       <td class="cell-right mono text-bear">81.18</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
     </tr>
     <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
       <td><a href="/hk200/ticker/02899_HK" class="mono" style="color: var(--fg);">02899.HK</a></td>
@@ -656,6 +596,19 @@ function toggleTheme(){
       <td class="cell-right mono">31.12</td>
       <td class="cell-right mono text-bull">34.51</td>
       <td class="cell-right mono text-bear">29.33</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
+      <td><a href="/hk200/ticker/03692_HK" class="mono" style="color: var(--fg);">03692.HK</a></td>
+      <td>HANSOH PHARMA</td>
+      <td class="cell-right mono">33.52</td>
+      <td class="cell-right mono text-bull">+0.36%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">32.28</td>
+      <td class="cell-right mono text-bull">34.72</td>
+      <td class="cell-right mono text-bear">30.45</td>
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">—</td>
     </tr>
@@ -672,7 +625,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">—</td>
     </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~100% · n=2 (ref)" class="row-bull">
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
       <td><a href="/hk200/ticker/03908_HK" class="mono" style="color: var(--fg);">03908.HK</a></td>
       <td>CICC</td>
       <td class="cell-right mono">19.13</td>
@@ -682,8 +635,34 @@ function toggleTheme(){
       <td class="cell-right mono">19.02</td>
       <td class="cell-right mono text-bull">20.75</td>
       <td class="cell-right mono text-bear">18.06</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="—" class="row-bull">
+      <td><a href="/hk200/ticker/03993_HK" class="mono" style="color: var(--fg);">03993.HK</a></td>
+      <td>CMOC</td>
+      <td class="cell-right mono">15.13</td>
+      <td class="cell-right mono text-bull">+1.68%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">14.60</td>
+      <td class="cell-right mono text-bull">16.27</td>
+      <td class="cell-right mono text-bear">13.64</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
+      <td><a href="/hk200/ticker/06066_HK" class="mono" style="color: var(--fg);">06066.HK</a></td>
+      <td>CSC</td>
+      <td class="cell-right mono">11.28</td>
+      <td class="cell-right mono text-bull">+0.89%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">10.99</td>
+      <td class="cell-right mono text-bull">11.74</td>
+      <td class="cell-right mono text-bear">10.57</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
     </tr>
     <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="—" class="row-bull">
       <td><a href="/hk200/ticker/06088_HK" class="mono" style="color: var(--fg);">06088.HK</a></td>
@@ -711,7 +690,20 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">—</td>
     </tr>
-    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="~100% · n=2 (ref)" class="row-bull">
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
+      <td><a href="/hk200/ticker/06613_HK" class="mono" style="color: var(--fg);">06613.HK</a></td>
+      <td>LENS</td>
+      <td class="cell-right mono">21.04</td>
+      <td class="cell-right mono text-bull">+0.48%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">20.66</td>
+      <td class="cell-right mono text-bull">22.78</td>
+      <td class="cell-right mono text-bear">19.32</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="—" class="row-bull">
       <td><a href="/hk200/ticker/06690_HK" class="mono" style="color: var(--fg);">06690.HK</a></td>
       <td></td>
       <td class="cell-right mono">20.14</td>
@@ -721,10 +713,23 @@ function toggleTheme(){
       <td class="cell-right mono">19.54</td>
       <td class="cell-right mono text-bull">20.69</td>
       <td class="cell-right mono text-bear">18.91</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
     </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~100% · n=2 (ref)" class="row-bull">
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
+      <td><a href="/hk200/ticker/06886_HK" class="mono" style="color: var(--fg);">06886.HK</a></td>
+      <td></td>
+      <td class="cell-right mono">16.57</td>
+      <td class="cell-right mono text-bull">+0.79%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">16.34</td>
+      <td class="cell-right mono text-bull">17.23</td>
+      <td class="cell-right mono text-bear">15.83</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
       <td><a href="/hk200/ticker/07200_HK" class="mono" style="color: var(--fg);">07200.HK</a></td>
       <td></td>
       <td class="cell-right mono">5.38</td>
@@ -734,352 +739,40 @@ function toggleTheme(){
       <td class="cell-right mono">5.20</td>
       <td class="cell-right mono text-bull">5.54</td>
       <td class="cell-right mono text-bear">5.02</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=6 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/00002_HK" class="mono" style="color: var(--fg);">00002.HK</a></td>
-      <td>CLP HOLDINGS</td>
-      <td class="cell-right mono">76.50</td>
-      <td class="cell-right mono text-bear">-0.07%</td>
-      <td><span class="tag tag-bear">DT</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
       <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="mono text-dim">—</td>
     </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~100% · n=7 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/00006_HK" class="mono" style="color: var(--fg);">00006.HK</a></td>
-      <td></td>
-      <td class="cell-right mono">59.50</td>
-      <td class="cell-right mono text-bear">-0.42%</td>
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
+      <td><a href="/hk200/ticker/09988_HK" class="mono" style="color: var(--fg);">09988.HK</a></td>
+      <td>BABA-W</td>
+      <td class="cell-right mono">106.20</td>
+      <td class="cell-right mono text-bear">-1.39%</td>
       <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">104.20</td>
+      <td class="cell-right mono text-bull">111.2</td>
+      <td class="cell-right mono text-bear">99.0</td>
       <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=7 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/00016_HK" class="mono" style="color: var(--fg);">00016.HK</a></td>
-      <td></td>
-      <td class="cell-right mono">107.90</td>
-      <td class="cell-right mono text-bull">+0.28%</td>
-      <td><span class="tag tag-bear">DT</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="~100% · n=10 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/00728_HK" class="mono" style="color: var(--fg);">00728.HK</a></td>
-      <td>CHINA TELECOM</td>
-      <td class="cell-right mono">4.49</td>
-      <td class="cell-right mono text-bull">+0.22%</td>
-      <td><span class="tag tag-amber">Recov</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~100% · n=16 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/00857_HK" class="mono" style="color: var(--fg);">00857.HK</a></td>
-      <td>PETROCHINA</td>
-      <td class="cell-right mono">9.71</td>
-      <td class="cell-right mono text-bull">+0.10%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=6 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/00981_HK" class="mono" style="color: var(--fg);">00981.HK</a></td>
-      <td>SMIC</td>
-      <td class="cell-right mono">61.05</td>
-      <td class="cell-right mono ">+0.00%</td>
-      <td><span class="tag tag-bear">DT</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=4 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/01072_HK" class="mono" style="color: var(--fg);">01072.HK</a></td>
-      <td>DONGFANG ELEC</td>
-      <td class="cell-right mono">18.13</td>
-      <td class="cell-right mono text-bull">+1.40%</td>
-      <td><span class="tag tag-bear">DT</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~100% · n=6 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/01205_HK" class="mono" style="color: var(--fg);">01205.HK</a></td>
-      <td>CITIC RESOURCES</td>
-      <td class="cell-right mono">0.58</td>
-      <td class="cell-right mono text-bear">-0.85%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="~100% · n=6 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/01385_HK" class="mono" style="color: var(--fg);">01385.HK</a></td>
-      <td>SHANGHAI FUDAN</td>
-      <td class="cell-right mono">26.18</td>
-      <td class="cell-right mono text-bull">+3.56%</td>
-      <td><span class="tag tag-amber">Recov</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=4 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/01928_HK" class="mono" style="color: var(--fg);">01928.HK</a></td>
-      <td>SANDS CHINA LTD</td>
-      <td class="cell-right mono">11.79</td>
-      <td class="cell-right mono text-bear">-1.17%</td>
-      <td><span class="tag tag-bear">DT</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~100% · n=5 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/02020_HK" class="mono" style="color: var(--fg);">02020.HK</a></td>
-      <td>ANTA SPORTS</td>
-      <td class="cell-right mono">73.50</td>
-      <td class="cell-right mono text-bull">+2.08%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=3 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/02208_HK" class="mono" style="color: var(--fg);">02208.HK</a></td>
-      <td>GOLDWIND</td>
-      <td class="cell-right mono">8.80</td>
-      <td class="cell-right mono text-bull">+0.63%</td>
-      <td><span class="tag tag-bear">DT</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~100% · n=3 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/02228_HK" class="mono" style="color: var(--fg);">02228.HK</a></td>
-      <td></td>
-      <td class="cell-right mono">7.89</td>
-      <td class="cell-right mono text-bull">+3.20%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=4 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/02338_HK" class="mono" style="color: var(--fg);">02338.HK</a></td>
-      <td>WEICHAI POWER</td>
-      <td class="cell-right mono">28.36</td>
-      <td class="cell-right mono text-bull">+2.24%</td>
-      <td><span class="tag tag-bear">DT</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=7 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/02577_HK" class="mono" style="color: var(--fg);">02577.HK</a></td>
-      <td>INNOSCIENCE</td>
-      <td class="cell-right mono">38.22</td>
-      <td class="cell-right mono text-bull">+2.30%</td>
-      <td><span class="tag tag-bear">DT</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=3 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/03323_HK" class="mono" style="color: var(--fg);">03323.HK</a></td>
-      <td></td>
-      <td class="cell-right mono">3.13</td>
-      <td class="cell-right mono text-bull">+1.79%</td>
-      <td><span class="tag tag-bear">DT</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="~100% · n=7 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/03431_HK" class="mono" style="color: var(--fg);">03431.HK</a></td>
-      <td>CSOP HKKRTECH</td>
-      <td class="cell-right mono">10.21</td>
-      <td class="cell-right mono text-bear">-1.54%</td>
-      <td><span class="tag tag-amber">Recov</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=4 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/03441_HK" class="mono" style="color: var(--fg);">03441.HK</a></td>
-      <td>CSOP EWSELECT</td>
-      <td class="cell-right mono">13.52</td>
-      <td class="cell-right mono text-bull">+0.52%</td>
-      <td><span class="tag tag-bear">DT</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="~100% · n=3 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/09660_HK" class="mono" style="color: var(--fg);">09660.HK</a></td>
-      <td></td>
-      <td class="cell-right mono">4.14</td>
-      <td class="cell-right mono text-bull">+0.73%</td>
-      <td><span class="tag tag-amber">Recov</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=5 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/09696_HK" class="mono" style="color: var(--fg);">09696.HK</a></td>
-      <td></td>
-      <td class="cell-right mono">28.58</td>
-      <td class="cell-right mono text-bull">+0.28%</td>
-      <td><span class="tag tag-bear">DT</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~100% · n=5 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/09698_HK" class="mono" style="color: var(--fg);">09698.HK</a></td>
-      <td>GDS-SW</td>
-      <td class="cell-right mono">31.04</td>
-      <td class="cell-right mono text-bear">-2.27%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="~100% · n=6 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/09863_HK" class="mono" style="color: var(--fg);">09863.HK</a></td>
-      <td>LEAPMOTOR</td>
-      <td class="cell-right mono">34.26</td>
-      <td class="cell-right mono text-bear">-3.87%</td>
-      <td><span class="tag tag-amber">Recov</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=4 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/09880_HK" class="mono" style="color: var(--fg);">09880.HK</a></td>
-      <td>UBTECH ROBOTICS</td>
-      <td class="cell-right mono">72.75</td>
-      <td class="cell-right mono text-bear">-1.29%</td>
-      <td><span class="tag tag-bear">DT</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~50% · n=4 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/01729_HK" class="mono" style="color: var(--fg);">01729.HK</a></td>
-      <td></td>
-      <td class="cell-right mono">16.43</td>
-      <td class="cell-right mono text-bull">+0.55%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~50%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~41% · n=17 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/01171_HK" class="mono" style="color: var(--fg);">01171.HK</a></td>
-      <td>YANKUANG ENERGY</td>
-      <td class="cell-right mono">11.62</td>
-      <td class="cell-right mono text-bear">-0.51%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~41%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~20% · n=10 (ref)" class="row-wait">
-      <td><a href="/hk200/ticker/02714_HK" class="mono" style="color: var(--fg);">02714.HK</a></td>
-      <td>MUYUAN</td>
-      <td class="cell-right mono">37.66</td>
-      <td class="cell-right mono text-bull">+1.45%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~20%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="mono text-dim">—</td>
     </tr>
     <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/00001_HK" class="mono" style="color: var(--fg);">00001.HK</a></td>
       <td>CKH HOLDINGS</td>
       <td class="cell-right mono">68.25</td>
       <td class="cell-right mono text-bear">-0.36%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/00002_HK" class="mono" style="color: var(--fg);">00002.HK</a></td>
+      <td>CLP HOLDINGS</td>
+      <td class="cell-right mono">76.50</td>
+      <td class="cell-right mono text-bear">-0.07%</td>
       <td><span class="tag tag-bear">DT</span></td>
       <td><span class="cell-action wait">WAIT</span></td>
       <td class="cell-right mono">—</td>
@@ -1101,7 +794,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=2 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/00005_HK" class="mono" style="color: var(--fg);">00005.HK</a></td>
       <td></td>
       <td class="cell-right mono">159.00</td>
@@ -1111,10 +804,23 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~100% · n=1 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/00006_HK" class="mono" style="color: var(--fg);">00006.HK</a></td>
+      <td></td>
+      <td class="cell-right mono">59.50</td>
+      <td class="cell-right mono text-bear">-0.42%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/00012_HK" class="mono" style="color: var(--fg);">00012.HK</a></td>
       <td>HENDERSON LAND</td>
       <td class="cell-right mono">26.36</td>
@@ -1124,10 +830,23 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=2 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/00016_HK" class="mono" style="color: var(--fg);">00016.HK</a></td>
+      <td></td>
+      <td class="cell-right mono">107.90</td>
+      <td class="cell-right mono text-bull">+0.28%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/00020_HK" class="mono" style="color: var(--fg);">00020.HK</a></td>
       <td></td>
       <td class="cell-right mono">1.22</td>
@@ -1137,8 +856,8 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
     <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/00027_HK" class="mono" style="color: var(--fg);">00027.HK</a></td>
@@ -1179,7 +898,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=9 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/00175_HK" class="mono" style="color: var(--fg);">00175.HK</a></td>
       <td>GEELY AUTO</td>
       <td class="cell-right mono">14.98</td>
@@ -1205,7 +924,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=2 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/00241_HK" class="mono" style="color: var(--fg);">00241.HK</a></td>
       <td>ALI HEALTH</td>
       <td class="cell-right mono">2.83</td>
@@ -1218,7 +937,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=2 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/00267_HK" class="mono" style="color: var(--fg);">00267.HK</a></td>
       <td>CITIC</td>
       <td class="cell-right mono">13.00</td>
@@ -1244,7 +963,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=4 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/00291_HK" class="mono" style="color: var(--fg);">00291.HK</a></td>
       <td>CHINA RES BEER</td>
       <td class="cell-right mono">18.85</td>
@@ -1283,7 +1002,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~100% · n=2 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/00388_HK" class="mono" style="color: var(--fg);">00388.HK</a></td>
       <td>HKEX</td>
       <td class="cell-right mono">386.80</td>
@@ -1293,8 +1012,8 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
     <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/00425_HK" class="mono" style="color: var(--fg);">00425.HK</a></td>
@@ -1322,7 +1041,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=2 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/00669_HK" class="mono" style="color: var(--fg);">00669.HK</a></td>
       <td>TECHTRONIC IND</td>
       <td class="cell-right mono">127.40</td>
@@ -1332,8 +1051,8 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
     <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/00700_HK" class="mono" style="color: var(--fg);">00700.HK</a></td>
@@ -1348,7 +1067,20 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=1 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/00728_HK" class="mono" style="color: var(--fg);">00728.HK</a></td>
+      <td>CHINA TELECOM</td>
+      <td class="cell-right mono">4.49</td>
+      <td class="cell-right mono text-bull">+0.22%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/00762_HK" class="mono" style="color: var(--fg);">00762.HK</a></td>
       <td></td>
       <td class="cell-right mono">5.54</td>
@@ -1361,7 +1093,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=1 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/00763_HK" class="mono" style="color: var(--fg);">00763.HK</a></td>
       <td>ZTE</td>
       <td class="cell-right mono">21.72</td>
@@ -1371,10 +1103,10 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=2 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/00780_HK" class="mono" style="color: var(--fg);">00780.HK</a></td>
       <td>TONGCHENGTRAVEL</td>
       <td class="cell-right mono">10.10</td>
@@ -1413,7 +1145,20 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="~100% · n=2 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/00857_HK" class="mono" style="color: var(--fg);">00857.HK</a></td>
+      <td>PETROCHINA</td>
+      <td class="cell-right mono">9.71</td>
+      <td class="cell-right mono text-bull">+0.10%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/00916_HK" class="mono" style="color: var(--fg);">00916.HK</a></td>
       <td>CHINA LONGYUAN</td>
       <td class="cell-right mono">5.30</td>
@@ -1423,10 +1168,10 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">BUY_S1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=8 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/00939_HK" class="mono" style="color: var(--fg);">00939.HK</a></td>
       <td>CCB</td>
       <td class="cell-right mono">9.69</td>
@@ -1445,6 +1190,19 @@ function toggleTheme(){
       <td class="cell-right mono">79.35</td>
       <td class="cell-right mono text-bull">+0.13%</td>
       <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/00981_HK" class="mono" style="color: var(--fg);">00981.HK</a></td>
+      <td>SMIC</td>
+      <td class="cell-right mono">61.05</td>
+      <td class="cell-right mono ">+0.00%</td>
+      <td><span class="tag tag-bear">DT</span></td>
       <td><span class="cell-action wait">WAIT</span></td>
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
@@ -1478,7 +1236,20 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~100% · n=2 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/01072_HK" class="mono" style="color: var(--fg);">01072.HK</a></td>
+      <td>DONGFANG ELEC</td>
+      <td class="cell-right mono">18.13</td>
+      <td class="cell-right mono text-bull">+1.40%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/01088_HK" class="mono" style="color: var(--fg);">01088.HK</a></td>
       <td>CHINA SHENHUA</td>
       <td class="cell-right mono">44.44</td>
@@ -1488,10 +1259,10 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=1 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/01109_HK" class="mono" style="color: var(--fg);">01109.HK</a></td>
       <td>CHINA RES LAND</td>
       <td class="cell-right mono">30.46</td>
@@ -1501,10 +1272,10 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~100% · n=2 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/01113_HK" class="mono" style="color: var(--fg);">01113.HK</a></td>
       <td></td>
       <td class="cell-right mono">46.66</td>
@@ -1514,14 +1285,27 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">BUY_S1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~0% · n=12 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/01138_HK" class="mono" style="color: var(--fg);">01138.HK</a></td>
       <td></td>
       <td class="cell-right mono">17.82</td>
       <td class="cell-right mono text-bear">-4.96%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/01171_HK" class="mono" style="color: var(--fg);">01171.HK</a></td>
+      <td>YANKUANG ENERGY</td>
+      <td class="cell-right mono">11.62</td>
+      <td class="cell-right mono text-bear">-0.51%</td>
       <td><span class="tag tag-amber">Base</span></td>
       <td><span class="cell-action wait">WAIT</span></td>
       <td class="cell-right mono">—</td>
@@ -1543,7 +1327,20 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="~50% · n=2 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/01205_HK" class="mono" style="color: var(--fg);">01205.HK</a></td>
+      <td>CITIC RESOURCES</td>
+      <td class="cell-right mono">0.58</td>
+      <td class="cell-right mono text-bear">-0.85%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/01211_HK" class="mono" style="color: var(--fg);">01211.HK</a></td>
       <td>BYD COMPANY</td>
       <td class="cell-right mono">75.75</td>
@@ -1553,8 +1350,8 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~50%</td>
-      <td class="mono text-dim">BUY_S1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
     <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/01276_HK" class="mono" style="color: var(--fg);">01276.HK</a></td>
@@ -1608,6 +1405,19 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
+    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/01385_HK" class="mono" style="color: var(--fg);">01385.HK</a></td>
+      <td>SHANGHAI FUDAN</td>
+      <td class="cell-right mono">26.18</td>
+      <td class="cell-right mono text-bull">+3.56%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
     <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/01398_HK" class="mono" style="color: var(--fg);">01398.HK</a></td>
       <td>ICBC</td>
@@ -1634,7 +1444,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=1 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/01530_HK" class="mono" style="color: var(--fg);">01530.HK</a></td>
       <td>3SBIO</td>
       <td class="cell-right mono">15.92</td>
@@ -1644,10 +1454,10 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~50% · n=2 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/01658_HK" class="mono" style="color: var(--fg);">01658.HK</a></td>
       <td>PSBC</td>
       <td class="cell-right mono">5.39</td>
@@ -1657,8 +1467,8 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~50%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
     <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/01688_HK" class="mono" style="color: var(--fg);">01688.HK</a></td>
@@ -1673,7 +1483,20 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=1 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/01729_HK" class="mono" style="color: var(--fg);">01729.HK</a></td>
+      <td></td>
+      <td class="cell-right mono">16.43</td>
+      <td class="cell-right mono text-bull">+0.55%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/01772_HK" class="mono" style="color: var(--fg);">01772.HK</a></td>
       <td>GANFENGLITHIUM</td>
       <td class="cell-right mono">30.32</td>
@@ -1712,7 +1535,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=1 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/01797_HK" class="mono" style="color: var(--fg);">01797.HK</a></td>
       <td>EAST BUY</td>
       <td class="cell-right mono">26.00</td>
@@ -1725,7 +1548,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=3 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/01801_HK" class="mono" style="color: var(--fg);">01801.HK</a></td>
       <td>INNOVENT BIO</td>
       <td class="cell-right mono">95.90</td>
@@ -1757,6 +1580,19 @@ function toggleTheme(){
       <td class="cell-right mono">48.68</td>
       <td class="cell-right mono text-bull">+3.53%</td>
       <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/01928_HK" class="mono" style="color: var(--fg);">01928.HK</a></td>
+      <td>SANDS CHINA LTD</td>
+      <td class="cell-right mono">11.79</td>
+      <td class="cell-right mono text-bear">-1.17%</td>
+      <td><span class="tag tag-bear">DT</span></td>
       <td><span class="cell-action wait">WAIT</span></td>
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
@@ -1803,7 +1639,20 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=2 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/02020_HK" class="mono" style="color: var(--fg);">02020.HK</a></td>
+      <td>ANTA SPORTS</td>
+      <td class="cell-right mono">73.50</td>
+      <td class="cell-right mono text-bull">+2.08%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/02050_HK" class="mono" style="color: var(--fg);">02050.HK</a></td>
       <td></td>
       <td class="cell-right mono">24.30</td>
@@ -1813,8 +1662,8 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
     <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/02057_HK" class="mono" style="color: var(--fg);">02057.HK</a></td>
@@ -1855,7 +1704,33 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="uptrend" data-detail="~0% · n=2 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/02208_HK" class="mono" style="color: var(--fg);">02208.HK</a></td>
+      <td>GOLDWIND</td>
+      <td class="cell-right mono">8.80</td>
+      <td class="cell-right mono text-bull">+0.63%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/02228_HK" class="mono" style="color: var(--fg);">02228.HK</a></td>
+      <td></td>
+      <td class="cell-right mono">7.89</td>
+      <td class="cell-right mono text-bull">+3.20%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="uptrend" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/02268_HK" class="mono" style="color: var(--fg);">02268.HK</a></td>
       <td>WUXI XDC</td>
       <td class="cell-right mono">78.05</td>
@@ -1894,7 +1769,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=6 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/02313_HK" class="mono" style="color: var(--fg);">02313.HK</a></td>
       <td>SHENZHOU INTL</td>
       <td class="cell-right mono">34.58</td>
@@ -1920,7 +1795,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=5 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/02328_HK" class="mono" style="color: var(--fg);">02328.HK</a></td>
       <td>PICC P&C</td>
       <td class="cell-right mono">16.51</td>
@@ -1938,6 +1813,19 @@ function toggleTheme(){
       <td></td>
       <td class="cell-right mono">12.53</td>
       <td class="cell-right mono text-bull">+0.64%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/02338_HK" class="mono" style="color: var(--fg);">02338.HK</a></td>
+      <td>WEICHAI POWER</td>
+      <td class="cell-right mono">28.36</td>
+      <td class="cell-right mono text-bull">+2.24%</td>
       <td><span class="tag tag-bear">DT</span></td>
       <td><span class="cell-action wait">WAIT</span></td>
       <td class="cell-right mono">—</td>
@@ -1972,7 +1860,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~0% · n=1 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/02423_HK" class="mono" style="color: var(--fg);">02423.HK</a></td>
       <td>BEKE-W</td>
       <td class="cell-right mono">44.42</td>
@@ -1998,7 +1886,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=1 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/02465_HK" class="mono" style="color: var(--fg);">02465.HK</a></td>
       <td>LOPAL TECH</td>
       <td class="cell-right mono">8.69</td>
@@ -2008,8 +1896,8 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
     <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/02476_HK" class="mono" style="color: var(--fg);">02476.HK</a></td>
@@ -2050,7 +1938,20 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~0% · n=3 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/02577_HK" class="mono" style="color: var(--fg);">02577.HK</a></td>
+      <td>INNOSCIENCE</td>
+      <td class="cell-right mono">38.22</td>
+      <td class="cell-right mono text-bull">+2.30%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/02611_HK" class="mono" style="color: var(--fg);">02611.HK</a></td>
       <td>GTHT</td>
       <td class="cell-right mono">14.71</td>
@@ -2102,6 +2003,19 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/02714_HK" class="mono" style="color: var(--fg);">02714.HK</a></td>
+      <td>MUYUAN</td>
+      <td class="cell-right mono">37.66</td>
+      <td class="cell-right mono text-bull">+1.45%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
     <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/02802_HK" class="mono" style="color: var(--fg);">02802.HK</a></td>
       <td></td>
@@ -2115,7 +2029,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=12 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/03032_HK" class="mono" style="color: var(--fg);">03032.HK</a></td>
       <td>HSTECH ETF</td>
       <td class="cell-right mono">4.30</td>
@@ -2128,7 +2042,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=13 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/03033_HK" class="mono" style="color: var(--fg);">03033.HK</a></td>
       <td></td>
       <td class="cell-right mono">4.20</td>
@@ -2141,7 +2055,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=1 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/03067_HK" class="mono" style="color: var(--fg);">03067.HK</a></td>
       <td>ISHARESHSTECH</td>
       <td class="cell-right mono">9.09</td>
@@ -2151,10 +2065,10 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">BUY_S1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=9 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/03088_HK" class="mono" style="color: var(--fg);">03088.HK</a></td>
       <td></td>
       <td class="cell-right mono">5.48</td>
@@ -2180,7 +2094,20 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=6 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/03323_HK" class="mono" style="color: var(--fg);">03323.HK</a></td>
+      <td></td>
+      <td class="cell-right mono">3.13</td>
+      <td class="cell-right mono text-bull">+1.79%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/03328_HK" class="mono" style="color: var(--fg);">03328.HK</a></td>
       <td>BANKCOMM</td>
       <td class="cell-right mono">8.24</td>
@@ -2211,6 +2138,32 @@ function toggleTheme(){
       <td>A GX HSCEICC</td>
       <td class="cell-right mono">8.27</td>
       <td class="cell-right mono text-bull">+0.79%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/03431_HK" class="mono" style="color: var(--fg);">03431.HK</a></td>
+      <td>CSOP HKKRTECH</td>
+      <td class="cell-right mono">10.21</td>
+      <td class="cell-right mono text-bear">-1.54%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/03441_HK" class="mono" style="color: var(--fg);">03441.HK</a></td>
+      <td>CSOP EWSELECT</td>
+      <td class="cell-right mono">13.52</td>
+      <td class="cell-right mono text-bull">+0.52%</td>
       <td><span class="tag tag-bear">DT</span></td>
       <td><span class="cell-action wait">WAIT</span></td>
       <td class="cell-right mono">—</td>
@@ -2271,7 +2224,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=6 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/03750_HK" class="mono" style="color: var(--fg);">03750.HK</a></td>
       <td>CATL</td>
       <td class="cell-right mono">482.20</td>
@@ -2310,7 +2263,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=2 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/03808_HK" class="mono" style="color: var(--fg);">03808.HK</a></td>
       <td>SINOTRUK</td>
       <td class="cell-right mono">35.12</td>
@@ -2320,8 +2273,8 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
     <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/03858_HK" class="mono" style="color: var(--fg);">03858.HK</a></td>
@@ -2375,7 +2328,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="~100% · n=1 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/03986_HK" class="mono" style="color: var(--fg);">03986.HK</a></td>
       <td>GIGADEVICE</td>
       <td class="cell-right mono">466.00</td>
@@ -2385,10 +2338,10 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">BUY_S1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=5 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/03988_HK" class="mono" style="color: var(--fg);">03988.HK</a></td>
       <td>BANK OF CHINA</td>
       <td class="cell-right mono">6.01</td>
@@ -2557,7 +2510,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=14 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/07226_HK" class="mono" style="color: var(--fg);">07226.HK</a></td>
       <td>XL2CSOPHSTECH</td>
       <td class="cell-right mono">2.80</td>
@@ -2609,7 +2562,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=7 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/09626_HK" class="mono" style="color: var(--fg);">09626.HK</a></td>
       <td>BILIBILI-W</td>
       <td class="cell-right mono">117.90</td>
@@ -2648,11 +2601,76 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
+    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/09660_HK" class="mono" style="color: var(--fg);">09660.HK</a></td>
+      <td></td>
+      <td class="cell-right mono">4.14</td>
+      <td class="cell-right mono text-bull">+0.73%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/09696_HK" class="mono" style="color: var(--fg);">09696.HK</a></td>
+      <td></td>
+      <td class="cell-right mono">28.58</td>
+      <td class="cell-right mono text-bull">+0.28%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/09698_HK" class="mono" style="color: var(--fg);">09698.HK</a></td>
+      <td>GDS-SW</td>
+      <td class="cell-right mono">31.04</td>
+      <td class="cell-right mono text-bear">-2.27%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/09863_HK" class="mono" style="color: var(--fg);">09863.HK</a></td>
+      <td>LEAPMOTOR</td>
+      <td class="cell-right mono">34.26</td>
+      <td class="cell-right mono text-bear">-3.87%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
     <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/09868_HK" class="mono" style="color: var(--fg);">09868.HK</a></td>
       <td>XPENG-W</td>
       <td class="cell-right mono">37.50</td>
       <td class="cell-right mono text-bear">-4.09%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/hk200/ticker/09880_HK" class="mono" style="color: var(--fg);">09880.HK</a></td>
+      <td>UBTECH ROBOTICS</td>
+      <td class="cell-right mono">72.75</td>
+      <td class="cell-right mono text-bear">-1.29%</td>
       <td><span class="tag tag-bear">DT</span></td>
       <td><span class="cell-action wait">WAIT</span></td>
       <td class="cell-right mono">—</td>
@@ -2687,7 +2705,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=4 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/09961_HK" class="mono" style="color: var(--fg);">09961.HK</a></td>
       <td>TRIP.COM-S</td>
       <td class="cell-right mono">307.00</td>
@@ -2700,7 +2718,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=1 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/09987_HK" class="mono" style="color: var(--fg);">09987.HK</a></td>
       <td>YUM CHINA</td>
       <td class="cell-right mono">321.20</td>
@@ -2710,8 +2728,8 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
     <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/09992_HK" class="mono" style="color: var(--fg);">09992.HK</a></td>
@@ -2752,7 +2770,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~100% · n=1 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
       <td><a href="/hk200/ticker/09999_HK" class="mono" style="color: var(--fg);">09999.HK</a></td>
       <td>NTES</td>
       <td class="cell-right mono">192.80</td>
@@ -2762,8 +2780,8 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
   </tbody>
   </table>

@@ -28,6 +28,7 @@ import json
 import re
 import sqlite3
 import sys
+from mobile_nav import mobile_bottom_nav
 from datetime import datetime
 from pathlib import Path
 
@@ -869,6 +870,20 @@ def _en_url_for(zh_path: str) -> str:
     return "/en/"
 
 
+def _mnav_key(active_path: str) -> str:
+    """Map a page path to the mobile bottom-nav active key."""
+    p = (active_path or "/").rstrip("/") or "/"
+    if p.startswith("/hk200"):
+        return "hk"
+    if p.startswith("/us200"):
+        return "us"
+    if p.startswith("/jp200"):
+        return "jp"
+    if p.startswith("/methodology"):
+        return "me"
+    return "home"
+
+
 def nav_html(active_path: str) -> str:
     """Top nav — minimal 4-link set (2026-08-29 user request)."""
     # 2026-08-29: SVG icons 取代 emoji（Pro Max anti-pattern fix：emoji 跨平台不一致）
@@ -929,6 +944,7 @@ def nav_html(active_path: str) -> str:
         f'  </div>\n'
         f'</nav>\n'
         f'</header>\n'
+        f'{mobile_bottom_nav(_mnav_key(active_path), en=active_path.startswith("/en"))}'
         f'<script>\n'
         f'function toggleTheme(){{\n'
         f'  const cur = document.documentElement.getAttribute("data-theme") || "dark";\n'
@@ -1067,6 +1083,8 @@ def shell(title: str, body_html: str, active_path: str = "/",
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="alternate icon" href="/favicon.ico" sizes="any">
+<link rel="manifest" href="/manifest.json">
 <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <title>{_html.escape(title)}</title>
@@ -2212,6 +2230,10 @@ filter 可以 hide 其他方向。</p>
                 body_html=body,
                 active_path=f"/{active_key}.html",
                 description=_STATIC_META.get(slug, {}).get("description", f"Leeks Terminal {en} page"),
+                # 2026-10-02 SEO audit: every static page inherited shell()'s
+                # default canonical of the homepage, so /disclaimer/ and
+                # /privacy/ told Google they were duplicates of "/".
+                canonical=f"https://www.win9you.com/{active_key}",
             ),
             encoding="utf-8",
         )

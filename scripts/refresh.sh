@@ -100,6 +100,15 @@ python3 scripts/build_home.py 2>&1 | tail -3
 echo
 echo "[7/7] Static pages + backtest page..."
 python3 scripts/build_static.py 2>&1 | tail -2
+# 2026-10-02: /insights.html shipped hard-coded index levels (HSI 18,420,
+# USD/JPY 142.8) written on 2026-09-03 while the real closes were 24,613 /
+# 157.95 — a 25% error on a site that claims "zero LLM hallucination".
+# This re-fetches the index strip from Yahoo Finance on every build.
+python3 scripts/build_insights_index.py 2>&1 | tail -1
+# 2026-10-02: v2 limit-buy plan (primary signal set). Reads our own OHLC from
+# public/<market>/ohlc/*.json, applies the 10-year-audit's rule set, and
+# writes public/v2-signals.json for build_dashboard.py to render.
+python3 scripts/build_v2_signals.py 2>&1 | tail -2
 python3 scripts/build_backtest_page.py 2>&1 | tail -1
 
 # --- Step 6: Git commit + wrangler deploy ---

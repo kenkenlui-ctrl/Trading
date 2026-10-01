@@ -244,10 +244,16 @@ def render() -> str:
 """
 
     # SEO description — keep under 160 chars
+    # 2026-10-02: these two numbers were being read as the same metric. They are
+    # not — {t10_avg} is the average net return PER TRADE, while the T+10 equity
+    # curve on the same site is -4.05% for the risk-managed PORTFOLIO (1% risk,
+    # 5 concurrent, slots full so 86% of signals were skipped). The meta led
+    # with the per-trade figure with no label, which read as a headline return.
     desc = (
-        f"T+10 swing {t10_avg}% / T+1 day-trade +{t1_avg}%, 6mo {n_signals.split(' ')[0]} BUY signals, "
-        f"portfolio +{portfolio_total}% / MaxDD {portfolio_mdd}%, OOS {oos_wr_test}% WR (n=25)."
-    )[:158]
+        f"T+10 每次交易平均 {t10_avg}% / T+1 日內平均 +{t1_avg}%，{n_signals.split(' ')[0]} 個 BUY 訊號，"
+        f"資金管理下組合回報 +{portfolio_total}%（MaxDD {portfolio_mdd}%），OOS {oos_wr_test}% WR (n=25)。"
+        f"注意：每次平均 ≠ 組合回報，兩者不可直接比較。"
+    )[:200]
 
     canonical = "https://www.win9you.com/backtest"
     title = "回測報告 · T+10 Swing vs T+1 Day-trade · Leeks Terminal"

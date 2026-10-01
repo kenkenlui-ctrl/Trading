@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="alternate icon" href="/favicon.ico" sizes="any">
+<link rel="manifest" href="/manifest.json">
 <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <title>美股 200 · Leeks Terminal</title>
@@ -38,14 +40,14 @@
       "inLanguage": "zh-Hant-HK",
       "isPartOf": {"@type": "WebSite", "name": "Leeks Terminal", "url": "https://www.win9you.com/"}
     },
-    {{
+    {
       "@type": "FAQPage",
       "mainEntity": [
-        {{"@type": "Question", "name": "美股 200 點樣揀？", "acceptedAnswer": {{"@type": "Answer", "text": "用 5-day 平均成交額排序頭 200 隻，全部 T-1 收市 data，每日 refresh。"}}},
-        {{"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {{"@type": "Answer", "text": "10-step 價格行為 framework，分 phase + S/R ladder + 4 strategies。T-1 OHLC 純 Python deterministic 計算。"}}},
-        {{"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {{"@type": "Answer", "text": "已扣 0.05% round-trip (US)，Futu 免佣。"}}}}
+        {"@type": "Question", "name": "美股 200 點樣揀？", "acceptedAnswer": {"@type": "Answer", "text": "用 5-day 平均成交額排序頭 200 隻，全部 T-1 收市 data，每日 refresh。"}},
+        {"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {"@type": "Answer", "text": "10-step 價格行為 framework，分 phase + S/R ladder + 4 strategies。T-1 OHLC 純 Python deterministic 計算。"}},
+        {"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {"@type": "Answer", "text": "已扣 0.05% round-trip (US)，Futu 免佣。"}}
       ]
-    }}
+    }
   ]
 }
 </script>
@@ -85,6 +87,15 @@
     </div>
   </nav>
 </header>
+
+<nav class="mobile-bottom-nav" aria-label="Mobile">
+  <a href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home</a>
+  <a href="/hk200/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg>HK</a>
+  <a href="/us200/" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 4-5"/></svg>US</a>
+  <a href="/jp200/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg>JP</a>
+  <a href="/methodology">EN<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>Method</a>
+</nav>
+
 <script>
 function toggleTheme(){
   const cur = document.documentElement.getAttribute('data-theme') || 'dark';
@@ -117,12 +128,59 @@ function toggleTheme(){
       
       <span>Universe: <b>200 US names</b></span>
       <span>T-1 data: <b>2026-09-29</b></span>
-      <span>Updated: <b>10:49 HKT</b></span>
+      <span>Updated: <b>02:23 HKT</b></span>
       <span>Regime: <b style="color: var(--bear);">Down 115 · Base 66 · Recov 8 · Up 11</b></span>
     
     </div>
   </div>
 </div>
+
+<!-- 2026-10-02: v2 limit-buy plan. The 10-year audit of the four published
+     strategies found no positive edge, so v2 (long-only, BUY at S1 next
+     session, 3xATR stop, no target, 10-session exit, trend + market filter)
+     is published as the primary plan. Its setup statistics are the study's
+     out-of-sample figures and are labelled as third-party in the block. -->
+
+<div class="container" style="margin:22px 0 6px">
+  <div class="info-card" style="border-left:3px solid var(--accent)">
+    <h2 style="margin-top:0">v2 交易計劃 · T-1 2026-09-29 收市</h2>
+    <p style="font-size:0.85rem;opacity:0.75;margin:6px 0 12px">
+      10 年回測顯示原有四個策略（SELL_R1 / BUY_S1 / BREAK_LONG / BREAK_SHORT）於
+      2016–2026 並無正期望值，故改用以下經樣本外驗證的規則。
+    </p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:12px">
+      <div class="idx-card" style="border:1px solid var(--border);border-radius:8px;padding:10px 12px">
+        <div style="font-size:0.7rem;opacity:0.6">今日限價單</div>
+        <div style="font-size:1.15rem">97</div>
+        <div style="font-size:0.72rem;opacity:0.65">以 S1 掛單，僅下一個交易日有效</div>
+      </div>
+      <div class="idx-card" style="border:1px solid var(--border);border-radius:8px;padding:10px 12px"><div style="font-size:0.7rem;opacity:0.6;letter-spacing:0.06em">THIS SETUP · 樣本外</div><div style="font-size:1.15rem;margin:2px 0">勝率 50.8%（95% CI 49.4–52.3%）</div><div style="font-size:0.75rem;opacity:0.7">平均淨 0.45%／單 · n = 4,656（2023–26）</div><div style="font-size:0.68rem;opacity:0.5;margin-top:4px">第三方回測數字，非本站自行驗證</div></div>
+    </div>
+    <div style="font-size:0.8rem;opacity:0.8;margin-bottom:10px">
+      <b>規則：</b>只做多 · 下一個交易日以 S1 限價買入（開市低過 S1 則跳過） · 止損 S1 ×(1 − 3×ATR%) · 無目標價，第 10 個交易日收市離場<br>
+      <b>股票篩選：</b>T-1 收市價 &gt; 200 天線且 200 天線 20 日內向上 ·
+      <b>大市過濾：</b>指數 T-1 收市價 &gt; 其 200 天線 ·
+      <b>倉位：</b>每單 1% 風險，單名上限 10% 名義
+    </div>
+    <div style="overflow-x:auto">
+    <table style="width:100%;font-size:0.82rem">
+      <thead><tr>
+        <th>代號</th><th style="text-align:right">T-1 收市</th>
+        <th style="text-align:right">入場 S1</th><th style="text-align:right">距離</th>
+        <th style="text-align:right">止損</th><th style="text-align:right">止損幅度</th>
+        <th style="text-align:right">5 日</th>
+      </tr></thead>
+      <tbody><tr><td class="mono"><a href="/us200/ticker/SNDK" style="color:var(--fg)">SNDK</a></td><td class="cell-right mono">1729.76</td><td class="cell-right mono text-accent">1504.20</td><td class="cell-right mono">-13.04%</td><td class="cell-right mono text-bear">1238.76</td><td class="cell-right mono">-17.65%</td><td class="cell-right mono">-8.33%</td></tr><tr><td class="mono"><a href="/us200/ticker/NEM" style="color:var(--fg)">NEM</a></td><td class="cell-right mono">117.09</td><td class="cell-right mono text-accent">114.63</td><td class="cell-right mono">-2.10%</td><td class="cell-right mono text-bear">102.39</td><td class="cell-right mono">-10.67%</td><td class="cell-right mono">-7.99%</td></tr><tr><td class="mono"><a href="/us200/ticker/QCOM" style="color:var(--fg)">QCOM</a></td><td class="cell-right mono">184.10</td><td class="cell-right mono text-accent">161.33</td><td class="cell-right mono">-12.37%</td><td class="cell-right mono text-bear">134.06</td><td class="cell-right mono">-16.90%</td><td class="cell-right mono">-7.15%</td></tr><tr><td class="mono"><a href="/us200/ticker/TEAM" style="color:var(--fg)">TEAM</a></td><td class="cell-right mono">175.96</td><td class="cell-right mono text-accent">168.05</td><td class="cell-right mono">-4.50%</td><td class="cell-right mono text-bear">142.32</td><td class="cell-right mono">-15.31%</td><td class="cell-right mono">-6.73%</td></tr><tr><td class="mono"><a href="/us200/ticker/REGN" style="color:var(--fg)">REGN</a></td><td class="cell-right mono">750.51</td><td class="cell-right mono text-accent">741.83</td><td class="cell-right mono">-1.16%</td><td class="cell-right mono text-bear">684.89</td><td class="cell-right mono">-7.68%</td><td class="cell-right mono">-6.64%</td></tr><tr><td class="mono"><a href="/us200/ticker/EL" style="color:var(--fg)">EL</a></td><td class="cell-right mono">94.37</td><td class="cell-right mono text-accent">91.64</td><td class="cell-right mono">-2.89%</td><td class="cell-right mono text-bear">82.94</td><td class="cell-right mono">-9.50%</td><td class="cell-right mono">-5.90%</td></tr><tr><td class="mono"><a href="/us200/ticker/FCX" style="color:var(--fg)">FCX</a></td><td class="cell-right mono">70.79</td><td class="cell-right mono text-accent">67.01</td><td class="cell-right mono">-5.34%</td><td class="cell-right mono text-bear">59.49</td><td class="cell-right mono">-11.22%</td><td class="cell-right mono">-4.79%</td></tr><tr><td class="mono"><a href="/us200/ticker/EQIX" style="color:var(--fg)">EQIX</a></td><td class="cell-right mono">1015.27</td><td class="cell-right mono text-accent">987.79</td><td class="cell-right mono">-2.71%</td><td class="cell-right mono text-bear">912.69</td><td class="cell-right mono">-7.60%</td><td class="cell-right mono">-4.15%</td></tr><tr><td class="mono"><a href="/us200/ticker/EBAY" style="color:var(--fg)">EBAY</a></td><td class="cell-right mono">105.21</td><td class="cell-right mono text-accent">99.85</td><td class="cell-right mono">-5.09%</td><td class="cell-right mono text-bear">90.56</td><td class="cell-right mono">-9.30%</td><td class="cell-right mono">-3.72%</td></tr><tr><td class="mono"><a href="/us200/ticker/MS" style="color:var(--fg)">MS</a></td><td class="cell-right mono">192.76</td><td class="cell-right mono text-accent">191.27</td><td class="cell-right mono">-0.77%</td><td class="cell-right mono text-bear">176.15</td><td class="cell-right mono">-7.90%</td><td class="cell-right mono">-3.71%</td></tr><tr><td class="mono"><a href="/us200/ticker/CRM" style="color:var(--fg)">CRM</a></td><td class="cell-right mono">225.31</td><td class="cell-right mono text-accent">221.18</td><td class="cell-right mono">-1.83%</td><td class="cell-right mono text-bear">197.40</td><td class="cell-right mono">-10.75%</td><td class="cell-right mono">-3.42%</td></tr><tr><td class="mono"><a href="/us200/ticker/AMZN" style="color:var(--fg)">AMZN</a></td><td class="cell-right mono">246.67</td><td class="cell-right mono text-accent">244.30</td><td class="cell-right mono">-0.96%</td><td class="cell-right mono text-bear">228.79</td><td class="cell-right mono">-6.35%</td><td class="cell-right mono">-3.26%</td></tr><tr><td class="mono"><a href="/us200/ticker/DE" style="color:var(--fg)">DE</a></td><td class="cell-right mono">678.88</td><td class="cell-right mono text-accent">652.49</td><td class="cell-right mono">-3.89%</td><td class="cell-right mono text-bear">609.00</td><td class="cell-right mono">-6.67%</td><td class="cell-right mono">-3.22%</td></tr><tr><td class="mono"><a href="/us200/ticker/AAPL" style="color:var(--fg)">AAPL</a></td><td class="cell-right mono">329.40</td><td class="cell-right mono text-accent">309.90</td><td class="cell-right mono">-5.92%</td><td class="cell-right mono text-bear">290.75</td><td class="cell-right mono">-6.18%</td><td class="cell-right mono">-3.05%</td></tr><tr><td class="mono"><a href="/us200/ticker/MCK" style="color:var(--fg)">MCK</a></td><td class="cell-right mono">864.82</td><td class="cell-right mono text-accent">847.29</td><td class="cell-right mono">-2.03%</td><td class="cell-right mono text-bear">786.92</td><td class="cell-right mono">-7.12%</td><td class="cell-right mono">-2.96%</td></tr><tr><td class="mono"><a href="/us200/ticker/GOOGL" style="color:var(--fg)">GOOGL</a></td><td class="cell-right mono">340.92</td><td class="cell-right mono text-accent">327.74</td><td class="cell-right mono">-3.87%</td><td class="cell-right mono text-bear">303.26</td><td class="cell-right mono">-7.47%</td><td class="cell-right mono">-2.92%</td></tr><tr><td class="mono"><a href="/us200/ticker/ADP" style="color:var(--fg)">ADP</a></td><td class="cell-right mono">261.80</td><td class="cell-right mono text-accent">258.30</td><td class="cell-right mono">-1.34%</td><td class="cell-right mono text-bear">243.31</td><td class="cell-right mono">-5.80%</td><td class="cell-right mono">-2.91%</td></tr><tr><td class="mono"><a href="/us200/ticker/GOOG" style="color:var(--fg)">GOOG</a></td><td class="cell-right mono">337.32</td><td class="cell-right mono text-accent">325.63</td><td class="cell-right mono">-3.47%</td><td class="cell-right mono text-bear">301.79</td><td class="cell-right mono">-7.32%</td><td class="cell-right mono">-2.90%</td></tr><tr><td class="mono"><a href="/us200/ticker/MU" style="color:var(--fg)">MU</a></td><td class="cell-right mono">1065.08</td><td class="cell-right mono text-accent">902.60</td><td class="cell-right mono">-15.26%</td><td class="cell-right mono text-bear">791.48</td><td class="cell-right mono">-12.31%</td><td class="cell-right mono">-2.84%</td></tr><tr><td class="mono"><a href="/us200/ticker/URI" style="color:var(--fg)">URI</a></td><td class="cell-right mono">1014.54</td><td class="cell-right mono text-accent">967.58</td><td class="cell-right mono">-4.63%</td><td class="cell-right mono text-bear">879.64</td><td class="cell-right mono">-9.09%</td><td class="cell-right mono">-2.73%</td></tr><tr><td class="mono"><a href="/us200/ticker/OXY" style="color:var(--fg)">OXY</a></td><td class="cell-right mono">54.94</td><td class="cell-right mono text-accent">54.76</td><td class="cell-right mono">-0.33%</td><td class="cell-right mono text-bear">49.86</td><td class="cell-right mono">-8.94%</td><td class="cell-right mono">-2.43%</td></tr><tr><td class="mono"><a href="/us200/ticker/WDC" style="color:var(--fg)">WDC</a></td><td class="cell-right mono">453.48</td><td class="cell-right mono text-accent">407.12</td><td class="cell-right mono">-10.22%</td><td class="cell-right mono text-bear">341.02</td><td class="cell-right mono">-16.24%</td><td class="cell-right mono">-2.39%</td></tr><tr><td class="mono"><a href="/us200/ticker/BAC" style="color:var(--fg)">BAC</a></td><td class="cell-right mono">54.96</td><td class="cell-right mono text-accent">54.73</td><td class="cell-right mono">-0.42%</td><td class="cell-right mono text-bear">50.76</td><td class="cell-right mono">-7.26%</td><td class="cell-right mono">-2.21%</td></tr><tr><td class="mono"><a href="/us200/ticker/ETN" style="color:var(--fg)">ETN</a></td><td class="cell-right mono">433.27</td><td class="cell-right mono text-accent">384.77</td><td class="cell-right mono">-11.19%</td><td class="cell-right mono text-bear">345.74</td><td class="cell-right mono">-10.14%</td><td class="cell-right mono">-2.08%</td></tr><tr><td class="mono"><a href="/us200/ticker/KO" style="color:var(--fg)">KO</a></td><td class="cell-right mono">86.84</td><td class="cell-right mono text-accent">86.56</td><td class="cell-right mono">-0.32%</td><td class="cell-right mono text-bear">83.09</td><td class="cell-right mono">-4.01%</td><td class="cell-right mono">-2.00%</td></tr><tr><td class="mono"><a href="/us200/ticker/SNOW" style="color:var(--fg)">SNOW</a></td><td class="cell-right mono">330.31</td><td class="cell-right mono text-accent">303.89</td><td class="cell-right mono">-8.00%</td><td class="cell-right mono text-bear">265.29</td><td class="cell-right mono">-12.70%</td><td class="cell-right mono">-1.87%</td></tr><tr><td class="mono"><a href="/us200/ticker/MPWR" style="color:var(--fg)">MPWR</a></td><td class="cell-right mono">1353.99</td><td class="cell-right mono text-accent">1132.16</td><td class="cell-right mono">-16.38%</td><td class="cell-right mono text-bear">994.68</td><td class="cell-right mono">-12.14%</td><td class="cell-right mono">-1.78%</td></tr><tr><td class="mono"><a href="/us200/ticker/PSX" style="color:var(--fg)">PSX</a></td><td class="cell-right mono">252.25</td><td class="cell-right mono text-accent">247.14</td><td class="cell-right mono">-2.03%</td><td class="cell-right mono text-bear">220.08</td><td class="cell-right mono">-10.95%</td><td class="cell-right mono">-1.76%</td></tr><tr><td class="mono"><a href="/us200/ticker/TGT" style="color:var(--fg)">TGT</a></td><td class="cell-right mono">156.43</td><td class="cell-right mono text-accent">153.55</td><td class="cell-right mono">-1.84%</td><td class="cell-right mono text-bear">142.63</td><td class="cell-right mono">-7.11%</td><td class="cell-right mono">-1.63%</td></tr><tr><td class="mono"><a href="/us200/ticker/JPM" style="color:var(--fg)">JPM</a></td><td class="cell-right mono">334.98</td><td class="cell-right mono text-accent">333.33</td><td class="cell-right mono">-0.49%</td><td class="cell-right mono text-bear">312.16</td><td class="cell-right mono">-6.35%</td><td class="cell-right mono">-1.48%</td></tr><tr><td class="mono"><a href="/us200/ticker/C" style="color:var(--fg)">C</a></td><td class="cell-right mono">130.80</td><td class="cell-right mono text-accent">130.07</td><td class="cell-right mono">-0.56%</td><td class="cell-right mono text-bear">119.08</td><td class="cell-right mono">-8.45%</td><td class="cell-right mono">-1.26%</td></tr><tr><td class="mono"><a href="/us200/ticker/SCHW" style="color:var(--fg)">SCHW</a></td><td class="cell-right mono">99.10</td><td class="cell-right mono text-accent">97.40</td><td class="cell-right mono">-1.72%</td><td class="cell-right mono text-bear">90.30</td><td class="cell-right mono">-7.29%</td><td class="cell-right mono">-1.25%</td></tr><tr><td class="mono"><a href="/us200/ticker/SMCI" style="color:var(--fg)">SMCI</a></td><td class="cell-right mono">41.02</td><td class="cell-right mono text-accent">35.36</td><td class="cell-right mono">-13.80%</td><td class="cell-right mono text-bear">29.21</td><td class="cell-right mono">-17.40%</td><td class="cell-right mono">-1.25%</td></tr><tr><td class="mono"><a href="/us200/ticker/ANET" style="color:var(--fg)">ANET</a></td><td class="cell-right mono">202.86</td><td class="cell-right mono text-accent">181.27</td><td class="cell-right mono">-10.64%</td><td class="cell-right mono text-bear">161.30</td><td class="cell-right mono">-11.02%</td><td class="cell-right mono">-1.14%</td></tr><tr><td class="mono"><a href="/us200/ticker/MRK" style="color:var(--fg)">MRK</a></td><td class="cell-right mono">149.28</td><td class="cell-right mono text-accent">142.32</td><td class="cell-right mono">-4.66%</td><td class="cell-right mono text-bear">132.89</td><td class="cell-right mono">-6.62%</td><td class="cell-right mono">-1.08%</td></tr><tr><td class="mono"><a href="/us200/ticker/VZ" style="color:var(--fg)">VZ</a></td><td class="cell-right mono">45.98</td><td class="cell-right mono text-accent">45.98</td><td class="cell-right mono">0.00%</td><td class="cell-right mono text-bear">42.80</td><td class="cell-right mono">-6.91%</td><td class="cell-right mono">-1.01%</td></tr><tr><td class="mono"><a href="/us200/ticker/GILD" style="color:var(--fg)">GILD</a></td><td class="cell-right mono">151.28</td><td class="cell-right mono text-accent">142.70</td><td class="cell-right mono">-5.67%</td><td class="cell-right mono text-bear">132.93</td><td class="cell-right mono">-6.84%</td><td class="cell-right mono">-0.91%</td></tr><tr><td class="mono"><a href="/us200/ticker/NVDA" style="color:var(--fg)">NVDA</a></td><td class="cell-right mono">227.21</td><td class="cell-right mono text-accent">208.93</td><td class="cell-right mono">-8.05%</td><td class="cell-right mono text-bear">194.11</td><td class="cell-right mono">-7.09%</td><td class="cell-right mono">-0.73%</td></tr><tr><td class="mono"><a href="/us200/ticker/ABBV" style="color:var(--fg)">ABBV</a></td><td class="cell-right mono">263.29</td><td class="cell-right mono text-accent">246.77</td><td class="cell-right mono">-6.27%</td><td class="cell-right mono text-bear">232.35</td><td class="cell-right mono">-5.84%</td><td class="cell-right mono">-0.72%</td></tr><tr><td class="mono"><a href="/us200/ticker/DVN" style="color:var(--fg)">DVN</a></td><td class="cell-right mono">46.60</td><td class="cell-right mono text-accent">45.56</td><td class="cell-right mono">-2.23%</td><td class="cell-right mono text-bear">40.82</td><td class="cell-right mono">-10.41%</td><td class="cell-right mono">-0.70%</td></tr></tbody>
+    </table>
+    </div>
+    <p style="font-size:0.75rem;opacity:0.6;margin-top:8px">另有 57 張限價單未列出，按 5 日跌幅由大到小排序（最超賣優先）。</p>
+    <p style="font-size:0.72rem;opacity:0.55;margin-top:10px">
+      績效數字來源：第三方 10 年回測（2016–2026，2023–26 樣本外），規則見 Leeks Terminal 10 年訊號審計報告。本站未自行重跑該回測，故此處標示為第三方數字。
+      過往表現不代表未來結果，非投資建議。
+    </p>
+  </div>
+</div>
+
 
 <div class="container">
   <div class="filter-bar">
@@ -165,19 +223,6 @@ function toggleTheme(){
   </tr>
   </thead>
   <tbody id="tableBody">
-    <tr data-action="SELL" data-phase="base_building" data-detail="~100% · n=4 (ref)" class="row-bear">
-      <td><a href="/us200/ticker/MU" class="mono" style="color: var(--fg);">MU</a></td>
-      <td></td>
-      <td class="cell-right mono">1,065.08</td>
-      <td class="cell-right mono text-bull">+1.05%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action bear">SELL</span></td>
-      <td class="cell-right mono">1,108.72</td>
-      <td class="cell-right mono text-bull">1,006</td>
-      <td class="cell-right mono text-bear">1,177</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
-    </tr>
     <tr data-action="SELL" data-phase="base_building" data-detail="~100% · n=8 (ref)" class="row-bear">
       <td><a href="/us200/ticker/NVDA" class="mono" style="color: var(--fg);">NVDA</a></td>
       <td></td>
@@ -477,7 +522,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">—</td>
     </tr>
-    <tr data-action="SELL" data-phase="base_building" data-detail="~100% · n=1 (ref)" class="row-bear">
+    <tr data-action="SELL" data-phase="base_building" data-detail="—" class="row-bear">
       <td><a href="/us200/ticker/MRVL" class="mono" style="color: var(--fg);">MRVL</a></td>
       <td>迈威尔科技</td>
       <td class="cell-right mono">263.27</td>
@@ -487,8 +532,21 @@ function toggleTheme(){
       <td class="cell-right mono">267.48</td>
       <td class="cell-right mono text-bull">234.1</td>
       <td class="cell-right mono text-bear">286.6</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="SELL" data-phase="base_building" data-detail="—" class="row-bear">
+      <td><a href="/us200/ticker/MU" class="mono" style="color: var(--fg);">MU</a></td>
+      <td></td>
+      <td class="cell-right mono">1,065.08</td>
+      <td class="cell-right mono text-bull">+1.05%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">1,108.72</td>
+      <td class="cell-right mono text-bull">1,006</td>
+      <td class="cell-right mono text-bear">1,177</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
     </tr>
     <tr data-action="SELL" data-phase="downtrend_active" data-detail="—" class="row-bear">
       <td><a href="/us200/ticker/NET" class="mono" style="color: var(--fg);">NET</a></td>
@@ -529,7 +587,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">—</td>
     </tr>
-    <tr data-action="SELL" data-phase="base_building" data-detail="~100% · n=2 (ref)" class="row-bear">
+    <tr data-action="SELL" data-phase="base_building" data-detail="—" class="row-bear">
       <td><a href="/us200/ticker/STX" class="mono" style="color: var(--fg);">STX</a></td>
       <td>Seagate Technology Holdings PLC</td>
       <td class="cell-right mono">913.45</td>
@@ -539,8 +597,8 @@ function toggleTheme(){
       <td class="cell-right mono">944.43</td>
       <td class="cell-right mono text-bull">851.4</td>
       <td class="cell-right mono text-bear">1,017.8</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">BUY_S1</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
     </tr>
     <tr data-action="SELL" data-phase="base_building" data-detail="—" class="row-bear">
       <td><a href="/us200/ticker/TER" class="mono" style="color: var(--fg);">TER</a></td>
@@ -581,32 +639,6 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">—</td>
     </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~100% · n=5 (ref)" class="row-bull">
-      <td><a href="/us200/ticker/ORCL" class="mono" style="color: var(--fg);">ORCL</a></td>
-      <td>Oracle Corporation</td>
-      <td class="cell-right mono">137.79</td>
-      <td class="cell-right mono text-bull">+3.91%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action bull">BUY</span></td>
-      <td class="cell-right mono">131.58</td>
-      <td class="cell-right mono text-bull">151.1</td>
-      <td class="cell-right mono text-bear">120.5</td>
-      <td class="cell-right mono">100%</td>
-      <td class="mono text-dim">SELL_R1</td>
-    </tr>
-    <tr data-action="BUY" data-phase="base_building" data-detail="~89% · n=19 (ref)" class="row-bull">
-      <td><a href="/us200/ticker/BABA" class="mono" style="color: var(--fg);">BABA</a></td>
-      <td>Alibaba Group Holding Limited</td>
-      <td class="cell-right mono">107.74</td>
-      <td class="cell-right mono text-bear">-0.94%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action bull">BUY</span></td>
-      <td class="cell-right mono">106.64</td>
-      <td class="cell-right mono text-bull">113.5</td>
-      <td class="cell-right mono text-bear">102.6</td>
-      <td class="cell-right mono">89%</td>
-      <td class="mono text-dim">SELL_R1</td>
-    </tr>
     <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
       <td><a href="/us200/ticker/ACN" class="mono" style="color: var(--fg);">ACN</a></td>
       <td></td>
@@ -617,6 +649,19 @@ function toggleTheme(){
       <td class="cell-right mono">172.11</td>
       <td class="cell-right mono text-bull">184.9</td>
       <td class="cell-right mono text-bear">161.9</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
+      <td><a href="/us200/ticker/BABA" class="mono" style="color: var(--fg);">BABA</a></td>
+      <td>Alibaba Group Holding Limited</td>
+      <td class="cell-right mono">107.74</td>
+      <td class="cell-right mono text-bear">-0.94%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">106.64</td>
+      <td class="cell-right mono text-bull">113.5</td>
+      <td class="cell-right mono text-bear">102.6</td>
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">—</td>
     </tr>
@@ -842,6 +887,19 @@ function toggleTheme(){
       <td class="mono text-dim">—</td>
     </tr>
     <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
+      <td><a href="/us200/ticker/ORCL" class="mono" style="color: var(--fg);">ORCL</a></td>
+      <td>Oracle Corporation</td>
+      <td class="cell-right mono">137.79</td>
+      <td class="cell-right mono text-bull">+3.91%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">131.58</td>
+      <td class="cell-right mono text-bull">151.1</td>
+      <td class="cell-right mono text-bear">120.5</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
       <td><a href="/us200/ticker/OXY" class="mono" style="color: var(--fg);">OXY</a></td>
       <td>Occidental Petroleum Corporatio</td>
       <td class="cell-right mono">54.94</td>
@@ -945,111 +1003,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">—</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=4 (ref)" class="row-wait">
-      <td><a href="/us200/ticker/LLY" class="mono" style="color: var(--fg);">LLY</a></td>
-      <td>Eli Lilly and Company</td>
-      <td class="cell-right mono">1,184.63</td>
-      <td class="cell-right mono text-bear">-0.01%</td>
-      <td><span class="tag tag-bear">DT</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="uptrend" data-detail="~100% · n=8 (ref)" class="row-wait">
-      <td><a href="/us200/ticker/MRNA" class="mono" style="color: var(--fg);">MRNA</a></td>
-      <td>Moderna, Inc.</td>
-      <td class="cell-right mono">203.46</td>
-      <td class="cell-right mono text-bull">+3.13%</td>
-      <td><span class="tag tag-bull">Uptrend</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">BUY_S1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~100% · n=3 (ref)" class="row-wait">
-      <td><a href="/us200/ticker/SNDK" class="mono" style="color: var(--fg);">SNDK</a></td>
-      <td>Sandisk Corporation</td>
-      <td class="cell-right mono">1,729.76</td>
-      <td class="cell-right mono text-bull">+0.98%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=5 (ref)" class="row-wait">
-      <td><a href="/us200/ticker/WMT" class="mono" style="color: var(--fg);">WMT</a></td>
-      <td>沃尔玛</td>
-      <td class="cell-right mono">106.80</td>
-      <td class="cell-right mono text-bear">-1.78%</td>
-      <td><span class="tag tag-bear">DT</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~80% · n=5 (ref)" class="row-wait">
-      <td><a href="/us200/ticker/COIN" class="mono" style="color: var(--fg);">COIN</a></td>
-      <td>Coinbase Global, Inc.</td>
-      <td class="cell-right mono">190.02</td>
-      <td class="cell-right mono text-bear">-0.92%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~80%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~78% · n=9 (ref)" class="row-wait">
-      <td><a href="/us200/ticker/V" class="mono" style="color: var(--fg);">V</a></td>
-      <td></td>
-      <td class="cell-right mono">365.88</td>
-      <td class="cell-right mono text-bear">-0.51%</td>
-      <td><span class="tag tag-bear">DT</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~78%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="uptrend" data-detail="~33% · n=9 (ref)" class="row-wait">
-      <td><a href="/us200/ticker/HOOD" class="mono" style="color: var(--fg);">HOOD</a></td>
-      <td>Robinhood Markets, Inc.</td>
-      <td class="cell-right mono">116.22</td>
-      <td class="cell-right mono text-bear">-0.21%</td>
-      <td><span class="tag tag-bull">Uptrend</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~33%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~17% · n=12 (ref)" class="row-wait">
-      <td><a href="/us200/ticker/MSTR" class="mono" style="color: var(--fg);">MSTR</a></td>
-      <td>Strategy Inc</td>
-      <td class="cell-right mono">154.67</td>
-      <td class="cell-right mono text-bear">-1.57%</td>
-      <td><span class="tag tag-amber">Base</span></td>
-      <td><span class="cell-action wait">WAIT</span></td>
-      <td class="cell-right mono">—</td>
-      <td class="cell-right mono text-bull">—</td>
-      <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~17%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
-    </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=2 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/us200/ticker/AAPL" class="mono" style="color: var(--fg);">AAPL</a></td>
       <td>Apple Inc.</td>
       <td class="cell-right mono">329.40</td>
@@ -1059,8 +1013,8 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
     <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
       <td><a href="/us200/ticker/ABT" class="mono" style="color: var(--fg);">ABT</a></td>
@@ -1127,7 +1081,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~0% · n=7 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/us200/ticker/AMD" class="mono" style="color: var(--fg);">AMD</a></td>
       <td></td>
       <td class="cell-right mono">607.57</td>
@@ -1153,7 +1107,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=1 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/us200/ticker/AMZN" class="mono" style="color: var(--fg);">AMZN</a></td>
       <td>亚马逊</td>
       <td class="cell-right mono">246.67</td>
@@ -1163,8 +1117,8 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
     <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
       <td><a href="/us200/ticker/APH" class="mono" style="color: var(--fg);">APH</a></td>
@@ -1205,7 +1159,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=1 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/us200/ticker/AVGO" class="mono" style="color: var(--fg);">AVGO</a></td>
       <td>博通</td>
       <td class="cell-right mono">355.10</td>
@@ -1215,8 +1169,8 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">SELL_R1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
     <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="—" class="row-wait">
       <td><a href="/us200/ticker/AXP" class="mono" style="color: var(--fg);">AXP</a></td>
@@ -1431,6 +1385,19 @@ function toggleTheme(){
       <td>Coherent Corp.</td>
       <td class="cell-right mono">292.21</td>
       <td class="cell-right mono text-bull">+3.46%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/us200/ticker/COIN" class="mono" style="color: var(--fg);">COIN</a></td>
+      <td>Coinbase Global, Inc.</td>
+      <td class="cell-right mono">190.02</td>
+      <td class="cell-right mono text-bear">-0.92%</td>
       <td><span class="tag tag-amber">Base</span></td>
       <td><span class="cell-action wait">WAIT</span></td>
       <td class="cell-right mono">—</td>
@@ -1712,7 +1679,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~100% · n=2 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
       <td><a href="/us200/ticker/GOOG" class="mono" style="color: var(--fg);">GOOG</a></td>
       <td>Alphabet Inc.</td>
       <td class="cell-right mono">337.32</td>
@@ -1722,10 +1689,10 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">BUY_S1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~100% · n=2 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
       <td><a href="/us200/ticker/GOOGL" class="mono" style="color: var(--fg);">GOOGL</a></td>
       <td>Alphabet Inc.</td>
       <td class="cell-right mono">340.92</td>
@@ -1735,8 +1702,8 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
       <td class="cell-right mono text-bear">—</td>
-      <td class="cell-right mono">~100%</td>
-      <td class="mono text-dim">BUY_S1 (ref)</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
     </tr>
     <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/us200/ticker/GS" class="mono" style="color: var(--fg);">GS</a></td>
@@ -1757,6 +1724,19 @@ function toggleTheme(){
       <td class="cell-right mono">288.04</td>
       <td class="cell-right mono text-bear">-0.64%</td>
       <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="uptrend" data-detail="—" class="row-wait">
+      <td><a href="/us200/ticker/HOOD" class="mono" style="color: var(--fg);">HOOD</a></td>
+      <td>Robinhood Markets, Inc.</td>
+      <td class="cell-right mono">116.22</td>
+      <td class="cell-right mono text-bear">-0.21%</td>
+      <td><span class="tag tag-bull">Uptrend</span></td>
       <td><span class="cell-action wait">WAIT</span></td>
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
@@ -1894,6 +1874,19 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/us200/ticker/LLY" class="mono" style="color: var(--fg);">LLY</a></td>
+      <td>Eli Lilly and Company</td>
+      <td class="cell-right mono">1,184.63</td>
+      <td class="cell-right mono text-bear">-0.01%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
     <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="—" class="row-wait">
       <td><a href="/us200/ticker/LMT" class="mono" style="color: var(--fg);">LMT</a></td>
       <td>Lockheed Martin Corporation</td>
@@ -1959,7 +1952,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="uptrend" data-detail="~0% · n=4 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="uptrend" data-detail="—" class="row-wait">
       <td><a href="/us200/ticker/META" class="mono" style="color: var(--fg);">META</a></td>
       <td></td>
       <td class="cell-right mono">738.79</td>
@@ -2024,6 +2017,19 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
+    <tr data-action="WAIT" data-phase="uptrend" data-detail="—" class="row-wait">
+      <td><a href="/us200/ticker/MRNA" class="mono" style="color: var(--fg);">MRNA</a></td>
+      <td>Moderna, Inc.</td>
+      <td class="cell-right mono">203.46</td>
+      <td class="cell-right mono text-bull">+3.13%</td>
+      <td><span class="tag tag-bull">Uptrend</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
     <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
       <td><a href="/us200/ticker/MS" class="mono" style="color: var(--fg);">MS</a></td>
       <td>Morgan Stanley</td>
@@ -2043,6 +2049,19 @@ function toggleTheme(){
       <td class="cell-right mono">508.96</td>
       <td class="cell-right mono text-bear">-0.05%</td>
       <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/us200/ticker/MSTR" class="mono" style="color: var(--fg);">MSTR</a></td>
+      <td>Strategy Inc</td>
+      <td class="cell-right mono">154.67</td>
+      <td class="cell-right mono text-bear">-1.57%</td>
+      <td><span class="tag tag-amber">Base</span></td>
       <td><span class="cell-action wait">WAIT</span></td>
       <td class="cell-right mono">—</td>
       <td class="cell-right mono text-bull">—</td>
@@ -2414,6 +2433,19 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/us200/ticker/SNDK" class="mono" style="color: var(--fg);">SNDK</a></td>
+      <td>Sandisk Corporation</td>
+      <td class="cell-right mono">1,729.76</td>
+      <td class="cell-right mono text-bull">+0.98%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
     <tr data-action="WAIT" data-phase="uptrend" data-detail="—" class="row-wait">
       <td><a href="/us200/ticker/SNOW" class="mono" style="color: var(--fg);">SNOW</a></td>
       <td>Snowflake Inc.</td>
@@ -2557,7 +2589,7 @@ function toggleTheme(){
       <td class="cell-right mono">—</td>
       <td class="mono text-dim">RANGE</td>
     </tr>
-    <tr data-action="WAIT" data-phase="base_building" data-detail="~0% · n=2 (ref)" class="row-wait">
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
       <td><a href="/us200/ticker/TSLA" class="mono" style="color: var(--fg);">TSLA</a></td>
       <td></td>
       <td class="cell-right mono">352.84</td>
@@ -2627,6 +2659,19 @@ function toggleTheme(){
       <td>United Rentals, Inc.</td>
       <td class="cell-right mono">1,014.54</td>
       <td class="cell-right mono text-bear">-2.81%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/us200/ticker/V" class="mono" style="color: var(--fg);">V</a></td>
+      <td></td>
+      <td class="cell-right mono">365.88</td>
+      <td class="cell-right mono text-bear">-0.51%</td>
       <td><span class="tag tag-bear">DT</span></td>
       <td><span class="cell-action wait">WAIT</span></td>
       <td class="cell-right mono">—</td>
@@ -2731,6 +2776,19 @@ function toggleTheme(){
       <td>Welltower Inc.</td>
       <td class="cell-right mono">232.90</td>
       <td class="cell-right mono text-bear">-0.03%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/us200/ticker/WMT" class="mono" style="color: var(--fg);">WMT</a></td>
+      <td>沃尔玛</td>
+      <td class="cell-right mono">106.80</td>
+      <td class="cell-right mono text-bear">-1.78%</td>
       <td><span class="tag tag-bear">DT</span></td>
       <td><span class="cell-action wait">WAIT</span></td>
       <td class="cell-right mono">—</td>

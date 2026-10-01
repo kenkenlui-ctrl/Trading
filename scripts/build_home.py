@@ -12,6 +12,7 @@ import json
 import shutil
 from datetime import datetime, date, timedelta
 from pathlib import Path
+from mobile_nav import mobile_bottom_nav
 import os as _os_i18n
 
 # 2026-08-30: i18n — zh / en per-string translation
@@ -82,6 +83,11 @@ def t_minus_1(market: str | None = None) -> date:
     (HK-first product); pass market='US' for the US session date.
 
     Override with DSA_T_MINUS_1_HK / DSA_T_MINUS_1_US, or DSA_T_MINUS_1 (both).
+
+    2026-10-02: LEAKS_ASOF is now the single override shared with
+    build_dashboard.py, so a rebuild can pin the T-1 label to the date the
+    bars actually end on. Without it the home page printed 2026-10-01 while
+    every hub said 2026-09-29 — the two disagreed on the same deploy.
     """
     import os as _os
     if market:
@@ -90,6 +96,8 @@ def t_minus_1(market: str | None = None) -> date:
             from datetime import datetime as _dt
             return _dt.strptime(override, "%Y-%m-%d").date()
     override = _os.environ.get("DSA_T_MINUS_1")
+    if not override:
+        override = _os.environ.get("LEAKS_ASOF")
     if override:
         from datetime import datetime as _dt
         return _dt.strptime(override, "%Y-%m-%d").date()
@@ -301,6 +309,8 @@ def build_home_page():
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="alternate icon" href="/favicon.ico" sizes="any">
+<link rel="manifest" href="/manifest.json">
 <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <title>Leeks Terminal · {T("home_subtitle_zh")}</title>
@@ -400,6 +410,7 @@ def build_home_page():
     </div>
   </nav>
 </header>
+{mobile_bottom_nav("home")}
 <script>
 function toggleTheme(){{
   const cur = document.documentElement.getAttribute('data-theme') || 'dark';

@@ -17,14 +17,29 @@ Writes:
 """
 from __future__ import annotations
 import json
+import os
 import shutil
 from datetime import datetime, date, timedelta
 from pathlib import Path
 import sys
+from mobile_nav import mobile_bottom_nav, render_v2_block
 
 
 def t_minus_1() -> date:
-    """Return T-1 = last trading day (skip Sat/Sun)."""
+    """Return T-1 = last trading day (skip Sat/Sun).
+
+    2026-10-02: LEAKS_ASOF overrides the computed date. Without it a rebuild
+    on a later day stamps the header with a date the data does not cover —
+    e.g. building on 2026-10-02 against 2026-09-29 bars produced a page that
+    claimed "T-1 09-30" while every number was 09-29. Set LEAKS_ASOF to the
+    date the bars actually end on when rebuilding out of cycle.
+    """
+    override = os.environ.get("LEAKS_ASOF", "").strip()
+    if override:
+        try:
+            return date.fromisoformat(override)
+        except ValueError:
+            print(f"! LEAKS_ASOF={override!r} is not YYYY-MM-DD, ignoring")
     today = date.today()
     if today.weekday() == 0:  # Monday
         return today - timedelta(days=3)  # Friday
@@ -95,21 +110,56 @@ def load_backtest(ticker: str) -> dict | None:
     return None
 
 
-def pick_recent_edge(bt: dict | None, recent_windows=("60", "90", "30", "197")) -> dict | None:
-    """Pick the highest-win% strategy from recent windows, with min n=3.
-    Falls back to 197 if no recent window qualifies.
+# 2026-10-02: the Win% badge was "laundering" the opposite direction. A row
+# showing Action=BUY could carry the win% of SELL_R1, so the number users read
+# as confidence in the displayed action was actually a different setup's record.
+# Fix: the badge is now keyed on the plan's own direction, and enforces the
+# n >= 5 rule the methodology page documents (it was only documented, never
+# enforced in the renderer — n=1..4 badges were being shown).
+MIN_EDGE_N = 5
+
+_LONG_STRATS = ("BUY_S1", "BREAK_LONG")
+_SHORT_STRATS = ("SELL_R1", "BREAK_SHORT")
+
+
+def strats_for_verdict(verdict: str) -> tuple[str, ...]:
+    """Backtest strategies that can legitimately justify this plan's action."""
+    if verdict == "BUY":
+        return _LONG_STRATS
+    if verdict == "SELL":
+        return _SHORT_STRATS
+    return ()
+
+
+def pick_recent_edge(
+    bt: dict | None,
+    verdict: str = "",
+    recent_windows=("60", "90", "30", "197"),
+) -> dict | None:
+    """Highest-win% strategy for THIS plan's direction, with min n=5.
+
+    2026-10-02: previously direction-agnostic (n>=3), which is what produced
+    "Action BUY + Strategy SELL_R1 · 100% win" rows. Returns None when the
+    plan's own direction has no qualifying sample — the renderer then shows
+    "—", which is honest.
     """
     if not bt or not bt.get("windows"):
+        return None
+    allowed = strats_for_verdict(verdict)
+    if not allowed:
         return None
     for w in recent_windows:
         wd = bt["windows"].get(w)
         if not wd:
             continue
-        for strat, data in wd.items():
+        for strat in allowed:
+            data = wd.get(strat)
+            if not data:
+                continue
             n = data.get("n", 0)
             win = data.get("win_pct", 0)
             tot = data.get("total_pnl", 0)
-            if n >= 3 and tot > 0:
+            if n >= MIN_EDGE_N and tot > 0:
                 return {
                     "strategy": strat,
                     "window": w,
@@ -323,35 +373,40 @@ def build_dashboard_page(
     faq_block = ""
     if market == "HK":
         faq_block = """,
-    {{
+    {
       "@type": "FAQPage",
       "mainEntity": [
-        {{"@type": "Question", "name": "港股 200 點樣揀？", "acceptedAnswer": {{"@type": "Answer", "text": "用 5-day 平均成交額排序頭 200 隻，全部 T-1 收市 data，每日 refresh。"}}},
-        {{"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {{"@type": "Answer", "text": "10-step 價格行為 framework，分 phase + S/R ladder + 4 strategies (SELL_R1 / BUY_S1 / BREAK_LONG / BREAK_SHORT)。T-1 OHLC 純 Python deterministic 計算。"}}},
-        {{"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {{"@type": "Answer", "text": "已扣 Futu 免佣 + 0.25% round-trip (HK)，純 signal + backtest 結果。"}}}}
+        {"@type": "Question", "name": "港股 200 點樣揀？", "acceptedAnswer": {"@type": "Answer", "text": "用 5-day 平均成交額排序頭 200 隻，全部 T-1 收市 data，每日 refresh。"}},
+        {"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {"@type": "Answer", "text": "10-step 價格行為 framework，分 phase + S/R ladder + 4 strategies (SELL_R1 / BUY_S1 / BREAK_LONG / BREAK_SHORT)。T-1 OHLC 純 Python deterministic 計算。"}},
+        {"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {"@type": "Answer", "text": "已扣 Futu 免佣 + 0.25% round-trip (HK)，純 signal + backtest 結果。"}}
       ]
-    }}"""
+    }"""
     elif market == "US":
         faq_block = """,
-    {{
+    {
       "@type": "FAQPage",
       "mainEntity": [
-        {{"@type": "Question", "name": "美股 200 點樣揀？", "acceptedAnswer": {{"@type": "Answer", "text": "用 5-day 平均成交額排序頭 200 隻，全部 T-1 收市 data，每日 refresh。"}}},
-        {{"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {{"@type": "Answer", "text": "10-step 價格行為 framework，分 phase + S/R ladder + 4 strategies。T-1 OHLC 純 Python deterministic 計算。"}}},
-        {{"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {{"@type": "Answer", "text": "已扣 0.05% round-trip (US)，Futu 免佣。"}}}}
+        {"@type": "Question", "name": "美股 200 點樣揀？", "acceptedAnswer": {"@type": "Answer", "text": "用 5-day 平均成交額排序頭 200 隻，全部 T-1 收市 data，每日 refresh。"}},
+        {"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {"@type": "Answer", "text": "10-step 價格行為 framework，分 phase + S/R ladder + 4 strategies。T-1 OHLC 純 Python deterministic 計算。"}},
+        {"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {"@type": "Answer", "text": "已扣 0.05% round-trip (US)，Futu 免佣。"}}
       ]
-    }}"""
+    }"""
     elif market == "JP":
         faq_block = """,
-    {{
+    {
       "@type": "FAQPage",
       "mainEntity": [
-        {{"@type": "Question", "name": "日股 200 點樣揀？", "acceptedAnswer": {{"@type": "Answer", "text": "由 Topix Core30 + Large70 開始，yfinance verify 流通量，200 隻全部 T-1 收市 data。"}}},
-        {{"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {{"@type": "Answer", "text": "10-step 價格行為 framework。T-1 OHLC 純 Python deterministic 計算。"}}},
-        {{"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {{"@type": "Answer", "text": "已扣 0.05% round-trip (JP)，Futu 免佣。"}}}}
+        {"@type": "Question", "name": "日股 200 點樣揀？", "acceptedAnswer": {"@type": "Answer", "text": "由 Topix Core30 + Large70 開始，yfinance verify 流通量，200 隻全部 T-1 收市 data。"}},
+        {"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {"@type": "Answer", "text": "10-step 價格行為 framework。T-1 OHLC 純 Python deterministic 計算。"}},
+        {"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {"@type": "Answer", "text": "已扣 0.05% round-trip (JP)，Futu 免佣。"}}
       ]
-    }}"""
+    }"""
 
+    # 2026-10-02: this is an f-string, so every *literal* JSON brace must stay
+    # doubled ({{ / }}); only the interpolation expressions below are single.
+    # faq_block is itself a plain (non-f) string built above, so its braces are
+    # already single there — that mismatch is what used to emit literal `{{`
+    # into the page and made the whole JSON-LD block unparseable for Google.
     jsonld = f"""{{
   "@context": "https://schema.org",
   "@graph": [
@@ -372,12 +427,16 @@ def build_dashboard_page(
   ]
 }}"""
 
+    _mnav = {"HK": "hk", "US": "us", "JP": "jp"}.get(market, "")
+    v2_block = render_v2_block(market)
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant-HK">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="alternate icon" href="/favicon.ico" sizes="any">
+<link rel="manifest" href="/manifest.json">
 <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <title>{title_main} · Leeks Terminal</title>
@@ -421,6 +480,7 @@ def build_dashboard_page(
     </div>
   </nav>
 </header>
+{mobile_bottom_nav(_mnav)}
 <script>
 function toggleTheme(){{
   const cur = document.documentElement.getAttribute('data-theme') || 'dark';
@@ -454,6 +514,13 @@ function toggleTheme(){{
     </div>
   </div>
 </div>
+
+<!-- 2026-10-02: v2 limit-buy plan. The 10-year audit of the four published
+     strategies found no positive edge, so v2 (long-only, BUY at S1 next
+     session, 3xATR stop, no target, 10-session exit, trend + market filter)
+     is published as the primary plan. Its setup statistics are the study's
+     out-of-sample figures and are labelled as third-party in the block. -->
+{v2_block}
 
 <div class="container">
   <div class="filter-bar">
@@ -539,6 +606,7 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
     market = t["market"]
     detail_url = t["detail_url"]
     back_url = "/hk200/" if market == "HK" else "/us200/"
+    _mnav = {"HK": "hk", "US": "us", "JP": "jp"}.get(market, "")
 
     phase_label_map = {
         "uptrend": ("Uptrend", "var(--bull)"),
@@ -668,6 +736,8 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="alternate icon" href="/favicon.ico" sizes="any">
+<link rel="manifest" href="/manifest.json">
 <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <title>{ticker} {name} · Action Plan · Leeks Terminal</title>
@@ -723,6 +793,7 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
     </div>
   </nav>
 </header>
+{mobile_bottom_nav(_mnav)}
 <script>
 function toggleTheme(){{
   const cur = document.documentElement.getAttribute('data-theme') || 'dark';
@@ -982,13 +1053,19 @@ def build_for_market(market: str):
         ap = tj.get("action_plan", {})
         verdict = ap.get("verdict", "WAIT")
 
-        edge = pick_recent_edge(bt)
+        edge = pick_recent_edge(bt, verdict)
         if not edge:
             # fallback to backtest_futu best_strategy — but skip if it's a
-            # placeholder (name='—', n=0) since 0% is meaningless.
+            # placeholder (name='—', n=0) since 0% is meaningless, and skip it
+            # if it belongs to the opposite direction (2026-10-02) or has a
+            # sample below the documented n >= 5.
             if bt and bt.get("best_strategy"):
                 bs = bt["best_strategy"]
-                if bs.get("name") and bs["name"] != "—" and bs.get("n_trades", 0) > 0:
+                if (
+                    bs.get("name")
+                    and bs["name"] in strats_for_verdict(verdict)
+                    and bs.get("n_trades", 0) >= MIN_EDGE_N
+                ):
                     edge = {
                         "strategy": bs["name"],
                         "window": bs["window"],
@@ -1065,6 +1142,14 @@ def build_for_market(market: str):
     for _row in rows_sorted:
         if _row.get("plan_edge") is not None:
             continue
+        # 2026-10-02: the (ref) fallback is now direction-locked and n>=5.
+        # It previously scanned every strategy and accepted n>=1, which is how
+        # 56 rows ended up showing the opposite direction's record and 20 rows
+        # showed samples of 1-4 trades while the methodology page claimed n>=5.
+        _verdict = _row.get("action_plan", {}).get("verdict", "WAIT")
+        _allowed = strats_for_verdict(_verdict)
+        if not _allowed:
+            continue
         try:
             _bt = load_backtest(_row["ticker"])
         except Exception:
@@ -1076,15 +1161,18 @@ def build_for_market(market: str):
             _wd = _bt.get("windows", {}).get(_w)
             if not _wd:
                 continue
-            for _sname, _sd in _wd.items():
+            for _sname in _allowed:
+                _sd = _wd.get(_sname)
                 if not isinstance(_sd, dict) or _sd.get("n", 0) <= _ref_n:
+                    continue
+                if _sd.get("total_pnl", 0) <= 0:
                     continue
                 _ref_n = _sd["n"]
                 _ref_data = dict(_sd)
                 _ref_data["strategy"] = _sname  # so render can use edge["strategy"]
                 _ref_data["window"] = _w       # so render can use edge["window"]
                 _ref_data["n"] = _sd["n"]      # alias for n_trades (edge uses "n")
-        if _ref_data and _ref_n >= 1:  # 2026-09-17: lower to n>=1 (show any signal, n=1 still gets (ref) marker so user knows it's a single trade)
+        if _ref_data and _ref_n >= MIN_EDGE_N:
             _row["plan_edge"] = dict(_ref_data)
             _row["plan_edge"]["_weak"] = True
             _row["plan_edge"]["_ref"] = True
