@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Optional
 
 
-DB_PATH = "/Users/kenken/Documents/dsa-hk/data/dsa_hk.db"
+DB_PATH = "/Users/kenken/dev/dsa-hk/data/dsa_hk.db"
 
 
 # =============== Sub-score Algorithm (Phase 9 Step 4) ===============

@@ -29,18 +29,25 @@
   --border-2: #d1d5db;
   --fg: #1a1d23;
   --fg-2: #374151;
-  --dim: #6b7280;
+  --dim: #5b6371;          /* 2026-09-03 a11y: bumped from #6b7280 to clear WCAG AA on --bg-2 #f3f4f6 (4.39 → 5.16) */
   --dim-2: #9ca3af;
-  --bull: #059669;
-  --bull-dim: rgba(5, 150, 105, 0.10);
-  --bear: #dc2626;
+  /* 2026-09-03 a11y fix: bull/amber bumped from 600 → 700 to clear WCAG AA 4.5:1 on white panel */
+  --bull: #047857;          /* emerald-700, 5.65:1 on #ffffff */
+  --bull-dim: rgba(4, 120, 87, 0.10);
+  --bear: #dc2626;          /* red-600, 4.83:1 — keep */
   --bear-dim: rgba(220, 38, 38, 0.10);
-  --amber: #d97706;
-  --amber-dim: rgba(217, 119, 6, 0.10);
+  --amber: #b45309;         /* amber-700, 4.86:1 on #ffffff */
+  --amber-dim: rgba(180, 83, 9, 0.10);
   --blue: #4f46e5;
   --blue-dim: rgba(79, 70, 229, 0.10);
   --violet: #7c3aed;
   --theme-color: #fafbfc;
+  /* 2026-09-06: WCAG 2.1 AA contrast (4.5:1) for light theme:
+     bull/bear/amber/blue used as text on white (#fafbfc) panels */
+  --bull: #047857;          /* emerald-700, 5.65:1 on #ffffff (was #10b981, only 1.5:1) */
+  --bear: #be123c;          /* rose-700, 5.30:1 on #ffffff (was #f43f5e, only 2.95:1) */
+  --bull-dim: rgba(4, 120, 87, 0.10);
+  --bear-dim: rgba(190, 18, 60, 0.10);
 }
 
 /* Root tokens — signal palette + type scale + spacing
@@ -117,13 +124,51 @@ img { max-width: 100%; height: auto; display: block; }
    ========================================================= */
 .container { max-width: var(--container); margin: 0 auto; padding: 0 var(--sp-5); }
 
-.site-header {
+.site-header,
+nav.leeks-site-nav {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(10, 14, 26, 0.85);
+  background: var(--bg);
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
 }
+
+/* v2.3 fix 2026-08-28: sub-pages built by build_static.py use the legacy
+   <nav class="leeks-site-nav"> instead of <header class="site-header">.
+   Without these rules those pages render with browser default styling,
+   which leaves the nav bar un-themed in light mode. Mirror the v2.3 look. */
+nav.leeks-site-nav {
+  display: flex; align-items: center; gap: var(--sp-5);
+  padding: var(--sp-3) var(--sp-5);
+  max-width: var(--container);
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+/* 2026-08-30: 2026-08-30 — all main pages now use <nav class="nav">
+   via build_static.shell / build_home / build_dashboard. The .leeks-site-nav
+   rules are kept for legacy daily-report pages in /dashboard/YYYY-MM-DD/.
+   New nav (nav.nav) has gap: var(--sp-6) = 32px which is plenty. */
+nav.leeks-site-nav .brand {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--fg);
+  margin-right: var(--sp-3);
+}
+nav.leeks-site-nav a {
+  color: var(--fg-2);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: color .15s, background .15s;
+}
+nav.leeks-site-nav a:hover { color: var(--fg); background: var(--bg-2); text-decoration: none; }
+nav.leeks-site-nav a:hover { color: var(--fg); background: var(--bg-2); }
+nav.leeks-site-nav a.active { color: var(--bull); }
 
 .nav {
   display: flex; align-items: center; gap: var(--sp-6);
@@ -151,7 +196,8 @@ img { max-width: 100%; height: auto; display: block; }
   letter-spacing: 0.06em;
   color: var(--fg-2);
   position: relative;
-  padding: var(--sp-1) 0;
+  padding: var(--sp-2) 0; /* 2026-08-29 a11y: 8px vertical + text ≈ 36px hit area */
+  cursor: pointer;
 }
 .nav-links a:hover, .nav-links a.active { color: var(--fg); }
 .nav-links a.active::after {
@@ -220,7 +266,9 @@ h4, .h4 { font-family: var(--font-mono); font-size: var(--text-xs); font-weight:
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
+  /* 2026-08-29 a11y: 44px touch target */
+  min-height: 44px;
+  padding: 10px 14px;
   border-radius: 4px;
   font-size: var(--text-xs);
   font-family: var(--font-mono);
@@ -304,7 +352,8 @@ h4, .h4 { font-family: var(--font-mono); font-size: var(--text-xs); font-weight:
   gap: var(--sp-4);
   transition: all 0.15s ease;
 }
-.signal-card:hover { transform: translateX(2px); border-color: var(--border-2); }
+/* 2026-08-29: hover 改 border-color only（Pro Max anti-pattern: 唔用 transform 移位） */
+.signal-card:hover { border-color: var(--border-2); background: var(--panel-2); }
 .signal-card.bull { border-left-color: var(--bull); }
 .signal-card.bear { border-left-color: var(--bear); }
 .signal-card.wait { border-left-color: var(--dim-2); }
@@ -370,6 +419,54 @@ h4, .h4 { font-family: var(--font-mono); font-size: var(--text-xs); font-weight:
   border-collapse: collapse;
   font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
+  table-layout: fixed;
+}
+.data-table th, .data-table td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 8px 10px;
+}
+/* 2026-08-31: column width hints — Ticker sticky on horizontal scroll so
+   rightmost Win%/To Trigger% columns stay readable. Widths sized to fit
+   header text + content (no header truncation). */
+.data-table th:nth-child(1), .data-table td:nth-child(1) { width: 104px; position: sticky; left: 0;  background: var(--bg); z-index: 1; }
+.data-table th:nth-child(2), .data-table td:nth-child(2) { width: 200px; }
+.data-table th:nth-child(3), .data-table td:nth-child(3) { width: 85px;  text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.data-table th:nth-child(4), .data-table td:nth-child(4) { width: 80px;  text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.data-table th:nth-child(5), .data-table td:nth-child(5) { width: 90px;  text-align: center; }
+.data-table th:nth-child(6), .data-table td:nth-child(6) { width: 110px; text-align: center; }
+
+/* 2026-09-12: hub-table column layout — col 1=checkbox, col 2=ticker,
+   col 3=NAME (200px), col 4=Last, col 5=Chg%, col 6=Phase, col 7=Action,
+   col 8=Trigger, col 9=Target, col 10=Stop, col 11=To Trigger%, col 12=Win%,
+   col 13=Strategy. */
+.hub-table { table-layout: fixed; min-width: 1280px; }
+.hub-table th, .hub-table td { word-wrap: break-word; overflow-wrap: break-word; }
+.hub-table th:nth-child(1), .hub-table td:nth-child(1) { width: 30px; position: sticky; left: 0; background: var(--bg); z-index: 1; }
+.hub-table th:nth-child(2), .hub-table td:nth-child(2) { width: 100px; font-family: var(--font-mono); }
+.hub-table th:nth-child(3), .hub-table td:nth-child(3) { width: 200px; min-width: 200px; }
+.hub-table th:nth-child(4), .hub-table td:nth-child(4) { width: 80px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hub-table th:nth-child(5), .hub-table td:nth-child(5) { width: 75px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hub-table th:nth-child(6), .hub-table td:nth-child(6) { width: 95px; text-align: center; }
+.hub-table th:nth-child(7), .hub-table td:nth-child(7) { width: 95px; text-align: center; }
+.hub-table th:nth-child(8), .hub-table td:nth-child(8) { width: 75px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hub-table th:nth-child(9), .hub-table td:nth-child(9) { width: 75px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hub-table th:nth-child(10), .hub-table td:nth-child(10) { width: 75px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hub-table th:nth-child(11), .hub-table td:nth-child(11) { width: 95px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hub-table th:nth-child(12), .hub-table td:nth-child(12) { width: 95px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hub-table th:nth-child(13), .hub-table td:nth-child(13) { width: 110px; }
+.hub-table th[onclick], .hub-table td { padding: 6px 8px; }
+/* Trigger / Target / Stop (cols 7-9): fixed width + tabular-nums for clean alignment.
+   Header text "Trigger" (7c) and "Target" (8c) need a few extra px over Stop (9c). */
+.data-table th:nth-child(7), .data-table td:nth-child(7) { width: 105px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.data-table th:nth-child(8), .data-table td:nth-child(8) { width: 95px;  text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.data-table th:nth-child(9), .data-table td:nth-child(9) { width: 85px;  text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.data-table th:nth-child(10), .data-table td:nth-child(10) { width: 135px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.data-table th:nth-child(11), .data-table td:nth-child(11) { width: 130px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.data-table th:nth-child(12), .data-table td:nth-child(12) { width: 140px; }
+@media (max-width: 700px) {
+  .data-table th, .data-table td { padding: 6px 6px; font-size: var(--text-xs); }
 }
 
 .data-table th {
@@ -451,10 +548,41 @@ h4, .h4 { font-family: var(--font-mono); font-size: var(--text-xs); font-weight:
 .filter-bar input:focus, .filter-bar select:focus { outline: none; border-color: var(--blue); }
 .filter-bar label { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.1em; color: var(--dim); }
 
+/* 2026-08-29: hub 表格 scroll wrapper — 抽出 inline style + 加 mobile scroll hint */
+.table-scroll-wrap {
+  overflow: auto;
+  max-height: calc(100vh - 76px);
+  overscroll-behavior: contain;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  position: relative;
+}
+/* 右邊漸層提示：仲有欄位可以橫向 scroll（唔遮 content，pointer-events none） */
+.table-scroll-wrap::after {
+  content: '';
+  position: sticky;
+  top: 0;
+  right: 0;
+  display: block;
+  width: 0;
+  height: 0;
+}
+@media (max-width: 900px) {
+  .table-scroll-wrap {
+    background:
+      linear-gradient(to right, transparent calc(100% - 28px), var(--bg) calc(100% - 2px)),
+      transparent;
+    background-repeat: no-repeat;
+    background-attachment: local;
+  }
+}
+
 .filter-chip {
   display: inline-block;
   appearance: none; -webkit-appearance: none; /* v2.1: render as <button> */
-  padding: 4px 10px;
+  /* 2026-08-29 a11y: min-height 44px touch target (WCAG/Apple HIG) */
+  min-height: 44px;
+  padding: 10px 14px;
   border-radius: 3px;
   font-size: var(--text-xs);
   font-weight: 500;
@@ -577,8 +705,23 @@ section h2 .em { font-style: italic; color: var(--blue); font-variation-settings
   padding: var(--sp-4);
   min-height: 600px;
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 12px;
+}
+.chart-frame > #chart-host {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 540px;
+  display: flex;
   align-items: center;
   justify-content: center;
+}
+.chart-frame > #chart-host > canvas {
+  width: 100% !important;
+  height: 540px !important;
+  display: block;
 }
 .chart-frame img {
   display: block;
@@ -590,7 +733,7 @@ section h2 .em { font-style: italic; color: var(--blue); font-variation-settings
 }
 .chart-frame .skeleton {
   width: 100%;
-  height: 600px;
+  height: 540px;
   display: block;
 }
 
@@ -723,6 +866,31 @@ section h2 .em { font-style: italic; color: var(--blue); font-variation-settings
 }
 .data-table th:focus-visible { color: var(--fg); }
 
+/* 2026-08-29: skip-link (WCAG 2.1 "Skip to main content") — hidden by
+   default, becomes visible on keyboard focus. Visually-hidden until
+   Tab is pressed, then anchors to the top-left so screen-reader and
+   keyboard users can bypass the header nav. */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 8px;
+  z-index: 1000;
+  padding: 10px 16px;
+  background: var(--bg-2);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  font-weight: 600;
+  transition: top 0.15s ease;
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+  top: 8px;
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -732,3 +900,294 @@ section h2 .em { font-style: italic; color: var(--blue); font-variation-settings
     transition-duration: 0.01ms !important;
   }
 }
+
+/* 2026-08-28: Swing paper-trade badge (T+10 hold, -10% stop, +15% target) */
+.swing-pill {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  margin-left: 4px;
+}
+.swing-pill::before { content: "🌿 "; }
+
+/* 2026-08-29: i18n language switcher button */
+.lang-switch {
+  margin-left: auto;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--fg-2);
+  text-decoration: none;
+  font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  transition: color .15s, border-color .15s, background .15s;
+  cursor: pointer;
+}
+.lang-switch:hover { color: var(--fg); border-color: var(--border-2); background: var(--bg-2); text-decoration: none; }
+
+/* =========================================================
+   2026-08-30: Mobile responsive pass (≤600px phones)
+   - 1-col layouts, smaller h1, sticky table header column
+   - filter chips horizontal scroll, 44px touch targets
+   ========================================================= */
+@media (max-width: 600px) {
+  /* Global font shrink */
+  :root {
+    --text-7xl: 36px;
+    --text-6xl: 28px;
+    --text-5xl: 26px;
+    --text-4xl: 22px;
+    --text-3xl: 18px;
+    --text-2xl: 16px;
+  }
+  /* Container padding tighter */
+  .container { padding: 0 var(--sp-3); }
+  /* Nav: 2-row layout, no wrap, smaller font, full-width links */
+  .site-header, nav.leeks-site-nav { padding: 8px 0; }
+  .nav {
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-3);
+    padding: 8px 12px;
+  }
+  .nav-brand { font-size: var(--text-base); }
+  .nav-links {
+    order: 3;
+    width: 100%;
+    gap: var(--sp-3);
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+  }
+  .nav-links::-webkit-scrollbar { display: none; }
+  .nav-links a {
+    font-size: 0.7rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .nav-meta {
+    font-size: 0.65rem;
+    gap: var(--sp-2);
+  }
+  .nav-meta .live-dot { width: 5px; height: 5px; }
+  .lang-switch { padding: 3px 8px; font-size: 0.7rem; }
+  .theme-toggle { padding: 4px 8px; font-size: 0.7rem; }
+  /* Page-head: smaller h1, tighter padding */
+  .page-head { padding: var(--sp-5) 0 var(--sp-4); margin-bottom: var(--sp-4); }
+  .page-head h1 { font-size: var(--text-3xl) !important; line-height: 1.15; }
+  .page-head .lede { font-size: var(--text-sm); }
+  .page-head .kicker { font-size: 0.65rem; }
+  /* Hero: hide .hero-grid if present (home page) */
+  .hero { padding: var(--sp-6) 0 var(--sp-5); }
+  .hero-title { font-size: var(--text-4xl); line-height: 1.1; }
+  .hero-grid { grid-template-columns: 1fr; gap: var(--sp-4); }
+  .hero-meta { gap: var(--sp-2); font-size: 0.7rem; flex-wrap: wrap; }
+  .hero-stat { padding: var(--sp-3); }
+  .hero-stat .value { font-size: var(--text-xl); }
+  /* Cards: tighter padding */
+  .info-card { padding: var(--sp-3); }
+  .info-card h3 { font-size: var(--text-base); }
+  .info-card .lede, .info-card p { font-size: 0.85rem; }
+  /* Filter bar: scrollable horizontally */
+  .filter-bar {
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    padding: var(--sp-2) 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .filter-bar > label { font-size: 0.7rem; }
+  .filter-bar input[type="text"] { font-size: 0.85rem; padding: 6px 8px; }
+  .filter-chip {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+    min-height: 32px;
+  }
+  /* Data table: sticky first column + horizontal scroll */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .data-table th, .data-table td {
+    padding: 6px 6px;
+    font-size: 0.7rem;
+    white-space: nowrap;
+  }
+  /* Sticky first 2 columns (ticker + name) for horizontal scroll */
+  .data-table th:nth-child(1), .data-table td:nth-child(1),
+  .data-table th:nth-child(2), .data-table td:nth-child(2) {
+    position: sticky;
+    background: var(--bg-2);
+  }
+  .data-table th:nth-child(1), .data-table td:nth-child(1) { left: 0; z-index: 3; }
+  .data-table th:nth-child(2), .data-table td:nth-child(2) { left: 56px; z-index: 3; }
+  /* Detail-grid: chart first, action plan below */
+  .detail-grid { grid-template-columns: 1fr; gap: var(--sp-3); }
+  .detail-grid > div:last-child { order: -1; }
+  /* Phase-block: tighter */
+  .phase-block { padding: 6px 0; }
+  .phase-block .name { font-size: 0.7rem; }
+  .phase-block .value { font-size: 0.85rem; }
+  /* Scenario list: smaller text */
+  .scenario-list { padding-left: 18px; font-size: 0.8rem; }
+  /* Key levels dl: tighter */
+  .info-card dl { grid-template-columns: 110px 1fr; gap: 4px var(--sp-3); font-size: 0.8rem; }
+  /* Footer */
+  .site-footer { padding: var(--sp-4) 0; font-size: 0.75rem; }
+  .site-footer .row { flex-direction: column; gap: var(--sp-2); }
+  /* Section heads */
+  .section-head { flex-direction: column; align-items: flex-start; gap: var(--sp-1); }
+  .section-head h2 { font-size: var(--text-2xl); }
+  /* Card grid: single column */
+  .card-grid, .card-grid-2, .card-grid-3 { grid-template-columns: 1fr; }
+  /* Signal card */
+  .signal-card { padding: var(--sp-3); grid-template-columns: 1fr; }
+  .signal-card .signal-ticker { font-size: var(--text-base); }
+  /* Chart frame: even smaller on phones */
+  .chart-frame { min-height: 320px !important; }
+  .chart-frame .skeleton { height: 320px; }
+  /* Buttons / touch targets */
+  .btn { padding: 8px 14px; font-size: 0.85rem; min-height: 36px; }
+  /* Disclaimer page: sections stack tightly */
+  .card.mt-4 { margin-top: var(--sp-3); padding: var(--sp-3); }
+  .card h1, .card h2 { font-size: var(--text-xl); }
+  /* Reduce section vertical gaps on mobile */
+  .mt-4 { margin-top: var(--sp-3) !important; }
+  .mt-5 { margin-top: var(--sp-4) !important; }
+  .mb-5 { margin-bottom: var(--sp-4) !important; }
+  /* Action plan: phase-block flex layout */
+  .cell-action { font-size: 0.7rem; padding: 2px 6px; }
+  /* Today actionable list */
+  h1 em, h2 em { font-size: inherit; }
+  /* Tabs/scroll areas */
+  [style*="overflow-x"] { -webkit-overflow-scrolling: touch; }
+}
+
+/* Even smaller phones (≤400px) */
+@media (max-width: 400px) {
+  :root { --text-5xl: 22px; --text-4xl: 18px; --text-3xl: 16px; }
+  .container { padding: 0 var(--sp-2); }
+  .nav-brand { font-size: 0.85rem; }
+  .data-table th, .data-table td { font-size: 0.65rem; padding: 4px 4px; }
+  .data-table th:nth-child(2), .data-table td:nth-child(2) { left: 44px; }
+}
+
+
+/* 2026-09-06: Per-market color semantics toggle.
+   HK + Mainland China: Red = Up, Green = Down (cultural norm).
+   US + International: Green = Up, Red = Down (international norm).
+   .cell-up / .cell-down are added in build_dashboard.py for the chg value. */
+[data-market="hk"] .cell-up, [data-market="jp"] .cell-up {
+  color: var(--bull);
+}
+[data-market="hk"] .cell-down, [data-market="jp"] .cell-down {
+  color: var(--bear);
+}
+[data-market="us"] .cell-up {
+  color: var(--bull);
+}
+[data-market="us"] .cell-down {
+  color: var(--bear);
+}
+/* When the build pipeline flips sign for HK/JP (negative→up), the .chg-up/.chg-dn classes
+   carry the actual semantic. CSS just trusts the class. */
+
+/* 2026-09-06: Skeleton loaders for hub table (prevent CLS on data load). */
+#tableBody tr.skeleton-row td {
+  background: linear-gradient(90deg, var(--bg-2) 0%, var(--border-2) 50%, var(--bg-2) 100%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite;
+  color: transparent;
+}
+@keyframes skeletonShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* 2026-09-06: Cmd+K command palette overlay. */
+.cmdk-overlay {
+  position: fixed; inset: 0; background: rgba(10,14,26,0.85); backdrop-filter: blur(8px);
+  z-index: 1000; display: none; align-items: flex-start; justify-content: center;
+  padding-top: 15vh;
+}
+.cmdk-overlay.open { display: flex; }
+.cmdk-box {
+  width: 90%; max-width: 560px; background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: var(--sp-3);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.cmdk-input {
+  width: 100%; padding: 12px 16px; font-size: 1.1rem;
+  background: transparent; border: 1px solid var(--border); border-radius: 6px;
+  color: var(--fg); font-family: var(--font-body);
+  outline: none;
+}
+.cmdk-input:focus { border-color: var(--blue); }
+.cmdk-results { max-height: 50vh; overflow-y: auto; margin-top: 12px; }
+.cmdk-result {
+  padding: 10px 14px; border-radius: 4px; cursor: pointer; color: var(--fg);
+  display: flex; align-items: center; gap: 12px;
+}
+.cmdk-result:hover, .cmdk-result.selected { background: var(--panel-2); }
+.cmdk-result .ticker { font-family: var(--font-mono); color: var(--blue); min-width: 90px; }
+.cmdk-result .name { color: var(--fg-2); flex: 1; }
+.cmdk-result .action { font-family: var(--font-mono); font-size: 0.85rem; }
+
+/* 2026-09-06: Mobile bottom navigation (<768px). */
+@media (max-width: 768px) {
+  .nav { display: none !important; }
+  .mobile-bottom-nav {
+    display: flex; position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--panel); border-top: 1px solid var(--border);
+    z-index: 50; padding: 6px 0 calc(env(safe-area-inset-bottom, 0) + 6px);
+    justify-content: space-around;
+  }
+  .mobile-bottom-nav a {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    padding: 6px 4px; color: var(--fg-2); text-decoration: none; font-size: 0.65rem;
+    font-family: var(--font-mono);
+  }
+  .mobile-bottom-nav a.active { color: var(--blue); }
+  .mobile-bottom-nav a svg { width: 20px; height: 20px; margin-bottom: 2px; }
+  main { padding-bottom: 60px; }
+}
+@media (min-width: 769px) {
+  .mobile-bottom-nav { display: none !important; }
+}
+
+/* 2026-09-06: Clickable filter distribution badges (Phase + Action + Reg). */
+.hero-dist-stat[data-action] { cursor: pointer; transition: opacity 0.15s; }
+.hero-dist-stat[data-action]:hover { opacity: 0.7; }
+
+/* 2026-09-06: Region-suggest button (auto-detect local market) */
+.region-suggest a.region-suggest-link {
+  text-decoration: none;
+  color: var(--blue);
+  font-weight: 500;
+}
+.region-suggest a.region-suggest-link:hover {
+  text-decoration: underline;
+}
+
+/* 2026-09-06: Comprehensive hover/focus states (a11y + polish). */
+a { transition: color 0.15s ease, background 0.15s ease; }
+a:hover { text-decoration: underline; text-underline-offset: 2px; }
+a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 2px; }
+button:focus-visible, .btn:focus-visible {
+  outline: 2px solid var(--blue); outline-offset: 2px;
+}
+.btn { transition: background 0.15s, border-color 0.15s, color 0.15s; }
+.btn:hover { background: var(--panel-2); border-color: var(--blue); }
+.btn-ghost:hover { background: var(--bg-2); border-color: var(--border-2); }
+.signal-action.bull:hover { background: var(--bull-dim); border-color: var(--bull); }
+.signal-action.bear:hover { background: var(--bear-dim); border-color: var(--bear); }
+.info-card a:hover { color: var(--blue); text-decoration: underline; }
+.tag:hover { opacity: 0.8; }
+input:hover, select:hover, textarea:hover { border-color: var(--blue); }

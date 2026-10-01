@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 
 import yfinance as yf
 
-DB_PATH = "/Users/kenken/Documents/dsa-hk/data/dsa_hk.db"
+DB_PATH = "/Users/kenken/dev/dsa-hk/data/dsa_hk.db"
 
 DATES = ["2026-06-26", "2026-06-27", "2026-06-29", "2026-06-30", "2026-07-01", "2026-07-02", "2026-07-03", "2026-07-06", "2026-07-07"]
 NEXT_TRADING = {
@@ -242,7 +242,7 @@ def main():
     print("=" * 80)
     from src.conservative_filters import TECH_SECTORS_AVOID
     # Reload sys
-    sys.path.insert(0, "/Users/kenken/Documents/dsa-hk")
+    sys.path.insert(0, "/Users/kenken/dev/dsa-hk")
     cons_buys = []
     for d in data:
         if d["op"] != "買入" or d["code"].endswith(".HK"):

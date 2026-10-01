@@ -12,7 +12,7 @@ import argparse
 import sqlite3
 from pathlib import Path
 
-PROJECT_ROOT = Path("/Users/kenken/Documents/dsa-hk")
+PROJECT_ROOT = Path("/Users/kenken/dev/dsa-hk")
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from scripts.build_static import (

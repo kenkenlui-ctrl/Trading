@@ -1,0 +1,152 @@
+{
+  "ticker": "HK.01299",
+  "ticker_user": "01299.HK",
+  "name": "AIA",
+  "data_source": "yfinance",
+  "data_range": "2025-12-05 → 2026-09-29 (200 daily bars)",
+  "last_bar": {
+    "date": "2026-09-29",
+    "O": 73.5,
+    "H": 74.3,
+    "L": 73.05,
+    "C": 73.9,
+    "prev_close": 74.05,
+    "chg_pct": -0.2
+  },
+  "phase": "base_building",
+  "adx": 15.06,
+  "plus_di": 14.66,
+  "minus_di": 27.56,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 92.15 (2026-04-08), trough 69.05 (2026-06-10), box top 80.15 (2026-07-30)",
+  "peak": {
+    "date": "2026-04-08",
+    "price": 92.15
+  },
+  "trough": {
+    "date": "2026-06-10",
+    "price": 69.05
+  },
+  "box": {
+    "top": 80.15,
+    "top_date": "2026-07-30",
+    "bottom": 69.05,
+    "period": "2026-06-10 to 2026-09-29"
+  },
+  "drop_from_peak_pct": 19.8,
+  "recovery_from_crash_pct": 7.0,
+  "supports": [
+    {
+      "level": 72.0,
+      "label": "S1 bottom",
+      "touches": 21,
+      "evidence": "structural bottom, near crash low 69.05"
+    }
+  ],
+  "resistances": [
+    {
+      "level": 74.3,
+      "label": "R1 today high",
+      "evidence": "today's high 74.30000305175781"
+    },
+    {
+      "level": 80.15,
+      "label": "R3 Jul high",
+      "evidence": "box top 80.15, base period high"
+    }
+  ],
+  "position": {
+    "current": 73.9,
+    "in_box_pct": 23.3,
+    "nearest_support": "S1 bottom (72.0)",
+    "nearest_resistance": "R1 today high (74.3)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 73.5,
+    "H": 74.3,
+    "L": 73.05,
+    "C": 73.9,
+    "body_pct": 32.0,
+    "upper_wick_pct": 32.0,
+    "lower_wick_pct": 36.0
+  },
+  "bias": {
+    "short": {
+      "bias": "defensive",
+      "reason": "near box bottom (23% of box)"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 72.0 (KEY support)",
+      "then": "still range; watch 74.3 for next test"
+    },
+    {
+      "if": "break 72.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 72.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 74.3 on close",
+      "then": "short-term bullish; next test 80.15"
+    },
+    {
+      "if": "break 80.15 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
+  "action_plan": {
+    "verdict": "WAIT",
+    "strategy": "WAIT_RR_TOO_THIN",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 78.8,
+    "s1": 72.8,
+    "s2": 70.2,
+    "r2": 80.15,
+    "r3": 90.5,
+    "s3": 69.05,
+    "s4": 76.55,
+    "current_position_pct": 18.3,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 入場位 support 72.80：以收市價為準 —— 收得守住先當入場成立；收穿就係 support 失效，本單取消（見上方失效條件）。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+  }
+}

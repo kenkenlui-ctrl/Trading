@@ -84,7 +84,7 @@ def _feat_chg_5d(code: str) -> Optional[float]:
     import json as _json
     import sqlite3 as _sq
     try:
-        con = _sq.connect("/Users/kenken/Documents/dsa-hk/data/dsa_hk.db", timeout=5)
+        con = _sq.connect("/Users/kenken/dev/dsa-hk/data/dsa_hk.db", timeout=5)
         rows = con.execute(
             "SELECT report_date, data_snapshot_json FROM daily_report "
             "WHERE code=? ORDER BY report_date DESC LIMIT 5",
@@ -133,7 +133,7 @@ def _feat_pe_rel(code: str, snap: dict, name: str = "") -> Optional[float]:
     sector = (snap.get("sector") or "").strip()
     if not sector:
         try:
-            con = _sq.connect("/Users/kenken/Documents/dsa-hk/data/dsa_hk.db", timeout=5)
+            con = _sq.connect("/Users/kenken/dev/dsa-hk/data/dsa_hk.db", timeout=5)
             row = con.execute(
                 "SELECT sector FROM ticker WHERE code=?", (code,)
             ).fetchone()
@@ -144,7 +144,7 @@ def _feat_pe_rel(code: str, snap: dict, name: str = "") -> Optional[float]:
     if not sector:
         return None
     try:
-        con = _sq.connect("/Users/kenken/Documents/dsa-hk/data/dsa_hk.db", timeout=5)
+        con = _sq.connect("/Users/kenken/dev/dsa-hk/data/dsa_hk.db", timeout=5)
         rows = con.execute(
             "SELECT data_snapshot_json FROM daily_report "
             "WHERE code != ? AND report_date = (SELECT MAX(report_date) FROM daily_report)",
@@ -177,7 +177,7 @@ def _feat_to_ratio(code: str) -> Optional[float]:
     import json as _json
     import sqlite3 as _sq
     try:
-        con = _sq.connect("/Users/kenken/Documents/dsa-hk/data/dsa_hk.db", timeout=5)
+        con = _sq.connect("/Users/kenken/dev/dsa-hk/data/dsa_hk.db", timeout=5)
         rows = con.execute(
             "SELECT report_date, data_snapshot_json FROM daily_report "
             "WHERE code=? ORDER BY report_date DESC LIMIT 5",

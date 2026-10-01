@@ -36,6 +36,16 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.db import list_report_dates, list_reports, init_db  # noqa: E402
+# 2026-08-30: import t_minus_1 for nav T-1 date display (unified nav)
+try:
+    from build_dashboard import t_minus_1
+except Exception:
+    def t_minus_1(market=None):  # type: ignore
+        from datetime import date, timedelta
+        d = date.today()
+        while d.weekday() >= 5:
+            d -= timedelta(days=1)
+        return d - timedelta(days=1)
 from src.pipeline import build_dashboard_md  # noqa: E402
 from src.config import get_config  # noqa: E402
 
@@ -827,32 +837,206 @@ def extract_shared_css(public_dir=None) -> str:
     return str(out_path)
 
 
+# Per-page explicit mapping. /en/ subpath always uses directory form
+# (trailing slash). For /about we use /en/about/ since both /en/about and
+# /en/about/ resolve to the same file.
+_EN_PATH_MAP = {
+    "/": "/en/",
+    "/hk200/": "/en/methodology/",  # hk200 → en methodology is intentional
+    "/us200/": "/en/backtest/",     # us200 → en backtest, same
+    "/methodology.html": "/en/methodology/",
+    "/methodology": "/en/methodology/",
+    "/backtest.html": "/en/backtest/",
+    "/backtest": "/en/backtest/",
+    "/insights": "/en/insights/",
+    "/insights.html": "/en/insights/",
+    "/disclaimer": "/en/disclaimer/",
+    "/disclaimer.html": "/en/disclaimer/",
+    "/privacy": "/en/privacy/",
+    "/privacy.html": "/en/privacy/",
+}
+
+
+def _en_url_for(zh_path: str) -> str:
+    """Map a zh path to its /en/ equivalent. Uses explicit table; falls back
+    to /en/ root for unrecognised paths."""
+    if zh_path in _EN_PATH_MAP:
+        return _EN_PATH_MAP[zh_path]
+    # Try a few normalisations
+    p = zh_path.lstrip("/")
+    if not p:
+        return "/en/"
+    return "/en/"
+
+
 def nav_html(active_path: str) -> str:
-    """Top nav matching the Worker-injected nav on Streamlit."""
+    """Top nav — minimal 4-link set (2026-08-29 user request)."""
+    # 2026-08-29: SVG icons 取代 emoji（Pro Max anti-pattern fix：emoji 跨平台不一致）
+    # Icons: bar-chart (HK), globe (US) — inline SVG, currentColor 繼承文字色
+    icon_hk = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg>'
+    icon_us = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="vertical-align:-2px" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.6 3 14.4 0 18M12 3c-3 3.6-3 14.4 0 18"/></svg>'
+    icon_jp = '<span style="display: inline-block; width: 14px; height: 14px; background: radial-gradient(circle at 50% 50%, #bc002d 30%, #fff 30%); border-radius: 50%; vertical-align: -2px; margin-right: 4px;" title="Japan"></span>'
+    # 2026-09-14: nav set unified with build_dashboard.py — 10 items same on every page
+    # so user sees identical menu no matter where they click.
     links = [
         ("/", "Home", "Home"),
-        ("/dashboard/", "Dashboard", "Dashboard"),
-        ("/full-results.html", "Full Results", "Full Results"),
-        ("/hk200/", "📊 HK200 S/R", "HK200 S/R"),
-        ("/us200/", "🇺🇸 US200 S/R", "US200 S/R"),
-        ("/pair-trades/", "⚖️ Pair Trades", "Pair Trades"),
-        ("/live-monitor.html", "🔴 Live", "Live Monitor"),
-        ("/paper-trades.html", "Paper Trades", "Paper Trades"),
-        ("/faq.html", "FAQ", "FAQ"),
+        ("/hk200/", f"{icon_hk} HK Signals", "HK Signals"),
+        ("/us200/", f"{icon_us} US Signals", "US Signals"),
+        ("/jp200/", f"{icon_jp} JP Signals", "JP Signals"),
+        ("/compare/", "Compare", "Compare"),
+        ("/backtest.html", "Backtest", "Backtest"),
+        ("/insights.html", "Insights", "Insights"),
         ("/methodology.html", "Methodology", "Methodology"),
-        ("/learn/", "Learn", "教學中心"),
-        ("/about.html", "About", "About"),
+        ("/faq.html", "FAQ", "FAQ"),
+        ("/disclaimer/", "Disclaimer", "Disclaimer"),
+        ("/privacy.html", "Privacy", "Privacy"),
     ]
     items = []
     for path, label, _ in links:
         cls = ' class="active"' if active_path.rstrip("/").endswith(path.rstrip("/")) else ""
         items.append(f'<a href="{path}"{cls}>{label}</a>')
+    # 2026-08-29: i18n language switcher. Detects current page lang and shows
+    # the alternate locale's URL (subpath /en/ mapping).
+    en_url = _en_url_for(active_path)
+    is_zh = not active_path.startswith("/en")
+    if is_zh:
+        lang_label, lang_href, lang_title = "EN", en_url, "View in English"
+    else:
+        # On /en/ — point back to base zh URL
+        zh_url = active_path.replace("/en", "", 1) or "/"
+        lang_label, lang_href, lang_title = "中", zh_url, "切換至繁體中文"
+    lang_switch = f'<a class="lang-switch" href="{lang_href}" title="{lang_title}" aria-label="{lang_title}">{lang_label}</a>'
+    # 2026-08-30: nav unified to match build_home.py / build_dashboard.py.
+    # Use <header class="site-header"> + <nav class="nav"> + nav-brand/nav-links/
+    # nav-meta structure so all 9 pages render identical uppercase + monospace
+    # styling. Includes T-1 date, theme toggle, lang switch on the right.
+    t1 = t_minus_1().isoformat() if "t_minus_1" in dir() else "—"
     return (
-        '<nav class="leeks-site-nav" role="navigation" aria-label="Site navigation">'
-        '<span class="brand">◆ Leeks Terminal</span>'
+        f'<header class="site-header">\n'
+        f'<nav class="nav" aria-label="Primary">\n'
+        f'  <a href="/" class="nav-brand"><span class="leek">L</span>eeks <em class="italic">Terminal</em></a>\n'
+        f'  <div class="nav-links">\n    '
         + "".join(items)
-        + "</nav>"
+        + f'\n  </div>\n'
+        f'  {lang_switch}\n'
+        f'  <div class="nav-meta">\n'
+        f'    <span class="live-dot"></span>\n'
+        f'    T-1 · {t1}\n'
+        f'    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">\n'
+        f'      <span class="icon" id="themeIcon">●</span>\n'
+        f'      <span id="themeLabel">DARK</span>\n'
+        f'    </button>\n'
+        f'  </div>\n'
+        f'</nav>\n'
+        f'</header>\n'
+        f'<script>\n'
+        f'function toggleTheme(){{\n'
+        f'  const cur = document.documentElement.getAttribute("data-theme") || "dark";\n'
+        f'  const next = cur === "dark" ? "light" : "dark";\n'
+        f'  document.documentElement.setAttribute("data-theme", next);\n'
+        f'  localStorage.setItem("leeks-theme", next);\n'
+        f'  const meta = document.querySelector("meta[name=\\"theme-color\\"]");\n'
+        f'  if (meta) meta.content = next === "dark" ? "#0a0e1a" : "#fafbfc";\n'
+        f'  const lbl = document.getElementById("themeLabel");\n'
+        f'  const ic = document.getElementById("themeIcon");\n'
+        f'  if (lbl) lbl.textContent = next.toUpperCase();\n'
+        f'  if (ic) ic.textContent = next === "dark" ? "●" : "○";\n'
+        f'}}\n'
+        f'(function(){{\n'
+        f'  const t = document.documentElement.getAttribute("data-theme") || "dark";\n'
+        f'  const lbl = document.getElementById("themeLabel");\n'
+        f'  const ic = document.getElementById("themeIcon");\n'
+        f'  if (lbl) lbl.textContent = t.toUpperCase();\n'
+        f'  if (ic) ic.textContent = t === "dark" ? "●" : "○";\n'
+        f'}})();\n'
+        f'</script>'
     )
+
+
+
+
+# =========================================================
+# Learn hub (2026-08-28): 4 evergreen teaching posts + index.
+# Content = first-party methodology education, zh-Hant, aligned
+# with the 10-step framework. Built via build_static_pages().
+# =========================================================
+
+LEARN_POSTS = [
+    {
+        "slug": "llm-trading-inversion",
+        "title": "LLM 交易反轉：點解我哋唔俾 AI 出數字",
+        "desc": "LLM 出 trigger/target/stop 會 hallucinate。反轉架構：Python 計數，LLM 只解畫。",
+        "body": """
+<p>多數「AI 炒股」產品都係叫 LLM 睇圖然後出「買入，目標 XX」。呢個架構有一個致命位：LLM 對具體數字係會幻覺嘅。佢可以頭先講 45.2，兩句之後變 44.8，而且語氣一樣肯定。</p>
+<p>Leeks Terminal 用相反架構：</p>
+<ul>
+<li><b>Python 計所有數字</b> — S/R 位、trigger、target、stop、R:R，全部由 T-1 OHLC 確定性計出，同一輸入永遠同一輸出。</li>
+<li><b>LLM 只做敘事</b> — 解釋個 plan 嘅 if-then 情境、常見誤判。佢冇權掂任何價位。</li>
+<li><b>審計證據</b> — 我哋曾經試過俾 LLM 出 4 維度評分（價值/質量/動量/訂單流），14 日審計發現 Pearson r ≈ 0（零預測力），即場廢棄，換做 deterministic rules。</li>
+</ul>
+<p>教訓：AI 喺交易入面嘅正確位置係「解釋者」同「風險提示者」，唔係「數字產生器」。</p>
+"""
+    },
+    {
+        "slug": "conservative-rule",
+        "title": "Conservative Rule：點解大市跌你更加要冷靜",
+        "desc": "HSI 單日 ≤ -1.5% 嘅熊市日，訊號應該點處理？一條 rule 慳返你幾次爆倉。",
+        "body": """
+<p>個股訊號係由個股 OHLC 計，但大市 regime 會令同樣訊號嘅勝率完全唔同。我哋嘅 HSI_REGIME rule：</p>
+<ul>
+<li>恒指單日跌 ≥ 1.5% = bear day，全場 long 訊號 score 被壓向中性（direction_score 上限 48）。</li>
+<li>回測顯示 bear day 入場嘅 T+1 long 勝率明顯低過平常 — 唔係話一定輸，係 edge 唔夠。</li>
+<li>T+10 swing 反而未受呢個影響（10 日窗口入面 bear 好快會被反彈消化），所以我哋 day-trade 同 swing 分開睇。</li>
+</ul>
+<p>核心教訓：<b>個股訊號唔可以離開大市 context 用</b>。同一個 BUY_S1，牛市同熊市係兩個唔同嘅期望值。</p>
+"""
+    },
+    {
+        "slug": "hk-vs-us-day-trade",
+        "title": "港股 vs 美股即日鮮：三個結構性差異",
+        "desc": "交易時段、成本、波幅結構 — 呢啲差異直接影響策略參數點 set。",
+        "body": """
+<p>同一套框架唔可以直接套落兩個市場，因為結構唔同：</p>
+<ul>
+<li><b>時段</b> — 港股 09:30–16:00（中午不休），美股 09:30–16:00 ET = 香港 21:30–04:00（夏令 22:30–05:00）。US 即日鮮對香港人係通宵工程，執行紀律要求高好多。</li>
+<li><b>成本</b> — 港股 round-trip 連印花稅約 0.20%，美股 $0 佣金加 SEC fee 約 0.10%。同樣策略，港股要跑贏多一倍成本先打和。我哋 backtest 就係咁 set。</li>
+<li><b>波幅結構</b> — 美股趨勢持續性較強（momentum work），港股 mean-reversion 較明顯（S/R 反彈較多）。所以同一個 R:R floor，兩邊嘅邊際策略組合唔同。</li>
+</ul>
+<p>呢個係點解我哋個 score engine 嘅參數要 per-market 校，唔可以一組數行晒兩邊。</p>
+"""
+    },
+    {
+        "slug": "paper-trade-self-honesty",
+        "title": "Paper Trade 嘅自我誠實：點解要 DELETE 假成交",
+        "desc": "一個 4 PM 之後先 fill 嘅模擬交易係無效交易 — 刪咗佢，唔好自我安慰。",
+        "body": """
+<p>Paper trading 最大嘅敵人唔係蝕錢，係自我欺騙。真實案例：</p>
+<ul>
+<li>系統喺 4 PM HKT 收市後生成咗 8 個 MA20 訊號，1 小時 13 分鐘之後先「fill」。呢啲喺真實世界根本冇得執行 — 收咗市。</li>
+<li>正確做法係 <b>DELETE，唔好 salvage</b>。如果你留住佢哋，個月報就會混入永遠唔會發生嘅交易，成個統計被污染。</li>
+</ul>
+<p>我哋嘅規矩：</p>
+<ul>
+<li>訊號時間戳必須對應一個可以真實執行嘅市場時刻（唔可以收市後、唔可以 15:45–16:00 收市前最後一枝 bar）。</li>
+<li>回測用嘅數據必須 T-1 對齊 — 用當日收市數據計「當日訊號」係 look-ahead，即係作弊。</li>
+<li>Fill 唔合理 = 刪。紀錄要反映「可以發生嘅事」，唔係「想發生嘅事」。</li>
+</ul>
+<p>Paper trade 嘅價值在於佢夠膽話俾你聽你嘅策略得唔得。如果你幫佢作數，佢就只會講你想聽嘅嘢。</p>
+"""
+    },
+]
+
+
+def build_learn_hub() -> str:
+    """2026-08-29: Learn hub removed (user wants minimal nav).
+    Function kept as a stub for build pipeline stability."""
+    return ""
+
+
+def build_learn_post(post: dict) -> str:
+    """2026-08-29: Learn hub removed (user wants minimal nav).
+    Function kept as a stub for build pipeline stability."""
+    return ""
 
 
 def shell(title: str, body_html: str, active_path: str = "/",
@@ -897,11 +1081,9 @@ def shell(title: str, body_html: str, active_path: str = "/",
 <link rel="canonical" href="{_html.escape(canonical)}">
 <link rel="alternate" hreflang="zh-Hant" href="{_html.escape(canonical)}">
 <link rel="alternate" hreflang="x-default" href="{_html.escape(canonical)}">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
-<link rel="stylesheet" href="/leeks.css?v=2026-08-25b">
+<link rel="preload" as="style" href="/static/fonts-local.css" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="/static/fonts-local.css" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="/leeks.css?v={__import__('datetime').date.today().isoformat()}">
 {ld_block}
 </head>
 <body>
@@ -1408,9 +1590,12 @@ def build_dashboard_for_date(date: str) -> tuple[list[str], int]:
             _con.close()
         except Exception:
             _all_dates = [date]
-        is_indexable_filter = (slug == "all") or (
-            slug in ("hk-buy", "us-buy", "conservative-buy") and date in _all_dates
-        )
+        # 2026-08-29 SEO tightening: ALL dashboard date pages are noindex.
+        # The daily-table content duplicates /hk200/ + /us200/ (which are the
+        # canonical indexable hubs); date pages remain reachable as archive
+        # but stop diluting domain quality with 45 thin URLs.
+        # Per-ticker report pages were already noindex (2026-08-02).
+        is_indexable_filter = False
         out_path.write_text(
             shell(
                 title=f"Leeks Terminal · {date} · {label}",
@@ -1836,9 +2021,11 @@ def build_static_pages() -> list[str]:
         ("privacy", "Privacy", "私隱政策", "/privacy.html", "privacy"),
     ]
     # Hand-edited pages — preserve existing files (don't overwrite)
-    hand_edited = ["faq", "about", "methodology", "insights"]
-    path_map = {"faq": "faq.html", "about": "about.html", "methodology": "methodology.html", "insights": "insights.html"}
-    zh_map = {"faq": "常見問題", "about": "關於 Leeks Terminal", "methodology": "分析方法論", "insights": "信號審計研究"}
+    # 2026-08-29: about.html + faq.html removed (user wants minimal nav).
+    # insights.html and methodology.html remain hand-edited.
+    hand_edited = ["insights", "methodology"]
+    path_map = {"insights": "insights.html", "methodology": "methodology.html"}
+    zh_map = {"insights": "信號審計研究", "methodology": "分析方法論"}
     for slug in hand_edited:
         existing = PUBLIC_DIR / path_map[slug]
         if existing.exists():
@@ -1851,7 +2038,7 @@ def build_static_pages() -> list[str]:
         out_path.write_text(shell(
             title=f"{zh_map[slug]} · Leeks Terminal",
             body_html=body,
-            active_path=f"/{slug_map.get(slug, slug)}/",
+            active_path=f"/{path_map.get(slug, slug)}/",
             description=f"Leeks Terminal {zh_map[slug]}",
             canonical=f"https://www.win9you.com/{path_map[slug]}",
         ), encoding="utf-8")
@@ -2008,7 +2195,9 @@ filter 可以 hide 其他方向。</p>
         # 2026-07-10: Hand-edited pages (insights.html = T4 task; about.html = T4 task).
         # If the file already exists and contains the hand-edited marker, skip the
         # build overwrite so parallel T4 / t5-build work doesn't lose content.
-        if slug in {"insights", "about"} and out_path.exists():
+        # 2026-08-30: Added disclaimer + privacy (rich 7-section zh version, written
+        # 2026-08-28, would be wiped by the simple inline body above).
+        if slug in {"insights", "about", "disclaimer", "privacy"} and out_path.exists():
             try:
                 existing = out_path.read_text(encoding="utf-8")
                 if "<!-- hand-edited-t4 -->" in existing:
@@ -2027,6 +2216,10 @@ filter 可以 hide 其他方向。</p>
             encoding="utf-8",
         )
         written.append(path)
+
+    # 2026-08-29: Learn hub removed (user wants minimal nav).
+    # Stubs below no-op; pipeline stays stable.
+
     return written
 
 
@@ -2045,45 +2238,36 @@ def build_sitemap_xml(dates: list[str]) -> str:
     urls = []
 
     # Static pages — index all
+    # 2026-08-28: extensionless canonical URLs (CF Pages pretty-URL serves
+    # /about for /about.html; listing /about.html cost an extra 308 hop).
     static = [
         ("/", "1.0", "daily", now),
-        ("/dashboard/", "0.9", "daily", now),
-        ("/methodology.html", "0.8", "weekly", now),
-        ("/faq.html", "0.8", "weekly", now),
-        ("/about.html", "0.5", "monthly", now),
+        ("/methodology", "0.8", "weekly", now),
+        ("/backtest", "0.8", "weekly", now),
         # Original first-party data (audit + research) — primary SEO/GEO leverage
-        ("/insights.html", "0.9", "weekly", now),
-        ("/disclaimer.html", "0.3", "monthly", now),
-        ("/privacy.html", "0.3", "monthly", now),
-        # Intent landing pages
-        ("/hk-scanner.html", "0.9", "daily", now),
-        ("/us-scanner.html", "0.9", "daily", now),
-        ("/day-trade-signals.html", "0.9", "daily", now),
-        ("/hk-stock-screener.html", "0.8", "daily", now),
-        # 2026-08-03 SEO P1: evergreen content hub
-        ("/learn/", "0.9", "weekly", now),
-        ("/learn/llm-trading-inversion.html", "0.8", "monthly", now),
-        ("/learn/conservative-rule.html", "0.8", "monthly", now),
-        # 2026-08-03 SEO P2: 2 more evergreen posts
-        ("/learn/hk-vs-us-day-trade.html", "0.8", "monthly", now),
-        ("/learn/paper-trade-self-honesty.html", "0.8", "monthly", now),
-        # 2026-08-03 SEO P2: AI crawler file
+        ("/insights", "0.9", "weekly", now),
+        ("/disclaimer", "0.3", "monthly", now),
+        ("/privacy", "0.3", "monthly", now),
+        # 2026-08-28: replaced legacy redirect-only URLs (hk-scanner/us-scanner/
+        # day-trade-signals/hk-stock-screener → 301 elsewhere) with the real
+        # reachable pages. Sitemap must never list a redirect target.
+        ("/hk200/", "0.9", "daily", now),
         ("/llms.txt", "0.3", "monthly", now),
     ]
     for path, prio, freq, lastmod in static:
         urls.append((path, prio, freq, lastmod))
 
-    # Per-date dashboard: ONLY index "all.html" + 5 most recent dates
+    # Per-date dashboard: ONLY index "all" + 5 most recent dates
     # Filter variants (hk-buy/us-sell/etc) are still generated but noindex
     # (built into the page itself) to avoid thin/duplicate content penalty
     recent_cutoff = sorted(dates, reverse=True)[:5] if dates else []
     for d in dates:
         # Always index all.html for every date (canonical entry)
-        urls.append((f"/dashboard/{d}/all.html", "0.9", "daily", now))
+        urls.append((f"/dashboard/{d}/all", "0.9", "daily", now))
         # Only index filter variants for the 5 most recent dates
         if d in recent_cutoff:
             for f in ["hk-buy", "us-buy", "conservative-buy"]:
-                urls.append((f"/dashboard/{d}/{f}.html", "0.6", "daily", now))
+                urls.append((f"/dashboard/{d}/{f}", "0.6", "daily", now))
 
     lines = ['<?xml version="1.0" encoding="UTF-8"?>']
     lines.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
@@ -2280,8 +2464,13 @@ def build_dashboard_hub(dates: list[str]) -> str:
 
 
 def build_intent_pages() -> list[str]:
-    """Build 4 long-form intent landing pages for SEO.
-    Each targets a specific high-intent search query."""
+    """2026-08-29 cleanup: removed 5 v1.x intent landing pages
+    (full-results / hk-scanner / hk-stock-screener / us-scanner /
+    day-trade-signals). The real content lives in /hk200/, /us200/,
+    /dashboard/. v1.x pages are 301'd to those hubs via _redirects.
+    Function kept as a no-op so the build pipeline stays intact.
+    """
+    return []
     # Detect latest date for sample links
     latest = None
     try:
@@ -3162,7 +3351,18 @@ def build_paper_trades_page() -> str:
     con.close()
 
     # Build HTML
-    summary_html = f'''<div class="paper-stats">
+    def _src_badge(src: str) -> str:
+        """2026-08-28: Add swing-pill to swing-buy source for visual distinction."""
+        if src == "swing-buy":
+            return f'{src}<span class="swing-pill">swing</span>'
+        return src
+
+    explainer = '''<p class="dim" style="margin:0 0 var(--sp-3) 0; font-size: var(--text-sm);">
+        📈 Paper trades mix day-trade (T+1) and swing (T+10) presets side-by-side.
+        <span class="swing-pill">swing</span> = T+10 hold, -10% stop, +15% target (3-month side project test).
+        Other presets = T+1 day-trade. Total P&amp;L is summed across both.
+    </p>'''
+    summary_html = explainer + f'''<div class="paper-stats">
         <div class="stat-box"><b>{total}</b><span>Total Trades</span></div>
         <div class="stat-box"><b>{n_open}</b><span>Open</span></div>
         <div class="stat-box"><b>{n_closed}</b><span>Closed</span></div>
@@ -3199,7 +3399,7 @@ def build_paper_trades_page() -> str:
                 held = (datetime.strptime(t["exit_date"], "%Y-%m-%d") - datetime.strptime(t["entry_date"], "%Y-%m-%d")).days
             except Exception:
                 held = "?"
-            closed_html += f'<tr><td>{t["exit_date"]}</td><td>{t["code"]}</td><td>{t["signal_source"]}</td><td>${t["entry_price"]:.2f}</td><td>${t["exit_price"]:.2f}</td><td class="{pnl_class}">{pnl_pct:+.2f}%</td><td class="{pnl_class}">${t["pnl_usd"]:+.2f}</td><td>{t["close_reason"]}</td><td>{held}d</td></tr>'
+            closed_html += f'<tr><td>{t["exit_date"]}</td><td>{t["code"]}</td><td>{_src_badge(t["signal_source"] or "")}</td><td>${t["entry_price"]:.2f}</td><td>${t["exit_price"]:.2f}</td><td class="{pnl_class}">{pnl_pct:+.2f}%</td><td class="{pnl_class}">${t["pnl_usd"]:+.2f}</td><td>{t["close_reason"]}</td><td>{held}d</td></tr>'
         closed_html += '</tbody></table>'
 
     # Open trades (with current price + unrealized P&L via yfinance)
@@ -3243,7 +3443,7 @@ def build_paper_trades_page() -> str:
             elif sig >= _SIG_PAPER_FLOOR:
                 sig_badge = f' <b>{sig}</b>'
             cur_str = f"${cur:.2f}" if cur else "—"
-            open_html += f'<tr><td>{t["entry_date"]}</td><td><b>{t["code"]}</b></td><td>{t["signal_source"]}</td><td>{sig_badge or "—"}</td><td>${entry:.2f}</td><td>{cur_str}</td><td>${t["stop_loss"]:.2f}</td><td>${t["target_price"]:.2f}</td><td class="{pnl_class}">{pnl_str}</td><td>{held}d</td></tr>'
+            open_html += f'<tr><td>{t["entry_date"]}</td><td><b>{t["code"]}</b></td><td>{_src_badge(t["signal_source"] or "")}</td><td>{sig_badge or "—"}</td><td>${entry:.2f}</td><td>{cur_str}</td><td>${t["stop_loss"]:.2f}</td><td>${t["target_price"]:.2f}</td><td class="{pnl_class}">{pnl_str}</td><td>{held}d</td></tr>'
         open_html += '</tbody></table>'
 
     body_html = f'''<div class="signal-warning"><b>📈 Paper Trade Tracker</b> · 跟 Conservative BUY + Cyber BUY signals 自動落 paper trade · $1000/trade · 6% stop loss · 2-3 day hold
@@ -3497,11 +3697,21 @@ def build_live_monitor_page() -> str:
         {t1_html}
         {refresh_js}'''
 
+    live_monitor_jsonld = {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Leeks Terminal · Live Monitor",
+        "description": "Real-time HSI + paper trade P&L + signal score monitor (auto-refresh 30s)",
+        "url": "https://www.win9you.com/live-monitor/",
+        "inLanguage": "zh-Hant-HK",
+        "isPartOf": {"@type": "WebSite", "name": "Leeks Terminal", "url": "https://www.win9you.com/"}
+    }
     return shell(
         title="Leeks Terminal · Live Monitor",
         body_html=body_html,
         active_path="/live-monitor/",
         description="Real-time HSI + paper trade P&L + signal score monitor (auto-refresh 30s)",
+        json_ld=live_monitor_jsonld,
     )
 
 
@@ -3515,9 +3725,11 @@ def main():
 
     PUBLIC_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Phase 9+ (2026-07-21) web-perf: write /leeks.css once (not inline × 10K pages)
-    css_path = extract_shared_css()
-    print(f"✅ Shared CSS extracted → {css_path}")
+    # 2026-08-28 fix: extract_shared_css() was overwriting the 734-line
+    # v2.3 design system (public/leeks.css in git) with a 141-line legacy
+    # light-theme SHARED_CSS subset, silently destroying the redesign.
+    # v2.3 is now the master — main() must not touch public/leeks.css.
+    print(f"✅ Skipping CSS extract — public/leeks.css is the v2.3 master (734 lines)")
 
     init_db()
     all_dates = list_report_dates(limit=30)
@@ -3530,20 +3742,11 @@ def main():
             written.append(p)
         for p in build_intent_pages():
             written.append(p)
-        # Paper trades tracker page (always rebuilt) — non-critical, don't fail build
-        try:
-            paper_path = PUBLIC_DIR / "paper-trades.html"
-            paper_path.write_text(build_paper_trades_page(), encoding="utf-8")
-            written.append("paper-trades.html")
-        except Exception as e:
-            print(f"⚠️  Paper-trades page build failed (non-fatal): {type(e).__name__}: {e}")
-        # Live monitor page (auto-refresh 30s, fresh yfinance data)
-        try:
-            monitor_path = PUBLIC_DIR / "live-monitor.html"
-            monitor_path.write_text(build_live_monitor_page(), encoding="utf-8")
-            written.append("live-monitor.html")
-        except Exception as e:
-            print(f"⚠️  Live monitor build failed (non-fatal): {type(e).__name__}: {e}")
+        # 2026-08-29 cleanup: paper-trades.html removed (no live pipeline
+        # driving it after the swing T+10 paper-trade side project was
+        # abandoned). See _redirects for legacy 301 entry.
+        # Live monitor page (auto-refresh 30s, fresh yfinance data) — also
+        # disabled, no live data source driving it.
         print(f"✅ Built {len(written)} static info + intent pages")
 
     # 2. Dashboard pages
@@ -3561,12 +3764,18 @@ def main():
         print(f"✅ {d}: {count} reports → {len(files)} filter variants")
         written.extend(files)
 
-    # 3. Index
+    # 3. Index — public/index.html is owned by build_home.py (v2.3 design
+    # with action cards, theme toggle, market regime). Do NOT clobber it
+    # here. (2026-08-28 incident: build_static.py's v1.x build_index()
+    # silently overwrote the v2.3 home page after build_home.py.)
     if args.index or args.all or not any([args.date, args.all]):
+        print("⏭  Skipping public/index.html (owned by build_home.py)")
         idx_path = PUBLIC_DIR / "index.html"
-        idx_path.write_text(build_index(all_dates), encoding="utf-8")
-        print(f"✅ Built index.html ({len(all_dates)} dates)")
-        written.append("index.html")
+        if not idx_path.exists():
+            # First-time bootstrap fallback only
+            idx_path.write_text(build_index(all_dates), encoding="utf-8")
+            print(f"  bootstrap fallback: built v1.x index.html ({len(all_dates)} dates)")
+            written.append("index.html")
 
         # Dashboard hub at /dashboard/index.html (replaces SPA fallback to homepage)
         hub_path = PUBLIC_DIR / "dashboard" / "index.html"
@@ -3575,15 +3784,9 @@ def main():
         print(f"✅ Built dashboard/index.html (hub of {len(all_dates)} dates)")
         written.append("dashboard/index.html")
 
-        # Phase 9+ (2026-07-20): also rebuild /full-results.html with all dates
-        # so users hitting www.win9you.com/full-results.html (or
-        # /full-results/{date} via _redirects) see the latest list
-        try:
-            fr_path = PUBLIC_DIR / "full-results.html"
-            fr_path.write_text(build_full_results_hub(all_dates), encoding="utf-8")
-            written.append("full-results.html")
-        except Exception as e:
-            print(f"⚠️  full-results.html build failed (non-fatal): {type(e).__name__}: {e}")
+        # 2026-08-29 cleanup: /full-results.html removed (replaced by
+        # /dashboard/ hub which is built above). The 301 redirect from
+        # /full-results → /dashboard/ in _redirects keeps legacy bookmarks working.
 
     # 4. Sitemap + robots.txt (always — they need to stay in sync with dates)
     (PUBLIC_DIR / "sitemap.xml").write_text(build_sitemap_xml(all_dates), encoding="utf-8")

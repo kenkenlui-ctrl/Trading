@@ -1,0 +1,180 @@
+{
+  "ticker": "US.MSTR",
+  "ticker_user": "MSTR",
+  "name": "Strategy Inc",
+  "data_source": "yfinance",
+  "data_range": "2025-12-11 → 2026-09-29 (200 daily bars)",
+  "last_bar": {
+    "date": "2026-09-29",
+    "O": 161.63,
+    "H": 161.63,
+    "L": 152.34,
+    "C": 154.67,
+    "prev_close": 157.14,
+    "chg_pct": -1.57
+  },
+  "phase": "base_building",
+  "adx": 40.27,
+  "plus_di": 34.7,
+  "minus_di": 18.89,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 197.0 (2026-05-11), trough 81.81 (2026-06-26), box top 171.19 (2026-09-22)",
+  "peak": {
+    "date": "2026-05-11",
+    "price": 197.0
+  },
+  "trough": {
+    "date": "2026-06-26",
+    "price": 81.81
+  },
+  "box": {
+    "top": 171.19,
+    "top_date": "2026-09-22",
+    "bottom": 81.81,
+    "period": "2026-06-26 to 2026-09-29"
+  },
+  "drop_from_peak_pct": 21.5,
+  "recovery_from_crash_pct": 89.1,
+  "supports": [
+    {
+      "level": 128.0,
+      "label": "S1 KEY",
+      "touches": 10,
+      "evidence": "tested 10x in base period; 17.2% below current"
+    },
+    {
+      "level": 124.0,
+      "label": "S2",
+      "touches": 10,
+      "evidence": "mid-base support, tested 10x"
+    },
+    {
+      "level": 120.0,
+      "label": "S3",
+      "touches": 8,
+      "evidence": "mid-base support, tested 8x"
+    },
+    {
+      "level": 81.81,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-06-26, structural bottom"
+    }
+  ],
+  "resistances": [
+    {
+      "level": 161.63,
+      "label": "R1 today high",
+      "evidence": "today's high 161.6300048828125"
+    },
+    {
+      "level": 165.0,
+      "label": "R2",
+      "evidence": "mid-box supply, round number 165"
+    },
+    {
+      "level": 171.19,
+      "label": "R3 Sep high",
+      "evidence": "box top 171.19, base period high"
+    },
+    {
+      "level": 190.0,
+      "label": "R4",
+      "evidence": "psychological round number, pre-crash zone 190"
+    }
+  ],
+  "position": {
+    "current": 154.67,
+    "in_box_pct": 81.5,
+    "nearest_support": "S1 KEY (128.0)",
+    "nearest_resistance": "R1 today high (161.63)"
+  },
+  "kline_today": {
+    "type": "bearish_pullback",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 161.63,
+    "H": 161.63,
+    "L": 152.34,
+    "C": 154.67,
+    "body_pct": 74.9,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 25.1
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 128.0 (KEY support)",
+      "then": "still range; watch 161.63 for next test"
+    },
+    {
+      "if": "break 128.0 on close",
+      "then": "target 124.0 → 120.0 (short-term bearish)"
+    },
+    {
+      "if": "break 81.81 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 161.63 on close",
+      "then": "short-term bullish; next test 165.0"
+    },
+    {
+      "if": "break 171.19 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
+  "action_plan": {
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 171.19,
+    "s1": 121.38,
+    "s2": 89.21,
+    "r2": 139.78,
+    "r3": 197.0,
+    "s3": 81.81,
+    "s4": 104.17,
+    "current_position_pct": 66.8,
+    "notes": "WAIT_RANGE: in box (121-171), pos 67%, no clear setup"
+  }
+}

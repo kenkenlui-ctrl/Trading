@@ -28,9 +28,34 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import pandas as pd
 import yfinance as yf
 
-DB_PATH = Path("/Users/kenken/Documents/dsa-hk/data/dsa_hk.db")
-POSITION_SIZE_USD = 1000.0
+DB_PATH = Path("/Users/kenken/dev/dsa-hk/data/dsa_hk.db")
+POSITION_SIZE_USD = 1000.0  # fallback if risk formula can't compute
+ACCOUNT_EQUITY_USD = 100000.0  # baseline paper-trading account
+RISK_PCT_PER_TRADE = 0.01  # 1% rule, matches Kenneth's hard rule "1-2% / account"
+
+
+def calc_position_size_usd(entry: float, stop: float) -> float:
+    """Risk-budgeted position size: equity × risk% / (entry - stop).
+
+    Caps at 30% of equity per user profile "30-40% max exposure".
+    Returns POSITION_SIZE_USD if inputs invalid.
+    """
+    if not entry or not stop or stop >= entry or entry <= 0:
+        return POSITION_SIZE_USD
+    risk_per_share = abs(entry - stop)
+    if risk_per_share <= 0:
+        return POSITION_SIZE_USD
+    max_position = (ACCOUNT_EQUITY_USD * RISK_PCT_PER_TRADE) / risk_per_share
+    cap = ACCOUNT_EQUITY_USD * 0.30  # 30% position cap
+    return min(max_position, cap)
 MAX_HOLD_DAYS = 3
+
+# 2026-08-28: Swing paper-trade side project (parallel to day-trade)
+# T+10 hold horizon (vs day-trade T+1) for multi-day technical trades
+SWING_HOLD_DAYS = 10
+SWING_TARGET_PCT = 0.15  # +15% target
+SWING_STOP_PCT = 0.10    # -10% stop
+SWING_MIN_SIG = 60        # T+10 needs more conviction (vs day-trade 65)
 
 # Phase 9 (2026-07-20): user-configurable sig score thresholds via env vars
 # Defaults: high=70 (gold star), mid=60 (blue), paper floor=65 (paper trader)
@@ -196,6 +221,18 @@ def get_signal_codes(report_date: str, preset: str) -> list[dict]:
                  AND signal_score >= ?""",
             (report_date, SIG_PAPER_FLOOR),
         ).fetchall()
+    elif preset == "swing-buy":
+        # 2026-08-28: Swing paper-trade side project. T+10 hold horizon with
+        # explicit swing_universe filter (excludes leveraged/ETP/warrant).
+        # Lower signal threshold (60) because T+10 absorbs more noise.
+        rows = con.execute(
+            """SELECT code, score, signal_score, decision_reason, operation_advice, full_md, summary_md,
+                      data_snapshot_json, score_breakdown_json, sentiment, llm_original_op, trend
+               FROM daily_report
+               WHERE report_date=? AND operation_advice='買入'
+                 AND signal_score >= ?""",
+            (report_date, SWING_MIN_SIG),
+        ).fetchall()
     elif preset in ("gold-long", "fade-short"):
         # Phase 10: re-run decide() so paper works even before DB backfill.
         rows = con.execute(
@@ -271,6 +308,10 @@ def get_signal_codes(report_date: str, preset: str) -> list[dict]:
             # SQL already filters to signal_score >= 65 + VALUE/CONSERVATIVE rules.
             # Just pass-through here.
             out.append(dict(r))
+        elif preset == "swing-buy":
+            # 2026-08-28: Swing paper-trade. SQL filters sig >= 60.
+            # swing_universe filter (ETP/leveraged) applied in open_paper_trades.
+            out.append(dict(r))
         elif preset == "conservative-buy":
             if code.endswith(".HK"):
                 continue  # US-only filter
@@ -336,6 +377,16 @@ def open_paper_trades(report_date: str, preset: str, dry_run: bool = False) -> i
     cur = con.cursor()
     for sig in signals:
         code = sig["code"]
+        # 2026-08-28: Swing preset applies swing_universe filter (excludes
+        # leveraged ETP/ETF/warrant which suffer daily-reset decay on multi-day holds)
+        if preset == "swing-buy":
+            try:
+                from src.swing_filter import is_swing_tradeable
+                if not is_swing_tradeable(code):
+                    print(f"    {code}: excluded by swing_universe (ETP/leveraged)")
+                    continue
+            except Exception as e:
+                print(f"    [WARN] swing_filter import failed: {e}, allowing {code}")
         # Skip if already opened
         existing = cur.execute(
             """SELECT id FROM paper_trade
@@ -358,6 +409,13 @@ def open_paper_trades(report_date: str, preset: str, dry_run: bool = False) -> i
         stop, target = parse_stop_target(
             sig["full_md"] or "", sig["summary_md"] or "", entry_price, side=side
         )
+        # 2026-08-28: Swing preset overrides stop/target to T+10 horizons
+        # (-10% stop, +15% target) when LLM narrative didn't extract clear levels
+        if preset == "swing-buy":
+            if stop is None or stop == 0 or stop >= entry_price * 0.96:
+                stop = round(entry_price * (1 - SWING_STOP_PCT), 2)
+            if target is None or target == 0 or target <= entry_price * 1.06:
+                target = round(entry_price * (1 + SWING_TARGET_PCT), 2)
         if dry_run:
             dry_label = _colorize("[DRY]", "yellow", bold=True)
             print(f"    {dry_label} OPEN " + _colorize(code, "white", bold=True) + f" entry=${entry_price:.2f} stop=${stop:.2f} target=${target:.2f}")
@@ -368,7 +426,7 @@ def open_paper_trades(report_date: str, preset: str, dry_run: bool = False) -> i
                 position_size_usd, stop_loss, target_price, score, signal_score, op_advice, status)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'open')""",
             (code, report_date, preset, report_date, entry_price,
-             POSITION_SIZE_USD, stop, target, sig["score"], sig.get("signal_score"), sig["operation_advice"]),
+             calc_position_size_usd(entry_price, stop), stop, target, sig["score"], sig.get("signal_score"), sig["operation_advice"]),
         )
         opened += 1
         sig_score = sig.get("signal_score") or 0
@@ -432,6 +490,8 @@ def close_paper_trades(dry_run: bool = False) -> int:
         exit_reason = None
         exit_price = cur_price
         is_short = (t["signal_source"] or "") == "fade-short"
+        is_swing = (t["signal_source"] or "") == "swing-buy"
+        max_hold = SWING_HOLD_DAYS if is_swing else MAX_HOLD_DAYS
         if is_short:
             # Short: stop above entry, target below
             if stop and cur_price >= stop:
@@ -450,8 +510,8 @@ def close_paper_trades(dry_run: bool = False) -> int:
             elif target and cur_price >= target:
                 exit_reason = "target"
                 exit_price = target
-            elif hold_days >= MAX_HOLD_DAYS:
-                exit_reason = "eod-3day"
+            elif hold_days >= max_hold:
+                exit_reason = "eod-3day" if not is_swing else "eod-10day"
                 exit_price = cur_price
         if exit_reason is None:
             if is_short:
@@ -533,6 +593,7 @@ def main():
             "fade-short",     # Phase 10: next-day short fade (~62% WR)
             "conservative-buy",
             "value-buy",
+            "swing-buy",      # 2026-08-28: T+10 swing side project (swing_universe filter)
             "all-buy",
             # 2026-08-02 P0 fix: bounce-buy PAUSED — 67 closed trades at 43.3% WR
             # (-0.24% avg, -$160). Re-enable only after independent OOS validation

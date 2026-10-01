@@ -1,0 +1,170 @@
+{
+  "ticker": "US.MRVL",
+  "ticker_user": "MRVL",
+  "name": "",
+  "data_source": "yfinance",
+  "data_range": "2025-12-11 → 2026-09-29 (200 daily bars)",
+  "last_bar": {
+    "date": "2026-09-29",
+    "O": 258.55,
+    "H": 264.4,
+    "L": 256.88,
+    "C": 263.27,
+    "prev_close": 251.9,
+    "chg_pct": 4.51
+  },
+  "phase": "base_building",
+  "adx": 21.06,
+  "plus_di": 33.82,
+  "minus_di": 20.94,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 329.88 (2026-06-18), trough 162.9 (2026-07-29), box top 267.48 (2026-09-25)",
+  "peak": {
+    "date": "2026-06-18",
+    "price": 329.88
+  },
+  "trough": {
+    "date": "2026-07-29",
+    "price": 162.9
+  },
+  "box": {
+    "top": 267.48,
+    "top_date": "2026-09-25",
+    "bottom": 162.9,
+    "period": "2026-07-29 to 2026-09-29"
+  },
+  "drop_from_peak_pct": 20.2,
+  "recovery_from_crash_pct": 61.6,
+  "supports": [
+    {
+      "level": 256.0,
+      "label": "S1 KEY",
+      "touches": 8,
+      "evidence": "tested 8x in base period; 2.8% below current"
+    },
+    {
+      "level": 236.0,
+      "label": "S2",
+      "touches": 8,
+      "evidence": "mid-base support, tested 8x"
+    },
+    {
+      "level": 228.0,
+      "label": "S3",
+      "touches": 7,
+      "evidence": "mid-base support, tested 7x"
+    },
+    {
+      "level": 162.9,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-07-29, structural bottom"
+    }
+  ],
+  "resistances": [
+    {
+      "level": 264.4,
+      "label": "R1 today high",
+      "evidence": "today's high 264.3999938964844"
+    },
+    {
+      "level": 267.48,
+      "label": "R3 Sep high",
+      "evidence": "box top 267.48, base period high"
+    }
+  ],
+  "position": {
+    "current": 263.27,
+    "in_box_pct": 96.0,
+    "nearest_support": "S1 KEY (256.0)",
+    "nearest_resistance": "R1 today high (264.4)"
+  },
+  "kline_today": {
+    "type": "bullish_reclaim",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 258.55,
+    "H": 264.4,
+    "L": 256.88,
+    "C": 263.27,
+    "body_pct": 62.8,
+    "upper_wick_pct": 15.0,
+    "lower_wick_pct": 22.2
+  },
+  "bias": {
+    "short": {
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 256.0 (KEY support)",
+      "then": "still range; watch 264.4 for next test"
+    },
+    {
+      "if": "break 256.0 on close",
+      "then": "target 236.0 → 228.0 (short-term bearish)"
+    },
+    {
+      "if": "break 162.9 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 264.4 on close",
+      "then": "short-term bullish; next test 267.48"
+    },
+    {
+      "if": "break 267.48 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
+  "action_plan": {
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 267.48,
+    "target_price": 234.05,
+    "stop_price": 286.63,
+    "risk_pct": 7.16,
+    "reward_pct": 12.5,
+    "rr_ratio": 1.75,
+    "phase_match": true,
+    "r1": 267.48,
+    "s1": 200.62,
+    "s2": 162.9,
+    "r2": 254.6,
+    "r3": 329.88,
+    "s3": 117.83,
+    "s4": 70.69,
+    "current_position_pct": 93.7,
+    "notes": "SELL_R1: in box (201-267), entry at R1 267, target mid 234, stop 287 ｜ 入場位 resistance 267.48：以收市價為準 —— 收得守住先當入場成立；收穿就係 resistance 失效，本單取消（見上方失效條件）。"
+  }
+}

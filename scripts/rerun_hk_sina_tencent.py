@@ -33,7 +33,7 @@ SOURCE_DATE = "2026-07-02"
 # from run_daily to use 7/7 closing data. Move the env set to a function or
 # guard with __main__ check.
 import sys
-sys.path.insert(0, "/Users/kenken/Documents/dsa-hk")
+sys.path.insert(0, "/Users/kenken/dev/dsa-hk")
 
 from src.analyzer import analyze, render_summary_md, render_report_md
 from src.db import save_report, init_db, get_db

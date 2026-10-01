@@ -1,0 +1,158 @@
+{
+  "ticker": "US.WFC",
+  "ticker_user": "WFC",
+  "name": "Wells Fargo & Company",
+  "data_source": "yfinance",
+  "data_range": "2025-12-11 → 2026-09-29 (200 daily bars)",
+  "last_bar": {
+    "date": "2026-09-29",
+    "O": 80.62,
+    "H": 81.13,
+    "L": 80.12,
+    "C": 80.48,
+    "prev_close": 80.81,
+    "chg_pct": -0.41
+  },
+  "phase": "base_building",
+  "adx": 19.74,
+  "plus_di": 14.8,
+  "minus_di": 33.12,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 97.76 (2026-01-05), trough 72.78 (2026-05-15), box top 91.99 (2026-09-15)",
+  "peak": {
+    "date": "2026-01-05",
+    "price": 97.76
+  },
+  "trough": {
+    "date": "2026-05-15",
+    "price": 72.78
+  },
+  "box": {
+    "top": 91.99,
+    "top_date": "2026-09-15",
+    "bottom": 72.78,
+    "period": "2026-05-15 to 2026-09-29"
+  },
+  "drop_from_peak_pct": 17.7,
+  "recovery_from_crash_pct": 10.6,
+  "supports": [
+    {
+      "level": 76.0,
+      "label": "S1 KEY",
+      "touches": 9,
+      "evidence": "tested 9x in base period; 5.6% below current"
+    },
+    {
+      "level": 72.0,
+      "label": "S2 bottom",
+      "touches": 4,
+      "evidence": "structural bottom, near crash low 72.78"
+    }
+  ],
+  "resistances": [
+    {
+      "level": 81.13,
+      "label": "R1 today high",
+      "evidence": "rejection at 81.12999725341797 (long upper wick, close weak)"
+    },
+    {
+      "level": 91.99,
+      "label": "R3 Sep high",
+      "evidence": "box top 91.99, base period high"
+    }
+  ],
+  "position": {
+    "current": 80.48,
+    "in_box_pct": 42.4,
+    "nearest_support": "S1 KEY (76.0)",
+    "nearest_resistance": "R1 today high (81.13)"
+  },
+  "kline_today": {
+    "type": "bearish_rejection",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 80.62,
+    "H": 81.13,
+    "L": 80.12,
+    "C": 80.48,
+    "body_pct": 13.9,
+    "upper_wick_pct": 50.5,
+    "lower_wick_pct": 35.6
+  },
+  "bias": {
+    "short": {
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (42% of box)"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 76.0 (KEY support)",
+      "then": "still range; watch 81.13 for next test"
+    },
+    {
+      "if": "break 76.0 on close",
+      "then": "target 72.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 72.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 81.13 on close",
+      "then": "short-term bullish; next test 91.99"
+    },
+    {
+      "if": "break 91.99 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
+  "action_plan": {
+    "verdict": "BUY",
+    "strategy": "BUY_S1",
+    "trigger_price": 80.12,
+    "target_price": 86.06,
+    "stop_price": 76.95,
+    "risk_pct": 3.95,
+    "reward_pct": 7.41,
+    "rr_ratio": 1.87,
+    "phase_match": true,
+    "r1": 91.99,
+    "s1": 80.12,
+    "s2": 83.48,
+    "r2": 90.17,
+    "r3": 87.63,
+    "s3": 72.78,
+    "s4": 74.03,
+    "current_position_pct": 3.0,
+    "notes": "BUY_S1: in box (80-92), entry at S1 80, target mid 86, stop 77 ｜ 入場位 support 80.12：以收市價為準 —— 收得守住先當入場成立；收穿就係 support 失效，本單取消（見上方失效條件）。"
+  }
+}

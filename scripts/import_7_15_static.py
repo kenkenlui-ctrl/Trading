@@ -26,8 +26,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-DB_PATH = Path("/Users/kenken/Documents/dsa-hk/data/dsa_hk.db")
-REPORTS_DIR = Path("/Users/kenken/Documents/dsa-hk/public/dashboard/2026-07-15/reports")
+DB_PATH = Path("/Users/kenken/dev/dsa-hk/data/dsa_hk.db")
+REPORTS_DIR = Path("/Users/kenken/dev/dsa-hk/public/dashboard/2026-07-15/reports")
 REPORT_DATE = "2026-07-15"
 
 

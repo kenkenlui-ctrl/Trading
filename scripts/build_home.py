@@ -5,17 +5,94 @@ build_home.py — Build the win9you.com home page with live data.
 Reads the top 5 actionable tickers (highest win% BUY or SELL) from
 HK + US action_plan JSON + backtest JSON, plus market regime stats.
 
-Output: /Users/kenken/Documents/dsa-hk/public/index.html
+Output: /Users/kenken/dev/dsa-hk/public/index.html
 """
 from __future__ import annotations
 import json
 import shutil
 from datetime import datetime, date, timedelta
 from pathlib import Path
+import os as _os_i18n
+
+# 2026-08-30: i18n — zh / en per-string translation
+_SITE_LANG = _os_i18n.environ.get("SITE_LANG", "zh")
+_STRINGS = {
+    "home_subtitle_zh": {"zh": "多週期 AI 交易決策儀表板", "en": "Multi-Horizon AI Trading Decision Dashboard"},
+    "home_meta_desc": {
+        "zh": "Leeks Terminal 每日對 200 隻港股 + 200 隻美股跑 10 步價格行為框架，輸出 BUY/SELL/WAIT 行動計劃，附入場 trigger、目標價、止損位同策略自身歷史勝率。T+1 / T+3 / T+5 / T+10 多週期 backtest（已扣 Futu 免佣真實成本 HK 0.25% / US 0.05%）。全部數字 Python 確定性計算，T-1 收市數據，零 LLM 幻覺。",
+        "en": "Leeks Terminal runs a 10-step price-action framework daily on 200 HK + 200 US stocks, producing BUY/SELL/WAIT action plans with entry trigger, target, stop, R:R ratio and strategy own 60-day win rate. T+1/T+3/T+5/T+10 multi-horizon backtest net of Futu commission-free real costs (HK 0.25%/US 0.05% per round-trip). Python deterministic, T-1 close, zero LLM hallucination."
+    },
+    "home_lede_zh": {
+        "zh": (
+            "每日對 <b>200 隻港股 + 200 隻美股</b> 跑 10 步價格行為框架"
+            "（phase 分類 → 20/60/120/200 日 S/R ladder → "
+            "30/60/90/197 日四窗口回測），輸出 BUY / SELL / WAIT 行動計劃，"
+            "附入場 trigger、目標價、止損位同 R:R ratio。"
+            "<b>全部數字由 Python 對 T-1 收市 OHLC 確定性計出，零 LLM 幻覺</b>；"
+            "每隻股票嘅訊號策略仲有自身 60 日歷史勝率（n≥5 先顯示）。"
+            "<b style=\"color: var(--bull);\">T+1 / T+3 / T+5 三個 short-cycle horizon（已扣 Futu 免佣真實成本 HK 0.25% / US 0.05% round-trip）</b>："
+            "T+1 +0.35% / T+3 +0.80% / T+5 +1.08%（對 US$20k 注碼）。"
+            "<b style=\"color: var(--amber);\">T+10 swing 結果（+3.02% net）— 統計上係最強 window（4.39 t-statistic 過 deflated Sharpe Ratio 修正），"
+            "但屬 swing horizon，請按個人風格同 lifestyle 自決。</b>"
+        ),
+        "en": (
+            "Daily runs a 10-step price-action framework on <b>200 HK + 200 US stocks</b> "
+            "(phase → 20/60/120/200-day S/R ladder → 30/60/90/197-day backtest windows), "
+            "producing BUY / SELL / WAIT action plans with entry trigger, target, stop, and R:R ratio. "
+            "<b>All numbers are computed deterministically by Python on T-1 close OHLC — zero LLM hallucination</b>; "
+            "each signal strategy also carries its own 60-day historical win rate (n≥5 only). "
+            "<b style=\"color: var(--bull);\">T+1 / T+3 / T+5 short-cycle horizons (net of Futu commission-free real costs: HK 0.25% / US 0.05% per round-trip)</b>: "
+            "T+1 +0.35% / T+3 +0.80% / T+5 +1.08% (on US$20k size). "
+            "<b style=\"color: var(--amber);\">T+10 swing result (+3.02% net) — statistically the strongest window "
+            "(4.39 t-statistic passes deflated Sharpe Ratio correction), but it is a swing horizon — your call based on style and lifestyle.</b>"
+        ),
+    },
+    "home_today_actionable": {"zh": "今日 <em>actionable</em>", "en": "Today's <em>actionable</em>"},
+    "home_how_it_works": {"zh": "HOW IT WORKS · 10 步方法論", "en": "HOW IT WORKS · 10-step methodology"},
+    "home_regime": {"zh": "Market regime", "en": "Market regime"},
+    "home_phase_dist": {"zh": "PHASE DISTRIBUTION", "en": "PHASE DISTRIBUTION"},
+    "home_action_dist": {"zh": "ACTION DISTRIBUTION", "en": "ACTION DISTRIBUTION"},
+    "home_hero_universe": {"zh": "Universe: <b>{n} {market} names</b>",
+                         "en": "Universe: <b>{n} {market} names</b>"},
+    "home_hero_t1": {"zh": "T-1 data: <b>{t1}</b>", "en": "T-1 data: <b>{t1}</b>"},
+    "home_hero_updated": {"zh": "Updated: <b>{t} HKT</b>", "en": "Updated: <b>{t} HKT</b>"},
+    "home_hero_phase": {"zh": "Phase dist: <b style=\"color: {color};\">{dist}</b>",
+                        "en": "Phase dist: <b style=\"color: {color};\">{dist}</b>"},
+    "home_hero_action": {"zh": "Action dist: <b>{dist}</b>", "en": "Action dist: <b>{dist}</b>"},
+}
 
 
-def t_minus_1() -> date:
-    """Return T-1 = last trading day (skip Sat/Sun)."""
+def T(key: str, **kw) -> str:
+    """Translate string by key, returning zh or en based on _SITE_LANG."""
+    entry = _STRINGS.get(key, {})
+    v = entry.get(_SITE_LANG) or entry.get("zh") or key
+    if kw:
+        try:
+            v = v.format(**kw)
+        except Exception:
+            pass
+    return v
+
+
+def t_minus_1(market: str | None = None) -> date:
+    """Return T-1 = last trading day (skip Sat/Sun), per market.
+
+    Home page mixes HK + US cards: HK data may be today (after 16:00 HKT close)
+    while US data is still the previous session. Header shows the HK date
+    (HK-first product); pass market='US' for the US session date.
+
+    Override with DSA_T_MINUS_1_HK / DSA_T_MINUS_1_US, or DSA_T_MINUS_1 (both).
+    """
+    import os as _os
+    if market:
+        override = _os.environ.get(f"DSA_T_MINUS_1_{market}")
+        if override:
+            from datetime import datetime as _dt
+            return _dt.strptime(override, "%Y-%m-%d").date()
+    override = _os.environ.get("DSA_T_MINUS_1")
+    if override:
+        from datetime import datetime as _dt
+        return _dt.strptime(override, "%Y-%m-%d").date()
     today = date.today()
     if today.weekday() == 0:  # Monday
         return today - timedelta(days=3)  # Friday
@@ -26,11 +103,11 @@ def t_minus_1() -> date:
     else:
         return today - timedelta(days=1)
 
-REPO = Path("/Users/kenken/Documents/dsa-hk")
+REPO = Path("/Users/kenken/dev/dsa-hk")
 PUBLIC = REPO / "public"
-HK_OUT = Path("/Users/kenken/Documents/Minimax/charts/hk200")
-US_OUT = Path("/Users/kenken/Documents/Minimax/charts/us200")
-BACKTEST_OUT = Path("/tmp/backtest_out")
+HK_OUT = Path("/Users/kenken/dev/dsa-hk/charts/hk200")
+US_OUT = Path("/Users/kenken/dev/dsa-hk/charts/us200")
+BACKTEST_OUT = Path("/Users/kenken/dev/dsa-hk/data/backtest_out")
 
 
 def load_ticker_json(ticker: str, market: str) -> dict | None:
@@ -57,6 +134,7 @@ def load_backtest(ticker: str) -> dict | None:
 
 
 def pick_recent_edge(bt):
+    """Best ANY-strategy edge (n>=5 + win>=50) — kept for reference/stats."""
     if not bt or not bt.get("windows"):
         return None
     for w in ("60", "90", "30", "197"):
@@ -67,7 +145,7 @@ def pick_recent_edge(bt):
             n = data.get("n", 0)
             win = data.get("win_pct", 0)
             tot = data.get("total_pnl", 0)
-            if n >= 3 and tot > 0:
+            if n >= 5 and tot > 0 and win >= 50:
                 return {
                     "strategy": strat,
                     "window": w,
@@ -78,8 +156,41 @@ def pick_recent_edge(bt):
     return None
 
 
+def pick_plan_edge(bt, plan_strategy):
+    """2026-08-28 methodology fix: TODAY'S plan strategy's own backtest stats.
+
+    Home cards used to badge a BUY plan with "SELL_R1 86% win" from a different
+    strategy. Only the plan strategy's own window stats (n>=5) qualify now.
+    """
+    if not bt or not bt.get("windows") or not plan_strategy:
+        return None
+    if plan_strategy.startswith("WAIT"):
+        return None
+    for w in ("60", "90", "30", "197"):
+        wd = bt["windows"].get(w)
+        if not wd:
+            continue
+        data = wd.get(plan_strategy)
+        if not data:
+            continue
+        if data.get("n", 0) >= 5:
+            return {
+                "strategy": plan_strategy,
+                "window": w,
+                "win_pct": data.get("win_pct", 0),
+                "n": data.get("n", 0),
+                "total_pnl": data.get("total_pnl", 0),
+            }
+    return None
+
+
 def collect_actionables(market: str, top_n: int = 5):
-    """Pick top N actionable tickers (BUY or SELL with high win%)."""
+    """Pick top N actionable tickers (BUY or SELL with high win%).
+
+    2026-08-28: selection + display both use the PLAN strategy's own win%
+    (n>=5 floor). A card is only picked if today's advised strategy itself has
+    >=50% historical win rate — no more cross-strategy win% laundering.
+    """
     base = HK_OUT if market == "HK" else US_OUT
     universes_path = REPO / "hk_universe_200.json" if market == "HK" else US_OUT / "us_top200_fresh.json"
     if not universes_path.exists():
@@ -96,8 +207,8 @@ def collect_actionables(market: str, top_n: int = 5):
         if verdict == "WAIT":
             continue
         bt = load_backtest(tk)
-        edge = pick_recent_edge(bt)
-        if not edge or edge["win_pct"] < 50:
+        plan_edge = pick_plan_edge(bt, ap.get("strategy"))
+        if not plan_edge or plan_edge["win_pct"] < 50:
             continue
 
         last_bar = tj.get("last_bar", {})
@@ -110,7 +221,7 @@ def collect_actionables(market: str, top_n: int = 5):
             "trigger": ap.get("trigger_price"),
             "target": ap.get("target_price"),
             "stop": ap.get("stop_price"),
-            "edge": edge,
+            "edge": plan_edge,
             "phase": tj.get("phase", ""),
             "market": market,
         })
@@ -152,7 +263,7 @@ def fmt(x, dp=2):
 def render_signal_card(row):
     verdict = row["verdict"]
     cls = "bull" if verdict == "BUY" else "bear"
-    action_cls = "bull" if verdict == "BUY" else "bear"
+    action_cls = "buy" if verdict == "BUY" else "sell"
     safe = row["ticker"].replace(".", "_")
     market = row["market"]
     detail_url = f"/{market.lower()}200/ticker/{safe}"
@@ -162,25 +273,25 @@ def render_signal_card(row):
         <div>
           <div class="signal-ticker">{row["ticker"]}</div>
           <div class="signal-name">{row["name"]}</div>
+          <div class="signal-name" style="margin-top: var(--sp-2);">本策略歷史: {edge["strategy"]} · {edge["win_pct"]:.0f}% win ({edge["window"]}d, n={edge["n"]})</div>
         </div>
-        <div>
-          <div class="signal-name">Backtest edge: {edge["strategy"]} · {edge["win_pct"]:.0f}% win ({edge["window"]}d, n={edge["n"]})</div>
-        </div>
-        <div class="signal-action {action_cls}">{verdict}</div>
+        <span class="signal-action-large {action_cls}">{verdict}</span>
         <div class="signal-detail">{fmt(row["trigger"])} → <b>{fmt(row["target"])}</b> · stop {fmt(row["stop"])}</div>
       </a>'''
 
 
 def build_home_page():
-    today = t_minus_1()
+    today = t_minus_1("HK")
     hk_top = collect_actionables("HK", top_n=3)
     us_top = collect_actionables("US", top_n=2)
     actionable = hk_top + us_top
     stats = collect_phase_stats()
 
     phase_dist = stats.get("phase", {})
-    hk_dt = phase_dist.get("downtrend_active", 0)
-    hk_total = sum(phase_dist.values()) or 1
+
+    # 2026-08-30: i18n strings for hero (built once, used in template below)
+    subtitle = T("home_subtitle_zh")
+    lede = T("home_lede_zh")
 
     cards = "".join(render_signal_card(r) for r in actionable)
 
@@ -192,14 +303,16 @@ def build_home_page():
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<title>Leeks Terminal · 港美股即日鮮交易信號</title>
-<meta name="description" content="AI 港美股即日鮮交易信號儀表板 · 200+200 隻主流股票 · T-1 數據 · 10 步價格行為框架 · 開市前 5 分鐘決策。">
+<title>Leeks Terminal · {T("home_subtitle_zh")}</title>
+<meta name="description" content="{T('home_meta_desc')}">
+<meta property="og:title" content="Leeks Terminal · {T('home_subtitle_zh')}">
+<meta property="og:description" content="{T('home_meta_desc')}">
 <meta name="theme-color" content="#0a0e1a">
 <link rel="canonical" href="https://www.win9you.com/">
 <meta property="og:site_name" content="Leeks Terminal">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Leeks Terminal · 港美股即日鮮交易信號">
-<meta property="og:description" content="AI 港美股即日鮮交易信號儀表板 · 200+200 隻主流股票 · T-1 數據 · 10 步價格行為框架 · 開市前 5 分鐘決策。">
+<meta property="og:title" content="Leeks Terminal · {T('home_subtitle_zh')}">
+<meta property="og:description" content="AI 港美股多週期 AI 交易決策儀表板 · 200+200 隻主流股票 · T-1 數據 · 10 步價格行為框架 · 4 個持倉期 backtest（T+1 / T+3 / T+5 / T+10）。">
 <meta property="og:url" content="https://www.win9you.com/">
 <meta property="og:image" content="https://www.win9you.com/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -209,22 +322,46 @@ def build_home_page():
 <script type="application/ld+json">
 {{
   "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "Leeks Terminal",
-  "url": "https://www.win9you.com/",
-  "inLanguage": "zh-Hant-HK",
-  "description": "HK + US day-trade decision dashboard. 200 HK + 200 US stocks, daily 10-step price-action signals from T-1 OHLC data. Educational use only.",
-  "publisher": {{
-    "@type": "Organization",
-    "name": "Leeks Terminal",
-    "url": "https://www.win9you.com/"
-  }}
+  "@graph": [
+    {{
+      "@type": "WebSite",
+      "name": "Leeks Terminal",
+      "url": "https://www.win9you.com/",
+      "inLanguage": "zh-Hant-HK",
+      "description": "HK + US multi-horizon AI trading decision dashboard. 200 HK + 200 US stocks, daily 10-step price-action signals from T-1 OHLC data. T+1 / T+3 / T+5 / T+10 horizons backtested net of Futu commission-free real costs (HK 0.25% / US 0.05% per round-trip). Educational use only.",
+      "publisher": {{
+        "@type": "Organization",
+        "name": "Leeks Terminal",
+        "url": "https://www.win9you.com/"
+      }}
+    }},
+    {{
+      "@type": "SoftwareApplication",
+      "name": "Leeks Terminal",
+      "url": "https://www.win9you.com/",
+      "applicationCategory": "FinanceApplication",
+      "applicationSubCategory": "Trading Signal Dashboard",
+      "operatingSystem": "Web",
+      "inLanguage": ["zh-Hant-HK", "en"],
+      "description": "Daily AI-driven HK and US stock signal engine using a 10-step price-action framework (5-phase market regime + 4-tier support/resistance ladder + 4 action strategies with T+1/T+3/T+5/T+10 backtest horizons).",
+      "offers": {{
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }},
+      "featureList": [
+        "200 HK stocks + 200 US stocks daily signals",
+        "10-step price-action framework (phase / S/R / strategy / backtest)",
+        "T+1 / T+3 / T+5 / T+10 multi-horizon backtest (Futu HK 0.25% / US 0.05% cost model)",
+        "Anomaly filter (Futu capital-flow signals)",
+        "Plan-strategy 60-day win rate gate (MED ≥50%, HIGH ≥60%)"
+      ]
+    }}
+  ]
 }}
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/leeks.css?v=2026-08-25b">
+<link rel="stylesheet" href="/static/fonts-local.css">
+<link rel="stylesheet" href="/leeks.css?v={__import__('datetime').date.today().isoformat()}">
 <script>
 (function(){{
   const t = localStorage.getItem('leeks-theme') || 'dark';
@@ -234,16 +371,25 @@ def build_home_page():
 </head>
 <body>
 
+<a class="skip-link" href="#main">Skip to main content</a>
+
 <header class="site-header">
-  <nav class="nav">
+  <nav class="nav" aria-label="Primary">
     <a href="/" class="nav-brand"><span class="leek">L</span>eeks <em class="italic">Terminal</em></a>
     <div class="nav-links">
       <a href="/" class="active">Home</a>
-      <a href="/hk200/">HK Signals</a>
-      <a href="/us200/">US Signals</a>
-      <a href="/pair-trades/">Pair Trades</a>
-      <a href="/methodology">Methodology</a>
+      <a href="/hk200/"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg> HK Signals</a>
+      <a href="/us200/"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="vertical-align:-2px" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.6 3 14.4 0 18M12 3c-3 3.6-3 14.4 0 18"/></svg> US Signals</a>
+      <a href="/jp200/"><span style="display: inline-block; width: 16px; height: 12px; background: radial-gradient(circle at 50% 50%, #bc002d 30%, #fff 30%); border-radius: 50%; vertical-align: -1px; margin-right: 4px;" title="Japan"></span>JP Signals</a>
+      <a href="/compare/">Compare</a>
+      <a href="/backtest.html">Backtest</a>
+      <a href="/insights.html">Insights</a>
+      <a href="/methodology.html">Methodology</a>
+      <a href="/faq.html">FAQ</a>
+      <a href="/disclaimer/">Disclaimer</a>
+      <a href="/privacy.html">Privacy</a>
     </div>
+    <a class="lang-switch" href="/en/" title="View in English" aria-label="View in English">EN</a>
     <div class="nav-meta">
       <span class="live-dot"></span>
       T-1 · {today.isoformat()}
@@ -276,58 +422,24 @@ function toggleTheme(){{
 }})();
 </script>
 
-<section class="hero">
+<main id="main">
+<div class="page-head">
   <div class="container">
-    <div class="hero-grid">
-      <div class="fade-in">
-        <div class="kicker">Day-Trade · 即日鮮 · T-1 Data</div>
-        <h1 class="hero-title">
-          開市前 5 分鐘<br>
-          知邊隻 <em class="italic">做</em>，<br>
-          邊隻 <em class="italic">唔做</em>。
-        </h1>
-        <p class="lede">
-          AI 港美股 <b>200+200</b> 隻主流股票，10 步價格行為框架 + backtested signal
-          — 每一隻都答到你：<b>買 / 沽 / 觀望</b>，trigger 喺邊，target 喺邊，止蝕喺邊。
-        </p>
-        <div class="hero-meta">
-          <span>Source: <b>Futu OpenD</b></span>
-          <span>Update: <b>On-demand</b></span>
-          <span>Method: <b>OHLC only · No LLM hallucination</b></span>
-        </div>
-        <div class="btn-row mt-4">
-          <a href="/hk200/" class="btn btn-primary">View HK Signals →</a>
-          <a href="/us200/" class="btn">View US Signals →</a>
-          <a href="/methodology" class="btn btn-ghost">How it works</a>
-        </div>
-      </div>
-
-      <div class="fade-in fade-in-2">
-        <div class="card mb-3">
-          <h3 class="card-label">Today · {today.isoformat()} (T-1 close)</h3>
-          <div class="hero-stat mt-3">
-            <div class="label">Actionable signals</div>
-            <div class="value text-bull">{stats.get("BUY", 0) + stats.get("SELL", 0)}</div>
-            <div class="delta text-dim">of {sum(stats.get(k, 0) for k in ("BUY", "SELL", "WAIT"))} total</div>
-          </div>
-          <div class="hero-stat mt-3">
-            <div class="label">High confidence (≥70%)</div>
-            <div class="value text-accent">{sum(1 for r in actionable if r["edge"]["win_pct"] >= 70)}</div>
-          </div>
-          <div class="hero-stat mt-3">
-            <div class="label">Regime</div>
-            <div class="value text-bear" style="font-size: var(--text-lg);">🔴 {hk_dt / hk_total * 100:.0f}% Downtrend</div>
-          </div>
-        </div>
-      </div>
+    <div class="kicker">Leeks Terminal · Live</div>
+    <h1>Leeks Terminal · <em class="italic">{subtitle}</em></h1>
+    <p class="lede">{lede}</p>
+    <div class="hero-meta">
+      <span>T-1 數據 · {today.isoformat()}</span>
+      <span>200 HK + 200 US</span>
+      <span>4 種策略 × 4 窗口回測</span>
+      <span>Updated {datetime.now().strftime('%H:%M HKT')}</span>
     </div>
   </div>
-</section>
-
-<section style="padding-top: 0;">
+</div>
+<section>
   <div class="container">
     <div class="section-head">
-      <h2>今日 <em class="italic">actionable</em></h2>
+      <h2>{T("home_today_actionable")}</h2>
       <span class="section-meta">{len(actionable)} of {stats.get("BUY", 0) + stats.get("SELL", 0)} · Updated {datetime.now().strftime('%H:%M HKT')}</span>
     </div>
     <div class="card-grid" style="grid-template-columns: 1fr;">
@@ -342,7 +454,7 @@ function toggleTheme(){{
       <h2>Market <em class="italic">regime</em></h2>
       <span class="section-meta">200 HK + 200 US · {today.isoformat()}</span>
     </div>
-    <div class="card-grid card-grid-3">
+    <div class="card-grid card-grid-2">
       <div class="card fade-in fade-in-1">
         <h3 class="card-label">Phase distribution</h3>
         <div style="margin-top: var(--sp-4); display: grid; gap: var(--sp-3);">
@@ -362,20 +474,25 @@ function toggleTheme(){{
           <div class="flex justify-between"><span class="text-dim">WAIT</span><span class="mono text-dim">{stats.get("WAIT", 0)}</span></div>
         </div>
       </div>
+    </div>
+  </div>
+</section>
 
-      <div class="card fade-in fade-in-3">
-        <h3 class="card-label">How it works</h3>
-        <div style="margin-top: var(--sp-4); display: grid; gap: var(--sp-3); font-size: var(--text-sm); color: var(--fg-2);">
-          <div>① Phase 分類 (5 種) — 20d rolling</div>
-          <div>② S/R ladder (4-tier)</div>
-          <div>③ Action plan (4 strategies)</div>
-          <div>④ Backtest 4 windows × 4 strategies</div>
-          <div>⑤ Pick recent edge (30-90d)</div>
-        </div>
+<section style="padding-top: 0;">
+  <div class="container">
+    <div class="card fade-in fade-in-3">
+      <h3 class="card-label">How it works</h3>
+      <div style="margin-top: var(--sp-3); display: grid; gap: var(--sp-3); font-size: var(--text-sm); color: var(--fg-2);">
+        <div>① Phase 分類 (5 種) — 20d rolling</div>
+        <div>② S/R ladder (4-tier)</div>
+        <div>③ Action plan (4 strategies)</div>
+        <div>④ Backtest 4 windows × 4 strategies</div>
+        <div>⑤ Pick recent edge (30-90d)</div>
       </div>
     </div>
   </div>
 </section>
+</main>
 
 <div class="container">
   <div class="disclaimer">
@@ -387,7 +504,7 @@ function toggleTheme(){{
 <footer class="site-footer">
   <div class="container">
     <div class="row">
-      <div>© 2026 Leeks Terminal · win9you.com · <a href="/methodology">Methodology</a> · <a href="/disclaimer">Disclaimer</a></div>
+      <div>© {datetime.now().year} Leeks Terminal · win9you.com · <a href="/methodology">Methodology</a> · <a href="/disclaimer">Disclaimer</a></div>
       <div class="mono text-dim">T-1 · {today.isoformat()} · Futu OpenD</div>
     </div>
   </div>

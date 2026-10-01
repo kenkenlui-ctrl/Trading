@@ -25,7 +25,7 @@ import yfinance as yf
 
 from src.data_fetcher import _hk_code_yfinance
 
-DB = "/Users/kenken/Documents/dsa-hk/data/dsa_hk.db"
+DB = "/Users/kenken/dev/dsa-hk/data/dsa_hk.db"
 HORIZONS = {
     "1D": 1,
     "1W": 5,
@@ -160,7 +160,7 @@ def main():
     print(f"Done fetching in {time.time()-t0:.0f}s. Outcomes: {len(outcomes)}")
 
     # Save raw outcomes
-    with open("/tmp/backtest_outcomes.json", "w") as f:
+    with open("/Users/kenken/dev/dsa-hk/data/backtest_outcomes.json", "w") as f:
         json.dump(outcomes, f, ensure_ascii=False, indent=2)
 
     # Stats

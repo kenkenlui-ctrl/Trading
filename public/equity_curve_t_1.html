@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>T+1 Equity Curve · Leeks Terminal</title>
+<meta name="description" content="T+1 day-trade fixed-capital portfolio equity curve. HK$1M, 1% risk/trade, 5 concurrent cap. Daily mark-to-market, real paper-trade simulation.">
+<meta name="robots" content="noindex,follow">
+<link rel="canonical" href="https://www.win9you.com/equity_curve_t_1.html">
+<link rel="stylesheet" href="/leeks.css">
+<style>
+.ec-summary { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin: var(--sp-4) 0; padding: var(--sp-4); background: var(--panel); border: 1px solid var(--border); border-radius:8px; }
+.ec-stat { text-align:center; padding: var(--sp-2); border-right: 1px solid var(--border); }
+.ec-stat:last-child { border-right:none; }
+.ec-stat-label { font-size: var(--text-xs); color: var(--dim); text-transform:uppercase; letter-spacing: 0.5px; }
+.ec-stat-value { font-size: var(--text-lg); font-weight:600; font-family: var(--font-mono); margin-top: 4px; }
+.ec-table { width:100%; border-collapse: collapse; font-size: var(--text-xs); font-family: var(--font-mono); margin-top: var(--sp-4); max-height: 500px; overflow-y: auto; display:block; }
+.ec-table thead { position:sticky; top:0; background:var(--bg-2); }
+.ec-table th, .ec-table td { padding: 4px 8px; border-bottom: 1px solid var(--border); text-align: left; }
+.ec-table th { color: var(--dim); font-weight: 600; }
+.cell-right { text-align: right; }
+.cav { padding: var(--sp-3) var(--sp-4); background: var(--amber-dim); border-left: 3px solid var(--amber); border-radius: 4px; margin: var(--sp-3) 0; font-size: var(--text-sm); }
+</style>
+</head>
+<body>
+<main class="container" style="max-width:1200px; margin:0 auto; padding: var(--sp-5) var(--sp-4);">
+<a href="/equity_curve_t10.html" class="text-dim" style="text-decoration:none;">← All horizons</a>
+<h1 style="margin-top: var(--sp-3);">📈 T+1 day-trade Equity Curve</h1>
+<p class="lede" style="color: var(--fg-2); max-width: 800px;">Fixed-capital simulation of the T+1 strategy. Initial capital HK$1,000,000, 1% risk per trade, max 5 concurrent positions. Daily mark-to-market.</p>
+
+<div class="cav">
+<strong>2026-09-11 update (Astra/Grok review fix):</strong> The backtest page previously showed "T+1 +X%" as the sum of per-trade percentages. That figure is <em>not</em> a portfolio return — it assumes 100% capital in every trade simultaneously. This page is the honest fixed-capital simulation with position sizing, concurrent-cap, and daily mark-to-market.
+</div>
+
+
+<div class="ec-summary">
+  <div class="ec-stat"><div class="ec-stat-label">Initial Capital</div><div class="ec-stat-value">HK$1,000,000</div></div>
+  <div class="ec-stat"><div class="ec-stat-label">Final Equity</div><div class="ec-stat-value" style="color:var(--bull);">HK$1,157,990</div></div>
+  <div class="ec-stat"><div class="ec-stat-label">Total Return</div><div class="ec-stat-value" style="color:var(--bull);">+15.80%</div></div>
+  <div class="ec-stat"><div class="ec-stat-label">Max Drawdown</div><div class="ec-stat-value" style="color:var(--bear);">-4.19%</div></div>
+  <div class="ec-stat"><div class="ec-stat-label">Calmar (ann.)</div><div class="ec-stat-value">+34.44</div></div>
+  <div class="ec-stat"><div class="ec-stat-label">Trades Taken</div><div class="ec-stat-value">45 / 121</div></div>
+  <div class="ec-stat"><div class="ec-stat-label">Skipped (slot full)</div><div class="ec-stat-value">76</div></div>
+  <div class="ec-stat"><div class="ec-stat-label">Win Rate</div><div class="ec-stat-value">55.6%</div></div>
+  <div class="ec-stat"><div class="ec-stat-label">Avg PnL/trade</div><div class="ec-stat-value" style="color:var(--bull);">+HK$3,511</div></div>
+</div>
+
+
+<h2 style="margin-top: var(--sp-5); font-size: var(--text-md);">Equity Curve (2026-06-27 → 2026-08-06, 41 days)</h2>
+<svg viewBox="0 0 1000 320" style="width:100%; max-width:1000px; height:auto; background:var(--bg-2); border-radius:6px; padding:8px;">
+  <text x="20" y="20" fill="var(--fg-2)" font-size="11" font-family="monospace">HK$</text>
+  <text x="940" y="20" fill="var(--fg-2)" font-size="11" font-family="monospace" text-anchor="end">HK$ 1,208,584</text>
+  <line x1="50" y1="290" x2="990" y2="290" stroke="var(--border)" stroke-width="1"/>
+  <polyline points="50.0,281.8 73.5,281.8 97.0,271.6 120.5,282.6 144.0,276.5 167.5,276.1 191.0,283.1 214.5,283.1 238.0,283.1 261.5,271.6 285.0,273.8 308.5,273.8 332.0,272.0 355.5,280.4 379.0,280.4 402.5,280.4 426.0,287.8 449.5,268.3 473.0,290.0 496.5,280.3 520.0,280.3 543.5,280.3 567.0,280.3 590.5,266.6 614.0,219.4 637.5,186.6 661.0,143.2 684.5,121.1 708.0,121.1 731.5,121.1 755.0,56.9 778.5,30.0 802.0,45.0 825.5,83.4 849.0,86.0 872.5,86.0 896.0,86.0 919.5,86.0 943.0,86.0 966.5,86.0 990.0,86.0" fill="none" stroke="var(--bull)" stroke-width="2"/>
+  <text x="20" y="305" fill="var(--dim)" font-size="10" font-family="monospace">2026-06-27</text>
+  <text x="990" y="305" fill="var(--dim)" font-size="10" font-family="monospace" text-anchor="end">2026-08-06</text>
+</svg>
+
+<details style="margin-top: var(--sp-4);">
+<summary style="cursor: pointer; padding: var(--sp-3); background: var(--panel); border: 1px solid var(--border); border-radius: 6px;">📋 Daily equity (last 60 days, 41 total rows)</summary>
+<table class="ec-table">
+<thead><tr><th>Date</th><th>Equity (HK$)</th><th>Open positions</th><th>Drawdown %</th></tr></thead>
+<tbody>
+<tr><td class='mono'>2026-06-27</td><td class='mono cell-right'>HK$981,174</td><td class='mono cell-right'>2</td><td class='mono cell-right' style='color:var(--dim);'>1.88%</td></tr><tr><td class='mono'>2026-06-28</td><td class='mono cell-right'>HK$981,174</td><td class='mono cell-right'>0</td><td class='mono cell-right' style='color:var(--dim);'>1.88%</td></tr><tr><td class='mono'>2026-06-29</td><td class='mono cell-right'>HK$990,388</td><td class='mono cell-right'>2</td><td class='mono cell-right' style='color:var(--dim);'>0.96%</td></tr><tr><td class='mono'>2026-06-30</td><td class='mono cell-right'>HK$980,461</td><td class='mono cell-right'>3</td><td class='mono cell-right' style='color:var(--dim);'>1.95%</td></tr><tr><td class='mono'>2026-07-01</td><td class='mono cell-right'>HK$985,963</td><td class='mono cell-right'>3</td><td class='mono cell-right' style='color:var(--dim);'>1.4%</td></tr><tr><td class='mono'>2026-07-02</td><td class='mono cell-right'>HK$986,288</td><td class='mono cell-right'>3</td><td class='mono cell-right' style='color:var(--dim);'>1.37%</td></tr><tr><td class='mono'>2026-07-03</td><td class='mono cell-right'>HK$980,034</td><td class='mono cell-right'>2</td><td class='mono cell-right' style='color:var(--dim);'>2.0%</td></tr><tr><td class='mono'>2026-07-04</td><td class='mono cell-right'>HK$980,034</td><td class='mono cell-right'>0</td><td class='mono cell-right' style='color:var(--dim);'>2.0%</td></tr><tr><td class='mono'>2026-07-05</td><td class='mono cell-right'>HK$980,034</td><td class='mono cell-right'>0</td><td class='mono cell-right' style='color:var(--dim);'>2.0%</td></tr><tr><td class='mono'>2026-07-06</td><td class='mono cell-right'>HK$990,337</td><td class='mono cell-right'>2</td><td class='mono cell-right' style='color:var(--dim);'>0.97%</td></tr><tr><td class='mono'>2026-07-07</td><td class='mono cell-right'>HK$988,356</td><td class='mono cell-right'>2</td><td class='mono cell-right' style='color:var(--dim);'>1.16%</td></tr><tr><td class='mono'>2026-07-08</td><td class='mono cell-right'>HK$988,356</td><td class='mono cell-right'>0</td><td class='mono cell-right' style='color:var(--dim);'>1.16%</td></tr><tr><td class='mono'>2026-07-09</td><td class='mono cell-right'>HK$990,045</td><td class='mono cell-right'>2</td><td class='mono cell-right' style='color:var(--dim);'>1.0%</td></tr><tr><td class='mono'>2026-07-10</td><td class='mono cell-right'>HK$982,463</td><td class='mono cell-right'>3</td><td class='mono cell-right' style='color:var(--dim);'>1.75%</td></tr><tr><td class='mono'>2026-07-11</td><td class='mono cell-right'>HK$982,463</td><td class='mono cell-right'>0</td><td class='mono cell-right' style='color:var(--dim);'>1.75%</td></tr><tr><td class='mono'>2026-07-12</td><td class='mono cell-right'>HK$982,463</td><td class='mono cell-right'>0</td><td class='mono cell-right' style='color:var(--dim);'>1.75%</td></tr><tr><td class='mono'>2026-07-13</td><td class='mono cell-right'>HK$975,752</td><td class='mono cell-right'>1</td><td class='mono cell-right' style='color:var(--amber);'>2.42%</td></tr><tr><td class='mono'>2026-07-14</td><td class='mono cell-right'>HK$993,316</td><td class='mono cell-right'>2</td><td class='mono cell-right' style='color:var(--dim);'>0.67%</td></tr><tr><td class='mono'>2026-07-15</td><td class='mono cell-right'>HK$973,757</td><td class='mono cell-right'>2</td><td class='mono cell-right' style='color:var(--amber);'>2.62%</td></tr><tr><td class='mono'>2026-07-16</td><td class='mono cell-right'>HK$982,521</td><td class='mono cell-right'>1</td><td class='mono cell-right' style='color:var(--dim);'>1.75%</td></tr><tr><td class='mono'>2026-07-17</td><td class='mono cell-right'>HK$982,521</td><td class='mono cell-right'>0</td><td class='mono cell-right' style='color:var(--dim);'>1.75%</td></tr><tr><td class='mono'>2026-07-18</td><td class='mono cell-right'>HK$982,521</td><td class='mono cell-right'>0</td><td class='mono cell-right' style='color:var(--dim);'>1.75%</td></tr><tr><td class='mono'>2026-07-19</td><td class='mono cell-right'>HK$982,521</td><td class='mono cell-right'>0</td><td class='mono cell-right' style='color:var(--dim);'>1.75%</td></tr><tr><td class='mono'>2026-07-20</td><td class='mono cell-right'>HK$994,902</td><td class='mono cell-right'>1</td><td class='mono cell-right' style='color:var(--dim);'>0.51%</td></tr><tr><td class='mono'>2026-07-21</td><td class='mono cell-right'>HK$1,037,559</td><td class='mono cell-right'>2</td><td class='mono cell-right' style='color:var(--dim);'>0.0%</td></tr><tr><td class='mono'>2026-07-22</td><td class='mono cell-right'>HK$1,067,153</td><td class='mono cell-right'>1</td><td class='mono cell-right' style='color:var(--dim);'>0.0%</td></tr><tr><td class='mono'>2026-07-23</td><td class='mono cell-right'>HK$1,106,373</td><td class='mono cell-right'>1</td><td class='mono cell-right' style='color:var(--dim);'>0.0%</td></tr><tr><td class='mono'>2026-07-24</td><td class='mono cell-right'>HK$1,126,287</td><td class='mono cell-right'>2</td><td class='mono cell-right' style='color:var(--dim);'>0.0%</td></tr><tr><td class='mono'>2026-07-25</td><td class='mono cell-right'>HK$1,126,287</td><td class='mono cell-right'>0</td><td class='mono cell-right' style='color:var(--dim);'>0.0%</td></tr><tr><td class='mono'>2026-07-26</td><td class='mono cell-right'>HK$1,126,287</td><td class='mono cell-right'>0</td><td class='mono cell-right' style='color:var(--dim);'>0.0%</td></tr><tr><td class='mono'>2026-07-27</td><td class='mono cell-right'>HK$1,184,248</td><td class='mono cell-right'>1</td><td class='mono cell-right' style='color:var(--dim);'>0.0%</td></tr><tr><td class='mono'>2026-07-28</td><td class='mono cell-right'>HK$1,208,584</td><td class='mono cell-right'>2</td><td class='mono cell-right' style='color:var(--dim);'>0.0%</td></tr><tr><td class='mono'>2026-07-29</td><td class='mono cell-right'>HK$1,195,050</td><td class='mono cell-right'>1</td><td class='mono cell-right' style='color:var(--dim);'>1.12%</td></tr><tr><td class='mono'>2026-07-30</td><td class='mono cell-right'>HK$1,160,311</td><td class='mono cell-right'>2</td><td class='mono cell-right' style='color:var(--amber);'>3.99%</td></tr><tr><td class='mono'>2026-07-31</td><td class='mono cell-right'>HK$1,157,990</td><td class='mono cell-right'>2</td><td class='mono cell-right' style='color:var(--amber);'>4.19%</td></tr><tr><td class='mono'>2026-08-01</td><td class='mono cell-right'>HK$1,157,990</td><td class='mono cell-right'>0</td><td class='mono cell-right' style='color:var(--amber);'>4.19%</td></tr><tr><td class='mono'>2026-08-02</td><td class='mono cell-right'>HK$1,157,990</td><td class='mono cell-right'>0</td><td class='mono cell-right' style='color:var(--amber);'>4.19%</td></tr><tr><td class='mono'>2026-08-03</td><td class='mono cell-right'>HK$1,157,990</td><td class='mono cell-right'>0</td><td class='mono cell-right' style='color:var(--amber);'>4.19%</td></tr><tr><td class='mono'>2026-08-04</td><td class='mono cell-right'>HK$1,157,990</td><td class='mono cell-right'>0</td><td class='mono cell-right' style='color:var(--amber);'>4.19%</td></tr><tr><td class='mono'>2026-08-05</td><td class='mono cell-right'>HK$1,157,990</td><td class='mono cell-right'>0</td><td class='mono cell-right' style='color:var(--amber);'>4.19%</td></tr><tr><td class='mono'>2026-08-06</td><td class='mono cell-right'>HK$1,157,990</td><td class='mono cell-right'>0</td><td class='mono cell-right' style='color:var(--amber);'>4.19%</td></tr>
+</tbody>
+</table>
+</details>
+
+<h2 style="margin-top: var(--sp-5); font-size: var(--text-md);">Methodology</h2>
+<ul style="color: var(--fg-2); font-size: var(--text-sm); line-height: 1.6;">
+<li><b>Universe:</b> 121 T+1 signals from 2026-06-27 to 2026-08-06</li>
+<li><b>Initial capital:</b> HK$1,000,000</li>
+<li><b>Risk per trade:</b> 1% of equity (position sized to stop distance)</li>
+<li><b>Max concurrent:</b> 5 positions; if full, signal skipped</li>
+<li><b>Holding period:</b> 1 trading days; exit at end OR at stop/target (already in return_pct)</li>
+<li><b>Costs:</b> HK 0.25% round-trip already deducted from return_pct by source backtest</li>
+<li><b>Mark-to-market:</b> daily equity = cash + sum(open position value at current return_pct)</li>
+<li><b>Calmar:</b> annualized return / max drawdown</li>
+</ul>
+
+<h2 style="margin-top: var(--sp-5); font-size: var(--text-md);">Caveats</h2>
+<ul style="color: var(--fg-2); font-size: var(--text-sm); line-height: 1.6;">
+<li>No slippage, no liquidity filter, no shortable filter (long-only assumption)</li>
+<li>"Today's top-200 universe" used historically (selection bias — see <a href="/methodology.html">methodology</a>)</li>
+<li>6mo / 121 signals — sample still small; multiple testing concerns</li>
+<li>Best config from 9-config tune: 1% risk × 5 cap (locked 2026-09-11). Other configs range from -0.8% to +1.1%.</li>
+</ul>
+
+<p style="margin-top: var(--sp-5); font-size: var(--text-xs); color: var(--dim);">Last updated: 2026-09-11 · Source: data/monthly_backtest/backtest_2026-09-10.json · 121 T+1 signals</p>
+</main>
+</body>
+</html>

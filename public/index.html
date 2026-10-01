@@ -6,14 +6,16 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<title>Leeks Terminal · 港美股即日鮮交易信號</title>
-<meta name="description" content="AI 港美股即日鮮交易信號儀表板 · 200+200 隻主流股票 · T-1 數據 · 10 步價格行為框架 · 開市前 5 分鐘決策。">
+<title>Leeks Terminal · 多週期 AI 交易決策儀表板</title>
+<meta name="description" content="Leeks Terminal 每日對 200 隻港股 + 200 隻美股跑 10 步價格行為框架，輸出 BUY/SELL/WAIT 行動計劃，附入場 trigger、目標價、止損位同策略自身歷史勝率。T+1 / T+3 / T+5 / T+10 多週期 backtest（已扣 Futu 免佣真實成本 HK 0.25% / US 0.05%）。全部數字 Python 確定性計算，T-1 收市數據，零 LLM 幻覺。">
+<meta property="og:title" content="Leeks Terminal · 多週期 AI 交易決策儀表板">
+<meta property="og:description" content="Leeks Terminal 每日對 200 隻港股 + 200 隻美股跑 10 步價格行為框架，輸出 BUY/SELL/WAIT 行動計劃，附入場 trigger、目標價、止損位同策略自身歷史勝率。T+1 / T+3 / T+5 / T+10 多週期 backtest（已扣 Futu 免佣真實成本 HK 0.25% / US 0.05%）。全部數字 Python 確定性計算，T-1 收市數據，零 LLM 幻覺。">
 <meta name="theme-color" content="#0a0e1a">
 <link rel="canonical" href="https://www.win9you.com/">
 <meta property="og:site_name" content="Leeks Terminal">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Leeks Terminal · 港美股即日鮮交易信號">
-<meta property="og:description" content="AI 港美股即日鮮交易信號儀表板 · 200+200 隻主流股票 · T-1 數據 · 10 步價格行為框架 · 開市前 5 分鐘決策。">
+<meta property="og:title" content="Leeks Terminal · 多週期 AI 交易決策儀表板">
+<meta property="og:description" content="AI 港美股多週期 AI 交易決策儀表板 · 200+200 隻主流股票 · T-1 數據 · 10 步價格行為框架 · 4 個持倉期 backtest（T+1 / T+3 / T+5 / T+10）。">
 <meta property="og:url" content="https://www.win9you.com/">
 <meta property="og:image" content="https://www.win9you.com/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -23,22 +25,46 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "Leeks Terminal",
-  "url": "https://www.win9you.com/",
-  "inLanguage": "zh-Hant-HK",
-  "description": "HK + US day-trade decision dashboard. 200 HK + 200 US stocks, daily 10-step price-action signals from T-1 OHLC data. Educational use only.",
-  "publisher": {
-    "@type": "Organization",
-    "name": "Leeks Terminal",
-    "url": "https://www.win9you.com/"
-  }
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "Leeks Terminal",
+      "url": "https://www.win9you.com/",
+      "inLanguage": "zh-Hant-HK",
+      "description": "HK + US multi-horizon AI trading decision dashboard. 200 HK + 200 US stocks, daily 10-step price-action signals from T-1 OHLC data. T+1 / T+3 / T+5 / T+10 horizons backtested net of Futu commission-free real costs (HK 0.25% / US 0.05% per round-trip). Educational use only.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Leeks Terminal",
+        "url": "https://www.win9you.com/"
+      }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Leeks Terminal",
+      "url": "https://www.win9you.com/",
+      "applicationCategory": "FinanceApplication",
+      "applicationSubCategory": "Trading Signal Dashboard",
+      "operatingSystem": "Web",
+      "inLanguage": ["zh-Hant-HK", "en"],
+      "description": "Daily AI-driven HK and US stock signal engine using a 10-step price-action framework (5-phase market regime + 4-tier support/resistance ladder + 4 action strategies with T+1/T+3/T+5/T+10 backtest horizons).",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "200 HK stocks + 200 US stocks daily signals",
+        "10-step price-action framework (phase / S/R / strategy / backtest)",
+        "T+1 / T+3 / T+5 / T+10 multi-horizon backtest (Futu HK 0.25% / US 0.05% cost model)",
+        "Anomaly filter (Futu capital-flow signals)",
+        "Plan-strategy 60-day win rate gate (MED ≥50%, HIGH ≥60%)"
+      ]
+    }
+  ]
 }
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/leeks.css?v=2026-08-25b">
+<link rel="stylesheet" href="/static/fonts-local.css">
+<link rel="stylesheet" href="/leeks.css?v=2026-09-23">
 <script>
 (function(){
   const t = localStorage.getItem('leeks-theme') || 'dark';
@@ -48,19 +74,28 @@
 </head>
 <body>
 
+<a class="skip-link" href="#main">Skip to main content</a>
+
 <header class="site-header">
-  <nav class="nav">
+  <nav class="nav" aria-label="Primary">
     <a href="/" class="nav-brand"><span class="leek">L</span>eeks <em class="italic">Terminal</em></a>
     <div class="nav-links">
       <a href="/" class="active">Home</a>
-      <a href="/hk200/">HK Signals</a>
-      <a href="/us200/">US Signals</a>
-      <a href="/pair-trades/">Pair Trades</a>
-      <a href="/methodology">Methodology</a>
+      <a href="/hk200/"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg> HK Signals</a>
+      <a href="/us200/"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="vertical-align:-2px" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.6 3 14.4 0 18M12 3c-3 3.6-3 14.4 0 18"/></svg> US Signals</a>
+      <a href="/jp200/"><span style="display: inline-block; width: 16px; height: 12px; background: radial-gradient(circle at 50% 50%, #bc002d 30%, #fff 30%); border-radius: 50%; vertical-align: -1px; margin-right: 4px;" title="Japan"></span>JP Signals</a>
+      <a href="/compare/">Compare</a>
+      <a href="/backtest.html">Backtest</a>
+      <a href="/insights.html">Insights</a>
+      <a href="/methodology.html">Methodology</a>
+      <a href="/faq.html">FAQ</a>
+      <a href="/disclaimer/">Disclaimer</a>
+      <a href="/privacy.html">Privacy</a>
     </div>
+    <a class="lang-switch" href="/en/" title="View in English" aria-label="View in English">EN</a>
     <div class="nav-meta">
       <span class="live-dot"></span>
-      T-1 · 2026-08-24
+      T-1 · HK/JP/US 09-29
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
         <span class="icon" id="themeIcon">●</span>
         <span id="themeLabel">DARK</span>
@@ -90,116 +125,72 @@ function toggleTheme(){
 })();
 </script>
 
-<section class="hero">
+<main id="main">
+<div class="page-head">
   <div class="container">
-    <div class="hero-grid">
-      <div class="fade-in">
-        <div class="kicker">Day-Trade · 即日鮮 · T-1 Data</div>
-        <h1 class="hero-title">
-          開市前 5 分鐘<br>
-          知邊隻 <em class="italic">做</em>，<br>
-          邊隻 <em class="italic">唔做</em>。
-        </h1>
-        <p class="lede">
-          AI 港美股 <b>200+200</b> 隻主流股票，10 步價格行為框架 + backtested signal
-          — 每一隻都答到你：<b>買 / 沽 / 觀望</b>，trigger 喺邊，target 喺邊，止蝕喺邊。
-        </p>
-        <div class="hero-meta">
-          <span>Source: <b>Futu OpenD</b></span>
-          <span>Update: <b>On-demand</b></span>
-          <span>Method: <b>OHLC only · No LLM hallucination</b></span>
-        </div>
-        <div class="btn-row mt-4">
-          <a href="/hk200/" class="btn btn-primary">View HK Signals →</a>
-          <a href="/us200/" class="btn">View US Signals →</a>
-          <a href="/methodology" class="btn btn-ghost">How it works</a>
-        </div>
-      </div>
-
-      <div class="fade-in fade-in-2">
-        <div class="card mb-3">
-          <h3 class="card-label">Today · 2026-08-24 (T-1 close)</h3>
-          <div class="hero-stat mt-3">
-            <div class="label">Actionable signals</div>
-            <div class="value text-bull">163</div>
-            <div class="delta text-dim">of 399 total</div>
-          </div>
-          <div class="hero-stat mt-3">
-            <div class="label">High confidence (≥70%)</div>
-            <div class="value text-accent">5</div>
-          </div>
-          <div class="hero-stat mt-3">
-            <div class="label">Regime</div>
-            <div class="value text-bear" style="font-size: var(--text-lg);">🔴 55% Downtrend</div>
-          </div>
-        </div>
-      </div>
+    <div class="kicker">Leeks Terminal · Live</div>
+    <h1>Leeks Terminal · <em class="italic">多週期 AI 交易決策儀表板</em></h1>
+    <p class="lede">每日對 <b>200 隻港股 + 200 隻美股</b> 跑 10 步價格行為框架（phase 分類 → 20/60/120/200 日 S/R ladder → 30/60/90/197 日四窗口回測），輸出 BUY / SELL / WAIT 行動計劃，附入場 trigger、目標價、止損位同 R:R ratio。<b>全部數字由 Python 對 T-1 收市 OHLC 確定性計出，零 LLM 幻覺</b>；每隻股票嘅訊號策略仲有自身 60 日歷史勝率（n≥5 先顯示）。<b style="color: var(--bull);">T+1 / T+3 / T+5 三個 short-cycle horizon（已扣 Futu 免佣真實成本 HK 0.25% / US 0.05% round-trip）</b>：T+1 +0.35% / T+3 +0.80% / T+5 +1.08%（對 US$20k 注碼）。<b style="color: var(--amber);">T+10 swing 結果（+3.02% net）— 統計上係最強 window（4.39 t-statistic 過 deflated Sharpe Ratio 修正），但屬 swing horizon，請按個人風格同 lifestyle 自決。</b></p>
+    <div class="hero-meta">
+      <span>T-1 數據 · 2026-09-22</span>
+      <span>200 HK + 200 US</span>
+      <span>4 種策略 × 4 窗口回測</span>
+      <span>Updated 23:31 HKT</span>
     </div>
   </div>
-</section>
-
-<section style="padding-top: 0;">
+</div>
+<section>
   <div class="container">
     <div class="section-head">
-      <h2>今日 <em class="italic">actionable</em></h2>
-      <span class="section-meta">5 of 163 · Updated 12:51 HKT</span>
+      <h2>今日 <em>actionable</em></h2>
+      <span class="section-meta">5 of 87 · Updated 23:31 HKT</span>
     </div>
     <div class="card-grid" style="grid-template-columns: 1fr;">
       
-      <a href="/hk200/ticker/03988_HK" class="signal-card bear">
+      <a href="/hk200/ticker/09698_HK" class="signal-card bear">
         <div>
-          <div class="signal-ticker">03988.HK</div>
-          <div class="signal-name">BANK OF CHINA</div>
+          <div class="signal-ticker">09698.HK</div>
+          <div class="signal-name"></div>
+          <div class="signal-name" style="margin-top: var(--sp-2);">本策略歷史: SELL_R1 · 100% win (60d, n=5)</div>
         </div>
-        <div>
-          <div class="signal-name">Backtest edge: BUY_S1 · 100% win (60d, n=5)</div>
-        </div>
-        <div class="signal-action bear">SELL</div>
-        <div class="signal-detail">5.58 → <b>5.38</b> · stop 5.69</div>
+        <span class="signal-action-large sell">SELL</span>
+        <div class="signal-detail">33.76 → <b>31.46</b> · stop 35.34</div>
       </a>
-      <a href="/hk200/ticker/00669_HK" class="signal-card bear">
+      <a href="/hk200/ticker/01205_HK" class="signal-card bear">
         <div>
-          <div class="signal-ticker">00669.HK</div>
-          <div class="signal-name">TECHTRONIC IND</div>
+          <div class="signal-ticker">01205.HK</div>
+          <div class="signal-name">CITIC RESOURCES</div>
+          <div class="signal-name" style="margin-top: var(--sp-2);">本策略歷史: SELL_R1 · 100% win (60d, n=6)</div>
         </div>
-        <div>
-          <div class="signal-name">Backtest edge: BUY_S1 · 100% win (197d, n=3)</div>
-        </div>
-        <div class="signal-action bear">SELL</div>
-        <div class="signal-detail">150.00 → <b>137.50</b> · stop 153.00</div>
+        <span class="signal-action-large sell">SELL</span>
+        <div class="signal-detail">0.56 → <b>0.53</b> · stop 0.59</div>
       </a>
-      <a href="/hk200/ticker/00175_HK" class="signal-card bull">
+      <a href="/hk200/ticker/02318_HK" class="signal-card bull">
         <div>
-          <div class="signal-ticker">00175.HK</div>
-          <div class="signal-name">GEELY AUTO</div>
+          <div class="signal-ticker">02318.HK</div>
+          <div class="signal-name">PING AN</div>
+          <div class="signal-name" style="margin-top: var(--sp-2);">本策略歷史: BUY_S1 · 100% win (60d, n=5)</div>
         </div>
-        <div>
-          <div class="signal-name">Backtest edge: BUY_S1 · 100% win (60d, n=4)</div>
-        </div>
-        <div class="signal-action bull">BUY</div>
-        <div class="signal-detail">17.64 → <b>19.27</b> · stop 17.29</div>
+        <span class="signal-action-large buy">BUY</span>
+        <div class="signal-detail">52.20 → <b>55.20</b> · stop 50.51</div>
       </a>
-      <a href="/us200/ticker/ACN" class="signal-card bear">
+      <a href="/us200/ticker/NVDA" class="signal-card bear">
         <div>
-          <div class="signal-ticker">ACN</div>
-          <div class="signal-name">Accenture plc</div>
+          <div class="signal-ticker">NVDA</div>
+          <div class="signal-name">NVIDIA</div>
+          <div class="signal-name" style="margin-top: var(--sp-2);">本策略歷史: SELL_R1 · 100% win (60d, n=8)</div>
         </div>
-        <div>
-          <div class="signal-name">Backtest edge: BREAK_LONG · 100% win (90d, n=3)</div>
-        </div>
-        <div class="signal-action bear">SELL</div>
-        <div class="signal-detail">188.45 → <b>172.70</b> · stop 192.22</div>
+        <span class="signal-action-large sell">SELL</span>
+        <div class="signal-detail">234.50 → <b>220.76</b> · stop 243.85</div>
       </a>
-      <a href="/us200/ticker/FDX" class="signal-card bear">
+      <a href="/us200/ticker/WMT" class="signal-card bear">
         <div>
-          <div class="signal-ticker">FDX</div>
-          <div class="signal-name">FedEx Corporation</div>
+          <div class="signal-ticker">WMT</div>
+          <div class="signal-name">Walmart Inc.</div>
+          <div class="signal-name" style="margin-top: var(--sp-2);">本策略歷史: SELL_R1 · 100% win (60d, n=5)</div>
         </div>
-        <div>
-          <div class="signal-name">Backtest edge: BUY_S1 · 100% win (60d, n=4)</div>
-        </div>
-        <div class="signal-action bear">SELL</div>
-        <div class="signal-detail">341.69 → <b>322.35</b> · stop 348.52</div>
+        <span class="signal-action-large sell">SELL</span>
+        <div class="signal-detail">109.74 → <b>106.00</b> · stop 112.43</div>
       </a>
     </div>
   </div>
@@ -209,16 +200,16 @@ function toggleTheme(){
   <div class="container">
     <div class="section-head">
       <h2>Market <em class="italic">regime</em></h2>
-      <span class="section-meta">200 HK + 200 US · 2026-08-24</span>
+      <span class="section-meta">200 HK + 200 US · 2026-09-22</span>
     </div>
-    <div class="card-grid card-grid-3">
+    <div class="card-grid card-grid-2">
       <div class="card fade-in fade-in-1">
         <h3 class="card-label">Phase distribution</h3>
         <div style="margin-top: var(--sp-4); display: grid; gap: var(--sp-3);">
-          <div class="flex justify-between"><span class="text-dim">Downtrend active</span><span class="mono text-bear">218</span></div>
-          <div class="flex justify-between"><span class="text-dim">Base building</span><span class="mono text-amber">133</span></div>
-          <div class="flex justify-between"><span class="text-dim">Uptrend</span><span class="mono text-bull">40</span></div>
-          <div class="flex justify-between"><span class="text-dim">Recovery</span><span class="mono text-amber">8</span></div>
+          <div class="flex justify-between"><span class="text-dim">Downtrend active</span><span class="mono text-bear">179</span></div>
+          <div class="flex justify-between"><span class="text-dim">Base building</span><span class="mono text-amber">169</span></div>
+          <div class="flex justify-between"><span class="text-dim">Uptrend</span><span class="mono text-bull">28</span></div>
+          <div class="flex justify-between"><span class="text-dim">Recovery</span><span class="mono text-amber">24</span></div>
           <div class="flex justify-between"><span class="text-dim">Range</span><span class="mono text-dim">0</span></div>
         </div>
       </div>
@@ -226,25 +217,30 @@ function toggleTheme(){
       <div class="card fade-in fade-in-2">
         <h3 class="card-label">Action distribution</h3>
         <div style="margin-top: var(--sp-4); display: grid; gap: var(--sp-3);">
-          <div class="flex justify-between"><span class="text-dim">BUY</span><span class="mono text-bull">42</span></div>
-          <div class="flex justify-between"><span class="text-dim">SELL</span><span class="mono text-bear">121</span></div>
-          <div class="flex justify-between"><span class="text-dim">WAIT</span><span class="mono text-dim">236</span></div>
-        </div>
-      </div>
-
-      <div class="card fade-in fade-in-3">
-        <h3 class="card-label">How it works</h3>
-        <div style="margin-top: var(--sp-4); display: grid; gap: var(--sp-3); font-size: var(--text-sm); color: var(--fg-2);">
-          <div>① Phase 分類 (5 種) — 20d rolling</div>
-          <div>② S/R ladder (4-tier)</div>
-          <div>③ Action plan (4 strategies)</div>
-          <div>④ Backtest 4 windows × 4 strategies</div>
-          <div>⑤ Pick recent edge (30-90d)</div>
+          <div class="flex justify-between"><span class="text-dim">BUY</span><span class="mono text-bull">53</span></div>
+          <div class="flex justify-between"><span class="text-dim">SELL</span><span class="mono text-bear">34</span></div>
+          <div class="flex justify-between"><span class="text-dim">WAIT</span><span class="mono text-dim">313</span></div>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<section style="padding-top: 0;">
+  <div class="container">
+    <div class="card fade-in fade-in-3">
+      <h3 class="card-label">How it works</h3>
+      <div style="margin-top: var(--sp-3); display: grid; gap: var(--sp-3); font-size: var(--text-sm); color: var(--fg-2);">
+        <div>① Phase 分類 (5 種) — 20d rolling</div>
+        <div>② S/R ladder (4-tier)</div>
+        <div>③ Action plan (4 strategies)</div>
+        <div>④ Backtest 4 windows × 4 strategies</div>
+        <div>⑤ Pick recent edge (30-90d)</div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
 
 <div class="container">
   <div class="disclaimer">
@@ -257,7 +253,7 @@ function toggleTheme(){
   <div class="container">
     <div class="row">
       <div>© 2026 Leeks Terminal · win9you.com · <a href="/methodology">Methodology</a> · <a href="/disclaimer">Disclaimer</a></div>
-      <div class="mono text-dim">T-1 · 2026-08-24 · Futu OpenD</div>
+      <div class="mono text-dim">T-1 · HK/JP/US 09-29 · Futu OpenD</div>
     </div>
   </div>
 </footer>

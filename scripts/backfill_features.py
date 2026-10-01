@@ -14,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import sqlite3
 from src.features import compute_all_features
 
-DB_PATH = "/Users/kenken/Documents/dsa-hk/data/dsa_hk.db"
+DB_PATH = "/Users/kenken/dev/dsa-hk/data/dsa_hk.db"
 
 
 def main():

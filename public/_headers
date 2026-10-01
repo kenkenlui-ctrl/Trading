@@ -1,33 +1,40 @@
 # =========================================================
 # LEEKS TERMINAL — Cache-Control policy
-# v3 (2026-08-25 SEO pass)
+# v4 (2026-08-25 P1 fix)
 #
 # Policy:
-#   HTML  → max-age=0 must-revalidate (content changes daily after close;
-#           Cloudflare Pages' built-in default already sends max-age=0 for
-#           assets without a matching rule — incl. pretty URLs like
-#           /hk200/ticker/00700_HK — so we only pin what needs overriding)
+#   HTML  → max-age=0 must-revalidate (content changes daily after close)
 #   CSS   → 300s; cache-busted via ?v= query param on every deploy
 #   PNGs  → 300s; cache-busted via ?v=T-1-date query param
 #
-# Removed in v3: rules for /dashboard/*, /full-results.html,
-# /live-monitor.html — pages deleted in the 2026-08-24 v2.0 redesign.
+# v4 note: v3 used exact path "/leeks.css" which Cloudflare Pages
+# matched only for the no-query variant. Adding wildcard "/leeks*" so
+# both "/leeks.css" and "/leeks.css?v=..." honor the 300s rule.
+# Same fix applied to PNG paths.
 # =========================================================
 
-# Direct .html requests (incl. the 308 pretty-URL redirect responses)
+# HTML — must-revalidate so daily data refresh is visible immediately
 /*.html
+  Cache-Control: public, max-age=0, must-revalidate
+/*
   Cache-Control: public, max-age=0, must-revalidate
 
 # Shared CSS — short cache so theme updates roll out fast (?v= busting)
 /leeks.css
   Cache-Control: public, max-age=300, must-revalidate
+/leeks.css?*
+  Cache-Control: public, max-age=300, must-revalidate
 
 # Chart PNGs — short cache; pages reference them with ?v=<T-1 date>
 /hk200/charts/*.png
   Cache-Control: public, max-age=300, must-revalidate
+/hk200/charts/*.png?*
+  Cache-Control: public, max-age=300, must-revalidate
 /us200/charts/*.png
+  Cache-Control: public, max-age=300, must-revalidate
+/us200/charts/*.png?*
   Cache-Control: public, max-age=300, must-revalidate
 
 # OG image — rarely changes
-/og-image.png
+/og-image*
   Cache-Control: public, max-age=86400, must-revalidate

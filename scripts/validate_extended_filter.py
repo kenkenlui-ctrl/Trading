@@ -26,7 +26,7 @@ import yfinance as yf
 
 from src.data_fetcher import _hk_code_yfinance
 
-DB = "/Users/kenken/Documents/dsa-hk/data/dsa_hk.db"
+DB = "/Users/kenken/dev/dsa-hk/data/dsa_hk.db"
 HORIZONS = {"1D": 1, "1W": 5}
 
 # Buy-side caution patterns (same as extended_filter.py)

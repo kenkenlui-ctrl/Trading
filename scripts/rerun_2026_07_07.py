@@ -13,7 +13,7 @@ TARGET_DATE = "2026-07-07"
 os.environ["DSA_REPORT_DATE_OVERRIDE"] = TARGET_DATE
 os.environ["DSA_LLM_MAX_TOKENS"] = "8000"
 
-sys.path.insert(0, "/Users/kenken/Documents/dsa-hk")
+sys.path.insert(0, "/Users/kenken/dev/dsa-hk")
 
 from src.analyzer import analyze, render_summary_md, render_report_md
 from src.db import save_report, init_db

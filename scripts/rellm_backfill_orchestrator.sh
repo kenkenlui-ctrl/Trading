@@ -5,7 +5,7 @@
 # Estimated 7-10hr sequential.
 
 set -e
-cd /Users/kenken/Documents/dsa-hk
+cd /Users/kenken/dev/dsa-hk
 
 DATES=("2026-07-15" "2026-07-16" "2026-07-17" "2026-07-20" "2026-07-21" "2026-07-22" "2026-07-23" "2026-07-24" "2026-07-27" "2026-07-28" "2026-07-29")
 

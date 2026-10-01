@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
+<title>Signal Audit Studies · Leeks Terminal</title>
+<meta name="description" content="First-party signal audit research: win% laundering detection, Wilson CI, multi-testing correction, survivorship bias. How to audit your own trading engine.">
+<meta property="og:title" content="Signal Audit Research · Leeks Terminal">
+<meta property="og:description" content="First-party signal audit: 4 investigations into win%, Wilson CI, multi-testing, survivorship bias.">
+<meta property="og:url" content="https://www.win9you.com/en/insights">
+<link rel="canonical" href="https://www.win9you.com/en/insights">
+<link rel="alternate" hreflang="en" href="https://www.win9you.com/en/insights">
+<link rel="alternate" hreflang="zh-Hant" href="https://www.win9you.com/insights">
+<link rel="alternate" hreflang="x-default" href="https://www.win9you.com/en/insights">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/leeks.css?v=2026-08-30-v12">
+<script>
+(function(){
+  const t = localStorage.getItem('leeks-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="site-header" role="banner">
+  <nav class="nav" aria-label="Primary">
+    <a href="/en/" class="nav-brand"><span class="leek">L</span>eeks <em class="italic">Terminal</em></a>
+    <div class="nav-links">
+      <a href="/" >Home</a>
+      <a href="/hk200/" ><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg> HK Signals</a>
+      <a href="/us200/" ><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="vertical-align:-2px" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.6 3 14.4 0 18M12 3c-3 3.6-3 14.4 0 18"/></svg> US Signals</a>
+      <a href="/jp200/" ><span style="display: inline-block; width: 14px; height: 14px; background: radial-gradient(circle at 50% 50%, #bc002d 30%, #fff 30%); border-radius: 50%; vertical-align: -2px; margin-right: 4px;" title="Japan"></span>JP Signals</a>
+      <a href="/methodology.html" >Methodology</a>
+      <a href="/backtest.html" >Backtest</a>
+      <a href="/insights.html" class="active">Insights</a>
+      <a href="/faq.html" >FAQ</a>
+      <a href="/disclaimer/" >Disclaimer</a>
+      <a href="/privacy.html" >Privacy</a>
+    </div>
+    <a class="lang-switch" href="/insights.html" title="View in 繁體中文" aria-label="View in 繁體中文">🌐&nbsp;中 →</a>
+    <div class="nav-meta">
+      <span class="live-dot"></span>
+      T-1 · 2026-08-28
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme, currently DARK mode">
+
+        <span class="icon" id="themeIcon" aria-hidden="true">●</span>
+
+        <span id="themeLabel" aria-hidden="true">DARK</span>
+
+      </button>
+    </div>
+  </nav>
+</header>
+<script>
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('leeks-theme', next);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = next === 'dark' ? '#0a0e1a' : '#fafbfc';
+  const lbl = document.getElementById('themeLabel');
+  const ic = document.getElementById('themeIcon');
+  const btn = document.querySelector('.theme-toggle');
+  if (lbl) lbl.textContent = next.toUpperCase();
+  if (ic) ic.textContent = next === 'dark' ? '●' : '○';
+  if (btn) btn.setAttribute('aria-label', `Toggle theme, currently ${next.toUpperCase()} mode`);
+}
+(function(){
+  const t = document.documentElement.getAttribute('data-theme') || 'dark';
+  const lbl = document.getElementById('themeLabel');
+  const ic = document.getElementById('themeIcon');
+  const btn = document.querySelector('.theme-toggle');
+  if (lbl) lbl.textContent = t.toUpperCase();
+  if (ic) ic.textContent = t === 'dark' ? '●' : '○';
+  if (btn) btn.setAttribute('aria-label', `Toggle theme, currently ${t.toUpperCase()} mode`);
+})();
+</script>
+
+<main id="main" role="main">
+<div class="page-head">
+  <div class="container">
+    <div class="kicker">Leeks Terminal · Research</div>
+    <h1>Signal Audit Studies</h1>
+    <p class="lede">How to know whether your trading engine is real edge or overfitted noise. Four deep-research audits applied to our own stack.</p>
+    <p class="text-dim" style="font-size: var(--text-sm);">Last updated: 2026-08-28</p>
+  </div>
+</div>
+
+<div class="container" style="max-width: 900px;">
+
+<h2 class="mt-5">Audit 1: Win% Laundering Detection</h2>
+<p>Many signal products show off-plan win% next to today's trade, even when the off-plan strategy is different from the recommended one. Real win% must be the <b>same strategy that's being advised</b>.</p>
+<ul style="line-height: 2; margin-left: var(--sp-5);">
+  <li>If the table says "SELL_R1 plan" but the win% comes from a different strategy (e.g. BUY_S1 with 82% historical), the displayed win% is laundered</li>
+  <li>The audited fix: tie win% to <b>today's plan strategy's own backtest</b> (n≥5)</li>
+  <li>Recent strongest edge is shown separately on the detail page, never mixed with the plan</li>
+</ul>
+
+<h2 class="mt-5">Audit 2: Small-Sample Win% Wilson Interval</h2>
+<p>A 90% win rate on n=10 trades has a 95% confidence interval of roughly 55%–99%. Reporting only the point estimate is misleading.</p>
+<ul style="line-height: 2; margin-left: var(--sp-5);">
+  <li>Reliability tier MED requires n≥5; HIGH requires n≥20 (after audit tightening)</li>
+  <li>Below MED, the row is hidden (insufficient evidence to act on)</li>
+  <li>Detail page shows Wilson interval alongside point estimate</li>
+</ul>
+
+<h2 class="mt-5">Audit 3: Backtest Look-Ahead Bias</h2>
+<p>The most common silent bug: today's close is used to compute signals AFTER the test period closes, inflating returns.</p>
+<ul style="line-height: 2; margin-left: var(--sp-5);">
+  <li>Leeks Terminal uses T-1 close only — no live intraday data</li>
+  <li>S/R levels are computed from a rolling window that EXCLUDES the most recent bar</li>
+  <li>Today's open is the entry price; no peeking at intraday extremes</li>
+</ul>
+
+<h2 class="mt-5">Audit 4: Backtest Window Label Honesty</h2>
+<p>It's tempting to label a 200-day backtest as "recent regime" when the early half is actually stale. Label windows by their actual coverage.</p>
+<ul style="line-height: 2; margin-left: var(--sp-5);">
+  <li>30/60/90-day windows are short-term regime signals</li>
+  <li>197-day window is long-term direction confirmation</li>
+  <li>Two windows agreeing → strong; contradictory → skip</li>
+  <li>Monthly swing backtest re-rolls and re-labels every 1st of the month</li>
+</ul>
+
+<h2 class="mt-5">Audit Checklist You Can Run Yourself</h2>
+<ol style="line-height: 2; margin-left: var(--sp-5);">
+  <li>Does the table win% match the plan strategy, or some other strategy?</li>
+  <li>What is the 95% CI of the win%? If n=10, the CI is huge.</li>
+  <li>Is the signal computed at T-1 close, or at some later timestamp?</li>
+  <li>Are the backtest windows labeled correctly?</li>
+  <li>Is a deflated Sharpe or Bonferroni correction applied to the published t-statistic?</li>
+</ol>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="row">
+      <div>© 2026 Leeks Terminal · win9you.com · <a href="/methodology">Methodology</a> · <a href="/disclaimer">Disclaimer</a></div>
+      <div class="mono text-dim">T-1 · 2026-08-28</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -20,7 +20,7 @@ import re
 import html as _html
 from pathlib import Path
 
-REPO = Path("/Users/kenken/Documents/dsa-hk")
+REPO = Path("/Users/kenken/dev/dsa-hk")
 MD_PATH = REPO / "data" / "monthly_backtest" / "latest.md"
 OUT_PATH = REPO / "public" / "backtest.html"
 JSON_PATH = REPO / "data" / "monthly_backtest" / "backtest_latest.json"  # canonical, for future per-page deep dives
@@ -200,7 +200,7 @@ def render() -> str:
     <h1>回測報告 · <em class="italic">T+10 Swing vs T+1 Day-trade</em></h1>
     <p class="lede">{n_signals} 個 BUY 訊號嘅 6 個月回測，全部<b>淨回報</b>（扣交易成本）。
     同一批訊號，T+10 持有平均 <b>+{t10_avg}%</b>，係 T+1 即日鮮（+{t1_avg}%）嘅 {float(t10_avg)/max(float(t1_avg), 0.01):.0f}× 倍。
-    Portfolio sim（1.5% risk/trade, 8 concurrent）總回報 <b>+{portfolio_total}%</b>，MaxDD {portfolio_mdd}%。</p>
+    2026-09-11 update: <b>honest equity curves (1% risk/trade, 5 concurrent, HK$1M)</b>: <a href="/equity_curve_t_1.html" style="color:var(--bull);">T+1 +15.80%</a> · <a href="/equity_curve_t_3.html">T+3 +8.94%</a> · <a href="/equity_curve_t_5.html">T+5 +7.91%</a> · <a href="/equity_curve_t_10.html" style="color:var(--bear);">T+10 -4.05%</a>. T+1 day-trade = realistic edge; T+10 swing loses under proper sizing.</p>
     <div class="hero-meta">
       <span>Window: {window}</span>
       <span>Signals: {n_signals}</span>
@@ -220,7 +220,7 @@ def render() -> str:
 
 {_section_block("Universe filter (data availability + 20d ADV)", universe_html, "section-universe") if universe_html else ''}
 
-{_section_block("Risk metrics — T+10 portfolio sim (1.5% risk/trade, 8 concurrent cap)", risk_tbl, "section-risk") if risk_tbl else ''}
+{_section_block("Risk metrics — T+10 portfolio sim (1% risk/trade, 5 concurrent cap — matches d71 honest equity curve)", risk_tbl, "section-risk") if risk_tbl else ''}
 
 {_section_block("Walk-forward OOS (80/20 train/test split)", oos_tbl, "section-oos") if oos_tbl else ''}
 
@@ -230,7 +230,7 @@ def render() -> str:
     <ul>
       <li><b>Live stop/target 取代 hardcoded</b> — 51% 訊號用 live signal 嘅 stop/target（avg −2.45%/+4.07%，比舊 hardcoded T+10 −10%/+15% 緊），其餘 49% 因 DB 缺 stop/target 或 sanity bounds 外而 fall back 去 hardcoded。</li>
       <li><b>T+10 即日鮮嘅優勢係頻率</b> — 單筆 +0.72% 但可以日日做；T+10 單筆大但要忍 10 日波動。兩者唔互斥，可以並行 paper-trade 驗證。</li>
-      <li><b>Portfolio sim 顯示真實 sizing 下 edge 仲存</b> — 1.5% risk/trade + 8 concurrent cap 嘅 T+10 sim：+55% 6mo return，MaxDD 只 1.96%，Calmar 28。</li>
+      <li><b>Equity curve per horizon (honest fixed-capital sim)</b> — 2026-09-11 update: replaced loose +55% "sum-of-pct" figure with per-horizon equity curves (1% risk/trade, 5 concurrent, HK$1M initial): <a href="/equity_curve_t_1.html">T+1 +15.80% / 4.19% DD / Calmar 34</a> · <a href="/equity_curve_t_3.html">T+3 +8.94%</a> · <a href="/equity_curve_t_5.html">T+5 +7.91%</a> · <a href="/equity_curve_t_10.html">T+10 -4.05%</a> (slot full, 86% skipped). T+1 day-trade is the realistic edge; T+10 swing doesn't survive risk-managed sizing.</li>
       <li><b>Walk-forward OOS 初步 positive</b> — 80/20 split：train 60.4% WR vs OOS 56.0% WR（−4.4pp degradation），OOS 25 trades 樣本仍細，要至少 3 cycle OOS 先有 statistical evidence。</li>
       <li><b>高 signal score 唔保證 T+10 更好</b> — 分桶顯示 high-score 組 T+1 反而 -0.24%（過熱回歸），low-score 組 T+10 仲有 +1.63%。分數係方向信心，唔係持貨期指引。</li>
       <li><b>樣本限制</b> — 121 個訊號來自 yfinance 有數據嘅 regular stocks（ETP/warrant 缺數據）；6 個月窗口未涵蓋多日熊市。每月 1 號自動重跑滾動更新。</li>

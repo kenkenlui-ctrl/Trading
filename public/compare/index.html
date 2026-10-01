@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compare Tickers · Leeks Terminal</title>
+<meta name="description" content="Side-by-side compare up to 3 tickers across HK / US / JP. Last, Chg%, Phase, Strategy, MAE, MFE, R:R, Streak, backtest win%.">
+<meta name="robots" content="noindex,follow">
+<link rel="canonical" href="https://www.win9you.com/compare/">
+<link rel="stylesheet" href="/leeks.css">
+<style>
+  body { background: var(--bg); color: var(--fg); font-family: var(--font-sans); margin: 0; }
+  .cmp-wrap { max-width: 1280px; margin: 0 auto; padding: var(--sp-5) var(--sp-4); }
+  .cmp-header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--sp-3); margin-bottom: var(--sp-4); }
+  .cmp-header h1 { font-size: var(--text-xl); margin: 0; }
+  .cmp-back { color: var(--dim); font-size: var(--text-sm); text-decoration: none; }
+  .cmp-back:hover { color: var(--accent); }
+  .cmp-meta { color: var(--dim); font-size: var(--text-xs); font-family: var(--font-mono); }
+  .cmp-picker { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: var(--sp-3); margin-bottom: var(--sp-4); }
+  .cmp-picker-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .cmp-picker-row input { background: var(--bg-2); border: 1px solid var(--border); color: var(--fg); padding: 6px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: var(--text-sm); min-width: 120px; }
+  .cmp-picker-row button { background: var(--accent); color: var(--bg); border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: var(--text-xs); }
+  .cmp-picker-row button.ghost { background: transparent; color: var(--dim); border: 1px solid var(--border); }
+  .cmp-table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .cmp-table th, .cmp-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; font-size: var(--text-sm); }
+  .cmp-table th { background: var(--bg-2); color: var(--dim); font-weight: 600; font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.5px; }
+  .cmp-table tr:last-child td { border-bottom: none; }
+  .cmp-table .row-label { color: var(--dim); font-size: var(--text-xs); font-family: var(--font-mono); width: 140px; background: var(--bg-2); }
+  .cmp-table .ticker-cell { font-family: var(--font-mono); font-weight: 600; font-size: var(--text-md); }
+  .cmp-table .ticker-cell a { color: var(--fg); text-decoration: none; }
+  .cmp-table .ticker-cell a:hover { color: var(--accent); }
+  .cmp-table .market-tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-family: var(--font-mono); background: var(--bg); border: 1px solid var(--border); margin-right: 4px; vertical-align: middle; }
+  .cmp-table .market-tag.HK { color: var(--bull); border-color: var(--bull); }
+  .cmp-table .market-tag.US { color: var(--accent); border-color: var(--accent); }
+  .cmp-table .market-tag.JP { color: var(--amber); border-color: var(--amber); }
+  .cmp-table .best { background: rgba(var(--bull-rgb), 0.1); font-weight: 600; }
+  .cmp-table .best-neg { background: rgba(var(--bear-rgb), 0.1); font-weight: 600; }
+  .cmp-table .missing { color: var(--dim); }
+  .cmp-table .verdict-BUY { color: var(--bull); }
+  .cmp-table .verdict-SELL { color: var(--bear); }
+  .cmp-table .verdict-WAIT { color: var(--dim); }
+  .cmp-table .phase-tag { padding: 1px 6px; border-radius: 3px; font-size: 11px; }
+  .cmp-table .phase-tag.uptrend { background: rgba(var(--bull-rgb), 0.15); color: var(--bull); }
+  .cmp-table .phase-tag.base_building { background: rgba(var(--amber-rgb), 0.15); color: var(--amber); }
+  .cmp-table .phase-tag.downtrend_active { background: rgba(var(--bear-rgb), 0.15); color: var(--bear); }
+  .cmp-table .phase-tag.downtrend_recovery { background: rgba(var(--amber-rgb), 0.15); color: var(--amber); }
+  .cmp-table .phase-tag.range { background: var(--bg-2); color: var(--dim); }
+  .cmp-empty { text-align: center; padding: var(--sp-7); color: var(--dim); font-size: var(--text-md); }
+  .cmp-empty code { background: var(--bg-2); padding: 2px 8px; border-radius: 3px; font-family: var(--font-mono); color: var(--accent); }
+  .cmp-streak-cell { font-family: var(--font-mono); }
+  .cmp-streak-cell .win { color: var(--bull); }
+  .cmp-streak-cell .loss { color: var(--bear); }
+  .cmp-footer-note { color: var(--dim); font-size: var(--text-xs); margin-top: var(--sp-4); padding: var(--sp-3); background: var(--panel); border: 1px solid var(--border); border-radius: 6px; line-height: 1.6; }
+  .cmp-cell-up { color: var(--bull); }
+  .cmp-cell-down { color: var(--bear); }
+  .cmp-freshness { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--panel); border: 1px solid var(--border); border-radius: 6px; margin-bottom: var(--sp-3); font-size: var(--text-xs); font-family: var(--font-mono); flex-wrap: wrap; }
+  .cmp-freshness .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--bull); box-shadow: 0 0 6px var(--bull); animation: pulse 2s infinite; }
+  .cmp-freshness .dot.stale { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+  .cmp-freshness .dot.old { background: var(--bear); box-shadow: 0 0 6px var(--bear); }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  @media (max-width: 768px) {
+    .cmp-table { font-size: 12px; }
+    .cmp-table th, .cmp-table td { padding: 8px 6px; }
+    .cmp-table .row-label { width: 100px; font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+<main class="cmp-wrap">
+  <div class="cmp-header">
+    <div>
+      <h1>📊 Multi-ticker Compare</h1>
+      <div class="cmp-meta" id="cmpMeta">Loading ticker index…</div>
+    </div>
+    <a href="/hk200/" class="cmp-back">← Back to HK200</a>
+  </div>
+
+  <div class="cmp-picker">
+    <div class="cmp-picker-row">
+      <span style="color: var(--dim); font-size: var(--text-xs);">tickers:</span>
+      <input type="text" id="tickerInput" placeholder="0700.HK, NVDA, 7203.T" style="flex: 1;">
+      <button type="button" id="loadBtn">Load</button>
+      <button type="button" class="ghost" id="clearBtn">Clear</button>
+    </div>
+    <div style="margin-top: 6px; font-size: 11px; color: var(--dim);">
+      Max 3 tickers · 跨 HK / US / JP · URL <code style="background: var(--bg-2); padding: 1px 5px; border-radius: 2px;">?tickers=A,B,C</code> 自動載入
+    </div>
+  </div>
+
+  <div class="cmp-freshness" id="cmpFreshness">
+    <span class="dot" id="freshDot"></span>
+    <span id="freshText">Loading data freshness…</span>
+    <button type="button" id="forceRefreshBtn" style="margin-left: auto; background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 4px 10px; border-radius: 4px; cursor: pointer; font-family: var(--font-mono); font-size: 11px; display: none;">↻ Force refresh</button>
+  </div>
+
+  <div id="cmpContent">
+    <div class="cmp-empty">
+      揀 2-3 隻 ticker 加到比較 tray，喺 hub 頁面剔 row 最左格 checkbox。<br>
+      例如 <code>0700.HK</code> vs <code>NVDA</code> vs <code>7203.T</code> 跨市場直接比較。
+    </div>
+  </div>
+
+  <div class="cmp-footer-note">
+    <b>📅 T-1 close data</b> · 全部數據係 T-1 收市 (yesterday close)，唔係今日盤中即時 quote。詳見 <a href="/hk200/" style="color: var(--accent);">hub</a> 頁面 disclaimer。<br>
+    <b>Color 高亮</b>：每行 metric 最佳 (▲) 用綠、最差 (▼) 用紅對比 — 同類橫向比較用，唔係 buy/sell 訊號。<br>
+    <b>Best/Worst 邏輯</b>：Chg% / Win% / MFE / R:R / Streak ▲ 越高越好；MAE / Stop 越接近 0 越好；Last 越高越好 (size 比較)。
+  </div>
+</main>
+
+<script>
+const INDEX_URL = '/data/ticker-index.json';
+let TICKERS = {};
+let INDEX_AS_OF = '';
+
+async function loadIndex(forceFresh = false) {
+  try {
+    // Cache-bust on force refresh
+    const url = INDEX_URL + (forceFresh ? '?_t=' + Date.now() : '');
+    const r = await fetch(url, forceFresh ? { cache: 'reload' } : {});
+    const j = await r.json();
+    TICKERS = j.tickers || {};
+    INDEX_AS_OF = j.as_of || '';
+    document.getElementById('cmpMeta').textContent =
+      `Index ${Object.keys(TICKERS).length} tickers · as-of ${INDEX_AS_OF} · max 3 for compare`;
+    updateFreshness(j);
+  } catch (e) {
+    document.getElementById('cmpMeta').textContent = '⚠ Failed to load index: ' + e.message;
+    document.getElementById('cmpFreshness').innerHTML =
+      '<span class="dot old"></span> Failed to load — try force refresh';
+  }
+}
+
+function updateFreshness(j) {
+  const idxDate = j.as_of || (j._generated_at || '');
+  const fetchedAt = new Date();
+  const idxDateParsed = idxDate ? new Date(idxDate) : null;
+  // freshness = days since index as_of
+  let ageDays = idxDateParsed ? (fetchedAt - idxDateParsed) / (1000 * 60 * 60 * 24) : 999;
+  let cls = 'dot';
+  let status = '';
+  if (ageDays <= 1) {
+    status = '🟢 Fresh';
+  } else if (ageDays <= 3) {
+    cls = 'dot stale'; status = '🟡 Stale';
+  } else {
+    cls = 'dot old'; status = '🔴 Old';
+  }
+  const coverage = (() => {
+    const t = j.tickers || {};
+    let n = 0, mae = 0, streak = 0;
+    for (const k in t) {
+      n++;
+      if (t[k].mae_pct != null && t[k].mae_pct !== 0) mae++;
+      if (t[k].max_loss_streak != null) streak++;
+    }
+    return { n, mae, streak };
+  })();
+  document.getElementById('cmpFreshness').innerHTML =
+    `<span class="${cls}"></span> ` +
+    `<span>Data ${status} · index as-of <b>${idxDate}</b> · loaded ${fetchedAt.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</span>` +
+    `<span style="color: var(--dim);">· coverage: ${coverage.mae}/${coverage.n} MAE, ${coverage.streak}/${coverage.n} streak</span>` +
+    `<button type="button" id="forceRefreshBtn2" style="margin-left: auto; background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 4px 10px; border-radius: 4px; cursor: pointer; font-family: var(--font-mono); font-size: 11px;">↻ Force refresh</button>`;
+  const r = document.getElementById('forceRefreshBtn2');
+  if (r) r.onclick = () => loadIndex(true);
+}
+
+function getTickerEntry(ticker) {
+  if (!ticker) return null;
+  if (TICKERS[ticker]) return TICKERS[ticker];
+  // Try variants
+  const variants = [];
+  if (!ticker.endsWith('.HK') && /^\d{4,6}$/.test(ticker)) variants.push(ticker + '.HK');
+  if (!ticker.endsWith('.T') && /^\d{4}$/.test(ticker)) variants.push(ticker + '.T');
+  if (ticker.endsWith('.HK')) variants.push(ticker.replace('.HK',''));
+  if (ticker.endsWith('.T')) variants.push(ticker.replace('.T',''));
+  for (const v of variants) {
+    if (TICKERS[v]) return TICKERS[v];
+  }
+  // Case-insensitive last try
+  const upper = ticker.toUpperCase();
+  for (const k of Object.keys(TICKERS)) {
+    if (k.toUpperCase() === upper) return TICKERS[k];
+  }
+  return null;
+}
+
+function fmtNum(x, dp=2) {
+  if (x === null || x === undefined || x === '') return '—';
+  const n = Number(x);
+  if (isNaN(n)) return '—';
+  return n.toLocaleString('en-US', { minimumFractionDigits: dp, maximumFractionDigits: dp });
+}
+function fmtPct(x, dp=2) {
+  if (x === null || x === undefined) return '—';
+  const n = Number(x);
+  if (isNaN(n)) return '—';
+  return (n >= 0 ? '+' : '') + n.toFixed(dp) + '%';
+}
+function fmtChg(x) {
+  if (x === null || x === undefined) return '—';
+  const n = Number(x);
+  if (isNaN(n)) return '—';
+  const cls = n > 0 ? 'cmp-cell-up' : (n < 0 ? 'cmp-cell-down' : '');
+  const sign = n > 0 ? '+' : '';
+  return `<span class="${cls}">${sign}${n.toFixed(2)}%</span>`;
+}
+
+function phaseLabel(p) {
+  const map = { uptrend: 'Uptrend', base_building: 'Base', downtrend_active: 'DT', downtrend_recovery: 'Recov', range: 'Range' };
+  return map[p] || p || '—';
+}
+function detailUrl(ticker, market) {
+  const safe = ticker.replace(/\./g, '_');
+  const m = (market || '').toLowerCase();
+  if (m === 'hk') return `/hk200/ticker/${safe}`;
+  if (m === 'us') return `/us200/ticker/${safe}`;
+  if (m === 'jp') return `/jp200/ticker/${safe}`;
+  return '#';
+}
+
+function buildCompareTable(tickers) {
+  if (!tickers || tickers.length < 2) {
+    return '<div class="cmp-empty">需要至少 2 隻 ticker 至可以比較。</div>';
+  }
+  const entries = tickers.map(t => ({ input: t, entry: getTickerEntry(t) }));
+
+  // Header row
+  const headers = entries.map((e, i) => {
+    const en = e.entry;
+    const ticker = en ? Object.keys(TICKERS).find(k => TICKERS[k] === en) || e.input : e.input;
+    if (!en) return `<th class="ticker-cell"><span class="missing">${e.input} (not found)</span></th>`;
+    const safe = ticker.replace(/\./g, '_');
+    const market = en.market;
+    return `<th class="ticker-cell"><span class="market-tag ${market}">${market}</span><a href="${detailUrl(ticker, market)}">${ticker}</a><div style="font-size: 11px; color: var(--dim); font-weight: 400; margin-top: 2px;">${en.name_zh || en.name || ''}</div></th>`;
+  }).join('');
+
+  // Helper to find best/worst for a metric
+  function bestWorstIdx(values, higherIsBetter = true) {
+    const valid = values.map((v, i) => ({ v, i })).filter(x => x.v !== null && x.v !== undefined && !isNaN(x.v));
+    if (valid.length < 2) return { best: -1, worst: -1 };
+    valid.sort((a, b) => higherIsBetter ? b.v - a.v : a.v - b.v);
+    return { best: valid[0].i, worst: valid[valid.length - 1].i };
+  }
+
+  function row(label, key, formatter = (x) => x, higherIsBetter = true) {
+    const values = entries.map(e => e.entry ? Number(e.entry[key]) : null);
+    const { best, worst } = bestWorstIdx(values, higherIsBetter);
+    const cells = entries.map((e, i) => {
+      if (!e.entry) return '<td class="missing">—</td>';
+      const raw = e.entry[key];
+      if (raw === null || raw === undefined) return '<td class="missing">—</td>';
+      let cls = '';
+      if (i === best && best !== worst) cls = 'best';
+      else if (i === worst && best !== worst) cls = 'best-neg';
+      return `<td class="${cls}">${formatter(raw)}</td>`;
+    }).join('');
+    return `<tr><td class="row-label">${label}</td>${cells}</tr>`;
+  }
+
+  // Phase row with tag
+  const phaseCells = entries.map((e, i) => {
+    if (!e.entry) return '<td class="missing">—</td>';
+    const p = e.entry.phase || 'range';
+    return `<td><span class="phase-tag ${p}">${phaseLabel(p)}</span></td>`;
+  }).join('');
+  const phaseRow = `<tr><td class="row-label">Phase</td>${phaseCells}</tr>`;
+
+  // Verdict row
+  const verdictCells = entries.map((e, i) => {
+    if (!e.entry) return '<td class="missing">—</td>';
+    const v = e.entry.verdict || 'WAIT';
+    const sym = v === 'BUY' ? '▲' : (v === 'SELL' ? '▼' : '○');
+    return `<td class="verdict-${v}"><b>${sym} ${v}</b></td>`;
+  }).join('');
+  const verdictRow = `<tr><td class="row-label">Action</td>${verdictCells}</tr>`;
+
+  // Strategy row (text, no best/worst)
+  const stratCells = entries.map(e => {
+    if (!e.entry) return '<td class="missing">—</td>';
+    return `<td><code style="background: var(--bg); padding: 2px 6px; border-radius: 3px; font-size: 12px;">${e.entry.strategy || '—'}</code></td>`;
+  }).join('');
+  const stratRow = `<tr><td class="row-label">Strategy</td>${stratCells}</tr>`;
+
+  // Streak row
+  const streakCells = entries.map(e => {
+    if (!e.entry || e.entry.max_win_streak === undefined) return '<td class="missing">—</td>';
+    return `<td class="cmp-streak-cell"><span class="win">▲${e.entry.max_win_streak || 0}</span> / <span class="loss">▼${e.entry.max_loss_streak || 0}</span></td>`;
+  }).join('');
+  const streakRow = `<tr><td class="row-label">Streak (▲W / ▼L)</td>${streakCells}</tr>`;
+
+  // As-of row
+  const asofCells = entries.map(e => {
+    if (!e.entry) return '<td class="missing">—</td>';
+    return `<td class="mono" style="font-size: 12px;">${e.entry.as_of || '—'}</td>`;
+  }).join('');
+  const asofRow = `<tr><td class="row-label">As-of</td>${asofCells}</tr>`;
+
+  return `
+    <table class="cmp-table">
+      <thead><tr><th></th>${headers}</tr></thead>
+      <tbody>
+        ${asofRow}
+        ${row('Last', 'last', x => fmtNum(x, 2), true)}
+        ${row('Chg%', 'chg_pct', x => fmtChg(x), true)}
+        ${phaseRow}
+        ${verdictRow}
+        ${stratRow}
+        ${row('Trigger', 'trigger', x => fmtNum(x, 2), true)}
+        ${row('Target', 'target', x => fmtNum(x, 2), true)}
+        ${row('Stop', 'stop', x => fmtNum(x, 2), false)}
+        ${row('R:R', 'rr_ratio', x => fmtNum(x, 2), true)}
+        ${row('Win% (plan)', 'win_pct', x => x + '%', true)}
+        ${row('n', 'win_n', x => x, true)}
+        ${row('MAE 60d', 'mae_pct', x => fmtPct(x, 1), false)}
+        ${row('MFE 60d', 'mfe_pct', x => fmtPct(x, 1), true)}
+        ${row('Total PnL', 'total_pnl', x => fmtPct(x, 1), true)}
+        ${streakRow}
+      </tbody>
+    </table>
+  `;
+}
+
+function loadFromUrl() {
+  const u = new URL(window.location.href);
+  const t = u.searchParams.get('tickers');
+  if (t) {
+    const arr = t.split(',').map(s => s.trim()).filter(Boolean).slice(0, 3);
+    document.getElementById('tickerInput').value = arr.join(', ');
+    render(arr);
+  }
+}
+function loadFromInput() {
+  const arr = document.getElementById('tickerInput').value.split(',').map(s => s.trim()).filter(Boolean).slice(0, 3);
+  if (arr.length < 2) {
+    document.getElementById('cmpContent').innerHTML = '<div class="cmp-empty">需要至少 2 隻 ticker 至可以比較。</div>';
+    return;
+  }
+  // Update URL for shareability
+  const u = new URL(window.location.href);
+  u.searchParams.set('tickers', arr.join(','));
+  history.replaceState({}, '', u.toString());
+  render(arr);
+}
+function render(tickers) {
+  const html = buildCompareTable(tickers);
+  document.getElementById('cmpContent').innerHTML = html;
+}
+function clearAll() {
+  document.getElementById('tickerInput').value = '';
+  const u = new URL(window.location.href);
+  u.search = '';
+  history.replaceState({}, '', u.toString());
+  document.getElementById('cmpContent').innerHTML = `
+    <div class="cmp-empty">
+      揀 2-3 隻 ticker 加到比較 tray，喺 hub 頁面剔 row 最左格 checkbox。<br>
+      例如 <code>0700.HK</code> vs <code>NVDA</code> vs <code>7203.T</code> 跨市場直接比較。
+    </div>
+  `;
+}
+
+document.getElementById('loadBtn').addEventListener('click', loadFromInput);
+document.getElementById('clearBtn').addEventListener('click', clearAll);
+document.getElementById('tickerInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') loadFromInput();
+});
+
+(async () => {
+  await loadIndex();
+  loadFromUrl();
+})();
+</script>
+</body>
+</html>

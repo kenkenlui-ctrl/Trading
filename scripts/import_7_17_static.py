@@ -30,7 +30,7 @@ import sqlite3
 import yfinance as yf
 import requests
 
-DB_PATH = "/Users/kenken/Documents/dsa-hk/data/dsa_hk.db"
+DB_PATH = "/Users/kenken/dev/dsa-hk/data/dsa_hk.db"
 REPORT_DATE = "2026-07-17"
 HSI_CHG_PCT = -1.78  # verified via Tencent API
 HSI_REGIME_RULE = "HSI_REGIME"

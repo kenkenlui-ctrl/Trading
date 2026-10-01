@@ -1,0 +1,170 @@
+{
+  "ticker": "US.DDOG",
+  "ticker_user": "DDOG",
+  "name": "Datadog, Inc.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-11 → 2026-09-29 (200 daily bars)",
+  "last_bar": {
+    "date": "2026-09-29",
+    "O": 267.03,
+    "H": 269.44,
+    "L": 259.26,
+    "C": 268.56,
+    "prev_close": 268.7,
+    "chg_pct": -0.05
+  },
+  "phase": "downtrend_active",
+  "adx": 20.77,
+  "plus_di": 31.42,
+  "minus_di": 14.05,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 292.72 (2026-08-05), trough 203.24 (2026-09-08), box top 280.7 (2026-09-25)",
+  "peak": {
+    "date": "2026-08-05",
+    "price": 292.72
+  },
+  "trough": {
+    "date": "2026-09-08",
+    "price": 203.24
+  },
+  "box": {
+    "top": 280.7,
+    "top_date": "2026-09-25",
+    "bottom": 203.24,
+    "period": "2026-09-08 to 2026-09-29"
+  },
+  "drop_from_peak_pct": 8.3,
+  "recovery_from_crash_pct": 32.1,
+  "supports": [
+    {
+      "level": 260.0,
+      "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; 3.2% below current"
+    },
+    {
+      "level": 248.0,
+      "label": "S2",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 228.0,
+      "label": "S3",
+      "touches": 10,
+      "evidence": "mid-base support, tested 10x"
+    },
+    {
+      "level": 203.24,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-09-08, structural bottom"
+    }
+  ],
+  "resistances": [
+    {
+      "level": 269.44,
+      "label": "R1 today high",
+      "evidence": "today's high 269.44000244140625"
+    },
+    {
+      "level": 280.7,
+      "label": "R3 Sep high",
+      "evidence": "box top 280.7, base period high"
+    }
+  ],
+  "position": {
+    "current": 268.56,
+    "in_box_pct": 84.3,
+    "nearest_support": "S1 KEY (260.0)",
+    "nearest_resistance": "R1 today high (269.44)"
+  },
+  "kline_today": {
+    "type": "bullish_hold",
+    "touched_R1": true,
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 267.03,
+    "H": 269.44,
+    "L": 259.26,
+    "C": 268.56,
+    "body_pct": 15.0,
+    "upper_wick_pct": 8.6,
+    "lower_wick_pct": 76.3
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 260.0 (KEY support)",
+      "then": "still range; watch 269.44 for next test"
+    },
+    {
+      "if": "break 260.0 on close",
+      "then": "target 248.0 → 228.0 (short-term bearish)"
+    },
+    {
+      "if": "break 203.24 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 269.44 on close",
+      "then": "short-term bullish; next test 280.7"
+    },
+    {
+      "if": "break 280.7 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
+  "action_plan": {
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 280.7,
+    "target_price": 241.97,
+    "stop_price": 299.15,
+    "risk_pct": 6.57,
+    "reward_pct": 13.8,
+    "rr_ratio": 2.1,
+    "phase_match": true,
+    "r1": 280.7,
+    "s1": 203.24,
+    "s2": 219.0,
+    "r2": 292.72,
+    "r3": 278.7,
+    "s3": 100.79,
+    "s4": 98.01,
+    "current_position_pct": 84.3,
+    "notes": "SELL_R1: in box (203-281), entry at R1 281, target mid 242, stop 299 ｜ 入場位 resistance 280.70：以收市價為準 —— 收得守住先當入場成立；收穿就係 resistance 失效，本單取消（見上方失效條件）。"
+  }
+}

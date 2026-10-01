@@ -22,7 +22,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
-PROJECT_ROOT = "/Users/kenken/Documents/dsa-hk"
+PROJECT_ROOT = "/Users/kenken/dev/dsa-hk"
 sys.path.insert(0, PROJECT_ROOT)
 sys.path.insert(0, f"{PROJECT_ROOT}/scripts")
 

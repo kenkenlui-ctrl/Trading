@@ -287,7 +287,7 @@ def process_us(code: str) -> tuple[str, str]:
 
 def delete_existing_3_7_records():
     import sqlite3
-    db_path = "/Users/kenken/Documents/dsa-hk/data/dsa_hk.db"
+    db_path = "/Users/kenken/dev/dsa-hk/data/dsa_hk.db"
     con = sqlite3.connect(db_path)
     cur = con.cursor()
     n = cur.execute(f"DELETE FROM daily_report WHERE report_date='{TARGET_DATE}'").rowcount

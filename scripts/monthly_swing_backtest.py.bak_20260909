@@ -1,0 +1,280 @@
+"""Monthly swing backtest — runs 6-month rolling forward-return analysis.
+
+Re-uses the methodology from /tmp/backtest_v3_bear.py but expands to 6 months
+and adds HSI bear regime tags. Writes markdown report to data/monthly_backtest/
+so owner can review month-over-month trend.
+
+Usage:
+  python3 scripts/monthly_swing_backtest.py              # default 6mo from today
+  python3 scripts/monthly_swing_backtest.py --months 6  # 6 months
+  python3 scripts/monthly_swing_backtest.py --months 12 # 12 months (slower)
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import sqlite3
+import time
+from datetime import datetime, timedelta
+from pathlib import Path
+
+import pandas as pd
+import yfinance as yf
+
+DB_PATH = "/Users/kenken/Documents/dsa-hk/data/dsa_hk.db"
+OUT_DIR = Path("/Users/kenken/Documents/dsa-hk/data/monthly_backtest")
+HSI_BEAR = -0.015
+
+HORIZONS = {
+    "T+1 (day-trade)":   {"days": 1,  "stop": -0.02, "target":  0.02},
+    "T+3 (3-day swing)":  {"days": 3,  "stop": -0.05, "target":  0.05},
+    "T+5 (5-day swing)":  {"days": 5,  "stop": -0.07, "target":  0.10},
+    "T+10 (10-day swing)":{"days": 10, "stop": -0.10, "target":  0.15},
+}
+FRICTION = {"HK": 0.003, "US": 0.002}
+
+
+def is_hk(c): return c.split(".")[0].isdigit() and len(c.split(".")[0]) <= 5
+def normalize_yf(c): return f"{c.split('.')[0].zfill(4)}.HK" if is_hk(c) else c
+
+
+def get_buy_signals(start: str, end: str) -> list[dict]:
+    c = sqlite3.connect(DB_PATH)
+    c.row_factory = sqlite3.Row
+    rows = c.execute("""
+        SELECT code, report_date, signal_score FROM daily_report
+        WHERE operation_advice='買入' AND report_date BETWEEN ? AND ?
+        ORDER BY report_date
+    """, (start, end)).fetchall()
+    return [{"code": r["code"], "date": r["report_date"], "sig": r["signal_score"]} for r in rows]
+
+
+def fetch_prices(codes, start, end):
+    yf_codes = list({normalize_yf(c) for c in codes}) + ["^HSI"]
+    t0 = time.time()
+    out = {}
+    for i in range(0, len(yf_codes), 50):
+        batch = yf_codes[i:i+50]
+        try:
+            data = yf.download(batch, start=start, end=end, auto_adjust=False,
+                               progress=False, threads=True, group_by="ticker")
+            for c in batch:
+                if len(batch) == 1: df = data
+                else:
+                    df = data[c] if c in data.columns.get_level_values(0) else pd.DataFrame()
+                if df is None or df.empty or "Close" not in df.columns: continue
+                df = df[["Open","High","Low","Close"]].copy()
+                df.index = pd.to_datetime(df.index).date
+                out[c] = df
+        except Exception as e:
+            print(f"  batch {i} err: {e}")
+        time.sleep(0.3)
+    print(f"  Got {len(out)-1} tickers + HSI in {time.time()-t0:.0f}s")
+    return out
+
+
+def sim(prices, entry_date, days, stop, target, friction):
+    valid = [d for d in prices.index if d >= entry_date]
+    if not valid: return None
+    first = valid[0]
+    try:
+        entry_open = prices.loc[first, "Open"]
+    except: return None
+    if pd.isna(entry_open): return None
+    start_idx = list(prices.index).index(first)
+    for i in range(1, days+1):
+        if start_idx + i >= len(prices.index):
+            last = prices.iloc[-1]
+            return (last["Close"] - entry_open) / entry_open - friction, "data_end"
+        row = prices.iloc[start_idx + i]
+        opn = (row["Open"] - entry_open) / entry_open
+        low = (row["Low"] - entry_open) / entry_open
+        high = (row["High"] - entry_open) / entry_open
+        if opn <= stop: return opn - friction, "stop_gap"
+        if low <= stop: return stop - friction, "stop"
+        if high >= target: return target - friction, "target"
+    final = prices.iloc[start_idx + days]
+    return (final["Close"] - entry_open) / entry_open - friction, "close"
+
+
+def hsi_min_window(hsi_df, start_date, days):
+    if hsi_df is None or hsi_df.empty: return None
+    valid = [d for d in hsi_df.index if d >= start_date]
+    if not valid: return None
+    sidx = list(hsi_df.index).index(valid[0])
+    if sidx >= len(hsi_df) - 1: return None
+    eidx = min(sidx + days, len(hsi_df) - 1)
+    chgs = hsi_df["Close"].pct_change().iloc[sidx:eidx+1]
+    return chgs.min(), chgs.max(), chgs.mean()
+
+
+def render_report(records: list[dict], start: str, end: str, hsi_bear_count: int,
+                  requested: tuple[str, str] | None = None) -> str:
+    """Render markdown summary."""
+    n_total = len(records) // 4  # each signal has 4 horizons
+    uniq_codes = len({r["code"] for r in records})
+    lines = [
+        f"# Monthly Swing Backtest Report",
+        f"",
+        f"**Window (effective, actual signal dates):** {start} to {end}",
+    ]
+    if requested and tuple(requested) != (start, end):
+        lines.append(f"**Window (requested):** {requested[0]} to {requested[1]} — DB 無早期數據，effective window 以實際 signal dates 為準")
+    lines.extend([
+        f"**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M HKT')}",
+        f"**BUY signals simulated:** {n_total} ({uniq_codes} unique tickers — yfinance 有數據嘅 subset)",
+        f"**HSI bear days in window:** {hsi_bear_count}",
+        f"",
+        f"## Headline (net of friction)",
+        f"",
+        f"| Horizon | n | WR | Avg | Total |",
+        f"|---|---|---|---|---|",
+    ])
+    for h_name in HORIZONS:
+        sub = [r for r in records if r["horizon"] == h_name]
+        if not sub: continue
+        n = len(sub)
+        wr = sum(1 for r in sub if r["return_pct"] > 0) / n * 100
+        avg = sum(r["return_pct"] for r in sub) / n * 100
+        total = sum(r["return_pct"] for r in sub) * 100
+        lines.append(f"| {h_name} | {n} | {wr:.1f}% | {avg:+.2f}% | {total:+.1f}% |")
+
+    # HSI bear breakdown
+    lines.extend([
+        "",
+        "## HSI Bear regime impact",
+        "",
+        f"| Horizon | Regime | n | WR | Avg |",
+        f"|---|---|---|---|---|",
+    ])
+    for h_name in HORIZONS:
+        for label, key in [("Bear in hold", True), ("No bear", False)]:
+            sub = [r for r in records if r["horizon"] == h_name and r.get("hsi_bear_during") == key]
+            if not sub: continue
+            n = len(sub)
+            wr = sum(1 for r in sub if r["return_pct"] > 0) / n * 100
+            avg = sum(r["return_pct"] for r in sub) / n * 100
+            lines.append(f"| {h_name} | {label} | {n} | {wr:.1f}% | {avg:+.2f}% |")
+
+    # Sig bucket
+    sigs = sorted(r["sig"] for r in records if r.get("sig") is not None)
+    p33 = sigs[len(sigs)//3] if sigs else 0
+    p67 = sigs[(2*len(sigs))//3] if sigs else 0
+    lines.extend([
+        "",
+        f"## Sig score buckets (p33={p33}, p67={p67})",
+        "",
+        f"| Bucket | T+1 | T+3 | T+5 | T+10 |",
+        f"|---|---|---|---|---|",
+    ])
+    for label, lo, hi in [("low", 0, p33), ("mid", p33, p67+1), ("high", p67+1, 999)]:
+        row = f"| {label} |"
+        for h_name in HORIZONS:
+            sub = [r for r in records if r["horizon"] == h_name and lo <= (r.get("sig") or 0) < hi]
+            n = len(sub)
+            if n == 0:
+                row += f" N/A |"
+                continue
+            wr = sum(1 for r in sub if r["return_pct"] > 0) / n * 100
+            avg = sum(r["return_pct"] for r in sub) / n * 100
+            row += f" {n}n {wr:.0f}% {avg:+.2f}% |"
+        lines.append(row)
+
+    return "\n".join(lines)
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--months", type=int, default=6, help="rolling window in months")
+    ap.add_argument("--out-dir", default=str(OUT_DIR))
+    args = ap.parse_args()
+    out_dir = Path(args.out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    end_dt = datetime.now()
+    end_str = end_dt.strftime("%Y-%m-%d")
+    start_dt = end_dt - timedelta(days=args.months * 30)
+    start_str = start_dt.strftime("%Y-%m-%d")
+
+    print(f"=== Monthly Swing Backtest ===")
+    print(f"  Window: {start_str} to {end_str}")
+
+    signals = get_buy_signals(start_str, end_str)
+    if not signals:
+        print(f"  No BUY signals in window. Aborting.")
+        return
+    print(f"  BUY signals: {len(signals)}")
+
+    codes = list({s["code"] for s in signals})
+    print(f"  Unique tickers: {len(codes)}")
+    fetch_start = (start_dt - timedelta(days=5)).strftime("%Y-%m-%d")
+    fetch_end = (end_dt + timedelta(days=20)).strftime("%Y-%m-%d")
+    prices = fetch_prices(codes, fetch_start, fetch_end)
+    hsi = prices.get("^HSI")
+
+    # Count HSI bear days
+    hsi_bear_count = 0
+    if hsi is not None:
+        hsi_chg = hsi["Close"].pct_change()
+        hsi_bear_count = int((hsi_chg <= HSI_BEAR).sum())
+
+    # Simulate
+    print(f"  Simulating...")
+    records = []
+    for sig in signals:
+        yf_code = normalize_yf(sig["code"])
+        if yf_code not in prices: continue
+        entry_dt = datetime.strptime(sig["date"], "%Y-%m-%d").date()
+        friction = FRICTION["HK"] if is_hk(sig["code"]) else FRICTION["US"]
+        hsi_w = hsi_min_window(hsi, entry_dt, max(h["days"] for h in HORIZONS.values()))
+        for h_name, h_cfg in HORIZONS.items():
+            r = sim(prices[yf_code], entry_dt, h_cfg["days"], h_cfg["stop"], h_cfg["target"], friction)
+            if r is None: continue
+            ret, _ = r
+            rec = {"code": sig["code"], "date": sig["date"], "sig": sig["sig"],
+                   "horizon": h_name, "return_pct": ret}
+            if hsi_w is not None:
+                rec["hsi_min_chg"] = hsi_w[0]
+                rec["hsi_bear_during"] = hsi_w[0] <= HSI_BEAR
+            else:
+                rec["hsi_bear_during"] = None
+            records.append(rec)
+
+    print(f"  Records: {len(records)}")
+
+    # Render + save
+    # 2026-08-28: label the EFFECTIVE window (actual signal dates), not the
+    # requested one — DB only has data from 2026-06-26, so a "6-month" window
+    # was really ~6 weeks and the old label was misleading.
+    sig_dates = sorted({r["date"] for r in records})
+    eff_start = sig_dates[0] if sig_dates else start_str
+    eff_end = sig_dates[-1] if sig_dates else end_str
+    report = render_report(records, eff_start, eff_end, hsi_bear_count,
+                           requested=(start_str, end_str))
+    out_file = out_dir / f"backtest_{end_str}.md"
+    out_file.write_text(report, encoding="utf-8")
+    print(f"\nSaved: {out_file}")
+
+    # Also save latest
+    latest = out_dir / "latest.md"
+    latest.write_text(report, encoding="utf-8")
+    print(f"Saved: {latest}")
+
+    # Also save raw JSON
+    raw_file = out_dir / f"backtest_{end_str}.json"
+    raw_file.write_text(json.dumps(records, indent=2, default=str), encoding="utf-8")
+    print(f"Saved: {raw_file}")
+
+    # Brief console summary
+    print(f"\n--- Brief ---")
+    for h_name in HORIZONS:
+        sub = [r for r in records if r["horizon"] == h_name]
+        if not sub: continue
+        n = len(sub)
+        wr = sum(1 for r in sub if r["return_pct"] > 0) / n * 100
+        avg = sum(r["return_pct"] for r in sub) / n * 100
+        print(f"  {h_name}: n={n}, WR={wr:.1f}%, avg={avg:+.2f}%")
+
+
+if __name__ == "__main__":
+    main()

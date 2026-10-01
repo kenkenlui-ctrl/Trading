@@ -4,7 +4,7 @@
 # Estimated total: 12-16 hours overnight (1.5-2hr per date)
 
 set -e
-cd /Users/kenken/Documents/dsa-hk
+cd /Users/kenken/dev/dsa-hk
 
 DATES=("2026-07-20" "2026-07-21" "2026-07-22" "2026-07-23" "2026-07-24" "2026-07-25" "2026-07-26" "2026-07-27" "2026-07-29")
 

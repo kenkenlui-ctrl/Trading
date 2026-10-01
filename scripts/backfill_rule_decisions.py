@@ -18,7 +18,7 @@ import sqlite3
 from src.signal_decision import apply_to_snapshot, direction_score
 from src.db import get_market_state_for_date
 
-DB_PATH = "/Users/kenken/Documents/dsa-hk/data/dsa_hk.db"
+DB_PATH = "/Users/kenken/dev/dsa-hk/data/dsa_hk.db"
 
 
 def main():

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ · Leeks Terminal</title>
+<link rel="alternate" hreflang="zh-Hant-HK" href="https://www.win9you.com/faq">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/manrope/v20/xn7_YHE41ni1AdIRqAuZuw1Bx9mbZk79FN_P-bnTfc7AGraJwA.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/manrope/v20/xn7_YHE41ni1AdIRqAuZuw1Bx9mbZk79FN_G-bnTfc7AGraJwA.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/fraunces/v38/6NUh8FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0K7iN7hzFUPJH58nib1603gg7S2nfgRYIctxuTBv7Tp05GNyXkb24.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxTN1OVk6OThhvAWV8.woff2">
+<link rel="stylesheet" href="/static/fonts-local.css">
+<style>
+:root {
+  --bg: #0a0e1a; --bg-2: #0d1220; --panel: #131826; --panel-2: #18203a;
+  --border: #1f2735; --border-2: #2a3447;
+  --fg: #e8eaf0; --fg-2: #c5cad6; --dim: #8892a4; --dim-2: #4b5563;
+  --bull: #10b981; --bull-dim: rgba(16,185,129,0.12);
+  --bear: #f43f5e; --bear-dim: rgba(244,63,94,0.12);
+  --amber: #f59e0b; --amber-dim: rgba(245,158,11,0.12);
+  --blue: #818cf8; --blue-dim: rgba(129,140,248,0.12);
+  --violet: #a78bfa;
+  --font-display: 'Fraunces', 'Newsreader', serif;
+  --font-body: 'Manrope', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --text-xs: 11px; --text-sm: 12px; --text-base: 14px; --text-md: 15px;
+  --text-lg: 17px; --text-xl: 20px; --text-2xl: 26px; --text-3xl: 34px; --text-4xl: 46px;
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px;
+  --sp-6: 32px; --sp-7: 48px; --sp-8: 64px; --sp-9: 96px; --sp-10: 128px;
+  --radius: 4px; --radius-lg: 8px; --container: 1280px;
+}
+:root[data-theme="light"] {
+  --bg: #fafbfc; --bg-2: #f3f4f6; --panel: #ffffff; --panel-2: #f9fafb;
+  --border: #e5e7eb; --border-2: #d1d5db;
+  --fg: #1a1d23; --fg-2: #374151; --dim: #6b7280; --dim-2: #9ca3af;
+  --bull: #059669; --bull-dim: rgba(5,150,105,0.10);
+  --bear: #dc2626; --bear-dim: rgba(220,38,38,0.10);
+  --amber: #d97706; --amber-dim: rgba(217,119,6,0.10);
+  --blue: #4f46e5; --blue-dim: rgba(79,70,229,0.10);
+  --violet: #7c3aed;
+  --border-soft: rgba(0,0,0,0.04);
+}
+:root[data-theme="light"] body {
+  background-image:
+    radial-gradient(ellipse 800px 400px at 20% 0%, rgba(79,70,229,0.05), transparent 60%),
+    radial-gradient(ellipse 600px 300px at 80% 100%, rgba(124,58,237,0.04), transparent 60%);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: var(--text-base); line-height: 1.6; background-attachment: fixed; }
+a { color: var(--blue); text-decoration: none; transition: color 0.15s; }
+a:hover { color: var(--fg); }
+.container { max-width: var(--container); margin: 0 auto; padding: 0 var(--sp-5); }
+.direction-tag { position: fixed; top: 12px; right: 12px; z-index: 1000; background: var(--bull); color: var(--bg); font-family: var(--font-mono); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 3px; letter-spacing: 0.08em; }
+
+.site-header { position: sticky; top: 0; z-index: 100; background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+.nav { display: flex; align-items: center; gap: var(--sp-6); padding: var(--sp-4) var(--sp-5); max-width: var(--container); margin: 0 auto; }
+.nav-brand { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 500; letter-spacing: -0.01em; color: var(--fg); }
+.nav-brand .leek { color: var(--bull); }
+.nav-links { display: flex; gap: var(--sp-5); margin-left: auto; }
+.nav-links a { font-size: var(--text-sm); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-2); padding: var(--sp-2) 0; position: relative; }
+.nav-links a:hover, .nav-links a.active { color: var(--fg); }
+.nav-meta { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--dim); display: flex; align-items: center; gap: var(--sp-3); }
+.theme-toggle { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 6px 10px; border-radius: 4px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; background: transparent; border: 1px solid var(--border); color: var(--fg-2); cursor: pointer; transition: all 0.12s; }
+.theme-toggle:hover { color: var(--fg); border-color: var(--border-2); }
+.live-dot { display: inline-block; width: 6px; height: 6px; background: var(--bull); border-radius: 50%; margin-right: 6px; box-shadow: 0 0 8px var(--bull); animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+.page-header { padding: var(--sp-9) 0 var(--sp-7); }
+.page-kicker { font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.18em; color: var(--bull); margin-bottom: var(--sp-4); }
+.page-header h1 { font-family: var(--font-display); font-size: var(--text-4xl); font-weight: 400; letter-spacing: -0.025em; line-height: 1.05; max-width: 20ch; font-variation-settings: "opsz" 80; }
+.page-header .subtitle { font-size: var(--text-lg); color: var(--fg-2); margin-top: var(--sp-4); max-width: 56ch; line-height: 1.6; }
+
+/* Category tabs */
+.faq-categories { display: flex; gap: var(--sp-3); margin: var(--sp-6) 0 var(--sp-7); flex-wrap: wrap; }
+.cat-btn { font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 8px 16px; border-radius: 4px; border: 1px solid var(--border); background: transparent; color: var(--fg-2); cursor: pointer; transition: all 0.12s; }
+.cat-btn:hover { border-color: var(--border-2); color: var(--fg); }
+.cat-btn.active { background: var(--blue-dim); border-color: var(--blue); color: var(--blue); }
+
+/* FAQ accordion */
+.faq-list { display: grid; gap: var(--sp-3); }
+.faq-item { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; transition: border-color 0.15s; }
+.faq-item:hover { border-color: var(--border-2); }
+.faq-item.open { border-color: var(--blue); }
+.faq-q { display: flex; justify-content: space-between; align-items: center; padding: var(--sp-4) var(--sp-5); cursor: pointer; gap: var(--sp-4); }
+.faq-q:hover { background: var(--panel-2); }
+.faq-q h3 { font-family: var(--font-body); font-size: var(--text-base); font-weight: 600; color: var(--fg); }
+.faq-item.open .faq-q h3 { color: var(--blue); }
+.faq-arrow { font-family: var(--font-mono); font-size: 16px; color: var(--dim); transition: transform 0.2s ease; flex-shrink: 0; }
+.faq-item.open .faq-arrow { transform: rotate(45deg); color: var(--blue); }
+.faq-a { display: none; padding: 0 var(--sp-5) var(--sp-5); }
+.faq-item.open .faq-a { display: block; }
+.faq-a p { color: var(--fg-2); line-height: 1.75; max-width: 72ch; font-size: var(--text-sm); }
+.faq-a ul { list-style: none; margin: var(--sp-3) 0; display: grid; gap: var(--sp-2); }
+.faq-a ul li { display: flex; gap: var(--sp-3); color: var(--fg-2); font-size: var(--text-sm); }
+.faq-a ul li::before { content: '→'; color: var(--blue); font-family: var(--font-mono); flex-shrink: 0; }
+.faq-tag { display: inline-block; font-family: var(--font-mono); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.08em; margin-left: var(--sp-2); vertical-align: middle; }
+.tag-blue { background: var(--blue-dim); color: var(--blue); }
+.tag-bull { background: var(--bull-dim); color: var(--bull); }
+.tag-amber { background: var(--amber-dim); color: var(--amber); }
+
+.section-divider { height: 1px; background: var(--border); margin: var(--sp-8) 0; }
+
+.site-footer { margin-top: var(--sp-10); padding: var(--sp-7) 0; border-top: 1px solid var(--border); font-size: var(--text-sm); color: var(--dim); }
+.site-footer .row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--sp-4); align-items: center; }
+.site-footer a { color: var(--fg-2); }
+.site-footer a:hover { color: var(--fg); }
+</style>
+<script>
+(function(){
+  const t = localStorage.getItem('leeks-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body>
+
+<div class="direction-tag">A · DIRECTION A</div>
+
+<header class="site-header">
+  <nav class="nav" aria-label="Primary">
+    <a href="/" class="nav-brand"><span class="leek">L</span>eeks <em style="font-style:italic">Terminal</em></a>
+    <div class="nav-links">
+      <a href="/" >Home</a>
+      <a href="/hk200/" ><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg> HK Signals</a>
+      <a href="/us200/" ><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="vertical-align:-2px" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.6 3 14.4 0 18M12 3c-3 3.6-3 14.4 0 18"/></svg> US Signals</a>
+      <a href="/jp200/" ><span style="display: inline-block; width: 14px; height: 14px; background: radial-gradient(circle at 50% 50%, #bc002d 30%, #fff 30%); border-radius: 50%; vertical-align: -2px; margin-right: 4px;" title="Japan"></span>JP Signals</a>
+      <a href="/methodology.html" >Methodology</a>
+      <a href="/backtest.html" >Backtest</a>
+      <a href="/insights.html" >Insights</a>
+      <a href="/faq.html" class="active">FAQ</a>
+       · <a href="/disclaimer">Disclaimer</a>
+      <a href="/privacy.html" >Privacy</a>
+    </div>
+    <div class="nav-meta">
+      <span><span class="live-dot"></span>T-1 · 2026-09-22</span>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span id="themeIcon">●</span>
+        <span id="themeLabel">DARK</span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <div class="container">
+    <div class="page-header">
+      <div class="page-kicker">❓ Help Center</div>
+      <h1>Frequently Asked Questions</h1>
+      <p class="subtitle">Everything you need to know about Leeks Terminal — signals, data, methodology, and how to use the platform effectively.</p>
+    </div>
+
+    <div class="faq-categories">
+      <button class="cat-btn active" onclick="showCategory('all', this)">All</button>
+      <button class="cat-btn" onclick="showCategory('signals', this)">Signals</button>
+      <button class="cat-btn" onclick="showCategory('data', this)">Data</button>
+      <button class="cat-btn" onclick="showCategory('method', this)">Methodology</button>
+      <button class="cat-btn" onclick="showCategory('account', this)">Account</button>
+    </div>
+
+    <div class="faq-list" id="faq-list">
+
+      <!-- SIGNALS -->
+      <div class="faq-item" data-cat="signals">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <h3>What does BUY / SELL / WAIT mean? <span class="faq-tag tag-bull">SIGNALS</span></h3>
+          <span class="faq-arrow">+</span>
+        </div>
+        <div class="faq-a">
+          <p><strong>BUY:</strong> The model detects a mean reversion entry point — price is near a support zone, momentum is turning bullish, and the risk/reward ratio meets our threshold. A long position is signalled with a specific trigger price, target, and stop-loss.</p>
+          <p style="margin-top: 12px;"><strong>SELL:</strong> The model detects a shorting opportunity — price is near a resistance zone, momentum is turning bearish, and the R:R ratio is favourable. A short position is signalled with trigger, target, and stop.</p>
+          <p style="margin-top: 12px;"><strong>WAIT:</strong> No high-confidence signal. Price is in a neutral zone, or market regime conditions (e.g., low volume, high volatility) are not met. This is not a negative view — it simply means the model doesn't have an edge right now.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="signals">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <h3>What is the Trigger Price? <span class="faq-tag tag-blue">SIGNALS</span></h3>
+          <span class="faq-arrow">+</span>
+        </div>
+        <div class="faq-a">
+          <p>The <strong>trigger price</strong> is the entry condition — the level at which the signal becomes actionable. This is typically slightly above support (for BUY) or slightly below resistance (for SELL) to confirm the zone has been respected. You do not enter immediately; you wait for the price to reach or confirm at the trigger level.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="signals">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <h3>What is the R:R ratio? <span class="faq-tag tag-bull">SIGNALS</span></h3>
+          <span class="faq-arrow">+</span>
+        </div>
+        <div class="faq-a">
+          <p>R:R stands for <strong>Risk:Reward ratio</strong>. A 2.0 R:R means you are targeting 2× your stop-loss distance as profit. For example, if your stop-loss is $1 away from entry, a 2.0 R:R means your target is $2 away. We only show signals with R:R ≥ 1.5 on the platform.</p>
+          <p style="margin-top: 12px;">R:R = (Target − Entry) / (Entry − Stop). The platform shows this as a single number (e.g., 2.14).</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="signals">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <h3>Why are signals on Leeks Terminal different from broker alerts? <span class="faq-tag tag-amber">SIGNALS</span></h3>
+          <span class="faq-arrow">+</span>
+        </div>
+        <div class="faq-a">
+          <p>Broker alerts are usually price-level triggers — they fire when a stock crosses a price. Leeks Terminal signals are <strong>contextual</strong>: they consider support/resistance zones, market phase, volume profile, and R:R ratio. A signal means the model has identified a specific entry with defined risk management, not just "price is above X."</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="data">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <h3>What markets does Leeks Terminal cover? <span class="faq-tag tag-blue">DATA</span></h3>
+          <span class="faq-arrow">+</span>
+        </div>
+        <div class="faq-a">
+          <p>Leeks Terminal covers three markets:</p>
+          <ul>
+            <li><strong>Hong Kong (HK200):</strong> 200 stocks from HSI, HSCEI constituents, and notable H-shares</li>
+            <li><strong>United States (US200):</strong> 200 major US equities across all major indices</li>
+            <li><strong>Japan (JP200):</strong> 200 Japanese equities from TOPIX/Nikkei 225 constituents</li>
+          </ul>
+          <p>Each market has its own hub page with signals, historical data, and performance tracking.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="data">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <h3>How often is the data updated? <span class="faq-tag tag-amber">DATA</span></h3>
+          <span class="faq-arrow">+</span>
+        </div>
+        <div class="faq-a">
+          <p>Market data is updated daily after the close of each market:</p>
+          <ul>
+            <li>HK: ~16:15 HKT daily</li>
+            <li>JP: ~15:30 JST daily</li>
+            <li>US: ~04:00 HKT daily (next trading day)</li>
+          </ul>
+          <p>Signals reflect the previous close (T-1) data. The platform does not provide real-time or intraday data.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="data">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <h3>Why is the data from yesterday, not today? <span class="faq-tag tag-amber">DATA</span></h3>
+          <span class="faq-arrow">+</span>
+        </div>
+        <div class="faq-a">
+          <p>Leeks Terminal uses <strong>end-of-day (EOD) closing data</strong>. The signals are generated based on the previous day's close, which is the standard for swing trading and positional strategies. Intraday data is not displayed because the strategies are not designed for intraday trading.</p>
+          <p style="margin-top: 12px;">If you are checking the site in the morning, the data is from the previous close — this is intentional and correct.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="data">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <h3>What are Support and Resistance levels? <span class="faq-tag tag-blue">DATA</span></h3>
+          <span class="faq-arrow">+</span>
+        </div>
+        <div class="faq-a">
+          <p><strong>Support (S1–S4):</strong> Price zones where buying has historically absorbed selling pressure. The model identifies these from recent swing lows and round-number clusters.</p>
+          <p style="margin-top: 12px;"><strong>Resistance (R1–R4):</strong> Price zones where selling has historically capped rallies. Identified from recent swing highs and volume nodes.</p>
+          <p style="margin-top: 12px;">These are not fixed lines — they are zones. A breach of support doesn't always mean the stock will fall further; it means the balance of supply and demand has shifted.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="method">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <h3>What is the Trading Methodology? <span class="faq-tag tag-bull">METHOD</span></h3>
+          <span class="faq-arrow">+</span>
+        </div>
+        <div class="faq-a">
+          <p>Leeks Terminal uses a <strong>mean reversion + momentum confirmation</strong> approach across three market regimes:</p>
+          <ul>
+            <li><strong>Downtrend Active:</strong> Focus on SHORT signals; mean reversion to resistance zones</li>
+            <li><strong>Uptrend:</strong> Focus on BUY signals; momentum confirms support holds</li>
+            <li><strong>Base Building:</strong> Mixed signals; wait for range break</li>
+          </ul>
+          <p>Full methodology details are available on the <a href="/methodology">Methodology page</a>.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="method">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <h3>How were the backtest results generated? <span class="faq-tag tag-amber">METHOD</span></h3>
+          <span class="faq-arrow">+</span>
+        </div>
+        <div class="faq-a">
+          <p>The <a href="/backtest">Backtest page</a> shows simulated historical performance using end-of-day data. Each strategy was backtested over a defined lookback period with these assumptions:</p>
+          <ul>
+            <li>Entry at signal close price (not intraday)</li>
+            <li>Exit at T+1, T+2, or T+3 close (configurable)</li>
+            <li>Broker fee: 0.25% HK / 0.05% US (approximate)</li>
+            <li>No slippage modelled (conservative)</li>
+          </ul>
+          <p>These are simulations, not live results. Past performance does not guarantee future results.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="account">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <h3>Is there a mobile app? <span class="faq-tag tag-blue">ACCOUNT</span></h3>
+          <span class="faq-arrow">+</span>
+        </div>
+        <div class="faq-a">
+          <p>No — Leeks Terminal is a web-based platform optimised for desktop and tablet browsers. On mobile, the chart falls back to a static PNG. We recommend using the site on a desktop or laptop for the full interactive experience.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="account">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <h3>How do I contact the team? <span class="faq-tag tag-amber">ACCOUNT</span></h3>
+          <span class="faq-arrow">+</span>
+        </div>
+        <div class="faq-a">
+          <p>You can reach us via the contact information on win9you.com. Please note: we do not provide personalised investment advice, stock tips, or custom model development through contact channels.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="row">
+      <span>© 2026 Leeks Terminal</span>
+      <div style="display: flex; gap: var(--sp-5);">
+        <a href="/disclaimer">Disclaimer</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/faq">FAQ</a>
+        <a href="/insights">Insights</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeLabel').textContent = isDark ? 'LIGHT' : 'DARK';
+  document.getElementById('themeIcon').textContent = isDark ? '◐' : '●';
+  try { localStorage.setItem('leeks-theme', isDark ? 'light' : 'dark'); } catch(e) {}
+}
+(function() {
+  try { const saved = localStorage.getItem('leeks-theme'); if (saved) { document.documentElement.setAttribute('data-theme', saved); document.getElementById('themeLabel').textContent = saved === 'dark' ? 'DARK' : 'LIGHT'; document.getElementById('themeIcon').textContent = saved === 'dark' ? '●' : '◐'; } } catch(e) {}
+})();
+
+function toggleFaq(el) {
+  const item = el.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  // Open clicked if it was closed
+  if (!isOpen) item.classList.add('open');
+}
+
+function showCategory(cat, btn) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.style.display = (cat === 'all' || item.dataset.cat === cat) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>

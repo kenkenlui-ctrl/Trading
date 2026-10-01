@@ -22,7 +22,7 @@ from src.analyzer import analyze, render_summary_md, render_report_md
 from src.backtest_fetcher import fetch_historical_snapshot
 from src.news_fetcher import fetch_news
 
-DB = "/Users/kenken/Documents/dsa-hk/data/dsa_hk.db"
+DB = "/Users/kenken/dev/dsa-hk/data/dsa_hk.db"
 
 logging.basicConfig(
     level=logging.WARNING,
@@ -76,8 +76,8 @@ def ensure_table(conn):
 
 def get_codes() -> list[str]:
     """Return all 400 codes in HK+US universe."""
-    hk = json.load(open("/Users/kenken/Documents/dsa-hk/hk_universe_200.json"))
-    us = json.load(open("/Users/kenken/Documents/dsa-hk/us_universe_200.json"))
+    hk = json.load(open("/Users/kenken/dev/dsa-hk/hk_universe_200.json"))
+    us = json.load(open("/Users/kenken/dev/dsa-hk/us_universe_200.json"))
     return sorted(set(hk) | set(us))
 
 

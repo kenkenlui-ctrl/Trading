@@ -4,22 +4,23 @@ build_dashboard.py — Build the action plan dashboards and per-ticker detail pa
 for win9you.com (HK + US).
 
 Reads:
-  - /Users/kenken/Documents/Minimax/charts/hk200/  (per-ticker PNGs + JSON from daily-sr-chart)
-  - /tmp/backtest_out/                              (per-ticker backtest JSON from backtest_futu.py)
+  - /Users/kenken/dev/dsa-hk/charts/hk200/  (per-ticker PNGs + JSON from daily-sr-chart)
+  - /Users/kenken/dev/dsa-hk/data/backtest_out/                              (per-ticker backtest JSON from backtest_futu.py)
   - hk_universe_200.json                            (universe list)
 
 Writes:
-  - /Users/kenken/Documents/dsa-hk/public/hk200/index.html
-  - /Users/kenken/Documents/dsa-hk/public/hk200/ticker/<safe>.html
-  - /Users/kenken/Documents/dsa-hk/public/us200/index.html
-  - /Users/kenken/Documents/dsa-hk/public/us200/ticker/<safe>.html
-  - /Users/kenken/Documents/dsa-hk/public/index.html (home)
+  - /Users/kenken/dev/dsa-hk/public/hk200/index.html
+  - /Users/kenken/dev/dsa-hk/public/hk200/ticker/<safe>.html
+  - /Users/kenken/dev/dsa-hk/public/us200/index.html
+  - /Users/kenken/dev/dsa-hk/public/us200/ticker/<safe>.html
+  - /Users/kenken/dev/dsa-hk/public/index.html (home)
 """
 from __future__ import annotations
 import json
 import shutil
 from datetime import datetime, date, timedelta
 from pathlib import Path
+import sys
 
 
 def t_minus_1() -> date:
@@ -35,14 +36,18 @@ def t_minus_1() -> date:
         return today - timedelta(days=1)
 
 # Repo paths
-REPO = Path("/Users/kenken/Documents/dsa-hk")
+REPO = Path("/Users/kenken/dev/dsa-hk")
 PUBLIC = REPO / "public"
-HK_OUT = Path("/Users/kenken/Documents/Minimax/charts/hk200")
-US_OUT = Path("/Users/kenken/Documents/Minimax/charts/us200")
-BACKTEST_OUT = Path("/tmp/backtest_out")
+HK_OUT = Path("/Users/kenken/dev/dsa-hk/charts/hk200")
+US_OUT = Path("/Users/kenken/dev/dsa-hk/charts/us200")
+BACKTEST_OUT = Path("/Users/kenken/dev/dsa-hk/data/backtest_out")
 
 UNIVERSE_HK = REPO / "hk_universe_200.json"
 US_UNIVERSE = US_OUT / "us_top200_fresh.json"
+US_NAMES_PATH = REPO / "data" / "us_names.json"
+US_NAMES: dict[str, str] = (
+    json.loads(US_NAMES_PATH.read_text(encoding="utf-8")) if US_NAMES_PATH.exists() else {}
+)
 
 
 def load_universe(path: Path) -> list[str]:
@@ -55,7 +60,12 @@ def load_universe(path: Path) -> list[str]:
 def load_ticker_json(ticker: str, market: str) -> dict | None:
     """Load per-ticker action_plan JSON written by daily-sr-chart skill."""
     safe = ticker.replace(".", "_")
-    base = HK_OUT if market == "HK" else US_OUT
+    if market == "HK":
+        base = HK_OUT
+    elif market == "JP":
+        base = REPO / "data" / "jp200"
+    else:
+        base = US_OUT
     p = base / f"{safe}.json"
     if not p.exists():
         return None
@@ -68,13 +78,21 @@ def load_ticker_json(ticker: str, market: str) -> dict | None:
 def load_backtest(ticker: str) -> dict | None:
     """Load per-ticker backtest JSON written by backtest_futu.py."""
     safe = ticker.replace(".", "_")
-    p = BACKTEST_OUT / f"{safe}.json"
-    if not p.exists():
-        return None
-    try:
-        return json.load(open(p))
-    except Exception:
-        return None
+    # 2026-09-17: HK.NNNNN format tickers have backtest stored as NNNNN_HK.json
+    # Try the raw safe form first, then strip "HK." prefix.
+    candidates = [f"{safe}.json"]
+    if ticker.startswith("HK."):
+        candidates.append(f"{ticker[3:]}.HK.json")
+    elif ticker.startswith("JP."):
+        candidates.append(f"{ticker[3:]}.T.json")
+    for fn in candidates:
+        p = BACKTEST_OUT / fn
+        if p.exists():
+            try:
+                return json.load(open(p))
+            except Exception:
+                return None
+    return None
 
 
 def pick_recent_edge(bt: dict | None, recent_windows=("60", "90", "30", "197")) -> dict | None:
@@ -149,8 +167,17 @@ def render_action_row(t: dict) -> str:
 
     if verdict == "WAIT":
         trigger_s = target_s = stop_s = "—"
-        win_s = "—"
-        strat_s = "RANGE"
+        str(verdict)  # silence unused warning
+        # 2026-09-16: For WAIT tickers, still show backtest Win% via plan_edge
+        # (set by d88 _ref fallback loop) so user sees historical performance
+        # even when there's no actionable setup today.
+        _plan_edge = t.get("plan_edge")
+        if _plan_edge and _plan_edge.get("win_pct", 0) > 0 and _plan_edge.get("n", 0) >= 1:
+            win_s = f"~{_plan_edge['win_pct']:.0f}%"
+            strat_s = _plan_edge.get("strategy", "RANGE") + " (ref)"
+        else:
+            win_s = "—"
+            strat_s = "RANGE"
     else:
         trigger_s = fmt(trigger)
         target_s = fmt(target, dp=2 if last and last < 100 else (1 if last and last < 1000 else 0))
@@ -162,9 +189,21 @@ def render_action_row(t: dict) -> str:
             win_s = "—"
             strat_s = "—"
 
+    # 2026-09-12: data-detail for filter tooltip + (ref) tag for fallback stats.
+    # Uses plan_edge (set by build_for_market with _ref fallback) so WAIT
+    # tickers get a "(ref)" stat instead of "—" when backtest has any signal.
+    _plan_edge = t.get("plan_edge")
+    if _plan_edge:
+        _plan_detail = (
+            f"~{_plan_edge['win_pct']:.0f}% · n={_plan_edge['n']} (ref)" if _plan_edge.get("_ref")
+            else f"{_plan_edge['win_pct']:.0f}% · n={_plan_edge['n']}"
+        )
+    else:
+        _plan_detail = "—"
+
     chg_cls = "text-bear" if chg and chg < 0 else ("text-bull" if chg and chg > 0 else "")
     return f"""
-    <tr data-action="{verdict}" data-phase="{phase}" class="{row_class}">
+    <tr data-action="{verdict}" data-phase="{phase}" data-detail="{_plan_detail}" class="{row_class}">
       <td><a href="{detail_url}" class="mono" style="color: var(--fg);">{ticker}</a></td>
       <td>{name}</td>
       <td class="cell-right mono">{fmt(last)}</td>
@@ -270,11 +309,49 @@ def build_dashboard_page(
       <a href="/">Home</a>
       <a href="/hk200/"{' class="active"' if market == "HK" else ''}>HK Signals</a>
       <a href="/us200/"{' class="active"' if market == "US" else ''}>US Signals</a>
-      <a href="/pair-trades/">Pair Trades</a>
-      <a href="/methodology">Methodology</a>
+      <a href="/jp200/"{' class="active"' if market == "JP" else ''}>JP Signals</a>
+      <a href="/compare/">Compare</a>
+      <a href="/backtest.html">Backtest</a>
+      <a href="/insights.html">Insights</a>
+      <a href="/methodology.html">Methodology</a>
+      <a href="/faq.html">FAQ</a>
+      <a href="/disclaimer/">Disclaimer</a>
+      <a href="/privacy.html">Privacy</a>
     '''
 
     canon_url = f"https://www.win9you.com/{market.lower()}200/"
+    faq_block = ""
+    if market == "HK":
+        faq_block = """,
+    {{
+      "@type": "FAQPage",
+      "mainEntity": [
+        {{"@type": "Question", "name": "港股 200 點樣揀？", "acceptedAnswer": {{"@type": "Answer", "text": "用 5-day 平均成交額排序頭 200 隻，全部 T-1 收市 data，每日 refresh。"}}},
+        {{"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {{"@type": "Answer", "text": "10-step 價格行為 framework，分 phase + S/R ladder + 4 strategies (SELL_R1 / BUY_S1 / BREAK_LONG / BREAK_SHORT)。T-1 OHLC 純 Python deterministic 計算。"}}},
+        {{"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {{"@type": "Answer", "text": "已扣 Futu 免佣 + 0.25% round-trip (HK)，純 signal + backtest 結果。"}}}}
+      ]
+    }}"""
+    elif market == "US":
+        faq_block = """,
+    {{
+      "@type": "FAQPage",
+      "mainEntity": [
+        {{"@type": "Question", "name": "美股 200 點樣揀？", "acceptedAnswer": {{"@type": "Answer", "text": "用 5-day 平均成交額排序頭 200 隻，全部 T-1 收市 data，每日 refresh。"}}},
+        {{"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {{"@type": "Answer", "text": "10-step 價格行為 framework，分 phase + S/R ladder + 4 strategies。T-1 OHLC 純 Python deterministic 計算。"}}},
+        {{"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {{"@type": "Answer", "text": "已扣 0.05% round-trip (US)，Futu 免佣。"}}}}
+      ]
+    }}"""
+    elif market == "JP":
+        faq_block = """,
+    {{
+      "@type": "FAQPage",
+      "mainEntity": [
+        {{"@type": "Question", "name": "日股 200 點樣揀？", "acceptedAnswer": {{"@type": "Answer", "text": "由 Topix Core30 + Large70 開始，yfinance verify 流通量，200 隻全部 T-1 收市 data。"}}},
+        {{"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {{"@type": "Answer", "text": "10-step 價格行為 framework。T-1 OHLC 純 Python deterministic 計算。"}}},
+        {{"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {{"@type": "Answer", "text": "已扣 0.05% round-trip (JP)，Futu 免佣。"}}}}
+      ]
+    }}"""
+
     jsonld = f"""{{
   "@context": "https://schema.org",
   "@graph": [
@@ -291,7 +368,7 @@ def build_dashboard_page(
       "url": "{canon_url}",
       "inLanguage": "zh-Hant-HK",
       "isPartOf": {{"@type": "WebSite", "name": "Leeks Terminal", "url": "https://www.win9you.com/"}}
-    }}
+    }}{faq_block}
   ]
 }}"""
 
@@ -312,7 +389,7 @@ def build_dashboard_page(
 <meta property="og:title" content="{title_main} · Leeks Terminal">
 <meta property="og:description" content="{title_lede}">
 <meta property="og:url" content="{canon_url}">
-<meta property="og:image" content="https://www.win9you.com/og-image.png">
+<meta property="og:image" content="{market.lower()}200/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="zh_HK">
@@ -320,9 +397,7 @@ def build_dashboard_page(
 <script type="application/ld+json">
 {jsonld}
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/static/fonts-local.css">
 <link rel="stylesheet" href="/leeks.css?v=2026-08-25b">
 <script>
 (function(){{
@@ -368,6 +443,7 @@ function toggleTheme(){{
 }})();
 </script>
 
+<main role="main">
 <div class="page-head">
   <div class="container">
     <div class="kicker">{title_kicker}</div>
@@ -431,6 +507,8 @@ function toggleTheme(){{
     <b>⚠ Disclaimer</b> · Educational only. Not investment advice. T-1 data (yesterday's close) — never today's intraday. Backtest win% is historical, not predictive.
   </div>
 </div>
+
+</main>
 
 <footer class="site-footer">
   <div class="container">
@@ -601,7 +679,7 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
 <meta property="og:title" content="{ticker} {name} · Action Plan · Leeks Terminal">
 <meta property="og:description" content="{meta_desc}">
 <meta property="og:url" content="{canon_url}">
-<meta property="og:image" content="https://www.win9you.com/og-image.png">
+<meta property="og:image" content="{market.lower()}200/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="zh_HK">
@@ -609,9 +687,7 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
 <script type="application/ld+json">
 {detail_jsonld}
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/static/fonts-local.css">
 <link rel="stylesheet" href="/leeks.css?v=2026-08-25b">
 <script>
 (function(){{
@@ -628,8 +704,14 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
       <a href="/">Home</a>
       <a href="/hk200/"{' class="active"' if market == "HK" else ''}>HK Signals</a>
       <a href="/us200/"{' class="active"' if market == "US" else ''}>US Signals</a>
-      <a href="/pair-trades/">Pair Trades</a>
-      <a href="/methodology">Methodology</a>
+      <a href="/jp200/"{' class="active"' if market == "JP" else ''}>JP Signals</a>
+      <a href="/compare/">Compare</a>
+      <a href="/backtest.html">Backtest</a>
+      <a href="/insights.html">Insights</a>
+      <a href="/methodology.html">Methodology</a>
+      <a href="/faq.html">FAQ</a>
+      <a href="/disclaimer/">Disclaimer</a>
+      <a href="/privacy.html">Privacy</a>
     </div>
     <div class="nav-meta">
       <span class="live-dot"></span>
@@ -686,11 +768,25 @@ function toggleTheme(){{
 </div>
 
 <div class="container">
-  <div class="detail-grid">
+  <main role="main">
+<div class="detail-grid">
     <div>
       <div class="chart-frame fade-in">
         <div class="skeleton" id="chartSkel_{safe}"></div>
-        <img src="{chart_url}?v={t_minus_1().isoformat()}" alt="{ticker} daily K" loading="eager" onload="document.getElementById('chartSkel_{safe}')?.remove()" onerror="this.parentElement.innerHTML='<div class=&quot;text-dim&quot; style=&quot;padding:var(--sp-7);text-align:center&quot;>Chart unavailable · try refresh</div>'">
+        <div id="chart-host"
+             data-ticker="{safe}"
+             data-chart-json="/{market.lower()}200/charts/{safe}.json"
+             data-png="{chart_url}"
+             style="position:relative;min-height:540px;">
+          <noscript>
+            <img src="{chart_url}?v={t_minus_1().isoformat()}" alt="{ticker} daily K" loading="eager">
+          </noscript>
+        </div>
+        <div id="chart-window-controls" style="display:flex;gap:var(--sp-2);justify-content:flex-end;padding:var(--sp-3) var(--sp-4);font-family:var(--font-mono);font-size:var(--text-xs);">
+          <button data-window="30" style="background:transparent;border:1px solid var(--border);color:var(--fg-2);padding:4px 10px;border-radius:4px;cursor:pointer;">30D</button>
+          <button data-window="90" class="active" style="background:var(--blue-dim);border:1px solid var(--blue);color:var(--blue);padding:4px 10px;border-radius:4px;cursor:pointer;">90D</button>
+          <span id="chart-window-label" style="color:var(--dim);margin-left:var(--sp-3);align-self:center;">Daily · 90D</span>
+        </div>
       </div>
 
       <div class="info-card mt-4 fade-in fade-in-2">
@@ -722,7 +818,12 @@ function toggleTheme(){{
       </div>
 
       <div class="info-card mt-4 fade-in fade-in-3">
-        <h3>If-then scenarios</h3>
+        <h3>失效條件（If-then scenarios）</h3>
+        <p style="font-size: var(--text-sm); color: var(--text-dim); margin: 0 0 10px;">
+          呢啲係<b>取消／反轉</b>條件，唔係另一個行動指示。
+          同一個價位如果同時出現「入場」同「失守」，
+          <b>以收市價為準</b>：收得守住就照入場計，收穿就當 support 失效、唔好入場。
+        </p>
         <ul class="scenario-list">{scenarios_html}
         </ul>
       </div>
@@ -786,12 +887,19 @@ function toggleTheme(){{
     </div>
   </div>
 
-  <div class="mt-5 mb-5">
+  <div class="mt-5 mb-5" style="display: flex; gap: var(--sp-2); flex-wrap: wrap;">
     <a href="{back_url}" class="btn btn-ghost">← Back to {market} Signals</a>
-    <a href="/methodology" class="btn btn-ghost" style="margin-left: var(--sp-2);">Methodology</a>
+    <a href="/methodology" class="btn btn-ghost">Methodology</a>
+    <a href="/backtest" class="btn btn-ghost">Backtest</a>
+    <a href="/faq" class="btn btn-ghost">FAQ</a>
+    <a href="/compare/" class="btn btn-ghost">Compare</a>
+    <a href="/hk200/" class="btn btn-ghost">HK</a>
+    <a href="/us200/" class="btn btn-ghost">US</a>
+    <a href="/jp200/" class="btn btn-ghost">JP</a>
   </div>
   {prevnext_html}
 </div>
+</main>
 
 <footer class="site-footer">
   <div class="container">
@@ -801,6 +909,7 @@ function toggleTheme(){{
     </div>
   </div>
 </footer>
+<script src="/static/canvas-chart.js?v=2026-09-18b" defer></script>
 </body>
 </html>"""
 
@@ -814,7 +923,19 @@ def build_for_market(market: str):
         ticker_dir = PUBLIC / "hk200" / "ticker"
         market_name = "HK"
         title_kicker = "HK · 200 names"
-        title_lede = "Top 200 港股 by 5-day 平均成交額。即日鮮信號 — 一表答晒：邊隻做、邊隻唔做、trigger/target/stop 喺邊。"
+        title_lede = "港股 200 by 5-day 平均成交額排序。即日鮮信號 — 200 隻個股一表答晒：邊隻做 BUY/SELL/WAIT、trigger/target/stop 喺邊、win% 60d backtest 點。T-1 收市 data。已扣 HK 0.25% round-trip 成本。"
+    elif market == "JP":
+        universe = []
+        jp_univ = REPO / "jp_universe_200.json"
+        if jp_univ.exists():
+            universe = json.load(open(jp_univ))
+        chart_dir = PUBLIC / "jp200" / "charts"
+        src_dir = REPO / "data" / "jp200"
+        out_index = PUBLIC / "jp200" / "index.html"
+        ticker_dir = PUBLIC / "jp200" / "ticker"
+        market_name = "JP"
+        title_kicker = "JP · 200 names"
+        title_lede = "日股 200 (Topix Core30 + Large70) by 5-day 平均成交額排序。即日鮮信號 — 200 隻個股一表答晒：邊隻做 BUY/SELL/WAIT、trigger/target/stop 喺邊、win% 60d backtest 點。T-1 收市 data。已扣 0.05% round-trip 成本。"
     else:
         universe = []
         if US_UNIVERSE.exists():
@@ -827,7 +948,7 @@ def build_for_market(market: str):
         ticker_dir = PUBLIC / "us200" / "ticker"
         market_name = "US"
         title_kicker = "US · 200 names"
-        title_lede = "Top 200 美股 by 5-day 平均成交額。即日鮮信號 — 一表答晒：邊隻做、邊隻唔做、trigger/target/stop 喺邊。"
+        title_lede = "美股 200 by 5-day 平均成交額排序。即日鮮信號 — 200 隻個股一表答晒：邊隻做 BUY/SELL/WAIT、trigger/target/stop 喺邊、win% 60d backtest 點。T-1 收市 data。已扣 US 0.05% round-trip 成本。"
 
     if not universe:
         print(f"⚠ {market}: empty universe, skip")
@@ -852,23 +973,30 @@ def build_for_market(market: str):
         last = last_bar.get("C", 0)
         chg = last_bar.get("chg_pct", 0)
         name = tj.get("name", "")
+        # 2026-09-16: fallback to /dsa-hk/data/us_names.json when source name empty
+        # (HK + JP come with names in source; US lacks ~50% of names → use Tencent qt fetch)
+        if not name and market == "US" and US_NAMES:
+            code = ticker.replace(".", "_")
+            name = US_NAMES.get(code, "") or US_NAMES.get(ticker.replace("US.", ""), "")
         phase = tj.get("phase", "range")
         ap = tj.get("action_plan", {})
         verdict = ap.get("verdict", "WAIT")
 
         edge = pick_recent_edge(bt)
         if not edge:
-            # fallback to backtest_futu best_strategy
+            # fallback to backtest_futu best_strategy — but skip if it's a
+            # placeholder (name='—', n=0) since 0% is meaningless.
             if bt and bt.get("best_strategy"):
                 bs = bt["best_strategy"]
-                edge = {
-                    "strategy": bs["name"],
-                    "window": bs["window"],
-                    "win_pct": bs["win_pct"],
-                    "n": bs["n_trades"],
-                    "total_pnl": bs["total_pnl"],
-                    "avg_pnl": bs.get("avg_pnl", 0),
-                }
+                if bs.get("name") and bs["name"] != "—" and bs.get("n_trades", 0) > 0:
+                    edge = {
+                        "strategy": bs["name"],
+                        "window": bs["window"],
+                        "win_pct": bs["win_pct"],
+                        "n": bs["n_trades"],
+                        "total_pnl": bs["total_pnl"],
+                        "avg_pnl": bs.get("avg_pnl", 0),
+                    }
 
         safe = ticker.replace(".", "_")
         chart_url = f"/{market.lower()}200/charts/{safe}.png"
@@ -891,11 +1019,31 @@ def build_for_market(market: str):
         action_counts[verdict] = action_counts.get(verdict, 0) + 1
         phase_counts[phase] = phase_counts.get(phase, 0) + 1
 
-        # Copy chart PNG
+        # Copy chart PNG + JSON (metadata) + OHLC (raw candlesticks)
+        # canvas-chart.js fetches /charts/{safe}.json + derives /ohlc/{safe}_ohlc.json
+        # 2026-09-22: retry up to 3x on TimeoutError (NFS mount intermittent stalls)
+        def _safe_copy(src, dst):
+            import time as _t
+            for _i in range(3):
+                try:
+                    shutil.copy2(src, dst)
+                    return
+                except (TimeoutError, OSError) as _e:
+                    if _i == 2: raise
+                    _t.sleep(0.5)
         src_png = src_dir / f"{safe}.png"
         if src_png.exists():
-            shutil.copy2(src_png, chart_dir / f"{safe}.png")
+            _safe_copy(src_png, chart_dir / f"{safe}.png")
             chart_copied += 1
+        src_json = src_dir / f"{safe}.json"
+        if src_json.exists():
+            _safe_copy(src_json, chart_dir / f"{safe}.json")
+        src_ohlc = src_dir / f"{safe}_ohlc.json"
+        if src_ohlc.exists():
+            # canvas-chart.js reads /ohlc/{safe}_ohlc.json (derived from chartJson URL)
+            ohlc_mirror = ticker_dir.parent / "ohlc"
+            ohlc_mirror.mkdir(parents=True, exist_ok=True)
+            _safe_copy(src_ohlc, ohlc_mirror / f"{safe}_ohlc.json")
 
         if (i + 1) % 20 == 0:
             print(f"  [{i+1}/{len(universe)}] {ticker} ...")
@@ -909,6 +1057,44 @@ def build_for_market(market: str):
         return (act_priority, -win, r["ticker"])
 
     rows_sorted = sorted(rows, key=row_sort_key)
+
+    # 2026-09-12 (d88 ref fallback): patch each row to use highest-n strategy
+    # stats when plan strategy has 0 trades. The index build handles its own
+    # version of this; here we just inject the (ref) data into the row dict
+    # so render_action_row's `t.get("plan_edge")` finds it.
+    for _row in rows_sorted:
+        if _row.get("plan_edge") is not None:
+            continue
+        try:
+            _bt = load_backtest(_row["ticker"])
+        except Exception:
+            _bt = None
+        if not _bt:
+            continue
+        _ref_n, _ref_data = 0, None
+        for _w in ("60", "90", "30", "197"):
+            _wd = _bt.get("windows", {}).get(_w)
+            if not _wd:
+                continue
+            for _sname, _sd in _wd.items():
+                if not isinstance(_sd, dict) or _sd.get("n", 0) <= _ref_n:
+                    continue
+                _ref_n = _sd["n"]
+                _ref_data = dict(_sd)
+                _ref_data["strategy"] = _sname  # so render can use edge["strategy"]
+                _ref_data["window"] = _w       # so render can use edge["window"]
+                _ref_data["n"] = _sd["n"]      # alias for n_trades (edge uses "n")
+        if _ref_data and _ref_n >= 1:  # 2026-09-17: lower to n>=1 (show any signal, n=1 still gets (ref) marker so user knows it's a single trade)
+            _row["plan_edge"] = dict(_ref_data)
+            _row["plan_edge"]["_weak"] = True
+            _row["plan_edge"]["_ref"] = True
+            # 2026-09-16: also inject into `edge` so the Win% 90D column renders
+            # the (ref) stat instead of "—" for WAIT/no-plan-strategy tickers.
+            # Without this, plan_edge is only used for tooltip data-detail but
+            # the visible column stays empty — which is why user kept seeing
+            # "Win% 90D blank" after every deploy.
+            if not _row.get("edge"):
+                _row["edge"] = _row["plan_edge"]
 
     rows_html = "".join(render_action_row(r) for r in rows_sorted)
 
@@ -941,6 +1127,8 @@ def build_for_market(market: str):
     title_main = f"{market} 200"
     if market == "HK":
         title_main = "港股 200"
+    elif market == "JP":
+        title_main = "日股 200"
     else:
         title_main = "美股 200"
 
@@ -960,9 +1148,17 @@ def build_for_market(market: str):
 
 
 def main():
+    import subprocess
     print(f"=== build_dashboard.py · T-1 = {t_minus_1().isoformat()} ===")
     build_for_market("HK")
     build_for_market("US")
+    build_for_market("JP")
+    # 2026-09-19: auto-run build_sitemap.py so ticker pages + equity curves
+    # are picked up in sitemap every deploy (was previously a manual step).
+    subprocess.run(
+        [sys.executable, str(REPO / "scripts" / "build_sitemap.py")],
+        check=False,  # don't fail build if sitemap errors
+    )
     print("\nDone.")
 
 

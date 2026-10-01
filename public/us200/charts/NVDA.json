@@ -1,0 +1,170 @@
+{
+  "ticker": "US.NVDA",
+  "ticker_user": "NVDA",
+  "name": "",
+  "data_source": "yfinance",
+  "data_range": "2025-12-11 → 2026-09-29 (200 daily bars)",
+  "last_bar": {
+    "date": "2026-09-29",
+    "O": 230.97,
+    "H": 232.82,
+    "L": 227.03,
+    "C": 227.21,
+    "prev_close": 228.86,
+    "chg_pct": -0.72
+  },
+  "phase": "base_building",
+  "adx": 14.07,
+  "plus_di": 33.41,
+  "minus_di": 22.58,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 236.54 (2026-05-14), trough 189.8 (2026-06-29), box top 234.76 (2026-09-04)",
+  "peak": {
+    "date": "2026-05-14",
+    "price": 236.54
+  },
+  "trough": {
+    "date": "2026-06-29",
+    "price": 189.8
+  },
+  "box": {
+    "top": 234.76,
+    "top_date": "2026-09-04",
+    "bottom": 189.8,
+    "period": "2026-06-29 to 2026-09-29"
+  },
+  "drop_from_peak_pct": 3.9,
+  "recovery_from_crash_pct": 19.7,
+  "supports": [
+    {
+      "level": 220.0,
+      "label": "S1 KEY",
+      "touches": 16,
+      "evidence": "tested 16x in base period; 3.2% below current"
+    },
+    {
+      "level": 216.0,
+      "label": "S2",
+      "touches": 20,
+      "evidence": "mid-base support, tested 20x"
+    },
+    {
+      "level": 208.0,
+      "label": "S3",
+      "touches": 8,
+      "evidence": "mid-base support, tested 8x"
+    },
+    {
+      "level": 189.8,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-06-29, structural bottom"
+    }
+  ],
+  "resistances": [
+    {
+      "level": 232.82,
+      "label": "R1 today high",
+      "evidence": "today's high 232.82000732421875"
+    },
+    {
+      "level": 234.76,
+      "label": "R3 Sep high",
+      "evidence": "box top 234.76, base period high"
+    }
+  ],
+  "position": {
+    "current": 227.21,
+    "in_box_pct": 83.2,
+    "nearest_support": "S1 KEY (220.0)",
+    "nearest_resistance": "R1 today high (232.82)"
+  },
+  "kline_today": {
+    "type": "bearish_pullback",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 230.97,
+    "H": 232.82,
+    "L": 227.03,
+    "C": 227.21,
+    "body_pct": 64.9,
+    "upper_wick_pct": 32.0,
+    "lower_wick_pct": 3.1
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 220.0 (KEY support)",
+      "then": "still range; watch 232.82 for next test"
+    },
+    {
+      "if": "break 220.0 on close",
+      "then": "target 216.0 → 208.0 (short-term bearish)"
+    },
+    {
+      "if": "break 189.8 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 232.82 on close",
+      "then": "short-term bullish; next test 234.76"
+    },
+    {
+      "if": "break 234.76 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
+  "action_plan": {
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 234.76,
+    "target_price": 221.84,
+    "stop_price": 243.11,
+    "risk_pct": 3.56,
+    "reward_pct": 5.5,
+    "rr_ratio": 1.55,
+    "phase_match": true,
+    "r1": 234.76,
+    "s1": 208.93,
+    "s2": 190.01,
+    "r2": 230.47,
+    "r3": 236.54,
+    "s3": 180.62,
+    "s4": 164.27,
+    "current_position_pct": 70.8,
+    "notes": "SELL_R1: in box (209-235), entry at R1 235, target mid 222, stop 243 ｜ 入場位 resistance 234.76：以收市價為準 —— 收得守住先當入場成立；收穿就係 resistance 失效，本單取消（見上方失效條件）。"
+  }
+}

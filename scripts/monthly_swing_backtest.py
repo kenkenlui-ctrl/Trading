@@ -35,8 +35,8 @@ from typing import Optional
 import pandas as pd
 import yfinance as yf
 
-DB_PATH = "/Users/kenken/Documents/dsa-hk/data/dsa_hk.db"
-OUT_DIR = Path("/Users/kenken/Documents/dsa-hk/data/monthly_backtest")
+DB_PATH = "/Users/kenken/dev/dsa-hk/data/dsa_hk.db"
+OUT_DIR = Path("/Users/kenken/dev/dsa-hk/data/monthly_backtest")
 HSI_BEAR = -0.015
 
 # Fallback horizons (used only when live stop/target missing from DB).
@@ -49,11 +49,15 @@ HORIZONS = {
 }
 FRICTION = {"HK": 0.003, "US": 0.002}
 
-# Portfolio sim defaults (1.5% per-trade risk, 30% deploy cap, 8 concurrent max)
+# 2026-09-11: Portfolio sim defaults aligned with d71 honest equity curve sim
+# (1% per-trade risk, 5 concurrent, 30% deploy cap). Earlier 1.5%/8 cap produced
+# +55% T+10 6mo return — that figure was the sum-of-pct compounding artefact,
+# not a realistic portfolio return. See /equity_curve_t10.html for the
+# honest daily-mark-to-market simulation.
 PORTFOLIO_DEFAULTS = {
-    "max_concurrent": 8,
+    "max_concurrent": 5,
     "max_capital_pct": 0.30,
-    "risk_per_trade": 0.015,
+    "risk_per_trade": 0.010,
     "start_capital": 1_000_000.0,
 }
 
@@ -256,8 +260,8 @@ def hsi_min_window(hsi_df, start_date, days):
 # ===========================
 
 def simulate_portfolio(records: list[dict], start_date: str, end_date: str,
-                       max_concurrent: int = 8, max_capital_pct: float = 0.30,
-                       risk_per_trade: float = 0.015,
+                       max_concurrent: int = 5, max_capital_pct: float = 0.30,
+                       risk_per_trade: float = 0.010,
                        start_capital: float = 1_000_000.0) -> dict:
     """Sequential portfolio sim over T+10 BUY signals.
 
@@ -594,7 +598,7 @@ def render_report(records: list[dict], start: str, end: str, hsi_bear_count: int
     if portfolio_metrics and "error" not in portfolio_metrics:
         lines.extend([
             "",
-            f"## Risk metrics (T+10 portfolio sim, 1.5% risk/trade, 8 concurrent cap)",
+            f"## Risk metrics (T+10 portfolio sim, 1% risk/trade, 5 concurrent cap — matches d71 honest equity curve)",
             f"",
             f"| Metric | Value |",
             f"|---|---|",
@@ -888,7 +892,7 @@ def main():
         print(f"  {h_name}: n={n}, WR={wr:.1f}%, avg={avg:+.2f}%, live_stop_used={live_pct:.0f}%")
 
     if portfolio_metrics and "error" not in portfolio_metrics:
-        print(f"\n--- Portfolio (T+10, 8 concurrent, 1.5% risk) ---")
+        print(f"\n--- Portfolio (T+10, 5 concurrent, 1% risk) ---")
         print(f"  Trades: {portfolio_metrics['n_trades']}, WR: {portfolio_metrics['win_rate']*100:.1f}%")
         print(f"  Total: {portfolio_metrics['total_return']*100:+.2f}%, MaxDD: {portfolio_metrics['max_drawdown']*100:.2f}%")
         print(f"  Sortino: {portfolio_metrics['sortino']:.2f}, Calmar: {portfolio_metrics['calmar']:.2f}")

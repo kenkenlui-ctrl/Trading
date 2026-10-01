@@ -1,0 +1,2867 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<title>日股 200 · Leeks Terminal</title>
+<meta name="description" content="日股 200 (Topix Core30 + Large70) by 5-day 平均成交額排序。即日鮮信號 — 200 隻個股一表答晒：邊隻做 BUY/SELL/WAIT、trigger/target/stop 喺邊、win% 60d backtest 點。T-1 收市 data。已扣 0.05% round-trip 成本。">
+<meta name="theme-color" content="#0a0e1a">
+<link rel="canonical" href="https://www.win9you.com/jp200/">
+<meta property="og:site_name" content="Leeks Terminal">
+<meta property="og:type" content="website">
+<meta property="og:title" content="日股 200 · Leeks Terminal">
+<meta property="og:description" content="日股 200 (Topix Core30 + Large70) by 5-day 平均成交額排序。即日鮮信號 — 200 隻個股一表答晒：邊隻做 BUY/SELL/WAIT、trigger/target/stop 喺邊、win% 60d backtest 點。T-1 收市 data。已扣 0.05% round-trip 成本。">
+<meta property="og:url" content="https://www.win9you.com/jp200/">
+<meta property="og:image" content="jp200/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="zh_HK">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.win9you.com/"},
+        {"@type": "ListItem", "position": 2, "name": "JP Signals", "item": "https://www.win9you.com/jp200/"}
+      ]
+    },
+    {
+      "@type": "CollectionPage",
+      "name": "日股 200 Action Plan",
+      "url": "https://www.win9you.com/jp200/",
+      "inLanguage": "zh-Hant-HK",
+      "isPartOf": {"@type": "WebSite", "name": "Leeks Terminal", "url": "https://www.win9you.com/"}
+    },
+    {{
+      "@type": "FAQPage",
+      "mainEntity": [
+        {{"@type": "Question", "name": "日股 200 點樣揀？", "acceptedAnswer": {{"@type": "Answer", "text": "由 Topix Core30 + Large70 開始，yfinance verify 流通量，200 隻全部 T-1 收市 data。"}}},
+        {{"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {{"@type": "Answer", "text": "10-step 價格行為 framework。T-1 OHLC 純 Python deterministic 計算。"}}},
+        {{"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {{"@type": "Answer", "text": "已扣 0.05% round-trip (JP)，Futu 免佣。"}}}}
+      ]
+    }}
+  ]
+}
+</script>
+<link rel="stylesheet" href="/static/fonts-local.css">
+<link rel="stylesheet" href="/leeks.css?v=2026-08-25b">
+<script>
+(function(){
+  const t = localStorage.getItem('leeks-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+</head>
+<body>
+<header class="site-header">
+  <nav class="nav">
+    <a href="/" class="nav-brand"><span class="leek">L</span>eeks <em class="italic">Terminal</em></a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/hk200/">HK Signals</a>
+      <a href="/us200/">US Signals</a>
+      <a href="/jp200/" class="active">JP Signals</a>
+      <a href="/compare/">Compare</a>
+      <a href="/backtest.html">Backtest</a>
+      <a href="/insights.html">Insights</a>
+      <a href="/methodology.html">Methodology</a>
+      <a href="/faq.html">FAQ</a>
+      <a href="/disclaimer/">Disclaimer</a>
+      <a href="/privacy.html">Privacy</a>
+    </div>
+    <div class="nav-meta">
+      <span class="live-dot"></span>
+      T-1 · 2026-09-29
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span class="icon" id="themeIcon">●</span>
+        <span id="themeLabel">DARK</span>
+      </button>
+    </div>
+  </nav>
+</header>
+<script>
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('leeks-theme', next);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = next === 'dark' ? '#0a0e1a' : '#fafbfc';
+  const lbl = document.getElementById('themeLabel');
+  const ic = document.getElementById('themeIcon');
+  if (lbl) lbl.textContent = next.toUpperCase();
+  if (ic) ic.textContent = next === 'dark' ? '●' : '○';
+}
+(function(){
+  const t = document.documentElement.getAttribute('data-theme') || 'dark';
+  const lbl = document.getElementById('themeLabel');
+  const ic = document.getElementById('themeIcon');
+  if (lbl) lbl.textContent = t.toUpperCase();
+  if (ic) ic.textContent = t === 'dark' ? '●' : '○';
+})();
+</script>
+
+<main role="main">
+<div class="page-head">
+  <div class="container">
+    <div class="kicker">JP · 200 names</div>
+    <h1>日股 200 <em class="italic">Action Plan</em></h1>
+    <p class="lede">日股 200 (Topix Core30 + Large70) by 5-day 平均成交額排序。即日鮮信號 — 200 隻個股一表答晒：邊隻做 BUY/SELL/WAIT、trigger/target/stop 喺邊、win% 60d backtest 點。T-1 收市 data。已扣 0.05% round-trip 成本。</p>
+    <div class="hero-meta">
+      
+      <span>Universe: <b>200 JP names</b></span>
+      <span>T-1 data: <b>2026-09-29</b></span>
+      <span>Updated: <b>11:41 HKT</b></span>
+      <span>Regime: <b style="color: var(--bear);">Down 103 · Base 72 · Recov 15 · Up 10</b></span>
+    
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="filter-bar">
+    <label>Filter</label>
+    <input type="text" id="search" placeholder="Search ticker or name..." onkeyup="filterTable()">
+    <label>Action</label>
+    <div style="display: flex; gap: 6px;">
+      <button type="button" class="filter-chip active" data-action="">All</button>
+      <button type="button" class="filter-chip" data-action="BUY">🟢 BUY</button>
+      <button type="button" class="filter-chip" data-action="SELL">🔴 SELL</button>
+      <button type="button" class="filter-chip" data-action="WAIT">⚪ WAIT</button>
+    </div>
+    <label>Phase</label>
+    <div style="display: flex; gap: 6px;">
+      <button type="button" class="filter-chip active" data-phase="">All</button>
+      <button type="button" class="filter-chip" data-phase="uptrend">Uptrend</button>
+      <button type="button" class="filter-chip" data-phase="base_building">Base</button>
+      <button type="button" class="filter-chip" data-phase="downtrend_recovery">Recovery</button>
+      <button type="button" class="filter-chip" data-phase="downtrend_active">Down</button>
+      <button type="button" class="filter-chip" data-phase="range">Range</button>
+    </div>
+    <label style="margin-left: auto;" id="rowCount">200 of 200</label>
+  </div>
+
+  <div style="overflow: auto; max-height: calc(100vh - 76px); overscroll-behavior: contain; border: 1px solid var(--border); border-radius: var(--radius-lg);">
+  <table class="data-table" id="dataTable">
+  <thead>
+  <tr>
+    <th data-col="ticker">Ticker</th>
+    <th data-col="name">Name</th>
+    <th data-col="last" class="cell-right">Last</th>
+    <th data-col="chg" class="cell-right">Chg%</th>
+    <th data-col="phase">Phase</th>
+    <th data-col="action">Action</th>
+    <th data-col="trigger" class="cell-right">Trigger</th>
+    <th data-col="target" class="cell-right">Target</th>
+    <th data-col="stop" class="cell-right">Stop</th>
+    <th data-col="win" class="cell-right">Win% (90d)</th>
+    <th data-col="strategy">Strategy</th>
+  </tr>
+  </thead>
+  <tbody id="tableBody">
+    <tr data-action="SELL" data-phase="base_building" data-detail="~54% · n=24 (ref)" class="row-bear">
+      <td><a href="/jp200/ticker/6981_T" class="mono" style="color: var(--fg);">6981.T</a></td>
+      <td>MURATA MANUFACTURING CO</td>
+      <td class="cell-right mono">8,089.00</td>
+      <td class="cell-right mono text-bull">+1.06%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">8,292.00</td>
+      <td class="cell-right mono text-bull">7,534</td>
+      <td class="cell-right mono text-bear">8,915</td>
+      <td class="cell-right mono">100%</td>
+      <td class="mono text-dim">BUY_S1</td>
+    </tr>
+    <tr data-action="SELL" data-phase="downtrend_active" data-detail="~90% · n=39 (ref)" class="row-bear">
+      <td><a href="/jp200/ticker/2914_T" class="mono" style="color: var(--fg);">2914.T</a></td>
+      <td>JAPAN TOBACCO INC</td>
+      <td class="cell-right mono">6,885.00</td>
+      <td class="cell-right mono text-bull">+0.51%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">7,109.00</td>
+      <td class="cell-right mono text-bull">6,804</td>
+      <td class="cell-right mono text-bear">7,279</td>
+      <td class="cell-right mono">90%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="SELL" data-phase="downtrend_active" data-detail="~82% · n=45 (ref)" class="row-bear">
+      <td><a href="/jp200/ticker/6301_T" class="mono" style="color: var(--fg);">6301.T</a></td>
+      <td>KOMATSU</td>
+      <td class="cell-right mono">7,398.00</td>
+      <td class="cell-right mono text-bull">+0.50%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">7,641.38</td>
+      <td class="cell-right mono text-bull">7,254</td>
+      <td class="cell-right mono text-bear">7,961</td>
+      <td class="cell-right mono">82%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="SELL" data-phase="downtrend_active" data-detail="~82% · n=11 (ref)" class="row-bear">
+      <td><a href="/jp200/ticker/6674_T" class="mono" style="color: var(--fg);">6674.T</a></td>
+      <td>GS YUASA CORP</td>
+      <td class="cell-right mono">5,339.00</td>
+      <td class="cell-right mono text-bear">-1.09%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">5,566.00</td>
+      <td class="cell-right mono text-bull">5,224</td>
+      <td class="cell-right mono text-bear">5,843</td>
+      <td class="cell-right mono">82%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="SELL" data-phase="base_building" data-detail="~73% · n=70 (ref)" class="row-bear">
+      <td><a href="/jp200/ticker/7751_T" class="mono" style="color: var(--fg);">7751.T</a></td>
+      <td>CANON INC</td>
+      <td class="cell-right mono">4,587.00</td>
+      <td class="cell-right mono ">+0.00%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">4,750.00</td>
+      <td class="cell-right mono text-bull">4,520</td>
+      <td class="cell-right mono text-bear">4,868</td>
+      <td class="cell-right mono">73%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="SELL" data-phase="base_building" data-detail="~66% · n=41 (ref)" class="row-bear">
+      <td><a href="/jp200/ticker/6501_T" class="mono" style="color: var(--fg);">6501.T</a></td>
+      <td>HITACHI</td>
+      <td class="cell-right mono">5,465.00</td>
+      <td class="cell-right mono text-bear">-0.46%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">5,616.36</td>
+      <td class="cell-right mono text-bull">5,315</td>
+      <td class="cell-right mono text-bear">5,821</td>
+      <td class="cell-right mono">66%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="SELL" data-phase="base_building" data-detail="~65% · n=69 (ref)" class="row-bear">
+      <td><a href="/jp200/ticker/9201_T" class="mono" style="color: var(--fg);">9201.T</a></td>
+      <td>JAPAN AIRLINES CO LTD</td>
+      <td class="cell-right mono">3,012.00</td>
+      <td class="cell-right mono text-bear">-1.79%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">3,075.00</td>
+      <td class="cell-right mono text-bull">2,978</td>
+      <td class="cell-right mono text-bear">3,142</td>
+      <td class="cell-right mono">65%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="SELL" data-phase="base_building" data-detail="~63% · n=46 (ref)" class="row-bear">
+      <td><a href="/jp200/ticker/6988_T" class="mono" style="color: var(--fg);">6988.T</a></td>
+      <td>NITTO DENKO CORP</td>
+      <td class="cell-right mono">3,502.00</td>
+      <td class="cell-right mono text-bull">+0.72%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">3,594.00</td>
+      <td class="cell-right mono text-bull">3,354</td>
+      <td class="cell-right mono text-bear">3,732</td>
+      <td class="cell-right mono">63%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="SELL" data-phase="downtrend_active" data-detail="~63% · n=43 (ref)" class="row-bear">
+      <td><a href="/jp200/ticker/3106_T" class="mono" style="color: var(--fg);">3106.T</a></td>
+      <td>KURABO INDUSTRIES</td>
+      <td class="cell-right mono">2,325.00</td>
+      <td class="cell-right mono text-bear">-0.47%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">2,419.00</td>
+      <td class="cell-right mono text-bull">2,258</td>
+      <td class="cell-right mono text-bear">2,524</td>
+      <td class="cell-right mono">63%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="SELL" data-phase="downtrend_active" data-detail="~61% · n=18 (ref)" class="row-bear">
+      <td><a href="/jp200/ticker/6920_T" class="mono" style="color: var(--fg);">6920.T</a></td>
+      <td>LASERTEC CORP</td>
+      <td class="cell-right mono">41,000.00</td>
+      <td class="cell-right mono text-bull">+2.50%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">41,580.00</td>
+      <td class="cell-right mono text-bull">36,710</td>
+      <td class="cell-right mono text-bear">44,750</td>
+      <td class="cell-right mono">61%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="SELL" data-phase="downtrend_active" data-detail="~60% · n=47 (ref)" class="row-bear">
+      <td><a href="/jp200/ticker/6965_T" class="mono" style="color: var(--fg);">6965.T</a></td>
+      <td>HAMAMATSU PHOTONICS</td>
+      <td class="cell-right mono">2,302.00</td>
+      <td class="cell-right mono text-bear">-0.13%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">2,408.50</td>
+      <td class="cell-right mono text-bull">2,271</td>
+      <td class="cell-right mono text-bear">2,514</td>
+      <td class="cell-right mono">60%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="SELL" data-phase="downtrend_active" data-detail="~50% · n=28 (ref)" class="row-bear">
+      <td><a href="/jp200/ticker/6645_T" class="mono" style="color: var(--fg);">6645.T</a></td>
+      <td>OMRON CORP</td>
+      <td class="cell-right mono">6,374.00</td>
+      <td class="cell-right mono text-bull">+1.50%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">6,738.00</td>
+      <td class="cell-right mono text-bull">6,265</td>
+      <td class="cell-right mono text-bear">7,028</td>
+      <td class="cell-right mono">50%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="SELL" data-phase="base_building" data-detail="~44% · n=39 (ref)" class="row-bear">
+      <td><a href="/jp200/ticker/6702_T" class="mono" style="color: var(--fg);">6702.T</a></td>
+      <td>FUJITSU</td>
+      <td class="cell-right mono">3,945.00</td>
+      <td class="cell-right mono text-bear">-0.83%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">4,089.00</td>
+      <td class="cell-right mono text-bull">3,876</td>
+      <td class="cell-right mono text-bear">4,265</td>
+      <td class="cell-right mono">44%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="SELL" data-phase="base_building" data-detail="~38% · n=26 (ref)" class="row-bear">
+      <td><a href="/jp200/ticker/2986_T" class="mono" style="color: var(--fg);">2986.T</a></td>
+      <td>LA HOLDINGS CO LTD</td>
+      <td class="cell-right mono">2,893.00</td>
+      <td class="cell-right mono text-bear">-0.38%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">2,991.00</td>
+      <td class="cell-right mono text-bull">2,866</td>
+      <td class="cell-right mono text-bear">3,074</td>
+      <td class="cell-right mono">38%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="SELL" data-phase="downtrend_active" data-detail="~33% · n=12 (ref)" class="row-bear">
+      <td><a href="/jp200/ticker/6856_T" class="mono" style="color: var(--fg);">6856.T</a></td>
+      <td>HORIBA LTD</td>
+      <td class="cell-right mono">24,295.00</td>
+      <td class="cell-right mono text-bull">+2.14%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">24,345.00</td>
+      <td class="cell-right mono text-bull">22,662</td>
+      <td class="cell-right mono text-bear">25,458</td>
+      <td class="cell-right mono">33%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="SELL" data-phase="downtrend_active" data-detail="~29% · n=38 (ref)" class="row-bear">
+      <td><a href="/jp200/ticker/6925_T" class="mono" style="color: var(--fg);">6925.T</a></td>
+      <td>USHIO INC</td>
+      <td class="cell-right mono">4,069.00</td>
+      <td class="cell-right mono text-bull">+1.65%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">4,096.00</td>
+      <td class="cell-right mono text-bull">3,750</td>
+      <td class="cell-right mono text-bear">4,300</td>
+      <td class="cell-right mono">29%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="SELL" data-phase="downtrend_active" data-detail="~12% · n=25 (ref)" class="row-bear">
+      <td><a href="/jp200/ticker/6723_T" class="mono" style="color: var(--fg);">6723.T</a></td>
+      <td>RENESAS ELECTRONICS CORP</td>
+      <td class="cell-right mono">3,458.00</td>
+      <td class="cell-right mono text-bear">-0.03%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">3,626.00</td>
+      <td class="cell-right mono text-bull">3,346</td>
+      <td class="cell-right mono text-bear">3,846</td>
+      <td class="cell-right mono">12%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="SELL" data-phase="downtrend_active" data-detail="~10% · n=31 (ref)" class="row-bear">
+      <td><a href="/jp200/ticker/6971_T" class="mono" style="color: var(--fg);">6971.T</a></td>
+      <td>KYOCERA CORP</td>
+      <td class="cell-right mono">3,685.00</td>
+      <td class="cell-right mono text-bear">-0.49%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">3,827.00</td>
+      <td class="cell-right mono text-bull">3,589</td>
+      <td class="cell-right mono text-bear">3,986</td>
+      <td class="cell-right mono">10%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="SELL" data-phase="downtrend_active" data-detail="~9% · n=11 (ref)" class="row-bear">
+      <td><a href="/jp200/ticker/8035_T" class="mono" style="color: var(--fg);">8035.T</a></td>
+      <td>TOKYO ELECTRON</td>
+      <td class="cell-right mono">11,505.00</td>
+      <td class="cell-right mono text-bull">+2.14%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">11,580.00</td>
+      <td class="cell-right mono text-bull">10,690</td>
+      <td class="cell-right mono text-bear">12,235</td>
+      <td class="cell-right mono">9%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="SELL" data-phase="downtrend_active" data-detail="—" class="row-bear">
+      <td><a href="/jp200/ticker/1434_T" class="mono" style="color: var(--fg);">1434.T</a></td>
+      <td>JESCO HOLDINGS INC</td>
+      <td class="cell-right mono">1,623.00</td>
+      <td class="cell-right mono text-bear">-0.25%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">1,667.00</td>
+      <td class="cell-right mono text-bull">1,602</td>
+      <td class="cell-right mono text-bear">1,716</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="SELL" data-phase="base_building" data-detail="—" class="row-bear">
+      <td><a href="/jp200/ticker/3023_T" class="mono" style="color: var(--fg);">3023.T</a></td>
+      <td>RASA CORPORATION</td>
+      <td class="cell-right mono">2,066.00</td>
+      <td class="cell-right mono text-bear">-1.95%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">2,121.00</td>
+      <td class="cell-right mono text-bull">2,048</td>
+      <td class="cell-right mono text-bear">2,171</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="SELL" data-phase="downtrend_active" data-detail="—" class="row-bear">
+      <td><a href="/jp200/ticker/3179_T" class="mono" style="color: var(--fg);">3179.T</a></td>
+      <td>SYUPPIN CO LIMITED</td>
+      <td class="cell-right mono">1,335.00</td>
+      <td class="cell-right mono text-bull">+0.07%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">1,352.00</td>
+      <td class="cell-right mono text-bull">1,236</td>
+      <td class="cell-right mono text-bear">1,407</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="SELL" data-phase="base_building" data-detail="—" class="row-bear">
+      <td><a href="/jp200/ticker/6905_T" class="mono" style="color: var(--fg);">6905.T</a></td>
+      <td>COSEL CO LTD</td>
+      <td class="cell-right mono">1,448.00</td>
+      <td class="cell-right mono text-bear">-0.82%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bear">SELL</span></td>
+      <td class="cell-right mono">1,518.00</td>
+      <td class="cell-right mono text-bull">1,385</td>
+      <td class="cell-right mono text-bear">1,599</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="~28% · n=32 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/1333_T" class="mono" style="color: var(--fg);">1333.T</a></td>
+      <td>UMIOS CORP</td>
+      <td class="cell-right mono">1,240.50</td>
+      <td class="cell-right mono text-bear">-3.20%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">1,240.50</td>
+      <td class="cell-right mono text-bull">1,276</td>
+      <td class="cell-right mono text-bear">1,212</td>
+      <td class="cell-right mono">100%</td>
+      <td class="mono text-dim">BUY_S1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~25% · n=51 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/2002_T" class="mono" style="color: var(--fg);">2002.T</a></td>
+      <td>NISSHIN SEIFUN GROUP INC</td>
+      <td class="cell-right mono">1,968.00</td>
+      <td class="cell-right mono text-bear">-2.77%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">1,957.00</td>
+      <td class="cell-right mono text-bull">2,030</td>
+      <td class="cell-right mono text-bear">1,898</td>
+      <td class="cell-right mono">100%</td>
+      <td class="mono text-dim">BUY_S1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~89% · n=55 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/2502_T" class="mono" style="color: var(--fg);">2502.T</a></td>
+      <td>ASAHI GROUP HLDGS</td>
+      <td class="cell-right mono">1,582.00</td>
+      <td class="cell-right mono text-bear">-0.94%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">1,578.50</td>
+      <td class="cell-right mono text-bull">1,639</td>
+      <td class="cell-right mono text-bear">1,542</td>
+      <td class="cell-right mono">89%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="~83% · n=24 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/8804_T" class="mono" style="color: var(--fg);">8804.T</a></td>
+      <td>TOKYO TATEMONO CO</td>
+      <td class="cell-right mono">3,243.00</td>
+      <td class="cell-right mono text-bear">-1.73%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">3,223.00</td>
+      <td class="cell-right mono text-bull">3,352</td>
+      <td class="cell-right mono text-bear">3,125</td>
+      <td class="cell-right mono">83%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~83% · n=29 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/8058_T" class="mono" style="color: var(--fg);">8058.T</a></td>
+      <td>MITSUBISHI CORP</td>
+      <td class="cell-right mono">4,637.00</td>
+      <td class="cell-right mono text-bear">-3.76%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">4,620.00</td>
+      <td class="cell-right mono text-bull">4,872</td>
+      <td class="cell-right mono text-bear">4,443</td>
+      <td class="cell-right mono">83%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~71% · n=52 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/7261_T" class="mono" style="color: var(--fg);">7261.T</a></td>
+      <td>MAZDA MOTOR CORP</td>
+      <td class="cell-right mono">1,107.50</td>
+      <td class="cell-right mono text-bear">-4.32%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">1,092.00</td>
+      <td class="cell-right mono text-bull">1,184</td>
+      <td class="cell-right mono text-bear">1,050</td>
+      <td class="cell-right mono">71%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~70% · n=27 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/7270_T" class="mono" style="color: var(--fg);">7270.T</a></td>
+      <td>SUBARU CORPORATION</td>
+      <td class="cell-right mono">2,534.00</td>
+      <td class="cell-right mono text-bear">-3.65%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">2,519.50</td>
+      <td class="cell-right mono text-bull">2,634</td>
+      <td class="cell-right mono text-bear">2,435</td>
+      <td class="cell-right mono">70%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~67% · n=48 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/7211_T" class="mono" style="color: var(--fg);">7211.T</a></td>
+      <td>MITSUBISHI MOTOR CORP</td>
+      <td class="cell-right mono">354.60</td>
+      <td class="cell-right mono text-bear">-4.93%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">343.80</td>
+      <td class="cell-right mono text-bull">375.1</td>
+      <td class="cell-right mono text-bear">328.6</td>
+      <td class="cell-right mono">67%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="~65% · n=40 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/1419_T" class="mono" style="color: var(--fg);">1419.T</a></td>
+      <td>TAMA HOME CO LIMITED</td>
+      <td class="cell-right mono">2,907.00</td>
+      <td class="cell-right mono text-bear">-0.95%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">2,844.00</td>
+      <td class="cell-right mono text-bull">2,950</td>
+      <td class="cell-right mono text-bear">2,787</td>
+      <td class="cell-right mono">65%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~64% · n=25 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/4507_T" class="mono" style="color: var(--fg);">4507.T</a></td>
+      <td>SHIONOGI & CO</td>
+      <td class="cell-right mono">2,838.50</td>
+      <td class="cell-right mono text-bear">-2.72%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">2,790.50</td>
+      <td class="cell-right mono text-bull">2,908</td>
+      <td class="cell-right mono text-bear">2,703</td>
+      <td class="cell-right mono">64%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~63% · n=30 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/8031_T" class="mono" style="color: var(--fg);">8031.T</a></td>
+      <td>MITSUI & CO</td>
+      <td class="cell-right mono">4,829.00</td>
+      <td class="cell-right mono text-bear">-3.82%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">4,825.00</td>
+      <td class="cell-right mono text-bull">5,079</td>
+      <td class="cell-right mono text-bear">4,640</td>
+      <td class="cell-right mono">63%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~63% · n=49 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/3088_T" class="mono" style="color: var(--fg);">3088.T</a></td>
+      <td>MATSUKIYOCOCOKARA & CO</td>
+      <td class="cell-right mono">2,427.50</td>
+      <td class="cell-right mono text-bear">-2.41%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">2,425.50</td>
+      <td class="cell-right mono text-bull">2,543</td>
+      <td class="cell-right mono text-bear">2,339</td>
+      <td class="cell-right mono">63%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~62% · n=26 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/7974_T" class="mono" style="color: var(--fg);">7974.T</a></td>
+      <td>NINTENDO CO LTD</td>
+      <td class="cell-right mono">7,896.00</td>
+      <td class="cell-right mono text-bear">-1.29%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">7,851.00</td>
+      <td class="cell-right mono text-bull">8,516</td>
+      <td class="cell-right mono text-bear">7,453</td>
+      <td class="cell-right mono">62%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="~61% · n=28 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/7203_T" class="mono" style="color: var(--fg);">7203.T</a></td>
+      <td></td>
+      <td class="cell-right mono">2,881.50</td>
+      <td class="cell-right mono text-bear">-3.52%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">2,881.00</td>
+      <td class="cell-right mono text-bull">3,075</td>
+      <td class="cell-right mono text-bear">2,794</td>
+      <td class="cell-right mono">61%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~60% · n=53 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/3382_T" class="mono" style="color: var(--fg);">3382.T</a></td>
+      <td>SEVEN & I HOLDINGS CO LTD</td>
+      <td class="cell-right mono">1,977.50</td>
+      <td class="cell-right mono text-bear">-1.12%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">1,957.50</td>
+      <td class="cell-right mono text-bull">2,018</td>
+      <td class="cell-right mono text-bear">1,909</td>
+      <td class="cell-right mono">60%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~59% · n=51 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/3048_T" class="mono" style="color: var(--fg);">3048.T</a></td>
+      <td>BIC CAMERA INC.</td>
+      <td class="cell-right mono">1,689.00</td>
+      <td class="cell-right mono text-bear">-0.35%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">1,668.00</td>
+      <td class="cell-right mono text-bull">1,735</td>
+      <td class="cell-right mono text-bear">1,620</td>
+      <td class="cell-right mono">59%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~58% · n=26 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/9022_T" class="mono" style="color: var(--fg);">9022.T</a></td>
+      <td>CENTRAL JAPAN RAILWAY CO</td>
+      <td class="cell-right mono">3,675.00</td>
+      <td class="cell-right mono text-bear">-2.34%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">3,660.00</td>
+      <td class="cell-right mono text-bull">3,852</td>
+      <td class="cell-right mono text-bear">3,550</td>
+      <td class="cell-right mono">58%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~57% · n=51 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/1925_T" class="mono" style="color: var(--fg);">1925.T</a></td>
+      <td>DAIWA HOUSE INDUSTRY CO</td>
+      <td class="cell-right mono">2,173.50</td>
+      <td class="cell-right mono text-bear">-3.85%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">2,169.00</td>
+      <td class="cell-right mono text-bull">2,284</td>
+      <td class="cell-right mono text-bear">2,109</td>
+      <td class="cell-right mono">57%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="~54% · n=39 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/9020_T" class="mono" style="color: var(--fg);">9020.T</a></td>
+      <td></td>
+      <td class="cell-right mono">3,337.00</td>
+      <td class="cell-right mono text-bear">-2.74%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">3,331.00</td>
+      <td class="cell-right mono text-bull">3,483</td>
+      <td class="cell-right mono text-bear">3,231</td>
+      <td class="cell-right mono">54%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~52% · n=50 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/3101_T" class="mono" style="color: var(--fg);">3101.T</a></td>
+      <td>TOYOBO CO</td>
+      <td class="cell-right mono">1,639.00</td>
+      <td class="cell-right mono text-bear">-0.67%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">1,581.00</td>
+      <td class="cell-right mono text-bull">1,693</td>
+      <td class="cell-right mono text-bear">1,519</td>
+      <td class="cell-right mono">52%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~52% · n=27 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/3092_T" class="mono" style="color: var(--fg);">3092.T</a></td>
+      <td></td>
+      <td class="cell-right mono">1,089.00</td>
+      <td class="cell-right mono text-bear">-2.20%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">1,080.50</td>
+      <td class="cell-right mono text-bull">1,132</td>
+      <td class="cell-right mono text-bear">1,045</td>
+      <td class="cell-right mono">52%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="~43% · n=51 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/6902_T" class="mono" style="color: var(--fg);">6902.T</a></td>
+      <td>DENSO CORP</td>
+      <td class="cell-right mono">1,847.00</td>
+      <td class="cell-right mono text-bear">-3.78%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">1,847.00</td>
+      <td class="cell-right mono text-bull">1,916</td>
+      <td class="cell-right mono text-bear">1,799</td>
+      <td class="cell-right mono">43%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~39% · n=36 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/1928_T" class="mono" style="color: var(--fg);">1928.T</a></td>
+      <td>SEKISUI HOUSE</td>
+      <td class="cell-right mono">3,317.00</td>
+      <td class="cell-right mono text-bear">-1.72%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">3,276.00</td>
+      <td class="cell-right mono text-bull">3,373</td>
+      <td class="cell-right mono text-bear">3,199</td>
+      <td class="cell-right mono">39%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~39% · n=54 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/3003_T" class="mono" style="color: var(--fg);">3003.T</a></td>
+      <td>HULIC CO LTD</td>
+      <td class="cell-right mono">1,706.50</td>
+      <td class="cell-right mono text-bear">-1.44%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">1,706.50</td>
+      <td class="cell-right mono text-bull">1,756</td>
+      <td class="cell-right mono text-bear">1,666</td>
+      <td class="cell-right mono">39%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~32% · n=28 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/1605_T" class="mono" style="color: var(--fg);">1605.T</a></td>
+      <td>INPEX CORPORATION</td>
+      <td class="cell-right mono">3,671.00</td>
+      <td class="cell-right mono text-bear">-3.77%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">3,671.00</td>
+      <td class="cell-right mono text-bull">3,942</td>
+      <td class="cell-right mono text-bear">3,507</td>
+      <td class="cell-right mono">32%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="~27% · n=37 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/3116_T" class="mono" style="color: var(--fg);">3116.T</a></td>
+      <td>TOYOTA BOSHOKU CORP</td>
+      <td class="cell-right mono">2,167.00</td>
+      <td class="cell-right mono text-bear">-1.66%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">2,108.85</td>
+      <td class="cell-right mono text-bull">2,206</td>
+      <td class="cell-right mono text-bear">2,050</td>
+      <td class="cell-right mono">27%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~26% · n=46 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/3002_T" class="mono" style="color: var(--fg);">3002.T</a></td>
+      <td>GUNZE LTD</td>
+      <td class="cell-right mono">4,015.00</td>
+      <td class="cell-right mono text-bear">-1.71%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">3,980.00</td>
+      <td class="cell-right mono text-bull">4,095</td>
+      <td class="cell-right mono text-bear">3,900</td>
+      <td class="cell-right mono">26%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~10% · n=20 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/3197_T" class="mono" style="color: var(--fg);">3197.T</a></td>
+      <td>SKYLARK HOLDINGS CO LTD</td>
+      <td class="cell-right mono">3,125.00</td>
+      <td class="cell-right mono text-bear">-1.11%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">3,108.00</td>
+      <td class="cell-right mono text-bull">3,271</td>
+      <td class="cell-right mono text-bear">3,004</td>
+      <td class="cell-right mono">25%</td>
+      <td class="mono text-dim">BUY_S1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="~15% · n=20 (ref)" class="row-bull">
+      <td><a href="/jp200/ticker/9532_T" class="mono" style="color: var(--fg);">9532.T</a></td>
+      <td>OSAKA GAS CO</td>
+      <td class="cell-right mono">5,670.00</td>
+      <td class="cell-right mono text-bear">-2.91%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">5,577.00</td>
+      <td class="cell-right mono text-bull">5,918</td>
+      <td class="cell-right mono text-bear">5,337</td>
+      <td class="cell-right mono">15%</td>
+      <td class="mono text-dim">SELL_R1</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
+      <td><a href="/jp200/ticker/1376_T" class="mono" style="color: var(--fg);">1376.T</a></td>
+      <td>KANEKO SEEDS CO</td>
+      <td class="cell-right mono">1,563.00</td>
+      <td class="cell-right mono text-bear">-2.07%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">1,541.00</td>
+      <td class="cell-right mono text-bull">1,596</td>
+      <td class="cell-right mono text-bear">1,502</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
+      <td><a href="/jp200/ticker/1456_T" class="mono" style="color: var(--fg);">1456.T</a></td>
+      <td></td>
+      <td class="cell-right mono">1,262.00</td>
+      <td class="cell-right mono ">+0.00%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">1,239.00</td>
+      <td class="cell-right mono text-bull">1,282</td>
+      <td class="cell-right mono text-bear">1,204</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
+      <td><a href="/jp200/ticker/2982_T" class="mono" style="color: var(--fg);">2982.T</a></td>
+      <td>AD WORKS GRP CO LTD</td>
+      <td class="cell-right mono">417.00</td>
+      <td class="cell-right mono text-bear">-1.42%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">411.00</td>
+      <td class="cell-right mono text-bull">427.5</td>
+      <td class="cell-right mono text-bear">398.4</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
+      <td><a href="/jp200/ticker/2983_T" class="mono" style="color: var(--fg);">2983.T</a></td>
+      <td>ARR PLANNER CO LTD</td>
+      <td class="cell-right mono">1,620.00</td>
+      <td class="cell-right mono text-bear">-2.59%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">1,601.00</td>
+      <td class="cell-right mono text-bull">1,710</td>
+      <td class="cell-right mono text-bear">1,520</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="—" class="row-bull">
+      <td><a href="/jp200/ticker/2998_T" class="mono" style="color: var(--fg);">2998.T</a></td>
+      <td>CREAL INC</td>
+      <td class="cell-right mono">494.00</td>
+      <td class="cell-right mono text-bear">-1.79%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">485.00</td>
+      <td class="cell-right mono text-bull">534.0</td>
+      <td class="cell-right mono text-bear">460.7</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
+      <td><a href="/jp200/ticker/3109_T" class="mono" style="color: var(--fg);">3109.T</a></td>
+      <td>SHIKIBO LTD</td>
+      <td class="cell-right mono">1,041.00</td>
+      <td class="cell-right mono text-bear">-2.16%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">1,038.00</td>
+      <td class="cell-right mono text-bull">1,066</td>
+      <td class="cell-right mono text-bear">1,017</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="—" class="row-bull">
+      <td><a href="/jp200/ticker/3150_T" class="mono" style="color: var(--fg);">3150.T</a></td>
+      <td>GREMS INC</td>
+      <td class="cell-right mono">2,369.00</td>
+      <td class="cell-right mono text-bear">-1.09%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">2,359.00</td>
+      <td class="cell-right mono text-bull">2,430</td>
+      <td class="cell-right mono text-bear">2,309</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="base_building" data-detail="—" class="row-bull">
+      <td><a href="/jp200/ticker/3151_T" class="mono" style="color: var(--fg);">3151.T</a></td>
+      <td>VITAL KSK HOLDINGS INC</td>
+      <td class="cell-right mono">1,547.00</td>
+      <td class="cell-right mono text-bear">-3.43%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">1,537.00</td>
+      <td class="cell-right mono text-bull">1,617</td>
+      <td class="cell-right mono text-bear">1,498</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="BUY" data-phase="downtrend_recovery" data-detail="—" class="row-bull">
+      <td><a href="/jp200/ticker/3168_T" class="mono" style="color: var(--fg);">3168.T</a></td>
+      <td></td>
+      <td class="cell-right mono">1,254.00</td>
+      <td class="cell-right mono text-bear">-0.16%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action bull">BUY</span></td>
+      <td class="cell-right mono">1,201.00</td>
+      <td class="cell-right mono text-bull">1,334</td>
+      <td class="cell-right mono text-bear">1,136</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">—</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="~100% · n=16 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/1459_T" class="mono" style="color: var(--fg);">1459.T</a></td>
+      <td>RAKUTEN INVESTMENT NIKKEI 225 D</td>
+      <td class="cell-right mono">112.00</td>
+      <td class="cell-right mono text-bull">+0.90%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~100%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=15 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/1812_T" class="mono" style="color: var(--fg);">1812.T</a></td>
+      <td>KAJIMA CORP</td>
+      <td class="cell-right mono">4,847.00</td>
+      <td class="cell-right mono text-bear">-0.84%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~100%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~47% · n=36 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/1878_T" class="mono" style="color: var(--fg);">1878.T</a></td>
+      <td>DAITO TRUST CONSTRUCTION CO</td>
+      <td class="cell-right mono">3,143.00</td>
+      <td class="cell-right mono text-bear">-1.75%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~47%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=60 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3148_T" class="mono" style="color: var(--fg);">3148.T</a></td>
+      <td>CREATE SD HOLDINGS CO LTD</td>
+      <td class="cell-right mono">3,255.00</td>
+      <td class="cell-right mono text-bear">-1.51%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~100%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~24% · n=42 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3167_T" class="mono" style="color: var(--fg);">3167.T</a></td>
+      <td>TOKAI HLDGS CORP</td>
+      <td class="cell-right mono">1,329.00</td>
+      <td class="cell-right mono text-bear">-2.42%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~24%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~100% · n=8 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/4519_T" class="mono" style="color: var(--fg);">4519.T</a></td>
+      <td>CHUGAI PHARMACEUTICAL CO</td>
+      <td class="cell-right mono">6,096.00</td>
+      <td class="cell-right mono text-bear">-4.18%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~100%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~45% · n=44 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/6701_T" class="mono" style="color: var(--fg);">6701.T</a></td>
+      <td>NEC CORP</td>
+      <td class="cell-right mono">4,785.00</td>
+      <td class="cell-right mono text-bull">+0.15%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~45%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~10% · n=21 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/6857_T" class="mono" style="color: var(--fg);">6857.T</a></td>
+      <td>ADVANTEST CORP</td>
+      <td class="cell-right mono">33,910.00</td>
+      <td class="cell-right mono text-bull">+0.53%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~10%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~100% · n=44 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/7164_T" class="mono" style="color: var(--fg);">7164.T</a></td>
+      <td>ZENKOKU HOSHO CO LTD</td>
+      <td class="cell-right mono">3,069.00</td>
+      <td class="cell-right mono text-bear">-0.45%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~100%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~43% · n=23 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/9024_T" class="mono" style="color: var(--fg);">9024.T</a></td>
+      <td>SEIBU HOLDINGS INC</td>
+      <td class="cell-right mono">3,525.00</td>
+      <td class="cell-right mono text-bear">-2.52%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~43%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~97% · n=35 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/4503_T" class="mono" style="color: var(--fg);">4503.T</a></td>
+      <td>ASTELLAS PHARMA</td>
+      <td class="cell-right mono">2,294.00</td>
+      <td class="cell-right mono text-bear">-2.55%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~97%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~94% · n=18 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/8830_T" class="mono" style="color: var(--fg);">8830.T</a></td>
+      <td>SUMITOMO REALTY & DEVELOPMENT C</td>
+      <td class="cell-right mono">3,096.00</td>
+      <td class="cell-right mono text-bear">-2.67%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~94%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~93% · n=29 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3104_T" class="mono" style="color: var(--fg);">3104.T</a></td>
+      <td>FUJIBO HOLDINGS INC</td>
+      <td class="cell-right mono">3,330.00</td>
+      <td class="cell-right mono ">+0.00%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~93%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~93% · n=43 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/4568_T" class="mono" style="color: var(--fg);">4568.T</a></td>
+      <td>DAIICHI SANKYO COMPANY LIMITED</td>
+      <td class="cell-right mono">2,784.50</td>
+      <td class="cell-right mono text-bear">-1.61%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~93%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~43% · n=30 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/4523_T" class="mono" style="color: var(--fg);">4523.T</a></td>
+      <td>EISAI CO LTD</td>
+      <td class="cell-right mono">4,811.00</td>
+      <td class="cell-right mono text-bear">-2.24%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~43%</td>
+      <td class="mono text-dim">BUY_S1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~88% · n=25 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/7012_T" class="mono" style="color: var(--fg);">7012.T</a></td>
+      <td>KAWASAKI HEAVY INDUSTRIES</td>
+      <td class="cell-right mono">2,354.50</td>
+      <td class="cell-right mono text-bear">-1.90%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~88%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~84% · n=25 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/7013_T" class="mono" style="color: var(--fg);">7013.T</a></td>
+      <td>IHI CORPORATION</td>
+      <td class="cell-right mono">2,674.00</td>
+      <td class="cell-right mono text-bear">-3.24%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~84%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~81% · n=37 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3038_T" class="mono" style="color: var(--fg);">3038.T</a></td>
+      <td>KOBE BUSSAN CO LTD</td>
+      <td class="cell-right mono">2,969.00</td>
+      <td class="cell-right mono text-bull">+0.76%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~81%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~80% · n=15 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/9531_T" class="mono" style="color: var(--fg);">9531.T</a></td>
+      <td></td>
+      <td class="cell-right mono">6,075.00</td>
+      <td class="cell-right mono text-bear">-1.16%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~80%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~79% · n=38 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/8801_T" class="mono" style="color: var(--fg);">8801.T</a></td>
+      <td>MITSUI FUDOSAN</td>
+      <td class="cell-right mono">1,453.00</td>
+      <td class="cell-right mono text-bear">-2.55%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~79%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~79% · n=28 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/7011_T" class="mono" style="color: var(--fg);">7011.T</a></td>
+      <td></td>
+      <td class="cell-right mono">3,793.00</td>
+      <td class="cell-right mono text-bear">-2.39%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~79%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~78% · n=46 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3064_T" class="mono" style="color: var(--fg);">3064.T</a></td>
+      <td>MONOTARO CO.LTD</td>
+      <td class="cell-right mono">1,919.00</td>
+      <td class="cell-right mono text-bear">-0.85%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~78%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~74% · n=50 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3076_T" class="mono" style="color: var(--fg);">3076.T</a></td>
+      <td>AI HOLDINGS CORPORATION</td>
+      <td class="cell-right mono">2,968.00</td>
+      <td class="cell-right mono text-bear">-0.60%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~74%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~37% · n=51 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/6594_T" class="mono" style="color: var(--fg);">6594.T</a></td>
+      <td>NIDEC CORPORATION</td>
+      <td class="cell-right mono">2,250.00</td>
+      <td class="cell-right mono text-bear">-3.85%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~37%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~71% · n=14 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/7220_T" class="mono" style="color: var(--fg);">7220.T</a></td>
+      <td>MUSASHI SEIMITSU IND</td>
+      <td class="cell-right mono">2,965.00</td>
+      <td class="cell-right mono text-bear">-3.42%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~71%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~71% · n=38 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/7267_T" class="mono" style="color: var(--fg);">7267.T</a></td>
+      <td>HONDA MOTOR CO</td>
+      <td class="cell-right mono">1,669.00</td>
+      <td class="cell-right mono text-bear">-2.85%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~71%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~69% · n=32 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/1332_T" class="mono" style="color: var(--fg);">1332.T</a></td>
+      <td>NISSUI CORPORATION</td>
+      <td class="cell-right mono">1,117.00</td>
+      <td class="cell-right mono text-bear">-2.83%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~69%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="uptrend" data-detail="~69% · n=32 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3131_T" class="mono" style="color: var(--fg);">3131.T</a></td>
+      <td>SHINDEN HIGHTEX CORPORATION</td>
+      <td class="cell-right mono">7,980.00</td>
+      <td class="cell-right mono text-bull">+1.92%</td>
+      <td><span class="tag tag-bull">Uptrend</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~69%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~69% · n=64 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3191_T" class="mono" style="color: var(--fg);">3191.T</a></td>
+      <td>JOYFUL HONDA CO LTD</td>
+      <td class="cell-right mono">2,271.00</td>
+      <td class="cell-right mono text-bear">-0.87%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~69%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~68% · n=59 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3401_T" class="mono" style="color: var(--fg);">3401.T</a></td>
+      <td>TEIJIN LTD</td>
+      <td class="cell-right mono">1,659.50</td>
+      <td class="cell-right mono text-bear">-1.80%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~68%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~68% · n=31 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/7741_T" class="mono" style="color: var(--fg);">7741.T</a></td>
+      <td></td>
+      <td class="cell-right mono">23,225.00</td>
+      <td class="cell-right mono text-bear">-1.55%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~68%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~68% · n=37 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/2503_T" class="mono" style="color: var(--fg);">2503.T</a></td>
+      <td>KIRIN HOLDINGS COMPANY LIMITED</td>
+      <td class="cell-right mono">2,817.50</td>
+      <td class="cell-right mono text-bear">-0.62%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~68%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~68% · n=37 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3086_T" class="mono" style="color: var(--fg);">3086.T</a></td>
+      <td>J FRONT RETAILING CO LTD</td>
+      <td class="cell-right mono">2,660.50</td>
+      <td class="cell-right mono text-bear">-0.89%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~68%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~67% · n=43 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/4452_T" class="mono" style="color: var(--fg);">4452.T</a></td>
+      <td>KAO CORP</td>
+      <td class="cell-right mono">3,484.00</td>
+      <td class="cell-right mono text-bear">-0.37%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~67%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~67% · n=15 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/2979_T" class="mono" style="color: var(--fg);">2979.T</a></td>
+      <td>SOSILA LOGISTICS REIT INC</td>
+      <td class="cell-right mono">99,900.00</td>
+      <td class="cell-right mono text-bull">+1.42%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~67%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~66% · n=62 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/4151_T" class="mono" style="color: var(--fg);">4151.T</a></td>
+      <td>KYOWA KIRIN CO LTD</td>
+      <td class="cell-right mono">2,266.00</td>
+      <td class="cell-right mono text-bull">+0.89%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~66%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~66% · n=58 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/8697_T" class="mono" style="color: var(--fg);">8697.T</a></td>
+      <td>JAPAN EXCHANGE GROUP</td>
+      <td class="cell-right mono">2,250.00</td>
+      <td class="cell-right mono text-bear">-2.58%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~66%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~65% · n=23 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/7224_T" class="mono" style="color: var(--fg);">7224.T</a></td>
+      <td>SHINMAYWA INDUSTRIES</td>
+      <td class="cell-right mono">1,909.00</td>
+      <td class="cell-right mono text-bear">-2.75%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~65%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~65% · n=31 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/4578_T" class="mono" style="color: var(--fg);">4578.T</a></td>
+      <td>OTSUKA HLDGS CO LTD</td>
+      <td class="cell-right mono">11,400.00</td>
+      <td class="cell-right mono text-bull">+2.89%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~65%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="uptrend" data-detail="~64% · n=42 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3132_T" class="mono" style="color: var(--fg);">3132.T</a></td>
+      <td>MACNICA HOLDINGS INC</td>
+      <td class="cell-right mono">4,255.00</td>
+      <td class="cell-right mono text-bull">+0.73%</td>
+      <td><span class="tag tag-bull">Uptrend</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~64%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~64% · n=36 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/9432_T" class="mono" style="color: var(--fg);">9432.T</a></td>
+      <td>NTT INC</td>
+      <td class="cell-right mono">171.30</td>
+      <td class="cell-right mono text-bear">-1.95%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~64%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~63% · n=43 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/6758_T" class="mono" style="color: var(--fg);">6758.T</a></td>
+      <td>SONY GROUP CORPORATION</td>
+      <td class="cell-right mono">3,732.00</td>
+      <td class="cell-right mono text-bull">+1.41%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~63%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~62% · n=42 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/7201_T" class="mono" style="color: var(--fg);">7201.T</a></td>
+      <td>NISSAN MOTOR CO</td>
+      <td class="cell-right mono">296.90</td>
+      <td class="cell-right mono text-bear">-1.66%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~62%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~62% · n=26 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/2980_T" class="mono" style="color: var(--fg);">2980.T</a></td>
+      <td>SRE HLDGS CORP</td>
+      <td class="cell-right mono">2,297.00</td>
+      <td class="cell-right mono text-bear">-0.39%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~62%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~61% · n=57 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/9202_T" class="mono" style="color: var(--fg);">9202.T</a></td>
+      <td>ANA HOLDINGS INC</td>
+      <td class="cell-right mono">2,950.00</td>
+      <td class="cell-right mono text-bear">-1.50%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~61%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~61% · n=56 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/6841_T" class="mono" style="color: var(--fg);">6841.T</a></td>
+      <td>YOKOGAWA ELECTRIC CORP</td>
+      <td class="cell-right mono">4,679.00</td>
+      <td class="cell-right mono text-bear">-0.47%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~61%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~60% · n=25 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/1377_T" class="mono" style="color: var(--fg);">1377.T</a></td>
+      <td>SAKATA SEED CORP</td>
+      <td class="cell-right mono">4,295.00</td>
+      <td class="cell-right mono text-bear">-1.60%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~60%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~59% · n=22 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3097_T" class="mono" style="color: var(--fg);">3097.T</a></td>
+      <td>MONOGATARI CORPORATION</td>
+      <td class="cell-right mono">5,340.00</td>
+      <td class="cell-right mono text-bull">+0.19%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~59%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~58% · n=24 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/7173_T" class="mono" style="color: var(--fg);">7173.T</a></td>
+      <td>TOKYO KIRABOSHI FINANCIAL GP IN</td>
+      <td class="cell-right mono">1,707.00</td>
+      <td class="cell-right mono text-bear">-3.99%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~58%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~57% · n=44 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/6367_T" class="mono" style="color: var(--fg);">6367.T</a></td>
+      <td>DAIKIN INDUSTRIES</td>
+      <td class="cell-right mono">20,705.00</td>
+      <td class="cell-right mono text-bear">-1.03%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~57%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~57% · n=23 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/6952_T" class="mono" style="color: var(--fg);">6952.T</a></td>
+      <td>CASIO COMPUTER CO</td>
+      <td class="cell-right mono">2,148.50</td>
+      <td class="cell-right mono text-bull">+0.37%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~57%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~53% · n=45 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/8766_T" class="mono" style="color: var(--fg);">8766.T</a></td>
+      <td>TOKIO MARINE HOLDINGS INC</td>
+      <td class="cell-right mono">523.20</td>
+      <td class="cell-right mono text-bear">-2.81%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~53%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~53% · n=15 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/9984_T" class="mono" style="color: var(--fg);">9984.T</a></td>
+      <td>SOFTBANK GROUP CORP</td>
+      <td class="cell-right mono">6,035.00</td>
+      <td class="cell-right mono text-bear">-3.26%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~53%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~52% · n=21 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3034_T" class="mono" style="color: var(--fg);">3034.T</a></td>
+      <td>QOL HOLDINGS CO LTD</td>
+      <td class="cell-right mono">2,362.00</td>
+      <td class="cell-right mono text-bear">-2.03%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~52%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~51% · n=39 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3091_T" class="mono" style="color: var(--fg);">3091.T</a></td>
+      <td>BRONCO BILLY CO LTD</td>
+      <td class="cell-right mono">2,836.00</td>
+      <td class="cell-right mono text-bear">-0.18%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~51%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~50% · n=34 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3093_T" class="mono" style="color: var(--fg);">3093.T</a></td>
+      <td>TREASURE FACTORY CO LTD</td>
+      <td class="cell-right mono">1,928.00</td>
+      <td class="cell-right mono text-bear">-0.67%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~50%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~50% · n=16 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/6762_T" class="mono" style="color: var(--fg);">6762.T</a></td>
+      <td>TDK CORP</td>
+      <td class="cell-right mono">2,919.00</td>
+      <td class="cell-right mono text-bear">-1.22%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~50%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~48% · n=67 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3107_T" class="mono" style="color: var(--fg);">3107.T</a></td>
+      <td>DAIWABO HOLDINGS CO LTD</td>
+      <td class="cell-right mono">3,719.00</td>
+      <td class="cell-right mono text-bear">-1.48%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~48%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~47% · n=34 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/2802_T" class="mono" style="color: var(--fg);">2802.T</a></td>
+      <td>AJINOMOTO CO INC</td>
+      <td class="cell-right mono">4,978.00</td>
+      <td class="cell-right mono text-bear">-0.06%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~47%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~45% · n=29 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3099_T" class="mono" style="color: var(--fg);">3099.T</a></td>
+      <td>ISETAN MITSUKOSHI HOLDINGS LTD</td>
+      <td class="cell-right mono">1,618.00</td>
+      <td class="cell-right mono text-bear">-2.74%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~45%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~44% · n=34 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3050_T" class="mono" style="color: var(--fg);">3050.T</a></td>
+      <td>DCM HOLDINGS CO LTD</td>
+      <td class="cell-right mono">1,584.00</td>
+      <td class="cell-right mono text-bear">-0.56%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~44%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~44% · n=25 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/1417_T" class="mono" style="color: var(--fg);">1417.T</a></td>
+      <td>MIRAIT ONE CORPORATION</td>
+      <td class="cell-right mono">3,463.00</td>
+      <td class="cell-right mono text-bear">-2.67%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~44%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~44% · n=39 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/5401_T" class="mono" style="color: var(--fg);">5401.T</a></td>
+      <td>NIPPON STEEL CORPORATION</td>
+      <td class="cell-right mono">650.80</td>
+      <td class="cell-right mono text-bear">-4.70%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~44%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~42% · n=52 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/7282_T" class="mono" style="color: var(--fg);">7282.T</a></td>
+      <td>TOYODA GOSEI</td>
+      <td class="cell-right mono">1,017.50</td>
+      <td class="cell-right mono text-bear">-3.35%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~42%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~42% · n=62 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/7167_T" class="mono" style="color: var(--fg);">7167.T</a></td>
+      <td>MEBUKI FINANCIAL GROUP INC</td>
+      <td class="cell-right mono">1,675.00</td>
+      <td class="cell-right mono text-bear">-3.43%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~42%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~42% · n=12 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3046_T" class="mono" style="color: var(--fg);">3046.T</a></td>
+      <td>JINS HOLDINGS INC</td>
+      <td class="cell-right mono">5,730.00</td>
+      <td class="cell-right mono text-bear">-1.04%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~42%</td>
+      <td class="mono text-dim">BUY_S1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~41% · n=27 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3176_T" class="mono" style="color: var(--fg);">3176.T</a></td>
+      <td>SANYO TRADING CO LIMITED</td>
+      <td class="cell-right mono">1,134.00</td>
+      <td class="cell-right mono text-bear">-2.41%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~41%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~40% · n=35 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/1458_T" class="mono" style="color: var(--fg);">1458.T</a></td>
+      <td>RAKUTEN INVESTMENT NIKKEI 225 L</td>
+      <td class="cell-right mono">81,500.00</td>
+      <td class="cell-right mono text-bear">-0.31%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~40%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~40% · n=63 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/7186_T" class="mono" style="color: var(--fg);">7186.T</a></td>
+      <td>YOKOHAMA FINANCIAL GROUP INC</td>
+      <td class="cell-right mono">1,868.50</td>
+      <td class="cell-right mono text-bear">-2.53%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~40%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~38% · n=34 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/9433_T" class="mono" style="color: var(--fg);">9433.T</a></td>
+      <td>KDDI CORPORATION</td>
+      <td class="cell-right mono">2,923.50</td>
+      <td class="cell-right mono text-bear">-1.95%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~38%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~38% · n=64 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/6861_T" class="mono" style="color: var(--fg);">6861.T</a></td>
+      <td>KEYENCE CORP</td>
+      <td class="cell-right mono">79,480.00</td>
+      <td class="cell-right mono text-bull">+1.25%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~38%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~37% · n=30 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/2501_T" class="mono" style="color: var(--fg);">2501.T</a></td>
+      <td>SAPPORO BREWERIES LTD</td>
+      <td class="cell-right mono">1,800.00</td>
+      <td class="cell-right mono text-bull">+0.47%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~37%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~36% · n=45 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/8601_T" class="mono" style="color: var(--fg);">8601.T</a></td>
+      <td>DAIWA SECURITIES GROUP</td>
+      <td class="cell-right mono">1,786.00</td>
+      <td class="cell-right mono text-bear">-3.49%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~36%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~35% · n=31 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/1414_T" class="mono" style="color: var(--fg);">1414.T</a></td>
+      <td>SHO-BOND HOLDINGS CO LTD</td>
+      <td class="cell-right mono">1,252.50</td>
+      <td class="cell-right mono text-bear">-0.40%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~35%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="uptrend" data-detail="~34% · n=32 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3105_T" class="mono" style="color: var(--fg);">3105.T</a></td>
+      <td>NISSHINBO HOLDINGS INC</td>
+      <td class="cell-right mono">2,610.50</td>
+      <td class="cell-right mono text-bull">+0.17%</td>
+      <td><span class="tag tag-bull">Uptrend</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~34%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~32% · n=28 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/6954_T" class="mono" style="color: var(--fg);">6954.T</a></td>
+      <td>FANUC CORPORATION</td>
+      <td class="cell-right mono">5,911.00</td>
+      <td class="cell-right mono text-bear">-0.54%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~32%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~31% · n=36 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/4063_T" class="mono" style="color: var(--fg);">4063.T</a></td>
+      <td>SHIN-ETSU CHEMICAL CO</td>
+      <td class="cell-right mono">5,749.00</td>
+      <td class="cell-right mono text-bear">-1.12%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~31%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~30% · n=43 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3186_T" class="mono" style="color: var(--fg);">3186.T</a></td>
+      <td>NEXTAGE CO LTD</td>
+      <td class="cell-right mono">2,800.00</td>
+      <td class="cell-right mono text-bear">-0.81%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~30%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~30% · n=40 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/8306_T" class="mono" style="color: var(--fg);">8306.T</a></td>
+      <td></td>
+      <td class="cell-right mono">3,592.00</td>
+      <td class="cell-right mono text-bear">-3.47%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~30%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="uptrend" data-detail="~28% · n=43 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/6098_T" class="mono" style="color: var(--fg);">6098.T</a></td>
+      <td>RECRUIT HOLDINGS CO LTD</td>
+      <td class="cell-right mono">16,700.00</td>
+      <td class="cell-right mono text-bull">+1.55%</td>
+      <td><span class="tag tag-bull">Uptrend</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~28%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~26% · n=34 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3087_T" class="mono" style="color: var(--fg);">3087.T</a></td>
+      <td>DOUTOR NICHIRES HOLDINGS CO LTD</td>
+      <td class="cell-right mono">3,180.00</td>
+      <td class="cell-right mono text-bear">-0.47%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~26%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~21% · n=48 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3407_T" class="mono" style="color: var(--fg);">3407.T</a></td>
+      <td>ASAHI KASEI CORP</td>
+      <td class="cell-right mono">1,611.50</td>
+      <td class="cell-right mono text-bear">-1.83%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~21%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~20% · n=20 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/4661_T" class="mono" style="color: var(--fg);">4661.T</a></td>
+      <td>ORIENTAL LAND CO</td>
+      <td class="cell-right mono">2,889.00</td>
+      <td class="cell-right mono text-bear">-0.45%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~20%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~20% · n=41 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/8411_T" class="mono" style="color: var(--fg);">8411.T</a></td>
+      <td>MIZUHO FINANCIAL GROUP</td>
+      <td class="cell-right mono">8,472.00</td>
+      <td class="cell-right mono text-bear">-2.89%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~20%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="uptrend" data-detail="~19% · n=37 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3036_T" class="mono" style="color: var(--fg);">3036.T</a></td>
+      <td>ALCONIX CORPORATION</td>
+      <td class="cell-right mono">3,325.00</td>
+      <td class="cell-right mono text-bear">-3.48%</td>
+      <td><span class="tag tag-bull">Uptrend</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~19%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~17% · n=30 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/4502_T" class="mono" style="color: var(--fg);">4502.T</a></td>
+      <td>TAKEDA PHARMACEUTICAL CO LTD</td>
+      <td class="cell-right mono">5,739.00</td>
+      <td class="cell-right mono text-bear">-3.22%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~17%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~13% · n=47 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/8316_T" class="mono" style="color: var(--fg);">8316.T</a></td>
+      <td>SUMITOMO MITSUI FINANCIAL GROUP</td>
+      <td class="cell-right mono">3,357.00</td>
+      <td class="cell-right mono text-bear">-1.41%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~13%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="~5% · n=22 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/6752_T" class="mono" style="color: var(--fg);">6752.T</a></td>
+      <td>PANASONIC HOLDINGS CORP</td>
+      <td class="cell-right mono">4,389.00</td>
+      <td class="cell-right mono text-bear">-1.79%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~5%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="uptrend" data-detail="~3% · n=34 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3156_T" class="mono" style="color: var(--fg);">3156.T</a></td>
+      <td>RESTAR CORPORATION</td>
+      <td class="cell-right mono">6,220.00</td>
+      <td class="cell-right mono text-bull">+0.97%</td>
+      <td><span class="tag tag-bull">Uptrend</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">~3%</td>
+      <td class="mono text-dim">SELL_R1 (ref)</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/1379_T" class="mono" style="color: var(--fg);">1379.T</a></td>
+      <td>HOKUTO CORP</td>
+      <td class="cell-right mono">2,036.00</td>
+      <td class="cell-right mono text-bear">-3.46%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/1433_T" class="mono" style="color: var(--fg);">1433.T</a></td>
+      <td></td>
+      <td class="cell-right mono">1,181.00</td>
+      <td class="cell-right mono text-bear">-0.67%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/1435_T" class="mono" style="color: var(--fg);">1435.T</a></td>
+      <td></td>
+      <td class="cell-right mono">172.00</td>
+      <td class="cell-right mono text-bear">-2.27%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/1447_T" class="mono" style="color: var(--fg);">1447.T</a></td>
+      <td></td>
+      <td class="cell-right mono">321.00</td>
+      <td class="cell-right mono text-bull">+0.63%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/1457_T" class="mono" style="color: var(--fg);">1457.T</a></td>
+      <td>DAIWA ASSET MANAGEMENT IFREEETF</td>
+      <td class="cell-right mono">1,764.00</td>
+      <td class="cell-right mono text-bull">+0.57%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/2922_T" class="mono" style="color: var(--fg);">2922.T</a></td>
+      <td>NATORI CO LTD</td>
+      <td class="cell-right mono">1,967.00</td>
+      <td class="cell-right mono text-bear">-2.19%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/2927_T" class="mono" style="color: var(--fg);">2927.T</a></td>
+      <td>AFC-HD AMS LIFE SCIENCE CO LTD</td>
+      <td class="cell-right mono">848.00</td>
+      <td class="cell-right mono text-bull">+0.12%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="uptrend" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/2929_T" class="mono" style="color: var(--fg);">2929.T</a></td>
+      <td>PHARMA FOODS INTERNATIONAL CO</td>
+      <td class="cell-right mono">701.00</td>
+      <td class="cell-right mono text-bull">+0.14%</td>
+      <td><span class="tag tag-bull">Uptrend</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/2930_T" class="mono" style="color: var(--fg);">2930.T</a></td>
+      <td>KITANOTATSUJIN CORP</td>
+      <td class="cell-right mono">131.00</td>
+      <td class="cell-right mono text-bear">-3.68%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/2931_T" class="mono" style="color: var(--fg);">2931.T</a></td>
+      <td>EUGLENA CO LTD</td>
+      <td class="cell-right mono">345.00</td>
+      <td class="cell-right mono text-bear">-1.43%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/2933_T" class="mono" style="color: var(--fg);">2933.T</a></td>
+      <td>KIBUN FOODS INC</td>
+      <td class="cell-right mono">1,097.00</td>
+      <td class="cell-right mono text-bear">-1.53%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/2935_T" class="mono" style="color: var(--fg);">2935.T</a></td>
+      <td>PICKLES HOLDINGS CO LTD</td>
+      <td class="cell-right mono">1,195.00</td>
+      <td class="cell-right mono text-bear">-1.32%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/2938_T" class="mono" style="color: var(--fg);">2938.T</a></td>
+      <td>OKAMURA FOODS CO LTD</td>
+      <td class="cell-right mono">1,261.00</td>
+      <td class="cell-right mono text-bear">-1.56%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="~0% · n=2 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/2962_T" class="mono" style="color: var(--fg);">2962.T</a></td>
+      <td>TECNISCO LTD</td>
+      <td class="cell-right mono">2,033.00</td>
+      <td class="cell-right mono text-bear">-2.77%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/2971_T" class="mono" style="color: var(--fg);">2971.T</a></td>
+      <td>ESCON JAPAN REIT INVESTMENT COR</td>
+      <td class="cell-right mono">105,200.00</td>
+      <td class="cell-right mono text-bear">-1.31%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/2972_T" class="mono" style="color: var(--fg);">2972.T</a></td>
+      <td>SANKEI REAL ESTATE INC</td>
+      <td class="cell-right mono">125,000.00</td>
+      <td class="cell-right mono text-bear">-0.16%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/2975_T" class="mono" style="color: var(--fg);">2975.T</a></td>
+      <td>STAR MICA HLDGS CO</td>
+      <td class="cell-right mono">1,380.00</td>
+      <td class="cell-right mono text-bear">-2.54%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/2989_T" class="mono" style="color: var(--fg);">2989.T</a></td>
+      <td>TOKAIDO REIT INC</td>
+      <td class="cell-right mono">91,400.00</td>
+      <td class="cell-right mono text-bear">-0.76%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="uptrend" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/2997_T" class="mono" style="color: var(--fg);">2997.T</a></td>
+      <td>STORAGE-OH CO LTD</td>
+      <td class="cell-right mono">1,322.00</td>
+      <td class="cell-right mono ">+0.00%</td>
+      <td><span class="tag tag-bull">Uptrend</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3010_T" class="mono" style="color: var(--fg);">3010.T</a></td>
+      <td>POLARIS HOLDINGS CO LTD</td>
+      <td class="cell-right mono">190.00</td>
+      <td class="cell-right mono ">+0.00%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3021_T" class="mono" style="color: var(--fg);">3021.T</a></td>
+      <td>PACIFIC NET CO. LTD</td>
+      <td class="cell-right mono">1,621.00</td>
+      <td class="cell-right mono text-bear">-0.92%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3028_T" class="mono" style="color: var(--fg);">3028.T</a></td>
+      <td>ALPEN CO LTD</td>
+      <td class="cell-right mono">2,336.00</td>
+      <td class="cell-right mono text-bear">-0.04%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="uptrend" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3031_T" class="mono" style="color: var(--fg);">3031.T</a></td>
+      <td>RACCOON HOLDINGS INC</td>
+      <td class="cell-right mono">704.00</td>
+      <td class="cell-right mono text-bull">+1.00%</td>
+      <td><span class="tag tag-bull">Uptrend</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3035_T" class="mono" style="color: var(--fg);">3035.T</a></td>
+      <td>KTK INC</td>
+      <td class="cell-right mono">782.00</td>
+      <td class="cell-right mono text-bear">-0.51%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="uptrend" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3040_T" class="mono" style="color: var(--fg);">3040.T</a></td>
+      <td>SOLITON SYSTEMS K.K.</td>
+      <td class="cell-right mono">2,678.00</td>
+      <td class="cell-right mono text-bull">+1.09%</td>
+      <td><span class="tag tag-bull">Uptrend</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3053_T" class="mono" style="color: var(--fg);">3053.T</a></td>
+      <td></td>
+      <td class="cell-right mono">200.00</td>
+      <td class="cell-right mono text-bear">-0.99%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3054_T" class="mono" style="color: var(--fg);">3054.T</a></td>
+      <td>HYPER INC</td>
+      <td class="cell-right mono">379.00</td>
+      <td class="cell-right mono text-bear">-0.52%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3063_T" class="mono" style="color: var(--fg);">3063.T</a></td>
+      <td></td>
+      <td class="cell-right mono">1,130.00</td>
+      <td class="cell-right mono text-bear">-1.82%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3070_T" class="mono" style="color: var(--fg);">3070.T</a></td>
+      <td>JELLY BEANS GROUP CO LTD</td>
+      <td class="cell-right mono">43.00</td>
+      <td class="cell-right mono text-bear">-2.27%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3077_T" class="mono" style="color: var(--fg);">3077.T</a></td>
+      <td>HORIIFOODSERVICE CO.LTD.</td>
+      <td class="cell-right mono">1,451.00</td>
+      <td class="cell-right mono text-bull">+4.39%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3083_T" class="mono" style="color: var(--fg);">3083.T</a></td>
+      <td>STAR SEEDS CO LTD</td>
+      <td class="cell-right mono">1,071.00</td>
+      <td class="cell-right mono text-bear">-5.64%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3103_T" class="mono" style="color: var(--fg);">3103.T</a></td>
+      <td>UNITIKA LTD</td>
+      <td class="cell-right mono">1,466.00</td>
+      <td class="cell-right mono text-bear">-2.14%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="~0% · n=7 (ref)" class="row-wait">
+      <td><a href="/jp200/ticker/3110_T" class="mono" style="color: var(--fg);">3110.T</a></td>
+      <td>NITTO BOSEKI CO</td>
+      <td class="cell-right mono">3,040.00</td>
+      <td class="cell-right mono text-bear">-1.55%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3133_T" class="mono" style="color: var(--fg);">3133.T</a></td>
+      <td>KAIHAN CO LTD</td>
+      <td class="cell-right mono">47.00</td>
+      <td class="cell-right mono text-bear">-2.08%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3139_T" class="mono" style="color: var(--fg);">3139.T</a></td>
+      <td>LACTO JAPAN CO.LTD</td>
+      <td class="cell-right mono">3,415.00</td>
+      <td class="cell-right mono text-bear">-1.87%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3153_T" class="mono" style="color: var(--fg);">3153.T</a></td>
+      <td>YASHIMA DENKI CO LTD</td>
+      <td class="cell-right mono">3,140.00</td>
+      <td class="cell-right mono text-bull">+0.48%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3154_T" class="mono" style="color: var(--fg);">3154.T</a></td>
+      <td>MEDIUS HLDG CO LTD</td>
+      <td class="cell-right mono">779.00</td>
+      <td class="cell-right mono text-bear">-2.50%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3159_T" class="mono" style="color: var(--fg);">3159.T</a></td>
+      <td>MARUZEN CHI HOLDINGS CO LTD</td>
+      <td class="cell-right mono">382.00</td>
+      <td class="cell-right mono text-bull">+0.79%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3173_T" class="mono" style="color: var(--fg);">3173.T</a></td>
+      <td>COMINIX CO LTD</td>
+      <td class="cell-right mono">1,496.00</td>
+      <td class="cell-right mono text-bull">+2.26%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3180_T" class="mono" style="color: var(--fg);">3180.T</a></td>
+      <td>BEAUTY GARAGE INC</td>
+      <td class="cell-right mono">1,629.00</td>
+      <td class="cell-right mono text-bull">+0.62%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3182_T" class="mono" style="color: var(--fg);">3182.T</a></td>
+      <td>OISIX INC</td>
+      <td class="cell-right mono">1,624.00</td>
+      <td class="cell-right mono text-bear">-0.37%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3185_T" class="mono" style="color: var(--fg);">3185.T</a></td>
+      <td>DREAM VISION CO LTD</td>
+      <td class="cell-right mono">110.00</td>
+      <td class="cell-right mono text-bear">-1.79%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3187_T" class="mono" style="color: var(--fg);">3187.T</a></td>
+      <td>MIRATAP INC</td>
+      <td class="cell-right mono">409.00</td>
+      <td class="cell-right mono text-bull">+0.74%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_recovery" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3189_T" class="mono" style="color: var(--fg);">3189.T</a></td>
+      <td></td>
+      <td class="cell-right mono">105.00</td>
+      <td class="cell-right mono text-bear">-1.87%</td>
+      <td><span class="tag tag-amber">Recov</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3193_T" class="mono" style="color: var(--fg);">3193.T</a></td>
+      <td>ETERNAL HOSPITALITY GROUP CO LT</td>
+      <td class="cell-right mono">1,293.00</td>
+      <td class="cell-right mono text-bear">-1.30%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3195_T" class="mono" style="color: var(--fg);">3195.T</a></td>
+      <td>GENERATION PASS CO LTD</td>
+      <td class="cell-right mono">453.00</td>
+      <td class="cell-right mono text-bull">+1.12%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3196_T" class="mono" style="color: var(--fg);">3196.T</a></td>
+      <td>HOTLAND HOLDINGS CO LTD</td>
+      <td class="cell-right mono">1,657.00</td>
+      <td class="cell-right mono text-bear">-0.78%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/3199_T" class="mono" style="color: var(--fg);">3199.T</a></td>
+      <td>WATAHAN CO LTD</td>
+      <td class="cell-right mono">1,283.00</td>
+      <td class="cell-right mono text-bear">-1.00%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="base_building" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/7198_T" class="mono" style="color: var(--fg);">7198.T</a></td>
+      <td>SBI ARUHI CORPORATION</td>
+      <td class="cell-right mono">815.00</td>
+      <td class="cell-right mono text-bear">-3.55%</td>
+      <td><span class="tag tag-amber">Base</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+    <tr data-action="WAIT" data-phase="downtrend_active" data-detail="—" class="row-wait">
+      <td><a href="/jp200/ticker/7318_T" class="mono" style="color: var(--fg);">7318.T</a></td>
+      <td>SERENDIP HOLDINGS CO LTD</td>
+      <td class="cell-right mono">1,338.00</td>
+      <td class="cell-right mono text-bear">-4.43%</td>
+      <td><span class="tag tag-bear">DT</span></td>
+      <td><span class="cell-action wait">WAIT</span></td>
+      <td class="cell-right mono">—</td>
+      <td class="cell-right mono text-bull">—</td>
+      <td class="cell-right mono text-bear">—</td>
+      <td class="cell-right mono">—</td>
+      <td class="mono text-dim">RANGE</td>
+    </tr>
+  </tbody>
+  </table>
+  <div id="emptyState" hidden style="padding: var(--sp-7); text-align: center; color: var(--dim); font-family: var(--font-mono); font-size: var(--text-sm);">
+    0 results — clear the search or filters to see all rows.
+  </div>
+  </div>
+
+  <div class="disclaimer mt-5">
+    <b>⚠ Disclaimer</b> · Educational only. Not investment advice. T-1 data (yesterday's close) — never today's intraday. Backtest win% is historical, not predictive.
+  </div>
+</div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="row">
+      <div>© 2026 Leeks Terminal · win9you.com · <a href="/methodology">Methodology</a> · <a href="/disclaimer">Disclaimer</a></div>
+      <div class="mono text-dim">T-1 · 2026-09-29</div>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+const TOTAL_ROWS = document.querySelectorAll('#tableBody tr[data-action]').length;
+let currentAction = '';
+let currentPhase = '';
+document.querySelectorAll('.filter-chip[data-action]').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip[data-action]').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    currentAction = c.dataset.action;
+    filterTable();
+  });
+});
+document.querySelectorAll('.filter-chip[data-phase]').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip[data-phase]').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    currentPhase = c.dataset.phase;
+    filterTable();
+  });
+});
+
+function filterTable() {
+  const search = document.getElementById('search').value.toLowerCase();
+  const rows = document.querySelectorAll('#tableBody tr[data-action]');
+  let visible = 0;
+  rows.forEach(row => {
+    const ticker = row.cells[0]?.textContent.toLowerCase() || '';
+    const name = row.cells[1]?.textContent.toLowerCase() || '';
+    const action = row.dataset.action;
+    const phase = row.dataset.phase;
+    const matchSearch = !search || ticker.includes(search) || name.includes(search);
+    const matchAction = !currentAction || action === currentAction;
+    const matchPhase = !currentPhase || phase === currentPhase;
+    const show = matchSearch && matchAction && matchPhase;
+    row.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('rowCount').textContent = visible + ' of ' + TOTAL_ROWS;
+  const empty = document.getElementById('emptyState');
+  if (empty) empty.hidden = visible !== 0;
+}
+
+document.querySelectorAll('th[data-col]').forEach(th => {
+  th.setAttribute('tabindex', '0');
+  const runSort = () => {
+    const idx = Array.from(th.parentNode.children).indexOf(th);
+    const dir = th.classList.contains('sorted-asc') ? 'desc' : 'asc';
+    document.querySelectorAll('th').forEach(x => {
+      x.classList.remove('sorted-asc','sorted-desc');
+      x.removeAttribute('aria-sort');
+    });
+    th.classList.add('sorted-' + dir);
+    th.setAttribute('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
+    const tbody = document.getElementById('tableBody');
+    const rows = Array.from(tbody.querySelectorAll('tr[data-action]'));
+    rows.sort((a, b) => {
+      const av = a.cells[idx]?.textContent.trim() || '';
+      const bv = b.cells[idx]?.textContent.trim() || '';
+      const an = parseFloat(av.replace(/[+%,$ HKD\s]/g, ''));
+      const bn = parseFloat(bv.replace(/[+%,$ HKD\s]/g, ''));
+      const isNum = !isNaN(an) && !isNaN(bn);
+      if (isNum) return dir === 'asc' ? an - bn : bn - an;
+      return dir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+    });
+    rows.forEach(r => tbody.appendChild(r));
+  };
+  th.addEventListener('click', runSort);
+  th.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); runSort(); }
+  });
+});
+document.getElementById('rowCount').textContent = TOTAL_ROWS + ' of ' + TOTAL_ROWS;
+</script>
+
+</body>
+</html>

@@ -13,7 +13,7 @@ import sys
 from collections import Counter
 from typing import Optional
 
-DB = "/Users/kenken/Documents/dsa-hk/data/dsa_hk.db"
+DB = "/Users/kenken/dev/dsa-hk/data/dsa_hk.db"
 
 # Buy-side caution phrases — if LLM body mentions these AND op was overridden to 買入,
 # revert to 觀望.

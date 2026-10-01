@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.data_fetcher import fetch_snapshot
 
-DB = "/Users/kenken/Documents/dsa-hk/data/dsa_hk.db"
+DB = "/Users/kenken/dev/dsa-hk/data/dsa_hk.db"
 MAX_WORKERS = 8
 REPORT_DATE = "2026-06-29"
 MAX_WORKERS = int(os.environ.get("DSA_PARALLEL", "8"))
