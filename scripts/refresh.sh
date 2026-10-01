@@ -112,6 +112,11 @@ python3 scripts/build_v2_signals.py 2>&1 | tail -2
 python3 scripts/build_backtest_page.py 2>&1 | tail -1
 
 # --- Step 6: Git commit + wrangler deploy ---
+# Finder drops .DS_Store into .git/refs/heads/, which git reads as a ref and
+# reports as badRefName. A junk ref also breaks `git bundle --all`. Clear it
+# before the commit so fsck output stays readable and backups keep working.
+bash scripts/git_housekeeping.sh 2>&1 | tail -2
+
 git add -A
 git commit -m "chore: refresh T-1 data ($DATA_DATE)" || echo "  no changes to commit"
 git push origin main 2>&1 | tail -3
