@@ -3,21 +3,21 @@
   "ticker_user": "3050.T",
   "name": "DCM HOLDINGS CO LTD",
   "data_source": "yfinance",
-  "data_range": "2025-12-02 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-04 → 2026-10-01 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 1593.0,
-    "H": 1602.0,
-    "L": 1579.0,
-    "C": 1584.0,
-    "prev_close": 1593.0,
-    "chg_pct": -0.56
+    "date": "2026-10-01",
+    "O": 1527.0,
+    "H": 1532.0,
+    "L": 1513.0,
+    "C": 1524.0,
+    "prev_close": 1537.0,
+    "chg_pct": -0.85
   },
   "phase": "base_building",
-  "adx": 19.25,
-  "plus_di": 20.23,
-  "minus_di": 20.76,
-  "regime": "range",
+  "adx": 21.9,
+  "plus_di": 15.02,
+  "minus_di": 33.81,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 1746.0 (2026-02-24), trough 1404.0 (2026-06-01), box top 1636.0 (2026-08-25)",
   "peak": {
@@ -32,28 +32,22 @@
     "top": 1636.0,
     "top_date": "2026-08-25",
     "bottom": 1404.0,
-    "period": "2026-06-01 to 2026-09-29"
+    "period": "2026-06-01 to 2026-10-01"
   },
-  "drop_from_peak_pct": 9.3,
-  "recovery_from_crash_pct": 12.8,
+  "drop_from_peak_pct": 12.7,
+  "recovery_from_crash_pct": 8.5,
   "supports": [
     {
-      "level": 1512.0,
+      "level": 1484.0,
       "label": "S1 KEY",
-      "touches": 3,
-      "evidence": "tested 3x in base period; 4.5% below current"
+      "touches": 7,
+      "evidence": "tested 7x in base period; 2.6% below current"
     },
     {
-      "level": 1504.0,
+      "level": 1480.0,
       "label": "S2",
-      "touches": 3,
-      "evidence": "mid-base support, tested 3x"
-    },
-    {
-      "level": 1496.0,
-      "label": "S3",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
+      "touches": 9,
+      "evidence": "mid-base support, tested 9x"
     },
     {
       "level": 1404.0,
@@ -64,9 +58,9 @@
   ],
   "resistances": [
     {
-      "level": 1602.0,
+      "level": 1532.0,
       "label": "R1 today high",
-      "evidence": "today's high 1602.0"
+      "evidence": "today's high 1532.0"
     },
     {
       "level": 1636.0,
@@ -75,23 +69,23 @@
     }
   ],
   "position": {
-    "current": 1584.0,
-    "in_box_pct": 77.6,
-    "nearest_support": "S1 KEY (1512.0)",
-    "nearest_resistance": "R1 today high (1602.0)"
+    "current": 1524.0,
+    "in_box_pct": 51.7,
+    "nearest_support": "S1 KEY (1484.0)",
+    "nearest_resistance": "R1 today high (1532.0)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 1593.0,
-    "H": 1602.0,
-    "L": 1579.0,
-    "C": 1584.0,
-    "body_pct": 39.1,
-    "upper_wick_pct": 39.1,
-    "lower_wick_pct": 21.7
+    "close_position": "upper_half",
+    "O": 1527.0,
+    "H": 1532.0,
+    "L": 1513.0,
+    "C": 1524.0,
+    "body_pct": 15.8,
+    "upper_wick_pct": 26.3,
+    "lower_wick_pct": 57.9
   },
   "bias": {
     "short": {
@@ -109,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 1512.0 (KEY support)",
-      "then": "still range; watch 1602.0 for next test"
+      "if": "hold 1484.0 (KEY support)",
+      "then": "still range; watch 1532.0 for next test"
     },
     {
-      "if": "break 1512.0 on close",
-      "then": "target 1504.0 → 1496.0 (short-term bearish)"
+      "if": "break 1484.0 on close",
+      "then": "target 1480.0 → 1404.0 (short-term bearish)"
     },
     {
       "if": "break 1404.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1602.0 on close",
+      "if": "reclaim 1532.0 on close",
       "then": "short-term bullish; next test 1636.0"
     },
     {
@@ -148,23 +142,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
+    "verdict": "BUY",
+    "strategy": "BUY_S1",
+    "trigger_price": 1502.0,
+    "target_price": 1565.5,
+    "stop_price": 1462.4,
+    "risk_pct": 2.64,
+    "reward_pct": 4.23,
+    "rr_ratio": 1.6,
     "phase_match": true,
     "r1": 1629.0,
-    "s1": 1561.0,
+    "s1": 1502.0,
     "s2": 1474.0,
     "r2": 1636.0,
     "r3": 1672.0,
     "s3": 1404.0,
     "s4": 1511.0,
-    "current_position_pct": 33.8,
-    "notes": "WAIT_RANGE: in box (1561-1629), pos 34%, no clear setup"
+    "current_position_pct": 17.3,
+    "notes": "BUY_S1: in box (1502-1629), entry at S1 1502, target mid 1566, stop 1462 ｜ 52.2 條規則（BUY plan，support 1502.00）：① 跌到 1502.00、收市守住喺 1502.00 上面 → 照 BUY 條 plan 做（入場 1502.00，止蝕 1462.40，目標 1565.50）。② 收市跌穿 1502.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1502.00 上面』。"
   }
 }

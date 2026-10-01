@@ -3,20 +3,20 @@
   "ticker_user": "00001.HK",
   "name": "CKH HOLDINGS",
   "data_source": "yfinance",
-  "data_range": "2025-12-05 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-08 → 2026-09-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 68.5,
-    "H": 69.15,
-    "L": 68.05,
-    "C": 68.25,
-    "prev_close": 68.5,
-    "chg_pct": -0.36
+    "date": "2026-09-30",
+    "O": 68.0,
+    "H": 68.65,
+    "L": 67.6,
+    "C": 68.65,
+    "prev_close": 68.25,
+    "chg_pct": 0.59
   },
   "phase": "downtrend_active",
-  "adx": 23.88,
-  "plus_di": 18.41,
-  "minus_di": 19.24,
+  "adx": 22.81,
+  "plus_di": 17.29,
+  "minus_di": 20.67,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 74.4 (2026-08-04), trough 66.65 (2026-09-17), box top 69.15 (2026-09-29)",
@@ -32,49 +32,48 @@
     "top": 69.15,
     "top_date": "2026-09-29",
     "bottom": 66.65,
-    "period": "2026-09-17 to 2026-09-29"
+    "period": "2026-09-17 to 2026-09-30"
   },
-  "drop_from_peak_pct": 8.3,
-  "recovery_from_crash_pct": 2.4,
+  "drop_from_peak_pct": 7.7,
+  "recovery_from_crash_pct": 3.0,
   "supports": [
     {
       "level": 68.0,
-      "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 0.4% below current"
-    },
-    {
-      "level": 64.0,
-      "label": "S2 bottom",
-      "touches": 3,
+      "label": "S1 bottom",
+      "touches": 16,
       "evidence": "structural bottom, near crash low 66.65"
     }
   ],
   "resistances": [
     {
-      "level": 69.15,
+      "level": 68.65,
       "label": "R1 today high",
-      "evidence": "rejection at 69.1500015258789 (long upper wick, close weak)"
+      "evidence": "today's high 68.6500015258789"
+    },
+    {
+      "level": 69.15,
+      "label": "R3 Sep high",
+      "evidence": "box top 69.15, base period high"
     }
   ],
   "position": {
-    "current": 68.25,
-    "in_box_pct": 82.5,
-    "nearest_support": "S1 KEY (68.0)",
-    "nearest_resistance": "R1 today high (69.15)"
+    "current": 68.65,
+    "in_box_pct": 56.5,
+    "nearest_support": "S1 bottom (68.0)",
+    "nearest_resistance": "R3 Sep high (69.15)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": true,
-    "close_position": "lower_half",
-    "O": 68.5,
-    "H": 69.15,
-    "L": 68.05,
-    "C": 68.25,
-    "body_pct": 22.7,
-    "upper_wick_pct": 59.1,
-    "lower_wick_pct": 18.2
+    "close_position": "upper_half",
+    "O": 68.0,
+    "H": 68.65,
+    "L": 67.6,
+    "C": 68.65,
+    "body_pct": 61.9,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 38.1
   },
   "bias": {
     "short": {
@@ -93,19 +92,23 @@
   "scenarios": [
     {
       "if": "hold 68.0 (KEY support)",
-      "then": "still range; watch 69.15 for next test"
+      "then": "still range; watch 68.65 for next test"
     },
     {
       "if": "break 68.0 on close",
-      "then": "target 64.0 → lower (short-term bearish)"
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 64.0 (crash low)",
+      "if": "break 68.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 69.15 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 68.65 on close",
+      "then": "short-term bullish; next test 69.15"
+    },
+    {
+      "if": "break 69.15 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -138,12 +141,12 @@
     "phase_match": false,
     "r1": 70.6,
     "s1": 66.65,
-    "s2": 63.6,
+    "s2": 64.95,
     "r2": 74.4,
     "r3": 74.35,
-    "s3": 62.05,
+    "s3": 62.7,
     "s4": 52.55,
-    "current_position_pct": 40.5,
-    "notes": "WAIT_RANGE: in box (67-71), pos 41%, no clear setup"
+    "current_position_pct": 50.6,
+    "notes": "WAIT_RANGE: in box (67-71), pos 51%, no clear setup"
   }
 }

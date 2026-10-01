@@ -3,20 +3,20 @@
   "ticker_user": "00688.HK",
   "name": "CHINA OVERSEAS",
   "data_source": "yfinance",
-  "data_range": "2025-12-05 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-08 → 2026-09-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 13.09,
-    "H": 13.59,
-    "L": 12.92,
-    "C": 13.37,
-    "prev_close": 12.89,
-    "chg_pct": 3.72
+    "date": "2026-09-30",
+    "O": 13.11,
+    "H": 13.35,
+    "L": 12.53,
+    "C": 13.16,
+    "prev_close": 13.37,
+    "chg_pct": -1.57
   },
   "phase": "downtrend_active",
-  "adx": 15.75,
-  "plus_di": 33.88,
-  "minus_di": 22.45,
+  "adx": 15.25,
+  "plus_di": 30.0,
+  "minus_di": 25.19,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 16.7 (2026-05-14), trough 11.75 (2026-09-16), box top 13.59 (2026-09-29)",
@@ -32,10 +32,10 @@
     "top": 13.59,
     "top_date": "2026-09-29",
     "bottom": 11.75,
-    "period": "2026-09-16 to 2026-09-29"
+    "period": "2026-09-16 to 2026-09-30"
   },
-  "drop_from_peak_pct": 19.9,
-  "recovery_from_crash_pct": 13.8,
+  "drop_from_peak_pct": 21.2,
+  "recovery_from_crash_pct": 12.0,
   "supports": [
     {
       "level": 12.0,
@@ -46,29 +46,34 @@
   ],
   "resistances": [
     {
-      "level": 13.59,
+      "level": 13.35,
       "label": "R1 today high",
-      "evidence": "today's high 13.59000015258789"
+      "evidence": "today's high 13.350000381469727"
+    },
+    {
+      "level": 13.59,
+      "label": "R3 Sep high",
+      "evidence": "box top 13.59, base period high"
     }
   ],
   "position": {
-    "current": 13.37,
-    "in_box_pct": 86.2,
+    "current": 13.16,
+    "in_box_pct": 73.0,
     "nearest_support": "S1 bottom (12.0)",
-    "nearest_resistance": "R1 today high (13.59)"
+    "nearest_resistance": "R1 today high (13.35)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 13.09,
-    "H": 13.59,
-    "L": 12.92,
-    "C": 13.37,
-    "body_pct": 41.8,
-    "upper_wick_pct": 32.8,
-    "lower_wick_pct": 25.4
+    "O": 13.11,
+    "H": 13.35,
+    "L": 12.53,
+    "C": 13.16,
+    "body_pct": 6.1,
+    "upper_wick_pct": 23.2,
+    "lower_wick_pct": 70.7
   },
   "bias": {
     "short": {
@@ -87,7 +92,7 @@
   "scenarios": [
     {
       "if": "hold 12.0 (KEY support)",
-      "then": "still range; watch 13.59 for next test"
+      "then": "still range; watch 13.35 for next test"
     },
     {
       "if": "break 12.0 on close",
@@ -98,8 +103,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 13.59 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 13.35 on close",
+      "then": "short-term bullish; next test 13.59"
+    },
+    {
+      "if": "break 13.59 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -125,19 +134,19 @@
     "strategy": "SELL_R1",
     "trigger_price": 13.59,
     "target_price": 12.67,
-    "stop_price": 14.25,
-    "risk_pct": 4.89,
+    "stop_price": 14.33,
+    "risk_pct": 5.42,
     "reward_pct": 6.77,
-    "rr_ratio": 1.38,
+    "rr_ratio": 1.25,
     "phase_match": true,
     "r1": 13.59,
     "s1": 11.75,
     "s2": 12.06,
     "r2": 14.77,
     "r3": 16.7,
-    "s3": 11.62,
+    "s3": 11.74,
     "s4": 11.36,
-    "current_position_pct": 88.0,
-    "notes": "SELL_R1: in box (12-14), entry at R1 14, target mid 13, stop 14 ｜ 入場位 resistance 13.59：以收市價為準 —— 收得守住先當入場成立；收穿就係 resistance 失效，本單取消（見上方失效條件）。"
+    "current_position_pct": 76.6,
+    "notes": "SELL_R1: in box (12-14), entry at R1 14, target mid 13, stop 14 ｜ 52.2 條規則（SELL plan，resistance 13.59）：① 跌到 13.59、收市守住喺 13.59 上面 → 照 BUY 條 plan 做（入場 13.59，止蝕 14.33，目標 12.67）。② 收市跌穿 13.59 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 13.59 上面』。"
   }
 }

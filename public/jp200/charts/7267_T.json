@@ -3,20 +3,20 @@
   "ticker_user": "7267.T",
   "name": "HONDA MOTOR CO",
   "data_source": "yfinance",
-  "data_range": "2025-12-02 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-04 → 2026-10-01 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 1675.0,
-    "H": 1686.5,
-    "L": 1660.5,
-    "C": 1669.0,
-    "prev_close": 1718.0,
-    "chg_pct": -2.85
+    "date": "2026-10-01",
+    "O": 1665.0,
+    "H": 1698.0,
+    "L": 1654.0,
+    "C": 1696.0,
+    "prev_close": 1682.0,
+    "chg_pct": 0.83
   },
   "phase": "downtrend_active",
-  "adx": 15.44,
-  "plus_di": 24.04,
-  "minus_di": 24.95,
+  "adx": 13.53,
+  "plus_di": 22.97,
+  "minus_di": 21.86,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 1766.5 (2026-09-24), trough 1588.0 (2026-09-09), box top 1766.5 (2026-09-24)",
@@ -32,23 +32,29 @@
     "top": 1766.5,
     "top_date": "2026-09-24",
     "bottom": 1588.0,
-    "period": "2026-09-09 to 2026-09-29"
+    "period": "2026-09-09 to 2026-10-01"
   },
-  "drop_from_peak_pct": 5.5,
-  "recovery_from_crash_pct": 5.1,
+  "drop_from_peak_pct": 4.0,
+  "recovery_from_crash_pct": 6.8,
   "supports": [
     {
+      "level": 1660.0,
+      "label": "S1 KEY",
+      "touches": 5,
+      "evidence": "tested 5x in base period; 2.1% below current"
+    },
+    {
       "level": 1608.0,
-      "label": "S1 bottom",
+      "label": "S2 bottom",
       "touches": 3,
       "evidence": "structural bottom, near crash low 1588.0"
     }
   ],
   "resistances": [
     {
-      "level": 1686.5,
+      "level": 1698.0,
       "label": "R1 today high",
-      "evidence": "today's high 1686.5"
+      "evidence": "today's high 1698.0"
     },
     {
       "level": 1766.5,
@@ -57,28 +63,28 @@
     }
   ],
   "position": {
-    "current": 1669.0,
-    "in_box_pct": 38.5,
-    "nearest_support": "S1 bottom (1608.0)",
-    "nearest_resistance": "R1 today high (1686.5)"
+    "current": 1696.0,
+    "in_box_pct": 55.5,
+    "nearest_support": "S1 KEY (1660.0)",
+    "nearest_resistance": "R1 today high (1698.0)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 1675.0,
-    "H": 1686.5,
-    "L": 1660.5,
-    "C": 1669.0,
-    "body_pct": 23.1,
-    "upper_wick_pct": 44.2,
-    "lower_wick_pct": 32.7
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 1665.0,
+    "H": 1698.0,
+    "L": 1654.0,
+    "C": 1696.0,
+    "body_pct": 70.5,
+    "upper_wick_pct": 4.5,
+    "lower_wick_pct": 25.0
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (38% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -91,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 1608.0 (KEY support)",
-      "then": "still range; watch 1686.5 for next test"
+      "if": "hold 1660.0 (KEY support)",
+      "then": "still range; watch 1698.0 for next test"
     },
     {
-      "if": "break 1608.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 1660.0 on close",
+      "then": "target 1608.0 → lower (short-term bearish)"
     },
     {
       "if": "break 1608.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1686.5 on close",
+      "if": "reclaim 1698.0 on close",
       "then": "short-term bullish; next test 1766.5"
     },
     {
@@ -130,23 +136,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 1766.5,
+    "target_price": 1677.25,
+    "stop_price": 1826.43,
+    "risk_pct": 3.39,
+    "reward_pct": 5.05,
+    "rr_ratio": 1.49,
+    "phase_match": true,
     "r1": 1766.5,
     "s1": 1588.0,
-    "s2": 1464.5,
+    "s2": 1490.0,
     "r2": 1762.5,
-    "r3": 1537.0,
+    "r3": 1543.5,
     "s3": 1238.0,
     "s4": 1251.0,
-    "current_position_pct": 45.4,
-    "notes": "WAIT_RANGE: in box (1588-1766), pos 45%, no clear setup"
+    "current_position_pct": 60.5,
+    "notes": "SELL_R1: in box (1588-1766), entry at R1 1766, target mid 1677, stop 1826 ｜ 52.2 條規則（SELL plan，resistance 1766.50）：① 跌到 1766.50、收市守住喺 1766.50 上面 → 照 BUY 條 plan 做（入場 1766.50，止蝕 1826.43，目標 1677.25）。② 收市跌穿 1766.50 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1766.50 上面』。"
   }
 }

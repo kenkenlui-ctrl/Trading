@@ -50,6 +50,37 @@ def t_minus_1() -> date:
     else:
         return today - timedelta(days=1)
 
+def data_asof(market: str) -> str:
+    """T-1 for a market, derived from that market's own bars.
+
+    2026-10-02: JP traded 2026-10-01 while HK and US last closed 2026-09-30,
+    so a single global t_minus_1() would stamp the wrong date on two of the
+    three hubs. Deriving the label from the data cannot drift from the data —
+    the failure mode that produced "T-1 09-30" over 09-29 numbers.
+
+    Uses the modal (most common) last_bar date so a handful of suspended or
+    data-starved tickers cannot drag the label off the real session.
+    """
+    from collections import Counter
+    src = {"HK": HK_OUT, "US": US_OUT, "JP": REPO / "data/jp200"}.get(market)
+    if not src or not Path(src).is_dir():
+        return t_minus_1().isoformat()
+    c = Counter()
+    for p in Path(src).glob("*.json"):
+        if p.name.endswith("_ohlc.json"):
+            continue
+        try:
+            d = json.load(open(p))
+            dt = (d.get("last_bar") or {}).get("date")
+            if dt:
+                c[dt] += 1
+        except Exception:
+            continue
+    if not c:
+        return t_minus_1().isoformat()
+    return c.most_common(1)[0][0]
+
+
 # Repo paths
 REPO = Path("/Users/kenken/dev/dsa-hk")
 PUBLIC = REPO / "public"
@@ -428,6 +459,7 @@ def build_dashboard_page(
 }}"""
 
     _mnav = {"HK": "hk", "US": "us", "JP": "jp"}.get(market, "")
+    _t1 = data_asof(market)
     v2_block = render_v2_block(market)
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant-HK">
@@ -472,7 +504,7 @@ def build_dashboard_page(
     <div class="nav-links">{nav_links}</div>
     <div class="nav-meta">
       <span class="live-dot"></span>
-      T-1 · {t_minus_1().isoformat()}
+      T-1 · {_t1}
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
         <span class="icon" id="themeIcon">●</span>
         <span id="themeLabel">DARK</span>
@@ -581,7 +613,7 @@ function toggleTheme(){{
   <div class="container">
     <div class="row">
       <div>© 2026 Leeks Terminal · win9you.com · <a href="/methodology">Methodology</a> · <a href="/disclaimer">Disclaimer</a></div>
-      <div class="mono text-dim">T-1 · {t_minus_1().isoformat()}</div>
+      <div class="mono text-dim">T-1 · {_t1}</div>
     </div>
   </div>
 </footer>
@@ -607,6 +639,7 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
     detail_url = t["detail_url"]
     back_url = "/hk200/" if market == "HK" else "/us200/"
     _mnav = {"HK": "hk", "US": "us", "JP": "jp"}.get(market, "")
+    _t1 = data_asof(t.get("market", market))
 
     phase_label_map = {
         "uptrend": ("Uptrend", "var(--bull)"),
@@ -785,7 +818,7 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
     </div>
     <div class="nav-meta">
       <span class="live-dot"></span>
-      T-1 · {t_minus_1().isoformat()}
+      T-1 · {_t1}
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
         <span class="icon" id="themeIcon">●</span>
         <span id="themeLabel">DARK</span>
@@ -976,7 +1009,7 @@ function toggleTheme(){{
   <div class="container">
     <div class="row">
       <div>© 2026 Leeks Terminal · win9you.com · <a href="/methodology">Methodology</a> · <a href="/disclaimer">Disclaimer</a></div>
-      <div class="mono text-dim">T-1 · {t_minus_1().isoformat()}</div>
+      <div class="mono text-dim">T-1 · {_t1}</div>
     </div>
   </div>
 </footer>

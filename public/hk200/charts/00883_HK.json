@@ -3,20 +3,20 @@
   "ticker_user": "00883.HK",
   "name": "CNOOC",
   "data_source": "yfinance",
-  "data_range": "2025-12-05 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-08 → 2026-09-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 23.86,
-    "H": 23.94,
-    "L": 23.5,
-    "C": 23.7,
-    "prev_close": 23.68,
-    "chg_pct": 0.08
+    "date": "2026-09-30",
+    "O": 23.48,
+    "H": 24.1,
+    "L": 23.4,
+    "C": 23.96,
+    "prev_close": 23.7,
+    "chg_pct": 1.1
   },
   "phase": "base_building",
-  "adx": 16.51,
-  "plus_di": 17.2,
-  "minus_di": 21.12,
+  "adx": 15.68,
+  "plus_di": 17.65,
+  "minus_di": 19.44,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 30.98 (2026-03-23), trough 19.92 (2026-07-02), box top 26.0 (2026-09-08)",
@@ -32,29 +32,29 @@
     "top": 26.0,
     "top_date": "2026-09-08",
     "bottom": 19.92,
-    "period": "2026-07-02 to 2026-09-29"
+    "period": "2026-07-02 to 2026-09-30"
   },
-  "drop_from_peak_pct": 23.5,
-  "recovery_from_crash_pct": 19.0,
+  "drop_from_peak_pct": 22.7,
+  "recovery_from_crash_pct": 20.3,
   "supports": [
     {
       "level": 24.0,
       "label": "S1 KEY",
-      "touches": 12,
-      "evidence": "tested 12x in base period; -1.3% below current"
+      "touches": 30,
+      "evidence": "tested 30x in base period; -0.2% below current"
     },
     {
-      "level": 20.0,
-      "label": "S2 bottom",
-      "touches": 8,
-      "evidence": "structural bottom, near crash low 19.92"
+      "level": 19.92,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-07-02, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 23.94,
+      "level": 24.1,
       "label": "R1 today high",
-      "evidence": "today's high 23.940000534057617"
+      "evidence": "today's high 24.100000381469727"
     },
     {
       "level": 26.0,
@@ -63,23 +63,23 @@
     }
   ],
   "position": {
-    "current": 23.7,
-    "in_box_pct": 61.7,
+    "current": 23.96,
+    "in_box_pct": 66.4,
     "nearest_support": "S1 KEY (24.0)",
-    "nearest_resistance": "R1 today high (23.94)"
+    "nearest_resistance": "R1 today high (24.1)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": true,
-    "close_position": "lower_half",
-    "O": 23.86,
-    "H": 23.94,
-    "L": 23.5,
-    "C": 23.7,
-    "body_pct": 36.4,
-    "upper_wick_pct": 18.2,
-    "lower_wick_pct": 45.5
+    "close_position": "upper_half",
+    "O": 23.48,
+    "H": 24.1,
+    "L": 23.4,
+    "C": 23.96,
+    "body_pct": 68.6,
+    "upper_wick_pct": 20.0,
+    "lower_wick_pct": 11.4
   },
   "bias": {
     "short": {
@@ -98,18 +98,18 @@
   "scenarios": [
     {
       "if": "hold 24.0 (KEY support)",
-      "then": "still range; watch 23.94 for next test"
+      "then": "still range; watch 24.1 for next test"
     },
     {
       "if": "break 24.0 on close",
-      "then": "target 20.0 → lower (short-term bearish)"
+      "then": "target 19.92 → lower (short-term bearish)"
     },
     {
-      "if": "break 20.0 (crash low)",
+      "if": "break 19.92 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 23.94 on close",
+      "if": "reclaim 24.1 on close",
       "then": "short-term bullish; next test 26.0"
     },
     {
@@ -140,10 +140,10 @@
     "strategy": "BUY_S1",
     "trigger_price": 23.26,
     "target_price": 24.63,
-    "stop_price": 22.31,
-    "risk_pct": 4.1,
+    "stop_price": 22.34,
+    "risk_pct": 3.94,
     "reward_pct": 5.89,
-    "rr_ratio": 1.44,
+    "rr_ratio": 1.49,
     "phase_match": true,
     "r1": 26.0,
     "s1": 23.26,
@@ -152,7 +152,7 @@
     "r3": 29.8,
     "s3": 19.92,
     "s4": 19.92,
-    "current_position_pct": 16.1,
-    "notes": "BUY_S1: in box (23-26), entry at S1 23, target mid 25, stop 22 ｜ 入場位 support 23.26：以收市價為準 —— 收得守住先當入場成立；收穿就係 support 失效，本單取消（見上方失效條件）。"
+    "current_position_pct": 25.5,
+    "notes": "BUY_S1: in box (23-26), entry at S1 23, target mid 25, stop 22 ｜ 52.2 條規則（BUY plan，support 23.26）：① 跌到 23.26、收市守住喺 23.26 上面 → 照 BUY 條 plan 做（入場 23.26，止蝕 22.34，目標 24.63）。② 收市跌穿 23.26 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 23.26 上面』。"
   }
 }

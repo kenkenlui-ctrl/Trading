@@ -3,20 +3,20 @@
   "ticker_user": "SNPS",
   "name": "Synopsys, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-11 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 414.6,
-    "H": 418.0,
-    "L": 403.33,
-    "C": 415.09,
-    "prev_close": 417.61,
-    "chg_pct": -0.6
+    "date": "2026-09-30",
+    "O": 421.26,
+    "H": 445.57,
+    "L": 415.24,
+    "C": 434.94,
+    "prev_close": 415.09,
+    "chg_pct": 4.78
   },
   "phase": "downtrend_active",
-  "adx": 16.05,
-  "plus_di": 33.19,
-  "minus_di": 29.61,
+  "adx": 16.56,
+  "plus_di": 41.01,
+  "minus_di": 25.56,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 539.48 (2026-05-26), trough 362.55 (2026-09-15), box top 445.92 (2026-09-25)",
@@ -32,60 +32,61 @@
     "top": 445.92,
     "top_date": "2026-09-25",
     "bottom": 362.55,
-    "period": "2026-09-15 to 2026-09-29"
+    "period": "2026-09-15 to 2026-09-30"
   },
-  "drop_from_peak_pct": 23.1,
-  "recovery_from_crash_pct": 14.5,
+  "drop_from_peak_pct": 19.4,
+  "recovery_from_crash_pct": 20.0,
   "supports": [
     {
-      "level": 404.0,
+      "level": 416.0,
       "label": "S1 KEY",
-      "touches": 6,
-      "evidence": "tested 6x in base period; 2.7% below current"
+      "touches": 5,
+      "evidence": "tested 5x in base period; 4.4% below current"
     },
     {
-      "level": 396.0,
+      "level": 408.0,
       "label": "S2",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
     },
     {
-      "level": 380.0,
-      "label": "S3 bottom",
-      "touches": 4,
-      "evidence": "structural bottom, near crash low 362.55"
+      "level": 404.0,
+      "label": "S3",
+      "touches": 5,
+      "evidence": "mid-base support, tested 5x"
+    },
+    {
+      "level": 362.55,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-09-15, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 418.0,
+      "level": 445.57,
       "label": "R1 today high",
-      "evidence": "today's high 418.0"
-    },
-    {
-      "level": 445.92,
-      "label": "R3 Sep high",
-      "evidence": "box top 445.92, base period high"
+      "evidence": "today's high 445.57000732421875"
     }
   ],
   "position": {
-    "current": 415.09,
-    "in_box_pct": 53.2,
-    "nearest_support": "S1 KEY (404.0)",
-    "nearest_resistance": "R1 today high (418.0)"
+    "current": 434.94,
+    "in_box_pct": 87.2,
+    "nearest_support": "S1 KEY (416.0)",
+    "nearest_resistance": "R1 today high (445.57)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": true,
     "close_position": "upper_half",
-    "O": 414.6,
-    "H": 418.0,
-    "L": 403.33,
-    "C": 415.09,
-    "body_pct": 3.3,
-    "upper_wick_pct": 19.8,
-    "lower_wick_pct": 76.8
+    "O": 421.26,
+    "H": 445.57,
+    "L": 415.24,
+    "C": 434.94,
+    "body_pct": 45.1,
+    "upper_wick_pct": 35.0,
+    "lower_wick_pct": 19.8
   },
   "bias": {
     "short": {
@@ -103,24 +104,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 404.0 (KEY support)",
-      "then": "still range; watch 418.0 for next test"
+      "if": "hold 416.0 (KEY support)",
+      "then": "still range; watch 445.57 for next test"
     },
     {
-      "if": "break 404.0 on close",
-      "then": "target 396.0 → 380.0 (short-term bearish)"
+      "if": "break 416.0 on close",
+      "then": "target 408.0 → 404.0 (short-term bearish)"
     },
     {
-      "if": "break 380.0 (crash low)",
+      "if": "break 362.55 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 418.0 on close",
-      "then": "short-term bullish; next test 445.92"
-    },
-    {
-      "if": "break 445.92 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 445.57 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -146,10 +143,10 @@
     "strategy": "SELL_R1",
     "trigger_price": 445.92,
     "target_price": 404.24,
-    "stop_price": 467.78,
-    "risk_pct": 4.9,
+    "stop_price": 468.92,
+    "risk_pct": 5.16,
     "reward_pct": 9.35,
-    "rr_ratio": 1.91,
+    "rr_ratio": 1.81,
     "phase_match": true,
     "r1": 445.92,
     "s1": 362.55,
@@ -158,7 +155,7 @@
     "r3": 539.48,
     "s3": 388.07,
     "s4": 379.5,
-    "current_position_pct": 63.0,
-    "notes": "SELL_R1: in box (363-446), entry at R1 446, target mid 404, stop 468 ｜ 入場位 resistance 445.92：以收市價為準 —— 收得守住先當入場成立；收穿就係 resistance 失效，本單取消（見上方失效條件）。"
+    "current_position_pct": 86.8,
+    "notes": "SELL_R1: in box (363-446), entry at R1 446, target mid 404, stop 469 ｜ 52.2 條規則（SELL plan，resistance 445.92）：① 跌到 445.92、收市守住喺 445.92 上面 → 照 BUY 條 plan 做（入場 445.92，止蝕 468.92，目標 404.24）。② 收市跌穿 445.92 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 445.92 上面』。"
   }
 }

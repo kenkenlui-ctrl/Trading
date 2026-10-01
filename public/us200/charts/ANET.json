@@ -1,22 +1,22 @@
 {
   "ticker": "US.ANET",
   "ticker_user": "ANET",
-  "name": "",
+  "name": "Arista Networks, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-11 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 207.1,
-    "H": 207.48,
-    "L": 201.35,
-    "C": 202.86,
-    "prev_close": 204.92,
-    "chg_pct": -1.01
+    "date": "2026-09-30",
+    "O": 204.24,
+    "H": 207.43,
+    "L": 203.09,
+    "C": 203.59,
+    "prev_close": 202.86,
+    "chg_pct": 0.36
   },
   "phase": "downtrend_active",
-  "adx": 17.82,
-  "plus_di": 28.51,
-  "minus_di": 20.56,
+  "adx": 17.7,
+  "plus_di": 27.21,
+  "minus_di": 19.62,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 214.89 (2026-08-05), trough 181.27 (2026-09-03), box top 212.0 (2026-09-25)",
@@ -32,16 +32,16 @@
     "top": 212.0,
     "top_date": "2026-09-25",
     "bottom": 181.27,
-    "period": "2026-09-03 to 2026-09-29"
+    "period": "2026-09-03 to 2026-09-30"
   },
-  "drop_from_peak_pct": 5.6,
-  "recovery_from_crash_pct": 11.9,
+  "drop_from_peak_pct": 5.3,
+  "recovery_from_crash_pct": 12.3,
   "supports": [
     {
       "level": 196.0,
       "label": "S1 KEY",
       "touches": 7,
-      "evidence": "tested 7x in base period; 3.4% below current"
+      "evidence": "tested 7x in base period; 3.7% below current"
     },
     {
       "level": 192.0,
@@ -52,15 +52,15 @@
     {
       "level": 188.0,
       "label": "S3 bottom",
-      "touches": 7,
+      "touches": 6,
       "evidence": "structural bottom, near crash low 181.27"
     }
   ],
   "resistances": [
     {
-      "level": 207.48,
+      "level": 207.43,
       "label": "R1 today high",
-      "evidence": "today's high 207.47999572753906"
+      "evidence": "rejection at 207.42999267578125 (long upper wick, close weak)"
     },
     {
       "level": 212.0,
@@ -69,23 +69,23 @@
     }
   ],
   "position": {
-    "current": 202.86,
-    "in_box_pct": 61.9,
+    "current": 203.59,
+    "in_box_pct": 65.0,
     "nearest_support": "S1 KEY (196.0)",
-    "nearest_resistance": "R1 today high (207.48)"
+    "nearest_resistance": "R1 today high (207.43)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 207.1,
-    "H": 207.48,
-    "L": 201.35,
-    "C": 202.86,
-    "body_pct": 69.2,
-    "upper_wick_pct": 6.2,
-    "lower_wick_pct": 24.6
+    "O": 204.24,
+    "H": 207.43,
+    "L": 203.09,
+    "C": 203.59,
+    "body_pct": 15.0,
+    "upper_wick_pct": 73.5,
+    "lower_wick_pct": 11.5
   },
   "bias": {
     "short": {
@@ -104,7 +104,7 @@
   "scenarios": [
     {
       "if": "hold 196.0 (KEY support)",
-      "then": "still range; watch 207.48 for next test"
+      "then": "still range; watch 207.43 for next test"
     },
     {
       "if": "break 196.0 on close",
@@ -115,7 +115,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 207.48 on close",
+      "if": "reclaim 207.43 on close",
       "then": "short-term bullish; next test 212.0"
     },
     {
@@ -146,10 +146,10 @@
     "strategy": "SELL_R1",
     "trigger_price": 212.0,
     "target_price": 196.64,
-    "stop_price": 223.68,
-    "risk_pct": 5.51,
+    "stop_price": 223.57,
+    "risk_pct": 5.46,
     "reward_pct": 7.25,
-    "rr_ratio": 1.32,
+    "rr_ratio": 1.33,
     "phase_match": true,
     "r1": 212.0,
     "s1": 181.27,
@@ -158,7 +158,7 @@
     "r3": 179.8,
     "s3": 135.13,
     "s4": 115.42,
-    "current_position_pct": 70.3,
-    "notes": "SELL_R1: in box (181-212), entry at R1 212, target mid 197, stop 224 ｜ 入場位 resistance 212.00：以收市價為準 —— 收得守住先當入場成立；收穿就係 resistance 失效，本單取消（見上方失效條件）。"
+    "current_position_pct": 72.6,
+    "notes": "SELL_R1: in box (181-212), entry at R1 212, target mid 197, stop 224 ｜ 52.2 條規則（SELL plan，resistance 212.00）：① 跌到 212.00、收市守住喺 212.00 上面 → 照 BUY 條 plan 做（入場 212.00，止蝕 223.57，目標 196.64）。② 收市跌穿 212.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 212.00 上面』。"
   }
 }

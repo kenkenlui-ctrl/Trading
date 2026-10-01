@@ -3,45 +3,57 @@
   "ticker_user": "7013.T",
   "name": "IHI CORPORATION",
   "data_source": "yfinance",
-  "data_range": "2025-12-02 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-04 → 2026-10-01 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 2775.0,
-    "H": 2795.0,
-    "L": 2664.5,
-    "C": 2674.0,
-    "prev_close": 2763.5,
-    "chg_pct": -3.2386
+    "date": "2026-10-01",
+    "O": 2683.5,
+    "H": 2725.5,
+    "L": 2632.5,
+    "C": 2711.5,
+    "prev_close": 2692.5,
+    "chg_pct": 0.71
   },
   "phase": "base_building",
-  "adx": 12.9,
-  "plus_di": 25.8,
-  "minus_di": 23.08,
+  "adx": 11.29,
+  "plus_di": 23.84,
+  "minus_di": 22.61,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 4698.0 (2026-02-10), trough 2245.0 (2026-06-11), box top 3150.0 (2026-07-07)",
   "peak": {
     "date": "2026-02-10",
-    "price": 4665.16
+    "price": 4698.0
   },
   "trough": {
     "date": "2026-06-11",
-    "price": 2235.7
+    "price": 2245.0
   },
   "box": {
     "top": 3150.0,
     "top_date": "2026-07-07",
     "bottom": 2245.0,
-    "period": "2026-06-11 to 2026-09-29"
+    "period": "2026-06-11 to 2026-10-01"
   },
-  "drop_from_peak_pct": 43.1,
-  "recovery_from_crash_pct": 19.1,
+  "drop_from_peak_pct": 42.3,
+  "recovery_from_crash_pct": 20.8,
   "supports": [
     {
-      "level": 2616.0,
+      "level": 2648.0,
       "label": "S1 KEY",
-      "touches": 5,
-      "evidence": "tested 5x in base period; 2.2% below current"
+      "touches": 6,
+      "evidence": "tested 6x in base period; 2.3% below current"
+    },
+    {
+      "level": 2644.0,
+      "label": "S2",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 2636.0,
+      "label": "S3",
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
     },
     {
       "level": 2245.0,
@@ -52,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 2795.0,
+      "level": 2725.5,
       "label": "R1 today high",
-      "evidence": "today's high 2795.0"
+      "evidence": "today's high 2725.5"
     },
     {
       "level": 3150.0,
@@ -63,28 +75,28 @@
     }
   ],
   "position": {
-    "current": 2674.0,
-    "in_box_pct": 47.4,
-    "nearest_support": "S1 KEY (2616.0)",
-    "nearest_resistance": "R1 today high (2795.0)"
+    "current": 2711.5,
+    "in_box_pct": 51.5,
+    "nearest_support": "S1 KEY (2648.0)",
+    "nearest_resistance": "R1 today high (2725.5)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 2775.0,
-    "H": 2795.0,
-    "L": 2664.5,
-    "C": 2674.0,
-    "body_pct": 77.4,
-    "upper_wick_pct": 15.3,
-    "lower_wick_pct": 7.3
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 2683.5,
+    "H": 2725.5,
+    "L": 2632.5,
+    "C": 2711.5,
+    "body_pct": 30.1,
+    "upper_wick_pct": 15.1,
+    "lower_wick_pct": 54.8
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (47% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -97,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 2616.0 (KEY support)",
-      "then": "still range; watch 2795.0 for next test"
+      "if": "hold 2648.0 (KEY support)",
+      "then": "still range; watch 2725.5 for next test"
     },
     {
-      "if": "break 2616.0 on close",
-      "then": "target 2245.0 → lower (short-term bearish)"
+      "if": "break 2648.0 on close",
+      "then": "target 2644.0 → 2636.0 (short-term bearish)"
     },
     {
       "if": "break 2245.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 2795.0 on close",
+      "if": "reclaim 2725.5 on close",
       "then": "short-term bullish; next test 3150.0"
     },
     {
@@ -145,14 +157,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": true,
-    "r1": 2938.27,
-    "s1": 2557.36,
-    "s2": 2597.19,
-    "r2": 3136.95,
-    "r3": 3524.33,
-    "s3": 2235.7,
-    "s4": 2686.09,
-    "current_position_pct": 30.6,
-    "notes": "WAIT_RANGE: in box (2557-2938), pos 31%, no clear setup"
+    "r1": 2950.5,
+    "s1": 2568.0,
+    "s2": 2608.0,
+    "r2": 3150.0,
+    "r3": 3494.0,
+    "s3": 2245.0,
+    "s4": 2711.5,
+    "current_position_pct": 37.5,
+    "notes": "WAIT_RANGE: in box (2568-2950), pos 38%, no clear setup"
   }
 }

@@ -1,22 +1,22 @@
 {
   "ticker": "JP.1456",
   "ticker_user": "1456.T",
-  "name": "",
+  "name": "DAIWA ASSET MANAGEMENT IFREEETF",
   "data_source": "yfinance",
-  "data_range": "2025-12-02 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-04 → 2026-09-30 (199 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 1261.0,
-    "H": 1276.0,
-    "L": 1256.0,
-    "C": 1262.0,
+    "date": "2026-09-30",
+    "O": 1244.0,
+    "H": 1250.0,
+    "L": 1234.0,
+    "C": 1236.0,
     "prev_close": 1262.0,
-    "chg_pct": 0.0
+    "chg_pct": -2.06
   },
-  "phase": "base_building",
-  "adx": 14.27,
-  "plus_di": 27.02,
-  "minus_di": 27.74,
+  "phase": "downtrend_recovery",
+  "adx": 14.14,
+  "plus_di": 24.82,
+  "minus_di": 31.88,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 1725.0 (2026-03-23), trough 1164.0 (2026-06-22), box top 1382.0 (2026-07-29)",
@@ -32,35 +32,29 @@
     "top": 1382.0,
     "top_date": "2026-07-29",
     "bottom": 1164.0,
-    "period": "2026-06-22 to 2026-09-29"
+    "period": "2026-06-22 to 2026-09-30"
   },
-  "drop_from_peak_pct": 26.8,
-  "recovery_from_crash_pct": 8.4,
+  "drop_from_peak_pct": 28.3,
+  "recovery_from_crash_pct": 6.2,
   "supports": [
     {
-      "level": 1212.0,
-      "label": "S1 KEY",
-      "touches": 3,
-      "evidence": "tested 3x in base period; 4.0% below current"
-    },
-    {
       "level": 1208.0,
-      "label": "S2",
+      "label": "S1 KEY",
       "touches": 8,
-      "evidence": "mid-base support, tested 8x"
+      "evidence": "tested 8x in base period; 2.3% below current"
     },
     {
-      "level": 1200.0,
-      "label": "S3 bottom",
+      "level": 1168.0,
+      "label": "S2 bottom",
       "touches": 3,
       "evidence": "structural bottom, near crash low 1164.0"
     }
   ],
   "resistances": [
     {
-      "level": 1276.0,
+      "level": 1250.0,
       "label": "R1 today high",
-      "evidence": "today's high 1276.0"
+      "evidence": "today's high 1250.0"
     },
     {
       "level": 1382.0,
@@ -69,32 +63,32 @@
     }
   ],
   "position": {
-    "current": 1262.0,
-    "in_box_pct": 34.1,
-    "nearest_support": "S1 KEY (1212.0)",
-    "nearest_resistance": "R1 today high (1276.0)"
+    "current": 1236.0,
+    "in_box_pct": 31.8,
+    "nearest_support": "S1 KEY (1208.0)",
+    "nearest_resistance": "R1 today high (1250.0)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 1261.0,
-    "H": 1276.0,
-    "L": 1256.0,
-    "C": 1262.0,
-    "body_pct": 5.0,
-    "upper_wick_pct": 70.0,
-    "lower_wick_pct": 25.0
+    "O": 1244.0,
+    "H": 1250.0,
+    "L": 1234.0,
+    "C": 1236.0,
+    "body_pct": 50.0,
+    "upper_wick_pct": 37.5,
+    "lower_wick_pct": 12.5
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (32% of box)"
     },
     "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
+      "bias": "neutral",
+      "reason": ""
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -103,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 1212.0 (KEY support)",
-      "then": "still range; watch 1276.0 for next test"
+      "if": "hold 1208.0 (KEY support)",
+      "then": "still range; watch 1250.0 for next test"
     },
     {
-      "if": "break 1212.0 on close",
-      "then": "target 1208.0 → 1200.0 (short-term bearish)"
+      "if": "break 1208.0 on close",
+      "then": "target 1168.0 → lower (short-term bearish)"
     },
     {
-      "if": "break 1200.0 (crash low)",
+      "if": "break 1168.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1276.0 on close",
+      "if": "reclaim 1250.0 on close",
       "then": "short-term bullish; next test 1382.0"
     },
     {
@@ -144,21 +138,21 @@
   "action_plan": {
     "verdict": "BUY",
     "strategy": "BUY_S1",
-    "trigger_price": 1239.0,
-    "target_price": 1282.0,
-    "stop_price": 1204.39,
-    "risk_pct": 2.79,
-    "reward_pct": 3.47,
-    "rr_ratio": 1.24,
+    "trigger_price": 1234.0,
+    "target_price": 1279.5,
+    "stop_price": 1199.13,
+    "risk_pct": 2.83,
+    "reward_pct": 3.69,
+    "rr_ratio": 1.3,
     "phase_match": true,
     "r1": 1325.0,
-    "s1": 1239.0,
-    "s2": 1170.0,
+    "s1": 1234.0,
+    "s2": 1198.0,
     "r2": 1382.0,
-    "r3": 1656.0,
+    "r3": 1635.0,
     "s3": 1164.0,
     "s4": 1490.0,
-    "current_position_pct": 26.7,
-    "notes": "BUY_S1: in box (1239-1325), entry at S1 1239, target mid 1282, stop 1204 ｜ 52.2 條規則（BUY plan，support 1239.00）：① 跌到 1239.00、收市守住喺 1239.00 上面 → 照 BUY 條 plan 做（入場 1239.00，止蝕 1204.39，目標 1282.00）。② 收市跌穿 1239.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1239.00 上面』。"
+    "current_position_pct": 2.2,
+    "notes": "BUY_S1: in box (1234-1325), entry at S1 1234, target mid 1280, stop 1199 ｜ 52.2 條規則（BUY plan，support 1234.00）：① 跌到 1234.00、收市守住喺 1234.00 上面 → 照 BUY 條 plan 做（入場 1234.00，止蝕 1199.13，目標 1279.50）。② 收市跌穿 1234.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1234.00 上面』。"
   }
 }

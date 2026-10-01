@@ -3,57 +3,57 @@
   "ticker_user": "6501.T",
   "name": "HITACHI",
   "data_source": "yfinance",
-  "data_range": "2025-12-02 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-04 → 2026-10-01 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 5504.0,
-    "H": 5572.0,
-    "L": 5441.0,
-    "C": 5465.0,
-    "prev_close": 5490.0,
-    "chg_pct": -0.4554
+    "date": "2026-10-01",
+    "O": 5460.0,
+    "H": 5520.0,
+    "L": 5443.0,
+    "C": 5510.0,
+    "prev_close": 5489.0,
+    "chg_pct": 0.38
   },
   "phase": "base_building",
-  "adx": 18.85,
-  "plus_di": 28.54,
-  "minus_di": 16.69,
+  "adx": 18.25,
+  "plus_di": 26.0,
+  "minus_di": 18.65,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 6039.0 (2026-02-10), trough 4388.0 (2026-03-30), box top 5830.0 (2026-08-14)",
   "peak": {
     "date": "2026-02-10",
-    "price": 5973.96
+    "price": 6039.0
   },
   "trough": {
     "date": "2026-03-30",
-    "price": 4365.73
+    "price": 4388.0
   },
   "box": {
     "top": 5830.0,
     "top_date": "2026-08-14",
     "bottom": 4388.0,
-    "period": "2026-03-30 to 2026-09-29"
+    "period": "2026-03-30 to 2026-10-01"
   },
-  "drop_from_peak_pct": 9.5,
-  "recovery_from_crash_pct": 24.5,
+  "drop_from_peak_pct": 8.8,
+  "recovery_from_crash_pct": 25.6,
   "supports": [
     {
-      "level": 5312.0,
+      "level": 5392.0,
       "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; 2.1% below current"
+    },
+    {
+      "level": 5312.0,
+      "label": "S2",
       "touches": 6,
-      "evidence": "tested 6x in base period; 2.8% below current"
+      "evidence": "mid-base support, tested 6x"
     },
     {
       "level": 5248.0,
-      "label": "S2",
+      "label": "S3",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
-    },
-    {
-      "level": 5168.0,
-      "label": "S3",
-      "touches": 7,
-      "evidence": "mid-base support, tested 7x"
     },
     {
       "level": 4388.0,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 5572.0,
+      "level": 5520.0,
       "label": "R1 today high",
-      "evidence": "rejection at 5572.0 (long upper wick, close weak)"
+      "evidence": "today's high 5520.0"
     },
     {
       "level": 5830.0,
@@ -75,28 +75,28 @@
     }
   ],
   "position": {
-    "current": 5465.0,
-    "in_box_pct": 74.7,
-    "nearest_support": "S1 KEY (5312.0)",
-    "nearest_resistance": "R1 today high (5572.0)"
+    "current": 5510.0,
+    "in_box_pct": 77.8,
+    "nearest_support": "S1 KEY (5392.0)",
+    "nearest_resistance": "R1 today high (5520.0)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 5504.0,
-    "H": 5572.0,
-    "L": 5441.0,
-    "C": 5465.0,
-    "body_pct": 29.8,
-    "upper_wick_pct": 51.9,
-    "lower_wick_pct": 18.3
+    "close_position": "upper_half",
+    "O": 5460.0,
+    "H": 5520.0,
+    "L": 5443.0,
+    "C": 5510.0,
+    "body_pct": 64.9,
+    "upper_wick_pct": 13.0,
+    "lower_wick_pct": 22.1
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -109,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 5312.0 (KEY support)",
-      "then": "still range; watch 5572.0 for next test"
+      "if": "hold 5392.0 (KEY support)",
+      "then": "still range; watch 5520.0 for next test"
     },
     {
-      "if": "break 5312.0 on close",
-      "then": "target 5248.0 → 5168.0 (short-term bearish)"
+      "if": "break 5392.0 on close",
+      "then": "target 5312.0 → 5248.0 (short-term bearish)"
     },
     {
       "if": "break 4388.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 5572.0 on close",
+      "if": "reclaim 5520.0 on close",
       "then": "short-term bullish; next test 5830.0"
     },
     {
@@ -150,21 +150,21 @@
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
-    "trigger_price": 5616.36,
-    "target_price": 5315.39,
-    "stop_price": 5820.63,
-    "risk_pct": 3.64,
-    "reward_pct": 5.36,
-    "rr_ratio": 1.47,
+    "trigger_price": 5621.0,
+    "target_price": 5330.5,
+    "stop_price": 5817.31,
+    "risk_pct": 3.49,
+    "reward_pct": 5.17,
+    "rr_ratio": 1.48,
     "phase_match": true,
-    "r1": 5616.36,
-    "s1": 5014.43,
-    "s2": 4453.29,
-    "r2": 5800.42,
-    "r3": 5394.49,
-    "s3": 4399.56,
-    "s4": 4365.73,
-    "current_position_pct": 74.9,
-    "notes": "SELL_R1: in box (5014-5616), entry at R1 5616, target mid 5315, stop 5821 ｜ 52.2 條規則（SELL plan，resistance 5616.36）：① 跌到 5616.36、收市守住喺 5616.36 上面 → 照 BUY 條 plan 做（入場 5616.36，止蝕 5820.63，目標 5315.39）。② 收市跌穿 5616.36 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 5616.36 上面』。"
+    "r1": 5621.0,
+    "s1": 5040.0,
+    "s2": 4571.0,
+    "r2": 5830.0,
+    "r3": 5422.0,
+    "s3": 4422.0,
+    "s4": 4388.0,
+    "current_position_pct": 80.9,
+    "notes": "SELL_R1: in box (5040-5621), entry at R1 5621, target mid 5330, stop 5817 ｜ 52.2 條規則（SELL plan，resistance 5621.00）：① 跌到 5621.00、收市守住喺 5621.00 上面 → 照 BUY 條 plan 做（入場 5621.00，止蝕 5817.31，目標 5330.50）。② 收市跌穿 5621.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 5621.00 上面』。"
   }
 }

@@ -3,20 +3,20 @@
   "ticker_user": "MRNA",
   "name": "Moderna, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-11 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 197.78,
-    "H": 208.9,
-    "L": 190.0,
-    "C": 203.46,
-    "prev_close": 197.28,
-    "chg_pct": 3.13
+    "date": "2026-09-30",
+    "O": 186.55,
+    "H": 196.83,
+    "L": 184.58,
+    "C": 192.57,
+    "prev_close": 203.46,
+    "chg_pct": -5.35
   },
   "phase": "uptrend",
-  "adx": 61.66,
-  "plus_di": 41.99,
-  "minus_di": 6.59,
+  "adx": 61.71,
+  "plus_di": 37.81,
+  "minus_di": 8.79,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 85.6 (2026-07-06), trough 52.66 (2026-08-03), box top 208.9 (2026-09-29)",
@@ -32,28 +32,28 @@
     "top": 208.9,
     "top_date": "2026-09-29",
     "bottom": 52.66,
-    "period": "2026-08-03 to 2026-09-29"
+    "period": "2026-08-03 to 2026-09-30"
   },
-  "drop_from_peak_pct": -137.7,
-  "recovery_from_crash_pct": 286.4,
+  "drop_from_peak_pct": -125.0,
+  "recovery_from_crash_pct": 265.7,
   "supports": [
     {
-      "level": 192.0,
+      "level": 180.0,
       "label": "S1 KEY",
       "touches": 4,
-      "evidence": "tested 4x in base period; 5.6% below current"
-    },
-    {
-      "level": 180.0,
-      "label": "S2",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
+      "evidence": "tested 4x in base period; 6.5% below current"
     },
     {
       "level": 144.0,
-      "label": "S3",
+      "label": "S2",
       "touches": 6,
       "evidence": "mid-base support, tested 6x"
+    },
+    {
+      "level": 140.0,
+      "label": "S3",
+      "touches": 14,
+      "evidence": "mid-base support, tested 14x"
     },
     {
       "level": 52.66,
@@ -64,29 +64,39 @@
   ],
   "resistances": [
     {
-      "level": 208.9,
+      "level": 196.83,
       "label": "R1 today high",
-      "evidence": "today's high 208.9029998779297"
+      "evidence": "today's high 196.8300018310547"
+    },
+    {
+      "level": 200.0,
+      "label": "R2",
+      "evidence": "mid-box supply, round number 200"
+    },
+    {
+      "level": 208.9,
+      "label": "R3 Sep high",
+      "evidence": "box top 208.9, base period high"
     }
   ],
   "position": {
-    "current": 203.46,
-    "in_box_pct": 96.5,
-    "nearest_support": "S1 KEY (192.0)",
-    "nearest_resistance": "R1 today high (208.9)"
+    "current": 192.57,
+    "in_box_pct": 89.5,
+    "nearest_support": "S1 KEY (180.0)",
+    "nearest_resistance": "R1 today high (196.83)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 197.78,
-    "H": 208.9,
-    "L": 190.0,
-    "C": 203.46,
-    "body_pct": 30.0,
-    "upper_wick_pct": 28.8,
-    "lower_wick_pct": 41.2
+    "O": 186.55,
+    "H": 196.83,
+    "L": 184.58,
+    "C": 192.57,
+    "body_pct": 49.1,
+    "upper_wick_pct": 34.8,
+    "lower_wick_pct": 16.1
   },
   "bias": {
     "short": {
@@ -98,26 +108,30 @@
       "reason": "higher highs / higher lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 192.0 (KEY support)",
-      "then": "still range; watch 208.9 for next test"
+      "if": "hold 180.0 (KEY support)",
+      "then": "still range; watch 196.83 for next test"
     },
     {
-      "if": "break 192.0 on close",
-      "then": "target 180.0 → 144.0 (short-term bearish)"
+      "if": "break 180.0 on close",
+      "then": "target 144.0 → 140.0 (short-term bearish)"
     },
     {
       "if": "break 52.66 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 208.9 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 196.83 on close",
+      "then": "short-term bullish; next test 200.0"
+    },
+    {
+      "if": "break 208.9 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -155,7 +169,7 @@
     "r3": 85.6,
     "s3": 43.68,
     "s4": 28.66,
-    "current_position_pct": 93.1,
-    "notes": "WAIT_RANGE: in box (130-209), pos 93%, no clear setup"
+    "current_position_pct": 79.2,
+    "notes": "WAIT_RANGE: in box (130-209), pos 79%, no clear setup"
   }
 }

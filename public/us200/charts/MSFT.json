@@ -1,91 +1,86 @@
 {
   "ticker": "US.MSFT",
   "ticker_user": "MSFT",
-  "name": "",
+  "name": "Microsoft Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-11 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 508.31,
-    "H": 513.64,
-    "L": 502.4,
-    "C": 508.96,
-    "prev_close": 509.22,
-    "chg_pct": -0.05
+    "date": "2026-09-30",
+    "O": 511.61,
+    "H": 519.83,
+    "L": 510.31,
+    "C": 512.9,
+    "prev_close": 508.96,
+    "chg_pct": 0.77
   },
   "phase": "downtrend_active",
-  "adx": 33.35,
-  "plus_di": 32.35,
-  "minus_di": 13.1,
+  "adx": 34.33,
+  "plus_di": 33.97,
+  "minus_di": 12.24,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 519.4 (2026-09-25), trough 477.15 (2026-08-18), box top 519.4 (2026-09-25)",
+  "phase_evidence": "Peak 519.83 (2026-09-30), trough 486.0 (2026-09-10), box top 519.83 (2026-09-30)",
   "peak": {
-    "date": "2026-09-25",
-    "price": 519.4
+    "date": "2026-09-30",
+    "price": 519.83
   },
   "trough": {
-    "date": "2026-08-18",
-    "price": 477.15
+    "date": "2026-09-10",
+    "price": 486.0
   },
   "box": {
-    "top": 519.4,
-    "top_date": "2026-09-25",
-    "bottom": 477.15,
-    "period": "2026-08-18 to 2026-09-29"
+    "top": 519.83,
+    "top_date": "2026-09-30",
+    "bottom": 486.0,
+    "period": "2026-09-10 to 2026-09-30"
   },
-  "drop_from_peak_pct": 2.0,
-  "recovery_from_crash_pct": 6.7,
+  "drop_from_peak_pct": 1.3,
+  "recovery_from_crash_pct": 5.5,
   "supports": [
     {
-      "level": 496.0,
+      "level": 504.0,
       "label": "S1 KEY",
-      "touches": 10,
-      "evidence": "tested 10x in base period; 2.5% below current"
+      "touches": 4,
+      "evidence": "tested 4x in base period; 1.7% below current"
+    },
+    {
+      "level": 496.0,
+      "label": "S2",
+      "touches": 9,
+      "evidence": "mid-base support, tested 9x"
     },
     {
       "level": 492.0,
-      "label": "S2",
-      "touches": 18,
-      "evidence": "mid-base support, tested 18x"
-    },
-    {
-      "level": 488.0,
       "label": "S3 bottom",
-      "touches": 8,
-      "evidence": "structural bottom, near crash low 477.15"
+      "touches": 15,
+      "evidence": "structural bottom, near crash low 486.0"
     }
   ],
   "resistances": [
     {
-      "level": 513.64,
+      "level": 519.83,
       "label": "R1 today high",
-      "evidence": "today's high 513.6400146484375"
-    },
-    {
-      "level": 519.4,
-      "label": "R3 Sep high",
-      "evidence": "box top 519.4, base period high"
+      "evidence": "today's high 519.8300170898438"
     }
   ],
   "position": {
-    "current": 508.96,
-    "in_box_pct": 66.8,
-    "nearest_support": "S1 KEY (496.0)",
-    "nearest_resistance": "R1 today high (513.64)"
+    "current": 512.9,
+    "in_box_pct": 75.1,
+    "nearest_support": "S1 KEY (504.0)",
+    "nearest_resistance": "R1 today high (519.83)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 508.31,
-    "H": 513.64,
-    "L": 502.4,
-    "C": 508.96,
-    "body_pct": 5.8,
-    "upper_wick_pct": 41.6,
-    "lower_wick_pct": 52.6
+    "close_position": "lower_half",
+    "O": 511.61,
+    "H": 519.83,
+    "L": 510.31,
+    "C": 512.9,
+    "body_pct": 13.6,
+    "upper_wick_pct": 72.8,
+    "lower_wick_pct": 13.7
   },
   "bias": {
     "short": {
@@ -103,24 +98,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 496.0 (KEY support)",
-      "then": "still range; watch 513.64 for next test"
+      "if": "hold 504.0 (KEY support)",
+      "then": "still range; watch 519.83 for next test"
     },
     {
-      "if": "break 496.0 on close",
-      "then": "target 492.0 → 488.0 (short-term bearish)"
+      "if": "break 504.0 on close",
+      "then": "target 496.0 → 492.0 (short-term bearish)"
     },
     {
-      "if": "break 488.0 (crash low)",
+      "if": "break 492.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 513.64 on close",
-      "then": "short-term bullish; next test 519.4"
-    },
-    {
-      "if": "break 519.4 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 519.83 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -151,14 +142,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 519.4,
+    "r1": 519.83,
     "s1": 486.0,
     "s2": 373.35,
     "r2": 517.78,
     "r3": 466.32,
     "s3": 349.2,
     "s4": 356.28,
-    "current_position_pct": 68.7,
-    "notes": "WAIT_RANGE: in box (486-519), pos 69%, no clear setup"
+    "current_position_pct": 79.5,
+    "notes": "WAIT_RANGE: in box (486-520), pos 80%, no clear setup"
   }
 }

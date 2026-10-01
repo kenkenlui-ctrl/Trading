@@ -3,20 +3,20 @@
   "ticker_user": "02611.HK",
   "name": "GTHT",
   "data_source": "yfinance",
-  "data_range": "2025-12-05 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-08 → 2026-09-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 14.32,
-    "H": 14.85,
-    "L": 14.32,
-    "C": 14.71,
-    "prev_close": 14.32,
-    "chg_pct": 2.72
+    "date": "2026-09-30",
+    "O": 14.7,
+    "H": 15.2,
+    "L": 14.7,
+    "C": 15.05,
+    "prev_close": 14.71,
+    "chg_pct": 2.31
   },
   "phase": "base_building",
-  "adx": 16.2,
-  "plus_di": 16.14,
-  "minus_di": 21.93,
+  "adx": 15.11,
+  "plus_di": 20.52,
+  "minus_di": 20.15,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 18.2 (2026-02-10), trough 12.73 (2026-05-28), box top 16.3 (2026-07-06)",
@@ -32,29 +32,29 @@
     "top": 16.3,
     "top_date": "2026-07-06",
     "bottom": 12.73,
-    "period": "2026-05-28 to 2026-09-29"
+    "period": "2026-05-28 to 2026-09-30"
   },
-  "drop_from_peak_pct": 19.2,
-  "recovery_from_crash_pct": 15.6,
+  "drop_from_peak_pct": 17.3,
+  "recovery_from_crash_pct": 18.2,
   "supports": [
     {
       "level": 16.0,
       "label": "S1 KEY",
-      "touches": 23,
-      "evidence": "tested 23x in base period; -8.8% below current"
+      "touches": 61,
+      "evidence": "tested 61x in base period; -6.3% below current"
     },
     {
-      "level": 12.0,
-      "label": "S2 bottom",
-      "touches": 10,
-      "evidence": "structural bottom, near crash low 12.73"
+      "level": 12.73,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-05-28, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 14.85,
+      "level": 15.2,
       "label": "R1 today high",
-      "evidence": "today's high 14.850000381469727"
+      "evidence": "today's high 15.199999809265137"
     },
     {
       "level": 16.3,
@@ -63,22 +63,22 @@
     }
   ],
   "position": {
-    "current": 14.71,
-    "in_box_pct": 63.0,
+    "current": 15.05,
+    "in_box_pct": 65.0,
     "nearest_support": "S1 KEY (16.0)",
-    "nearest_resistance": "R1 today high (14.85)"
+    "nearest_resistance": "R1 today high (15.2)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": true,
     "close_position": "upper_half",
-    "O": 14.32,
-    "H": 14.85,
-    "L": 14.32,
-    "C": 14.71,
-    "body_pct": 73.6,
-    "upper_wick_pct": 26.4,
+    "O": 14.7,
+    "H": 15.2,
+    "L": 14.7,
+    "C": 15.05,
+    "body_pct": 70.0,
+    "upper_wick_pct": 30.0,
     "lower_wick_pct": 0.0
   },
   "bias": {
@@ -98,18 +98,18 @@
   "scenarios": [
     {
       "if": "hold 16.0 (KEY support)",
-      "then": "still range; watch 14.85 for next test"
+      "then": "still range; watch 15.2 for next test"
     },
     {
       "if": "break 16.0 on close",
-      "then": "target 12.0 → lower (short-term bearish)"
+      "then": "target 12.73 → lower (short-term bearish)"
     },
     {
-      "if": "break 12.0 (crash low)",
+      "if": "break 12.73 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 14.85 on close",
+      "if": "reclaim 15.2 on close",
       "then": "short-term bullish; next test 16.3"
     },
     {
@@ -137,14 +137,14 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
+    "phase_match": false,
     "r1": 15.63,
     "s1": 14.13,
     "s2": 14.06,
@@ -152,7 +152,7 @@
     "r3": 16.3,
     "s3": 12.73,
     "s4": 13.21,
-    "current_position_pct": 38.7,
-    "notes": "WAIT_RANGE: in box (14-16), pos 39%, no clear setup"
+    "current_position_pct": 61.3,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 15.63）：① 跌到 15.63、收市守住喺 15.63 上面 → 照 BUY 條 plan 做（入場 15.63，止蝕 16.32，目標 14.88）。② 收市跌穿 15.63 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 15.63 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }

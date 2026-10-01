@@ -3,21 +3,21 @@
   "ticker_user": "ADBE",
   "name": "Adobe Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-11 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 230.99,
-    "H": 233.33,
-    "L": 228.68,
-    "C": 233.17,
-    "prev_close": 231.01,
-    "chg_pct": 0.94
+    "date": "2026-09-30",
+    "O": 233.7,
+    "H": 240.84,
+    "L": 231.95,
+    "C": 239.94,
+    "prev_close": 233.17,
+    "chg_pct": 2.9
   },
   "phase": "base_building",
-  "adx": 25.21,
-  "plus_di": 16.75,
-  "minus_di": 35.18,
-  "regime": "trend",
+  "adx": 24.91,
+  "plus_di": 21.41,
+  "minus_di": 32.76,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 285.36 (2026-03-05), trough 190.12 (2026-06-18), box top 294.53 (2026-09-01)",
   "peak": {
@@ -32,28 +32,28 @@
     "top": 294.53,
     "top_date": "2026-09-01",
     "bottom": 190.12,
-    "period": "2026-06-18 to 2026-09-29"
+    "period": "2026-06-18 to 2026-09-30"
   },
-  "drop_from_peak_pct": 18.3,
-  "recovery_from_crash_pct": 22.6,
+  "drop_from_peak_pct": 15.9,
+  "recovery_from_crash_pct": 26.2,
   "supports": [
     {
-      "level": 224.0,
+      "level": 232.0,
       "label": "S1 KEY",
-      "touches": 7,
-      "evidence": "tested 7x in base period; 3.9% below current"
+      "touches": 3,
+      "evidence": "tested 3x in base period; 3.3% below current"
     },
     {
-      "level": 216.0,
+      "level": 228.0,
       "label": "S2",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
     },
     {
-      "level": 212.0,
+      "level": 224.0,
       "label": "S3",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
+      "touches": 7,
+      "evidence": "mid-base support, tested 7x"
     },
     {
       "level": 190.12,
@@ -64,14 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 233.33,
+      "level": 240.84,
       "label": "R1 today high",
-      "evidence": "today's high 233.3300018310547"
-    },
-    {
-      "level": 275.0,
-      "label": "R5",
-      "evidence": "pre-crash supply, top before breakdown"
+      "evidence": "today's high 240.83999633789062"
     },
     {
       "level": 294.53,
@@ -80,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 233.17,
-    "in_box_pct": 41.2,
-    "nearest_support": "S1 KEY (224.0)",
-    "nearest_resistance": "R1 today high (233.33)"
+    "current": 239.94,
+    "in_box_pct": 47.7,
+    "nearest_support": "S1 KEY (232.0)",
+    "nearest_resistance": "R1 today high (240.84)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 230.99,
-    "H": 233.33,
-    "L": 228.68,
-    "C": 233.17,
-    "body_pct": 46.9,
-    "upper_wick_pct": 3.4,
-    "lower_wick_pct": 49.7
+    "O": 233.7,
+    "H": 240.84,
+    "L": 231.95,
+    "C": 239.94,
+    "body_pct": 70.2,
+    "upper_wick_pct": 10.1,
+    "lower_wick_pct": 19.7
   },
   "bias": {
     "short": {
@@ -114,20 +109,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 224.0 (KEY support)",
-      "then": "still range; watch 233.33 for next test"
+      "if": "hold 232.0 (KEY support)",
+      "then": "still range; watch 240.84 for next test"
     },
     {
-      "if": "break 224.0 on close",
-      "then": "target 216.0 → 212.0 (short-term bearish)"
+      "if": "break 232.0 on close",
+      "then": "target 228.0 → 224.0 (short-term bearish)"
     },
     {
       "if": "break 190.12 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 233.33 on close",
-      "then": "short-term bullish; next test 275.0"
+      "if": "reclaim 240.84 on close",
+      "then": "short-term bullish; next test 294.53"
     },
     {
       "if": "break 294.53 (box top)",
@@ -153,23 +148,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 294.53,
+    "verdict": "BUY",
+    "strategy": "BUY_S1",
+    "trigger_price": 224.67,
+    "target_price": 258.78,
+    "stop_price": 212.25,
+    "risk_pct": 5.53,
+    "reward_pct": 15.18,
+    "rr_ratio": 2.75,
+    "phase_match": true,
+    "r1": 292.88,
     "s1": 224.67,
     "s2": 210.88,
-    "r2": 294.13,
+    "r2": 294.53,
     "r3": 275.44,
     "s3": 190.12,
-    "s4": 233.16,
-    "current_position_pct": 12.2,
-    "notes": "WAIT_RANGE: in box (225-295), pos 12%, no clear setup"
+    "s4": 227.7,
+    "current_position_pct": 22.4,
+    "notes": "BUY_S1: in box (225-293), entry at S1 225, target mid 259, stop 212 ｜ 52.2 條規則（BUY plan，support 224.67）：① 跌到 224.67、收市守住喺 224.67 上面 → 照 BUY 條 plan 做（入場 224.67，止蝕 212.25，目標 258.78）。② 收市跌穿 224.67 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 224.67 上面』。"
   }
 }

@@ -3,20 +3,20 @@
   "ticker_user": "INTC",
   "name": "Intel Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-11 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 116.7,
-    "H": 118.75,
-    "L": 113.97,
-    "C": 115.93,
-    "prev_close": 116.03,
-    "chg_pct": -0.09
+    "date": "2026-09-30",
+    "O": 116.22,
+    "H": 120.55,
+    "L": 116.0,
+    "C": 120.23,
+    "prev_close": 115.93,
+    "chg_pct": 3.71
   },
   "phase": "base_building",
-  "adx": 24.33,
-  "plus_di": 32.31,
-  "minus_di": 21.18,
+  "adx": 24.31,
+  "plus_di": 32.67,
+  "minus_di": 20.05,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 142.35 (2026-06-30), trough 81.79 (2026-07-29), box top 127.44 (2026-09-24)",
@@ -32,16 +32,16 @@
     "top": 127.44,
     "top_date": "2026-09-24",
     "bottom": 81.79,
-    "period": "2026-07-29 to 2026-09-29"
+    "period": "2026-07-29 to 2026-09-30"
   },
-  "drop_from_peak_pct": 18.6,
-  "recovery_from_crash_pct": 41.7,
+  "drop_from_peak_pct": 15.5,
+  "recovery_from_crash_pct": 47.0,
   "supports": [
     {
-      "level": 104.0,
+      "level": 116.0,
       "label": "S1 KEY",
-      "touches": 5,
-      "evidence": "tested 5x in base period; 10.3% below current"
+      "touches": 6,
+      "evidence": "tested 6x in base period; 3.5% below current"
     },
     {
       "level": 100.0,
@@ -52,8 +52,8 @@
     {
       "level": 96.0,
       "label": "S3",
-      "touches": 11,
-      "evidence": "mid-base support, tested 11x"
+      "touches": 10,
+      "evidence": "mid-base support, tested 10x"
     },
     {
       "level": 81.79,
@@ -64,14 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 118.75,
+      "level": 120.55,
       "label": "R1 today high",
-      "evidence": "today's high 118.75"
-    },
-    {
-      "level": 120.0,
-      "label": "R2",
-      "evidence": "mid-box supply, round number 120"
+      "evidence": "today's high 120.55000305175781"
     },
     {
       "level": 127.44,
@@ -80,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 115.93,
-    "in_box_pct": 74.8,
-    "nearest_support": "S1 KEY (104.0)",
-    "nearest_resistance": "R1 today high (118.75)"
+    "current": 120.23,
+    "in_box_pct": 84.2,
+    "nearest_support": "S1 KEY (116.0)",
+    "nearest_resistance": "R1 today high (120.55)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 116.7,
-    "H": 118.75,
-    "L": 113.97,
-    "C": 115.93,
-    "body_pct": 16.1,
-    "upper_wick_pct": 42.9,
-    "lower_wick_pct": 41.0
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 116.22,
+    "H": 120.55,
+    "L": 116.0,
+    "C": 120.23,
+    "body_pct": 88.1,
+    "upper_wick_pct": 7.0,
+    "lower_wick_pct": 4.8
   },
   "bias": {
     "short": {
@@ -114,11 +109,11 @@
   },
   "scenarios": [
     {
-      "if": "hold 104.0 (KEY support)",
-      "then": "still range; watch 118.75 for next test"
+      "if": "hold 116.0 (KEY support)",
+      "then": "still range; watch 120.55 for next test"
     },
     {
-      "if": "break 104.0 on close",
+      "if": "break 116.0 on close",
       "then": "target 100.0 → 96.0 (short-term bearish)"
     },
     {
@@ -126,8 +121,8 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 118.75 on close",
-      "then": "short-term bullish; next test 120.0"
+      "if": "reclaim 120.55 on close",
+      "then": "short-term bullish; next test 127.44"
     },
     {
       "if": "break 127.44 (box top)",
@@ -153,23 +148,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_VOLATILE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 127.44,
+    "target_price": 107.47,
+    "stop_price": 138.08,
+    "risk_pct": 8.35,
+    "reward_pct": 15.67,
+    "rr_ratio": 1.88,
+    "phase_match": true,
     "r1": 127.44,
-    "s1": 85.72,
+    "s1": 87.5,
     "s2": 81.79,
     "r2": 116.77,
     "r3": 142.35,
-    "s3": 58.39,
+    "s3": 60.75,
     "s4": 34.95,
-    "current_position_pct": 72.4,
-    "notes": "WAIT_VOLATILE: ATR14 5.9% / box width 36% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
+    "current_position_pct": 81.9,
+    "notes": "SELL_R1: in box (88-127), entry at R1 127, target mid 107, stop 138 ｜ 52.2 條規則（SELL plan，resistance 127.44）：① 跌到 127.44、收市守住喺 127.44 上面 → 照 BUY 條 plan 做（入場 127.44，止蝕 138.08，目標 107.47）。② 收市跌穿 127.44 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 127.44 上面』。"
   }
 }

@@ -3,20 +3,20 @@
   "ticker_user": "PYPL",
   "name": "PayPal Holdings, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-11 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 54.11,
-    "H": 54.23,
-    "L": 53.33,
-    "C": 53.89,
-    "prev_close": 54.28,
-    "chg_pct": -0.72
+    "date": "2026-09-30",
+    "O": 53.89,
+    "H": 53.95,
+    "L": 52.29,
+    "C": 52.53,
+    "prev_close": 53.89,
+    "chg_pct": -2.52
   },
   "phase": "base_building",
-  "adx": 22.5,
-  "plus_di": 29.06,
-  "minus_di": 20.39,
+  "adx": 21.41,
+  "plus_di": 27.01,
+  "minus_di": 23.37,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 60.13 (2026-01-07), trough 38.46 (2026-02-12), box top 62.73 (2026-08-20)",
@@ -32,22 +32,16 @@
     "top": 62.73,
     "top_date": "2026-08-20",
     "bottom": 38.46,
-    "period": "2026-02-12 to 2026-09-29"
+    "period": "2026-02-12 to 2026-09-30"
   },
-  "drop_from_peak_pct": 10.4,
-  "recovery_from_crash_pct": 40.1,
+  "drop_from_peak_pct": 12.6,
+  "recovery_from_crash_pct": 36.6,
   "supports": [
     {
-      "level": 52.0,
-      "label": "S1 KEY",
-      "touches": 33,
-      "evidence": "tested 33x in base period; 3.5% below current"
-    },
-    {
       "level": 44.0,
-      "label": "S2",
+      "label": "S1 KEY",
       "touches": 67,
-      "evidence": "mid-base support, tested 67x"
+      "evidence": "tested 67x in base period; 16.2% below current"
     },
     {
       "level": 38.46,
@@ -58,9 +52,9 @@
   ],
   "resistances": [
     {
-      "level": 54.23,
+      "level": 53.95,
       "label": "R1 today high",
-      "evidence": "today's high 54.22999954223633"
+      "evidence": "today's high 53.95000076293945"
     },
     {
       "level": 62.73,
@@ -69,23 +63,23 @@
     }
   ],
   "position": {
-    "current": 53.89,
-    "in_box_pct": 63.6,
-    "nearest_support": "S1 KEY (52.0)",
-    "nearest_resistance": "R1 today high (54.23)"
+    "current": 52.53,
+    "in_box_pct": 58.0,
+    "nearest_support": "S1 KEY (44.0)",
+    "nearest_resistance": "R1 today high (53.95)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 54.11,
-    "H": 54.23,
-    "L": 53.33,
-    "C": 53.89,
-    "body_pct": 24.4,
-    "upper_wick_pct": 13.3,
-    "lower_wick_pct": 62.2
+    "close_position": "lower_half",
+    "O": 53.89,
+    "H": 53.95,
+    "L": 52.29,
+    "C": 52.53,
+    "body_pct": 82.2,
+    "upper_wick_pct": 3.6,
+    "lower_wick_pct": 14.2
   },
   "bias": {
     "short": {
@@ -103,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 52.0 (KEY support)",
-      "then": "still range; watch 54.23 for next test"
+      "if": "hold 44.0 (KEY support)",
+      "then": "still range; watch 53.95 for next test"
     },
     {
-      "if": "break 52.0 on close",
-      "then": "target 44.0 → 38.46 (short-term bearish)"
+      "if": "break 44.0 on close",
+      "then": "target 38.46 → lower (short-term bearish)"
     },
     {
       "if": "break 38.46 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 54.23 on close",
+      "if": "reclaim 53.95 on close",
       "then": "short-term bullish; next test 62.73"
     },
     {
@@ -142,14 +136,14 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
+    "verdict": "BUY",
+    "strategy": "BUY_S1",
+    "trigger_price": 50.8,
+    "target_price": 53.88,
+    "stop_price": 48.76,
+    "risk_pct": 4.02,
+    "reward_pct": 6.06,
+    "rr_ratio": 1.51,
     "phase_match": true,
     "r1": 56.96,
     "s1": 50.8,
@@ -158,7 +152,7 @@
     "r3": 52.3,
     "s3": 40.2,
     "s4": 38.46,
-    "current_position_pct": 50.1,
-    "notes": "WAIT_RANGE: in box (51-57), pos 50%, no clear setup"
+    "current_position_pct": 28.1,
+    "notes": "BUY_S1: in box (51-57), entry at S1 51, target mid 54, stop 49 ｜ 52.2 條規則（BUY plan，support 50.80）：① 跌到 50.80、收市守住喺 50.80 上面 → 照 BUY 條 plan 做（入場 50.80，止蝕 48.76，目標 53.88）。② 收市跌穿 50.80 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 50.80 上面』。"
   }
 }

@@ -3,23 +3,23 @@
   "ticker_user": "01276.HK",
   "name": "HENGRUI PHARMA",
   "data_source": "yfinance",
-  "data_range": "2025-12-05 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-08 → 2026-09-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 44.98,
-    "H": 47.5,
-    "L": 44.86,
-    "C": 45.6,
-    "prev_close": 44.76,
-    "chg_pct": 1.88
+    "date": "2026-09-30",
+    "O": 46.08,
+    "H": 50.4,
+    "L": 45.38,
+    "C": 50.2,
+    "prev_close": 45.6,
+    "chg_pct": 10.09
   },
   "phase": "downtrend_active",
-  "adx": 22.68,
-  "plus_di": 24.34,
-  "minus_di": 23.42,
+  "adx": 22.59,
+  "plus_di": 30.06,
+  "minus_di": 19.41,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 76.75 (2026-05-12), trough 43.02 (2026-09-14), box top 49.5 (2026-09-22)",
+  "phase_evidence": "Peak 76.75 (2026-05-12), trough 43.02 (2026-09-14), box top 50.4 (2026-09-30)",
   "peak": {
     "date": "2026-05-12",
     "price": 76.75
@@ -29,86 +29,83 @@
     "price": 43.02
   },
   "box": {
-    "top": 49.5,
-    "top_date": "2026-09-22",
+    "top": 50.4,
+    "top_date": "2026-09-30",
     "bottom": 43.02,
-    "period": "2026-09-14 to 2026-09-29"
+    "period": "2026-09-14 to 2026-09-30"
   },
-  "drop_from_peak_pct": 40.6,
-  "recovery_from_crash_pct": 6.0,
+  "drop_from_peak_pct": 34.6,
+  "recovery_from_crash_pct": 16.7,
   "supports": [
     {
+      "level": 48.0,
+      "label": "S1 KEY",
+      "touches": 13,
+      "evidence": "tested 13x in base period; 4.4% below current"
+    },
+    {
       "level": 44.0,
-      "label": "S1 bottom",
-      "touches": 14,
+      "label": "S2 bottom",
+      "touches": 30,
       "evidence": "structural bottom, near crash low 43.02"
     }
   ],
   "resistances": [
     {
-      "level": 47.5,
+      "level": 50.4,
       "label": "R1 today high",
-      "evidence": "today's high 47.5"
-    },
-    {
-      "level": 49.5,
-      "label": "R3 Sep high",
-      "evidence": "box top 49.5, base period high"
+      "evidence": "today's high 50.400001525878906"
     }
   ],
   "position": {
-    "current": 45.6,
-    "in_box_pct": 29.1,
-    "nearest_support": "S1 bottom (44.0)",
-    "nearest_resistance": "R1 today high (47.5)"
+    "current": 50.2,
+    "in_box_pct": 96.9,
+    "nearest_support": "S1 KEY (48.0)",
+    "nearest_resistance": "R1 today high (50.4)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 44.98,
-    "H": 47.5,
-    "L": 44.86,
-    "C": 45.6,
-    "body_pct": 23.5,
-    "upper_wick_pct": 72.0,
-    "lower_wick_pct": 4.5
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 46.08,
+    "H": 50.4,
+    "L": 45.38,
+    "C": 50.2,
+    "body_pct": 82.1,
+    "upper_wick_pct": 4.0,
+    "lower_wick_pct": 13.9
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (29% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
       "reason": "making new lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 44.0 (KEY support)",
-      "then": "still range; watch 47.5 for next test"
+      "if": "hold 48.0 (KEY support)",
+      "then": "still range; watch 50.4 for next test"
     },
     {
-      "if": "break 44.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 48.0 on close",
+      "then": "target 44.0 → lower (short-term bearish)"
     },
     {
       "if": "break 44.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 47.5 on close",
-      "then": "short-term bullish; next test 49.5"
-    },
-    {
-      "if": "break 49.5 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 50.4 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -131,7 +128,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -139,14 +136,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 49.5,
+    "r1": 50.4,
     "s1": 43.02,
-    "s2": 45.66,
-    "r2": 62.0,
+    "s2": 45.08,
+    "r2": 61.75,
     "r3": 76.75,
     "s3": 51.3,
     "s4": 60.0,
-    "current_position_pct": 39.8,
-    "notes": "WAIT_RANGE: in box (43-50), pos 40%, no clear setup"
+    "current_position_pct": 97.3,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 50.40）：① 跌到 50.40、收市守住喺 50.40 上面 → 照 BUY 條 plan 做（入場 50.40，止蝕 53.56，目標 46.71）。② 收市跌穿 50.40 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 50.40 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }

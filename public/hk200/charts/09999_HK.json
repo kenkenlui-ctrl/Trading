@@ -3,20 +3,20 @@
   "ticker_user": "09999.HK",
   "name": "NTES",
   "data_source": "yfinance",
-  "data_range": "2025-12-05 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-08 → 2026-09-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 189.7,
-    "H": 193.8,
-    "L": 187.9,
-    "C": 192.8,
-    "prev_close": 189.7,
-    "chg_pct": 1.63
+    "date": "2026-09-30",
+    "O": 192.8,
+    "H": 192.9,
+    "L": 189.4,
+    "C": 192.6,
+    "prev_close": 192.8,
+    "chg_pct": -0.1
   },
   "phase": "base_building",
-  "adx": 9.72,
-  "plus_di": 28.31,
-  "minus_di": 17.29,
+  "adx": 10.75,
+  "plus_di": 27.0,
+  "minus_di": 16.49,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 232.6 (2026-01-06), trough 168.8 (2026-04-24), box top 216.6 (2026-07-09)",
@@ -32,16 +32,16 @@
     "top": 216.6,
     "top_date": "2026-07-09",
     "bottom": 168.8,
-    "period": "2026-04-24 to 2026-09-29"
+    "period": "2026-04-24 to 2026-09-30"
   },
-  "drop_from_peak_pct": 17.1,
-  "recovery_from_crash_pct": 14.2,
+  "drop_from_peak_pct": 17.2,
+  "recovery_from_crash_pct": 14.1,
   "supports": [
     {
       "level": 188.0,
       "label": "S1 KEY",
       "touches": 14,
-      "evidence": "tested 14x in base period; 2.5% below current"
+      "evidence": "tested 14x in base period; 2.4% below current"
     },
     {
       "level": 184.0,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 193.8,
+      "level": 192.9,
       "label": "R1 today high",
-      "evidence": "today's high 193.8000030517578"
+      "evidence": "today's high 192.89999389648438"
     },
     {
       "level": 200.0,
@@ -80,28 +80,28 @@
     }
   ],
   "position": {
-    "current": 192.8,
-    "in_box_pct": 50.2,
+    "current": 192.6,
+    "in_box_pct": 49.8,
     "nearest_support": "S1 KEY (188.0)",
-    "nearest_resistance": "R1 today high (193.8)"
+    "nearest_resistance": "R1 today high (192.9)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 189.7,
-    "H": 193.8,
-    "L": 187.9,
-    "C": 192.8,
-    "body_pct": 52.5,
-    "upper_wick_pct": 16.9,
-    "lower_wick_pct": 30.5
+    "O": 192.8,
+    "H": 192.9,
+    "L": 189.4,
+    "C": 192.6,
+    "body_pct": 5.7,
+    "upper_wick_pct": 2.9,
+    "lower_wick_pct": 91.4
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (50% of box)"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -115,7 +115,7 @@
   "scenarios": [
     {
       "if": "hold 188.0 (KEY support)",
-      "then": "still range; watch 193.8 for next test"
+      "then": "still range; watch 192.9 for next test"
     },
     {
       "if": "break 188.0 on close",
@@ -126,7 +126,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 193.8 on close",
+      "if": "reclaim 192.9 on close",
       "then": "short-term bullish; next test 200.0"
     },
     {
@@ -164,12 +164,12 @@
     "phase_match": false,
     "r1": 193.8,
     "s1": 179.0,
-    "s2": 186.1,
+    "s2": 183.6,
     "r2": 216.6,
-    "r3": 211.2,
+    "r3": 216.4,
     "s3": 168.8,
     "s4": 169.2,
-    "current_position_pct": 93.2,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 入場位 resistance 193.80：以收市價為準 —— 收得守住先當入場成立；收穿就係 resistance 失效，本單取消（見上方失效條件）。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 91.9,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 193.80）：① 跌到 193.80、收市守住喺 193.80 上面 → 照 BUY 條 plan 做（入場 193.80，止蝕 200.83，目標 186.40）。② 收市跌穿 193.80 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 193.80 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }

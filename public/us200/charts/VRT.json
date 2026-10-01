@@ -3,20 +3,20 @@
   "ticker_user": "VRT",
   "name": "Vertiv Holdings, LLC",
   "data_source": "yfinance",
-  "data_range": "2025-12-11 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 251.38,
-    "H": 254.13,
-    "L": 246.84,
-    "C": 248.34,
-    "prev_close": 244.04,
-    "chg_pct": 1.76
+    "date": "2026-09-30",
+    "O": 249.48,
+    "H": 250.82,
+    "L": 241.27,
+    "C": 241.31,
+    "prev_close": 248.34,
+    "chg_pct": -2.83
   },
-  "phase": "base_building",
-  "adx": 14.26,
-  "plus_di": 21.89,
-  "minus_di": 29.98,
+  "phase": "downtrend_recovery",
+  "adx": 14.74,
+  "plus_di": 20.66,
+  "minus_di": 31.56,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 379.93 (2026-05-14), trough 220.92 (2026-07-29), box top 300.3 (2026-08-17)",
@@ -32,41 +32,23 @@
     "top": 300.3,
     "top_date": "2026-08-17",
     "bottom": 220.92,
-    "period": "2026-07-29 to 2026-09-29"
+    "period": "2026-07-29 to 2026-09-30"
   },
-  "drop_from_peak_pct": 34.6,
-  "recovery_from_crash_pct": 12.4,
+  "drop_from_peak_pct": 36.5,
+  "recovery_from_crash_pct": 9.2,
   "supports": [
     {
-      "level": 244.0,
-      "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 1.7% below current"
-    },
-    {
-      "level": 240.0,
-      "label": "S2",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
-    },
-    {
-      "level": 236.0,
-      "label": "S3",
+      "level": 232.0,
+      "label": "S1 bottom",
       "touches": 3,
-      "evidence": "mid-base support, tested 3x"
-    },
-    {
-      "level": 220.92,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-07-29, structural bottom"
+      "evidence": "structural bottom, near crash low 220.92"
     }
   ],
   "resistances": [
     {
-      "level": 254.13,
+      "level": 250.82,
       "label": "R1 today high",
-      "evidence": "today's high 254.1300048828125"
+      "evidence": "today's high 250.82000732421875"
     },
     {
       "level": 300.3,
@@ -80,32 +62,32 @@
     }
   ],
   "position": {
-    "current": 248.34,
-    "in_box_pct": 34.5,
-    "nearest_support": "S1 KEY (244.0)",
-    "nearest_resistance": "R1 today high (254.13)"
+    "current": 241.31,
+    "in_box_pct": 13.6,
+    "nearest_support": "S1 bottom (232.0)",
+    "nearest_resistance": "R1 today high (250.82)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 251.38,
-    "H": 254.13,
-    "L": 246.84,
-    "C": 248.34,
-    "body_pct": 41.7,
-    "upper_wick_pct": 37.7,
-    "lower_wick_pct": 20.6
+    "O": 249.48,
+    "H": 250.82,
+    "L": 241.27,
+    "C": 241.31,
+    "body_pct": 85.5,
+    "upper_wick_pct": 14.0,
+    "lower_wick_pct": 0.4
   },
   "bias": {
     "short": {
       "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (34% of box)"
+      "reason": "rejection at R1 + near support (14% of box)"
     },
     "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
+      "bias": "neutral",
+      "reason": ""
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -114,19 +96,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 244.0 (KEY support)",
-      "then": "still range; watch 254.13 for next test"
+      "if": "hold 232.0 (KEY support)",
+      "then": "still range; watch 250.82 for next test"
     },
     {
-      "if": "break 244.0 on close",
-      "then": "target 240.0 → 236.0 (short-term bearish)"
+      "if": "break 232.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 220.92 (crash low)",
+      "if": "break 232.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 254.13 on close",
+      "if": "reclaim 250.82 on close",
       "then": "short-term bullish; next test 300.3"
     },
     {
@@ -153,14 +135,14 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
+    "verdict": "BUY",
+    "strategy": "BUY_S1",
+    "trigger_price": 226.94,
+    "target_price": 261.14,
+    "stop_price": 211.39,
+    "risk_pct": 6.85,
+    "reward_pct": 15.07,
+    "rr_ratio": 2.2,
     "phase_match": true,
     "r1": 295.34,
     "s1": 226.94,
@@ -169,7 +151,7 @@
     "r3": 379.93,
     "s3": 275.18,
     "s4": 147.82,
-    "current_position_pct": 31.3,
-    "notes": "WAIT_RANGE: in box (227-295), pos 31%, no clear setup"
+    "current_position_pct": 21.0,
+    "notes": "BUY_S1: in box (227-295), entry at S1 227, target mid 261, stop 211 ｜ 52.2 條規則（BUY plan，support 226.94）：① 跌到 226.94、收市守住喺 226.94 上面 → 照 BUY 條 plan 做（入場 226.94，止蝕 211.39，目標 261.14）。② 收市跌穿 226.94 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 226.94 上面』。"
   }
 }

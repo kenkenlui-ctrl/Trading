@@ -3,20 +3,20 @@
   "ticker_user": "ADI",
   "name": "Analog Devices, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-11 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 401.62,
-    "H": 405.38,
-    "L": 395.74,
-    "C": 398.22,
-    "prev_close": 395.43,
-    "chg_pct": 0.71
+    "date": "2026-09-30",
+    "O": 397.5,
+    "H": 399.48,
+    "L": 393.06,
+    "C": 396.71,
+    "prev_close": 398.22,
+    "chg_pct": -0.38
   },
   "phase": "downtrend_active",
-  "adx": 20.53,
-  "plus_di": 32.51,
-  "minus_di": 13.68,
+  "adx": 21.58,
+  "plus_di": 31.12,
+  "minus_di": 14.88,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 445.91 (2026-06-22), trough 348.0 (2026-09-03), box top 405.38 (2026-09-29)",
@@ -32,22 +32,22 @@
     "top": 405.38,
     "top_date": "2026-09-29",
     "bottom": 348.0,
-    "period": "2026-09-03 to 2026-09-29"
+    "period": "2026-09-03 to 2026-09-30"
   },
-  "drop_from_peak_pct": 10.7,
-  "recovery_from_crash_pct": 14.4,
+  "drop_from_peak_pct": 11.0,
+  "recovery_from_crash_pct": 14.0,
   "supports": [
     {
       "level": 380.0,
       "label": "S1 KEY",
       "touches": 6,
-      "evidence": "tested 6x in base period; 4.6% below current"
+      "evidence": "tested 6x in base period; 4.2% below current"
     },
     {
       "level": 372.0,
       "label": "S2",
-      "touches": 5,
-      "evidence": "mid-base support, tested 5x"
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
     },
     {
       "level": 364.0,
@@ -58,29 +58,34 @@
   ],
   "resistances": [
     {
-      "level": 405.38,
+      "level": 399.48,
       "label": "R1 today high",
-      "evidence": "today's high 405.3800048828125"
+      "evidence": "today's high 399.4800109863281"
+    },
+    {
+      "level": 405.38,
+      "label": "R3 Sep high",
+      "evidence": "box top 405.38, base period high"
     }
   ],
   "position": {
-    "current": 398.22,
-    "in_box_pct": 82.7,
+    "current": 396.71,
+    "in_box_pct": 79.0,
     "nearest_support": "S1 KEY (380.0)",
-    "nearest_resistance": "R1 today high (405.38)"
+    "nearest_resistance": "R1 today high (399.48)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 401.62,
-    "H": 405.38,
-    "L": 395.74,
-    "C": 398.22,
-    "body_pct": 35.3,
-    "upper_wick_pct": 39.0,
-    "lower_wick_pct": 25.7
+    "close_position": "upper_half",
+    "O": 397.5,
+    "H": 399.48,
+    "L": 393.06,
+    "C": 396.71,
+    "body_pct": 12.3,
+    "upper_wick_pct": 30.8,
+    "lower_wick_pct": 56.9
   },
   "bias": {
     "short": {
@@ -99,7 +104,7 @@
   "scenarios": [
     {
       "if": "hold 380.0 (KEY support)",
-      "then": "still range; watch 405.38 for next test"
+      "then": "still range; watch 399.48 for next test"
     },
     {
       "if": "break 380.0 on close",
@@ -110,8 +115,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 405.38 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 399.48 on close",
+      "then": "short-term bullish; next test 405.38"
+    },
+    {
+      "if": "break 405.38 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -137,19 +146,19 @@
     "strategy": "SELL_R1",
     "trigger_price": 405.38,
     "target_price": 376.69,
-    "stop_price": 423.2,
-    "risk_pct": 4.4,
+    "stop_price": 422.99,
+    "risk_pct": 4.35,
     "reward_pct": 7.08,
-    "rr_ratio": 1.61,
+    "rr_ratio": 1.63,
     "phase_match": true,
     "r1": 405.38,
     "s1": 348.0,
-    "s2": 352.73,
+    "s2": 348.66,
     "r2": 400.69,
     "r3": 445.91,
     "s3": 341.32,
     "s4": 270.14,
-    "current_position_pct": 87.5,
-    "notes": "SELL_R1: in box (348-405), entry at R1 405, target mid 377, stop 423 ｜ 入場位 resistance 405.38：以收市價為準 —— 收得守住先當入場成立；收穿就係 resistance 失效，本單取消（見上方失效條件）。"
+    "current_position_pct": 84.9,
+    "notes": "SELL_R1: in box (348-405), entry at R1 405, target mid 377, stop 423 ｜ 52.2 條規則（SELL plan，resistance 405.38）：① 跌到 405.38、收市守住喺 405.38 上面 → 照 BUY 條 plan 做（入場 405.38，止蝕 422.99，目標 376.69）。② 收市跌穿 405.38 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 405.38 上面』。"
   }
 }

@@ -288,8 +288,40 @@ def render_signal_card(row):
       </a>'''
 
 
+def data_asof(market: str) -> str:
+    """T-1 for a market, derived from that market's own chart JSONs.
+
+    2026-10-02: JP traded 2026-10-01 while HK/US last closed 2026-09-30, so a
+    single HK-derived label is wrong for two of three markets. Mirrors
+    build_dashboard.data_asof(); the header now prints each market's own date.
+    """
+    from collections import Counter
+    import json as _json
+    REPO = Path("/Users/kenken/dev/dsa-hk")
+    src = {"HK": REPO / "charts/hk200", "US": REPO / "charts/us200",
+           "JP": REPO / "data/jp200"}.get(market)
+    if not src or not src.is_dir():
+        return t_minus_1(market).isoformat()
+    c = Counter()
+    for f in src.glob("*.json"):
+        if f.name.endswith("_ohlc.json"):
+            continue
+        try:
+            d = _json.load(open(f))
+            dt = (d.get("last_bar") or {}).get("date")
+            if dt:
+                c[dt] += 1
+        except Exception:
+            continue
+    return c.most_common(1)[0][0] if c else t_minus_1(market).isoformat()
+
+
 def build_home_page():
     today = t_minus_1("HK")
+    # 2026-10-02: JP traded 10-01 while HK/US last closed 09-30. A single date
+    # in the header would be wrong for two of three markets, so print each.
+    _hk, _us, _jp = data_asof("HK"), data_asof("US"), data_asof("JP")
+    t1_label = f"{_hk} · US {_us}" + (f" · JP {_jp}" if _jp != _hk else "")
     hk_top = collect_actionables("HK", top_n=3)
     us_top = collect_actionables("US", top_n=2)
     actionable = hk_top + us_top
@@ -402,7 +434,7 @@ def build_home_page():
     <a class="lang-switch" href="/en/" title="View in English" aria-label="View in English">EN</a>
     <div class="nav-meta">
       <span class="live-dot"></span>
-      T-1 · {today.isoformat()}
+      T-1 · {t1_label}
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
         <span class="icon" id="themeIcon">●</span>
         <span id="themeLabel">DARK</span>
@@ -440,7 +472,7 @@ function toggleTheme(){{
     <h1>Leeks Terminal · <em class="italic">{subtitle}</em></h1>
     <p class="lede">{lede}</p>
     <div class="hero-meta">
-      <span>T-1 數據 · {today.isoformat()}</span>
+      <span>T-1 數據 · {t1_label}</span>
       <span>200 HK + 200 US</span>
       <span>4 種策略 × 4 窗口回測</span>
       <span>Updated {datetime.now().strftime('%H:%M HKT')}</span>
@@ -463,7 +495,7 @@ function toggleTheme(){{
   <div class="container">
     <div class="section-head">
       <h2>Market <em class="italic">regime</em></h2>
-      <span class="section-meta">200 HK + 200 US · {today.isoformat()}</span>
+      <span class="section-meta">200 HK + 200 US · {t1_label}</span>
     </div>
     <div class="card-grid card-grid-2">
       <div class="card fade-in fade-in-1">
@@ -516,7 +548,7 @@ function toggleTheme(){{
   <div class="container">
     <div class="row">
       <div>© {datetime.now().year} Leeks Terminal · win9you.com · <a href="/methodology">Methodology</a> · <a href="/disclaimer">Disclaimer</a></div>
-      <div class="mono text-dim">T-1 · {today.isoformat()} · Futu OpenD</div>
+      <div class="mono text-dim">T-1 · {t1_label} · Futu OpenD</div>
     </div>
   </div>
 </footer>

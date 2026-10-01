@@ -3,23 +3,23 @@
   "ticker_user": "3104.T",
   "name": "FUJIBO HOLDINGS INC",
   "data_source": "yfinance",
-  "data_range": "2025-12-02 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-04 → 2026-10-01 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 3265.0,
-    "H": 3350.0,
-    "L": 3250.0,
-    "C": 3330.0,
-    "prev_close": 3330.0,
-    "chg_pct": 0.0
+    "date": "2026-10-01",
+    "O": 3360.0,
+    "H": 3460.0,
+    "L": 3350.0,
+    "C": 3460.0,
+    "prev_close": 3380.0,
+    "chg_pct": 2.37
   },
   "phase": "downtrend_active",
-  "adx": 13.36,
-  "plus_di": 19.16,
-  "minus_di": 22.46,
+  "adx": 12.51,
+  "plus_di": 23.31,
+  "minus_di": 19.35,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 4625.0 (2026-07-02), trough 3135.0 (2026-09-14), box top 3400.0 (2026-09-28)",
+  "phase_evidence": "Peak 4625.0 (2026-07-02), trough 3135.0 (2026-09-14), box top 3460.0 (2026-10-01)",
   "peak": {
     "date": "2026-07-02",
     "price": 4625.0
@@ -29,86 +29,89 @@
     "price": 3135.0
   },
   "box": {
-    "top": 3400.0,
-    "top_date": "2026-09-28",
+    "top": 3460.0,
+    "top_date": "2026-10-01",
     "bottom": 3135.0,
-    "period": "2026-09-14 to 2026-09-29"
+    "period": "2026-09-14 to 2026-10-01"
   },
-  "drop_from_peak_pct": 28.0,
-  "recovery_from_crash_pct": 6.2,
+  "drop_from_peak_pct": 25.2,
+  "recovery_from_crash_pct": 10.4,
   "supports": [
     {
-      "level": 3232.0,
-      "label": "S1 bottom",
-      "touches": 0,
-      "evidence": "structural bottom, near crash low 3135.0"
+      "level": 3352.0,
+      "label": "S1 KEY",
+      "touches": 3,
+      "evidence": "tested 3x in base period; 3.1% below current"
+    },
+    {
+      "level": 3324.0,
+      "label": "S2",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 3135.0,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-09-14, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 3350.0,
+      "level": 3460.0,
       "label": "R1 today high",
-      "evidence": "today's high 3350.0"
-    },
-    {
-      "level": 3400.0,
-      "label": "R3 Sep high",
-      "evidence": "box top 3400.0, base period high"
+      "evidence": "today's high 3460.0"
     }
   ],
   "position": {
-    "current": 3330.0,
-    "in_box_pct": 58.3,
-    "nearest_support": "S1 bottom (3232.0)",
-    "nearest_resistance": "R1 today high (3350.0)"
+    "current": 3460.0,
+    "in_box_pct": 100.0,
+    "nearest_support": "S1 KEY (3352.0)",
+    "nearest_resistance": null
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 3265.0,
-    "H": 3350.0,
-    "L": 3250.0,
-    "C": 3330.0,
-    "body_pct": 65.0,
-    "upper_wick_pct": 20.0,
-    "lower_wick_pct": 15.0
+    "O": 3360.0,
+    "H": 3460.0,
+    "L": 3350.0,
+    "C": 3460.0,
+    "body_pct": 90.9,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 9.1
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
       "reason": "making new lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 3232.0 (KEY support)",
-      "then": "still range; watch 3350.0 for next test"
+      "if": "hold 3352.0 (KEY support)",
+      "then": "still range; watch 3460.0 for next test"
     },
     {
-      "if": "break 3232.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 3352.0 on close",
+      "then": "target 3324.0 → 3135.0 (short-term bearish)"
     },
     {
-      "if": "break 3232.0 (crash low)",
+      "if": "break 3135.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 3350.0 on close",
-      "then": "short-term bullish; next test 3400.0"
-    },
-    {
-      "if": "break 3400.0 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 3460.0 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -131,7 +134,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -139,14 +142,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 3480.0,
+    "r1": 3460.0,
     "s1": 3135.0,
     "s2": 3315.0,
-    "r2": 4625.0,
-    "r3": 4545.0,
+    "r2": 4575.0,
+    "r3": 4625.0,
     "s3": 3350.0,
     "s4": 2520.0,
-    "current_position_pct": 56.5,
-    "notes": "WAIT_RANGE: in box (3135-3480), pos 57%, no clear setup"
+    "current_position_pct": 100.0,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 3460.00）：① 跌到 3460.00、收市守住喺 3460.00 上面 → 照 BUY 條 plan 做（入場 3460.00，止蝕 3601.43，目標 3297.50）。② 收市跌穿 3460.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 3460.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }

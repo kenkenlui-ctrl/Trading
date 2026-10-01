@@ -84,20 +84,26 @@ def bars_from_public(market: str) -> dict[str, pd.DataFrame]:
     return out
 
 
-def index_up(index_sym: str) -> tuple[bool, str | None]:
-    """Market filter: index T-1 close above its own 200d MA."""
+def index_up(index_sym: str) -> tuple[bool | None, str | None, str | None]:
+    """Market filter: index T-1 close above its own 200d MA.
+
+    Returns (up, asof, error). `up` is None when the index could not be read.
+    2026-10-02: this used to return False on any exception, which meant a
+    Yahoo rate-limit looked exactly like a bearish market and silently zeroed
+    every signal. A data failure must never be publishable as a view.
+    """
     try:
         import yfinance as yf
         d = yf.Ticker(index_sym).history(period="2y", auto_adjust=True)
         if d is None or d.empty:
-            return False, None
+            return None, None, f"{index_sym}: no data returned"
         c = d["Close"]
         ma = c.rolling(200).mean()
         if ma.empty or pd.isna(ma.iloc[-1]):
-            return False, None
-        return bool(c.iloc[-1] > ma.iloc[-1]), str(d.index[-1].date())
-    except Exception:
-        return False, None
+            return None, None, f"{index_sym}: 200d MA unavailable"
+        return bool(c.iloc[-1] > ma.iloc[-1]), str(d.index[-1].date()), None
+    except Exception as e:
+        return None, None, f"{index_sym}: {type(e).__name__}: {e}"
 
 
 def plan(market: str, symbol: str, df: pd.DataFrame, equity: float):
@@ -143,8 +149,14 @@ def main() -> None:
 
     for mkt in mkts:
         cfg = MARKETS[mkt]
-        up, idx_date = index_up(cfg["index"])
-        market_state[mkt] = {"index": cfg["index"], "index_asof": idx_date, "up": up}
+        up, idx_date, err = index_up(cfg["index"])
+        market_state[mkt] = {"index": cfg["index"], "index_asof": idx_date,
+                             "up": up, "error": err}
+        if err:
+            # Do not publish "no signals" when the cause is our own data failure.
+            screen[f"{mkt}:INDEX_UNAVAILABLE"] = 1
+            print(f"  !! {mkt}: market filter unknown — {err}")
+            continue
         if not up:
             screen[f"{mkt}:market-filter-off"] = 1
             continue

@@ -3,20 +3,20 @@
   "ticker_user": "00012.HK",
   "name": "HENDERSON LAND",
   "data_source": "yfinance",
-  "data_range": "2025-12-05 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-08 → 2026-09-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 26.3,
-    "H": 26.64,
-    "L": 26.04,
-    "C": 26.36,
-    "prev_close": 26.3,
-    "chg_pct": 0.23
+    "date": "2026-09-30",
+    "O": 26.36,
+    "H": 26.76,
+    "L": 26.14,
+    "C": 26.74,
+    "prev_close": 26.36,
+    "chg_pct": 1.44
   },
   "phase": "base_building",
-  "adx": 17.45,
-  "plus_di": 21.65,
-  "minus_di": 24.14,
+  "adx": 16.34,
+  "plus_di": 21.48,
+  "minus_di": 22.31,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 35.66 (2026-02-24), trough 24.58 (2026-07-02), box top 30.68 (2026-08-24)",
@@ -32,23 +32,29 @@
     "top": 30.68,
     "top_date": "2026-08-24",
     "bottom": 24.58,
-    "period": "2026-07-02 to 2026-09-29"
+    "period": "2026-07-02 to 2026-09-30"
   },
-  "drop_from_peak_pct": 26.1,
-  "recovery_from_crash_pct": 7.2,
+  "drop_from_peak_pct": 25.0,
+  "recovery_from_crash_pct": 8.8,
   "supports": [
     {
+      "level": 28.0,
+      "label": "S1 KEY",
+      "touches": 10,
+      "evidence": "tested 10x in base period; -4.7% below current"
+    },
+    {
       "level": 24.0,
-      "label": "S1 bottom",
-      "touches": 22,
+      "label": "S2 bottom",
+      "touches": 32,
       "evidence": "structural bottom, near crash low 24.58"
     }
   ],
   "resistances": [
     {
-      "level": 26.64,
+      "level": 26.76,
       "label": "R1 today high",
-      "evidence": "today's high 26.639999389648438"
+      "evidence": "today's high 26.760000228881836"
     },
     {
       "level": 30.68,
@@ -57,23 +63,23 @@
     }
   ],
   "position": {
-    "current": 26.36,
-    "in_box_pct": 35.3,
-    "nearest_support": "S1 bottom (24.0)",
-    "nearest_resistance": "R1 today high (26.64)"
+    "current": 26.74,
+    "in_box_pct": 41.0,
+    "nearest_support": "S1 KEY (28.0)",
+    "nearest_resistance": "R1 today high (26.76)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 26.3,
-    "H": 26.64,
-    "L": 26.04,
-    "C": 26.36,
-    "body_pct": 10.0,
-    "upper_wick_pct": 46.7,
-    "lower_wick_pct": 43.3
+    "O": 26.36,
+    "H": 26.76,
+    "L": 26.14,
+    "C": 26.74,
+    "body_pct": 61.3,
+    "upper_wick_pct": 3.2,
+    "lower_wick_pct": 35.5
   },
   "bias": {
     "short": {
@@ -91,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 24.0 (KEY support)",
-      "then": "still range; watch 26.64 for next test"
+      "if": "hold 28.0 (KEY support)",
+      "then": "still range; watch 26.76 for next test"
     },
     {
-      "if": "break 24.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 28.0 on close",
+      "then": "target 24.0 → lower (short-term bearish)"
     },
     {
       "if": "break 24.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 26.64 on close",
+      "if": "reclaim 26.76 on close",
       "then": "short-term bullish; next test 30.68"
     },
     {
@@ -146,7 +152,7 @@
     "r3": 34.78,
     "s3": 24.58,
     "s4": 28.08,
-    "current_position_pct": 65.2,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 入場位 resistance 26.98：以收市價為準 —— 收得守住先當入場成立；收穿就係 resistance 失效，本單取消（見上方失效條件）。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 86.5,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 26.98）：① 跌到 26.98、收市守住喺 26.98 上面 → 照 BUY 條 plan 做（入場 26.98，止蝕 27.77，目標 26.09）。② 收市跌穿 26.98 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 26.98 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }

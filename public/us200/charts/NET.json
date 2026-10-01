@@ -1,22 +1,22 @@
 {
   "ticker": "US.NET",
   "ticker_user": "NET",
-  "name": "",
+  "name": "Cloudflare, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-11 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 351.92,
-    "H": 356.72,
-    "L": 348.01,
-    "C": 352.26,
-    "prev_close": 353.99,
-    "chg_pct": -0.49
+    "date": "2026-09-30",
+    "O": 351.0,
+    "H": 357.64,
+    "L": 346.15,
+    "C": 347.28,
+    "prev_close": 352.26,
+    "chg_pct": -1.41
   },
   "phase": "downtrend_active",
-  "adx": 22.72,
-  "plus_di": 21.6,
-  "minus_di": 13.28,
+  "adx": 22.59,
+  "plus_di": 20.55,
+  "minus_di": 13.43,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 367.43 (2026-09-24), trough 269.3 (2026-09-02), box top 367.43 (2026-09-24)",
@@ -32,16 +32,16 @@
     "top": 367.43,
     "top_date": "2026-09-24",
     "bottom": 269.3,
-    "period": "2026-09-02 to 2026-09-29"
+    "period": "2026-09-02 to 2026-09-30"
   },
-  "drop_from_peak_pct": 4.1,
-  "recovery_from_crash_pct": 30.8,
+  "drop_from_peak_pct": 5.5,
+  "recovery_from_crash_pct": 29.0,
   "supports": [
     {
       "level": 320.0,
       "label": "S1 KEY",
       "touches": 8,
-      "evidence": "tested 8x in base period; 9.2% below current"
+      "evidence": "tested 8x in base period; 7.9% below current"
     },
     {
       "level": 308.0,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 356.72,
+      "level": 357.64,
       "label": "R1 today high",
-      "evidence": "today's high 356.718994140625"
+      "evidence": "rejection at 357.6400146484375 (long upper wick, close weak)"
     },
     {
       "level": 367.43,
@@ -75,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 352.26,
-    "in_box_pct": 84.5,
+    "current": 347.28,
+    "in_box_pct": 79.5,
     "nearest_support": "S1 KEY (320.0)",
-    "nearest_resistance": "R1 today high (356.72)"
+    "nearest_resistance": "R1 today high (357.64)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 351.92,
-    "H": 356.72,
-    "L": 348.01,
-    "C": 352.26,
-    "body_pct": 3.9,
-    "upper_wick_pct": 51.2,
-    "lower_wick_pct": 44.9
+    "O": 351.0,
+    "H": 357.64,
+    "L": 346.15,
+    "C": 347.28,
+    "body_pct": 32.4,
+    "upper_wick_pct": 57.8,
+    "lower_wick_pct": 9.8
   },
   "bias": {
     "short": {
@@ -110,7 +110,7 @@
   "scenarios": [
     {
       "if": "hold 320.0 (KEY support)",
-      "then": "still range; watch 356.72 for next test"
+      "then": "still range; watch 357.64 for next test"
     },
     {
       "if": "break 320.0 on close",
@@ -121,7 +121,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 356.72 on close",
+      "if": "reclaim 357.64 on close",
       "then": "short-term bullish; next test 367.43"
     },
     {
@@ -152,10 +152,10 @@
     "strategy": "SELL_R1",
     "trigger_price": 367.43,
     "target_price": 318.36,
-    "stop_price": 394.93,
-    "risk_pct": 7.48,
+    "stop_price": 395.27,
+    "risk_pct": 7.58,
     "reward_pct": 13.35,
-    "rr_ratio": 1.78,
+    "rr_ratio": 1.76,
     "phase_match": true,
     "r1": 367.43,
     "s1": 269.3,
@@ -164,7 +164,7 @@
     "r3": 276.82,
     "s3": 164.05,
     "s4": 158.83,
-    "current_position_pct": 84.5,
-    "notes": "SELL_R1: in box (269-367), entry at R1 367, target mid 318, stop 395 ｜ 入場位 resistance 367.43：以收市價為準 —— 收得守住先當入場成立；收穿就係 resistance 失效，本單取消（見上方失效條件）。"
+    "current_position_pct": 79.5,
+    "notes": "SELL_R1: in box (269-367), entry at R1 367, target mid 318, stop 395 ｜ 52.2 條規則（SELL plan，resistance 367.43）：① 跌到 367.43、收市守住喺 367.43 上面 → 照 BUY 條 plan 做（入場 367.43，止蝕 395.27，目標 318.36）。② 收市跌穿 367.43 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 367.43 上面』。"
   }
 }

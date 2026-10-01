@@ -3,20 +3,20 @@
   "ticker_user": "07747.HK",
   "name": "XL2CSOPSMSN",
   "data_source": "yfinance",
-  "data_range": "2025-12-03 → 2026-09-28 (200 daily bars)",
+  "data_range": "2025-12-05 → 2026-09-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-09-28",
-    "O": 79.54,
-    "H": 80.76,
-    "L": 76.88,
-    "C": 77.54,
-    "prev_close": 83.0,
-    "chg_pct": -6.58
+    "date": "2026-09-29",
+    "O": 79.82,
+    "H": 82.64,
+    "L": 78.5,
+    "C": 80.92,
+    "prev_close": 77.54,
+    "chg_pct": 4.36
   },
-  "phase": "downtrend_recovery",
-  "adx": 12.12,
-  "plus_di": 30.46,
-  "minus_di": 30.84,
+  "phase": "base_building",
+  "adx": 11.47,
+  "plus_di": 30.84,
+  "minus_di": 29.0,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 243.1 (2026-06-03), trough 49.28 (2026-07-29), box top 91.86 (2026-08-17)",
@@ -32,28 +32,28 @@
     "top": 91.86,
     "top_date": "2026-08-17",
     "bottom": 49.28,
-    "period": "2026-07-29 to 2026-09-28"
+    "period": "2026-07-29 to 2026-09-29"
   },
-  "drop_from_peak_pct": 68.1,
-  "recovery_from_crash_pct": 57.3,
+  "drop_from_peak_pct": 66.7,
+  "recovery_from_crash_pct": 64.2,
   "supports": [
     {
-      "level": 72.0,
+      "level": 76.0,
       "label": "S1 KEY",
+      "touches": 14,
+      "evidence": "tested 14x in base period; 6.1% below current"
+    },
+    {
+      "level": 72.0,
+      "label": "S2",
       "touches": 13,
-      "evidence": "tested 13x in base period; 7.1% below current"
+      "evidence": "mid-base support, tested 13x"
     },
     {
       "level": 68.0,
-      "label": "S2",
+      "label": "S3",
       "touches": 15,
       "evidence": "mid-base support, tested 15x"
-    },
-    {
-      "level": 64.0,
-      "label": "S3",
-      "touches": 8,
-      "evidence": "mid-base support, tested 8x"
     },
     {
       "level": 49.28,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 80.76,
+      "level": 82.64,
       "label": "R1 today high",
-      "evidence": "today's high 80.76000213623047"
+      "evidence": "today's high 82.63999938964844"
     },
     {
       "level": 91.86,
@@ -85,23 +85,23 @@
     }
   ],
   "position": {
-    "current": 77.54,
-    "in_box_pct": 66.4,
-    "nearest_support": "S1 KEY (72.0)",
-    "nearest_resistance": "R1 today high (80.76)"
+    "current": 80.92,
+    "in_box_pct": 74.3,
+    "nearest_support": "S1 KEY (76.0)",
+    "nearest_resistance": "R1 today high (82.64)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 79.54,
-    "H": 80.76,
-    "L": 76.88,
-    "C": 77.54,
-    "body_pct": 51.5,
-    "upper_wick_pct": 31.4,
-    "lower_wick_pct": 17.0
+    "close_position": "upper_half",
+    "O": 79.82,
+    "H": 82.64,
+    "L": 78.5,
+    "C": 80.92,
+    "body_pct": 26.6,
+    "upper_wick_pct": 41.5,
+    "lower_wick_pct": 31.9
   },
   "bias": {
     "short": {
@@ -109,8 +109,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": ""
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -119,19 +119,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 72.0 (KEY support)",
-      "then": "still range; watch 80.76 for next test"
+      "if": "hold 76.0 (KEY support)",
+      "then": "still range; watch 82.64 for next test"
     },
     {
-      "if": "break 72.0 on close",
-      "then": "target 68.0 → 64.0 (short-term bearish)"
+      "if": "break 76.0 on close",
+      "then": "target 72.0 → 68.0 (short-term bearish)"
     },
     {
       "if": "break 49.28 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 80.76 on close",
+      "if": "reclaim 82.64 on close",
       "then": "short-term bullish; next test 91.86"
     },
     {
@@ -158,23 +158,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 86.52,
+    "target_price": 75.43,
+    "stop_price": 94.28,
+    "risk_pct": 8.97,
+    "reward_pct": 12.82,
+    "rr_ratio": 1.43,
+    "phase_match": true,
     "r1": 86.52,
     "s1": 64.34,
     "s2": 49.28,
-    "r2": 129.6,
+    "r2": 123.15,
     "r3": 243.1,
-    "s3": 72.1,
+    "s3": 75.9,
     "s4": 24.4,
-    "current_position_pct": 59.5,
-    "notes": "WAIT_RANGE: in box (64-87), pos 60%, no clear setup"
+    "current_position_pct": 74.8,
+    "notes": "SELL_R1: in box (64-87), entry at R1 87, target mid 75, stop 94 ｜ 52.2 條規則（SELL plan，resistance 86.52）：① 跌到 86.52、收市守住喺 86.52 上面 → 照 BUY 條 plan 做（入場 86.52，止蝕 94.28，目標 75.43）。② 收市跌穿 86.52 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 86.52 上面』。"
   }
 }

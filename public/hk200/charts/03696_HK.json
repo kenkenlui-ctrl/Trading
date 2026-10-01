@@ -3,20 +3,20 @@
   "ticker_user": "03696.HK",
   "name": "INSILICO",
   "data_source": "yfinance",
-  "data_range": "2025-12-30 → 2026-09-29 (185 daily bars)",
+  "data_range": "2025-12-30 → 2026-09-30 (186 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 53.8,
-    "H": 56.45,
-    "L": 53.75,
-    "C": 55.4,
-    "prev_close": 53.8,
-    "chg_pct": 2.97
+    "date": "2026-09-30",
+    "O": 55.4,
+    "H": 61.35,
+    "L": 54.65,
+    "C": 60.1,
+    "prev_close": 55.4,
+    "chg_pct": 8.48
   },
   "phase": "base_building",
-  "adx": 22.84,
-  "plus_di": 25.07,
-  "minus_di": 20.65,
+  "adx": 23.02,
+  "plus_di": 30.67,
+  "minus_di": 18.25,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 80.9 (2026-02-20), trough 30.82 (2026-06-11), box top 65.2 (2026-09-21)",
@@ -32,28 +32,28 @@
     "top": 65.2,
     "top_date": "2026-09-21",
     "bottom": 30.82,
-    "period": "2026-06-11 to 2026-09-29"
+    "period": "2026-06-11 to 2026-09-30"
   },
-  "drop_from_peak_pct": 31.5,
-  "recovery_from_crash_pct": 79.8,
+  "drop_from_peak_pct": 25.7,
+  "recovery_from_crash_pct": 95.0,
   "supports": [
     {
-      "level": 52.0,
+      "level": 56.0,
       "label": "S1 KEY",
       "touches": 10,
-      "evidence": "tested 10x in base period; 6.1% below current"
+      "evidence": "tested 10x in base period; 6.8% below current"
+    },
+    {
+      "level": 52.0,
+      "label": "S2",
+      "touches": 10,
+      "evidence": "mid-base support, tested 10x"
     },
     {
       "level": 48.0,
-      "label": "S2",
+      "label": "S3",
       "touches": 22,
       "evidence": "mid-base support, tested 22x"
-    },
-    {
-      "level": 44.0,
-      "label": "S3",
-      "touches": 24,
-      "evidence": "mid-base support, tested 24x"
     },
     {
       "level": 30.82,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 56.45,
+      "level": 61.35,
       "label": "R1 today high",
-      "evidence": "today's high 56.45000076293945"
+      "evidence": "today's high 61.349998474121094"
     },
     {
       "level": 65.2,
@@ -75,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 55.4,
-    "in_box_pct": 71.5,
-    "nearest_support": "S1 KEY (52.0)",
-    "nearest_resistance": "R1 today high (56.45)"
+    "current": 60.1,
+    "in_box_pct": 85.2,
+    "nearest_support": "S1 KEY (56.0)",
+    "nearest_resistance": "R1 today high (61.35)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 53.8,
-    "H": 56.45,
-    "L": 53.75,
-    "C": 55.4,
-    "body_pct": 59.3,
-    "upper_wick_pct": 38.9,
-    "lower_wick_pct": 1.9
+    "O": 55.4,
+    "H": 61.35,
+    "L": 54.65,
+    "C": 60.1,
+    "body_pct": 70.1,
+    "upper_wick_pct": 18.7,
+    "lower_wick_pct": 11.2
   },
   "bias": {
     "short": {
@@ -109,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 52.0 (KEY support)",
-      "then": "still range; watch 56.45 for next test"
+      "if": "hold 56.0 (KEY support)",
+      "then": "still range; watch 61.35 for next test"
     },
     {
-      "if": "break 52.0 on close",
-      "then": "target 48.0 → 44.0 (short-term bearish)"
+      "if": "break 56.0 on close",
+      "then": "target 52.0 → 48.0 (short-term bearish)"
     },
     {
       "if": "break 30.82 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 56.45 on close",
+      "if": "reclaim 61.35 on close",
       "then": "short-term bullish; next test 65.2"
     },
     {
@@ -149,22 +149,22 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_VOLATILE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
+    "phase_match": false,
     "r1": 65.2,
-    "s1": 43.74,
+    "s1": 45.86,
     "s2": 34.52,
     "r2": 53.9,
     "r3": 75.9,
     "s3": 30.82,
     "s4": 29.98,
-    "current_position_pct": 54.3,
-    "notes": "WAIT_RANGE: in box (44-65), pos 54%, no clear setup"
+    "current_position_pct": 73.6,
+    "notes": "WAIT_VOLATILE: ATR14 7.2% / box width 32% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
   }
 }

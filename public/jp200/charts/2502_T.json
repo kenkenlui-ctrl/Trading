@@ -3,98 +3,86 @@
   "ticker_user": "2502.T",
   "name": "ASAHI GROUP HLDGS",
   "data_source": "yfinance",
-  "data_range": "2025-12-02 → 2026-09-29 (200 daily bars)",
+  "data_range": "2025-12-04 → 2026-10-01 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 1599.5,
-    "H": 1599.5,
-    "L": 1578.5,
-    "C": 1582.0,
-    "prev_close": 1597.0,
-    "chg_pct": -0.94
+    "date": "2026-10-01",
+    "O": 1573.5,
+    "H": 1606.0,
+    "L": 1569.0,
+    "C": 1595.0,
+    "prev_close": 1591.0,
+    "chg_pct": 0.25
   },
-  "phase": "base_building",
-  "adx": 12.73,
-  "plus_di": 20.13,
-  "minus_di": 27.31,
+  "phase": "downtrend_active",
+  "adx": 12.67,
+  "plus_di": 20.7,
+  "minus_di": 24.35,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 1809.5 (2025-12-02), trough 1452.5 (2026-06-02), box top 1805.5 (2026-07-29)",
+  "phase_evidence": "Peak 1805.5 (2026-07-29), trough 1569.0 (2026-10-01), box top 1702.0 (2026-08-25)",
   "peak": {
-    "date": "2025-12-02",
-    "price": 1809.5
+    "date": "2026-07-29",
+    "price": 1805.5
   },
   "trough": {
-    "date": "2026-06-02",
-    "price": 1452.5
+    "date": "2026-10-01",
+    "price": 1569.0
   },
   "box": {
-    "top": 1805.5,
-    "top_date": "2026-07-29",
-    "bottom": 1452.5,
-    "period": "2026-06-02 to 2026-09-29"
+    "top": 1702.0,
+    "top_date": "2026-08-25",
+    "bottom": 1569.0,
+    "period": "2026-10-01 to 2026-10-01"
   },
-  "drop_from_peak_pct": 12.6,
-  "recovery_from_crash_pct": 8.9,
+  "drop_from_peak_pct": 11.7,
+  "recovery_from_crash_pct": 1.7,
   "supports": [
     {
-      "level": 1508.0,
-      "label": "S1 KEY",
-      "touches": 3,
-      "evidence": "tested 3x in base period; 4.7% below current"
-    },
-    {
-      "level": 1504.0,
-      "label": "S2",
-      "touches": 3,
-      "evidence": "mid-base support, tested 3x"
-    },
-    {
-      "level": 1484.0,
-      "label": "S3 bottom",
-      "touches": 3,
-      "evidence": "structural bottom, near crash low 1452.5"
+      "level": 1548.0,
+      "label": "S1 bottom",
+      "touches": 0,
+      "evidence": "structural bottom, near crash low 1569.0"
     }
   ],
   "resistances": [
     {
-      "level": 1599.5,
+      "level": 1606.0,
       "label": "R1 today high",
-      "evidence": "today's high 1599.5"
+      "evidence": "today's high 1606.0"
     },
     {
-      "level": 1805.5,
-      "label": "R3 Jul high",
-      "evidence": "box top 1805.5, base period high"
+      "level": 1702.0,
+      "label": "R3 Aug high",
+      "evidence": "box top 1702.0, base period high"
     }
   ],
   "position": {
-    "current": 1582.0,
+    "current": 1595.0,
     "in_box_pct": 30.5,
-    "nearest_support": "S1 KEY (1508.0)",
-    "nearest_resistance": "R1 today high (1599.5)"
+    "nearest_support": "S1 bottom (1548.0)",
+    "nearest_resistance": "R1 today high (1606.0)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 1599.5,
-    "H": 1599.5,
-    "L": 1578.5,
-    "C": 1582.0,
-    "body_pct": 83.3,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 16.7
+    "close_position": "upper_half",
+    "O": 1573.5,
+    "H": 1606.0,
+    "L": 1569.0,
+    "C": 1595.0,
+    "body_pct": 58.1,
+    "upper_wick_pct": 29.7,
+    "lower_wick_pct": 12.2
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (30% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -103,23 +91,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 1508.0 (KEY support)",
-      "then": "still range; watch 1599.5 for next test"
+      "if": "hold 1548.0 (KEY support)",
+      "then": "still range; watch 1606.0 for next test"
     },
     {
-      "if": "break 1508.0 on close",
-      "then": "target 1504.0 → 1484.0 (short-term bearish)"
+      "if": "break 1548.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 1484.0 (crash low)",
+      "if": "break 1548.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1599.5 on close",
-      "then": "short-term bullish; next test 1805.5"
+      "if": "reclaim 1606.0 on close",
+      "then": "short-term bullish; next test 1702.0"
     },
     {
-      "if": "break 1805.5 (box top)",
+      "if": "break 1702.0 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -142,23 +130,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 1578.5,
-    "target_price": 1638.75,
-    "stop_price": 1542.21,
-    "risk_pct": 2.3,
-    "reward_pct": 3.82,
-    "rr_ratio": 1.66,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 1699.0,
-    "s1": 1578.5,
-    "s2": 1508.0,
+    "s1": 1569.0,
+    "s2": 1553.0,
     "r2": 1805.5,
     "r3": 1675.5,
     "s3": 1452.5,
     "s4": 1543.0,
-    "current_position_pct": 2.9,
-    "notes": "BUY_S1: in box (1578-1699), entry at S1 1578, target mid 1639, stop 1542 ｜ 入場位 support 1578.50：以收市價為準 —— 收得守住先當入場成立；收穿就係 support 失效，本單取消（見上方失效條件）。"
+    "current_position_pct": 20.0,
+    "notes": "WAIT_RANGE: in box (1569-1699), pos 20%, no clear setup"
   }
 }
