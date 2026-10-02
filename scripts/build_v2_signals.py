@@ -54,10 +54,17 @@ V2_OOS = {
 V2_SOURCE = ("第三方 10 年回測（2016–2026，2023–26 樣本外），"
              "規則見 Leeks Terminal 10 年訊號審計報告")
 
+# 2026-10-02: yfinance started returning a NaN last bar for every US ETF
+# (SPY/VOO/IVV/QQQ/DIA all NaN) while ^GSPC resolved fine. Each market
+# therefore lists fallback symbols; the index is also the more direct proxy
+# for "is this market up" than a tracker ETF.
 MARKETS = {
-    "us200": {"index": "SPY", "tz": "America/New_York", "close": (16, 30)},
-    "jp200": {"index": "1306.T", "tz": "Asia/Tokyo", "close": (15, 50)},
-    "hk200": {"index": "2800.HK", "tz": "Asia/Hong_Kong", "close": (16, 40)},
+    "us200": {"index": "SPY", "fallback": ["^GSPC", "^NDX", "VOO"],
+              "tz": "America/New_York", "close": (16, 30)},
+    "jp200": {"index": "1306.T", "fallback": ["^N225", "1306.T"],
+              "tz": "Asia/Tokyo", "close": (15, 50)},
+    "hk200": {"index": "2800.HK", "fallback": ["^HSI", "2800.HK"],
+              "tz": "Asia/Hong_Kong", "close": (16, 40)},
 }
 INCLUDE_HK = False  # study found HK is ~0 edge after 0.45% round-trip
 
@@ -84,26 +91,68 @@ def bars_from_public(market: str) -> dict[str, pd.DataFrame]:
     return out
 
 
-def index_up(index_sym: str) -> tuple[bool | None, str | None, str | None]:
+INDEX_CACHE = REPO / "data" / "index_state.json"
+
+
+def _cache_read() -> dict:
+    try:
+        return json.loads(INDEX_CACHE.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def _cache_write(sym: str, up: bool, asof: str) -> None:
+    d = _cache_read()
+    d[sym] = {"up": up, "asof": asof}
+    INDEX_CACHE.parent.mkdir(parents=True, exist_ok=True)
+    INDEX_CACHE.write_text(json.dumps(d, indent=1), encoding="utf-8")
+
+
+def index_up(index_sym: str, fallback: list[str] | None = None
+             ) -> tuple[bool | None, str | None, str | None, bool]:
     """Market filter: index T-1 close above its own 200d MA.
 
-    Returns (up, asof, error). `up` is None when the index could not be read.
-    2026-10-02: this used to return False on any exception, which meant a
-    Yahoo rate-limit looked exactly like a bearish market and silently zeroed
+    Returns (up, asof, error, from_cache).
+
+    2026-10-02: this used to return False on ANY exception, so a Yahoo
+    rate-limit was indistinguishable from a bearish market and silently zeroed
     every signal. A data failure must never be publishable as a view.
+
+    Yahoo rate-limits aggressively (429) when a full 600-ticker refresh is
+    running, which is exactly when this runs. On failure we fall back to the
+    last good reading in data/index_state.json and flag from_cache=True so the
+    page can say the filter is based on a stale reading rather than showing
+    either a wrong verdict or a silent zero.
     """
-    try:
-        import yfinance as yf
-        d = yf.Ticker(index_sym).history(period="2y", auto_adjust=True)
-        if d is None or d.empty:
-            return None, None, f"{index_sym}: no data returned"
-        c = d["Close"]
-        ma = c.rolling(200).mean()
-        if ma.empty or pd.isna(ma.iloc[-1]):
-            return None, None, f"{index_sym}: 200d MA unavailable"
-        return bool(c.iloc[-1] > ma.iloc[-1]), str(d.index[-1].date()), None
-    except Exception as e:
-        return None, None, f"{index_sym}: {type(e).__name__}: {e}"
+    errors = []
+    for sym in [index_sym] + list(fallback or []):
+        try:
+            return _read_index(sym)
+        except Exception as e:
+            errors.append(f"{sym}: {type(e).__name__}")
+    c = _cache_read().get(index_sym)
+    if c:
+        return bool(c["up"]), c["asof"], \
+            f"全部候選取數失敗（{', '.join(errors)}）；用 {c['asof']} 快取", True
+    return None, None, "全部候選取數失敗：" + ", ".join(errors), False
+
+
+def _read_index(index_sym: str) -> tuple[bool, str, None, bool]:
+    """Read one symbol's 200d-MA verdict. Raises on any unusable data."""
+    import yfinance as yf
+    d = yf.Ticker(index_sym).history(period="2y", auto_adjust=True)
+    if d is None or d.empty:
+        raise ValueError("no data returned")
+    c = d["Close"]
+    ma = c.rolling(200).mean()
+    last_c, last_ma = c.iloc[-1], ma.iloc[-1]
+    # NaN compares False in Python, so a missing last bar would read as
+    # "index below its 200d MA" and publish a bearish verdict built on nothing.
+    if pd.isna(last_c) or pd.isna(last_ma):
+        raise ValueError(f"NaN in series (close={last_c}, 200dMA={last_ma})")
+    up, asof = bool(last_c > last_ma), str(d.index[-1].date())
+    _cache_write(index_sym, up, asof)
+    return up, asof, None, False
 
 
 def plan(market: str, symbol: str, df: pd.DataFrame, equity: float):
@@ -149,9 +198,9 @@ def main() -> None:
 
     for mkt in mkts:
         cfg = MARKETS[mkt]
-        up, idx_date, err = index_up(cfg["index"])
+        up, idx_date, err, cached = index_up(cfg["index"], cfg.get("fallback"))
         market_state[mkt] = {"index": cfg["index"], "index_asof": idx_date,
-                             "up": up, "error": err}
+                             "up": up, "error": err, "from_cache": cached}
         if err:
             # Do not publish "no signals" when the cause is our own data failure.
             screen[f"{mkt}:INDEX_UNAVAILABLE"] = 1
