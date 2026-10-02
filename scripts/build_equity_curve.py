@@ -28,8 +28,26 @@ START_DATE = "2026-06-27"
 END_DATE = "2026-07-31"
 
 
+def _resolve_source() -> Path:
+    """Always use the newest backtest_<date>.json (was hardcoded 2026-09-10).
+
+    A hardcoded pin means this page keeps showing stale figures after a fresh
+    backtest, contradicting backtest.html. Resolve the latest instead.
+    """
+    d = REPO / "data" / "monthly_backtest"
+    dated = sorted(d.glob("backtest_*.json"))
+    if dated:
+        return dated[-1]
+    return d / "backtest_latest.json"
+
+
 def load_trades() -> list:
-    p = REPO / "data" / "monthly_backtest" / "backtest_2026-09-10.json"
+    p = _resolve_source()
+    if not p.exists():
+        raise FileNotFoundError(
+            f"No backtest JSON found in {p.parent}. Run monthly_swing_backtest.py first."
+        )
+    print(f"  equity curve (T+10) source: {p.name}")
     d = json.load(open(p))
     return [r for r in d["records"] if "T+10" in r["horizon"]]
 

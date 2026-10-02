@@ -28,8 +28,30 @@ HORIZONS = {
 }
 
 
+def _resolve_source() -> Path:
+    """Always use the newest backtest_<date>.json, never a hardcoded date.
+
+    Was hardcoded to backtest_2026-09-10.json, which meant the equity-curve pages
+    silently kept reporting the OLD pre-fix numbers after a fresh backtest run —
+    the site would then show two contradicting sets of figures (backtest.html
+    fresh, equity curves stale). Resolve the latest file instead, so a rebuild
+    can never publish mismatched numbers.
+    """
+    d = REPO / "data" / "monthly_backtest"
+    dated = sorted(d.glob("backtest_*.json"))
+    if dated:
+        return dated[-1]
+    # Fall back to the canonical latest if no dated file exists yet.
+    return d / "backtest_latest.json"
+
+
 def load_trades():
-    p = REPO / "data" / "monthly_backtest" / "backtest_2026-09-10.json"
+    p = _resolve_source()
+    if not p.exists():
+        raise FileNotFoundError(
+            f"No backtest JSON found in {p.parent}. Run monthly_swing_backtest.py first."
+        )
+    print(f"  equity curves source: {p.name}")
     d = json.load(open(p))
     by_horizon = {}
     for h, (days, label) in HORIZONS.items():

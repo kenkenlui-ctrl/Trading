@@ -218,7 +218,7 @@ def render() -> str:
 
 {_section_block("Live stop/target adoption", live_stops_html, "section-live-stops") if live_stops_html else ''}
 
-{_section_block("Universe filter (data availability + 20d ADV)", universe_html, "section-universe") if universe_html else ''}
+{_section_block("Universe filter (20d ADV, fail-closed)", universe_html, "section-universe") if universe_html else ''}
 
 {_section_block("Risk metrics — T+10 portfolio sim (1% risk/trade, 5 concurrent cap — matches d71 honest equity curve)", risk_tbl, "section-risk") if risk_tbl else ''}
 

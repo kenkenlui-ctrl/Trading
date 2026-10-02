@@ -800,8 +800,51 @@ def fetch_snapshot(code: str, include_intraday: bool = True) -> Optional[dict]:
             # knows the data is unreliable.
             snapshot['data_as_of'] = f'{override_date} 16:00 HKT (closing, OVERRIDE_FAILED_yfinance_no_data)'
             snapshot['override_failed'] = True
-            # Keep snapshot fields but caller should detect override_failed and
-            # treat as data error (skip save or mark as 'data unavailable')
+            # Fail closed HERE, at the single source, rather than relying on every
+            # caller to inspect override_failed. All 6 call sites (pipeline, main,
+            # analyzer, run_daily, telegram_bot, backtest_fetcher) already handle a
+            # None return, so returning None is the safest possible signal: no
+            # caller can accidentally analyse or persist a stale snapshot.
+            logger.error(
+                "fetch_snapshot(%s): retrospective override failed for %s "
+                "(yfinance returned no history). Refusing to return a snapshot "
+                "built from undated/live data. Returning None to force fail-closed.",
+                code, override_date,
+            )
+            return None
+
+    # Freshness gate (2026-10-02, P0). Silent staleness — structurally valid data
+    # that is actually old — is the hardest class of pipeline failure to notice,
+    # because every downstream schema check passes. Enforce it in ONE place.
+    #
+    # Normalise first: the base paths (_fetch_futu / _fetch_yfinance) set `date`
+    # (the last bar they actually had) but only set `data_as_of` on some branches.
+    # `date` IS the honest freshness signal there, so promote it rather than
+    # rejecting data we can date.
+    if not snapshot.get("data_as_of") and snapshot.get("date"):
+        snapshot["data_as_of"] = f'{snapshot["date"]} (last bar, source: {snapshot.get("source", "?")})'
+
+    as_of = snapshot.get("data_as_of")
+    # 1. override_failed: retrospective override had no data (handled above, and
+    #    re-checked here in case another branch sets the flag).
+    if snapshot.get("override_failed"):
+        logger.error("fetch_snapshot(%s): snapshot carries override_failed; refusing.", code)
+        return None
+    # 2. No date at all: we cannot prove freshness. Fail closed.
+    if not as_of:
+        logger.error(
+            "fetch_snapshot(%s): snapshot has no data_as_of and no date — cannot prove "
+            "freshness. Refusing to return an undated snapshot.", code,
+        )
+        return None
+    # 3. A failure sentinel written into data_as_of. Previously these were display
+    #    strings only and the snapshot still flowed through to the LLM and the DB.
+    if "OVERRIDE_FAILED" in str(as_of) or "UNDATED" in str(as_of).upper():
+        logger.error(
+            "fetch_snapshot(%s): data_as_of carries a failure sentinel (%r); refusing.",
+            code, as_of,
+        )
+        return None
 
     if include_intraday:
         snapshot["intraday_15m"] = _try_load_intraday_15m(code)

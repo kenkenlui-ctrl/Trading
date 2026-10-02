@@ -570,21 +570,36 @@ def render_report(records: list[dict], start: str, end: str, hsi_bear_count: int
 
     # NEW: Universe filter
     if universe_stats.get("enabled"):
-        passed = universe_stats["passed"]
-        excluded = universe_stats["excluded"]
-        total_db = live_coverage["total_in_db"] or 1
+        total_db = universe_stats.get("total_signals") or 1
+        no_adv = universe_stats.get("no_adv_data", 0)
+        excl_no_adv = universe_stats.get("excluded_no_adv", 0)
+        policy = universe_stats.get("unverified_policy", "exclude")
+        verified_pct = universe_stats.get("adv_passed", 0) / total_db * 100
         lines.extend([
             "",
-            f"## Universe filter (data availability + 20d ADV)",
+            f"## Universe filter (20d ADV, fail-closed)",
             f"",
             f"- HK threshold: HK${universe_stats['hk_threshold']/1e6:.0f}M 20d ADV",
             f"- US threshold: US${universe_stats['us_threshold']/1e6:.0f}M 20d ADV",
             f"- Total signals in 6mo DB: {total_db}",
-            f"- **Excluded (no yfinance data — likely delisted/warrants/ETPs): {excluded}**",
-            f"- Passed: **{passed}/{total_db}** ({passed/total_db*100:.0f}%)",
-            f"- Of passed: {universe_stats.get('adv_passed', 0)} had ADV data and met threshold; "
-            f"{universe_stats.get('adv_excluded', 0)} failed ADV threshold; "
-            f"{universe_stats.get('no_adv_data', 0)} had yfinance OHLC but no Volume (yfinance HK Volume 缺失 known issue)",
+            f"- **ADV-verified and simulated: {universe_stats.get('simulated_signals', 0)} "
+            f"({verified_pct:.0f}%)**",
+            f"- Excluded — failed ADV threshold (too thin to trade a HK$100k clip): "
+            f"{universe_stats.get('adv_excluded', 0)}",
+            f"- Excluded — no yfinance OHLC at all (likely delisted/warrants/ETPs): "
+            f"{universe_stats.get('excluded_no_data', 0)}",
+            f"- Excluded — ADV unverifiable ({no_adv} signals have OHLC but no Volume; "
+            f"yfinance HK Volume 缺失 known issue): {excl_no_adv}"
+            + ("" if policy == "exclude" else "  ⚠️ INCLUDED anyway via --unverified-adv=include"),
+            f"",
+            f"**What this means:** only {universe_stats.get('simulated_signals', 0)} of {total_db} "
+            f"signals had their liquidity actually verified before being simulated. The rest were "
+            f"excluded rather than assumed tradeable, because a bar can exist and pass every "
+            f"structural check while being impossible to fill at size. "
+            + (f"Re-run with `--unverified-adv=include` to reproduce the pre-2026-10-02 numbers."
+               if policy == "exclude" else
+               f"⚠️ This run used `--unverified-adv=include`, i.e. the older, more optimistic "
+               f"assumption that unverifiable liquidity is acceptable."),
         ])
     else:
         lines.extend([
@@ -650,7 +665,12 @@ def main():
     ap.add_argument("--no-portfolio-sim", action="store_true")
     ap.add_argument("--no-oos", action="store_true")
     ap.add_argument("--no-universe-filter", action="store_true",
-                    help="Disable 20d ADV universe filter (default: enabled, stub if no volume)")
+                    help="Disable the 20d ADV universe filter entirely (diagnostic only)")
+    ap.add_argument("--unverified-adv", choices=["exclude", "include"], default="exclude",
+                    help="Policy for signals whose 20d ADV cannot be computed (yfinance HK "
+                         "Volume missing). exclude=default (fail-closed, honest). "
+                         "include=pre-2026-10-02 lenient behaviour, kept only to reproduce "
+                         "old numbers for comparison.")
     args = ap.parse_args()
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -699,13 +719,113 @@ def main():
         hsi_chg = hsi["Close"].pct_change()
         hsi_bear_count = int((hsi_chg <= HSI_BEAR).sum())
 
+    # ---------------------------------------------------------------------------------
+    # Universe filter — MUST run BEFORE simulate (2026-10-02 P0 fix).
+    #
+    # Previously this block sat AFTER `records` was already built and only tallied
+    # counters. It never removed a single signal, so the published headline numbers
+    # included illiquid/untradeable names while the page claimed a filter was
+    # applied. Two separate defects, both now fixed here:
+    #   1. Ordering  — the tally ran too late to gate anything. Now it produces
+    #      `eligible_signals`, which is what the simulate loop iterates.
+    #   2. Fail-open — `adv is None` (yfinance has OHLC but no Volume) used to
+    #      count as `passed += 1`. "Unknown" was silently treated as "verified".
+    #      Now unknown volume is its own bucket and is EXCLUDED by default.
+    #
+    # Rationale (same failure mode as A-share circuit-breaker proxy data): a bar
+    # can exist and pass every structural check while being impossible to trade.
+    # For a HK$100k clip, a name without verifiable 20d ADV is not a tradeable
+    # candidate, it is an untested one.
+    #
+    # Pass --unverified-adv=include to keep the old lenient behaviour when you
+    # specifically want the pre-2026-10-02 numbers for comparison.
+    # ---------------------------------------------------------------------------------
+    HK_ADV_THRESHOLD = 50_000_000   # HK$50M 20d ADV
+    US_ADV_THRESHOLD = 50_000_000   # US$50M 20d ADV
+
+    eligible_signals = signals
+    universe_stats = {"enabled": False, "note": "skipped"}
+
+    if args.no_universe_filter:
+        universe_stats = {"enabled": False, "note": "disabled via --no-universe-filter"}
+    else:
+        eligible_signals = []
+        passed = 0
+        excluded = 0            # 2026-10-02 review: was used at `excluded += 1`
+                               # but never initialised, so any signal failing the
+                               # ADV threshold raised NameError and the run died
+                               # after ~1 hour of fetching. py_compile cannot see
+                               # this — it is a runtime error, not a syntax one.
+        excluded_no_data = 0
+        adv_passed = 0
+        adv_excluded = 0
+        no_adv_data = 0
+        excluded_no_adv = 0
+        kept_unverified = 0
+
+        for sig in signals:
+            yf_code = normalize_yf(sig["code"])
+            if yf_code not in prices:
+                # yfinance has no OHLC at all — untradeable/unknown instrument.
+                excluded_no_data += 1
+                continue
+
+            entry_dt = datetime.strptime(sig["date"], "%Y-%m-%d").date()
+            adv = compute_adv_at_date(prices[yf_code], entry_dt, window=20)
+            thr = HK_ADV_THRESHOLD if is_hk(sig["code"]) else US_ADV_THRESHOLD
+
+            if adv is None:
+                # UNKNOWN liquidity. Fail closed: exclude unless explicitly opted in.
+                no_adv_data += 1
+                if args.unverified_adv == "include":
+                    kept_unverified += 1
+                    eligible_signals.append(sig)
+                else:
+                    excluded_no_adv += 1
+                continue
+
+            if adv >= thr:
+                passed += 1
+                adv_passed += 1
+                eligible_signals.append(sig)
+            else:
+                excluded += 1
+                adv_excluded += 1
+
+        universe_stats = {
+            "enabled": True,
+            "mode": "yfinance_data + ADV_threshold (fail-closed)",
+            "hk_threshold": HK_ADV_THRESHOLD,
+            "us_threshold": US_ADV_THRESHOLD,
+            "unverified_policy": args.unverified_adv,
+            "total_signals": len(signals),
+            "passed": passed,
+            "excluded": excluded,
+            "adv_passed": adv_passed,
+            "adv_excluded": adv_excluded,
+            "no_adv_data": no_adv_data,
+            "excluded_no_adv": excluded_no_adv,
+            "kept_unverified": kept_unverified,
+            "excluded_no_data": excluded_no_data,
+            "simulated_signals": len(eligible_signals),
+        }
+
+    # 2026-10-02 review: the counters below only exist in the else-branch, so
+    # running with --no-universe-filter raised NameError here. Read them off
+    # universe_stats (populated in both branches) instead of the locals.
+    print(f"  Universe filter: {len(eligible_signals)}/{len(signals)} signals eligible "
+          f"(ADV-verified {universe_stats.get('adv_passed', 0)}, "
+          f"excluded thin {universe_stats.get('adv_excluded', 0)}, "
+          f"excluded no-volume {universe_stats.get('excluded_no_adv', 0)}, "
+          f"excluded no-data {universe_stats.get('excluded_no_data', 0)})")
+
     # Simulate
     print(f"  Simulating (LIVE stop/target with HORIZONS fallback)...")
     records = []
     stop_pcts_used_t10 = []
     target_pcts_used_t10 = []
     used_live_count = 0
-    for sig in signals:
+    for sig in eligible_signals:
         yf_code = normalize_yf(sig["code"])
         if yf_code not in prices:
             continue
@@ -795,52 +915,11 @@ def main():
             live_coverage["fallback_avg_stop_pct"] = mean(fallback_stops) * 100
             live_coverage["fallback_avg_target_pct"] = mean(fallback_targets) * 100
 
-    # Universe filter — proxy: yfinance data availability
-    # yfinance doesn't return Volume for many HK tickers (known issue).
-    # Best proxy: "did yfinance have any OHLC data for this ticker?"
-    # This excludes ~76% of signals (mostly warrants/delisted/ETPs).
-    universe_stats = {"enabled": False, "note": "skipped"}
-    if not args.no_universe_filter:
-        hk_thr = 50_000_000  # HK$50M
-        us_thr = 50_000_000  # US$50M
-        passed = 0
-        excluded = 0
-        adv_passed = 0  # how many ADV-eligible (i.e., ADV data was available)
-        adv_excluded = 0
-        no_adv_data = 0
-        for sig in signals:
-            yf_code = normalize_yf(sig["code"])
-            if yf_code not in prices:
-                # yfinance has no data — exclude
-                excluded += 1
-                continue
-            entry_dt = datetime.strptime(sig["date"], "%Y-%m-%d").date()
-            adv = compute_adv_at_date(prices[yf_code], entry_dt, window=20)
-            if adv is None:
-                # Have yfinance OHLC but no Volume data — count as "passed" but flag
-                no_adv_data += 1
-                passed += 1
-                continue
-            thr = hk_thr if is_hk(sig["code"]) else us_thr
-            if adv >= thr:
-                passed += 1
-                adv_passed += 1
-            else:
-                excluded += 1
-                adv_excluded += 1
-        if passed + excluded > 0:
-            universe_stats = {
-                "enabled": True,
-                "mode": "yfinance_data + ADV_threshold",
-                "hk_threshold": hk_thr,
-                "us_threshold": us_thr,
-                "total": passed + excluded,
-                "passed": passed,
-                "excluded": excluded,
-                "adv_passed": adv_passed,
-                "adv_excluded": adv_excluded,
-                "no_adv_data": no_adv_data,
-            }
+    # NOTE (2026-10-02 P0): the old post-hoc universe tally used to live here.
+    # It ran AFTER `records` was already built, so it never filtered anything —
+    # it only produced counters for the report. Filtering now happens BEFORE the
+    # simulate loop (see `eligible_signals` above). The dead block is removed so
+    # nobody reads it as an active filter again.
 
     # Portfolio sim
     portfolio_metrics = {}
