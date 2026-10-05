@@ -3,20 +3,20 @@
   "ticker_user": "RKLB",
   "name": "Rocket Lab Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-30",
-    "O": 70.64,
-    "H": 74.58,
-    "L": 69.63,
-    "C": 69.68,
-    "prev_close": 69.7,
-    "chg_pct": -0.03
+    "date": "2026-10-02",
+    "O": 72.08,
+    "H": 76.09,
+    "L": 71.45,
+    "C": 73.92,
+    "prev_close": 70.46,
+    "chg_pct": 4.91
   },
-  "phase": "downtrend_recovery",
-  "adx": 15.78,
-  "plus_di": 20.16,
-  "minus_di": 17.87,
+  "phase": "base_building",
+  "adx": 15.36,
+  "plus_di": 23.18,
+  "minus_di": 15.49,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 151.0 (2026-05-27), trough 58.2 (2026-07-29), box top 86.83 (2026-08-10)",
@@ -32,29 +32,41 @@
     "top": 86.83,
     "top_date": "2026-08-10",
     "bottom": 58.2,
-    "period": "2026-07-29 to 2026-09-30"
+    "period": "2026-07-29 to 2026-10-02"
   },
-  "drop_from_peak_pct": 53.9,
-  "recovery_from_crash_pct": 19.7,
+  "drop_from_peak_pct": 51.0,
+  "recovery_from_crash_pct": 27.0,
   "supports": [
     {
-      "level": 64.0,
+      "level": 72.0,
       "label": "S1 KEY",
-      "touches": 28,
-      "evidence": "tested 28x in base period; 8.2% below current"
+      "touches": 13,
+      "evidence": "tested 13x in base period; 2.6% below current"
     },
     {
-      "level": 60.0,
-      "label": "S2 bottom",
+      "level": 68.0,
+      "label": "S2",
       "touches": 12,
-      "evidence": "structural bottom, near crash low 58.2"
+      "evidence": "mid-base support, tested 12x"
+    },
+    {
+      "level": 64.0,
+      "label": "S3",
+      "touches": 28,
+      "evidence": "mid-base support, tested 28x"
+    },
+    {
+      "level": 58.2,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-07-29, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 74.58,
+      "level": 76.09,
       "label": "R1 today high",
-      "evidence": "rejection at 74.58000183105469 (long upper wick, close weak)"
+      "evidence": "today's high 76.08999633789062"
     },
     {
       "level": 86.83,
@@ -63,32 +75,32 @@
     }
   ],
   "position": {
-    "current": 69.68,
-    "in_box_pct": 36.1,
-    "nearest_support": "S1 KEY (64.0)",
-    "nearest_resistance": "R1 today high (74.58)"
+    "current": 73.92,
+    "in_box_pct": 54.9,
+    "nearest_support": "S1 KEY (72.0)",
+    "nearest_resistance": "R1 today high (76.09)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 70.64,
-    "H": 74.58,
-    "L": 69.63,
-    "C": 69.68,
-    "body_pct": 19.4,
-    "upper_wick_pct": 79.6,
-    "lower_wick_pct": 1.0
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 72.08,
+    "H": 76.09,
+    "L": 71.45,
+    "C": 73.92,
+    "body_pct": 39.5,
+    "upper_wick_pct": 46.8,
+    "lower_wick_pct": 13.7
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (36% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": ""
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -97,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 64.0 (KEY support)",
-      "then": "still range; watch 74.58 for next test"
+      "if": "hold 72.0 (KEY support)",
+      "then": "still range; watch 76.09 for next test"
     },
     {
-      "if": "break 64.0 on close",
-      "then": "target 60.0 → lower (short-term bearish)"
+      "if": "break 72.0 on close",
+      "then": "target 68.0 → 64.0 (short-term bearish)"
     },
     {
-      "if": "break 60.0 (crash low)",
+      "if": "break 58.2 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 74.58 on close",
+      "if": "reclaim 76.09 on close",
       "then": "short-term bullish; next test 86.83"
     },
     {
@@ -136,23 +148,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 75.46,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 76.09,
+    "target_price": 68.3,
+    "stop_price": 82.44,
+    "risk_pct": 8.34,
+    "reward_pct": 10.24,
+    "rr_ratio": 1.23,
+    "phase_match": true,
+    "r1": 76.09,
     "s1": 60.51,
     "s2": 58.2,
     "r2": 86.83,
     "r3": 151.0,
-    "s3": 66.34,
+    "s3": 69.6,
     "s4": 52.68,
-    "current_position_pct": 61.3,
-    "notes": "WAIT_RANGE: in box (61-75), pos 61%, no clear setup"
+    "current_position_pct": 86.1,
+    "notes": "SELL_R1: in box (61-76), entry at R1 76, target mid 68, stop 82 ｜ 52.2 條規則（SELL plan，resistance 76.09）：① 跌到 76.09、收市守住喺 76.09 上面 → 照 BUY 條 plan 做（入場 76.09，止蝕 82.44，目標 68.30）。② 收市跌穿 76.09 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 76.09 上面』。"
   }
 }

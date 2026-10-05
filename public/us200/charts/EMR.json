@@ -1,91 +1,86 @@
 {
   "ticker": "US.EMR",
   "ticker_user": "EMR",
-  "name": "Emerson Electric",
-  "data_source": "futu",
-  "data_range": "2025-11-05 → 2026-08-24 (200 daily bars)",
+  "name": "Emerson Electric Company",
+  "data_source": "yfinance",
+  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
   "last_bar": {
-    "date": "2026-08-24",
-    "O": 157.37,
-    "H": 158.2,
-    "L": 156.21,
-    "C": 157.57,
-    "prev_close": 157.26,
-    "chg_pct": 0.2
+    "date": "2026-10-02",
+    "O": 161.59,
+    "H": 164.13,
+    "L": 160.24,
+    "C": 161.61,
+    "prev_close": 158.57,
+    "chg_pct": 1.92
   },
   "phase": "downtrend_active",
-  "phase_evidence": "Peak 165.79 (2026-08-12), trough 133.1 (2026-07-16), box top 165.79 (2026-08-12)",
+  "adx": 16.17,
+  "plus_di": 26.99,
+  "minus_di": 18.57,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 166.35 (2026-08-12), trough 144.4 (2026-09-16), box top 164.13 (2026-10-02)",
   "peak": {
     "date": "2026-08-12",
-    "price": 165.79
+    "price": 166.35
   },
   "trough": {
-    "date": "2026-07-16",
-    "price": 133.1
+    "date": "2026-09-16",
+    "price": 144.4
   },
   "box": {
-    "top": 165.79,
-    "top_date": "2026-08-12",
-    "bottom": 133.1,
-    "period": "2026-07-16 to 2026-08-24"
+    "top": 164.13,
+    "top_date": "2026-10-02",
+    "bottom": 144.4,
+    "period": "2026-09-16 to 2026-10-02"
   },
-  "drop_from_peak_pct": 5.0,
-  "recovery_from_crash_pct": 18.4,
+  "drop_from_peak_pct": 2.8,
+  "recovery_from_crash_pct": 11.9,
   "supports": [
     {
-      "level": 148.0,
+      "level": 156.0,
       "label": "S1 KEY",
-      "touches": 10,
-      "evidence": "tested 10x in base period; 6.1% below current"
+      "touches": 14,
+      "evidence": "tested 14x in base period; 3.5% below current"
     },
     {
-      "level": 144.0,
+      "level": 152.0,
       "label": "S2",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
+      "touches": 12,
+      "evidence": "mid-base support, tested 12x"
     },
     {
-      "level": 140.0,
+      "level": 148.0,
       "label": "S3 bottom",
-      "touches": 4,
-      "evidence": "structural bottom, near crash low 133.1"
+      "touches": 12,
+      "evidence": "structural bottom, near crash low 144.4"
     }
   ],
   "resistances": [
     {
-      "level": 158.2,
+      "level": 164.13,
       "label": "R1 today high",
-      "evidence": "today's high 158.2"
-    },
-    {
-      "level": 160.0,
-      "label": "R2",
-      "evidence": "mid-box supply, round number 160"
-    },
-    {
-      "level": 165.79,
-      "label": "R3 Aug high",
-      "evidence": "box top 165.79, base period high"
+      "evidence": "today's high 164.1300048828125"
     }
   ],
   "position": {
-    "current": 157.57,
-    "in_box_pct": 68.1,
-    "nearest_support": "S1 KEY (148.0)",
-    "nearest_resistance": "R1 today high (158.2)"
+    "current": 161.61,
+    "in_box_pct": 84.4,
+    "nearest_support": "S1 KEY (156.0)",
+    "nearest_resistance": "R1 today high (164.13)"
   },
   "kline_today": {
     "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 157.37,
-    "H": 158.2,
-    "L": 156.21,
-    "C": 157.57,
-    "body_pct": 10.0,
-    "upper_wick_pct": 31.6,
-    "lower_wick_pct": 58.4
+    "close_position": "lower_half",
+    "O": 161.59,
+    "H": 164.13,
+    "L": 160.24,
+    "C": 161.61,
+    "body_pct": 0.5,
+    "upper_wick_pct": 64.8,
+    "lower_wick_pct": 34.7
   },
   "bias": {
     "short": {
@@ -103,24 +98,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 148.0 (KEY support)",
-      "then": "still range; watch 158.2 for next test"
+      "if": "hold 156.0 (KEY support)",
+      "then": "still range; watch 164.13 for next test"
     },
     {
-      "if": "break 148.0 on close",
-      "then": "target 144.0 → 140.0 (short-term bearish)"
+      "if": "break 156.0 on close",
+      "then": "target 152.0 → 148.0 (short-term bearish)"
     },
     {
-      "if": "break 140.0 (crash low)",
+      "if": "break 148.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 158.2 on close",
-      "then": "short-term bullish; next test 160.0"
-    },
-    {
-      "if": "break 165.79 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 164.13 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -144,21 +135,21 @@
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
-    "trigger_price": 165.79,
-    "target_price": 155.2,
-    "stop_price": 169.1,
-    "risk_pct": 2.0,
-    "reward_pct": 6.39,
-    "rr_ratio": 3.19,
+    "trigger_price": 164.13,
+    "target_price": 154.26,
+    "stop_price": 169.92,
+    "risk_pct": 3.53,
+    "reward_pct": 6.01,
+    "rr_ratio": 1.7,
     "phase_match": true,
-    "r1": 165.79,
-    "s1": 144.61,
-    "s2": 133.1,
-    "r2": 152.36,
-    "r3": 148.37,
-    "s3": 121.73,
-    "s4": 122.0,
-    "current_position_pct": 61.2,
-    "notes": "SELL_R1: in box (145-166), entry at R1 166, target mid 155, stop 169"
+    "r1": 164.13,
+    "s1": 144.4,
+    "s2": 133.55,
+    "r2": 166.35,
+    "r3": 152.88,
+    "s3": 128.13,
+    "s4": 122.64,
+    "current_position_pct": 87.2,
+    "notes": "SELL_R1: in box (144-164), entry at R1 164, target mid 154, stop 170 ｜ 52.2 條規則（SELL plan，resistance 164.13）：① 跌到 164.13、收市守住喺 164.13 上面 → 照 BUY 條 plan 做（入場 164.13，止蝕 169.92，目標 154.26）。② 收市跌穿 164.13 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 164.13 上面』。"
   }
 }

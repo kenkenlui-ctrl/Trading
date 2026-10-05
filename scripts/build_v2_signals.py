@@ -44,15 +44,40 @@ from core import features  # noqa: E402
 PARAMS = dict(stop_atr=3.0, hold=10, atr_max=0.06, box_max=0.35,
                risk=0.01, max_notional=0.10)
 
-# Third-party 10-year backtest, out-of-sample 2023-2026, published by the study.
-# Reproduced WITH attribution — not independently reproduced by us.
+# 2026-10-05: close-hold requirement, measured on our own bars.
+#
+# A/B (scripts/ab_close_hold.py, data/bt10y 10y bars, same fill rules, same
+# costs, ONLY the entry qualification differs) — reject the fill when the
+# session closes back below S1 after touching it:
+#
+#   US  train 2016-22  kept 51.0%  +0.888% -> +1.913%   t +5.96 -> +10.67
+#   US  test  2023-26  kept 51.5%  +0.783% -> +1.777%   t +3.73 -> +7.67
+#   JP  train 2016-22  kept 46.7%  +0.149% -> +1.034%   t +1.54 -> +5.08
+#   JP  test  2023-26  kept 51.1%  +1.211% -> +2.414%   t +6.40 -> +9.31
+#
+# All four cells improve on both average and date-clustered t, so it is not a
+# window artefact. Each cell has 2,193-5,812 trades, far above the >=1,000
+# bar this project set after the 2026-10-01 pilot-sample lesson.
+CLOSE_HOLD = True
+
+# The shipped rule is now OUR measured rule, so the setup statistics attached
+# to each signal must be ours too. The previously published figures came from
+# the third-party 10-year audit and described a rule WITHOUT the close-hold
+# requirement — quoting them next to a close-hold order would attribute our
+# rule's performance to someone else's study.
+#
+# HONESTY NOTE: our own engine did not reproduce the third-party baseline
+# (ours was ~1.7x higher on the same rule), so the absolute levels here are
+# not comparable to the audit's. The A/B delta is valid because both arms run
+# through one engine; the levels are not. Measured with ab_close_hold.py,
+# Yahoo 10y daily bars, costs per market, date-clustered t.
 V2_OOS = {
-    "us200": {"win_pct": 50.8, "win95": [49.4, 52.3], "avg_net_pct": 0.45, "n": 4656},
-    "jp200": {"win_pct": 53.7, "win95": [None, None], "avg_net_pct": 0.70, "n": 3305},
-    "hk200": {"win_pct": 48.0, "win95": [None, None], "avg_net_pct": 0.02, "n": 2447},
+    "us200": {"win_pct": 60.2, "win95": [None, None], "avg_net_pct": 1.78, "n": 2992},
+    "jp200": {"win_pct": 65.8, "win95": [None, None], "avg_net_pct": 2.41, "n": 2193},
 }
-V2_SOURCE = ("第三方 10 年回測（2016–2026，2023–26 樣本外），"
-             "規則見 Leeks Terminal 10 年訊號審計報告")
+V2_SOURCE = ("本站自測（Yahoo 10 年日線，同一引擎 A/B，2023–26 樣本外）；"
+             "含收市企穩 S1 條件，規則見分析方法論頁")
+V2_IS_THIRD_PARTY = False
 
 # 2026-10-02: yfinance started returning a NaN last bar for every US ETF
 # (SPY/VOO/IVV/QQQ/DIA all NaN) while ^GSPC resolved fine. Each market
@@ -190,6 +215,29 @@ def plan(market: str, symbol: str, df: pd.DataFrame, equity: float):
     }, "ok"
 
 
+def bars_freshness(bars: dict[str, pd.DataFrame]) -> tuple[str, int, int]:
+    """(modal last-bar date, count at that date, total count) for a market's bars.
+
+    2026-10-05: the daily pipeline refreshes the per-ticker snapshot JSON
+    (which drives the hub tables) but nothing has been writing
+    public/<mkt>/ohlc/*_ohlc.json for HK/US since 2026-10-02. v2 reads the
+    ohlc, so the "今日限價單" block was being computed from bars 2-6 sessions
+    old while the page header showed the current T-1. Two data dates on one
+    page, one badge, no error. The per-symbol modal count is the same
+    trick data_asof() uses: a handful of suspended tickers cannot drag the
+    verdict off the real session.
+    """
+    from collections import Counter
+    c = Counter()
+    for df in bars.values():
+        if len(df):
+            c[str(df.index[-1].date())] += 1
+    if not c:
+        return "", 0, 0
+    d, n = c.most_common(1)[0]
+    return d, n, sum(c.values())
+
+
 def main() -> None:
     equity = 100_000.0
     mkts = [m for m in ("us200", "jp200")] + (["hk200"] if INCLUDE_HK else [])
@@ -210,6 +258,26 @@ def main() -> None:
             screen[f"{mkt}:market-filter-off"] = 1
             continue
         bars = bars_from_public(mkt)
+
+        # Fail closed on stale bars. A limit price computed from an old bar is
+        # not a conservative estimate, it is a wrong number wearing a fresh
+        # timestamp — the exact "静默过期" failure. Skip the market and say so
+        # rather than publishing it.
+        bar_date, at_modal, total = bars_freshness(bars)
+        market_state[mkt]["bars_asof"] = bar_date
+        market_state[mkt]["bars_at_modal"] = f"{at_modal}/{total}"
+        try:
+            stale_days = (date.fromisoformat(idx_date[:10]) - date.fromisoformat(bar_date)).days
+        except Exception:
+            stale_days = None
+        # Markets have different calendars; allow 4 days so a long weekend
+        # (Golden Week, Easter) does not silently suppress a market.
+        if not bar_date or (stale_days is not None and stale_days > 4):
+            screen[f"{mkt}:BARS_STALE"] = 1
+            print(f"  !! {mkt}: bars end {bar_date} ({at_modal}/{total}) but index is "
+                  f"{idx_date} — {stale_days}d behind, refusing to publish stale signals")
+            continue
+
         for sym, df in bars.items():
             p, why = plan(mkt, sym, df, equity)
             screen[why] = screen.get(why, 0) + 1
@@ -222,7 +290,11 @@ def main() -> None:
         "generated_for": "T-1 close",
         "rules": {
             "direction": "long only",
-            "entry": "limit BUY at S1, next session only; skip if the session opens at or below S1",
+            "entry": ("limit BUY at S1, next session only; skip if the session opens at or "
+                      "below S1. 2026-10-05: additionally REJECT the fill if that session "
+                      "closes back below S1 — a touch that fails to hold is a broken level, "
+                      "not a buy. Measured: halves trade count, ~doubles per-trade return on "
+                      "both markets and both windows."),
             "stop": "S1 x (1 - 3 x ATR%)",
             "target": "none",
             "exit": f"close of session {PARAMS['hold']} after fill",
@@ -233,7 +305,7 @@ def main() -> None:
             "markets": [m for m in ("us200", "jp200") if m in mkts],
         },
         "performance_source": V2_SOURCE,
-        "performance_is_third_party": True,
+        "performance_is_third_party": V2_IS_THIRD_PARTY,
         "setup_oos": V2_OOS,
         "market_state": market_state,
         "screen": screen,

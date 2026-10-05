@@ -3,20 +3,20 @@
   "ticker_user": "MCK",
   "name": "McKesson Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-30",
-    "O": 862.26,
-    "H": 866.19,
-    "L": 847.3,
-    "C": 853.81,
-    "prev_close": 864.82,
-    "chg_pct": -1.27
+    "date": "2026-10-02",
+    "O": 899.02,
+    "H": 905.55,
+    "L": 881.4,
+    "C": 902.28,
+    "prev_close": 898.82,
+    "chg_pct": 0.38
   },
   "phase": "base_building",
-  "adx": 12.26,
-  "plus_di": 19.9,
-  "minus_di": 24.97,
+  "adx": 13.95,
+  "plus_di": 30.45,
+  "minus_di": 18.43,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 999.0 (2026-03-03), trough 723.68 (2026-05-11), box top 929.95 (2026-09-03)",
@@ -32,35 +32,41 @@
     "top": 929.95,
     "top_date": "2026-09-03",
     "bottom": 723.68,
-    "period": "2026-05-11 to 2026-09-30"
+    "period": "2026-05-11 to 2026-10-02"
   },
-  "drop_from_peak_pct": 14.5,
-  "recovery_from_crash_pct": 18.0,
+  "drop_from_peak_pct": 9.7,
+  "recovery_from_crash_pct": 24.7,
   "supports": [
     {
-      "level": 808.0,
+      "level": 880.0,
       "label": "S1 KEY",
-      "touches": 3,
-      "evidence": "tested 3x in base period; 5.4% below current"
+      "touches": 12,
+      "evidence": "tested 12x in base period; 2.5% below current"
     },
     {
-      "level": 792.0,
+      "level": 876.0,
       "label": "S2",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
+      "touches": 9,
+      "evidence": "mid-base support, tested 9x"
     },
     {
-      "level": 760.0,
-      "label": "S3 bottom",
-      "touches": 6,
-      "evidence": "structural bottom, near crash low 723.68"
+      "level": 868.0,
+      "label": "S3",
+      "touches": 5,
+      "evidence": "mid-base support, tested 5x"
+    },
+    {
+      "level": 723.68,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-05-11, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 866.19,
+      "level": 905.55,
       "label": "R1 today high",
-      "evidence": "today's high 866.1900024414062"
+      "evidence": "today's high 905.5499877929688"
     },
     {
       "level": 929.95,
@@ -69,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 853.81,
-    "in_box_pct": 55.2,
-    "nearest_support": "S1 KEY (808.0)",
-    "nearest_resistance": "R1 today high (866.19)"
+    "current": 902.28,
+    "in_box_pct": 86.6,
+    "nearest_support": "S1 KEY (880.0)",
+    "nearest_resistance": "R1 today high (905.55)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 862.26,
-    "H": 866.19,
-    "L": 847.3,
-    "C": 853.81,
-    "body_pct": 44.7,
-    "upper_wick_pct": 20.8,
-    "lower_wick_pct": 34.5
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 899.02,
+    "H": 905.55,
+    "L": 881.4,
+    "C": 902.28,
+    "body_pct": 13.5,
+    "upper_wick_pct": 13.5,
+    "lower_wick_pct": 73.0
   },
   "bias": {
     "short": {
@@ -103,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 808.0 (KEY support)",
-      "then": "still range; watch 866.19 for next test"
+      "if": "hold 880.0 (KEY support)",
+      "then": "still range; watch 905.55 for next test"
     },
     {
-      "if": "break 808.0 on close",
-      "then": "target 792.0 → 760.0 (short-term bearish)"
+      "if": "break 880.0 on close",
+      "then": "target 876.0 → 868.0 (short-term bearish)"
     },
     {
-      "if": "break 760.0 (crash low)",
+      "if": "break 723.68 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 866.19 on close",
+      "if": "reclaim 905.55 on close",
       "then": "short-term bullish; next test 929.95"
     },
     {
@@ -142,23 +148,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 847.29,
-    "target_price": 888.62,
-    "stop_price": 817.43,
-    "risk_pct": 3.52,
-    "reward_pct": 4.88,
-    "rr_ratio": 1.38,
-    "phase_match": true,
-    "r1": 929.95,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RR_TOO_THIN",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 924.21,
     "s1": 847.29,
-    "s2": 786.81,
-    "r2": 918.0,
+    "s2": 790.57,
+    "r2": 929.95,
     "r3": 875.53,
     "s3": 723.68,
     "s4": 794.59,
-    "current_position_pct": 7.9,
-    "notes": "BUY_S1: in box (847-930), entry at S1 847, target mid 889, stop 817 ｜ 52.2 條規則（BUY plan，support 847.29）：① 跌到 847.29、收市守住喺 847.29 上面 → 照 BUY 條 plan 做（入場 847.29，止蝕 817.43，目標 888.62）。② 收市跌穿 847.29 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 847.29 上面』。"
+    "current_position_pct": 71.5,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 924.21）：① 跌到 924.21、收市守住喺 924.21 上面 → 照 BUY 條 plan 做（入場 924.21，止蝕 959.91，目標 885.75）。② 收市跌穿 924.21 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 924.21 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }

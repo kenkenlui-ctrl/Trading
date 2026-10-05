@@ -3,20 +3,20 @@
   "ticker_user": "AMGN",
   "name": "Amgen Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-30",
-    "O": 424.01,
-    "H": 426.59,
-    "L": 420.63,
-    "C": 421.51,
-    "prev_close": 423.64,
-    "chg_pct": -0.5
+    "date": "2026-10-02",
+    "O": 410.16,
+    "H": 410.16,
+    "L": 401.96,
+    "C": 403.04,
+    "prev_close": 407.27,
+    "chg_pct": -1.04
   },
   "phase": "downtrend_active",
-  "adx": 29.83,
-  "plus_di": 34.51,
-  "minus_di": 18.14,
+  "adx": 26.56,
+  "plus_di": 29.08,
+  "minus_di": 27.52,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 447.03 (2026-08-25), trough 374.46 (2026-09-16), box top 426.59 (2026-09-30)",
@@ -32,55 +32,54 @@
     "top": 426.59,
     "top_date": "2026-09-30",
     "bottom": 374.46,
-    "period": "2026-09-16 to 2026-09-30"
+    "period": "2026-09-16 to 2026-10-02"
   },
-  "drop_from_peak_pct": 5.7,
-  "recovery_from_crash_pct": 12.6,
+  "drop_from_peak_pct": 9.8,
+  "recovery_from_crash_pct": 7.6,
   "supports": [
     {
-      "level": 404.0,
-      "label": "S1 KEY",
-      "touches": 6,
-      "evidence": "tested 6x in base period; 4.2% below current"
-    },
-    {
       "level": 380.0,
-      "label": "S2",
+      "label": "S1 KEY",
       "touches": 5,
-      "evidence": "mid-base support, tested 5x"
+      "evidence": "tested 5x in base period; 5.7% below current"
     },
     {
       "level": 376.0,
-      "label": "S3 bottom",
+      "label": "S2 bottom",
       "touches": 7,
       "evidence": "structural bottom, near crash low 374.46"
     }
   ],
   "resistances": [
     {
-      "level": 426.59,
+      "level": 410.16,
       "label": "R1 today high",
-      "evidence": "today's high 426.5899963378906"
+      "evidence": "today's high 410.1600036621094"
+    },
+    {
+      "level": 426.59,
+      "label": "R3 Sep high",
+      "evidence": "box top 426.59, base period high"
     }
   ],
   "position": {
-    "current": 421.51,
-    "in_box_pct": 90.0,
-    "nearest_support": "S1 KEY (404.0)",
-    "nearest_resistance": "R1 today high (426.59)"
+    "current": 403.04,
+    "in_box_pct": 53.4,
+    "nearest_support": "S1 KEY (380.0)",
+    "nearest_resistance": "R1 today high (410.16)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 424.01,
-    "H": 426.59,
-    "L": 420.63,
-    "C": 421.51,
-    "body_pct": 41.9,
-    "upper_wick_pct": 43.3,
-    "lower_wick_pct": 14.8
+    "O": 410.16,
+    "H": 410.16,
+    "L": 401.96,
+    "C": 403.04,
+    "body_pct": 86.8,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 13.2
   },
   "bias": {
     "short": {
@@ -92,26 +91,30 @@
       "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 404.0 (KEY support)",
-      "then": "still range; watch 426.59 for next test"
+      "if": "hold 380.0 (KEY support)",
+      "then": "still range; watch 410.16 for next test"
     },
     {
-      "if": "break 404.0 on close",
-      "then": "target 380.0 → 376.0 (short-term bearish)"
+      "if": "break 380.0 on close",
+      "then": "target 376.0 → lower (short-term bearish)"
     },
     {
       "if": "break 376.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 426.59 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 410.16 on close",
+      "then": "short-term bullish; next test 426.59"
+    },
+    {
+      "if": "break 426.59 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -134,7 +137,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -142,14 +145,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 445.82,
+    "r1": 441.85,
     "s1": 374.46,
     "s2": 353.95,
     "r2": 447.03,
     "r3": 375.25,
     "s3": 320.52,
-    "s4": 315.19,
-    "current_position_pct": 65.9,
-    "notes": "WAIT_RANGE: in box (374-446), pos 66%, no clear setup"
+    "s4": 318.21,
+    "current_position_pct": 42.4,
+    "notes": "WAIT_RANGE: in box (374-442), pos 42%, no clear setup"
   }
 }

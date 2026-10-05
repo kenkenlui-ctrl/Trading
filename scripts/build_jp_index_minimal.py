@@ -34,13 +34,16 @@ for tk in universe:
     tj = load_t(tk)
     if not tj:
         continue
-    last_bar = tj.get("last_bar", {})
+    # 2026-10-05: JP snapshots are flat (asof/close/chg_pct) — reading
+    # last_bar.C directly gave 0 on every row. snapshot_quote() reads both.
+    from build_dashboard import snapshot_quote
+    q = snapshot_quote(tj)
     ap = tj.get("action_plan", {})
     rows.append({
         "ticker": tk,
-        "name": tj.get("name", ""),
-        "last": last_bar.get("C", 0),
-        "chg_pct": last_bar.get("chg_pct", 0),
+        "name": q["name"],
+        "last": q["last"],
+        "chg_pct": q["chg_pct"],
         "phase": tj.get("phase", "range"),
         "action_plan": ap,
         "adx": tj.get("adx"),

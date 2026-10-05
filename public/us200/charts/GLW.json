@@ -3,20 +3,20 @@
   "ticker_user": "GLW",
   "name": "Corning Incorporated",
   "data_source": "yfinance",
-  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-30",
-    "O": 158.5,
-    "H": 160.47,
-    "L": 152.68,
-    "C": 153.76,
-    "prev_close": 158.71,
-    "chg_pct": -3.12
+    "date": "2026-10-02",
+    "O": 164.0,
+    "H": 165.14,
+    "L": 159.5,
+    "C": 164.19,
+    "prev_close": 160.42,
+    "chg_pct": 2.35
   },
   "phase": "base_building",
-  "adx": 8.07,
-  "plus_di": 26.08,
-  "minus_di": 27.54,
+  "adx": 7.47,
+  "plus_di": 26.34,
+  "minus_di": 25.2,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 271.78 (2026-06-30), trough 114.5 (2026-07-28), box top 176.94 (2026-08-17)",
@@ -32,22 +32,28 @@
     "top": 176.94,
     "top_date": "2026-08-17",
     "bottom": 114.5,
-    "period": "2026-07-28 to 2026-09-30"
+    "period": "2026-07-28 to 2026-10-02"
   },
-  "drop_from_peak_pct": 43.4,
-  "recovery_from_crash_pct": 34.3,
+  "drop_from_peak_pct": 39.6,
+  "recovery_from_crash_pct": 43.4,
   "supports": [
     {
-      "level": 148.0,
+      "level": 160.0,
       "label": "S1 KEY",
-      "touches": 24,
-      "evidence": "tested 24x in base period; 3.7% below current"
+      "touches": 6,
+      "evidence": "tested 6x in base period; 2.6% below current"
     },
     {
-      "level": 144.0,
+      "level": 156.0,
       "label": "S2",
       "touches": 10,
       "evidence": "mid-base support, tested 10x"
+    },
+    {
+      "level": 152.0,
+      "label": "S3",
+      "touches": 11,
+      "evidence": "mid-base support, tested 11x"
     },
     {
       "level": 114.5,
@@ -58,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 160.47,
+      "level": 165.14,
       "label": "R1 today high",
-      "evidence": "today's high 160.47000122070312"
+      "evidence": "today's high 165.13999938964844"
     },
     {
       "level": 170.0,
@@ -73,29 +79,29 @@
       "evidence": "box top 176.94, base period high"
     },
     {
-      "level": 185.0,
+      "level": 200.0,
       "label": "R4",
-      "evidence": "psychological round number, pre-crash zone 185"
+      "evidence": "psychological round number, pre-crash zone 200"
     }
   ],
   "position": {
-    "current": 153.76,
-    "in_box_pct": 62.9,
-    "nearest_support": "S1 KEY (148.0)",
-    "nearest_resistance": "R1 today high (160.47)"
+    "current": 164.19,
+    "in_box_pct": 79.6,
+    "nearest_support": "S1 KEY (160.0)",
+    "nearest_resistance": "R1 today high (165.14)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 158.5,
-    "H": 160.47,
-    "L": 152.68,
-    "C": 153.76,
-    "body_pct": 60.8,
-    "upper_wick_pct": 25.3,
-    "lower_wick_pct": 13.9
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 164.0,
+    "H": 165.14,
+    "L": 159.5,
+    "C": 164.19,
+    "body_pct": 3.4,
+    "upper_wick_pct": 16.8,
+    "lower_wick_pct": 79.8
   },
   "bias": {
     "short": {
@@ -113,19 +119,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 148.0 (KEY support)",
-      "then": "still range; watch 160.47 for next test"
+      "if": "hold 160.0 (KEY support)",
+      "then": "still range; watch 165.14 for next test"
     },
     {
-      "if": "break 148.0 on close",
-      "then": "target 144.0 → 114.5 (short-term bearish)"
+      "if": "break 160.0 on close",
+      "then": "target 156.0 → 152.0 (short-term bearish)"
     },
     {
       "if": "break 114.5 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 160.47 on close",
+      "if": "reclaim 165.14 on close",
       "then": "short-term bullish; next test 170.0"
     },
     {
@@ -152,23 +158,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 171.3,
+    "target_price": 156.83,
+    "stop_price": 182.58,
+    "risk_pct": 6.58,
+    "reward_pct": 8.45,
+    "rr_ratio": 1.28,
     "phase_match": true,
     "r1": 171.3,
-    "s1": 139.25,
+    "s1": 142.35,
     "s2": 114.5,
-    "r2": 204.48,
+    "r2": 193.71,
     "r3": 271.78,
     "s3": 148.17,
     "s4": 83.95,
-    "current_position_pct": 45.3,
-    "notes": "WAIT_RANGE: in box (139-171), pos 45%, no clear setup"
+    "current_position_pct": 75.4,
+    "notes": "SELL_R1: in box (142-171), entry at R1 171, target mid 157, stop 183 ｜ 52.2 條規則（SELL plan，resistance 171.30）：① 跌到 171.30、收市守住喺 171.30 上面 → 照 BUY 條 plan 做（入場 171.30，止蝕 182.58，目標 156.83）。② 收市跌穿 171.30 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 171.30 上面』。"
   }
 }

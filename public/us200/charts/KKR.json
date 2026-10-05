@@ -1,67 +1,60 @@
 {
   "ticker": "US.KKR",
   "ticker_user": "KKR",
-  "name": "KKR & Co",
-  "data_source": "futu",
-  "data_range": "2025-11-05 → 2026-08-24 (200 daily bars)",
+  "name": "KKR & Co. Inc.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
   "last_bar": {
-    "date": "2026-08-24",
-    "O": 108.25,
-    "H": 109.36,
-    "L": 107.08,
-    "C": 107.32,
-    "prev_close": 108.48,
-    "chg_pct": -1.07
+    "date": "2026-10-02",
+    "O": 91.71,
+    "H": 93.35,
+    "L": 90.25,
+    "C": 90.29,
+    "prev_close": 91.24,
+    "chg_pct": -1.04
   },
-  "phase": "base_building",
-  "phase_evidence": "Peak 144.02 (2025-12-11), trough 82.35 (2026-03-12), box top 116.57 (2026-08-13)",
+  "phase": "downtrend_recovery",
+  "adx": 32.21,
+  "plus_di": 10.95,
+  "minus_di": 34.38,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 137.28 (2026-01-07), trough 82.67 (2026-03-12), box top 116.57 (2026-08-13)",
   "peak": {
-    "date": "2025-12-11",
-    "price": 144.02
+    "date": "2026-01-07",
+    "price": 137.28
   },
   "trough": {
     "date": "2026-03-12",
-    "price": 82.35
+    "price": 82.67
   },
   "box": {
     "top": 116.57,
     "top_date": "2026-08-13",
-    "bottom": 82.35,
-    "period": "2026-03-12 to 2026-08-24"
+    "bottom": 82.67,
+    "period": "2026-03-12 to 2026-10-02"
   },
-  "drop_from_peak_pct": 25.5,
-  "recovery_from_crash_pct": 30.3,
+  "drop_from_peak_pct": 34.2,
+  "recovery_from_crash_pct": 9.2,
   "supports": [
     {
-      "level": 104.0,
+      "level": 88.0,
       "label": "S1 KEY",
-      "touches": 18,
-      "evidence": "tested 18x in base period; 3.1% below current"
+      "touches": 10,
+      "evidence": "tested 10x in base period; 2.5% below current"
     },
     {
-      "level": 100.0,
-      "label": "S2",
-      "touches": 27,
-      "evidence": "mid-base support, tested 27x"
-    },
-    {
-      "level": 96.0,
-      "label": "S3",
-      "touches": 30,
-      "evidence": "mid-base support, tested 30x"
-    },
-    {
-      "level": 82.35,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-03-12, structural bottom"
+      "level": 84.0,
+      "label": "S2 bottom",
+      "touches": 3,
+      "evidence": "structural bottom, near crash low 82.67"
     }
   ],
   "resistances": [
     {
-      "level": 109.36,
+      "level": 93.35,
       "label": "R1 today high",
-      "evidence": "today's high 109.36"
+      "evidence": "rejection at 93.3499984741211 (long upper wick, close weak)"
     },
     {
       "level": 116.57,
@@ -70,32 +63,32 @@
     }
   ],
   "position": {
-    "current": 107.32,
-    "in_box_pct": 73.0,
-    "nearest_support": "S1 KEY (104.0)",
-    "nearest_resistance": "R1 today high (109.36)"
+    "current": 90.29,
+    "in_box_pct": 19.3,
+    "nearest_support": "S1 KEY (88.0)",
+    "nearest_resistance": "R1 today high (93.35)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 108.25,
-    "H": 109.36,
-    "L": 107.08,
-    "C": 107.32,
-    "body_pct": 40.8,
-    "upper_wick_pct": 48.7,
-    "lower_wick_pct": 10.5
+    "O": 91.71,
+    "H": 93.35,
+    "L": 90.25,
+    "C": 90.29,
+    "body_pct": 45.8,
+    "upper_wick_pct": 52.9,
+    "lower_wick_pct": 1.3
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (19% of box)"
     },
     "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
+      "bias": "neutral",
+      "reason": ""
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -104,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 104.0 (KEY support)",
-      "then": "still range; watch 109.36 for next test"
+      "if": "hold 88.0 (KEY support)",
+      "then": "still range; watch 93.35 for next test"
     },
     {
-      "if": "break 104.0 on close",
-      "then": "target 100.0 → 96.0 (short-term bearish)"
+      "if": "break 88.0 on close",
+      "then": "target 84.0 → lower (short-term bearish)"
     },
     {
-      "if": "break 82.35 (crash low)",
+      "if": "break 84.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 109.36 on close",
+      "if": "reclaim 93.35 on close",
       "then": "short-term bullish; next test 116.57"
     },
     {
@@ -144,22 +137,22 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
-    "r1": 116.57,
-    "s1": 95.48,
-    "s2": 87.33,
-    "r2": 103.97,
-    "r3": 107.24,
-    "s3": 82.35,
-    "s4": 84.19,
-    "current_position_pct": 56.1,
-    "notes": "WAIT_RANGE: in box (95-117), pos 56%, no clear setup"
+    "phase_match": false,
+    "r1": 109.38,
+    "s1": 89.19,
+    "s2": 94.13,
+    "r2": 116.57,
+    "r3": 107.65,
+    "s3": 87.5,
+    "s4": 82.67,
+    "current_position_pct": 5.4,
+    "notes": "WAIT_RANGE: in box (89-109), pos 5%, no clear setup"
   }
 }

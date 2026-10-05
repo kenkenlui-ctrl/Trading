@@ -3,23 +3,23 @@
   "ticker_user": "ON",
   "name": "ON Semiconductor Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-30",
-    "O": 76.5,
-    "H": 77.2,
-    "L": 75.37,
-    "C": 76.87,
-    "prev_close": 75.95,
-    "chg_pct": 1.21
+    "date": "2026-10-02",
+    "O": 84.75,
+    "H": 86.45,
+    "L": 82.96,
+    "C": 84.89,
+    "prev_close": 80.08,
+    "chg_pct": 6.01
   },
   "phase": "downtrend_active",
-  "adx": 19.63,
-  "plus_di": 24.99,
-  "minus_di": 17.88,
-  "regime": "range",
+  "adx": 22.09,
+  "plus_di": 37.68,
+  "minus_di": 14.2,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 134.92 (2026-06-03), trough 65.8 (2026-09-16), box top 77.68 (2026-09-25)",
+  "phase_evidence": "Peak 134.92 (2026-06-03), trough 65.8 (2026-09-16), box top 86.45 (2026-10-02)",
   "peak": {
     "date": "2026-06-03",
     "price": 134.92
@@ -29,19 +29,25 @@
     "price": 65.8
   },
   "box": {
-    "top": 77.68,
-    "top_date": "2026-09-25",
+    "top": 86.45,
+    "top_date": "2026-10-02",
     "bottom": 65.8,
-    "period": "2026-09-16 to 2026-09-30"
+    "period": "2026-09-16 to 2026-10-02"
   },
-  "drop_from_peak_pct": 43.0,
-  "recovery_from_crash_pct": 16.8,
+  "drop_from_peak_pct": 37.1,
+  "recovery_from_crash_pct": 29.0,
   "supports": [
     {
-      "level": 72.0,
+      "level": 76.0,
       "label": "S1 KEY",
+      "touches": 8,
+      "evidence": "tested 8x in base period; 10.5% below current"
+    },
+    {
+      "level": 72.0,
+      "label": "S2",
       "touches": 24,
-      "evidence": "tested 24x in base period; 6.3% below current"
+      "evidence": "mid-base support, tested 24x"
     },
     {
       "level": 65.8,
@@ -52,34 +58,29 @@
   ],
   "resistances": [
     {
-      "level": 77.2,
+      "level": 86.45,
       "label": "R1 today high",
-      "evidence": "today's high 77.19999694824219"
-    },
-    {
-      "level": 77.68,
-      "label": "R3 Sep high",
-      "evidence": "box top 77.68, base period high"
+      "evidence": "today's high 86.44999694824219"
     }
   ],
   "position": {
-    "current": 76.87,
-    "in_box_pct": 93.2,
-    "nearest_support": "S1 KEY (72.0)",
-    "nearest_resistance": "R1 today high (77.2)"
+    "current": 84.89,
+    "in_box_pct": 92.4,
+    "nearest_support": "S1 KEY (76.0)",
+    "nearest_resistance": "R1 today high (86.45)"
   },
   "kline_today": {
     "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 76.5,
-    "H": 77.2,
-    "L": 75.37,
-    "C": 76.87,
-    "body_pct": 20.2,
-    "upper_wick_pct": 18.0,
-    "lower_wick_pct": 61.7
+    "O": 84.75,
+    "H": 86.45,
+    "L": 82.96,
+    "C": 84.89,
+    "body_pct": 4.0,
+    "upper_wick_pct": 44.7,
+    "lower_wick_pct": 51.3
   },
   "bias": {
     "short": {
@@ -97,24 +98,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 72.0 (KEY support)",
-      "then": "still range; watch 77.2 for next test"
+      "if": "hold 76.0 (KEY support)",
+      "then": "still range; watch 86.45 for next test"
     },
     {
-      "if": "break 72.0 on close",
-      "then": "target 65.8 → lower (short-term bearish)"
+      "if": "break 76.0 on close",
+      "then": "target 72.0 → 65.8 (short-term bearish)"
     },
     {
       "if": "break 65.8 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 77.2 on close",
-      "then": "short-term bullish; next test 77.68"
-    },
-    {
-      "if": "break 77.68 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 86.45 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -136,23 +133,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 77.68,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 86.45,
+    "target_price": 76.12,
+    "stop_price": 92.12,
+    "risk_pct": 6.55,
+    "reward_pct": 11.94,
+    "rr_ratio": 1.82,
+    "phase_match": true,
+    "r1": 86.45,
     "s1": 65.8,
     "s2": 70.92,
-    "r2": 102.64,
+    "r2": 96.8,
     "r3": 134.92,
-    "s3": 68.14,
+    "s3": 70.81,
     "s4": 53.1,
-    "current_position_pct": 93.2,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 77.68）：① 跌到 77.68、收市守住喺 77.68 上面 → 照 BUY 條 plan 做（入場 77.68，止蝕 83.30，目標 71.74）。② 收市跌穿 77.68 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 77.68 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 92.4,
+    "notes": "SELL_R1: in box (66-86), entry at R1 86, target mid 76, stop 92 ｜ 52.2 條規則（SELL plan，resistance 86.45）：① 跌到 86.45、收市守住喺 86.45 上面 → 照 BUY 條 plan 做（入場 86.45，止蝕 92.12，目標 76.12）。② 收市跌穿 86.45 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 86.45 上面』。"
   }
 }

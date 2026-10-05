@@ -1,20 +1,25 @@
 {
   "ticker": "US.BE",
   "ticker_user": "BE",
-  "name": "Bloom Energy",
-  "data_source": "futu",
-  "data_range": "2025-11-05 → 2026-08-24 (200 daily bars)",
+  "name": "Bloom Energy Corporation",
+  "data_source": "yfinance",
+  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
   "last_bar": {
-    "date": "2026-08-24",
-    "O": 191.98,
-    "H": 209.92,
-    "L": 185.93,
-    "C": 204.02,
-    "prev_close": 201.45,
-    "chg_pct": 1.28
+    "date": "2026-10-02",
+    "O": 284.0,
+    "H": 297.59,
+    "L": 283.1,
+    "C": 289.15,
+    "prev_close": 277.58,
+    "chg_pct": 4.17
   },
-  "phase": "downtrend_active",
-  "phase_evidence": "Peak 351.28 (2026-06-25), trough 157.33 (2026-07-29), box top 253.31 (2026-08-13)",
+  "phase": "base_building",
+  "adx": 17.71,
+  "plus_di": 27.44,
+  "minus_di": 16.47,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 351.28 (2026-06-25), trough 157.33 (2026-07-29), box top 302.35 (2026-09-29)",
   "peak": {
     "date": "2026-06-25",
     "price": 351.28
@@ -24,63 +29,69 @@
     "price": 157.33
   },
   "box": {
-    "top": 253.31,
-    "top_date": "2026-08-13",
+    "top": 302.35,
+    "top_date": "2026-09-29",
     "bottom": 157.33,
-    "period": "2026-07-29 to 2026-08-24"
+    "period": "2026-07-29 to 2026-10-02"
   },
-  "drop_from_peak_pct": 41.9,
-  "recovery_from_crash_pct": 29.7,
+  "drop_from_peak_pct": 17.7,
+  "recovery_from_crash_pct": 83.8,
   "supports": [
     {
-      "level": 196.0,
+      "level": 272.0,
       "label": "S1 KEY",
       "touches": 6,
-      "evidence": "tested 6x in base period; 3.9% below current"
+      "evidence": "tested 6x in base period; 5.9% below current"
     },
     {
-      "level": 184.0,
+      "level": 268.0,
       "label": "S2",
-      "touches": 5,
-      "evidence": "mid-base support, tested 5x"
+      "touches": 6,
+      "evidence": "mid-base support, tested 6x"
     },
     {
-      "level": 156.0,
-      "label": "S3 bottom",
-      "touches": 3,
-      "evidence": "structural bottom, near crash low 157.33"
+      "level": 264.0,
+      "label": "S3",
+      "touches": 6,
+      "evidence": "mid-base support, tested 6x"
+    },
+    {
+      "level": 157.33,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-07-29, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 209.92,
+      "level": 297.59,
       "label": "R1 today high",
-      "evidence": "today's high 209.92"
+      "evidence": "today's high 297.5899963378906"
     },
     {
-      "level": 253.31,
-      "label": "R3 Aug high",
-      "evidence": "box top 253.31, base period high"
+      "level": 302.35,
+      "label": "R3 Sep high",
+      "evidence": "box top 302.35, base period high"
     }
   ],
   "position": {
-    "current": 204.02,
-    "in_box_pct": 49.3,
-    "nearest_support": "S1 KEY (196.0)",
-    "nearest_resistance": "R1 today high (209.92)"
+    "current": 289.15,
+    "in_box_pct": 90.9,
+    "nearest_support": "S1 KEY (272.0)",
+    "nearest_resistance": "R1 today high (297.59)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
-    "touched_S1": true,
-    "close_position": "upper_half",
-    "O": 191.98,
-    "H": 209.92,
-    "L": 185.93,
-    "C": 204.02,
-    "body_pct": 50.2,
-    "upper_wick_pct": 24.6,
-    "lower_wick_pct": 25.2
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 284.0,
+    "H": 297.59,
+    "L": 283.1,
+    "C": 289.15,
+    "body_pct": 35.5,
+    "upper_wick_pct": 58.2,
+    "lower_wick_pct": 6.2
   },
   "bias": {
     "short": {
@@ -88,33 +99,33 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bearish_continuation",
-      "reason": "making new lows"
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 196.0 (KEY support)",
-      "then": "still range; watch 209.92 for next test"
+      "if": "hold 272.0 (KEY support)",
+      "then": "still range; watch 297.59 for next test"
     },
     {
-      "if": "break 196.0 on close",
-      "then": "target 184.0 → 156.0 (short-term bearish)"
+      "if": "break 272.0 on close",
+      "then": "target 268.0 → 264.0 (short-term bearish)"
     },
     {
-      "if": "break 156.0 (crash low)",
+      "if": "break 157.33 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 209.92 on close",
-      "then": "short-term bullish; next test 253.31"
+      "if": "reclaim 297.59 on close",
+      "then": "short-term bullish; next test 302.35"
     },
     {
-      "if": "break 253.31 (box top)",
+      "if": "break 302.35 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -138,7 +149,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_VOLATILE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -146,14 +157,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 253.31,
-    "s1": 157.33,
-    "s2": 176.57,
-    "r2": 351.28,
-    "r3": 322.83,
-    "s3": 116.5,
+    "r1": 302.35,
+    "s1": 235.55,
+    "s2": 157.33,
+    "r2": 253.31,
+    "r3": 351.28,
+    "s3": 197.4,
     "s4": 75.7,
-    "current_position_pct": 48.6,
-    "notes": "WAIT_RANGE: in box (157-253), pos 49%, no clear setup"
+    "current_position_pct": 80.2,
+    "notes": "WAIT_VOLATILE: ATR14 7.2% / box width 23% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
   }
 }

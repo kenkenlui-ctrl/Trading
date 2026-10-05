@@ -3,23 +3,23 @@
   "ticker_user": "GEV",
   "name": "GE Vernova Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-30",
-    "O": 969.45,
-    "H": 971.99,
-    "L": 947.42,
-    "C": 950.49,
-    "prev_close": 962.49,
-    "chg_pct": -1.25
+    "date": "2026-10-02",
+    "O": 1004.0,
+    "H": 1006.0,
+    "L": 960.53,
+    "C": 988.7,
+    "prev_close": 987.45,
+    "chg_pct": 0.13
   },
   "phase": "downtrend_active",
-  "adx": 7.79,
-  "plus_di": 23.16,
-  "minus_di": 23.13,
+  "adx": 8.62,
+  "plus_di": 24.69,
+  "minus_di": 18.53,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 1195.94 (2026-07-06), trough 868.25 (2026-09-14), box top 973.41 (2026-09-29)",
+  "phase_evidence": "Peak 1195.94 (2026-07-06), trough 868.25 (2026-09-14), box top 1006.0 (2026-10-02)",
   "peak": {
     "date": "2026-07-06",
     "price": 1195.94
@@ -29,25 +29,31 @@
     "price": 868.25
   },
   "box": {
-    "top": 973.41,
-    "top_date": "2026-09-29",
+    "top": 1006.0,
+    "top_date": "2026-10-02",
     "bottom": 868.25,
-    "period": "2026-09-14 to 2026-09-30"
+    "period": "2026-09-14 to 2026-10-02"
   },
-  "drop_from_peak_pct": 20.5,
-  "recovery_from_crash_pct": 9.5,
+  "drop_from_peak_pct": 17.3,
+  "recovery_from_crash_pct": 13.9,
   "supports": [
     {
-      "level": 924.0,
+      "level": 948.0,
       "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 2.8% below current"
+      "touches": 3,
+      "evidence": "tested 3x in base period; 4.1% below current"
     },
     {
-      "level": 920.0,
+      "level": 944.0,
       "label": "S2",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
+      "touches": 9,
+      "evidence": "mid-base support, tested 9x"
+    },
+    {
+      "level": 936.0,
+      "label": "S3",
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
     },
     {
       "level": 868.25,
@@ -58,29 +64,29 @@
   ],
   "resistances": [
     {
-      "level": 971.99,
+      "level": 1006.0,
       "label": "R1 today high",
-      "evidence": "today's high 971.989990234375"
+      "evidence": "today's high 1006.0"
     }
   ],
   "position": {
-    "current": 950.49,
-    "in_box_pct": 79.3,
-    "nearest_support": "S1 KEY (924.0)",
-    "nearest_resistance": "R1 today high (971.99)"
+    "current": 988.7,
+    "in_box_pct": 87.4,
+    "nearest_support": "S1 KEY (948.0)",
+    "nearest_resistance": "R1 today high (1006.0)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 969.45,
-    "H": 971.99,
-    "L": 947.42,
-    "C": 950.49,
-    "body_pct": 77.2,
-    "upper_wick_pct": 10.3,
-    "lower_wick_pct": 12.5
+    "close_position": "upper_half",
+    "O": 1004.0,
+    "H": 1006.0,
+    "L": 960.53,
+    "C": 988.7,
+    "body_pct": 33.6,
+    "upper_wick_pct": 4.4,
+    "lower_wick_pct": 62.0
   },
   "bias": {
     "short": {
@@ -98,19 +104,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 924.0 (KEY support)",
-      "then": "still range; watch 971.99 for next test"
+      "if": "hold 948.0 (KEY support)",
+      "then": "still range; watch 1006.0 for next test"
     },
     {
-      "if": "break 924.0 on close",
-      "then": "target 920.0 → 868.25 (short-term bearish)"
+      "if": "break 948.0 on close",
+      "then": "target 944.0 → 936.0 (short-term bearish)"
     },
     {
       "if": "break 868.25 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 971.99 on close",
+      "if": "reclaim 1006.0 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -133,23 +139,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 983.34,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 1006.0,
+    "target_price": 937.12,
+    "stop_price": 1055.49,
+    "risk_pct": 4.92,
+    "reward_pct": 6.85,
+    "rr_ratio": 1.39,
+    "phase_match": true,
+    "r1": 1006.0,
     "s1": 868.25,
     "s2": 874.0,
     "r2": 1140.99,
     "r3": 1195.94,
     "s3": 856.01,
     "s4": 613.09,
-    "current_position_pct": 71.5,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 983.34）：① 跌到 983.34、收市守住喺 983.34 上面 → 照 BUY 條 plan 做（入場 983.34，止蝕 1035.89，目標 925.80）。② 收市跌穿 983.34 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 983.34 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 87.4,
+    "notes": "SELL_R1: in box (868-1006), entry at R1 1006, target mid 937, stop 1055 ｜ 52.2 條規則（SELL plan，resistance 1006.00）：① 跌到 1006.00、收市守住喺 1006.00 上面 → 照 BUY 條 plan 做（入場 1006.00，止蝕 1055.49，目標 937.12）。② 收市跌穿 1006.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1006.00 上面』。"
   }
 }

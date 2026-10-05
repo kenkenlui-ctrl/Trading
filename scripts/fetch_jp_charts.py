@@ -22,6 +22,22 @@ REPO = Path("/Users/kenken/dev/dsa-hk")
 JP_UNIVERSE = REPO / "jp_universe_200.json"
 JP_CHART_DIR = Path("/Users/kenken/dev/dsa-hk/charts/jp200")
 JP_JSON_DIR = REPO / "data" / "jp200"
+JP_NAMES = REPO / "data" / "jp_names.json"
+
+_JP_NAME_CACHE: dict | None = None
+
+
+def _jp_name(code: str) -> str:
+    """Company name from the cached data/jp_names.json (built by
+    backfill_jp_schema.py via yfinance). JP snapshots had no name field at
+    all, so the Name column was blank on all 200 rows."""
+    global _JP_NAME_CACHE
+    if _JP_NAME_CACHE is None:
+        try:
+            _JP_NAME_CACHE = json.loads(JP_NAMES.read_text(encoding="utf-8"))
+        except Exception:
+            _JP_NAME_CACHE = {}
+    return _JP_NAME_CACHE.get(code, "")
 
 # Add daily_sr.py to path
 sys.path.insert(0, str(Path("/Users/kenken/.minimax/skills/daily-sr-chart/scripts")))
@@ -74,16 +90,70 @@ def process_one(code: str) -> tuple[str, bool]:
         # Build JP JSON from snapshot
         if not snapshot:
             return (code, True)  # chart saved
-        df = fetch_jp_ohlc(code)
+        # 2026-10-05: 400 bars, not the 200 used for the analysis run.
+        # build_v2_signals.py rejects any ohlc series with < 260 rows
+        # (`if not isinstance(rows, list) or len(rows) < 260`), so writing the
+        # 200-bar frame silently took JP v2 signals from 91 to 0 — the file
+        # looked fine, the page just went empty. The historical series on this
+        # project has always been 400 bars; keep it that way.
+        df = fetch_jp_ohlc(code, days=400)
         if df is None or len(df) == 0:
             df = None
         close = float(df["close"].iloc[-1]) if df is not None and len(df) else 0.0
         chg_pct = (float(df["close"].pct_change().iloc[-1] * 100) if df is not None and len(df) > 1 else 0)
+        # 2026-10-05: stamp the real session from the data instead of echoing
+        # daily_sr's empty snapshot.asof. build_dashboard.data_asof() and the
+        # published chart both read this, so an empty string here meant the JP
+        # T-1 label silently fell back to a calendar guess.
+        data_asof = ""
+        if df is not None and len(df):
+            data_asof = pd.Timestamp(df.index[-1]).strftime("%Y-%m-%d")
+        # 2026-10-05: also write the OHLC series. build_dashboard copies
+        # <market>/<TICKER>_ohlc.json to public/<market>/ohlc/ for the
+        # interactive chart and for build_v2_signals.py. Nothing here wrote it,
+        # so JP charts kept serving a months-old series (last bar 2026-10-01)
+        # while the table showed current closes — same class of date drift as
+        # the hero-meta bug, one level deeper.
+        if df is not None and len(df):
+            bars = [
+                {
+                    "open": float(r["open"]),
+                    "high": float(r["high"]),
+                    "low": float(r["low"]),
+                    "close": float(r["close"]),
+                    "volume": float(r["volume"]) if "volume" in r else 0.0,
+                    "date": pd.Timestamp(idx).strftime("%Y-%m-%d"),
+                }
+                for idx, r in df.iterrows()
+            ]
+            (JP_JSON_DIR / f"{safe}_ohlc.json").write_text(
+                json.dumps(bars, ensure_ascii=False), encoding="utf-8"
+            )
         snap_out = {
             "ticker": code,
-            "asof": snapshot.get("asof", ""),
+            "asof": data_asof or snapshot.get("asof", ""),
             "close": close,
             "chg_pct": chg_pct,
+            # 2026-10-05: emit the HK/US `last_bar` shape too. JP was the only
+            # market written flat, and every reader (build_dashboard, build_home,
+            # build_jp_index_minimal, build_insights_radar) indexes last_bar.C
+            # with a 0 default — so /jp200/ rendered 200/200 rows as Last 0.00 /
+            # Chg% +0.00% with no error anywhere. flat fields are kept for
+            # backwards compatibility; last_bar is now the canonical one.
+            "last_bar": (
+                {
+                    "date": data_asof,
+                    "O": float(df["open"].iloc[-1]),
+                    "H": float(df["high"].iloc[-1]),
+                    "L": float(df["low"].iloc[-1]),
+                    "C": close,
+                    "prev_close": float(df["close"].iloc[-2]) if len(df) > 1 else None,
+                    "chg_pct": chg_pct,
+                }
+                if df is not None and len(df)
+                else None
+            ),
+            "name": _jp_name(code),
             "phase": snapshot.get("phase"),
             "kline": snapshot.get("kline", {}),
             "position": snapshot.get("position", {}),

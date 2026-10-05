@@ -50,6 +50,30 @@ def t_minus_1() -> date:
     else:
         return today - timedelta(days=1)
 
+def wilson_lower(wins: float, n: float, z: float = 1.96) -> float:
+    """Lower bound of the Wilson score interval, in percent.
+
+    Mirrors build_home.wilson_lower so the index table and the homepage cards
+    quote the same sample-size-aware number. Raw win% overstates small samples
+    (5/5 renders as "100%"); the lower bound is what the data supports.
+    """
+    if not n or n <= 0:
+        return 0.0
+    p = max(0.0, min(1.0, wins / n))
+    denom = 1 + z * z / n
+    centre = p + z * z / (2 * n)
+    margin = z * ((p * (1 - p) / n + z * z / (4 * n * n)) ** 0.5)
+    return max(0.0, (centre - margin) / denom) * 100
+
+
+def edge_win_lower(edge: dict) -> float:
+    """Wilson lower bound for a plan_edge dict (win_pct + n)."""
+    n = edge.get("n", 0) or 0
+    if n <= 0:
+        return 0.0
+    return wilson_lower(round(edge.get("win_pct", 0) / 100 * n), n)
+
+
 def data_asof(market: str) -> str:
     """T-1 for a market, derived from that market's own bars.
 
@@ -71,14 +95,66 @@ def data_asof(market: str) -> str:
             continue
         try:
             d = json.load(open(p))
-            dt = (d.get("last_bar") or {}).get("date")
-            if dt:
+            # 2026-10-05: HK/US snapshots carry last_bar.date, but JP snapshots
+            # written by fetch_jp_charts.py carry a flat `asof` string. Reading
+            # only last_bar meant JP always fell through to the calendar
+            # fallback, so the JP T-1 label was a guess, not the data — the one
+            # gap left in the single-source-of-truth fix.
+            dt = (d.get("last_bar") or {}).get("date") or d.get("asof") or ""
+            if isinstance(dt, str) and dt:
                 c[dt] += 1
         except Exception:
             continue
     if not c:
         return t_minus_1().isoformat()
     return c.most_common(1)[0][0]
+
+
+def site_t1() -> str:
+    """Site-wide T-1 for pages that are not market-specific.
+
+    The nav badge is global chrome, so Methodology / FAQ / Backtest / Disclaimer
+    / Privacy all need one date. Using t_minus_1() (a calendar guess) there is
+    what produced the three-way split seen on 2026-10-05: methodology hard-coded
+    "HK/JP/US 09-29", faq froze at 2026-09-22, and backtest/disclaimer/privacy
+    rendered a bare "—".
+
+    The three markets can and do trade on different sessions (JP was a day
+    ahead on 2026-10-02), so take the newest of the three real data dates
+    rather than a calendar date: the label then always describes data that is
+    actually on the site.
+    """
+    dates = [d for d in (data_asof(m) for m in ("HK", "US", "JP")) if d]
+    return max(dates) if dates else t_minus_1().isoformat()
+
+
+def snapshot_quote(tj: dict) -> dict:
+    """Normalise a ticker snapshot to {date, last, chg_pct, name}.
+
+    2026-10-05: /jp200/ showed Last = 0.00 and Chg% = +0.00% on 200/200 rows.
+    The JP snapshots written by fetch_jp_charts.py are flat ({asof, close,
+    chg_pct}) while every reader assumed the HK/US shape (last_bar.C), and the
+    lookup default of 0 turned a schema mismatch into a plausible-looking zero
+    instead of a visible error. This reads both shapes.
+
+    A missing close is returned as None, never 0 — the renderer prints "—"
+    for it, so a genuine data gap is visible instead of looking like a flat
+    market. (backfill_jp_schema.py writes last_bar into the JP snapshots, so
+    in practice both branches now agree; this is the guard for the next one.)
+    """
+    lb = tj.get("last_bar") or {}
+    last = lb.get("C")
+    if last in (None, 0):
+        last = tj.get("close") or None
+    chg = lb.get("chg_pct")
+    if chg is None:
+        chg = tj.get("chg_pct")
+    return {
+        "date": lb.get("date") or tj.get("asof") or "",
+        "last": last,
+        "chg_pct": chg,
+        "name": tj.get("name") or "",
+    }
 
 
 # Repo paths
@@ -254,7 +330,7 @@ def render_action_row(t: dict) -> str:
         # even when there's no actionable setup today.
         _plan_edge = t.get("plan_edge")
         if _plan_edge and _plan_edge.get("win_pct", 0) > 0 and _plan_edge.get("n", 0) >= 1:
-            win_s = f"~{_plan_edge['win_pct']:.0f}%"
+            win_s = f"~{edge_win_lower(_plan_edge):.0f}%"
             strat_s = _plan_edge.get("strategy", "RANGE") + " (ref)"
         else:
             win_s = "—"
@@ -275,16 +351,23 @@ def render_action_row(t: dict) -> str:
     # tickers get a "(ref)" stat instead of "—" when backtest has any signal.
     _plan_edge = t.get("plan_edge")
     if _plan_edge:
+        _wl = edge_win_lower(_plan_edge)
         _plan_detail = (
-            f"~{_plan_edge['win_pct']:.0f}% · n={_plan_edge['n']} (ref)" if _plan_edge.get("_ref")
-            else f"{_plan_edge['win_pct']:.0f}% · n={_plan_edge['n']}"
+            f"~{_wl:.0f}% · n={_plan_edge['n']} (ref)" if _plan_edge.get("_ref")
+            else f"{_wl:.0f}% · n={_plan_edge['n']}"
         )
     else:
         _plan_detail = "—"
 
     chg_cls = "text-bear" if chg and chg < 0 else ("text-bull" if chg and chg > 0 else "")
+    # 2026-10-05: a row is "actionable" when it carries a real plan — an
+    # actual trigger/target/stop to act on. Keying this off the backtest
+    # win% reference instead (first attempt) hid 199 of 200 rows, because the
+    # plan_edge reference only exists when that strategy has n>=5 history.
+    # Actionable means "has a plan", not "has a backtest sample".
+    _has_plan = "1" if (verdict != "WAIT" and "—" not in (trigger_s, target_s, stop_s)) else "0"
     return f"""
-    <tr data-action="{verdict}" data-phase="{phase}" data-detail="{_plan_detail}" class="{row_class}">
+    <tr data-action="{verdict}" data-phase="{phase}" data-detail="{_plan_detail}" data-plan="{_has_plan}" class="{row_class}">
       <td><a href="{detail_url}" class="mono" style="color: var(--fg);">{ticker}</a></td>
       <td>{name}</td>
       <td class="cell-right mono">{fmt(last)}</td>
@@ -324,6 +407,8 @@ document.querySelectorAll('.filter-chip[data-phase]').forEach(c => {
 function filterTable() {
   const search = document.getElementById('search').value.toLowerCase();
   const rows = document.querySelectorAll('#tableBody tr[data-action]');
+  const only = document.getElementById('signalOnly');
+  const signalOnly = only && only.classList.contains('active');
   let visible = 0;
   rows.forEach(row => {
     const ticker = row.cells[0]?.textContent.toLowerCase() || '';
@@ -333,14 +418,29 @@ function filterTable() {
     const matchSearch = !search || ticker.includes(search) || name.includes(search);
     const matchAction = !currentAction || action === currentAction;
     const matchPhase = !currentPhase || phase === currentPhase;
-    const show = matchSearch && matchAction && matchPhase;
+    const matchPlan = !signalOnly || row.dataset.plan === '1';
+    const show = matchSearch && matchAction && matchPhase && matchPlan;
     row.style.display = show ? '' : 'none';
     if (show) visible++;
   });
   document.getElementById('rowCount').textContent = visible + ' of ' + TOTAL_ROWS;
   const empty = document.getElementById('emptyState');
-  if (empty) empty.hidden = visible !== 0;
+  if (empty) {
+    empty.hidden = visible !== 0;
+    if (visible === 0) {
+      empty.textContent = signalOnly
+        ? '0 隻有訊號 — 按「⚡ 只看有訊號」取消篩選，可睇全部 ' + TOTAL_ROWS + ' 隻。'
+        : '0 results — clear the search or filters to see all rows.';
+    }
+  }
 }
+
+// "只看有訊號" is ON by default: the 200-name coverage is the point of the
+// page, but a first-time visitor should land on the rows they can act on.
+document.getElementById('signalOnly')?.addEventListener('click', function (e) {
+  this.classList.toggle('active');
+  filterTable();
+});
 
 document.querySelectorAll('th[data-col]').forEach(th => {
   th.setAttribute('tabindex', '0');
@@ -371,7 +471,8 @@ document.querySelectorAll('th[data-col]').forEach(th => {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); runSort(); }
   });
 });
-document.getElementById('rowCount').textContent = TOTAL_ROWS + ' of ' + TOTAL_ROWS;
+// Apply the default "只看有訊號" filter last, so the row count reflects it.
+filterTable();
 </script>
 """
 
@@ -575,6 +676,7 @@ function toggleTheme(){{
       <button type="button" class="filter-chip" data-phase="range">Range</button>
     </div>
     <label style="margin-left: auto;" id="rowCount">{len(universe)} of {len(universe)}</label>
+    <button type="button" class="filter-chip active" id="signalOnly" data-signal="1" title="Hide rows with no action plan (no trigger / target / stop)">⚡ 只看有訊號</button>
   </div>
 
   <div style="overflow: auto; max-height: calc(100vh - 76px); overscroll-behavior: contain; border: 1px solid var(--border); border-radius: var(--radius-lg);">
@@ -1073,10 +1175,10 @@ def build_for_market(market: str):
             # No JSON — skip but log
             continue
 
-        last_bar = tj.get("last_bar", {})
-        last = last_bar.get("C", 0)
-        chg = last_bar.get("chg_pct", 0)
-        name = tj.get("name", "")
+        q = snapshot_quote(tj)
+        last = q["last"]
+        chg = q["chg_pct"]          # None stays None → renders "—", never a fake 0.00%
+        name = q["name"]
         # 2026-09-16: fallback to /dsa-hk/data/us_names.json when source name empty
         # (HK + JP come with names in source; US lacks ~50% of names → use Tencent qt fetch)
         if not name and market == "US" and US_NAMES:
@@ -1239,7 +1341,7 @@ def build_for_market(market: str):
 
     hero_meta_extra = f'''
       <span>Universe: <b>{len(universe)} {market} names</b></span>
-      <span>T-1 data: <b>{t_minus_1().isoformat()}</b></span>
+      <span>T-1 data: <b>{data_asof(market)}</b></span>
       <span>Updated: <b>{datetime.now().strftime('%H:%M HKT')}</b></span>
       <span>Regime: <b style="color: {reg_color};">{phase_str}</b></span>
     '''
@@ -1270,7 +1372,10 @@ def build_for_market(market: str):
 
 def main():
     import subprocess
-    print(f"=== build_dashboard.py · T-1 = {t_minus_1().isoformat()} ===")
+    # Per-market T-1 is derived from each market's own bars (data_asof), never
+    # from the calendar — HK/US and JP can be a day apart, and a computed date
+    # can land on a holiday the market never traded. See data_asof() docstring.
+    print(f"=== build_dashboard.py · T-1 HK={data_asof('HK')} US={data_asof('US')} JP={data_asof('JP')} ===")
     build_for_market("HK")
     build_for_market("US")
     build_for_market("JP")

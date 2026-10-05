@@ -3,89 +3,94 @@
   "ticker_user": "VRTX",
   "name": "Vertex Pharmaceuticals Incorpor",
   "data_source": "yfinance",
-  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-30",
-    "O": 525.26,
-    "H": 529.72,
-    "L": 522.74,
-    "C": 522.81,
-    "prev_close": 526.73,
-    "chg_pct": -0.74
+    "date": "2026-10-02",
+    "O": 509.5,
+    "H": 509.5,
+    "L": 499.95,
+    "C": 504.73,
+    "prev_close": 506.74,
+    "chg_pct": -0.4
   },
   "phase": "downtrend_active",
-  "adx": 14.79,
-  "plus_di": 17.72,
-  "minus_di": 17.08,
+  "adx": 16.39,
+  "plus_di": 14.92,
+  "minus_di": 27.21,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 560.25 (2026-09-03), trough 501.01 (2026-09-21), box top 529.89 (2026-09-28)",
+  "phase_evidence": "Peak 560.25 (2026-09-03), trough 499.95 (2026-10-02), box top 560.25 (2026-09-03)",
   "peak": {
     "date": "2026-09-03",
     "price": 560.25
   },
   "trough": {
-    "date": "2026-09-21",
-    "price": 501.01
+    "date": "2026-10-02",
+    "price": 499.95
   },
   "box": {
-    "top": 529.89,
-    "top_date": "2026-09-28",
-    "bottom": 501.01,
-    "period": "2026-09-21 to 2026-09-30"
+    "top": 560.25,
+    "top_date": "2026-09-03",
+    "bottom": 499.95,
+    "period": "2026-10-02 to 2026-10-02"
   },
-  "drop_from_peak_pct": 6.7,
-  "recovery_from_crash_pct": 4.4,
+  "drop_from_peak_pct": 9.9,
+  "recovery_from_crash_pct": 1.0,
   "supports": [
     {
-      "level": 512.0,
+      "level": 484.0,
       "label": "S1 KEY",
-      "touches": 8,
-      "evidence": "tested 8x in base period; 2.1% below current"
+      "touches": 3,
+      "evidence": "tested 3x in base period; 4.1% below current"
     },
     {
-      "level": 508.0,
+      "level": 480.0,
       "label": "S2",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
+      "touches": 5,
+      "evidence": "mid-base support, tested 5x"
     },
     {
-      "level": 504.0,
+      "level": 476.0,
       "label": "S3 bottom",
-      "touches": 4,
-      "evidence": "structural bottom, near crash low 501.01"
+      "touches": 3,
+      "evidence": "structural bottom, near crash low 499.95"
     }
   ],
   "resistances": [
     {
-      "level": 529.72,
+      "level": 509.5,
       "label": "R1 today high",
-      "evidence": "rejection at 529.719970703125 (long upper wick, close weak)"
+      "evidence": "today's high 509.5"
+    },
+    {
+      "level": 560.25,
+      "label": "R3 Sep high",
+      "evidence": "box top 560.25, base period high"
     }
   ],
   "position": {
-    "current": 522.81,
-    "in_box_pct": 73.1,
-    "nearest_support": "S1 KEY (512.0)",
-    "nearest_resistance": "R1 today high (529.72)"
+    "current": 504.73,
+    "in_box_pct": 34.1,
+    "nearest_support": "S1 KEY (484.0)",
+    "nearest_resistance": "R1 today high (509.5)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 525.26,
-    "H": 529.72,
-    "L": 522.74,
-    "C": 522.81,
-    "body_pct": 35.1,
-    "upper_wick_pct": 63.9,
-    "lower_wick_pct": 1.0
+    "close_position": "upper_half",
+    "O": 509.5,
+    "H": 509.5,
+    "L": 499.95,
+    "C": 504.73,
+    "body_pct": 49.9,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 50.1
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (34% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -98,20 +103,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 512.0 (KEY support)",
-      "then": "still range; watch 529.72 for next test"
+      "if": "hold 484.0 (KEY support)",
+      "then": "still range; watch 509.5 for next test"
     },
     {
-      "if": "break 512.0 on close",
-      "then": "target 508.0 → 504.0 (short-term bearish)"
+      "if": "break 484.0 on close",
+      "then": "target 480.0 → 476.0 (short-term bearish)"
     },
     {
-      "if": "break 504.0 (crash low)",
+      "if": "break 476.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 529.72 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 509.5 on close",
+      "then": "short-term bullish; next test 560.25"
+    },
+    {
+      "if": "break 560.25 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -142,14 +151,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 560.25,
-    "s1": 501.01,
+    "r1": 556.99,
+    "s1": 499.95,
     "s2": 465.0,
-    "r2": 555.69,
+    "r2": 560.25,
     "r3": 533.67,
     "s3": 412.27,
     "s4": 425.26,
-    "current_position_pct": 36.8,
-    "notes": "WAIT_RANGE: in box (501-560), pos 37%, no clear setup"
+    "current_position_pct": 8.4,
+    "notes": "WAIT_RANGE: in box (500-557), pos 8%, no clear setup"
   }
 }

@@ -3,78 +3,77 @@
   "ticker_user": "BMY",
   "name": "Bristol-Myers Squibb Company",
   "data_source": "yfinance",
-  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-30",
-    "O": 63.28,
-    "H": 64.13,
-    "L": 62.4,
-    "C": 62.4,
-    "prev_close": 62.86,
-    "chg_pct": -0.73
+    "date": "2026-10-02",
+    "O": 60.66,
+    "H": 61.24,
+    "L": 60.24,
+    "C": 61.15,
+    "prev_close": 61.46,
+    "chg_pct": -0.5
   },
   "phase": "downtrend_active",
-  "adx": 16.94,
-  "plus_di": 22.61,
-  "minus_di": 21.77,
+  "adx": 16.73,
+  "plus_di": 19.76,
+  "minus_di": 29.57,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 68.64 (2026-08-19), trough 60.6 (2026-09-24), box top 64.13 (2026-09-30)",
+  "phase_evidence": "Peak 68.64 (2026-08-19), trough 60.24 (2026-10-02), box top 68.24 (2026-09-03)",
   "peak": {
     "date": "2026-08-19",
     "price": 68.64
   },
   "trough": {
-    "date": "2026-09-24",
-    "price": 60.6
+    "date": "2026-10-02",
+    "price": 60.24
   },
   "box": {
-    "top": 64.13,
-    "top_date": "2026-09-30",
-    "bottom": 60.6,
-    "period": "2026-09-24 to 2026-09-30"
+    "top": 68.24,
+    "top_date": "2026-09-03",
+    "bottom": 60.24,
+    "period": "2026-10-02 to 2026-10-02"
   },
-  "drop_from_peak_pct": 9.1,
-  "recovery_from_crash_pct": 3.0,
+  "drop_from_peak_pct": 10.9,
+  "recovery_from_crash_pct": 1.5,
   "supports": [
     {
-      "level": 60.0,
-      "label": "S1 KEY",
-      "touches": 10,
-      "evidence": "tested 10x in base period; 3.8% below current"
-    },
-    {
       "level": 56.0,
-      "label": "S2 bottom",
-      "touches": 6,
-      "evidence": "structural bottom, near crash low 60.6"
+      "label": "S1 bottom",
+      "touches": 4,
+      "evidence": "structural bottom, near crash low 60.24"
     }
   ],
   "resistances": [
     {
-      "level": 64.13,
+      "level": 61.24,
       "label": "R1 today high",
-      "evidence": "today's high 64.12999725341797"
+      "evidence": "today's high 61.2400016784668"
+    },
+    {
+      "level": 68.24,
+      "label": "R3 Sep high",
+      "evidence": "box top 68.24, base period high"
     }
   ],
   "position": {
-    "current": 62.4,
-    "in_box_pct": 78.7,
-    "nearest_support": "S1 KEY (60.0)",
-    "nearest_resistance": "R1 today high (64.13)"
+    "current": 61.15,
+    "in_box_pct": 42.1,
+    "nearest_support": "S1 bottom (56.0)",
+    "nearest_resistance": "R1 today high (61.24)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 63.28,
-    "H": 64.13,
-    "L": 62.4,
-    "C": 62.4,
-    "body_pct": 50.9,
-    "upper_wick_pct": 49.1,
-    "lower_wick_pct": 0.0
+    "close_position": "upper_half",
+    "O": 60.66,
+    "H": 61.24,
+    "L": 60.24,
+    "C": 61.15,
+    "body_pct": 49.0,
+    "upper_wick_pct": 9.0,
+    "lower_wick_pct": 42.0
   },
   "bias": {
     "short": {
@@ -92,20 +91,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 60.0 (KEY support)",
-      "then": "still range; watch 64.13 for next test"
+      "if": "hold 56.0 (KEY support)",
+      "then": "still range; watch 61.24 for next test"
     },
     {
-      "if": "break 60.0 on close",
-      "then": "target 56.0 → lower (short-term bearish)"
+      "if": "break 56.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
       "if": "break 56.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 64.13 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 61.24 on close",
+      "then": "short-term bullish; next test 68.24"
+    },
+    {
+      "if": "break 68.24 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -136,14 +139,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 68.24,
-    "s1": 60.6,
+    "r1": 67.72,
+    "s1": 60.24,
     "s2": 56.78,
     "r2": 68.64,
     "r3": 60.78,
     "s3": 53.44,
-    "s4": 52.01,
-    "current_position_pct": 23.6,
-    "notes": "WAIT_RANGE: in box (61-68), pos 24%, no clear setup"
+    "s4": 52.06,
+    "current_position_pct": 12.2,
+    "notes": "WAIT_RANGE: in box (60-68), pos 12%, no clear setup"
   }
 }

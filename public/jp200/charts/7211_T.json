@@ -1,72 +1,51 @@
 {
-  "ticker": "JP.7211",
-  "ticker_user": "7211.T",
-  "name": "MITSUBISHI MOTOR CORP",
-  "data_source": "yfinance",
-  "data_range": "2025-12-04 → 2026-10-01 (200 daily bars)",
+  "ticker": "7211.T",
+  "asof": "2026-10-05",
+  "close": 343.6000061035156,
+  "chg_pct": 1.8677789915645615,
   "last_bar": {
-    "date": "2026-10-01",
-    "O": 351.0,
-    "H": 351.0,
-    "L": 345.0,
-    "C": 347.3,
-    "prev_close": 351.1,
-    "chg_pct": -1.08
+    "date": "2026-10-05",
+    "O": 340.0,
+    "H": 344.70001220703125,
+    "L": 339.3999938964844,
+    "C": 343.6000061035156,
+    "prev_close": 337.29998779296875,
+    "chg_pct": 1.8677789915645615
   },
+  "name": "Mitsubishi Motors Corporation",
   "phase": "base_building",
-  "adx": 12.27,
-  "plus_di": 22.16,
-  "minus_di": 28.61,
-  "regime": "range",
-  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 458.0 (2026-02-10), trough 300.7 (2026-05-01), box top 415.5 (2026-05-29)",
-  "peak": {
-    "date": "2026-02-10",
-    "price": 458.0
+  "kline": {},
+  "position": {
+    "current": 337.3,
+    "in_box_pct": 21.4,
+    "nearest_support": "S1 KEY (328.0)",
+    "nearest_resistance": "R1 today high (345.6)"
   },
-  "trough": {
-    "date": "2026-05-01",
-    "price": 300.7
-  },
-  "box": {
-    "top": 415.5,
-    "top_date": "2026-05-29",
-    "bottom": 300.7,
-    "period": "2026-05-01 to 2026-10-01"
-  },
-  "drop_from_peak_pct": 24.2,
-  "recovery_from_crash_pct": 15.5,
   "supports": [
     {
-      "level": 336.0,
-      "label": "S1 KEY",
-      "touches": 10,
-      "evidence": "tested 10x in base period; 3.3% below current"
-    },
-    {
-      "level": 332.0,
-      "label": "S2",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
-    },
-    {
       "level": 328.0,
-      "label": "S3",
+      "label": "S1 KEY",
       "touches": 5,
-      "evidence": "mid-base support, tested 5x"
+      "evidence": "tested 5x in base period; 2.8% below current"
     },
     {
-      "level": 300.7,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-05-01, structural bottom"
+      "level": 324.0,
+      "label": "S2",
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
+    },
+    {
+      "level": 316.0,
+      "label": "S3 bottom",
+      "touches": 3,
+      "evidence": "structural bottom, near crash low 300.7"
     }
   ],
   "resistances": [
     {
-      "level": 351.0,
+      "level": 345.6,
       "label": "R1 today high",
-      "evidence": "today's high 351.0"
+      "evidence": "today's high 345.6000061035156"
     },
     {
       "level": 415.5,
@@ -74,97 +53,24 @@
       "evidence": "box top 415.5, base period high"
     }
   ],
-  "position": {
-    "current": 347.3,
-    "in_box_pct": 40.6,
-    "nearest_support": "S1 KEY (336.0)",
-    "nearest_resistance": "R1 today high (351.0)"
-  },
-  "kline_today": {
-    "type": "bearish_pullback",
-    "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 351.0,
-    "H": 351.0,
-    "L": 345.0,
-    "C": 347.3,
-    "body_pct": 61.7,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 38.3
-  },
-  "bias": {
-    "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (41% of box)"
-    },
-    "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
-    },
-    "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
-    }
-  },
-  "scenarios": [
-    {
-      "if": "hold 336.0 (KEY support)",
-      "then": "still range; watch 351.0 for next test"
-    },
-    {
-      "if": "break 336.0 on close",
-      "then": "target 332.0 → 328.0 (short-term bearish)"
-    },
-    {
-      "if": "break 300.7 (crash low)",
-      "then": "base invalidation; mid-term bearish"
-    },
-    {
-      "if": "reclaim 351.0 on close",
-      "then": "short-term bullish; next test 415.5"
-    },
-    {
-      "if": "break 415.5 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
-    }
-  ],
-  "common_misjudgments": [
-    {
-      "claim": "跌過好多，所以一定牛",
-      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
-    },
-    {
-      "claim": "今日陰燭，所以一定破位",
-      "refute": "陰燭在支持之上，只是弱，不是已破"
-    },
-    {
-      "claim": "MACD 綠箭就一定上",
-      "refute": "震盪市指標反覆；以水平位收市確認為優先"
-    },
-    {
-      "claim": "把歷史高位當短線目標",
-      "refute": "路徑依賴，中間有多層供應；分段過關"
-    }
-  ],
   "action_plan": {
     "verdict": "BUY",
     "strategy": "BUY_S1",
-    "trigger_price": 343.8,
-    "target_price": 375.05,
-    "stop_price": 329.88,
-    "risk_pct": 4.05,
-    "reward_pct": 9.09,
-    "rr_ratio": 2.25,
+    "trigger_price": 335.2,
+    "target_price": 364.95,
+    "stop_price": 321.34,
+    "risk_pct": 4.14,
+    "reward_pct": 8.88,
+    "rr_ratio": 2.15,
     "phase_match": true,
-    "r1": 406.3,
-    "s1": 343.8,
-    "s2": 327.5,
-    "r2": 396.9,
+    "r1": 394.7,
+    "s1": 335.2,
+    "s2": 328.3,
+    "r2": 406.3,
     "r3": 415.5,
     "s3": 300.7,
     "s4": 303.0,
-    "current_position_pct": 5.6,
-    "notes": "BUY_S1: in box (344-406), entry at S1 344, target mid 375, stop 330 ｜ 52.2 條規則（BUY plan，support 343.80）：① 跌到 343.80、收市守住喺 343.80 上面 → 照 BUY 條 plan 做（入場 343.80，止蝕 329.88，目標 375.05）。② 收市跌穿 343.80 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 343.80 上面』。"
+    "current_position_pct": 3.5,
+    "notes": "BUY_S1: in box (335-395), entry at S1 335, target mid 365, stop 321 ｜ 52.2 條規則（BUY plan，support 335.20）：① 跌到 335.20、收市守住喺 335.20 上面 → 照 BUY 條 plan 做（入場 335.20，止蝕 321.34，目標 364.95）。② 收市跌穿 335.20 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 335.20 上面』。"
   }
 }

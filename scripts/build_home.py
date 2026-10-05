@@ -164,11 +164,33 @@ def pick_recent_edge(bt):
     return None
 
 
+def wilson_lower(wins: float, n: float, z: float = 1.96) -> float:
+    """Lower bound of the Wilson score interval for a win rate, in percent.
+
+    2026-10-05: the homepage was printing raw win% as the headline, so a card
+    could read "100% win (60d, n=5)" — five trades in a row is not a 100%
+    probability, it is a sample of five. The Wilson lower bound is what the
+    data actually supports at ~95% confidence: 5/5 lands near 57%, which is
+    both defensible and still the strongest number in the set. Raw % is kept
+    alongside for transparency, but the bound is what we lead with and sort on.
+    """
+    if not n or n <= 0:
+        return 0.0
+    p = max(0.0, min(1.0, wins / n))
+    denom = 1 + z * z / n
+    centre = p + z * z / (2 * n)
+    margin = z * ((p * (1 - p) / n + z * z / (4 * n * n)) ** 0.5)
+    return max(0.0, (centre - margin) / denom) * 100
+
+
 def pick_plan_edge(bt, plan_strategy):
     """2026-08-28 methodology fix: TODAY'S plan strategy's own backtest stats.
 
     Home cards used to badge a BUY plan with "SELL_R1 86% win" from a different
     strategy. Only the plan strategy's own window stats (n>=5) qualify now.
+
+    2026-10-05: also returns a Wilson lower bound so callers can display a
+    sample-size-aware number instead of the raw rate.
     """
     if not bt or not bt.get("windows") or not plan_strategy:
         return None
@@ -182,30 +204,41 @@ def pick_plan_edge(bt, plan_strategy):
         if not data:
             continue
         if data.get("n", 0) >= 5:
+            n = data.get("n", 0)
+            win_pct = data.get("win_pct", 0)
             return {
                 "strategy": plan_strategy,
                 "window": w,
-                "win_pct": data.get("win_pct", 0),
-                "n": data.get("n", 0),
+                "win_pct": win_pct,
+                "n": n,
+                "wins": round(win_pct / 100 * n),
+                "wilson": wilson_lower(round(win_pct / 100 * n), n),
                 "total_pnl": data.get("total_pnl", 0),
             }
     return None
 
 
 def collect_actionables(market: str, top_n: int = 5):
-    """Pick top N actionable tickers (BUY or SELL with high win%).
+    """Pick top N actionable tickers (BUY or SELL with defensible win rate).
 
     2026-08-28: selection + display both use the PLAN strategy's own win%
     (n>=5 floor). A card is only picked if today's advised strategy itself has
     >=50% historical win rate — no more cross-strategy win% laundering.
+
+    2026-10-05: the >=50% gate and the ranking now use the Wilson lower bound,
+    not the raw rate, so a "100% on n=5" strategy can no longer outrank a
+    genuine 60% on n=40. Returns (cards, funnel) where funnel reports how many
+    signals were seen and how many cleared the bar, so the homepage can state
+    the funnel instead of printing a bare "2 of 105" that reads as emptiness.
     """
     base = HK_OUT if market == "HK" else US_OUT
     universes_path = REPO / "hk_universe_200.json" if market == "HK" else US_OUT / "us_top200_fresh.json"
     if not universes_path.exists():
-        return []
+        return [], {"signals": 0, "qualified": 0}
     universe = json.load(open(universes_path))
 
     rows = []
+    signals = 0
     for tk in universe:
         tj = load_ticker_json(tk, market)
         if not tj:
@@ -214,17 +247,20 @@ def collect_actionables(market: str, top_n: int = 5):
         verdict = ap.get("verdict", "WAIT")
         if verdict == "WAIT":
             continue
+        signals += 1
         bt = load_backtest(tk)
         plan_edge = pick_plan_edge(bt, ap.get("strategy"))
-        if not plan_edge or plan_edge["win_pct"] < 50:
+        if not plan_edge or plan_edge["wilson"] < 50:
             continue
 
-        last_bar = tj.get("last_bar", {})
+        # 2026-10-05: same flat-JP-schema guard as build_dashboard.py
+        from build_dashboard import snapshot_quote
+        _q = snapshot_quote(tj)
         rows.append({
             "ticker": tk,
-            "name": tj.get("name", ""),
-            "last": last_bar.get("C"),
-            "chg": last_bar.get("chg_pct"),
+            "name": _q["name"],
+            "last": _q["last"],
+            "chg": _q["chg_pct"],
             "verdict": verdict,
             "trigger": ap.get("trigger_price"),
             "target": ap.get("target_price"),
@@ -234,9 +270,9 @@ def collect_actionables(market: str, top_n: int = 5):
             "market": market,
         })
 
-    # Sort: by win% desc, then total_pnl desc
-    rows.sort(key=lambda r: (-r["edge"]["win_pct"], -r["edge"]["total_pnl"]))
-    return rows[:top_n]
+    # Sort: by Wilson lower bound desc (sample-size aware), then total_pnl desc
+    rows.sort(key=lambda r: (-r["edge"]["wilson"], -r["edge"]["total_pnl"]))
+    return rows[:top_n], {"signals": signals, "qualified": len(rows)}
 
 
 def collect_phase_stats():
@@ -281,7 +317,7 @@ def render_signal_card(row):
         <div>
           <div class="signal-ticker">{row["ticker"]}</div>
           <div class="signal-name">{row["name"]}</div>
-          <div class="signal-name" style="margin-top: var(--sp-2);">本策略歷史: {edge["strategy"]} · {edge["win_pct"]:.0f}% win ({edge["window"]}d, n={edge["n"]})</div>
+          <div class="signal-name" style="margin-top: var(--sp-2);">本策略歷史: {edge["strategy"]} · 勝率下限 <b>{edge["wilson"]:.0f}%</b> ({edge["wins"]}/{edge["n"]} 單, {edge["window"]}d, 95% Wilson)</div>
         </div>
         <span class="signal-action-large {action_cls}">{verdict}</span>
         <div class="signal-detail">{fmt(row["trigger"])} → <b>{fmt(row["target"])}</b> · stop {fmt(row["stop"])}</div>
@@ -322,9 +358,11 @@ def build_home_page():
     # in the header would be wrong for two of three markets, so print each.
     _hk, _us, _jp = data_asof("HK"), data_asof("US"), data_asof("JP")
     t1_label = f"{_hk} · US {_us}" + (f" · JP {_jp}" if _jp != _hk else "")
-    hk_top = collect_actionables("HK", top_n=3)
-    us_top = collect_actionables("US", top_n=2)
+    hk_top, hk_funnel = collect_actionables("HK", top_n=3)
+    us_top, us_funnel = collect_actionables("US", top_n=2)
     actionable = hk_top + us_top
+    n_signals = hk_funnel["signals"] + us_funnel["signals"]
+    n_qualified = hk_funnel["qualified"] + us_funnel["qualified"]
     stats = collect_phase_stats()
 
     phase_dist = stats.get("phase", {})
@@ -483,7 +521,7 @@ function toggleTheme(){{
   <div class="container">
     <div class="section-head">
       <h2>{T("home_today_actionable")}</h2>
-      <span class="section-meta">{len(actionable)} of {stats.get("BUY", 0) + stats.get("SELL", 0)} · Updated {datetime.now().strftime('%H:%M HKT')}</span>
+      <span class="section-meta">{n_signals} 隻有訊號 · <b>{n_qualified} 隻通過勝率篩選</b>（ Wilson 下限 ≥50%）· Updated {datetime.now().strftime('%H:%M HKT')}</span>
     </div>
     <div class="card-grid" style="grid-template-columns: 1fr;">
       {cards if cards else '<div class="card text-dim">No actionable signals yet — run refresh pipeline</div>'}

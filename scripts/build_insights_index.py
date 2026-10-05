@@ -31,24 +31,41 @@ SERIES = [
     ("JPY=X", "USD/JPY"),
 ]
 
+# 2026-10-05: FX is not an exchange series. Yahoo returns a JPY=X bar dated
+# 2026-10-04 — a Sunday, because the FX week opens Sunday evening UTC. Three
+# equity indices all closed 2026-10-02 while this one bar said 10-04, and
+# because `asof` was reassigned every loop iteration the strip footer printed
+# "最後更新 2026-10-04" on a day no market traded. Drop weekend FX bars so the
+# page quotes a real session, and derive the strip date from the equity
+# indices rather than from whichever series happened to be fetched last.
+FX_SYMBOLS = {"JPY=X"}
+
 
 def fetch() -> tuple[list[tuple[str, float, str]], str | None]:
     import yfinance as yf
     import pandas as pd
 
-    out, asof = [], None
+    out: list[tuple[str, float, str]] = []
+    equity_days: list[str] = []
     for sym, label in SERIES:
         try:
             d = yf.Ticker(sym).history(period="1mo", auto_adjust=True)
             if d is None or d.empty:
                 continue
             d.index = pd.to_datetime(d.index).tz_localize(None)
-            row, day = d.iloc[-1], d.index[-1]
-            val = float(row["Close"])
-            out.append((label, val, day.strftime("%Y-%m-%d")))
-            asof = day.strftime("%Y-%m-%d")
+            if sym in FX_SYMBOLS:
+                d = d[[ts.weekday() < 5 for ts in d.index]]
+                if d.empty:
+                    continue
+            row = d.iloc[-1]
+            day = d.index[-1].strftime("%Y-%m-%d")
+            out.append((label, float(row["Close"]), day))
+            if sym not in FX_SYMBOLS:
+                equity_days.append(day)
         except Exception:
             continue
+    # Strip-level date = the session the equity indices actually closed on.
+    asof = max(set(equity_days), key=equity_days.count) if equity_days else None
     return out, asof
 
 
@@ -92,6 +109,15 @@ def main() -> None:
     html = PAGE.read_text(encoding="utf-8", errors="ignore")
 
     rows, asof = fetch()
+    # 2026-10-05: fail loudly rather than publish a non-trading day. A weekend
+    # asof means an upstream series leaked an FX/Future-session bar into an
+    # equity label again — the exact failure this strip was built to prevent.
+    if asof:
+        _d = date.fromisoformat(asof)
+        if _d.weekday() >= 5:
+            print(f"! refusing to stamp a non-trading day: asof={asof} "
+                  f"({_d.strftime('%A')}). Strip written without a date.")
+            asof = None
     strip = build_strip(rows, asof)
 
     if MARK_START in html:

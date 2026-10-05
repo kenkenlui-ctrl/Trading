@@ -3,23 +3,23 @@
   "ticker_user": "FDX",
   "name": "FedEx Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-30",
-    "O": 286.75,
-    "H": 288.87,
-    "L": 284.52,
-    "C": 285.09,
-    "prev_close": 287.47,
-    "chg_pct": -0.83
+    "date": "2026-10-02",
+    "O": 287.65,
+    "H": 290.84,
+    "L": 287.23,
+    "C": 290.36,
+    "prev_close": 287.07,
+    "chg_pct": 1.15
   },
   "phase": "downtrend_active",
-  "adx": 41.71,
-  "plus_di": 9.81,
-  "minus_di": 35.12,
+  "adx": 43.11,
+  "plus_di": 11.71,
+  "minus_di": 32.71,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 345.37 (2026-06-15), trough 279.23 (2026-09-25), box top 340.83 (2026-08-26)",
+  "phase_evidence": "Peak 345.37 (2026-06-15), trough 279.23 (2026-09-25), box top 290.84 (2026-10-02)",
   "peak": {
     "date": "2026-06-15",
     "price": 345.37
@@ -29,86 +29,83 @@
     "price": 279.23
   },
   "box": {
-    "top": 340.83,
-    "top_date": "2026-08-26",
+    "top": 290.84,
+    "top_date": "2026-10-02",
     "bottom": 279.23,
-    "period": "2026-09-25 to 2026-09-30"
+    "period": "2026-09-25 to 2026-10-02"
   },
-  "drop_from_peak_pct": 17.5,
-  "recovery_from_crash_pct": 2.1,
+  "drop_from_peak_pct": 15.9,
+  "recovery_from_crash_pct": 4.0,
   "supports": [
     {
+      "level": 284.0,
+      "label": "S1 KEY",
+      "touches": 6,
+      "evidence": "tested 6x in base period; 2.2% below current"
+    },
+    {
       "level": 280.0,
-      "label": "S1 bottom",
+      "label": "S2 bottom",
       "touches": 4,
       "evidence": "structural bottom, near crash low 279.23"
     }
   ],
   "resistances": [
     {
-      "level": 288.87,
+      "level": 290.84,
       "label": "R1 today high",
-      "evidence": "today's high 288.8699951171875"
-    },
-    {
-      "level": 340.83,
-      "label": "R3 Aug high",
-      "evidence": "box top 340.83, base period high"
+      "evidence": "today's high 290.8399963378906"
     }
   ],
   "position": {
-    "current": 285.09,
-    "in_box_pct": 8.4,
-    "nearest_support": "S1 bottom (280.0)",
-    "nearest_resistance": "R1 today high (288.87)"
+    "current": 290.36,
+    "in_box_pct": 95.6,
+    "nearest_support": "S1 KEY (284.0)",
+    "nearest_resistance": "R1 today high (290.84)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 286.75,
-    "H": 288.87,
-    "L": 284.52,
-    "C": 285.09,
-    "body_pct": 38.2,
-    "upper_wick_pct": 48.7,
-    "lower_wick_pct": 13.1
+    "close_position": "upper_half",
+    "O": 287.65,
+    "H": 290.84,
+    "L": 287.23,
+    "C": 290.36,
+    "body_pct": 75.1,
+    "upper_wick_pct": 13.3,
+    "lower_wick_pct": 11.6
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (8% of box)"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "bearish_continuation",
       "reason": "making new lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 280.0 (KEY support)",
-      "then": "still range; watch 288.87 for next test"
+      "if": "hold 284.0 (KEY support)",
+      "then": "still range; watch 290.84 for next test"
     },
     {
-      "if": "break 280.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 284.0 on close",
+      "then": "target 280.0 → lower (short-term bearish)"
     },
     {
       "if": "break 280.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 288.87 on close",
-      "then": "short-term bullish; next test 340.83"
-    },
-    {
-      "if": "break 340.83 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 290.84 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -139,14 +136,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 325.62,
+    "r1": 325.05,
     "s1": 279.23,
     "s2": 303.0,
     "r2": 341.69,
     "r3": 345.37,
     "s3": 285.37,
     "s4": 218.21,
-    "current_position_pct": 12.6,
-    "notes": "WAIT_RANGE: in box (279-326), pos 13%, no clear setup"
+    "current_position_pct": 24.3,
+    "notes": "WAIT_RANGE: in box (279-325), pos 24%, no clear setup"
   }
 }

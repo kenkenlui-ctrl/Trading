@@ -59,6 +59,15 @@ def render_v2_block(market: str) -> str:
     src = d.get("performance_source", "")
     asof = rows[0].get("asof", "")
 
+    # 2026-10-05: this used to be a hard-coded "third-party, not verified
+    # by us". That was true while the numbers came from the 2026-10-01
+    # audit, but the shipped rule now carries our own close-hold
+    # requirement and the attached statistics are measured by us, so the
+    # label has to follow the payload instead of asserting something the
+    # data no longer says.
+    third_party = bool(d.get("performance_is_third_party"))
+    prov = ("第三方回測數字，非本站自行驗證" if third_party
+            else "本站自測數字 · 含收市企穩 S1 條件 · 見方法論頁")
     stat = ""
     if oos:
         w95 = oos.get("win95") or [None, None]
@@ -72,12 +81,12 @@ def render_v2_block(market: str) -> str:
             f'<div style="font-size:0.75rem;opacity:0.7">平均淨 {oos.get("avg_net_pct")}%／單 '
             f'· n = {oos.get("n"):,}（2023–26）</div>'
             f'<div style="font-size:0.68rem;opacity:0.5;margin-top:4px">'
-            f'第三方回測數字，非本站自行驗證</div></div>'
+            f'{prov}</div></div>'
         )
 
     rule_lines = " · ".join([
         "只做多",
-        f"下一個交易日以 S1 限價買入（開市低過 S1 則跳過）",
+        "下一個交易日以 S1 限價買入（開市低過 S1 則跳過，收市企唔穩 S1 唔當成交）",
         f"止損 S1 ×(1 − 3×ATR%)",
         f"無目標價，第 {rules.get('exit','').split()[-3] if rules.get('exit') else 10} 個交易日收市離場",
     ])

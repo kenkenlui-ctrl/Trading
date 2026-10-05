@@ -1,158 +1,159 @@
 {
-  "ticker": "HK.02828",
-  "ticker_user": "02828.HK",
-  "name": "HSCEI ETF",
-  "data_source": "yfinance",
-  "data_range": "2025-12-08 → 2026-09-29 (199 daily bars)",
-  "last_bar": {
-    "date": "2026-09-29",
-    "O": 84.12,
-    "H": 84.14,
-    "L": 83.48,
-    "C": 83.72,
-    "prev_close": 84.36,
-    "chg_pct": -0.76
+ "ticker": "02828.HK",
+ "ticker_user": "02828.HK",
+ "name": "恒生中國企業",
+ "data_source": "futu",
+ "data_range": "2025-12-10 → 2026-10-05 (200 daily bars)",
+ "last_bar": {
+  "date": "2026-10-05",
+  "O": 82.16,
+  "H": 82.46,
+  "L": 81.72,
+  "C": 82.46,
+  "prev_close": 82.08,
+  "chg_pct": 0.46
+ },
+ "phase": "base_building",
+ "adx": 17.86,
+ "plus_di": 14.91,
+ "minus_di": 32.83,
+ "regime": "range",
+ "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+ "phase_evidence": "Peak 96.95 (2026-01-29), trough 75.21 (2026-06-26), box top 89.35 (2026-07-30)",
+ "peak": {
+  "date": "2026-01-29",
+  "price": 96.95
+ },
+ "trough": {
+  "date": "2026-06-26",
+  "price": 75.21
+ },
+ "box": {
+  "top": 89.35,
+  "top_date": "2026-07-30",
+  "bottom": 75.21,
+  "period": "2026-06-26 to 2026-10-05"
+ },
+ "drop_from_peak_pct": 14.9,
+ "recovery_from_crash_pct": 9.6,
+ "supports": [
+  {
+   "level": 80.0,
+   "label": "S1 KEY",
+   "touches": 4,
+   "evidence": "tested 4x in base period; 3.0% below current"
   },
-  "phase": "base_building",
-  "adx": 16.06,
-  "plus_di": 16.94,
-  "minus_di": 30.91,
-  "regime": "range",
-  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 98.3 (2026-01-29), trough 75.86 (2026-06-26), box top 90.0 (2026-07-30)",
-  "peak": {
-    "date": "2026-01-29",
-    "price": 98.3
-  },
-  "trough": {
-    "date": "2026-06-26",
-    "price": 75.86
-  },
-  "box": {
-    "top": 90.0,
-    "top_date": "2026-07-30",
-    "bottom": 75.86,
-    "period": "2026-06-26 to 2026-09-29"
-  },
-  "drop_from_peak_pct": 14.8,
-  "recovery_from_crash_pct": 10.4,
-  "supports": [
-    {
-      "level": 80.0,
-      "label": "S1 KEY",
-      "touches": 5,
-      "evidence": "tested 5x in base period; 4.4% below current"
-    },
-    {
-      "level": 76.0,
-      "label": "S2 bottom",
-      "touches": 4,
-      "evidence": "structural bottom, near crash low 75.86"
-    }
-  ],
-  "resistances": [
-    {
-      "level": 84.14,
-      "label": "R1 today high",
-      "evidence": "today's high 84.13999938964844"
-    },
-    {
-      "level": 90.0,
-      "label": "R3 Jul high",
-      "evidence": "box top 90.0, base period high"
-    }
-  ],
-  "position": {
-    "current": 83.72,
-    "in_box_pct": 55.1,
-    "nearest_support": "S1 KEY (80.0)",
-    "nearest_resistance": "R1 today high (84.14)"
-  },
-  "kline_today": {
-    "type": "bearish_pullback",
-    "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 84.12,
-    "H": 84.14,
-    "L": 83.48,
-    "C": 83.72,
-    "body_pct": 60.6,
-    "upper_wick_pct": 3.0,
-    "lower_wick_pct": 36.4
-  },
-  "bias": {
-    "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
-    },
-    "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
-    },
-    "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
-    }
-  },
-  "scenarios": [
-    {
-      "if": "hold 80.0 (KEY support)",
-      "then": "still range; watch 84.14 for next test"
-    },
-    {
-      "if": "break 80.0 on close",
-      "then": "target 76.0 → lower (short-term bearish)"
-    },
-    {
-      "if": "break 76.0 (crash low)",
-      "then": "base invalidation; mid-term bearish"
-    },
-    {
-      "if": "reclaim 84.14 on close",
-      "then": "short-term bullish; next test 90.0"
-    },
-    {
-      "if": "break 90.0 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
-    }
-  ],
-  "common_misjudgments": [
-    {
-      "claim": "跌過好多，所以一定牛",
-      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
-    },
-    {
-      "claim": "今日陰燭，所以一定破位",
-      "refute": "陰燭在支持之上，只是弱，不是已破"
-    },
-    {
-      "claim": "MACD 綠箭就一定上",
-      "refute": "震盪市指標反覆；以水平位收市確認為優先"
-    },
-    {
-      "claim": "把歷史高位當短線目標",
-      "refute": "路徑依賴，中間有多層供應；分段過關"
-    }
-  ],
-  "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 82.84,
-    "target_price": 85.77,
-    "stop_price": 81.18,
-    "risk_pct": 2.0,
-    "reward_pct": 3.54,
-    "rr_ratio": 1.77,
-    "phase_match": true,
-    "r1": 88.7,
-    "s1": 82.84,
-    "s2": 80.16,
-    "r2": 90.0,
-    "r3": 93.0,
-    "s3": 75.86,
-    "s4": 84.44,
-    "current_position_pct": 15.0,
-    "notes": "BUY_S1: in box (83-89), entry at S1 83, target mid 86, stop 81 ｜ 52.2 條規則（BUY plan，support 82.84）：① 跌到 82.84、收市守住喺 82.84 上面 → 照 BUY 條 plan 做（入場 82.84，止蝕 81.18，目標 85.77）。② 收市跌穿 82.84 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 82.84 上面』。"
+  {
+   "level": 76.0,
+   "label": "S2 bottom",
+   "touches": 4,
+   "evidence": "structural bottom, near crash low 75.21"
   }
+ ],
+ "resistances": [
+  {
+   "level": 82.46,
+   "label": "R1 today high",
+   "evidence": "today's high 82.46"
+  },
+  {
+   "level": 89.35,
+   "label": "R3 Jul high",
+   "evidence": "box top 89.35, base period high"
+  }
+ ],
+ "position": {
+  "current": 82.46,
+  "in_box_pct": 48.4,
+  "nearest_support": "S1 KEY (80.0)",
+  "nearest_resistance": "R3 Jul high (89.35)"
+ },
+ "kline_today": {
+  "type": "neutral",
+  "touched_R1": true,
+  "touched_S1": false,
+  "close_position": "upper_half",
+  "O": 82.16,
+  "H": 82.46,
+  "L": 81.72,
+  "C": 82.46,
+  "body_pct": 40.5,
+  "upper_wick_pct": 0.0,
+  "lower_wick_pct": 59.5
+ },
+ "bias": {
+  "short": {
+   "bias": "neutral",
+   "reason": "mid-box, no clear signal"
+  },
+  "mid": {
+   "bias": "neutral_consolidation",
+   "reason": "consolidating after big move"
+  },
+  "long": {
+   "bias": "below_peak_recovery",
+   "reason": "still well below all-time peak"
+  }
+ },
+ "scenarios": [
+  {
+   "if": "hold 80.0 (KEY support)",
+   "then": "still range; watch 82.46 for next test"
+  },
+  {
+   "if": "break 80.0 on close",
+   "then": "target 76.0 → lower (short-term bearish)"
+  },
+  {
+   "if": "break 76.0 (crash low)",
+   "then": "base invalidation; mid-term bearish"
+  },
+  {
+   "if": "reclaim 82.46 on close",
+   "then": "short-term bullish; next test 89.35"
+  },
+  {
+   "if": "break 89.35 (box top)",
+   "then": "leave consolidation; mid-term recovery, watch next R"
+  }
+ ],
+ "common_misjudgments": [
+  {
+   "claim": "跌過好多，所以一定牛",
+   "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+  },
+  {
+   "claim": "今日陰燭，所以一定破位",
+   "refute": "陰燭在支持之上，只是弱，不是已破"
+  },
+  {
+   "claim": "MACD 綠箭就一定上",
+   "refute": "震盪市指標反覆；以水平位收市確認為優先"
+  },
+  {
+   "claim": "把歷史高位當短線目標",
+   "refute": "路徑依賴，中間有多層供應；分段過關"
+  }
+ ],
+ "action_plan": {
+  "verdict": "BUY",
+  "strategy": "BUY_S1",
+  "trigger_price": 81.72,
+  "target_price": 84.67,
+  "stop_price": 80.0,
+  "risk_pct": 2.1,
+  "reward_pct": 3.62,
+  "rr_ratio": 1.72,
+  "phase_match": true,
+  "r1": 87.63,
+  "s1": 81.72,
+  "s2": 81.23,
+  "r2": 89.35,
+  "r3": 91.65,
+  "s3": 75.21,
+  "s4": 83.09,
+  "current_position_pct": 12.5,
+  "notes": "BUY_S1: in box (82-88), entry at S1 82, target mid 85, stop 80 ｜ 52.2 條規則（BUY plan，support 81.72）：① 跌到 81.72、收市守住喺 81.72 上面 → 照 BUY 條 plan 做（入場 81.72，止蝕 80.00，目標 84.67）。② 收市跌穿 81.72 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 81.72 上面』。"
+ },
+ "asof": "2026-10-05"
 }

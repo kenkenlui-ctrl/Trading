@@ -1,59 +1,44 @@
 {
-  "ticker": "JP.3101",
-  "ticker_user": "3101.T",
-  "name": "TOYOBO CO",
-  "data_source": "yfinance",
-  "data_range": "2025-12-04 → 2026-10-01 (200 daily bars)",
+  "ticker": "3101.T",
+  "asof": "2026-10-05",
+  "close": 1675.0,
+  "chg_pct": 1.700060716454166,
   "last_bar": {
-    "date": "2026-10-01",
-    "O": 1655.0,
-    "H": 1677.0,
-    "L": 1648.0,
-    "C": 1665.0,
-    "prev_close": 1671.0,
-    "chg_pct": -0.36
+    "date": "2026-10-05",
+    "O": 1660.0,
+    "H": 1679.0,
+    "L": 1647.0,
+    "C": 1675.0,
+    "prev_close": 1647.0,
+    "chg_pct": 1.700060716454166
   },
+  "name": "Toyobo Co., Ltd.",
   "phase": "base_building",
-  "adx": 12.15,
-  "plus_di": 21.16,
-  "minus_di": 18.08,
-  "regime": "range",
-  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 1857.0 (2026-02-27), trough 1270.0 (2026-03-30), box top 1945.0 (2026-06-01)",
-  "peak": {
-    "date": "2026-02-27",
-    "price": 1857.0
+  "kline": {},
+  "position": {
+    "current": 1647.0,
+    "in_box_pct": 55.9,
+    "nearest_support": "S1 KEY (1596.0)",
+    "nearest_resistance": "R1 today high (1675.0)"
   },
-  "trough": {
-    "date": "2026-03-30",
-    "price": 1270.0
-  },
-  "box": {
-    "top": 1945.0,
-    "top_date": "2026-06-01",
-    "bottom": 1270.0,
-    "period": "2026-03-30 to 2026-10-01"
-  },
-  "drop_from_peak_pct": 10.3,
-  "recovery_from_crash_pct": 31.1,
   "supports": [
     {
-      "level": 1624.0,
+      "level": 1596.0,
       "label": "S1 KEY",
-      "touches": 5,
-      "evidence": "tested 5x in base period; 2.5% below current"
-    },
-    {
-      "level": 1616.0,
-      "label": "S2",
-      "touches": 9,
-      "evidence": "mid-base support, tested 9x"
+      "touches": 4,
+      "evidence": "tested 4x in base period; 3.1% below current"
     },
     {
       "level": 1592.0,
-      "label": "S3",
+      "label": "S2",
       "touches": 6,
       "evidence": "mid-base support, tested 6x"
+    },
+    {
+      "level": 1584.0,
+      "label": "S3",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
     },
     {
       "level": 1270.0,
@@ -64,87 +49,14 @@
   ],
   "resistances": [
     {
-      "level": 1677.0,
+      "level": 1675.0,
       "label": "R1 today high",
-      "evidence": "today's high 1677.0"
+      "evidence": "rejection at 1675.0 (long upper wick, close weak)"
     },
     {
       "level": 1945.0,
       "label": "R3 Jun high",
       "evidence": "box top 1945.0, base period high"
-    }
-  ],
-  "position": {
-    "current": 1665.0,
-    "in_box_pct": 58.5,
-    "nearest_support": "S1 KEY (1624.0)",
-    "nearest_resistance": "R1 today high (1677.0)"
-  },
-  "kline_today": {
-    "type": "neutral",
-    "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 1655.0,
-    "H": 1677.0,
-    "L": 1648.0,
-    "C": 1665.0,
-    "body_pct": 34.5,
-    "upper_wick_pct": 41.4,
-    "lower_wick_pct": 24.1
-  },
-  "bias": {
-    "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
-    },
-    "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
-    },
-    "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
-    }
-  },
-  "scenarios": [
-    {
-      "if": "hold 1624.0 (KEY support)",
-      "then": "still range; watch 1677.0 for next test"
-    },
-    {
-      "if": "break 1624.0 on close",
-      "then": "target 1616.0 → 1592.0 (short-term bearish)"
-    },
-    {
-      "if": "break 1270.0 (crash low)",
-      "then": "base invalidation; mid-term bearish"
-    },
-    {
-      "if": "reclaim 1677.0 on close",
-      "then": "short-term bullish; next test 1945.0"
-    },
-    {
-      "if": "break 1945.0 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
-    }
-  ],
-  "common_misjudgments": [
-    {
-      "claim": "跌過好多，所以一定牛",
-      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
-    },
-    {
-      "claim": "今日陰燭，所以一定破位",
-      "refute": "陰燭在支持之上，只是弱，不是已破"
-    },
-    {
-      "claim": "MACD 綠箭就一定上",
-      "refute": "震盪市指標反覆；以水平位收市確認為優先"
-    },
-    {
-      "claim": "把歷史高位當短線目標",
-      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -157,14 +69,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": true,
-    "r1": 1805.0,
+    "r1": 1746.0,
     "s1": 1581.0,
     "s2": 1437.0,
     "r2": 1840.0,
     "r3": 1945.0,
     "s3": 1357.0,
     "s4": 1193.0,
-    "current_position_pct": 37.5,
-    "notes": "WAIT_RANGE: in box (1581-1805), pos 38%, no clear setup"
+    "current_position_pct": 40.0,
+    "notes": "WAIT_RANGE: in box (1581-1746), pos 40%, no clear setup"
   }
 }

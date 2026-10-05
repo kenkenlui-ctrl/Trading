@@ -3,20 +3,20 @@
   "ticker_user": "OXY",
   "name": "Occidental Petroleum Corporatio",
   "data_source": "yfinance",
-  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-30",
-    "O": 55.1,
-    "H": 55.66,
-    "L": 54.77,
-    "C": 55.32,
-    "prev_close": 54.94,
-    "chg_pct": 0.69
+    "date": "2026-10-02",
+    "O": 56.91,
+    "H": 58.16,
+    "L": 56.81,
+    "C": 58.08,
+    "prev_close": 57.84,
+    "chg_pct": 0.41
   },
   "phase": "base_building",
-  "adx": 18.0,
-  "plus_di": 20.11,
-  "minus_di": 35.55,
+  "adx": 16.17,
+  "plus_di": 27.4,
+  "minus_di": 29.44,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 67.45 (2026-03-31), trough 47.77 (2026-07-01), box top 63.77 (2026-09-15)",
@@ -32,29 +32,35 @@
     "top": 63.77,
     "top_date": "2026-09-15",
     "bottom": 47.77,
-    "period": "2026-07-01 to 2026-09-30"
+    "period": "2026-07-01 to 2026-10-02"
   },
-  "drop_from_peak_pct": 18.0,
-  "recovery_from_crash_pct": 15.8,
+  "drop_from_peak_pct": 13.9,
+  "recovery_from_crash_pct": 21.6,
   "supports": [
     {
-      "level": 52.0,
+      "level": 56.0,
       "label": "S1 KEY",
-      "touches": 10,
-      "evidence": "tested 10x in base period; 6.0% below current"
+      "touches": 28,
+      "evidence": "tested 28x in base period; 3.6% below current"
     },
     {
-      "level": 48.0,
-      "label": "S2 bottom",
-      "touches": 4,
-      "evidence": "structural bottom, near crash low 47.77"
+      "level": 52.0,
+      "label": "S2",
+      "touches": 10,
+      "evidence": "mid-base support, tested 10x"
+    },
+    {
+      "level": 47.77,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-07-01, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 55.66,
+      "level": 58.16,
       "label": "R1 today high",
-      "evidence": "today's high 55.65999984741211"
+      "evidence": "today's high 58.15999984741211"
     },
     {
       "level": 63.77,
@@ -63,28 +69,28 @@
     }
   ],
   "position": {
-    "current": 55.32,
-    "in_box_pct": 46.4,
-    "nearest_support": "S1 KEY (52.0)",
-    "nearest_resistance": "R1 today high (55.66)"
+    "current": 58.08,
+    "in_box_pct": 64.4,
+    "nearest_support": "S1 KEY (56.0)",
+    "nearest_resistance": "R1 today high (58.16)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 55.1,
-    "H": 55.66,
-    "L": 54.77,
-    "C": 55.32,
-    "body_pct": 24.7,
-    "upper_wick_pct": 38.2,
-    "lower_wick_pct": 37.1
+    "O": 56.91,
+    "H": 58.16,
+    "L": 56.81,
+    "C": 58.08,
+    "body_pct": 86.7,
+    "upper_wick_pct": 5.9,
+    "lower_wick_pct": 7.4
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -97,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 52.0 (KEY support)",
-      "then": "still range; watch 55.66 for next test"
+      "if": "hold 56.0 (KEY support)",
+      "then": "still range; watch 58.16 for next test"
     },
     {
-      "if": "break 52.0 on close",
-      "then": "target 48.0 → lower (short-term bearish)"
+      "if": "break 56.0 on close",
+      "then": "target 52.0 → 47.77 (short-term bearish)"
     },
     {
-      "if": "break 48.0 (crash low)",
+      "if": "break 47.77 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 55.66 on close",
+      "if": "reclaim 58.16 on close",
       "then": "short-term bullish; next test 63.77"
     },
     {
@@ -136,14 +142,14 @@
     }
   ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 54.76,
-    "target_price": 59.26,
-    "stop_price": 52.45,
-    "risk_pct": 4.22,
-    "reward_pct": 8.23,
-    "rr_ratio": 1.95,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
     "phase_match": true,
     "r1": 63.77,
     "s1": 54.76,
@@ -152,7 +158,7 @@
     "r3": 61.24,
     "s3": 47.77,
     "s4": 38.8,
-    "current_position_pct": 6.2,
-    "notes": "BUY_S1: in box (55-64), entry at S1 55, target mid 59, stop 52 ｜ 52.2 條規則（BUY plan，support 54.76）：① 跌到 54.76、收市守住喺 54.76 上面 → 照 BUY 條 plan 做（入場 54.76，止蝕 52.45，目標 59.26）。② 收市跌穿 54.76 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 54.76 上面』。"
+    "current_position_pct": 36.8,
+    "notes": "WAIT_RANGE: in box (55-64), pos 37%, no clear setup"
   }
 }

@@ -884,6 +884,72 @@ def _mnav_key(active_path: str) -> str:
     return "home"
 
 
+def site_t1() -> str:
+    """Thin re-export so main() can report the date it stamped."""
+    try:
+        from build_dashboard import site_t1 as _s
+        return _s()
+    except Exception:
+        return t_minus_1().isoformat()
+
+
+# The nav-meta badge, in the exact shape nav_html() writes it. Hand-edited
+# pages were produced by older builds, so match the value loosely (any
+# non-tag text) rather than requiring today's exact formatting.
+_T1_BADGE_RE = re.compile(
+    r'(<span class="live-dot"></span>\s*\n?\s*T-1 · )(.*?)(\s*\n\s*<button class="theme-toggle")',
+    re.S,
+)
+# Hand-edited pages also carry a second copy in the footer
+# (`<div class="mono text-dim">T-1 · …</div>`), which is what left
+# methodology reading "T-1 · HK/JP/US 09-29" in the page body even after the
+# nav had been stamped.
+_T1_FOOTER_RE = re.compile(
+    r'(<div class="mono text-dim">T-1 · )([^<]*)(</div>)'
+)
+
+
+def restamp_t1_badges() -> list[str]:
+    """Rewrite the T-1 date inside nav/footer chrome on every built page.
+
+    Only the badge is touched, and only in the two shapes nav_html() emits:
+    the nav-meta block (live-dot … theme-toggle) and the footer stamp. The
+    hand-written body is left byte for byte intact, so editorial text that
+    legitimately mentions a dated session (e.g. insights.html's
+    "T-1 2026-09-03 記錄") is never touched.
+
+    Scope is public/**, which includes public/en/. The /en/ pages are rebuilt
+    only when someone runs scripts/build_i18n.py by hand, so their badges had
+    frozen at 2026-08-28 while the zh pages read 2026-10-02.
+
+    Returns the relative paths changed.
+    """
+    t1 = site_t1()
+    changed: list[str] = []
+
+    def _sub(m: re.Match) -> str:
+        return f"{m.group(1)}{t1}{m.group(3)}"
+
+    def _sub_f(m: re.Match) -> str:
+        return f"{m.group(1)}{t1}{m.group(3)}"
+
+    for p in sorted(PUBLIC_DIR.rglob("*.html")):
+        try:
+            html = p.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        new, n_nav = _T1_BADGE_RE.subn(_sub, html)
+        new, n_foot = _T1_FOOTER_RE.subn(_sub_f, new)
+        # Compare against the ORIGINAL, not against `new` — the first
+        # subn already mutated it. Testing `n_foot and new != html` made the
+        # write unreachable for any page carrying a nav badge but no footer
+        # stamp, which is exactly how /en/backtest/ kept its "T-1 · —".
+        if (n_nav or n_foot) and new != html:
+            p.write_text(new, encoding="utf-8")
+            changed.append(str(p.relative_to(PUBLIC_DIR)))
+    return changed
+
+
 def nav_html(active_path: str) -> str:
     """Top nav — minimal 4-link set (2026-08-29 user request)."""
     # 2026-08-29: SVG icons 取代 emoji（Pro Max anti-pattern fix：emoji 跨平台不一致）
@@ -925,7 +991,17 @@ def nav_html(active_path: str) -> str:
     # Use <header class="site-header"> + <nav class="nav"> + nav-brand/nav-links/
     # nav-meta structure so all 9 pages render identical uppercase + monospace
     # styling. Includes T-1 date, theme toggle, lang switch on the right.
-    t1 = t_minus_1().isoformat() if "t_minus_1" in dir() else "—"
+    # 2026-10-05: this was `t_minus_1().isoformat() if "t_minus_1" in dir()`
+    # — dir() with no args only sees *local* names, and t_minus_1 is a
+    # module-level import, so the condition was always False and every static
+    # page shipped a bare "T-1 · —". It was also a calendar guess even when it
+    # did resolve. site_t1() reads the real last session from the three markets'
+    # own bars, so the badge can never disagree with the data on the page.
+    try:
+        from build_dashboard import site_t1
+        t1 = site_t1()
+    except Exception:
+        t1 = t_minus_1().isoformat()
     return (
         f'<header class="site-header">\n'
         f'<nav class="nav" aria-label="Primary">\n'
@@ -3562,11 +3638,32 @@ def main():
         # /full-results → /dashboard/ in _redirects keeps legacy bookmarks working.
 
     # 4. Sitemap + robots.txt (always — they need to stay in sync with dates)
-    (PUBLIC_DIR / "sitemap.xml").write_text(build_sitemap_xml(all_dates), encoding="utf-8")
-    written.append("sitemap.xml")
-    (PUBLIC_DIR / "robots.txt").write_text(build_robots_txt(), encoding="utf-8")
-    written.append("robots.txt")
-    print(f"✅ Built sitemap.xml + robots.txt ({len(all_dates)} dates × 5 filter variants)")
+    #    2026-10-05: guard against an empty date list. list_report_dates()
+    #    reads the legacy `daily_report` table, which does not exist in the
+    #    current data/leeks_terminal.db — so building build_static.py on its
+    #    own produced all_dates = [] and rewrote the sitemap down to 8 URLs
+    #    from 600+. That is a silent SEO regression, not a build error.
+    if all_dates:
+        (PUBLIC_DIR / "sitemap.xml").write_text(build_sitemap_xml(all_dates), encoding="utf-8")
+        written.append("sitemap.xml")
+        (PUBLIC_DIR / "robots.txt").write_text(build_robots_txt(), encoding="utf-8")
+        written.append("robots.txt")
+        print(f"✅ Built sitemap.xml + robots.txt ({len(all_dates)} dates × 5 filter variants)")
+    else:
+        print("⚠  No legacy report dates — leaving sitemap.xml / robots.txt untouched")
+
+    # 5. Re-stamp the T-1 badge on hand-edited pages.
+    #    methodology.html and faq.html are preserved across builds (see
+    #    hand_edited above), so their nav badge froze at whatever it said on
+    #    the day they were last hand-edited — methodology read
+    #    "T-1 · HK/JP/US 09-29" and faq "T-1 · 2026-09-22" while the market
+    #    pages read 2026-10-02, all on the same site on the same day.
+    #    Rewriting just the badge keeps the hand-written content intact.
+    #    Idempotent: strips any previously injected value before writing.
+    restamped = restamp_t1_badges()
+    if restamped:
+        print(f"✅ Re-stamped T-1 badge on {restamped} hand-edited page(s) → {site_t1()}")
+        written.extend(restamped)
 
     print(f"\nTotal files written: {len(written)}")
     print(f"Output directory: {PUBLIC_DIR}")

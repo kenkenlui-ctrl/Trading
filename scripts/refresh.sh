@@ -50,8 +50,20 @@ try:
     for i, tk in enumerate(universe):
         safe = tk.replace('.', '_')
         png = out / f'{safe}.png'
-        if png.exists() and png.stat().st_mtime > 1747700000:  # skip if recent
-            continue
+        js = out / f'{safe}.json'
+        # 2026-10-05: this guard used to be `png.st_mtime > 1747700000` — a
+        # hard-coded epoch equal to 2025-05-20. Every chart drawn after that
+        # date counted as "recent", so a 200/200 skip fired on every run and
+        # refresh.sh silently became a no-op: no chart, no action_plan JSON, no
+        # data change. Skip only when this ticker is ALREADY at the target
+        # session, which is the only question the guard was meant to ask.
+        if js.exists():
+            try:
+                _have = (json.load(open(js)).get('last_bar') or {}).get('date')
+            except Exception:
+                _have = None
+            if _have == '$DATA_DATE' and png.exists():
+                continue
         try:
             df, src, name = fetch_ohlc(tk, days=200, source='auto', asof='$DATA_DATE')
             # call render via subprocess to avoid matplotlib in this process
@@ -105,6 +117,10 @@ python3 scripts/build_static.py 2>&1 | tail -2
 # 157.95 — a 25% error on a site that claims "zero LLM hallucination".
 # This re-fetches the index strip from Yahoo Finance on every build.
 python3 scripts/build_insights_index.py 2>&1 | tail -1
+# Market Radar on the same page. Must run after build_insights_index so the
+# top strip and the cards below it are stamped from the same session — they
+# used to disagree (strip 23,972 vs a hand-typed card reading 18,420).
+python3 scripts/build_insights_radar.py 2>&1 | tail -1
 # 2026-10-02: v2 limit-buy plan (primary signal set). Reads our own OHLC from
 # public/<market>/ohlc/*.json, applies the 10-year-audit's rule set, and
 # writes public/v2-signals.json for build_dashboard.py to render.

@@ -1,85 +1,84 @@
 {
   "ticker": "US.CI",
   "ticker_user": "CI",
-  "name": "Cigna Group",
-  "data_source": "futu",
-  "data_range": "2025-11-05 → 2026-08-24 (200 daily bars)",
+  "name": "The Cigna Group",
+  "data_source": "yfinance",
+  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
   "last_bar": {
-    "date": "2026-08-24",
-    "O": 278.51,
-    "H": 281.73,
-    "L": 276.96,
-    "C": 280.45,
-    "prev_close": 277.51,
-    "chg_pct": 1.06
+    "date": "2026-10-02",
+    "O": 270.03,
+    "H": 271.4,
+    "L": 266.0,
+    "C": 270.53,
+    "prev_close": 267.96,
+    "chg_pct": 0.96
   },
   "phase": "downtrend_active",
-  "phase_evidence": "Peak 305.44 (2026-07-14), trough 263.11 (2026-08-05), box top 285.74 (2026-08-10)",
+  "adx": 12.38,
+  "plus_di": 16.19,
+  "minus_di": 22.52,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 305.44 (2026-07-14), trough 262.85 (2026-10-01), box top 290.94 (2026-09-14)",
   "peak": {
     "date": "2026-07-14",
     "price": 305.44
   },
   "trough": {
-    "date": "2026-08-05",
-    "price": 263.11
+    "date": "2026-10-01",
+    "price": 262.85
   },
   "box": {
-    "top": 285.74,
-    "top_date": "2026-08-10",
-    "bottom": 263.11,
-    "period": "2026-08-05 to 2026-08-24"
+    "top": 290.94,
+    "top_date": "2026-09-14",
+    "bottom": 262.85,
+    "period": "2026-10-01 to 2026-10-02"
   },
-  "drop_from_peak_pct": 8.2,
-  "recovery_from_crash_pct": 6.6,
+  "drop_from_peak_pct": 11.4,
+  "recovery_from_crash_pct": 2.9,
   "supports": [
     {
-      "level": 276.0,
-      "label": "S1 KEY",
-      "touches": 6,
-      "evidence": "tested 6x in base period; 1.6% below current"
-    },
-    {
-      "level": 272.0,
-      "label": "S2 bottom",
+      "level": 264.0,
+      "label": "S1 bottom",
       "touches": 7,
-      "evidence": "structural bottom, near crash low 263.11"
+      "evidence": "structural bottom, near crash low 262.85"
     }
   ],
   "resistances": [
     {
-      "level": 281.73,
+      "level": 271.4,
       "label": "R1 today high",
-      "evidence": "today's high 281.73"
+      "evidence": "today's high 271.3999938964844"
     },
     {
-      "level": 285.74,
-      "label": "R3 Aug high",
-      "evidence": "box top 285.74, base period high"
+      "level": 290.94,
+      "label": "R3 Sep high",
+      "evidence": "box top 290.94, base period high"
     }
   ],
   "position": {
-    "current": 280.45,
-    "in_box_pct": 61.5,
-    "nearest_support": "S1 KEY (276.0)",
-    "nearest_resistance": "R1 today high (281.73)"
+    "current": 270.53,
+    "in_box_pct": 24.2,
+    "nearest_support": "S1 bottom (264.0)",
+    "nearest_resistance": "R1 today high (271.4)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 278.51,
-    "H": 281.73,
-    "L": 276.96,
-    "C": 280.45,
-    "body_pct": 40.7,
-    "upper_wick_pct": 26.8,
-    "lower_wick_pct": 32.5
+    "O": 270.03,
+    "H": 271.4,
+    "L": 266.0,
+    "C": 270.53,
+    "body_pct": 9.3,
+    "upper_wick_pct": 16.1,
+    "lower_wick_pct": 74.6
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "defensive",
+      "reason": "near box bottom (24% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -92,23 +91,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 276.0 (KEY support)",
-      "then": "still range; watch 281.73 for next test"
+      "if": "hold 264.0 (KEY support)",
+      "then": "still range; watch 271.4 for next test"
     },
     {
-      "if": "break 276.0 on close",
-      "then": "target 272.0 → lower (short-term bearish)"
+      "if": "break 264.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 272.0 (crash low)",
+      "if": "break 264.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 281.73 on close",
-      "then": "short-term bullish; next test 285.74"
+      "if": "reclaim 271.4 on close",
+      "then": "short-term bullish; next test 290.94"
     },
     {
-      "if": "break 285.74 (box top)",
+      "if": "break 290.94 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -140,14 +139,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 304.69,
-    "s1": 263.11,
-    "s2": 268.87,
+    "r1": 290.94,
+    "s1": 262.85,
+    "s2": 263.11,
     "r2": 305.44,
-    "r3": 301.58,
-    "s3": 256.36,
-    "s4": 251.25,
-    "current_position_pct": 41.7,
-    "notes": "WAIT_RANGE: in box (263-305), pos 42%, no clear setup"
+    "r3": 303.33,
+    "s3": 264.9,
+    "s4": 257.85,
+    "current_position_pct": 27.3,
+    "notes": "WAIT_RANGE: in box (263-291), pos 27%, no clear setup"
   }
 }

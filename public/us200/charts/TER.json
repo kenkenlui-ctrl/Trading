@@ -3,23 +3,23 @@
   "ticker_user": "TER",
   "name": "Teradyne, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-30",
-    "O": 402.6,
-    "H": 404.46,
-    "L": 393.14,
-    "C": 400.91,
-    "prev_close": 403.02,
-    "chg_pct": -0.52
+    "date": "2026-10-02",
+    "O": 430.8,
+    "H": 451.86,
+    "L": 427.03,
+    "C": 449.04,
+    "prev_close": 415.79,
+    "chg_pct": 8.0
   },
   "phase": "base_building",
-  "adx": 14.73,
-  "plus_di": 33.64,
-  "minus_di": 21.62,
+  "adx": 17.67,
+  "plus_di": 43.56,
+  "minus_di": 17.61,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 487.91 (2026-06-30), trough 296.82 (2026-07-17), box top 444.17 (2026-08-17)",
+  "phase_evidence": "Peak 487.91 (2026-06-30), trough 296.82 (2026-07-17), box top 451.86 (2026-10-02)",
   "peak": {
     "date": "2026-06-30",
     "price": 487.91
@@ -29,31 +29,31 @@
     "price": 296.82
   },
   "box": {
-    "top": 444.17,
-    "top_date": "2026-08-17",
+    "top": 451.86,
+    "top_date": "2026-10-02",
     "bottom": 296.82,
-    "period": "2026-07-17 to 2026-09-30"
+    "period": "2026-07-17 to 2026-10-02"
   },
-  "drop_from_peak_pct": 17.8,
-  "recovery_from_crash_pct": 35.1,
+  "drop_from_peak_pct": 8.0,
+  "recovery_from_crash_pct": 51.3,
   "supports": [
     {
-      "level": 376.0,
+      "level": 400.0,
       "label": "S1 KEY",
       "touches": 6,
-      "evidence": "tested 6x in base period; 6.2% below current"
+      "evidence": "tested 6x in base period; 10.9% below current"
+    },
+    {
+      "level": 376.0,
+      "label": "S2",
+      "touches": 5,
+      "evidence": "mid-base support, tested 5x"
     },
     {
       "level": 372.0,
-      "label": "S2",
-      "touches": 8,
-      "evidence": "mid-base support, tested 8x"
-    },
-    {
-      "level": 364.0,
       "label": "S3",
-      "touches": 9,
-      "evidence": "mid-base support, tested 9x"
+      "touches": 7,
+      "evidence": "mid-base support, tested 7x"
     },
     {
       "level": 296.82,
@@ -64,74 +64,60 @@
   ],
   "resistances": [
     {
-      "level": 404.46,
+      "level": 451.86,
       "label": "R1 today high",
-      "evidence": "today's high 404.4599914550781"
-    },
-    {
-      "level": 444.17,
-      "label": "R3 Aug high",
-      "evidence": "box top 444.17, base period high"
-    },
-    {
-      "level": 490.0,
-      "label": "R5",
-      "evidence": "pre-crash supply, top before breakdown"
+      "evidence": "today's high 451.8599853515625"
     }
   ],
   "position": {
-    "current": 400.91,
-    "in_box_pct": 70.6,
-    "nearest_support": "S1 KEY (376.0)",
-    "nearest_resistance": "R1 today high (404.46)"
+    "current": 449.04,
+    "in_box_pct": 98.2,
+    "nearest_support": "S1 KEY (400.0)",
+    "nearest_resistance": "R1 today high (451.86)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 402.6,
-    "H": 404.46,
-    "L": 393.14,
-    "C": 400.91,
-    "body_pct": 14.9,
-    "upper_wick_pct": 16.4,
-    "lower_wick_pct": 68.6
+    "O": 430.8,
+    "H": 451.86,
+    "L": 427.03,
+    "C": 449.04,
+    "body_pct": 73.5,
+    "upper_wick_pct": 11.4,
+    "lower_wick_pct": 15.2
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "neutral_consolidation",
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 376.0 (KEY support)",
-      "then": "still range; watch 404.46 for next test"
+      "if": "hold 400.0 (KEY support)",
+      "then": "still range; watch 451.86 for next test"
     },
     {
-      "if": "break 376.0 on close",
-      "then": "target 372.0 → 364.0 (short-term bearish)"
+      "if": "break 400.0 on close",
+      "then": "target 376.0 → 372.0 (short-term bearish)"
     },
     {
       "if": "break 296.82 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 404.46 on close",
-      "then": "short-term bullish; next test 444.17"
-    },
-    {
-      "if": "break 444.17 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 451.86 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -155,21 +141,21 @@
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
-    "trigger_price": 415.61,
-    "target_price": 370.8,
-    "stop_price": 445.09,
-    "risk_pct": 7.09,
-    "reward_pct": 10.78,
-    "rr_ratio": 1.52,
+    "trigger_price": 451.86,
+    "target_price": 389.11,
+    "stop_price": 479.18,
+    "risk_pct": 6.05,
+    "reward_pct": 13.89,
+    "rr_ratio": 2.3,
     "phase_match": true,
-    "r1": 415.61,
-    "s1": 326.0,
+    "r1": 451.86,
+    "s1": 326.37,
     "s2": 296.82,
     "r2": 444.17,
     "r3": 487.91,
     "s3": 301.86,
     "s4": 182.16,
-    "current_position_pct": 83.6,
-    "notes": "SELL_R1: in box (326-416), entry at R1 416, target mid 371, stop 445 ｜ 52.2 條規則（SELL plan，resistance 415.61）：① 跌到 415.61、收市守住喺 415.61 上面 → 照 BUY 條 plan 做（入場 415.61，止蝕 445.09，目標 370.80）。② 收市跌穿 415.61 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 415.61 上面』。"
+    "current_position_pct": 97.8,
+    "notes": "SELL_R1: in box (326-452), entry at R1 452, target mid 389, stop 479 ｜ 52.2 條規則（SELL plan，resistance 451.86）：① 跌到 451.86、收市守住喺 451.86 上面 → 照 BUY 條 plan 做（入場 451.86，止蝕 479.18，目標 389.11）。② 收市跌穿 451.86 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 451.86 上面』。"
   }
 }
