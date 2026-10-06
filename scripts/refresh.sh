@@ -112,6 +112,17 @@ python3 scripts/build_home.py 2>&1 | tail -3
 echo
 echo "[7/7] Static pages + backtest page..."
 python3 scripts/build_static.py 2>&1 | tail -2
+
+# --- Step 7b: sitemap.xml + llms.txt ---
+# Both files were previously outside the pipeline. llms.txt was last written
+# 2026-09-06 and spent a month telling AI answer engines to "cite these" figures
+# (T+10 +3.05%, 121 signals) that the site had already retracted, plus the v1
+# strategy names that are switched off. A file that no build step regenerates
+# does not stay true.
+echo
+echo "[7b] Sitemap + llms.txt..."
+python3 scripts/build_sitemap.py 2>&1 | tail -2
+python3 scripts/build_seo.py 2>&1 | tail -2
 # 2026-10-02: /insights.html shipped hard-coded index levels (HSI 18,420,
 # USD/JPY 142.8) written on 2026-09-03 while the real closes were 24,613 /
 # 157.95 — a 25% error on a site that claims "zero LLM hallucination".

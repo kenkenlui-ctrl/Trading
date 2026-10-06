@@ -15,6 +15,26 @@ from pathlib import Path
 from collections import Counter
 
 REPO = Path("/Users/kenken/dev/dsa-hk")
+
+
+def _cssver() -> str:
+    """Cache-buster shared by every builder.
+
+    Each build script used to invent its own: build_dashboard pinned
+    leeks.css?v=2026-08-25b for six weeks, build_home used today's date (so
+    nothing changed within a day), and the equity-curve builders used no
+    version at all. _headers pins leeks.css for 24h, so any of those keeps a
+    returning visitor on the old stylesheet. One content hash, one URL.
+    """
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    try:
+        from build_static import _CSS_VERSION
+        return _CSS_VERSION()
+    except Exception:
+        return "1"
+
 INITIAL = 1_000_000
 RISK = 0.01  # 1% per trade (locked d71)
 CAP = 5  # concurrent cap (locked d71)
@@ -207,7 +227,7 @@ def render_html(horizon: str, hold_days: int, label: str, r: dict) -> str:
 <meta name="description" content="{horizon} {label} fixed-capital portfolio equity curve. HK$1M, 1% risk/trade, 5 concurrent cap. Daily mark-to-market, real paper-trade simulation.">
 <meta name="robots" content="noindex,follow">
 <link rel="canonical" href="https://www.win9you.com/equity_curve_{horizon.lower().replace('+','_')}.html">
-<link rel="stylesheet" href="/leeks.css">
+<link rel="stylesheet" href="/leeks.css?v={_cssver()}">
 <style>
 .ec-summary {{ display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin: var(--sp-4) 0; padding: var(--sp-4); background: var(--panel); border: 1px solid var(--border); border-radius:8px; }}
 .ec-stat {{ text-align:center; padding: var(--sp-2); border-right: 1px solid var(--border); }}

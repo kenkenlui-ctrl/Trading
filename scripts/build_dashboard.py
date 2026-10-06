@@ -160,6 +160,26 @@ def snapshot_quote(tj: dict) -> dict:
 # Repo paths
 REPO = Path("/Users/kenken/dev/dsa-hk")
 PUBLIC = REPO / "public"
+
+
+def _cssver() -> str:
+    """Cache-buster shared by every builder.
+
+    Each build script used to invent its own: build_dashboard pinned
+    leeks.css?v=2026-08-25b for six weeks, build_home used today's date (so
+    nothing changed within a day), and the equity-curve builders used no
+    version at all. _headers pins leeks.css for 24h, so any of those keeps a
+    returning visitor on the old stylesheet. One content hash, one URL.
+    """
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    try:
+        from build_static import _CSS_VERSION
+        return _CSS_VERSION()
+    except Exception:
+        return "1"
+
 HK_OUT = Path("/Users/kenken/dev/dsa-hk/charts/hk200")
 US_OUT = Path("/Users/kenken/dev/dsa-hk/charts/us200")
 BACKTEST_OUT = Path("/Users/kenken/dev/dsa-hk/data/backtest_out")
@@ -590,7 +610,7 @@ def build_dashboard_page(
 {jsonld}
 </script>
 <link rel="stylesheet" href="/static/fonts-local.css">
-<link rel="stylesheet" href="/leeks.css?v=2026-08-25b">
+<link rel="stylesheet" href="/leeks.css?v={_cssver()}">
 <script>
 (function(){{
   const t = localStorage.getItem('leeks-theme') || 'dark';
@@ -893,7 +913,7 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
 {detail_jsonld}
 </script>
 <link rel="stylesheet" href="/static/fonts-local.css">
-<link rel="stylesheet" href="/leeks.css?v=2026-08-25b">
+<link rel="stylesheet" href="/leeks.css?v={_cssver()}">
 <script>
 (function(){{
   const t = localStorage.getItem('leeks-theme') || 'dark';

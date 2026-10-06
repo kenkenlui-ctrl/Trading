@@ -8,6 +8,19 @@ This script simulates a real fixed-capital portfolio and outputs:
 - Per-trade equity contribution
 
 Outputs: public/equity_curve_t10.html
+
+SIZING MODEL — read before comparing this page to /backtest
+    This page: 0.5% risk per trade, up to 10 concurrent positions, HK$1M.
+    /backtest quotes a T+10 portfolio figure of -4.05% from a DIFFERENT model:
+    1% risk per trade, 5 concurrent positions. Same trades, different risk
+    budget, therefore a different number. Neither page used to say so, so a
+    visitor comparing the two saw two portfolio returns for the same strategy
+    and had no way to tell that the models differ. Both now state their model.
+
+WHAT IS HARDCODED AND WHAT IS NOT
+    The footer used to print a literal "backtest_2026-09-10.json" regardless of
+    which source _resolve_source() actually picked, so the page cited a file it
+    had not been built from. The filename is now interpolated from the real run.
 """
 from __future__ import annotations
 import json
@@ -18,6 +31,26 @@ from collections import Counter, defaultdict
 
 REPO = Path("/Users/kenken/dev/dsa-hk")
 OUT = REPO / "public" / "equity_curve_t10.html"
+
+
+def _cssver() -> str:
+    """Cache-buster shared by every builder.
+
+    Each build script used to invent its own: build_dashboard pinned
+    leeks.css?v=2026-08-25b for six weeks, build_home used today's date (so
+    nothing changed within a day), and the equity-curve builders used no
+    version at all. _headers pins leeks.css for 24h, so any of those keeps a
+    returning visitor on the old stylesheet. One content hash, one URL.
+    """
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    try:
+        from build_static import _CSS_VERSION
+        return _CSS_VERSION()
+    except Exception:
+        return "1"
+
 
 INITIAL_CAPITAL = 1_000_000  # HK$1M for the swing portfolio
 MAX_CONCURRENT = 10
@@ -41,6 +74,17 @@ def _resolve_source() -> Path:
     return d / "backtest_latest.json"
 
 
+def _signed(v: float) -> tuple[str, str]:
+    """Return (text, css_colour_var) for a signed percentage.
+
+    The page previously printed "+{v}%" with a hard-coded bull colour, so a LOSS
+    rendered as "+-0.3%" in green. A negative return painted as a gain is worse
+    than a formatting bug: it is a false signal to the reader.
+    """
+    return (f"{v:+.2f}%".rstrip("0").rstrip(".") + ("" if abs(v) < 1 else ""),
+            "var(--bull)" if v >= 0 else "var(--bear)")
+
+
 def load_trades() -> list:
     p = _resolve_source()
     if not p.exists():
@@ -49,7 +93,10 @@ def load_trades() -> list:
         )
     print(f"  equity curve (T+10) source: {p.name}")
     d = json.load(open(p))
-    return [r for r in d["records"] if "T+10" in r["horizon"]]
+    trades = [r for r in d["records"] if "T+10" in r["horizon"]]
+    for t in trades:
+        t["_source_file"] = p.name
+    return trades
 
 
 def simulate(trades: list) -> dict:
@@ -200,11 +247,20 @@ def simulate(trades: list) -> dict:
         "daily_equity": daily_equity,
         "horizon_days": HOLDING_DAYS,
         "n_signals": len(sorted_trades),
+        # the file the numbers actually came from — the footer used to print a
+        # literal that had nothing to do with the run
+        "source_file": (sorted_trades[0].get("_source_file", "unknown")
+                        if sorted_trades else "unknown"),
     }
 
 
 def render_html(result: dict) -> str:
     daily = result["daily_equity"]
+    _ret_text, _ret_colour = _signed(result["total_return_pct"])
+    _cagr_text, _cagr_colour = _signed(result["cagr_pct"])
+    _eq_colour = "var(--bull)" if result["final_equity"] >= result["initial_capital"] else "var(--bear)"
+    _pnl_text = f"{result['avg_pnl_per_trade']:+,.2f}"
+    _pnl_colour = "var(--bull)" if result["avg_pnl_per_trade"] >= 0 else "var(--bear)"
     rows = []
     for d in daily:
         rows.append(f"<tr><td class='mono'>{d['date']}</td><td class='mono cell-right'>HK${d['equity']:,.0f}</td><td class='mono cell-right'>{d['open_count']}</td><td class='mono cell-right' style='color:{'var(--bear)' if d['drawdown_pct']>5 else 'var(--amber)' if d['drawdown_pct']>2 else 'var(--dim)'};'>{d['drawdown_pct']}%</td></tr>")
@@ -218,15 +274,15 @@ def render_html(result: dict) -> str:
   </div>
   <div class="ec-stat">
     <div class="ec-stat-label">Final Equity</div>
-    <div class="ec-stat-value" style="color:var(--bull);">HK${result['final_equity']:,.0f}</div>
+    <div class="ec-stat-value" style="color:{_eq_colour}">HK${result['final_equity']:,.0f}</div>
   </div>
   <div class="ec-stat">
     <div class="ec-stat-label">Total Return</div>
-    <div class="ec-stat-value" style="color:var(--bull);">+{result['total_return_pct']}%</div>
+    <div class="ec-stat-value" style="color:{_ret_colour}">{_ret_text}</div>
   </div>
   <div class="ec-stat">
     <div class="ec-stat-label">CAGR (annualized)</div>
-    <div class="ec-stat-value" style="color:var(--bull);">+{result['cagr_pct']}%</div>
+    <div class="ec-stat-value" style="color:{_cagr_colour}">{_cagr_text}</div>
   </div>
   <div class="ec-stat">
     <div class="ec-stat-label">Max Drawdown</div>
@@ -242,7 +298,7 @@ def render_html(result: dict) -> str:
   </div>
   <div class="ec-stat">
     <div class="ec-stat-label">Avg PnL/trade</div>
-    <div class="ec-stat-value">+{result['avg_pnl_per_trade']}</div>
+    <div class="ec-stat-value" style="color:{_pnl_colour}">{_pnl_text}</div>
   </div>
   <div class="ec-stat">
     <div class="ec-stat-label">Sharpe-like</div>
@@ -288,7 +344,7 @@ def render_html(result: dict) -> str:
 <meta name="description" content="T+10 swing portfolio equity curve: HK$1,000,000 initial capital, 0.5% risk per trade, max 10 concurrent positions. Honest fixed-capital simulation, daily mark-to-market.">
 <meta name="robots" content="noindex,follow">
 <link rel="canonical" href="https://www.win9you.com/equity_curve_t10.html">
-<link rel="stylesheet" href="/leeks.css">
+<link rel="stylesheet" href="/leeks.css?v={_cssver()}">
 <style>
 .ec-summary {{ display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin: var(--sp-4) 0; padding: var(--sp-4); background: var(--panel); border: 1px solid var(--border); border-radius:8px; }}
 .ec-stat {{ text-align:center; padding: var(--sp-2); border-right: 1px solid var(--border); }}
@@ -352,7 +408,13 @@ def render_html(result: dict) -> str:
 <li>Single backtest run; no walk-forward / out-of-sample split (planned for d72)</li>
 </ul>
 
-<p style="margin-top: var(--sp-5); font-size: var(--text-xs); color: var(--dim);">Last updated: 2026-09-11 · Source: data/monthly_backtest/backtest_2026-09-10.json · {result['n_signals']} T+10 signals</p>
+<p style="margin-top: var(--sp-5); font-size: var(--text-xs); color: var(--dim);">Source: <code>data/monthly_backtest/{result['source_file']}</code> · {result['n_signals']} T+10 signals · Sizing: 0.5% risk/trade, up to 10 concurrent, HK$1M</p>
+<p style="margin-top: var(--sp-2); font-size: var(--text-xs); color: var(--dim);">
+  <b>兩頁唔好撈亂：</b>本頁係 <b>0.5% 風險 / 最多 10 倉</b> 模型（{_ret_text}）。
+  站內另一頁 <a href="/equity_curve_t_10.html">T+10 Equity Curve</a> 係 <b>1% 風險 / 最多 5 倉</b> 模型（−4.05%），
+  嗰個先係<a href="/backtest">回測報告頁</a>同方法論頁引用嘅官方數字。
+  同一批交易、唔同風險預算就會得出唔同組合回報 —— 兩個都係實測，但唔可以直接比較。
+</p>
 </main>
 </body>
 </html>"""

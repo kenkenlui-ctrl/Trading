@@ -1,25 +1,31 @@
-"""portfolio_test.py — v2 vs control at the portfolio level, not per trade.
+"""portfolio_test.py — v2 vs control at the portfolio level, against the only
+benchmark that can actually answer the question.
 
-WHY THIS FILE EXISTS
-    control_test.py answered: per trade, v2 beats "buy any uptrend day" by
-    2.6-6.6x on every window. But v2 only takes 2-4% as many opportunities
-    (US 3,693 vs 132,032 trades). Per-trade superiority is NOT the same as
-    "put the same capital in both and see who finishes richer" — the control
-    churns through 10 slots many times over while v2 sits mostly idle.
+REVISION HISTORY (do not read the old numbers as current)
+    v1 of this file printed us200 v2 +1811.8%, CAGR +34.0%, Sharpe 2.97. Three
+    separate defects, all of which inflated the result:
+      1. it computed a `net` column with costs and then never used it — P&L was
+         booked gross
+      2. MAX_NOTIONAL was capped PER TRADE, not per NAME, so up to 5 lots of the
+         same stock could sit in a 10-slot book (verified: peak 5 lots of one name)
+      3. Sharpe was differenced across event dates and annualised as if every gap
+         were one trading day, which inflates it whenever the curve is sparse
+    On top of that the bar store itself had isolated bars printed at the wrong
+    price scale. See bt_clean.py.
 
-    So both arms now run through identical portfolio machinery:
-      * 1% of equity risked per trade
-      * max 10 concurrent positions
-      * max 10% notional per name
-      * gross exposure capped at 100% of equity
-      * when slots are full, the most-oversold candidate wins — the SAME
-        ranking rule for both arms, so entry quality is still the only
-        difference
-      * P&L realised at exit, costs per market already netted
+WHY THE BENCHMARK CHANGED
+    The 201-name universe is today's large caps applied retroactively. Equal
+    weighted, that universe beat its own index in 11 of 11 years in the US. So
+    "v2 beat SPY" is not evidence of an edge — it is evidence of a universe that
+    was chosen with hindsight. The question that means something is:
+        v2  vs  equal-weight monthly rebalance of the SAME names
+    If v2 lands on that benchmark, the strategy is the selection bias.
 
-    A control that used a different slot-ranking rule would not be a control.
+MACHINERY (identical for both arms, so entry quality stays the only difference)
+    1% of equity risked per trade, 10 slots, 10% notional per NAME,
+    gross exposure <= 100% of equity, most-oversold candidate wins a free slot.
 
-USAGE
+Usage:
     python3 scripts/portfolio_test.py
 """
 from __future__ import annotations
@@ -35,39 +41,24 @@ REPO = Path("/Users/kenken/dev/dsa-hk")
 sys.path.insert(0, str(REPO / "scripts" / "v2engine"))
 sys.path.insert(0, str(REPO / "scripts"))
 from core import features, _simulate, cost_rt  # noqa: E402
+from bt_clean import bars_dir, load as load_clean, _load_mask_cache, filter_candidates  # noqa: E402
 
-BARS = REPO / "data" / "bt10y"
 OUT = REPO / "data" / "portfolio_test.csv"
-SPLIT = pd.Timestamp("2023-01-01")
-HOLD = 10
-MAX_SLOTS = 10
-RISK = 0.01
-MAX_NOTIONAL = 0.10
-MARKETS = {"us200": ("SPY", "IDX_GSPC"), "jp200": ("1306_T", "IDX_N225")}
-
-# benchmarks
-SPY = None
-NIKKEI = None
+HOLD, MAX_SLOTS, RISK, MAX_NOTIONAL = 10, 10, 0.01, 0.10
+COST = "realistic"
+# Index, not ETF, and not 1306_T: the ETF's own series has an unadjusted 10:1
+# glitch (two sessions at 1/10 scale in March 2026) which shows up as a -91%
+# benchmark drawdown that never happened.
+MARKETS = {"us200": ("IDX_GSPC", "IDX_GSPC"), "jp200": ("IDX_N225", "IDX_N225")}
 
 
 def load(path: Path) -> pd.DataFrame | None:
-    try:
-        rows = json.loads(path.read_text())
-    except Exception:
-        return None
-    if not isinstance(rows, list) or len(rows) < 300:
-        return None
-    df = pd.DataFrame(rows)
-    if not {"date", "open", "high", "low", "close"} <= set(df.columns):
-        return None
-    df["date"] = pd.to_datetime(df["date"])
-    df = df.dropna(subset=["open", "high", "low", "close"]).sort_values("date")
-    return df.set_index("date")
+    return load_clean(path)
 
 
 def market_up_series(mkt: str) -> pd.Series | None:
     for sym in MARKETS[mkt]:
-        p = BARS / f"{sym}.json"
+        p = bars_dir() / f"{sym}.json"
         if p.exists():
             b = load(p)
             if b is not None:
@@ -76,7 +67,7 @@ def market_up_series(mkt: str) -> pd.Series | None:
     return None
 
 
-def candidates_v2(b: pd.DataFrame, mkt: str) -> list[dict]:
+def candidates_v2(b: pd.DataFrame) -> list[dict]:
     f = features(b)
     O, H, L, C = (b[k].to_numpy(float) for k in ("open", "high", "low", "close"))
     a, s1 = f.atr_pct.to_numpy(), f.S1.to_numpy()
@@ -98,21 +89,19 @@ def candidates_v2(b: pd.DataFrame, mkt: str) -> list[dict]:
         if r is None:
             continue
         j, xp, why = r
-        out.append({"sym": mkt, "entry_date": b.index[i], "exit_date": b.index[j],
-                    "entry": s1[i], "stop": stop, "exit": xp,
-                    "gross": xp / s1[i] - 1, "why": why, "ret5d": r5[i]})
+        out.append({"entry_date": b.index[i], "exit_date": b.index[j], "entry": s1[i],
+                    "stop": stop, "exit": xp, "gross": xp / s1[i] - 1,
+                    "why": why, "ret5d": r5[i]})
     return out
 
 
-def candidates_control(b: pd.DataFrame, mkt: str, up: pd.Series) -> list[dict]:
+def candidates_control(b: pd.DataFrame, up: pd.Series) -> list[dict]:
     f = features(b)
     O, H, L, C = (b[k].to_numpy(float) for k in ("open", "high", "low", "close"))
-    a = f.atr_pct.to_numpy()
-    ma200, slope = f.ma200.to_numpy(), f.ma200_slope.to_numpy()
+    a, ma200, slope = f.atr_pct.to_numpy(), f.ma200.to_numpy(), f.ma200_slope.to_numpy()
     boxw, r5 = f.box_w.to_numpy(), f.ret_5d.to_numpy()
     ok = (f.prev_close.to_numpy() > ma200) & (slope > 0) & (a < 0.06) & (boxw < 0.35)
-    idx = b.index
-    upa = up.reindex(idx).fillna(False).to_numpy(bool)
+    upa = up.reindex(b.index).fillna(False).to_numpy(bool)
     out = []
     for i in np.where(ok)[0]:
         if np.isnan(a[i]) or a[i] <= 0 or not upa[i]:
@@ -124,75 +113,76 @@ def candidates_control(b: pd.DataFrame, mkt: str, up: pd.Series) -> list[dict]:
         if r is None:
             continue
         j, xp, why = r
-        out.append({"sym": mkt, "entry_date": idx[i], "exit_date": idx[j],
-                    "entry": O[i], "stop": stop, "exit": xp,
-                    "gross": xp / O[i] - 1, "why": why, "ret5d": r5[i]})
+        out.append({"entry_date": b.index[i], "exit_date": b.index[j], "entry": O[i],
+                    "stop": stop, "exit": xp, "gross": xp / O[i] - 1,
+                    "why": why, "ret5d": r5[i]})
     return out
 
 
-def simulate(cands: list[dict], mkt: str) -> pd.DataFrame | None:
-    """Slot-constrained portfolio walk. Returns an equity curve."""
+def walk(cands: list[dict], mkt: str) -> tuple[pd.DataFrame | None, int]:
+    """Slot-constrained walk. Costs ARE applied. Notional is capped per NAME."""
     if not cands:
-        return None
-    d = pd.DataFrame(cands)
-    d["net"] = d.gross - cost_rt(mkt, "site", d.why.eq("stop").to_numpy())
-    d = d.sort_values(["entry_date", "ret5d"])   # most oversold wins a slot
+        return None, 0
+    d = pd.DataFrame(cands).sort_values(["entry_date", "ret5d"])
+    d["cost"] = [cost_rt(mkt, COST, w == "stop") for w in d.why]
     dates = sorted(set(d.entry_date) | set(d.exit_date))
-    equity = 100_000.0
-    open_pos: list[dict] = []
-    curve, trades = [], 0
+    equity, pos, curve, peak_one_name = 100_000.0, [], [], 0
     for dt in dates:
-        # realise anything exiting today
-        still = []
-        for p in open_pos:
+        keep = []
+        for p in pos:
             if p["exit_date"] <= dt:
-                shares = p["shares"]
-                equity += shares * (p["exit"] - p["entry"])
-                trades += 1
+                equity += p["shares"] * (p["exit"] * (1 - p["cost"]) - p["entry"])
             else:
-                still.append(p)
-        open_pos = still
-        # open new ones if capacity
-        todays = d[d.entry_date == dt]
-        for _, t in todays.iterrows():
-            if len(open_pos) >= MAX_SLOTS:
+                keep.append(p)
+        pos = keep
+        for _, t in d[d.entry_date == dt].iterrows():
+            if len(pos) >= MAX_SLOTS:
                 break
-            if any(p["sym"] == t.sym and p["entry_date"] == dt for p in open_pos):
+            rps = t.entry - t.stop
+            if rps <= 0:
                 continue
-            risk_per_share = (t.entry - t.stop)
-            if risk_per_share <= 0:
+            room = MAX_NOTIONAL * equity - sum(
+                p["shares"] * p["entry"] for p in pos if p["sym"] == t.sym)
+            if room <= 0:
                 continue
-            shares = RISK * equity / risk_per_share
-            cap = MAX_NOTIONAL * equity / t.entry
-            shares = min(shares, cap)
-            gross_notional = sum(p["shares"] * p["entry"] for p in open_pos) + shares * t.entry
-            if gross_notional > equity:      # gross cap 100%
+            sh = min(RISK * equity / rps, room / t.entry)
+            if sh <= 0:
                 continue
-            open_pos.append({"sym": t.sym, "entry": t.entry, "exit": t.exit,
-                             "entry_date": dt, "exit_date": t.exit_date,
-                             "shares": shares})
-        curve.append({"date": dt, "equity": equity,
-                      "open": len(open_pos)})
-    return pd.DataFrame(curve)
+            if sum(p["shares"] * p["entry"] for p in pos) + sh * t.entry > equity:
+                continue
+            pos.append({"sym": t.sym, "entry": t.entry, "exit": t.exit,
+                        "exit_date": t.exit_date, "shares": sh, "cost": t.cost})
+        seen: dict[str, int] = {}
+        for p in pos:
+            seen[p["sym"]] = seen.get(p["sym"], 0) + 1
+        if seen:
+            peak_one_name = max(peak_one_name, max(seen.values()))
+        curve.append({"date": dt, "equity": equity, "open": len(pos)})
+    return pd.DataFrame(curve), peak_one_name
 
 
-def metrics(curve: pd.DataFrame) -> dict:
-    if curve is None or len(curve) < 2:
-        return {}
-    e = curve.equity.to_numpy(float)
-    ret = e[-1] / e[0] - 1
-    years = max((curve.date.iloc[-1] - curve.date.iloc[0]).days / 365.25, 1e-9)
-    cagr = (e[-1] / e[0]) ** (1 / years) - 1
-    peak = np.maximum.accumulate(e)
-    dd = e / peak - 1
+def stats(eq: pd.Series) -> dict:
+    e = eq.to_numpy(float)
+    yrs = (eq.index[-1] - eq.index[0]).days / 365.25
+    return {"total%": (e[-1] / e[0] - 1) * 100,
+            "cagr%": ((e[-1] / e[0]) ** (1 / yrs) - 1) * 100,
+            "maxDD%": (e / np.maximum.accumulate(e) - 1).min() * 100}
+
+
+def sharpe_on_calendar(curve: pd.DataFrame, cal: pd.DatetimeIndex) -> float:
+    """Sharpe must be measured on a fixed trading-day grid. Differencing a step
+    function across event dates and annualising with sqrt(252) treats a 3-week
+    gap as a 1-day return."""
+    e = curve.set_index("date").equity.reindex(cal).ffill().bfill().to_numpy(float)
     r = np.diff(np.log(e))
-    sharpe = (r.mean() / r.std(ddof=1) * np.sqrt(252)) if r.std(ddof=1) > 0 else 0.0
-    return {"total%": round(ret * 100, 1), "cagr%": round(cagr * 100, 1),
-            "maxDD%": round(dd.min() * 100, 1), "sharpe": round(sharpe, 2),
-            "avg_slots": round(curve.open.mean(), 1)}
+    return r.mean() / r.std(ddof=1) * np.sqrt(252) if r.std(ddof=1) > 0 else 0.0
 
 
 def main() -> int:
+    src = bars_dir()
+    mask = _load_mask_cache()
+    print(f"bar source: {src}")
+    print(f"glitch-masked symbols: {len(mask)}  masked bars: {sum(len(v) for v in mask.values())}\n")
     rows = []
     for mkt in MARKETS:
         up = market_up_series(mkt)
@@ -200,7 +190,9 @@ def main() -> int:
             print(f"  {mkt}: no index bars, skipping")
             continue
         acc: dict[str, list[dict]] = {"v2": [], "control": []}
-        for p in sorted(BARS.glob("*.json")):
+        raw_n = {"v2": 0, "control": 0}
+        px: dict[str, pd.Series] = {}
+        for p in sorted(src.glob("*.json")):
             s = p.stem
             is_jp = s.endswith("_T")
             is_us = (not is_jp) and ("_" not in s) and not s.startswith(("HK_", "JP_"))
@@ -211,59 +203,82 @@ def main() -> int:
             b = load(p)
             if b is None:
                 continue
-            for label, cands in (("v2", candidates_v2(b, mkt)),
-                                 ("control", candidates_control(b, mkt, up.reindex(b.index)))):
-                for c in cands:
-                    c = dict(c)
-                    c["sym"] = s
-                    acc[label].append(c)
+            px[s] = b.close
+            for lab, cs in (("v2", candidates_v2(b)),
+                            ("control", candidates_control(b, up.reindex(b.index)))):
+                tagged = [dict(c, sym=s) for c in cs]
+                raw_n[lab] += len(tagged)
+                kept, _ = filter_candidates(tagged, mask)
+                acc[lab].extend(kept)
 
-        for label in ("v2", "control"):
-            curve = simulate(acc[label], mkt)
+        ib = load(src / f"{MARKETS[mkt][0]}.json")
+        cal = ib.index
+        # B0 index, B1 same-universe equal weight (the benchmark that matters).
+        # .mean(axis=1) is load-bearing: transform("mean") on a DataFrame returns a
+        # per-TICKER monthly mean, so prod() without it multiplies 201 tickers per
+        # session and "grows" the benchmark to 10^70%.
+        b1src = pd.DataFrame(px).reindex(cal)
+        b1src = b1src.loc[b1src.notna().any(axis=1)]
+        cal = b1src.index
+        mm = b1src.pct_change().groupby(
+            [cal.year, cal.month]).transform("mean").mean(axis=1)
+        b1 = (100_000 * (1 + mm).cumprod()).ffill()
+        # the benchmark index gets the same glitch treatment as everything else
+        b0 = ib.close.copy()
+        for d in mask.get(MARKETS[mkt][0], set()):
+            b0 = b0[b0.index != d]
+        b0 = b0.reindex(cal).ffill().bfill()
+        rows.append({"market": mkt, "arm": "B0 index B&H", **stats(b0), "sharpe": 0.0,
+                     "candidates": 0, "avg_slots": 0})
+        rows.append({"market": mkt, "arm": "B1 universe EW", **stats(b1), "sharpe": 0.0,
+                     "candidates": 0, "avg_slots": 0})
+
+        for lab in ("v2", "control"):
+            curve, peak = walk(acc[lab], mkt)
             if curve is None:
-                print(f"  {mkt} {label}: no candidates")
+                print(f"  {mkt} {lab}: no candidates")
                 continue
-            m = metrics(curve)
-            rows.append({"market": mkt, "arm": label, **m,
-                         "candidates": len(acc[label])})
-            print(f"\n{mkt}  {label:8}  candidates={len(acc[label]):,}")
-            print(f"   total {m['total%']:+.1f}%  CAGR {m['cagr%']:+.1f}%  "
-                  f"maxDD {m['maxDD%']:+.1f}%  Sharpe {m['sharpe']:+.2f}  "
-                  f"avg slots {m['avg_slots']}")
-
-    # buy and hold
-    print("\n" + "=" * 74)
-    print("BUY & HOLD (same window, 100% in the index)")
-    for mkt, syms in MARKETS.items():
-        for sym in syms:
-            p = BARS / f"{sym}.json"
-            if not p.exists():
-                continue
-            b = load(p)
-            if b is None or len(b) < 300:
-                continue
-            e = b.close
-            print(f"  {mkt:6} {sym:10} {e.iloc[-1]/e.iloc[0]-1:+.1%}  "
-                  f"maxDD {(e/e.cummax()-1).min():+.1%}")
-            break
-
-    print("\n" + "=" * 74)
-    print("PORTFOLIO VERDICT  (10 slots, 1% risk/trade, gross<=100%)")
-    for mkt in MARKETS:
-        v = next((r for r in rows if r["market"] == mkt and r["arm"] == "v2"), None)
-        c = next((r for r in rows if r["market"] == mkt and r["arm"] == "control"), None)
-        if not (v and c):
-            continue
-        dv = v["total%"] - c["total%"]
-        print(f"  {mkt:6} v2 {v['total%']:+.1f}%  vs  control {c['total%']:+.1f}%   "
-              f"delta {dv:+.1f}pp  => {'v2 AHEAD' if dv > 0 else 'control ahead'}")
-        print(f"         v2 avg slots {v['avg_slots']}  |  control avg slots {c['avg_slots']}")
+            m = stats(curve.set_index("date").equity)
+            rows.append({"market": mkt, "arm": lab, **m,
+                         "sharpe": round(sharpe_on_calendar(curve, cal), 2),
+                         "candidates": len(acc[lab]), "avg_slots": round(curve.open.mean(), 1),
+                         "peak_lots_one_name": peak})
+            eq = curve.set_index("date").equity
+            byyear, prev = {}, 100_000.0
+            for y in sorted(set(eq.index.year)):
+                ye = eq[eq.index.year == y].iloc[-1]
+                byyear[y] = (ye / prev - 1) * 100
+                prev = ye
+            print(f"  {mkt} {lab} by year: " +
+                  "  ".join(f"{y}:{v:+.0f}%" for y, v in byyear.items()))
+            print(f"{mkt:6} {lab:8} n={len(acc[lab]):6,} (raw {raw_n[lab]:,})  "
+                  f"total {m['total%']:+8.1f}%  CAGR {m['cagr%']:+6.1f}%  "
+                  f"maxDD {m['maxDD%']:+6.1f}%  Sharpe {sharpe_on_calendar(curve, cal):+.2f}  "
+                  f"slots {curve.open.mean():4.1f}  peak lots/name {peak}")
 
     if rows:
-        pd.DataFrame(rows).to_csv(OUT, index=False)
+        df = pd.DataFrame(rows)
+        pd.set_option("display.width", 220)
+        print("\n" + "=" * 100)
+        print(df.to_string(index=False, float_format=lambda x: f"{x:+.1f}"))
+        print("\n" + "=" * 100)
+        print("THE ONLY QUESTION THAT MATTERS: does v2 beat the SAME universe held passively?")
+        for mkt in MARKETS:
+            g = df[df.market == mkt].set_index("arm")
+            try:
+                v2, b1, b0 = g.loc["v2"], g.loc["B1 universe EW"], g.loc["B0 index B&H"]
+            except KeyError:
+                continue
+            print(f"  {mkt:6} v2 CAGR {v2['cagr%']:+.1f}%   universe EW {b1['cagr%']:+.1f}%"
+                  f"   index {b0['cagr%']:+.1f}%")
+            print(f"         v2 - universeEW = {v2['cagr%'] - b1['cagr%']:+.1f} pp/yr"
+                  f"     universeEW - index = {b1['cagr%'] - b0['cagr%']:+.1f} pp/yr")
+            print(f"         v2 - universeEW = {v2['total%'] - b1['total%']:+.1f} pp total"
+                  f"     v2 maxDD {v2['maxDD%']:+.1f}% vs universeEW {b1['maxDD%']:+.1f}%")
+        df.to_csv(OUT, index=False)
         print(f"\nwrote {OUT}")
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    raise SystemExit(main())

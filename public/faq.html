@@ -85,7 +85,7 @@
           "name": "頁面啲 performance 數字係你哋自己驗證㗎？",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "係，2026-10-05 起用嘅係本站自測數字：Yahoo 10 年日線、同一個引擎、按市場計成本、日期叢集 t。重跑方法同輸入資料都公開（scripts/ab_close_hold.py、data/bt10y）。要留意一點：我哋引擎重現唔到 2026-10-01 第三方審計報告嘅基線，同一規則高約 1.7 倍，差異原因未查清 —— 所以兩邊數字唔可以直接比較，有效嘅係同一引擎內嘅 A/B 相對差。"
+            "text": "係，2026-10-05 起用嘅係本站自測數字：Yahoo 10 年日線、同一個引擎、按市場計成本、日期叢集 t。重跑方法同輸入資料都公開：scripts/ab_close_hold.py（每單 A/B）、scripts/control_test.py（對照組）、scripts/portfolio_test.py（組合層面），輸入資料 data/bt10y2/。⚠ 舊嘅 data/bt10y/ 快取經逐隻重抓比對後確認有 8 個檔案損壞，唔應該再用。要留意一點：我哋引擎重現唔到 2026-10-01 第三方審計報告嘅基線，同一規則高約 1.7 倍，差異原因未查清 —— 所以兩邊數字唔可以直接比較，有效嘅係同一引擎內嘅 A/B 相對差。"
           }
         },
         {
@@ -93,7 +93,7 @@
           "name": "v2 係咪真係有選時能力，定只係買上升趨勢股？",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "我哋跑咗對照組：同一批股票、同一個篩選、同一個大市過濾、同一個止損同離場，唯一分別係唔等 S1 觸及、喺開市價直接買。結果 v2 每單收益喺四個窗口（美股／日股 × 訓練／樣本外）全部高過對照組 2.6 至 6.6 倍。但要留意兩點：一、呢個係每單優勢，v2 只做對照組 2–4% 嘅交易機會，同等資金下嘅組合回報仲未測過；二、呢個結果同 2026-10-01 第三方審計報告得出嘅結論相反（嗰份話 S1 選時價值有限），差異原因我哋未查清。"
+            "text": "要分兩層答。單筆層面：有優勢 —— 同一批股票、同一個篩選、同一個大市過濾，唯一分別係等 S1 定喺開市價直接買，v2 每單收益喺四個窗口全部高過對照組 2.6 至 6.6 倍。但組合層面：美股冇超額 —— 將同一批 201 隻股票等權每月再平衡，2016–26 年化 +27.4%，v2 只有 +27.2%。即係話每單揀得准，但喺美股呢個優勢冇轉化成跑贏「唔做嘢」嘅回報。日股就有 +6.9 個百分點/年，但未經 point-in-time 名單驗證，我哋唔會當佢係 alpha。詳見方法論頁 §4.6 同 §4.7。"
           }
         },
         {
@@ -124,7 +124,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/fraunces/v38/6NUh8FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0K7iN7hzFUPJH58nib1603gg7S2nfgRYIctxuTBv7Tp05GNyXkb24.woff2">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxTN1OVk6OThhvAWV8.woff2">
 <link rel="stylesheet" href="/static/fonts-local.css">
-<link rel="stylesheet" href="/leeks.css?v=2026-08-28">
+<link rel="stylesheet" href="/leeks.css?v=8e02907cb6">
 <style>
 .method-prose td { white-space: normal; overflow: visible; text-overflow: clip; vertical-align: top; }
 </style>
@@ -217,16 +217,29 @@ function toggleTheme(){
     </div>
   </div>
 
-  <div class="callout" style="margin: var(--sp-5) 0; padding: var(--sp-4); border-left: 4px solid var(--amber); background: var(--amber-dim); border-radius: 4px;">
-    <h3 style="margin-top: 0; font-size: var(--text-md);">⚠ 閱讀本頁前請先知：v2 嘅優勢仍然細過大市</h3>
+  <div class="callout" style="margin: var(--sp-5) 0; padding: var(--sp-4); border-left: 4px solid var(--red); background: var(--red-dim); border-radius: 4px;">
+    <h3 style="margin-top: 0; font-size: var(--text-md);">⚠ 閱讀本頁前請先知：每單有優勢，但美股層面冇超額回報</h3>
     <p style="margin: var(--sp-2) 0; font-size: var(--text-sm);">
-      2016–26 期間 v2 組合（US+JP）總回報 +67.8%，同期 SPY buy &amp; hold <b>+324.1%</b>。
-      即係話呢套規則贏唔過單純買入大市指數 —— 佢減少咗曝險同輸嘅單，
-      但冇創造出跑贏大市嘅 alpha。
+      我哋將 v2 放喺同一個 10 倉組合（每單風險 1%、單一名字上限 10% 名義、總曝險 ≤100%）
+      同一批日線跑足 2016–26，再加一個真正嘅對照：<b>乜都唔做，淨係將同一批股票等權每月再平衡</b>。
+    </p>
+    <table class="data-table method-prose" style="margin: var(--sp-3) 0;">
+      <thead><tr><th>2016–26 年化</th><th>美股</th><th>日股</th></tr></thead>
+      <tbody>
+        <tr><td>v2 組合</td><td>+27.2%</td><td>+25.4%</td></tr>
+        <tr><td>同一批股票等權持有</td><td><b>+27.4%</b></td><td>+18.5%</td></tr>
+        <tr><td>大市指數 buy &amp; hold</td><td>+13.3%</td><td>+15.0%</td></tr>
+      </tbody>
+    </table>
+    <p style="margin: var(--sp-2) 0; font-size: var(--text-sm);">
+      <b>美股：v2 落後純持有 0.2 個百分點/年。</b> 表面睇落跑贏大市 14 個百分點，
+      但嗰 14 點全部來自「呢 201 隻係今日嘅大型股」呢個選擇 —— 佢平均跑贏大市 14.1 點/年。
+      <b>日股：v2 領先純持有 6.9 個百分點/年</b>，但最大回撤更深（−28.2% 對 −19.9%），
+      而且未用 point-in-time 名單驗證過。
     </p>
     <p style="margin: 0; font-size: var(--text-sm);">
-      <b>至於 S1 入場係咪真係有選時價值：我哋跑咗對照組測試，結果係「有，但要以每單計」。</b>
-      見下方 §4.5。
+      即係話：<b>每單優勢係真嘅（見 §4.6），但喺美股，佢冇轉化成跑贏「攞住同一批股票」
+      嘅超額回報。</b> 詳情同限制見 §4.7。
     </p>
   </div>
 
@@ -276,6 +289,16 @@ function toggleTheme(){
         <td>touch 之後收市跌返落 S1 以下，代表該支持位失效 —— 你買嘅唔係支持位，係接飛刀。要求收市企穩 S1 先入，移除咗 26% 交易，嗰批平均每單 −3.90%</td>
         <td><b>2026-10-05 已出貨：四個窗口全部改善（每單約翻倍、t 大升），代價係交易量減半。見下方 §4.5</b></td>
       </tr>
+      <tr>
+        <td>10 年日線庫（407 個代號）</td>
+        <td>逐隻重新抓取後發現 <b>8 個檔案損壞</b>：7 隻日股加 1 隻美股，最嚴重嗰隻價格偏離原始數據 43,781%（日線被印成另一個價位級別）。源頭 Yahoo 本身亦有一兩支壞 bar（例如 1306.T 有兩日被印成 1/10 價）</td>
+        <td><b>已重新逐隻抓取成獨立資料庫，並加咗 fail-closed 過濾：任何交易窗（連同前 210 日特徵暖機）碰到壞 bar 就唔准入統計。舊嘅 +1811.8%／Sharpe 2.97 組合數字已撤回，原因見 §4.7</b></td>
+      </tr>
+      <tr>
+        <td>「v2 有選時優勢」呢句話</td>
+        <td>每單層面成立，但組合層面：v2 美股年化 +27.2%，同一批 201 隻股票等權每月再平衡就有 +27.4% —— 差額 −0.2 pp/年，等於零</td>
+        <td><b>已改寫：公開講明每單優勢 ≠ 超額回報，美股層面冇 alpha。見 §4.7</b></td>
+      </tr>
     </tbody>
   </table>
   <p class="text-dim" style="font-size: var(--text-sm);">
@@ -318,7 +341,7 @@ function toggleTheme(){
     <p style="margin: 0 0 var(--sp-2); font-size: var(--text-sm);">
       <b>以下數字係本站自己跑出嚟嘅</b>，用 Yahoo Finance 10 年日線、同一個引擎、
       按市場收成本、日期叢集 t 統計。重跑方法見 <code>scripts/ab_close_hold.py</code>，
-      輸入資料在 <code>data/bt10y/</code>，每個結論都可以覆核。
+      輸入資料在 <code>data/bt10y2/</code>，每個結論都可以覆核；含壞 bar 嘅交易窗會被自動剔除（<code>scripts/bt_clean.py</code>）。
     </p>
     <p style="margin: 0; font-size: var(--text-sm);">
       <b>一個必須講嘅差異：</b>本站引擎<b>未能重現</b> 2026-10-01 第三方審計報告嘅基線
@@ -461,43 +484,64 @@ function toggleTheme(){
         <td class="mono">6,542</td>
       </tr>
       <tr>
-        <td>v2 · US+JP · 2016–26</td>
-        <td class="mono">+67.8%</td>
-        <td class="mono">+5.8%</td>
-        <td class="mono">−18.8%</td>
-        <td class="mono">0.55</td>
-        <td class="mono">1,810</td>
+        <td>v2 · 美股 · 2016–26</td>
+        <td class="mono">+814.1%</td>
+        <td class="mono">+27.2%</td>
+        <td class="mono">−20.6%</td>
+        <td class="mono">2.19</td>
+        <td class="mono">6,675</td>
       </tr>
       <tr>
-        <td>v2 · US+JP · 樣本外 2023–26</td>
-        <td class="mono">+33.7%</td>
-        <td class="mono">+8.2%</td>
-        <td class="mono">−16.3%</td>
-        <td class="mono">0.73</td>
-        <td class="mono">829</td>
+        <td>v2 · 日股 · 2016–26</td>
+        <td class="mono">+702.0%</td>
+        <td class="mono">+25.4%</td>
+        <td class="mono">−28.2%</td>
+        <td class="mono">1.93</td>
+        <td class="mono">4,576</td>
       </tr>
       <tr>
-        <td>v2 · US+JP · 滑價加倍壓力測試</td>
-        <td class="mono">+44.7%</td>
-        <td class="mono">+4.1%</td>
-        <td class="mono">−20.4%</td>
-        <td class="mono">0.41</td>
-        <td class="mono">1,810</td>
+        <td>同一批股票等權每月再平衡 · 美股</td>
+        <td class="mono">+1048.8%</td>
+        <td class="mono">+27.4%</td>
+        <td class="mono">−21.4%</td>
+        <td class="mono">—</td>
+        <td class="mono">—</td>
       </tr>
       <tr>
-        <td>SPY buy &amp; hold · 2016–26（基準）</td>
-        <td class="mono">+324.1%</td>
-        <td class="mono">+15.7%</td>
-        <td class="mono">−33.7%</td>
-        <td class="mono">0.90</td>
+        <td>同一批股票等權每月再平衡 · 日股</td>
+        <td class="mono">+453.5%</td>
+        <td class="mono">+18.5%</td>
+        <td class="mono">−19.9%</td>
+        <td class="mono">—</td>
+        <td class="mono">—</td>
+      </tr>
+      <tr>
+        <td>大市指數 buy &amp; hold · 美股（^GSPC）</td>
+        <td class="mono">+253.2%</td>
+        <td class="mono">+13.3%</td>
+        <td class="mono">−33.9%</td>
+        <td class="mono">—</td>
+        <td class="mono">—</td>
+      </tr>
+      <tr>
+        <td>大市指數 buy &amp; hold · 日股（^N225）</td>
+        <td class="mono">+307.4%</td>
+        <td class="mono">+15.0%</td>
+        <td class="mono">−31.8%</td>
+        <td class="mono">—</td>
         <td class="mono">—</td>
       </tr>
     </tbody>
   </table>
   <p>
-    v2 每單平均收益喺 10 個曆年入面有 9 個為正（2018 年約持平 +0.01%）。
-    2022 年係唯一大幅虧損嘅一年：416 單、每單淨蝕 2.07% ——
-    大市過濾減少咗曝險，但冇完全避開。
+    <b>呢個表係組合層面，唔係每單。</b> 重點唔係 v2 跑贏指數，而係佢<b>跑唔贏
+    「乜都唔做、淨係等權持有同一批股票」</b> —— 詳情見 §4.7。
+  </p>
+  <p>
+    分年睇（美股 v2 組合）：2017 +15%、2018 +18%、2019 +48%、2020 +12%、2021 +53%、
+    2022 +3%、2023 +28%、2024 +44%、2025 +16%、2026 +20%。十個曆年全部為正，
+    但 2022 嗰年得 +3% —— 大市過濾減少咗曝險，冇完全避開。
+    同一個對照組（開市價直接買上升趨勢股）喺 2018 −14%、2022 −13%、2026 −1%。
   </p>
 
   <h2>4.5 已出貨：long entry 加咗收市確認（2026-10-05）</h2>
@@ -570,33 +614,33 @@ function toggleTheme(){
         <td>US</td>
         <td>訓練 2016–22</td>
         <td class="mono">3,693</td>
-        <td class="mono">+1.913%</td>
+        <td class="mono">+1.922%</td>
         <td class="mono">+0.535%</td>
-        <td class="mono">+1.378pp</td>
+        <td class="mono">+1.387pp</td>
       </tr>
       <tr>
         <td>US</td>
         <td>樣本外 2023–26</td>
-        <td class="mono">2,992</td>
-        <td class="mono">+1.777%</td>
-        <td class="mono">+0.694%</td>
-        <td class="mono">+1.083pp</td>
+        <td class="mono">2,982</td>
+        <td class="mono">+1.772%</td>
+        <td class="mono">+0.696%</td>
+        <td class="mono">+1.076pp</td>
       </tr>
       <tr>
         <td>JP</td>
         <td>訓練 2016–22</td>
-        <td class="mono">2,424</td>
-        <td class="mono">+1.034%</td>
-        <td class="mono">+0.156%</td>
-        <td class="mono">+0.878pp</td>
+        <td class="mono">2,389</td>
+        <td class="mono">+1.058%</td>
+        <td class="mono">+0.112%</td>
+        <td class="mono">+0.946pp</td>
       </tr>
       <tr>
         <td>JP</td>
         <td>樣本外 2023–26</td>
-        <td class="mono">2,193</td>
-        <td class="mono">+2.414%</td>
-        <td class="mono">+0.723%</td>
-        <td class="mono">+1.691pp</td>
+        <td class="mono">2,187</td>
+        <td class="mono">+2.354%</td>
+        <td class="mono">+0.693%</td>
+        <td class="mono">+1.661pp</td>
       </tr>
     </tbody>
   </table>
@@ -609,13 +653,13 @@ function toggleTheme(){
     <p style="margin: var(--sp-2) 0; font-size: var(--text-sm);">
       <b>一、呢個係「每單」優勢，唔係「總回報」優勢。</b>
       v2 只做對照組 2–4% 嘅交易機會（美股 3,693 對 132,032 單）。
-      每單贏多啲，唔等於同等資金下賺多啲 —— 仲要將兩邊都套入同一個 10 倉 / 1% 風險
-      組合模擬先可以答 portfolio 層面。呢一項我哋<b>未做</b>。
+      每單贏多啲，唔等於同等資金下賺多啲。呢一項我哋已經喺 <b>§4.7</b> 補做咗組合層面測試，
+      答案係：美股零超額。
     </p>
     <p style="margin: var(--sp-2) 0; font-size: var(--text-sm);">
       <b>二、呢個結果同 2026-10-01 第三方審計報告相反。</b>
       嗰份報告嘅對照組數字（美股樣本外 +0.58%）同我哋（+0.694%）好接近，
-      但佢哋報 v2 只有 +0.45%，我哋量到 +1.777%。
+      但佢哋報 v2 只有 +0.45%，我哋量到 +1.77%。
       差異喺 v2 嗰邊，而唔係對照組嗰邊 —— 原因未查清，<b>我哋唔會因此聲稱第三方有錯</b>。
     </p>
     <p style="margin: 0; font-size: var(--text-sm);">
@@ -631,6 +675,65 @@ function toggleTheme(){
     意味住一個 R:R 下限過濾有可能反而濫走好單。
     v2 冇目標價所以根本冇 R:R，呢個發現對 v2 唔構成問題。
   </p>
+
+  <h3>4.7 組合層面測試：同「攞住同一批股票」比，仲有冇超額？</h3>
+  <p>
+    §4.6 嘅對照組答緊「等 S1 係咪好過追上升趨勢」。但真正嘅問題係另一條：
+    <b>如果我淨係將呢 201 隻股票等權持有，我仲使唔使搞 v2？</b>
+    答呢條問題先至重要，因為「攞住一批股票」本身已經好叻 ——
+    呢 201 隻係<b>今日</b>嘅大型股，唔係當年嗰 200 隻。
+  </p>
+  <p>
+    測試設計：v2 同對照組行<b>完全同一套組合機器</b> —— 每單風險 1%、最多 10 倉、
+    單一名字名義上限 10%、總曝險 ≤100%、倉位滿時以最超賣者優先。
+    成本照市場所屬扣除（美股 0.05% 費用 + 雙邊滑價，日股另計）。兩邊唯一分別仍然係入場方式。
+  </p>
+  <table class="data-table method-prose">
+    <thead>
+      <tr><th>2016–26</th><th>美股年化</th><th>美股最大回撤</th><th>日股年化</th><th>日股最大回撤</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>v2 組合</td><td>+27.2%</td><td>−20.6%</td><td>+25.4%</td><td>−28.2%</td></tr>
+      <tr><td>同一批股票等權每月再平衡</td><td><b>+27.4%</b></td><td>−21.4%</td><td>+18.5%</td><td>−19.9%</td></tr>
+      <tr><td>大市指數 buy &amp; hold</td><td>+13.3%</td><td>−33.9%</td><td>+15.0%</td><td>−31.8%</td></tr>
+      <tr><td><b>v2 減「等權持有」</b></td><td><b>−0.2 pp/年</b></td><td>—</td><td><b>+6.9 pp/年</b></td><td>—</td></tr>
+    </tbody>
+  </table>
+  <p>
+    <b>美股答案係「冇」。</b> v2 表面上年化 +27.2%、跑贏大市 13.9 個百分點，但同一批股票
+    乜都唔做就係 +27.4%、跑贏大市 14.1 個百分點。<b>差額 −0.2 個百分點，即係零。</b>
+    v2 做緊嘅嘢，同「攞住呢批股票」冇分別。
+  </p>
+  <p>
+    <b>日股答案係「有 +6.9 個百分點」，但代價更深回撤（−28.2% 對 −19.9%）。</b>
+    呢個差距夠大，值得繼續查，但未算已證實。
+  </p>
+  <div class="callout" style="margin: var(--sp-4) 0; padding: var(--sp-4); border-left: 4px solid var(--red); background: var(--red-dim); border-radius: 4px;">
+    <h3 style="margin-top: 0; font-size: var(--text-md);">三個未解決嘅限制</h3>
+    <p style="margin: var(--sp-2) 0; font-size: var(--text-sm)">
+      <b>一、股票名單係靜態嘅，結構上 100% 帶倖存者偏差。</b>
+      呢 201 隻係用今日市值／排名抽出嚟，之後直接套落 2016–26 全部歷史。
+      名單冇 as-of 日期，所以任何 10 年絕對水平都唔可信 ——
+      包括上面「等權持有 +27.4%」嗰個數。唯一可信嘅係 v2 同等權持有之間嘅<b>相對差</b>，
+      因為兩邊行同一批股票。
+    </p>
+    <p style="margin: var(--sp-2) 0; font-size: var(--text-sm)">
+      <b>二、我哋自己喺呢個測試上面出過三個錯，全部令結果嚴重偏離。</b>
+      2026-10-05 首次跑，印出美股 +1811.8%／Sharpe 2.97。三個成因：
+      (a) 程式計咗成本但<em>從來冇用過</em>，盈虧係毛數；
+      (b) 10% 名義上限只限制<em>每筆單</em>，唔係<em>每隻股票</em> ——
+      實測同時可以持有多過 4 筆同一隻股；
+      (c) Sharpe 喺「有成交嘅日子」之間做差分，再當每個間隔都係一日去年化。
+      另外，10 年日線庫本身有 8 個檔案損壞（最嚴重嗰隻偏離原始數據 43,781%），
+      已重新逐隻抓取並剔除含壞 bar 嘅交易窗。修正後就係上面嘅數字。
+      <b>呢個過程記錄喺修正記錄一節，因為佢正正係點解絕對水平唔可以當真。</b>
+    </p>
+    <p style="margin: 0; font-size: var(--text-sm)">
+      <b>三、日股嗰 +6.9 個百分點未經 point-in-time 驗證。</b>
+      我哋冇 2016 年當時嘅日股 200 強名單，所以無法排除「呢個差距其實都係名單偏差」。
+      在搵到 point-in-time 名單之前，我哋唔會聲稱日股有 alpha。
+    </p>
+  </div>
 
   <h2>5. 風險管理</h2>
   <ul>
@@ -679,9 +782,9 @@ function toggleTheme(){
     <h3>T+10 swing 而家點計？以前話 +3.02% 係咪假嘅？</h3>
     <p>以前網站多處引用 T+10 swing +3.02%，嗰個係逐筆百分比直接相加，等於假設每一單都用盡 100% 資金同時持有，唔係一個投資組合回報。誠實嘅定資模擬（本金 HK$1,000,000、每單 1% 風險、最多 5 個同時持倉、每日 mark-to-market）實測 T+10 總回報係 <b>−4.05%</b>（期末權益 HK$959,531，最大回撤 −4.89%）。而家網站唔再將 T+10 當成 edge 宣傳。</p>
     <h3>頁面啲 performance 數字係你哋自己驗證㗎？</h3>
-    <p>係，2026-10-05 起用嘅係本站自測數字：Yahoo 10 年日線、同一個引擎、按市場計成本、日期叢集 t。重跑方法同輸入資料都公開（scripts/ab_close_hold.py、data/bt10y）。要留意一點：我哋引擎重現唔到 2026-10-01 第三方審計報告嘅基線，同一規則高約 1.7 倍，差異原因未查清 —— 所以兩邊數字唔可以直接比較，有效嘅係同一引擎內嘅 A/B 相對差。</p>
+    <p>係，2026-10-05 起用嘅係本站自測數字：Yahoo 10 年日線、同一個引擎、按市場計成本、日期叢集 t。重跑方法同輸入資料都公開：scripts/ab_close_hold.py（每單 A/B）、scripts/control_test.py（對照組）、scripts/portfolio_test.py（組合層面），輸入資料 data/bt10y2/。⚠ 舊嘅 data/bt10y/ 快取經逐隻重抓比對後確認有 8 個檔案損壞，唔應該再用。要留意一點：我哋引擎重現唔到 2026-10-01 第三方審計報告嘅基線，同一規則高約 1.7 倍，差異原因未查清 —— 所以兩邊數字唔可以直接比較，有效嘅係同一引擎內嘅 A/B 相對差。</p>
     <h3>v2 係咪真係有選時能力，定只係買上升趨勢股？</h3>
-    <p>我哋跑咗對照組：同一批股票、同一個篩選、同一個大市過濾、同一個止損同離場，唯一分別係唔等 S1 觸及、喺開市價直接買。結果 v2 每單收益喺四個窗口（美股／日股 × 訓練／樣本外）全部高過對照組 2.6 至 6.6 倍。但要留意兩點：一、呢個係每單優勢，v2 只做對照組 2–4% 嘅交易機會，同等資金下嘅組合回報仲未測過；二、呢個結果同 2026-10-01 第三方審計報告得出嘅結論相反（嗰份話 S1 選時價值有限），差異原因我哋未查清。</p>
+    <p>要分兩層答。單筆層面：有優勢 —— 同一批股票、同一個篩選、同一個大市過濾，唯一分別係等 S1 定喺開市價直接買，v2 每單收益喺四個窗口全部高過對照組 2.6 至 6.6 倍。但組合層面：美股冇超額 —— 將同一批 201 隻股票等權每月再平衡，2016–26 年化 +27.4%，v2 只有 +27.2%。即係話每單揀得准，但喺美股呢個優勢冇轉化成跑贏「唔做嘢」嘅回報。日股就有 +6.9 個百分點/年，但未經 point-in-time 名單驗證，我哋唔會當佢係 alpha。詳見方法論頁 §4.6 同 §4.7。</p>
     <h3>數據幾時更新？用即市價定收市價？</h3>
     <p>永遠使用 T-1 收市價（hard rule）。各市場喺自己收市後重建全站，開市前查看訊號即可，不會使用 live intraday 數據計算。</p>
     <h3>呢個站係投資建議嗎？</h3>
@@ -713,6 +816,28 @@ function toggleTheme(){
     </div>
   </div>
 </footer>
+
+
+<nav class="mobile-bottom-nav" aria-label="Mobile">
+  <a href="/" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home</a>
+  <a href="/hk200/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg>HK</a>
+  <a href="/us200/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 4-5"/></svg>US</a>
+  <a href="/jp200/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg>JP</a>
+  <details class="mob-more">
+    <summary aria-label="更多頁面"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg>More</summary>
+    <div class="mob-more-panel">
+      <a href="/backtest.html">Backtest · 回測</a>
+      <a href="/insights.html">Insights · 研究</a>
+      <a href="/compare/">Compare · 對比</a>
+      <a href="/methodology">Methodology · 方法論</a>
+      <a href="/faq.html">FAQ</a>
+      <a href="/about/">About</a>
+      <a href="/disclaimer/">Disclaimer</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/" lang="zh-Hant-HK">中 · 繁體中文</a>
+    </div>
+  </details>
+</nav>
 
 </body>
 </html>

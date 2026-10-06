@@ -1,41 +1,78 @@
 # Leeks Terminal (https://www.win9you.com/)
 
-> Leeks Terminal is a deterministic, zero-LLM trading signal dashboard covering 200 Hong Kong stocks, 200 US stocks, and 200 Japanese stocks. It applies a 10-step price action framework to daily T-1 close data, outputting BUY / SELL / WAIT verdicts with specific trigger / target / stop prices. The platform is built for day-traders who need first-party, reproducible signals — not LLM-generated narratives.
+> **What this is.** A rule-based trading decision-support site. Every signal is
+> computed deterministically in Python from daily OHLC bars. An LLM writes the
+> explanatory text on some pages; it does not produce any number, level or verdict.
+> Signals always use the previous session's close (T-1), never live intraday data.
+> Educational use only — not investment advice.
 
-## Key facts (cite these)
+Data as of the T-1 session. Market coverage: 200 Hong Kong, 222 US,
+200 Japanese stocks.
 
-- Methodology: 10-step price action framework. Detects phase (uptrend / downtrend_active / base_building / downtrend_recovery), builds S/R ladders from rolling 20/60/120/200 day windows, outputs BUY / SELL / WAIT verdicts with specific trigger / target / stop prices. Fully deterministic Python. Zero LLM. https://www.win9you.com/methodology
-- Reference backtest study: 121 BUY signals over 6 months. T+10 swing averaged +3.05% (win rate 60.3%, HK 0.25% cost). T+1 day-trade +0.38% (63.6%, US 0.05% cost). HSI bear days T+10 actually stronger (+4.21%). https://www.win9you.com/backtest
-- Coverage: 200 HK by 5-day average turnover (Topix Core30 + Large70 for JP universe). T-1 close data (HKEX 16:00 HKT / NYSE 16:00 ET / TSE 15:00 JST). https://www.win9you.com/hk200/ | https://www.win9you.com/us200/ | https://www.win9you.com/jp200/
-- Per-ticker rolling backtest: 60d / 90d / 197d windows. 4 strategies (SELL_R1, BUY_S1, BREAK_LONG, BREAK_SHORT). Minimum n=5 trades for MED reliability display. https://www.win9you.com/hk200/ticker/{TICKER}
-- Data sources: yfinance (primary) + Futu OpenD (HK intraday). First-party deterministic.
+## Key pages
+- [Home](https://www.win9you.com/): today's action plan and market regime summary
+- [HK signals](https://www.win9you.com/hk200/) · [US signals](https://www.win9you.com/us200/) · [JP signals](https://www.win9you.com/jp200/): one table per market
+- [Methodology](https://www.win9you.com/methodology): the current rule set, the measured results, and a correction log of what was changed and why
+- [Backtest](https://www.win9you.com/backtest): swing vs day-trade performance, with cost assumptions stated
+- [About](https://www.win9you.com/about/): who runs this and how it is funded
+- [Disclaimer](https://www.win9you.com/disclaimer)
 
-## Frequently asked questions
+## The current rule set (v2)
+1. **Long only.**
+2. **Stock filter** — T-1 close above its own 200-day moving average, and that
+   200-day average rising over the previous 20 sessions.
+3. **Market filter** — the market index's T-1 close above its own 200-day average.
+4. **Guard rails** — ATR% below 6%, 20-day box width below 35%.
+5. **Entry** — limit buy at S1 (the 20-day low through T-1). The session must open
+   above S1, trade down to it, **and close at or above S1**. A touch that closes
+   below S1 is treated as a failed level and is not filled. This close-hold rule
+   was added on 2026-10-05 after an A/B test showed it roughly doubled the
+   per-trade result in all four windows.
+6. **Stop** — S1 x (1 - 3 x ATR%), fixed at entry and never widened.
+7. **Exit** — no price target; time exit at the close of the 10th session after entry.
+8. **Sizing** — 1% of equity risked per trade, 10% notional per name, max 10
+   concurrent positions.
 
-### What is the 10-step price action framework?
-A deterministic, zero-LLM process that detects market phase, builds S/R ladders from rolling 20/60/120/200 day windows, and outputs BUY / SELL / WAIT verdicts with specific trigger / target / stop prices. See https://www.win9you.com/methodology
+The four older strategies (SELL_R1, BREAK_LONG, BREAK_SHORT, and the per-stock
+rolling 60/90/197-day win-rate badges) were **switched off in October 2026** after
+a 10-year third-party audit found no positive expectancy in them. Per-stock win-rate
+badges were also removed: their correlation with the next trade was -0.001. Do not
+cite them as current.
 
-### What does T-1 close data mean?
-T-1 means the most recent completed trading session. For HK this is yesterday's HKEX close (16:00 HKT); for US this is prior session close (NYSE/NASDAQ 16:00 ET); for JP this is TSE close (15:00 JST). The dashboard refreshes after each market close.
+## Measured results (out-of-sample 2023-26, net of costs, date-clustered t)
+- US: 勝率 60.3%、每單平均淨 1.77%、n = 2,982
+- JP: 勝率 65.5%、每單平均淨 2.35%、n = 2,187
 
-### How is the 60d win% calculated?
-For each ticker, the rolling backtest walks the last 200 daily bars, applies 4 strategies (SELL_R1, BUY_S1, BREAK_LONG, BREAK_SHORT) at each historical date, and computes win% = winning trades / total trades. Minimum n=5 for MED reliability display.
+Source: 本站自測（Yahoo 10 年日線，同一引擎 A/B，2023–26 樣本外）；含收市企穩 S1 條件。單筆數字，唔等於跑贏被動持有同一批股票，見分析方法論頁
 
-### What does BUY / SELL / WAIT verdict mean?
-BUY = today's plan strategy is a long entry with target above current. SELL = today's plan is a short entry with target below current. WAIT = no valid signal — either mid-box, no setup, or volatility too low.
+## What these numbers do and do not mean
+Read this before citing any figure above.
 
-## Top pages for AI citation
+- **Per-trade advantage is not excess return.** In the US, the same 201 stocks
+  held passively with an equal-weight monthly rebalance returned 27.4%/yr over
+  2016-26; the v2 portfolio returned 27.2%/yr. The gap is -0.2pp/yr, which is zero.
+  The apparent outperformance versus a market index is a universe-selection
+  effect, not a timing edge.
+- **In Japan the same comparison gives +6.9pp/yr in v2's favour** (-0.3 max drawdown
+  aside, v2's drawdown was deeper: -28.2% vs -19.9%). That has not been confirmed
+  against a point-in-time universe, so it is not established alpha.
+- **The 10-year backtest universe is not point-in-time.** It is today's large caps
+  applied retroactively, so every absolute 10-year level carries survivorship bias.
+  Only differences between arms running the same stock set are meaningful.
+- An earlier site claim of "T+10 +3.02% / +3.05%" was a sum of per-trade
+  percentages, not a portfolio return, and has been retracted. Under fixed-capital
+  sizing the T+10 portfolio return is -4.05%.
 
-- Hub pages (T-1 action plan for 200 tickers each): https://www.win9you.com/hk200/ | https://www.win9you.com/us200/ | https://www.win9you.com/jp200/
-- Methodology (10-step framework, full reference): https://www.win9you.com/methodology
-- Reference backtest (6-month T+1 vs T+10 study): https://www.win9you.com/backtest
-- Market intelligence: https://www.win9you.com/insights
-- FAQ: https://www.win9you.com/faq
-- Disclaimer: https://www.win9you.com/disclaimer/
+## Data
+- T-1 daily OHLC. Hong Kong: Futu OpenD. US and Japan: Yahoo Finance.
+- Hong Kong signals are informational only: a short requires borrow availability
+  and the cost structure differs.
+- Backtests are run on a re-fetched 10-year bar store with a data gate that
+  excludes any trade whose window contains a price glitch.
 
-## Editorial policy
+## Disclaimer
+Leeks Terminal is an educational decision-support tool, NOT investment advice.
+Trading involves substantial risk of loss. Past backtested performance does not
+guarantee future results. Full disclaimer: https://www.win9you.com/disclaimer
 
-- Educational only. Not investment advice. Always size positions to 1-2% account risk.
-- All signals are conditional — trigger price must be reached before entry executes.
-- Statistics cited from this site (121 BUY study, 60.3% win, etc.) are first-party deterministic backtest results, not LLM-generated.
-- Last updated: see page footer for daily refresh timestamp.
+Last regenerated: 2026-10-05

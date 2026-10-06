@@ -1,15 +1,36 @@
 #!/usr/bin/env python3
-"""backtest_10y.py — honest 10-year backtest of the v2 rule set, vs buy-and-hold.
+"""backtest_10y.py — 10-year backtest of a THROUGH-S1 breakout variant, vs buy-and-hold.
 
-Re-implements the published v2 rules from the daily bars in data/bt10y/:
+*** READ THIS BEFORE QUOTING ANY NUMBER FROM THIS SCRIPT ***
 
+This is NOT the live v2 entry rule, despite what the old docstring said.
+
+    THIS SCRIPT fills a BUY STOP at S1 x 1.001: it trades when the session
+    pushes UP THROUGH S1, and fills at max(open, S1 x 1.001).
+    (The previous docstring called this a "limit BUY at S1". It is not. A limit
+    order at S1 fills when price falls down to S1; this fills when price rises
+    through it. Opposite side of the level.)
+
+    LIVE v2 fills a LIMIT BUY AT S1 — the session must open above S1, trade
+    DOWN to S1, and CLOSE back at or above S1 (the close-hold requirement added
+    2026-10-05).
+
+So the two are different rules and their numbers are NOT comparable. The
+authoritative measurement of the live rule is:
+    scripts/ab_close_hold.py    per-trade A/B, clean bars, glitch-masked
+    scripts/control_test.py     v2 vs "buy any uptrend day", same machinery
+    scripts/portfolio_test.py   portfolio level, incl. the same-universe
+                                buy-and-hold benchmark
+This script remains useful as a variant study, and as the place that prices
+through-S1 fills at all. Keep it, do not cite it as v2.
+
+Rule set implemented here:
     Direction   long only
     Stock filter  T-1 close > 200d MA  AND  200d MA rising over 20 sessions
     Market filter index T-1 close > its 200d MA
     Guard rails   ATR% < 6%, 20d box width < 35%
-    Entry         limit BUY at S1 (20-day low of the T-1 window), valid for the
-                  next session only, and only if the session TRADES THROUGH S1
-                  by 0.10% (a touch is not a fill)
+    Entry         BUY STOP at S1 (20-day low of the T-1 window) x 1.001, valid
+                  for the next session only (a touch below that is not a fill)
     Stop          S1 x (1 - 3 x ATR%)
     Target        none — time exit at the close of the 10th session after entry
     Costs         fees + slippage per side; extra slippage on stop exits
@@ -32,6 +53,7 @@ Usage:
 from __future__ import annotations
 import argparse
 import json
+import sys
 import math
 from collections import defaultdict
 from datetime import date
@@ -41,7 +63,14 @@ import numpy as np
 import pandas as pd
 
 REPO = Path("/Users/kenken/dev/dsa-hk")
-DATA = REPO / "data" / "bt10y"
+sys.path.insert(0, str(REPO / "scripts"))
+from bt_clean import bars_dir, _load_mask_cache, filter_candidates  # noqa: E402
+
+# 2026-10-05: the old data/bt10y cache had 8 corrupt files (a batch-download
+# auto_adjust misalignment; worst case 8766_T off by 43,781%). bars_dir() points at
+# data/bt10y2, the per-symbol re-fetch, and trades touching a data glitch are
+# dropped fail-closed. See refetch_10y_clean.py and bt_clean.py.
+DATA = bars_dir()
 
 # v2 rule set (thresholds from the 10-year audit; every one chosen on
 # 2016-2022 and tested once on 2023-2026)
@@ -271,8 +300,12 @@ def main() -> None:
                 continue
             syms += 1
             mkt_trades.extend(backtest_symbol(safe, mkt, df, mup))
+        # fail-closed data gate: drop any trade whose [entry-210d, exit] window
+        # touches a bar printed at the wrong price scale
+        mkt_trades, dropped = filter_candidates(mkt_trades, _load_mask_cache())
         all_trades.extend(mkt_trades)
-        print(f"[{mkt}] {syms} 隻（universe {len(members)}），{len(mkt_trades)} 筆交易", flush=True)
+        print(f"[{mkt}] {syms} 隻（universe {len(members)}），{len(mkt_trades)} 筆交易"
+              + (f"（因數據 glitch 剔除 {dropped} 筆）" if dropped else ""), flush=True)
 
     # index availability is a data-quality note, not a verdict
     for mkt in ("us200", "jp200", "hk200"):

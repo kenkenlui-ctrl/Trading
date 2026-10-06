@@ -4,7 +4,20 @@ MOBILE_BOTTOM_NAV = '''
   <a href="/hk200/"{a_hk}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg>HK</a>
   <a href="/us200/"{a_us}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 4-5"/></svg>US</a>
   <a href="/jp200/"{a_jp}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg>JP</a>
-  <a href="/methodology"{a_me}>{lang}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>Method</a>
+  <details class="mob-more">
+    <summary aria-label="更多頁面"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg>More</summary>
+    <div class="mob-more-panel">
+      <a href="/backtest.html">Backtest · 回測</a>
+      <a href="/insights.html">Insights · 研究</a>
+      <a href="/compare/">Compare · 對比</a>
+      <a href="/methodology">Methodology · 方法論</a>
+      <a href="/faq.html">FAQ</a>
+      <a href="/about/">About</a>
+      <a href="/disclaimer/">Disclaimer</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="{langhref}" lang="{langattr}">{lang} · {langname}</a>
+    </div>
+  </details>
 </nav>
 '''
 
@@ -18,14 +31,21 @@ def mobile_bottom_nav(active: str = "", en: bool = False) -> str:
     (display:none !important) and had no navigation at all. This renders it.
     """
     a = lambda k: ' class="active"' if active == k else ""
-    lang = "EN" if not en else "中"
+    # The language switch used to be a bare "EN" glyph rendered INSIDE the
+    # Method anchor, so tapping what looked like a language control navigated
+    # to /methodology. It is now its own link at the bottom of the More panel.
+    lang, langhref = ("中", "/") if not en else ("EN", "/en/")
+    langattr = "zh-Hant-HK" if not en else "en"
+    langname = "繁體中文" if not en else "English"
     return (
         MOBILE_BOTTOM_NAV
         .replace("{a_home}", a("home"))
         .replace("{a_hk}", a("hk"))
         .replace("{a_us}", a("us"))
         .replace("{a_jp}", a("jp"))
-        .replace("{a_me}", a("me"))
+        .replace("{langhref}", langhref)
+        .replace("{langattr}", langattr)
+        .replace("{langname}", langname)
         .replace("{lang}", lang)
     )
 
@@ -141,8 +161,8 @@ def render_v2_block(market: str) -> str:
     </div>
     {more}
     <p style="font-size:0.72rem;opacity:0.55;margin-top:10px">
-      績效數字來源：{src}。本站未自行重跑該回測，故此處標示為第三方數字。
-      過往表現不代表未來結果，非投資建議。
+      績效數字來源：{src}（{prov}）。
+      過往表現不代表未來結果，非投資建議。每單優勢不等於跑贏大市 —— 限制見方法論頁。
     </p>
   </div>
 </div>

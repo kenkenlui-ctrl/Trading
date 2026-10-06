@@ -66,17 +66,28 @@ CLOSE_HOLD = True
 # requirement — quoting them next to a close-hold order would attribute our
 # rule's performance to someone else's study.
 #
-# HONESTY NOTE: our own engine did not reproduce the third-party baseline
-# (ours was ~1.7x higher on the same rule), so the absolute levels here are
-# not comparable to the audit's. The A/B delta is valid because both arms run
-# through one engine; the levels are not. Measured with ab_close_hold.py,
-# Yahoo 10y daily bars, costs per market, date-clustered t.
+# HONESTY NOTE 1 — our own engine did not reproduce the third-party baseline
+# (ours was ~1.7x higher on the same rule), so the absolute levels here are not
+# comparable to the audit's. The A/B delta is valid because both arms run through
+# one engine; the levels are not.
+#
+# HONESTY NOTE 2 — these are PER-TRADE figures. They are NOT evidence that the
+# strategy beats simply owning the same names. On the same bars and the same
+# 10-slot book, v2 compounded at 27.2%/yr in the US against 27.4%/yr for an
+# equal-weight monthly rebalance of the very same 201 names (portfolio_test.py).
+# The per-trade edge is real; the excess return over holding the universe is
+# approximately zero in the US. Japan showed +6.9pp/yr but with a deeper
+# drawdown, and that one has not been confirmed against a point-in-time universe.
+#
+# Re-measured 2026-10-05 on data/bt10y2 (407 symbols re-fetched one at a time;
+# 8 cached files were corrupt) with bars whose [entry-210d, exit] window touches
+# a data glitch excluded. See bt_clean.py.
 V2_OOS = {
-    "us200": {"win_pct": 60.2, "win95": [None, None], "avg_net_pct": 1.78, "n": 2992},
-    "jp200": {"win_pct": 65.8, "win95": [None, None], "avg_net_pct": 2.41, "n": 2193},
+    "us200": {"win_pct": 60.3, "win95": [None, None], "avg_net_pct": 1.77, "n": 2982},
+    "jp200": {"win_pct": 65.5, "win95": [None, None], "avg_net_pct": 2.35, "n": 2187},
 }
 V2_SOURCE = ("本站自測（Yahoo 10 年日線，同一引擎 A/B，2023–26 樣本外）；"
-             "含收市企穩 S1 條件，規則見分析方法論頁")
+             "含收市企穩 S1 條件。單筆數字，唔等於跑贏被動持有同一批股票，見分析方法論頁")
 V2_IS_THIRD_PARTY = False
 
 # 2026-10-02: yfinance started returning a NaN last bar for every US ETF

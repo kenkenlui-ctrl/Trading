@@ -95,19 +95,23 @@ def build_mask(d: Path | None = None) -> dict[str, set]:
 
 
 def _load_mask_cache() -> dict[str, set]:
+    """Always returns set[pd.Timestamp] — callers compare against Timestamps, and
+    mixing date/Timestamp/str is a TypeError waiting to happen."""
     cp = REPO / "data" / "bt10y_glitch_mask.json"
     src = bars_dir()
+    m = None
     if cp.exists():
         try:
             blob = json.loads(cp.read_text())
             if blob.get("_source") == src.name:
-                return {k: set(v) for k, v in blob["mask"].items()}
+                m = {k: {pd.Timestamp(d) for d in v} for k, v in blob["mask"].items()}
         except Exception:
-            pass
-    m = build_mask(src)
-    cp.write_text(json.dumps({"_source": src.name,
-                              "mask": {k: sorted(str(d.date()) for d in v) for k, v in m.items()}},
-                             indent=1))
+            m = None
+    if m is None:
+        m = build_mask(src)
+        cp.write_text(json.dumps({"_source": src.name,
+                                  "mask": {k: sorted(str(pd.Timestamp(d).date()) for d in v)
+                                           for k, v in m.items()}}, indent=1))
     return m
 
 
@@ -115,12 +119,13 @@ def filter_candidates(cands: list[dict], mask: dict[str, set] | None = None,
                       lookback: int = FEATURE_LOOKBACK) -> tuple[list[dict], int]:
     """Drop any candidate whose [entry - lookback, exit] window touches a glitch."""
     mask = mask if mask is not None else _load_mask_cache()
+    span = pd.Timedelta(days=int(lookback * 1.45))
     keep, dropped = [], 0
     for c in cands:
         g = mask.get(c["sym"])
         if g:
-            lo = (c["entry_date"] - pd.Timedelta(days=int(lookback * 1.45))).date()
-            hi = c["exit_date"].date()
+            lo = pd.Timestamp(c["entry_date"]) - span
+            hi = pd.Timestamp(c["exit_date"])
             if any(lo <= d <= hi for d in g):
                 dropped += 1
                 continue

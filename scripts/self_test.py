@@ -195,8 +195,39 @@ def t_sitemap_guard() -> None:
     if not sm.exists():
         record("sitemap/present", False, "sitemap.xml missing")
         return
-    n = sm.read_text(encoding="utf-8").count("<loc>")
+    text = sm.read_text(encoding="utf-8")
+    locs = set(re.findall(r"<loc>[^<]*</loc>", text))
+    n = len(locs)
     record("sitemap/has URLs", n > 100, f"{n} URLs")
+
+    # STRUCTURAL, not a magic number. The old guard only asked "is it non-empty",
+    # so build_seo.py rewrote the sitemap from 638 URLs to 427 — a third of the
+    # site dropped out — and this test still passed. A count threshold cannot
+    # catch a silent loss; "every ticker page that exists on disk is listed" can.
+    on_disk = sorted(f"{p.parent.parent.name}/ticker/{p.stem}"
+                     for mkt in ("hk200", "us200", "jp200")
+                     for p in (PUBLIC / mkt / "ticker").glob("*.html"))
+    listed = set()
+    for loc in locs:
+        m = re.search(r"\.com/(.*?)</loc>", loc)
+        if m:
+            listed.add(m.group(1).strip("/"))
+    missing = [t for t in on_disk if t not in listed]
+    record("sitemap/covers every ticker page on disk", not missing,
+           f"{len(on_disk)} ticker files, {len(missing)} missing"
+           + (f" e.g. {missing[:3]}" if missing else ""))
+
+    # MUST-FAIL: delete 10% of the real entries and the check must notice.
+    if n > 100:
+        def coverage(keep: set) -> int:
+            return sum(1 for t in on_disk
+                       if any(t == re.search(r"\.com/(.*?)</loc>", l).group(1).strip("/")
+                              for l in keep))
+        broken = set(list(locs)[: int(n * 0.9)])
+        record("sitemap/must-fail: truncated sitemap is detected",
+               coverage(broken) < coverage(locs),
+               f"dropping 10% of entries changed coverage {coverage(locs)} -> {coverage(broken)}"
+               " — the guard did not notice" if coverage(broken) == coverage(locs) else "")
 
     # MUST-FAIL: prove the guard is wired, by checking the source refuses the
     # empty-dates path rather than writing an 8-URL sitemap.
@@ -205,6 +236,13 @@ def t_sitemap_guard() -> None:
     record("sitemap/must-fail: empty-date path is guarded", guarded,
            "build_static.py no longer contains the empty-date guard"
            if not guarded else "")
+
+    # two writers for one artifact is how the sitemap lost a third of itself
+    seo = (REPO / "scripts" / "build_seo.py").read_text(encoding="utf-8")
+    body = seo.split("def main(")[1] if "def main(" in seo else seo
+    guarded = "owns sitemap.xml" in seo and "write_sitemap(urls)" not in body
+    record("sitemap/single writer", guarded,
+           "build_seo.py can still overwrite sitemap.xml")
 
 
 # --------------------------------------------------------------------------
@@ -241,6 +279,125 @@ def t_v2_bars_fresh() -> None:
             record("v2/stale markets suppressed in payload", True, f"suppressed: {stale}")
 
 
+def t_glitch_mask() -> None:
+    """The data gate has to catch corrupt bars WITHOUT eating real market moves.
+
+    A mask that is too loose passes the corruption test and silently deletes
+    every genuine 40% earnings gap — which would flatter the backtest just as
+    badly as letting the corruption through. So both directions are asserted,
+    and each assertion is also run against a deliberately broken copy.
+    """
+    sys.path.insert(0, str(REPO / "scripts"))
+    from bt_clean import bars_dir, load, glitch_dates, filter_candidates, _load_mask_cache
+    import numpy as np
+    import pandas as pd
+
+    src = bars_dir()
+    record("glitch/mask reads the re-fetched store", src.name == "bt10y2",
+           f"source={src.name} — legacy data/bt10y had 8 corrupt files")
+
+    mask = _load_mask_cache()
+
+    # 1. a real corruption IS caught. 1306.T printed two sessions at 1/10 scale
+    #    on 2026-03-30 with 10x volume.
+    b = load(src / "1306_T.json")
+    if b is None:
+        record("glitch/known corrupt bar is masked", False, "1306_T not loadable")
+    else:
+        hit = glitch_dates(b)
+        caught = any(str(d.date()) == "2026-03-30" for d in hit)
+        record("glitch/known corrupt bar is masked", caught,
+               f"masked={[str(d.date()) for d in hit][:5]}")
+
+    # 2. MUST-FAIL: real gaps must NOT be masked. MRNA +177% (2026-08-19) and
+    #    APP +46% on earnings (2024-11-07) both held their new level for the
+    #    following 20 sessions. A real market agrees with itself afterwards.
+    for sym, day, why in (("MRNA", "2026-08-19", "+177% — held the new level"),
+                          ("APP", "2024-11-07", "+46% on earnings — held the new level")):
+        bb = load(src / f"{sym}.json")
+        if bb is None:
+            record(f"glitch/real gap kept: {sym}", False, "not loadable")
+            continue
+        flagged = [str(d.date()) for d in glitch_dates(bb)]
+        record(f"glitch/real gap kept: {sym} {day}", day not in flagged,
+               f"{why}; flagged={flagged[:5]}")
+
+    # 3. MUST-FAIL: inject a synthetic corruption into a KNOWN-CLEAN series and
+    #    assert the detector finds it, and finds nothing before the injection.
+    #    (Do not use 1306_T as the control: it genuinely is corrupt on 2026-03-30,
+    #    so "no findings" there would be a contradiction, not a control.)
+    clean_sym = next((s for s in ("AAPL", "MSFT", "META")
+                      if (src / f"{s}.json").exists() and not mask.get(s)), None)
+    if clean_sym:
+        cb = load(src / f"{clean_sym}.json")
+        i = len(cb) // 2
+        before = [str(d.date()) for d in glitch_dates(cb)]
+        broken = cb.copy()
+        broken.iloc[i, broken.columns.get_loc("close")] *= 6.0
+        after = [str(d.date()) for d in glitch_dates(broken)]
+        record(f"glitch/{clean_sym} clean copy has no false positives", not before,
+               f"flagged before injection: {before[:5]}")
+        record("glitch/detector finds an injected 6x print",
+               str(broken.index[i].date()) in after,
+               f"injected at {broken.index[i].date()}, found={after[:3]}")
+
+    # 4. the gate drops a trade whose window touches a masked bar. The "outside"
+    #    trade must clear the 210-session feature warm-up, because one bad bar
+    #    poisons ma200/S1/atr for every entry behind it — that reach is the
+    #    whole point of the gate, so a control 60 days later is NOT a control.
+    sym = next(iter(mask))
+    d0 = pd.Timestamp(sorted(mask[sym])[0])
+    inside = {"sym": sym, "entry_date": d0, "exit_date": d0 + pd.Timedelta(days=5)}
+    outside = {"sym": sym, "entry_date": d0 + pd.Timedelta(days=400),
+               "exit_date": d0 + pd.Timedelta(days=405)}
+    kept, dropped = filter_candidates([inside, outside], mask)
+    record("glitch/trade inside a corrupted window is dropped, clear trade kept",
+           dropped == 1 and len(kept) == 1 and kept[0]["entry_date"] == outside["entry_date"],
+           f"dropped={dropped} kept={len(kept)} — a gate that keeps both is not a gate")
+
+
+def t_css_cachebuster() -> None:
+    """Every page links /leeks.css at the CURRENT content hash — zero literals."""
+    import build_static as bs
+    import hashlib
+    want = hashlib.sha1((PUBLIC / "leeks.css").read_bytes()).hexdigest()[:10]
+
+    # STRUCTURAL, not a count. "at least N pages use the hash" would pass with
+    # 30 stale pages still pinning old sheets; the real defect is "some page
+    # links a version literal", so assert that no page does.
+    linked, stale = 0, []
+    link_re = re.compile(r'leeks\.css\?v=([A-Za-z0-9_.\-]+)')
+    for p in sorted(PUBLIC.rglob("*.html")):
+        try:
+            hits = link_re.findall(p.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if not hits:
+            continue
+        linked += 1
+        for v in set(hits):
+            if v != want:
+                stale.append(f"{p.relative_to(PUBLIC)}={v}")
+    record("css/every linked page uses the current hash",
+           linked > 100 and not stale,
+           f"{linked} pages linked leeks.css, want {want}, {len(stale)} stale"
+           + (f" e.g. {stale[:4]}" if stale else ""))
+
+    # MUST-FAIL: the same assertion run against a page carrying a frozen literal
+    # must reject it. If this passes on stale text, the test cannot see the bug
+    # it was written for.
+    probe = 'leeks.css?v=2026-08-25b'
+    record("css/must-fail: a frozen literal is rejected",
+           link_re.findall(probe) != [want],
+           "the assertion accepted a stale version string")
+
+    # MUST-FAIL: the pass is actually wired into main(), not just importable.
+    src = (Path(__file__).resolve().parent / "build_static.py").read_text(encoding="utf-8")
+    record("css/restamp is called from build_static main()",
+           "restamp_css_version()" in src.split("def main(")[-1],
+           "restamp_css_version() defined but never invoked by the build")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--json", action="store_true")
@@ -249,7 +406,8 @@ def main() -> int:
     if a.json:
         print("{" + ",".join(json.dumps(r) for r in results) + "}")
     for fn in (t_quote_never_zero, t_badge_is_data_driven, t_no_zero_prices,
-               t_badges_agree, t_restamp_idempotent, t_sitemap_guard, t_v2_bars_fresh):
+               t_badges_agree, t_restamp_idempotent, t_sitemap_guard, t_v2_bars_fresh,
+               t_glitch_mask, t_css_cachebuster):
         print(f"\n{fn.__doc__.splitlines()[0] if fn.__doc__ else fn.__name__}")
         try:
             fn()

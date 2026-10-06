@@ -92,6 +92,43 @@ def _section_block(title: str, body_html: str, css_class: str = "") -> str:
 # Render
 # ===========================
 
+def _sign(v) -> str:
+    """Format a percentage that may or may not carry its own sign.
+    Prepending '+' to '+0.76' produced '++0.76' in the title, the meta and the
+    FAQ schema."""
+    if v in (None, "", "?"):
+        return "—"
+    v = str(v)
+    return v if v.startswith(("+", "-")) else f"+{v}"
+
+
+def _risk_managed_return() -> str:
+    """Read the T+10 portfolio return off the equity-curve page.
+
+    That page is the only artifact on the site that actually enforced the
+    concurrency cap, so its number is the one the FAQ and the meta description
+    are allowed to quote. If the page is missing, return "" and the callers
+    drop the figure instead of inventing one.
+    """
+    import html as _h
+    p = REPO / "public" / "equity_curve_t_10.html"
+    if not p.exists():
+        return ""
+    txt = p.read_text(encoding="utf-8")
+    m = re.search(r"Total Return.*?ec-stat-value[^>]*>([^<]+)<", txt, re.S)
+    if not m:
+        return ""
+    val = _h.unescape(m.group(1)).strip()
+    return val if re.fullmatch(r"[+-][0-9.]+%", val) else ""
+
+
+def _num(v):
+    """Return a display number, or None when the source had no value."""
+    if v in (None, "", "?"):
+        return None
+    return str(v)
+
+
 def render() -> str:
     md = MD_PATH.read_text(encoding="utf-8")
 
@@ -106,6 +143,7 @@ def render() -> str:
     bear_days = grab(r"\*\*HSI bear days[^:]*:\*\* ([^\n]+)")
 
     # Pull headline numbers for meta description
+
     def parse_headline_avg(horizon_name: str) -> str:
         m = re.search(rf"\|\s*{re.escape(horizon_name)}\s*\|[^|]*\|[^|]*\|\s*([+-]?[0-9.]+)%\s*\|", md)
         return m.group(1) if m else "?"
@@ -243,17 +281,41 @@ def render() -> str:
 </div>
 """
 
-    # SEO description — keep under 160 chars
-    # 2026-10-02: these two numbers were being read as the same metric. They are
-    # not — {t10_avg} is the average net return PER TRADE, while the T+10 equity
-    # curve on the same site is -4.05% for the risk-managed PORTFOLIO (1% risk,
-    # 5 concurrent, slots full so 86% of signals were skipped). The meta led
-    # with the per-trade figure with no label, which read as a headline return.
-    desc = (
-        f"T+10 每次交易平均 {t10_avg}% / T+1 日內平均 +{t1_avg}%，{n_signals.split(' ')[0]} 個 BUY 訊號，"
-        f"資金管理下組合回報 +{portfolio_total}%（MaxDD {portfolio_mdd}%），OOS {oos_wr_test}% WR (n=25)。"
-        f"注意：每次平均 ≠ 組合回報，兩者不可直接比較。"
-    )[:200]
+    # SEO description — this text is what Google shows under the title and what
+    # every social preview shows, so it has to survive a contradiction.
+    #
+    # It previously read "資金管理下組合回報 +44.02%（MaxDD 1.10%）". That figure
+    # comes from the "Total return (compounded)" row of the backtest markdown,
+    # which sits under a heading claiming a 5-concurrent-position cap — over the
+    # same 25-weekday window with 10-day holds, that cap allows at most 12
+    # trades, and the block claims 120. The cap was not applied. The risk-managed
+    # portfolio result on this site (-4.05%, 17 of 121 taken, 104 skipped) is
+    # the one that honoured it.
+    #
+    # So: quote per-trade figures, label them as per-trade, and never print a
+    # portfolio number this page cannot substantiate. Also, do not prepend "+" to
+    # a value that already carries its sign, and never print "?" for a metric
+    # that was not found — drop the clause instead.
+    t10_d, t1_d = _num(t10_avg), _num(t1_avg)
+    n_d = _num(n_signals.split(" ")[0])
+    oos_d = _num(oos_wr_test)
+
+
+    per_trade = []
+    if t10_d:
+        per_trade.append(f"T+10 每次交易平均 {t10_d}%")
+    if t1_d:
+        per_trade.append(f"T+1 日內平均 {t1_d}%")
+    if n_d:
+        per_trade.append(f"{n_d} 個 BUY 訊號")
+    desc = "，".join(per_trade) + "（已扣交易成本）。"
+    if oos_d:
+        desc += f"樣本外勝率 {oos_d}%。"
+    desc += (
+        "注意：每次平均 ≠ 組合回報。風險預算下的組合回報為負，"
+        "詳見方法論頁同 T+10 權益曲線。教育用途，非投資建議。"
+    )
+    desc = desc[:155]
 
     canonical = "https://www.win9you.com/backtest"
     title = "回測報告 · T+10 Swing vs T+1 Day-trade · Leeks Terminal"
@@ -261,7 +323,7 @@ def render() -> str:
     article_ld = {
         "@context": "https://schema.org",
         "@type": "Article",
-        "headline": f"Leeks Terminal 6-Month Backtest: T+10 {t10_avg}% (live stop/target) vs T+1 +{t1_avg}%",
+        "headline": f"Leeks Terminal 6-Month Backtest: T+10 {_sign(t10_avg)} per trade (live stop/target) vs T+1 {_sign(t1_avg)} per trade",
         "url": canonical,
         "mainEntityOfPage": canonical,
         "inLanguage": "zh-Hant-HK",
@@ -273,42 +335,57 @@ def render() -> str:
         "about": (
             f"Multi-horizon backtest of a deterministic price-action signal engine over "
             f"{n_signals.split(' ')[0]} BUY signals (net of HK/US friction costs, LIVE stop/target, "
-            f"portfolio-level position sizing with 1.5% risk/trade and 8 concurrent cap, "
+            f"risk-managed portfolio sizing at 1% risk/trade with a 5 concurrent cap, "
             f"80/20 walk-forward OOS validation)."
         ),
     }
+
+    # The risk-managed portfolio number, read from the equity-curve page that
+    # actually applied the concurrency cap. `portfolio_total` (the markdown's
+    # "Total return (compounded)" row) is NOT used: that block claims 120 trades
+    # taken under a 5-slot cap over a 25-weekday window, which allows at most
+    # 12. It is not a portfolio return, it is a sum of per-trade percentages
+    # with the cap ignored.
+    risk_mgmt = _risk_managed_return()
+    risk_txt = (f"風險預算下（1% 風險/單、5 倉上限）嘅 T+10 組合回報為 {risk_mgmt}"
+                if risk_mgmt else
+                "風險預算下嘅 T+10 組合回報為負，確切數字見 T+10 權益曲線頁")
+
     faq_ld = {
         "@context": "https://schema.org",
         "@type": "FAQPage",
         "mainEntity": [
             {"@type": "Question", "name": "T+10 swing 同 T+1 day-trade 邊個回報高？",
              "acceptedAnswer": {"@type": "Answer", "text": (
-                 f"同一批 BUY 訊號，T+10 持有平均 +{t10_avg}%，T+1 即日鮮 +{t1_avg}%。"
-                 f"T+10 嘅 paper-trade 模式 + portfolio sim 顯示 +{portfolio_total}% 6 個月總回報，"
-                 f"但需要 1.5% risk/trade + 8 concurrent cap 嘅紀律。"
+                 f"以每單計，{_sign(t10_avg)} 嘅 T+10 高過 {_sign(t1_avg)} 嘅 T+1。"
+                 f"但每單 ≠ 組合：{risk_txt}。T+1 即日鮮先係現實可行的 edge。"
              )}},
             {"@type": "Question", "name": "恒指熊市日會唔會令 T+10 失效？",
              "acceptedAnswer": {"@type": "Answer", "text": (
                  "回測窗口入面有 HSI 單日跌 ≥1.5% 嘅熊市日。"
                  "持倉期有熊市日嘅 T+10 交易反而更強（高 WR + 高 avg return），"
-                 "但呢個現象樣本細，需要更多熊市日先有 statistical power。"
+                 "但呢個現象樣本小，需要更多熊市日先有 statistical power。"
              )}},
             {"@type": "Question", "name": "呢個回測用邊個 stop/target？",
              "acceptedAnswer": {"@type": "Answer", "text": (
                  "由 2026-09-09 起，T+1/T+3/T+5/T+10 改用 live signal 嗰日 DB 儲存嘅 stop_loss 同 target_price 模擬（51% 訊號用 live，"
                  "其餘因 DB 缺值或 sanity bounds 外 fall back 去 hardcoded）。舊版用固定 -10% stop / +15% target 高估咗 edge。"
              )}},
-            {"@type": "Question", "name": "點解 portfolio sim 嘅總回報高過 avg × n？",
+            {"@type": "Question", "name": "點解「每次平均」會高過組合回報？",
              "acceptedAnswer": {"@type": "Answer", "text": (
-                 "因 compounding — 每筆 trade 嘅 size = 1.5% × capital / |stop_distance|，"
-                 "贏錢 trade 加 capital 後，下一筆 size 都大啲，所以 final return 係幾何級數。"
-                 f"呢個 +{portfolio_total}% 已經 cap 喺 8 concurrent 同 30% deploy 之內。"
+                 "因為每單都要食倉位、扣成本、受同時持倉上限同大市方向限制。"
+                 f"同一批訊號，{risk_txt}。"
+                 "站上曾經引用過一個高得多的數字（+44.02%），嗰個係逐筆百分比相加、"
+                 "而且冇執行同時持倉上限 —— 同一個窗口 5 個倉位、每單持有 10 日，"
+                 "數學上最多只做得 12 單，但嗰個數字聲稱做咗 120 單。已經撤回。"
              )}},
-            {"@type": "Question", "name": "Walk-forward OOS 點解得 25 trades？",
+            {"@type": "Question", "name": "Walk-forward OOS 點解得咁少 trades？",
              "acceptedAnswer": {"@type": "Answer", "text": (
-                 "現有 DB 由 2026-06-27 開始，先 80% train 76 個 calendar days 嘅 signals，後 20% OOS 5 個 days。"
-                 f"OOS {oos_wr_test}% WR vs train {oos_wr_train}% WR，−4.4pp degradation，"
-                 "但 25 trades 樣本仍細；framework 已 set up，每月 1 號自動重跑累積更多 OOS data。"
+                 "現有 DB 由 2026-06-27 開始，先 80% 嘅 signals 做 train，後 20% 做 OOS。"
+                 + (f"OOS {oos_wr_test}% WR vs train {oos_wr_train}% WR。"
+                    if _num(oos_wr_test) and _num(oos_wr_train) else "")
+                 + "樣本仍然細，唔足以支持任何關於未來表現嘅結論；"
+                 "framework 已 set up，每月自動重跑累積更多 OOS data。"
              )}},
             {"@type": "Question", "name": "呢個回測有冇計成本？",
              "acceptedAnswer": {"@type": "Answer", "text": (

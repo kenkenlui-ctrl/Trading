@@ -1191,3 +1191,36 @@ button:focus-visible, .btn:focus-visible {
 .info-card a:hover { color: var(--blue); text-decoration: underline; }
 .tag:hover { opacity: 0.8; }
 input:hover, select:hover, textarea:hover { border-color: var(--blue); }
+
+/* =========================================================
+   2026-10-06: mobile "More" panel in the bottom tab bar
+   The bar had 5 tabs but only Home / HK / US / JP / Method were
+   reachable, so Backtest, Insights, Compare, FAQ, Disclaimer and
+   Privacy could not be opened at all on a phone. The 5th tab is now a
+   zero-JavaScript <details> that opens a panel of everything else.
+   ========================================================= */
+.mobile-bottom-nav .mob-more { position: relative; flex: 1; }
+.mobile-bottom-nav .mob-more > summary {
+  list-style: none;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px; padding: 6px 4px; color: var(--fg-2);
+  cursor: pointer; min-height: 44px;
+}
+.mobile-bottom-nav .mob-more > summary::-webkit-details-marker { display: none; }
+.mobile-bottom-nav .mob-more > summary svg { width: 20px; height: 20px; }
+.mobile-bottom-nav .mob-more[open] > summary { color: var(--blue); }
+.mobile-bottom-nav .mob-more-panel {
+  position: fixed; left: 8px; right: 8px; bottom: 76px;
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 12px; padding: 6px; display: grid; gap: 2px;
+  box-shadow: 0 12px 32px rgba(0,0,0,.35); z-index: 1001;
+}
+.mobile-bottom-nav .mob-more-panel a {
+  display: block; padding: 12px 14px; font-size: 15px; color: var(--fg);
+  border-radius: 8px; text-decoration: none;
+}
+.mobile-bottom-nav .mob-more-panel a:hover,
+.mobile-bottom-nav .mob-more-panel a:focus { background: var(--panel-2, rgba(255,255,255,.04)); }
+@media (min-width: 769px) {
+  .mobile-bottom-nav .mob-more-panel { display: none; }
+}

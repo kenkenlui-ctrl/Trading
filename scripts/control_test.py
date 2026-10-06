@@ -39,9 +39,10 @@ import pandas as pd
 
 REPO = Path("/Users/kenken/dev/dsa-hk")
 sys.path.insert(0, str(REPO / "scripts" / "v2engine"))
+from bt_clean import bars_dir, _load_mask_cache  # noqa: E402
 from core import features, _simulate, cost_rt  # noqa: E402
 
-BARS = REPO / "data" / "bt10y"
+BARS = bars_dir()   # data/bt10y2 when present: the old cache had 8 corrupt files
 OUT = REPO / "data" / "control_test.csv"
 SPLIT = pd.Timestamp("2023-01-01")
 HOLD = 10
@@ -184,12 +185,24 @@ def main() -> int:
                 except Exception:
                     got = []
                 for date, gross, why in got or []:
-                    acc[label].append((mkt, pd.Timestamp(date), gross, why))
+                    acc[label].append((mkt, pd.Timestamp(date), gross, why, s))
 
         for label in ("v2", "control"):
             if not acc[label]:
                 continue
-            d = pd.DataFrame(acc[label], columns=["mkt", "date", "gross", "reason"])
+            d = pd.DataFrame(acc[label], columns=["mkt", "date", "gross", "reason", "sym"])
+            # fail-closed: a trade whose [entry-304d, exit] window touches a data
+            # glitch is dropped, same rule as bt_clean.filter_candidates
+            mask = _load_mask_cache()
+            if mask:
+                keep = []
+                for r in d.itertuples(index=False):
+                    g = mask.get(r.sym)
+                    if g and any(r.date - pd.Timedelta(days=304) <= x <= r.date + pd.Timedelta(days=14)
+                                 for x in g):
+                        continue
+                    keep.append(r)
+                d = pd.DataFrame(keep, columns=d.columns)
             d["net"] = d.gross - cost_rt(mkt, "site", d.reason.eq("stop").to_numpy())
             tr, te = d[d.date < SPLIT], d[d.date >= SPLIT]
             s_tr, s_te = stats(tr), stats(te)

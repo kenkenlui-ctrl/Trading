@@ -48,29 +48,19 @@ import pandas as pd
 
 REPO = Path("/Users/kenken/dev/dsa-hk")
 sys.path.insert(0, str(REPO / "scripts" / "v2engine"))
+sys.path.insert(0, str(REPO / "scripts"))
 from core import features, _simulate, cost_rt  # noqa: E402
+from bt_clean import bars_dir, load as load_clean, _load_mask_cache  # noqa: E402
 
-BARS = REPO / "data" / "bt10y"
+BARS = bars_dir()
 OUT = REPO / "data" / "ab_close_hold.csv"
 SPLIT = pd.Timestamp("2023-01-01")     # train < SPLIT <= test
 HOLD = 10
-MARKETS = {"us200": "SPY", "jp200": "1306.T"}
+MARKETS = {"us200": "SPY", "jp200": "1306_T"}
 
 
 def load(path: Path) -> pd.DataFrame | None:
-    try:
-        rows = json.loads(path.read_text())
-    except Exception:
-        return None
-    if not isinstance(rows, list) or len(rows) < 300:
-        return None
-    df = pd.DataFrame(rows)
-    need = {"date", "open", "high", "low", "close"}
-    if not need <= set(df.columns):
-        return None
-    df["date"] = pd.to_datetime(df["date"])
-    df = df.dropna(subset=list(need - {"date"})).sort_values("date")
-    return df.set_index("date")
+    return load_clean(path)
 
 
 def market_up(mkt: str) -> bool | None:
@@ -88,7 +78,12 @@ def market_up(mkt: str) -> bool | None:
     return None
 
 
-def trades_for(df: pd.DataFrame, mkt: str, close_hold: bool) -> pd.DataFrame | None:
+def trades_for(df: pd.DataFrame, mkt: str, close_hold: bool,
+               mask: set | None = None) -> pd.DataFrame | None:
+    """mask = the glitch dates for THIS symbol. A trade is dropped when any masked
+    bar sits in [entry - 210 calendar-ish days, exit], because ma200/S1/atr are
+    built from shifted closes and one bad bar poisons the features behind the
+    entry, not just the exit."""
     f = features(df)
     O, H, L, C = (df[k].to_numpy(float) for k in ("open", "high", "low", "close"))
     a = f.atr_pct.to_numpy()
@@ -116,6 +111,10 @@ def trades_for(df: pd.DataFrame, mkt: str, close_hold: bool) -> pd.DataFrame | N
         if res is None:
             continue
         j, xp, why = res
+        if mask:
+            lo = idx[i] - pd.Timedelta(days=304)
+            if any(lo <= d <= idx[j] for d in mask):
+                continue
         rows.append((mkt, idx[i], xp / s1[i] - 1, why))
     return pd.DataFrame(rows, columns=["mkt", "date", "gross", "reason"]) if rows else None
 
@@ -143,6 +142,9 @@ def main() -> int:
     a = ap.parse_args()
 
     frames = {}
+    mask_all = _load_mask_cache()
+    print(f"bar source: {BARS}")
+    print(f"glitch-masked symbols: {len(mask_all)}  masked bars: {sum(len(v) for v in mask_all.values())}")
     for mkt in MARKETS:
         up = market_up(mkt)
         if up is not True:
@@ -160,7 +162,7 @@ def main() -> int:
                 b = load(p)
                 if b is None:
                     continue
-                t = trades_for(b, mkt, ch)
+                t = trades_for(b, mkt, ch, mask_all.get(s))
                 if t is not None:
                     t["sym"] = s
                     parts.append(t)

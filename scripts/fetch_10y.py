@@ -16,6 +16,7 @@ Usage:
 from __future__ import annotations
 import argparse
 import json
+import sys
 import time
 from pathlib import Path
 
@@ -168,6 +169,25 @@ def main() -> None:
     ap.add_argument("--only", default=None)
     ap.add_argument("--force", action="store_true", help="re-download even if cached")
     a = ap.parse_args()
+
+    # 2026-10-05 — THIS SCRIPT IS SUPERSEDED. Do not run it.
+    #
+    # The batch download below (25 symbols at a time, auto_adjust=True,
+    # group_by="ticker") silently corrupted 8 of 407 cached series; the worst,
+    # 8766_T, was printed at the wrong price scale by a factor of 438.
+    # yfinance's multi-symbol auto-adjust path misaligns adjustment factors, and
+    # the damage looks exactly like real market data: every bar is well-formed,
+    # every date is present, nothing raises.
+    #
+    # Verified by re-fetching all 407 symbols ONE AT A TIME and diffing against
+    # the cache (data/bt10y2_diff.csv). 71 identical, 328 rounding drift, 8 corrupt.
+    # refetch_10y_clean.py is the replacement and is resumable.
+    print(__doc__.split("Usage:")[0].strip(), file=sys.stderr)
+    print("\n  *** SUPERSEDED — use scripts/refetch_10y_clean.py ***\n"
+          "  This batch downloader produced 8 corrupt bar files. Running it again\n"
+          "  will write unadjusted/split-broken prices into data/bt10y/ and every\n"
+          "  10-year number computed from it will be wrong.\n", file=sys.stderr)
+    raise SystemExit(2)
 
     todo = []
     for mkt, (up, od) in MARKETS.items():

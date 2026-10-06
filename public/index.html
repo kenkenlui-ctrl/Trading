@@ -9,9 +9,9 @@
 <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <title>Leeks Terminal · 多週期 AI 交易決策儀表板</title>
-<meta name="description" content="Leeks Terminal 每日對 200 隻港股 + 200 隻美股跑 10 步價格行為框架，輸出 BUY/SELL/WAIT 行動計劃，附入場 trigger、目標價、止損位同策略自身歷史勝率。T+1 / T+3 / T+5 / T+10 多週期 backtest（已扣 Futu 免佣真實成本 HK 0.25% / US 0.05%）。全部數字 Python 確定性計算，T-1 收市數據，零 LLM 幻覺。">
+<meta name="description" content="每晚收市後為港股、美股、日股計行動計劃：入場價、止損位、離場規則。只做多，收市企穩支持位先成交，3 倍 ATR 止損，第 10 個交易日離場。全部數字由 Python 對 T-1 收市 OHLC 確定性計出，零 LLM 幻覺。每單優勢不等於跑贏大市 —— 實測與限制見方法論頁。">
 <meta property="og:title" content="Leeks Terminal · 多週期 AI 交易決策儀表板">
-<meta property="og:description" content="Leeks Terminal 每日對 200 隻港股 + 200 隻美股跑 10 步價格行為框架，輸出 BUY/SELL/WAIT 行動計劃，附入場 trigger、目標價、止損位同策略自身歷史勝率。T+1 / T+3 / T+5 / T+10 多週期 backtest（已扣 Futu 免佣真實成本 HK 0.25% / US 0.05%）。全部數字 Python 確定性計算，T-1 收市數據，零 LLM 幻覺。">
+<meta property="og:description" content="每晚收市後為港股、美股、日股計行動計劃：入場價、止損位、離場規則。只做多，收市企穩支持位先成交，3 倍 ATR 止損，第 10 個交易日離場。全部數字由 Python 對 T-1 收市 OHLC 確定性計出，零 LLM 幻覺。每單優勢不等於跑贏大市 —— 實測與限制見方法論頁。">
 <meta name="theme-color" content="#0a0e1a">
 <link rel="canonical" href="https://www.win9you.com/">
 <meta property="og:site_name" content="Leeks Terminal">
@@ -33,7 +33,7 @@
       "name": "Leeks Terminal",
       "url": "https://www.win9you.com/",
       "inLanguage": "zh-Hant-HK",
-      "description": "HK + US multi-horizon AI trading decision dashboard. 200 HK + 200 US stocks, daily 10-step price-action signals from T-1 OHLC data. T+1 / T+3 / T+5 / T+10 horizons backtested net of Futu commission-free real costs (HK 0.25% / US 0.05% per round-trip). Educational use only.",
+      "description": "Rule-based trading decision dashboard covering Hong Kong, US and Japanese stocks. Signals are computed in Python from T-1 daily OHLC. Educational use only, not investment advice. Per-trade results are not evidence of excess return: in the US the same 201 stocks held passively outperformed the strategy over 2016-26. See the methodology page for the measured results and their limits.",
       "publisher": {
         "@type": "Organization",
         "name": "Leeks Terminal",
@@ -48,25 +48,25 @@
       "applicationSubCategory": "Trading Signal Dashboard",
       "operatingSystem": "Web",
       "inLanguage": ["zh-Hant-HK", "en"],
-      "description": "Daily AI-driven HK and US stock signal engine using a 10-step price-action framework (5-phase market regime + 4-tier support/resistance ladder + 4 action strategies with T+1/T+3/T+5/T+10 backtest horizons).",
+      "description": "Rule-based signal engine for Hong Kong, US and Japanese stocks. Signals are computed deterministically in Python from T-1 daily OHLC bars (long-only; stock above a rising 200-day average; market index above its own 200-day average; limit entry at the 20-day support with a close-hold confirmation; 3xATR stop; 10-session time exit). No language model produces any number, price level or verdict.",
       "offers": {
         "@type": "Offer",
         "price": "0",
         "priceCurrency": "USD"
       },
       "featureList": [
-        "200 HK stocks + 200 US stocks daily signals",
-        "10-step price-action framework (phase / S/R / strategy / backtest)",
-        "T+1 / T+3 / T+5 / T+10 multi-horizon backtest (Futu HK 0.25% / US 0.05% cost model)",
-        "Anomaly filter (Futu capital-flow signals)",
-        "Plan-strategy 60-day win rate gate (MED ≥50%, HIGH ≥60%)"
+        "Hong Kong, US and Japanese stocks, one action plan per stock per session",
+        "Deterministic Python on T-1 OHLC; no LLM in the number path",
+        "Long-only v2 rule: rising 200-day average filter, limit entry at support with close-hold, 3xATR stop, 10-session exit",
+        "10-year backtests run against a re-fetched bar store with a data gate that excludes corrupted price windows",
+        "Published correction log of what was changed and why"
       ]
     }
   ]
 }
 </script>
 <link rel="stylesheet" href="/static/fonts-local.css">
-<link rel="stylesheet" href="/leeks.css?v=2026-10-05">
+<link rel="stylesheet" href="/leeks.css?v=8e02907cb6">
 <script>
 (function(){
   const t = localStorage.getItem('leeks-theme') || 'dark';
@@ -111,7 +111,20 @@
   <a href="/hk200/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg>HK</a>
   <a href="/us200/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 4-5"/></svg>US</a>
   <a href="/jp200/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg>JP</a>
-  <a href="/methodology">EN<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>Method</a>
+  <details class="mob-more">
+    <summary aria-label="更多頁面"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg>More</summary>
+    <div class="mob-more-panel">
+      <a href="/backtest.html">Backtest · 回測</a>
+      <a href="/insights.html">Insights · 研究</a>
+      <a href="/compare/">Compare · 對比</a>
+      <a href="/methodology">Methodology · 方法論</a>
+      <a href="/faq.html">FAQ</a>
+      <a href="/about/">About</a>
+      <a href="/disclaimer/">Disclaimer</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/" lang="zh-Hant-HK">中 · 繁體中文</a>
+    </div>
+  </details>
 </nav>
 
 <script>
@@ -141,12 +154,12 @@ function toggleTheme(){
   <div class="container">
     <div class="kicker">Leeks Terminal · Live</div>
     <h1>Leeks Terminal · <em class="italic">多週期 AI 交易決策儀表板</em></h1>
-    <p class="lede">每日對 <b>200 隻港股 + 200 隻美股</b> 跑 10 步價格行為框架（phase 分類 → 20/60/120/200 日 S/R ladder → 30/60/90/197 日四窗口回測），輸出 BUY / SELL / WAIT 行動計劃，附入場 trigger、目標價、止損位同 R:R ratio。<b>全部數字由 Python 對 T-1 收市 OHLC 確定性計出，零 LLM 幻覺</b>；每隻股票嘅訊號策略仲有自身 60 日歷史勝率（n≥5 先顯示）。<b style="color: var(--bull);">T+1 / T+3 / T+5 三個 short-cycle horizon（已扣 Futu 免佣真實成本 HK 0.25% / US 0.05% round-trip）</b>：T+1 +0.35% / T+3 +0.80% / T+5 +1.08%（對 US$20k 注碼）。<b style="color: var(--amber);">T+10 swing 結果（+3.02% net）— 統計上係最強 window（4.39 t-statistic 過 deflated Sharpe Ratio 修正），但屬 swing horizon，請按個人風格同 lifestyle 自決。</b></p>
+    <p class="lede">每晚收市後，對 <b>200 隻港股、222 隻美股、200 隻日股</b>計一次行動計劃：入場價、止損位、離場規則。<b>全部數字由 Python 對 T-1 收市 OHLC 確定性計出，零 LLM 幻覺</b>。<br><br>現行規則（v2）：<b>只做多</b>；股價喺自己嘅 200 天線之上兼且 200 天線向上；大市指數都要喺自己嘅 200 天線之上；跌到 20 日低位 S1 掛限價單，<b>而且收市要企穩 S1 先算成交</b>；止損 S1 下方 3 倍 ATR；冇目標價，第 10 個交易日收市離場。<br><br><b style="color: var(--amber);">呢個係一個規則，唔係一個保證。</b>每單表現係實測，但<b>每單有優勢 ≠ 跑贏大市</b>：用同一批美股等權單純持有，2016–26 年化 +27.4%，我哋嘅規則 +27.2% —— 差額係零。日股暫時領先 6.9 個百分點/年，但未用 point-in-time 名單驗證，唔算已證實 alpha。<a href="/methodology">完整方法論同修正記錄 →</a></p>
     <div class="hero-meta">
       <span>T-1 數據 · 2026-10-05 · US 2026-10-02</span>
       <span>200 HK + 200 US</span>
       <span>4 種策略 × 4 窗口回測</span>
-      <span>Updated 22:35 HKT</span>
+      <span>Updated 16:56 HKT</span>
     </div>
   </div>
 </div>
@@ -154,7 +167,7 @@ function toggleTheme(){
   <div class="container">
     <div class="section-head">
       <h2>今日 <em>actionable</em></h2>
-      <span class="section-meta">102 隻有訊號 · <b>2 隻通過勝率篩選</b>（ Wilson 下限 ≥50%）· Updated 22:35 HKT</span>
+      <span class="section-meta">102 隻有訊號 · <b>2 隻通過勝率篩選</b>（ Wilson 下限 ≥50%）· Updated 16:56 HKT</span>
     </div>
     <div class="card-grid" style="grid-template-columns: 1fr;">
       

@@ -909,6 +909,60 @@ _T1_FOOTER_RE = re.compile(
 )
 
 
+
+def ensure_mobile_nav() -> list[str]:
+    """Give the hand-edited pages the same mobile bottom bar as the built ones.
+
+    insights.html / methodology.html / about are on a hand_edited skip list, so
+    build_static_pages() never regenerates them — which meant they never received
+    the mobile bottom nav either, and a phone visitor landing there had no
+    navigation at all. This injects only the <nav>, before </body>, and never
+    touches the hand-written content. Idempotent: pages that already have the
+    bar (including the new .mob-more panel) are skipped.
+    """
+    from mobile_nav import mobile_bottom_nav
+    out: list[str] = []
+    for p in sorted(PUBLIC_DIR.rglob("*.html")):
+        if "/ticker/" in p.as_posix() or "/dashboard/" in p.as_posix():
+            continue
+        try:
+            h = p.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        if "mobile-bottom-nav" in h or "</body>" not in h:
+            continue
+        rel = "/" + p.relative_to(PUBLIC_DIR).as_posix().replace("index.html", "")
+        key = _mnav_key("/" + p.name)
+        nav = mobile_bottom_nav(key)
+        h2 = h.replace("</body>", nav + "\n</body>", 1)
+        if h2 != h:
+            p.write_text(h2, encoding="utf-8")
+            out.append(rel)
+    return out
+
+
+
+def _CSS_VERSION() -> str:
+    """Cache-buster for /leeks.css.
+
+    This used to be today's DATE. That busts the cache once per day, which means
+    every CSS edit made after the first page view of the day is invisible to
+    anyone who has already loaded the site that day — the browser revalidates
+    the same URL and _headers pins leeks.css for 24h. That is how a mobile-menu
+    fix can be built, deployed and verified locally while the live page keeps
+    serving the old sheet.
+
+    A short hash of the file's own bytes changes exactly when the content
+    changes, so the URL is correct within the day.
+    """
+    import hashlib
+    p = PUBLIC_DIR / "leeks.css"
+    try:
+        return hashlib.sha1(p.read_bytes()).hexdigest()[:10]
+    except Exception:
+        import datetime
+        return datetime.date.today().isoformat()
+
 def restamp_t1_badges() -> list[str]:
     """Rewrite the T-1 date inside nav/footer chrome on every built page.
 
@@ -945,6 +999,44 @@ def restamp_t1_badges() -> list[str]:
         # write unreachable for any page carrying a nav badge but no footer
         # stamp, which is exactly how /en/backtest/ kept its "T-1 · —".
         if (n_nav or n_foot) and new != html:
+            p.write_text(new, encoding="utf-8")
+            changed.append(str(p.relative_to(PUBLIC_DIR)))
+    return changed
+
+
+_CSS_LINK_RE = re.compile(r'(leeks\.css\?v=)([A-Za-z0-9_.\-]+)')
+
+
+def restamp_css_version() -> list[str]:
+    """Point EVERY page's /leeks.css link at the current content hash.
+
+    2026-10-05: 30 of 644 built pages still referenced a frozen literal —
+    ?v=2026-08-25b (build_i18n output), ?v=2026-08-30, ?v=2026-08-28
+    (methodology.html + faq.html). Builders that own their own <head> write
+    the hash, but any page whose <head> is hand-written or copied from an older
+    snapshot keeps whatever literal it was born with, and public/_headers pins
+    /leeks.css?* for 300s. So those 30 pages served a stale sheet and no CSS
+    change could ever reach them.
+
+    Why this is a post-pass over public/** and not a per-builder fix: the stale
+    literal has four different sources and a fifth appears whenever a page is
+    copied. Patching each builder re-creates this drift. One normalising pass
+    at the end of the build cannot be bypassed by adding a new builder, and it
+    only rewrites the query string — no markup or copy is touched, which is what
+    makes it safe to run over public/en/ (whose bodies are NOT ours to
+    regenerate; scripts/build_i18n.py owns those).
+
+    Returns the relative paths changed.
+    """
+    ver = _CSS_VERSION()
+    changed: list[str] = []
+    for p in sorted(PUBLIC_DIR.rglob("*.html")):
+        try:
+            html = p.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        new, n = _CSS_LINK_RE.subn(lambda m: m.group(1) + ver, html)
+        if n and new != html:
             p.write_text(new, encoding="utf-8")
             changed.append(str(p.relative_to(PUBLIC_DIR)))
     return changed
@@ -1177,7 +1269,7 @@ def shell(title: str, body_html: str, active_path: str = "/",
 <link rel="alternate" hreflang="x-default" href="{_html.escape(canonical)}">
 <link rel="preload" as="style" href="/static/fonts-local.css" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link href="/static/fonts-local.css" rel="stylesheet"></noscript>
-<link rel="stylesheet" href="/leeks.css?v={__import__('datetime').date.today().isoformat()}">
+<link rel="stylesheet" href="/leeks.css?v={_CSS_VERSION()}">
 {ld_block}
 </head>
 <body>
@@ -3664,6 +3756,21 @@ def main():
     if restamped:
         print(f"✅ Re-stamped T-1 badge on {restamped} hand-edited page(s) → {site_t1()}")
         written.extend(restamped)
+
+    naved = ensure_mobile_nav()
+    if naved:
+        print(f"📱 Injected mobile bottom nav on {len(naved)} hand-edited page(s): {naved}")
+        written.extend(naved)
+
+    # LAST step, deliberately. _CSS_VERSION() reads public/leeks.css, and this
+    # must run after everything that could have touched the sheet, so the hash
+    # it stamps is the hash the site is actually serving. It also has to run
+    # after every builder that writes a <head>, otherwise the next builder
+    # re-introduces a frozen literal the moment this pass finishes.
+    cssed = restamp_css_version()
+    if cssed:
+        print(f"🎨 Re-stamped leeks.css cache-buster → {_CSS_VERSION()} on {len(cssed)} page(s): {cssed[:6]}{' …' if len(cssed) > 6 else ''}")
+        written.extend(cssed)
 
     print(f"\nTotal files written: {len(written)}")
     print(f"Output directory: {PUBLIC_DIR}")
