@@ -3,23 +3,23 @@
   "ticker_user": "HON",
   "name": "Honeywell International Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
+  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-30",
-    "O": 210.81,
-    "H": 211.92,
-    "L": 209.5,
-    "C": 210.94,
-    "prev_close": 210.13,
-    "chg_pct": 0.39
+    "date": "2026-10-06",
+    "O": 213.74,
+    "H": 215.37,
+    "L": 210.74,
+    "C": 212.87,
+    "prev_close": 214.14,
+    "chg_pct": -0.59
   },
   "phase": "downtrend_active",
-  "adx": 23.55,
-  "plus_di": 18.1,
-  "minus_di": 21.25,
-  "regime": "dead",
+  "adx": 18.97,
+  "plus_di": 19.46,
+  "minus_di": 19.06,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 260.28 (2026-03-02), trough 196.98 (2026-09-14), box top 213.64 (2026-09-25)",
+  "phase_evidence": "Peak 260.28 (2026-03-02), trough 196.98 (2026-09-14), box top 216.13 (2026-10-02)",
   "peak": {
     "date": "2026-03-02",
     "price": 260.28
@@ -29,57 +29,58 @@
     "price": 196.98
   },
   "box": {
-    "top": 213.64,
-    "top_date": "2026-09-25",
+    "top": 216.13,
+    "top_date": "2026-10-02",
     "bottom": 196.98,
-    "period": "2026-09-14 to 2026-09-30"
+    "period": "2026-09-14 to 2026-10-06"
   },
-  "drop_from_peak_pct": 19.0,
-  "recovery_from_crash_pct": 7.1,
+  "drop_from_peak_pct": 18.2,
+  "recovery_from_crash_pct": 8.1,
   "supports": [
     {
-      "level": 204.0,
+      "level": 208.0,
       "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; 2.3% below current"
+    },
+    {
+      "level": 204.0,
+      "label": "S2",
       "touches": 11,
-      "evidence": "tested 11x in base period; 3.3% below current"
+      "evidence": "mid-base support, tested 11x"
     },
     {
       "level": 200.0,
-      "label": "S2 bottom",
+      "label": "S3 bottom",
       "touches": 4,
       "evidence": "structural bottom, near crash low 196.98"
     }
   ],
   "resistances": [
     {
-      "level": 211.92,
+      "level": 215.37,
       "label": "R1 today high",
-      "evidence": "today's high 211.9199981689453"
-    },
-    {
-      "level": 213.64,
-      "label": "R3 Sep high",
-      "evidence": "box top 213.64, base period high"
+      "evidence": "today's high 215.3699951171875"
     }
   ],
   "position": {
-    "current": 210.94,
-    "in_box_pct": 80.2,
-    "nearest_support": "S1 KEY (204.0)",
-    "nearest_resistance": "R1 today high (211.92)"
+    "current": 212.87,
+    "in_box_pct": 83.7,
+    "nearest_support": "S1 KEY (208.0)",
+    "nearest_resistance": "R1 today high (215.37)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 210.81,
-    "H": 211.92,
-    "L": 209.5,
-    "C": 210.94,
-    "body_pct": 5.4,
-    "upper_wick_pct": 40.5,
-    "lower_wick_pct": 54.1
+    "close_position": "lower_half",
+    "O": 213.74,
+    "H": 215.37,
+    "L": 210.74,
+    "C": 212.87,
+    "body_pct": 18.8,
+    "upper_wick_pct": 35.2,
+    "lower_wick_pct": 46.0
   },
   "bias": {
     "short": {
@@ -97,24 +98,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 204.0 (KEY support)",
-      "then": "still range; watch 211.92 for next test"
+      "if": "hold 208.0 (KEY support)",
+      "then": "still range; watch 215.37 for next test"
     },
     {
-      "if": "break 204.0 on close",
-      "then": "target 200.0 → lower (short-term bearish)"
+      "if": "break 208.0 on close",
+      "then": "target 204.0 → 200.0 (short-term bearish)"
     },
     {
       "if": "break 200.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 211.92 on close",
-      "then": "short-term bullish; next test 213.64"
-    },
-    {
-      "if": "break 213.64 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 215.37 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -138,21 +135,21 @@
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
-    "trigger_price": 213.64,
-    "target_price": 205.31,
-    "stop_price": 219.98,
-    "risk_pct": 2.97,
-    "reward_pct": 3.9,
-    "rr_ratio": 1.31,
+    "trigger_price": 216.13,
+    "target_price": 206.56,
+    "stop_price": 222.02,
+    "risk_pct": 2.73,
+    "reward_pct": 4.43,
+    "rr_ratio": 1.62,
     "phase_match": true,
-    "r1": 213.64,
+    "r1": 216.13,
     "s1": 196.98,
-    "s2": 208.81,
+    "s2": 204.81,
     "r2": 252.0,
     "r3": 252.0,
     "s3": 215.54,
-    "s4": 201.9,
-    "current_position_pct": 83.8,
-    "notes": "SELL_R1: in box (197-214), entry at R1 214, target mid 205, stop 220 ｜ 52.2 條規則（SELL plan，resistance 213.64）：① 跌到 213.64、收市守住喺 213.64 上面 → 照 BUY 條 plan 做（入場 213.64，止蝕 219.98，目標 205.31）。② 收市跌穿 213.64 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 213.64 上面』。"
+    "s4": 202.78,
+    "current_position_pct": 83.0,
+    "notes": "SELL_R1: in box (197-216), entry at R1 216, target mid 207, stop 222 ｜ 52.2 條規則（SELL plan，resistance 216.13）：① 跌到 216.13、收市守住喺 216.13 上面 → 照 BUY 條 plan 做（入場 216.13，止蝕 222.02，目標 206.56）。② 收市跌穿 216.13 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 216.13 上面』。"
   }
 }

@@ -1,45 +1,66 @@
 {
-  "ticker": "4568.T",
-  "asof": "2026-10-05",
-  "close": 2716.0,
-  "chg_pct": 0.25839793281654533,
+  "ticker": "JP.4568",
+  "ticker_user": "4568.T",
+  "name": "DAIICHI SANKYO COMPANY LIMITED",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 2699.0,
-    "H": 2739.0,
-    "L": 2691.0,
-    "C": 2716.0,
-    "prev_close": 2709.0,
-    "chg_pct": 0.25839793281654533
+    "date": "2026-10-06",
+    "O": 2749.0,
+    "H": 2757.0,
+    "L": 2711.0,
+    "C": 2752.0,
+    "prev_close": 2716.0,
+    "chg_pct": 1.33
   },
-  "name": "Daiichi Sankyo Company, Limited",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 2709.0,
-    "in_box_pct": 46.6,
-    "nearest_support": "S1 KEY (2536.0)",
-    "nearest_resistance": "R1 today high (2751.0)"
+  "adx": 14.02,
+  "plus_di": 22.26,
+  "minus_di": 29.44,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 3625.0 (2026-01-13), trough 2390.0 (2026-06-05), box top 2962.5 (2026-09-25)",
+  "peak": {
+    "date": "2026-01-13",
+    "price": 3625.0
   },
+  "trough": {
+    "date": "2026-06-05",
+    "price": 2390.0
+  },
+  "box": {
+    "top": 2962.5,
+    "top_date": "2026-09-25",
+    "bottom": 2390.0,
+    "period": "2026-06-05 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 24.1,
+  "recovery_from_crash_pct": 15.1,
   "supports": [
     {
-      "level": 2536.0,
+      "level": 2680.0,
       "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; 2.6% below current"
+    },
+    {
+      "level": 2536.0,
+      "label": "S2",
       "touches": 3,
-      "evidence": "tested 3x in base period; 6.4% below current"
+      "evidence": "mid-base support, tested 3x"
     },
     {
       "level": 2488.0,
-      "label": "S2 bottom",
+      "label": "S3 bottom",
       "touches": 3,
       "evidence": "structural bottom, near crash low 2390.0"
     }
   ],
   "resistances": [
     {
-      "level": 2751.0,
+      "level": 2757.0,
       "label": "R1 today high",
-      "evidence": "rejection at 2751.0 (long upper wick, close weak)"
+      "evidence": "today's high 2757.0"
     },
     {
       "level": 2962.5,
@@ -47,15 +68,88 @@
       "evidence": "box top 2962.5, base period high"
     }
   ],
+  "position": {
+    "current": 2752.0,
+    "in_box_pct": 55.6,
+    "nearest_support": "S1 KEY (2680.0)",
+    "nearest_resistance": "R1 today high (2757.0)"
+  },
+  "kline_today": {
+    "type": "bullish_hold",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 2749.0,
+    "H": 2757.0,
+    "L": 2711.0,
+    "C": 2752.0,
+    "body_pct": 6.5,
+    "upper_wick_pct": 10.9,
+    "lower_wick_pct": 82.6
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 2680.0 (KEY support)",
+      "then": "still range; watch 2757.0 for next test"
+    },
+    {
+      "if": "break 2680.0 on close",
+      "then": "target 2536.0 → 2488.0 (short-term bearish)"
+    },
+    {
+      "if": "break 2488.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 2757.0 on close",
+      "then": "short-term bullish; next test 2962.5"
+    },
+    {
+      "if": "break 2962.5 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "BUY",
     "strategy": "BUY_S1",
     "trigger_price": 2679.0,
     "target_price": 2820.75,
-    "stop_price": 2571.19,
-    "risk_pct": 4.02,
+    "stop_price": 2577.41,
+    "risk_pct": 3.79,
     "reward_pct": 5.29,
-    "rr_ratio": 1.31,
+    "rr_ratio": 1.4,
     "phase_match": true,
     "r1": 2962.5,
     "s1": 2679.0,
@@ -64,7 +158,7 @@
     "r3": 3016.0,
     "s3": 2390.0,
     "s4": 2684.0,
-    "current_position_pct": 10.6,
-    "notes": "BUY_S1: in box (2679-2962), entry at S1 2679, target mid 2821, stop 2571 ｜ 52.2 條規則（BUY plan，support 2679.00）：① 跌到 2679.00、收市守住喺 2679.00 上面 → 照 BUY 條 plan 做（入場 2679.00，止蝕 2571.19，目標 2820.75）。② 收市跌穿 2679.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2679.00 上面』。"
+    "current_position_pct": 25.7,
+    "notes": "BUY_S1: in box (2679-2962), entry at S1 2679, target mid 2821, stop 2577 ｜ 52.2 條規則（BUY plan，support 2679.00）：① 跌到 2679.00、收市守住喺 2679.00 上面 → 照 BUY 條 plan 做（入場 2679.00，止蝕 2577.41，目標 2820.75）。② 收市跌穿 2679.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2679.00 上面』。"
   }
 }

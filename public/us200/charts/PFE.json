@@ -3,82 +3,88 @@
   "ticker_user": "PFE",
   "name": "Pfizer, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
+  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-02",
-    "O": 28.15,
-    "H": 28.16,
-    "L": 27.44,
-    "C": 27.8,
-    "prev_close": 28.12,
-    "chg_pct": -1.14
+    "date": "2026-10-06",
+    "O": 27.48,
+    "H": 27.71,
+    "L": 27.2,
+    "C": 27.5,
+    "prev_close": 27.41,
+    "chg_pct": 0.33
   },
   "phase": "downtrend_active",
-  "adx": 28.44,
-  "plus_di": 26.08,
-  "minus_di": 26.72,
+  "adx": 25.82,
+  "plus_di": 22.03,
+  "minus_di": 26.61,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 29.21 (2026-09-03), trough 27.25 (2026-09-15), box top 28.95 (2026-09-30)",
+  "phase_evidence": "Peak 29.21 (2026-09-03), trough 27.12 (2026-10-05), box top 29.21 (2026-09-03)",
   "peak": {
     "date": "2026-09-03",
     "price": 29.21
   },
   "trough": {
-    "date": "2026-09-15",
-    "price": 27.25
+    "date": "2026-10-05",
+    "price": 27.12
   },
   "box": {
-    "top": 28.95,
-    "top_date": "2026-09-30",
-    "bottom": 27.25,
-    "period": "2026-09-15 to 2026-10-02"
+    "top": 29.21,
+    "top_date": "2026-09-03",
+    "bottom": 27.12,
+    "period": "2026-10-05 to 2026-10-06"
   },
-  "drop_from_peak_pct": 4.8,
-  "recovery_from_crash_pct": 2.0,
+  "drop_from_peak_pct": 5.9,
+  "recovery_from_crash_pct": 1.4,
   "supports": [
     {
       "level": 28.0,
-      "label": "S1 bottom",
-      "touches": 0,
-      "evidence": "structural bottom, near crash low 27.25"
+      "label": "S1 KEY",
+      "touches": 7,
+      "evidence": "tested 7x in base period; -1.8% below current"
+    },
+    {
+      "level": 24.0,
+      "label": "S2 bottom",
+      "touches": 18,
+      "evidence": "structural bottom, near crash low 27.12"
     }
   ],
   "resistances": [
     {
-      "level": 28.16,
+      "level": 27.71,
       "label": "R1 today high",
-      "evidence": "today's high 28.15999984741211"
+      "evidence": "today's high 27.709999084472656"
     },
     {
-      "level": 28.95,
+      "level": 29.21,
       "label": "R3 Sep high",
-      "evidence": "box top 28.95, base period high"
+      "evidence": "box top 29.21, base period high"
     }
   ],
   "position": {
-    "current": 27.8,
-    "in_box_pct": 0.0,
-    "nearest_support": "S1 bottom (28.0)",
-    "nearest_resistance": "R1 today high (28.16)"
+    "current": 27.5,
+    "in_box_pct": 67.2,
+    "nearest_support": "S1 KEY (28.0)",
+    "nearest_resistance": "R1 today high (27.71)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": true,
-    "close_position": "lower_half",
-    "O": 28.15,
-    "H": 28.16,
-    "L": 27.44,
-    "C": 27.8,
-    "body_pct": 48.6,
-    "upper_wick_pct": 1.4,
-    "lower_wick_pct": 50.0
+    "close_position": "upper_half",
+    "O": 27.48,
+    "H": 27.71,
+    "L": 27.2,
+    "C": 27.5,
+    "body_pct": 3.9,
+    "upper_wick_pct": 41.2,
+    "lower_wick_pct": 54.9
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (0% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -92,22 +98,22 @@
   "scenarios": [
     {
       "if": "hold 28.0 (KEY support)",
-      "then": "still range; watch 28.16 for next test"
+      "then": "still range; watch 27.71 for next test"
     },
     {
       "if": "break 28.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "then": "target 24.0 → lower (short-term bearish)"
     },
     {
-      "if": "break 28.0 (crash low)",
+      "if": "break 24.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 28.16 on close",
-      "then": "short-term bullish; next test 28.95"
+      "if": "reclaim 27.71 on close",
+      "then": "short-term bullish; next test 29.21"
     },
     {
-      "if": "break 28.95 (box top)",
+      "if": "break 29.21 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -140,13 +146,13 @@
     "rr_ratio": 0.0,
     "phase_match": false,
     "r1": 28.95,
-    "s1": 27.25,
-    "s2": 24.1,
+    "s1": 27.12,
+    "s2": 24.14,
     "r2": 29.21,
     "r3": 27.85,
     "s3": 23.62,
     "s4": 24.83,
-    "current_position_pct": 32.4,
-    "notes": "WAIT_RANGE: in box (27-29), pos 32%, no clear setup"
+    "current_position_pct": 20.8,
+    "notes": "WAIT_RANGE: in box (27-29), pos 21%, no clear setup"
   }
 }

@@ -1,44 +1,138 @@
 {
-  "ticker": "2980.T",
-  "asof": "2026-10-05",
-  "close": 2303.0,
-  "chg_pct": -1.3704496788008558,
+  "ticker": "JP.2980",
+  "ticker_user": "2980.T",
+  "name": "SRE HLDGS CORP",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 2342.0,
-    "H": 2349.0,
-    "L": 2289.0,
-    "C": 2303.0,
-    "prev_close": 2335.0,
-    "chg_pct": -1.3704496788008558
+    "date": "2026-10-06",
+    "O": 2328.0,
+    "H": 2356.0,
+    "L": 2320.0,
+    "C": 2337.0,
+    "prev_close": 2303.0,
+    "chg_pct": 1.48
   },
-  "name": "SRE Holdings Corporation",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 2335.0,
-    "in_box_pct": 55.0,
-    "nearest_support": "S1 bottom (2280.0)",
-    "nearest_resistance": "R1 today high (2348.0)"
+  "adx": 8.01,
+  "plus_di": 22.22,
+  "minus_di": 24.64,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 4150.0 (2026-05-11), trough 2199.0 (2026-09-11), box top 2380.0 (2026-09-24)",
+  "peak": {
+    "date": "2026-05-11",
+    "price": 4150.0
   },
+  "trough": {
+    "date": "2026-09-11",
+    "price": 2199.0
+  },
+  "box": {
+    "top": 2380.0,
+    "top_date": "2026-09-24",
+    "bottom": 2199.0,
+    "period": "2026-09-11 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 43.7,
+  "recovery_from_crash_pct": 6.3,
   "supports": [
     {
+      "level": 2288.0,
+      "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; 2.1% below current"
+    },
+    {
       "level": 2280.0,
-      "label": "S1 bottom",
+      "label": "S2 bottom",
       "touches": 6,
       "evidence": "structural bottom, near crash low 2199.0"
     }
   ],
   "resistances": [
     {
-      "level": 2348.0,
+      "level": 2356.0,
       "label": "R1 today high",
-      "evidence": "today's high 2348.0"
+      "evidence": "today's high 2356.0"
     },
     {
       "level": 2380.0,
       "label": "R3 Sep high",
       "evidence": "box top 2380.0, base period high"
+    }
+  ],
+  "position": {
+    "current": 2337.0,
+    "in_box_pct": 57.0,
+    "nearest_support": "S1 KEY (2288.0)",
+    "nearest_resistance": "R1 today high (2356.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 2328.0,
+    "H": 2356.0,
+    "L": 2320.0,
+    "C": 2337.0,
+    "body_pct": 25.0,
+    "upper_wick_pct": 52.8,
+    "lower_wick_pct": 22.2
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 2288.0 (KEY support)",
+      "then": "still range; watch 2356.0 for next test"
+    },
+    {
+      "if": "break 2288.0 on close",
+      "then": "target 2280.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 2280.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 2356.0 on close",
+      "then": "short-term bullish; next test 2380.0"
+    },
+    {
+      "if": "break 2380.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -53,12 +147,12 @@
     "phase_match": false,
     "r1": 2455.0,
     "s1": 2199.0,
-    "s2": 2361.0,
+    "s2": 2317.0,
     "r2": 2818.0,
     "r3": 4150.0,
     "s3": 2278.0,
     "s4": 2418.0,
-    "current_position_pct": 53.1,
-    "notes": "WAIT_RANGE: in box (2199-2455), pos 53%, no clear setup"
+    "current_position_pct": 53.9,
+    "notes": "WAIT_RANGE: in box (2199-2455), pos 54%, no clear setup"
   }
 }

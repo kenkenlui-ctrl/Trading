@@ -1,29 +1,44 @@
 {
-  "ticker": "6856.T",
-  "asof": "2026-10-05",
-  "close": 26345.0,
-  "chg_pct": 4.007106198183963,
+  "ticker": "JP.6856",
+  "ticker_user": "6856.T",
+  "name": "HORIBA LTD",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 25745.0,
-    "H": 26555.0,
-    "L": 25590.0,
-    "C": 26345.0,
-    "prev_close": 25330.0,
-    "chg_pct": 4.007106198183963
+    "date": "2026-10-06",
+    "O": 26135.0,
+    "H": 26545.0,
+    "L": 25930.0,
+    "C": 26495.0,
+    "prev_close": 26345.0,
+    "chg_pct": 0.57
   },
-  "name": "HORIBA, Ltd.",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 25330.0,
-    "in_box_pct": 98.1,
-    "nearest_support": "S1 KEY (24572.0)",
-    "nearest_resistance": "R1 today high (25415.0)"
+  "adx": 26.14,
+  "plus_di": 36.42,
+  "minus_di": 14.39,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 30100.0 (2026-06-19), trough 20980.0 (2026-09-14), box top 26555.0 (2026-10-05)",
+  "peak": {
+    "date": "2026-06-19",
+    "price": 30100.0
   },
+  "trough": {
+    "date": "2026-09-14",
+    "price": 20980.0
+  },
+  "box": {
+    "top": 26555.0,
+    "top_date": "2026-10-05",
+    "bottom": 20980.0,
+    "period": "2026-09-14 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 12.0,
+  "recovery_from_crash_pct": 26.3,
   "supports": [
     {
-      "level": 24572.0,
+      "level": 25700.0,
       "label": "S1 KEY",
       "touches": 0,
       "evidence": "structural level near current; 3.0% below current"
@@ -37,29 +52,98 @@
   ],
   "resistances": [
     {
-      "level": 25415.0,
+      "level": 26545.0,
       "label": "R1 today high",
-      "evidence": "today's high 25415.0"
+      "evidence": "today's high 26545.0"
+    }
+  ],
+  "position": {
+    "current": 26495.0,
+    "in_box_pct": 99.1,
+    "nearest_support": "S1 KEY (25700.0)",
+    "nearest_resistance": "R1 today high (26545.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 26135.0,
+    "H": 26545.0,
+    "L": 25930.0,
+    "C": 26495.0,
+    "body_pct": 58.5,
+    "upper_wick_pct": 8.1,
+    "lower_wick_pct": 33.3
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 25700.0 (KEY support)",
+      "then": "still range; watch 26545.0 for next test"
+    },
+    {
+      "if": "break 25700.0 on close",
+      "then": "target 20980.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 20980.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 26545.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 25415.0,
-    "target_price": 23197.5,
-    "stop_price": 26433.05,
-    "risk_pct": 4.01,
-    "reward_pct": 8.73,
-    "rr_ratio": 2.18,
-    "phase_match": true,
-    "r1": 25415.0,
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 26555.0,
     "s1": 20980.0,
-    "s2": 22710.0,
+    "s2": 22350.0,
     "r2": 28985.0,
     "r3": 30100.0,
-    "s3": 18450.0,
+    "s3": 19585.0,
     "s4": 15210.0,
-    "current_position_pct": 98.1,
-    "notes": "SELL_R1: in box (20980-25415), entry at R1 25415, target mid 23198, stop 26433 ｜ 52.2 條規則（SELL plan，resistance 25415.00）：① 跌到 25415.00、收市守住喺 25415.00 上面 → 照 BUY 條 plan 做（入場 25415.00，止蝕 26433.05，目標 23197.50）。② 收市跌穿 25415.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 25415.00 上面』。"
+    "current_position_pct": 98.9,
+    "notes": "WAIT_RANGE: in box (20980-26555), pos 99%, no clear setup"
   }
 }

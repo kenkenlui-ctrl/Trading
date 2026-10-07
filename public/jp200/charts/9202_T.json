@@ -1,29 +1,44 @@
 {
-  "ticker": "9202.T",
-  "asof": "2026-10-05",
-  "close": 2932.0,
-  "chg_pct": -0.3737682636765216,
+  "ticker": "JP.9202",
+  "ticker_user": "9202.T",
+  "name": "ANA HOLDINGS INC",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 2944.0,
-    "H": 2957.0,
-    "L": 2932.0,
-    "C": 2932.0,
-    "prev_close": 2943.0,
-    "chg_pct": -0.3737682636765216
+    "date": "2026-10-06",
+    "O": 2950.0,
+    "H": 2958.0,
+    "L": 2919.0,
+    "C": 2919.0,
+    "prev_close": 2932.0,
+    "chg_pct": -0.44
   },
-  "name": "ANA Holdings Inc.",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 2943.0,
-    "in_box_pct": 56.5,
-    "nearest_support": "S1 KEY (2856.0)",
-    "nearest_resistance": "R1 today high (2951.0)"
+  "adx": 20.23,
+  "plus_di": 13.32,
+  "minus_di": 24.58,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 3419.0 (2026-02-27), trough 2582.0 (2026-04-30), box top 3221.0 (2026-07-29)",
+  "peak": {
+    "date": "2026-02-27",
+    "price": 3419.0
   },
+  "trough": {
+    "date": "2026-04-30",
+    "price": 2582.0
+  },
+  "box": {
+    "top": 3221.0,
+    "top_date": "2026-07-29",
+    "bottom": 2582.0,
+    "period": "2026-04-30 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 14.6,
+  "recovery_from_crash_pct": 13.1,
   "supports": [
     {
-      "level": 2856.0,
+      "level": 2832.0,
       "label": "S1 KEY",
       "touches": 0,
       "evidence": "structural level near current; 3.0% below current"
@@ -37,14 +52,87 @@
   ],
   "resistances": [
     {
-      "level": 2951.0,
+      "level": 2958.0,
       "label": "R1 today high",
-      "evidence": "today's high 2951.0"
+      "evidence": "today's high 2958.0"
     },
     {
       "level": 3221.0,
       "label": "R3 Jul high",
       "evidence": "box top 3221.0, base period high"
+    }
+  ],
+  "position": {
+    "current": 2919.0,
+    "in_box_pct": 52.7,
+    "nearest_support": "S1 KEY (2832.0)",
+    "nearest_resistance": "R1 today high (2958.0)"
+  },
+  "kline_today": {
+    "type": "bearish_pullback",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 2950.0,
+    "H": 2958.0,
+    "L": 2919.0,
+    "C": 2919.0,
+    "body_pct": 79.5,
+    "upper_wick_pct": 20.5,
+    "lower_wick_pct": 0.0
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 2832.0 (KEY support)",
+      "then": "still range; watch 2958.0 for next test"
+    },
+    {
+      "if": "break 2832.0 on close",
+      "then": "target 2582.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 2582.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 2958.0 on close",
+      "then": "short-term bullish; next test 3221.0"
+    },
+    {
+      "if": "break 3221.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -58,13 +146,13 @@
     "rr_ratio": 0.0,
     "phase_match": false,
     "r1": 3050.0,
-    "s1": 2924.0,
+    "s1": 2919.0,
     "s2": 2883.0,
     "r2": 3221.0,
-    "r3": 3156.0,
+    "r3": 3200.0,
     "s3": 2582.0,
     "s4": 2804.0,
-    "current_position_pct": 15.1,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（BUY plan，support 2924.00）：① 跌到 2924.00、收市守住喺 2924.00 上面 → 照 BUY 條 plan 做（入場 2924.00，止蝕 2852.46，目標 2987.00）。② 收市跌穿 2924.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2924.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 0.0,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（BUY plan，support 2919.00）：① 跌到 2919.00、收市守住喺 2919.00 上面 → 照 BUY 條 plan 做（入場 2919.00，止蝕 2847.27，目標 2984.50）。② 收市跌穿 2919.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2919.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }

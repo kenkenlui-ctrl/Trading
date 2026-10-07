@@ -92,7 +92,8 @@ FAQ = [
         "唯一分別係等 S1 定喺開市價直接買，v2 每單收益喺四個窗口全部高過對照組 2.6 至 6.6 倍。"
         "但組合層面：美股冇超額 —— 將同一批 201 隻股票等權每月再平衡，2016–26 年化 +27.4%，"
         "v2 只有 +27.2%。即係話每單揀得准，但喺美股呢個優勢冇轉化成跑贏「唔做嘢」嘅回報。"
-        "日股就有 +6.9 個百分點/年，但未經 point-in-time 名單驗證，我哋唔會當佢係 alpha。"
+        "日股全期 +6.9 個百分點/年，但按市況拆開就唔成立：2016–20 落後純持有 7.9 點/年，"
+        "2021–26 先領先 16.7 點/年 —— 差額幾乎全部來自單一大市 regime，我哋唔當佢係 alpha。"
         "詳見方法論頁 §4.6 同 §4.7。",
     ),
     (
@@ -311,8 +312,9 @@ def build_body() -> str:
     <p style="margin: var(--sp-2) 0; font-size: var(--text-sm);">
       <b>美股：v2 落後純持有 0.2 個百分點/年。</b> 表面睇落跑贏大市 14 個百分點，
       但嗰 14 點全部來自「呢 201 隻係今日嘅大型股」呢個選擇 —— 佢平均跑贏大市 14.1 點/年。
-      <b>日股：v2 領先純持有 6.9 個百分點/年</b>，但最大回撤更深（−28.2% 對 −19.9%），
-      而且未用 point-in-time 名單驗證過。
+      <b>日股：全期領先純持有 6.9 個百分點/年</b>，但呢個數拆開就冇咗 ——
+      2016–20 係<b>落後 7.9 個百分點/年</b>，2021–26 先領先 16.7 點/年（見 §4.8）。
+      最大回撤亦更深（−28.2% 對 −19.9%）。
     </p>
     <p style="margin: 0; font-size: var(--text-sm);">
       即係話：<b>每單優勢係真嘅（見 §4.6），但喺美股，佢冇轉化成跑贏「攞住同一批股票」
@@ -326,6 +328,19 @@ def build_body() -> str:
     結論係舊版四個策略喺整個週期都冇正期望值。以下係逐項處理結果。
     呢一節我哋刻意保留，唔打算改。
   </p>
+  <div class="callout" style="margin: var(--sp-4) 0; padding: var(--sp-4); border-left: 4px solid var(--amber); background: var(--amber-dim); border-radius: 4px;">
+    <p style="margin:0 0 var(--sp-2); font-size: var(--text-sm)">
+      <b>2026-10-06 — 撤回一句聲稱。</b>
+      我哋之前喺首頁、方法論同 llms.txt 都寫過「日股 +6.9 個百分點/年」。
+      <b>呢個數唔企穩，我哋撤回佢。</b> 拆開市況之後：日股 2016–20 落後純持有
+      <b>7.9 點/年</b>，2021–26 先領先 16.7 點/年；美股兩個時段分別 −2.0 同 +1.0。
+      四格冇一格係穩定正數，所以 +6.9 只係「輸嘅五年」同「贏嘅五年」嘅平均，
+      唔係一個跨市況都成立嘅優勢。同時我哋用 Nikkei 官方成分股變更紀錄做咗
+      point-in-time 名單（<code>scripts/portfolio_pit.py</code>）：剔除 17 隻遲入選股票後
+      差額只由 +6.9 變 +6.0，證明遲入選唔係主因；但真正嘅偏差（已經唔存在嘅股票）
+      用公開名單重建唔到。詳見 §4.7、§4.8 同第三項未解決限制。
+    </p>
+  </div>
   <table class="data-table method-prose">
     <thead>
       <tr><th>原本做法</th><th>審計發現</th><th>而家做法</th></tr>
@@ -556,7 +571,7 @@ def build_body() -> str:
       <tr><td>v2 組合</td><td>+27.2%</td><td>−20.6%</td><td>+25.4%</td><td>−28.2%</td></tr>
       <tr><td>同一批股票等權每月再平衡</td><td><b>+27.4%</b></td><td>−21.4%</td><td>+18.5%</td><td>−19.9%</td></tr>
       <tr><td>大市指數 buy &amp; hold</td><td>+13.3%</td><td>−33.9%</td><td>+15.0%</td><td>−31.8%</td></tr>
-      <tr><td><b>v2 減「等權持有」</b></td><td><b>−0.2 pp/年</b></td><td>—</td><td><b>+6.9 pp/年</b></td><td>—</td></tr>
+      <tr><td><b>v2 減「等權持有」</b></td><td><b>−0.2 pp/年</b></td><td>—</td><td><b>+6.9 pp/年</b><br><span style="font-size:0.82em;opacity:0.75">但拆分市況後不成立（§4.8）</span></td><td>—</td></tr>
     </tbody>
   </table>
   <p>
@@ -565,8 +580,57 @@ def build_body() -> str:
     v2 做緊嘅嘢，同「攞住呢批股票」冇分別。
   </p>
   <p>
-    <b>日股答案係「有 +6.9 個百分點」，但代價更深回撤（−28.2% 對 −19.9%）。</b>
-    呢個差距夠大，值得繼續查，但未算已證實。
+    <b>日股答案係「全期 +6.9 個百分點」，但呢個數唔企穩。</b>
+    拆成兩個市況段之後，2016–20 落後純持有 7.9 點/年，2021–26 領先 16.7 點/年。
+    差額幾乎全部來自日股單一大牛市 —— 同一條規則喺另一個 regime 係負數。
+    所以呢 6.9 點唔當作 alpha，只當作「呢段時間呢個 regime 嘅結果」。
+  </p>
+
+  <h3>4.8 全期差額拆開睇：佢來自單一個市況</h3>
+  <p style="margin: 0 0 var(--sp-3); font-size: var(--text-sm)">
+    全期數字最容易被誤讀成「十年都有 +6.9」。但 2016–26 其實橫跨兩個完全相反嘅 regime，
+    而 v2 喺兩個時段嘅表現係<b>一正一負</b>。下表用同一套機械重跑（<code>scripts/portfolio_pit.py</code>），
+    只係將日曆切成兩段：
+  </p>
+  <table style="width:100%;border-collapse:collapse;margin:0 0 var(--sp-3);font-size: var(--text-sm)">
+    <thead>
+      <tr>
+        <th style="text-align:left;padding:var(--sp-2);border-bottom:1px solid var(--border)">期間</th>
+        <th style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">v2 年化</th>
+        <th style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">等權持有</th>
+        <th style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">v2 減持有</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="padding:var(--sp-2);border-bottom:1px solid var(--border)">日股 2016–2020</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">+8.1%</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">+16.0%</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border);color:var(--red)"><b>−7.9 pp/年</b></td></tr>
+      <tr><td style="padding:var(--sp-2);border-bottom:1px solid var(--border)">日股 2021–2026</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">+37.2%</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">+20.5%</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border);color:var(--green)"><b>+16.7 pp/年</b></td></tr>
+      <tr><td style="padding:var(--sp-2);border-bottom:1px solid var(--border)">美股 2016–2020</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">+26.5%</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">+28.5%</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border);color:var(--red)"><b>−2.0 pp/年</b></td></tr>
+      <tr><td style="padding:var(--sp-2);border-bottom:1px solid var(--border)">美股 2021–2026</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">+27.6%</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">+26.6%</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border);color:var(--amber)"><b>+1.0 pp/年</b></td></tr>
+    </tbody>
+  </table>
+  <p style="margin: 0 0 var(--sp-3); font-size: var(--text-sm)">
+    四格入面<b>冇一格係穩定嘅正數</b>。日股嗰 +6.9 全期數字，實際係「頭五年蝕 7.9、後五年賺 16.7」
+    嘅平均 —— 全部差額幾乎由 2021 年之後日股單一大牛市貢獻。
+    美股更加直接：兩個時段都係零附近，冇任何 regime 過剩。
+  </p>
+  <p style="margin: 0 0 var(--sp-3); font-size: var(--text-sm)">
+    呢個唔代表規則冇用 ——
+    <a href="/equity_curve_t_1.html">佢喺單一交易層面仍然有可重現嘅優勢</a>，
+    而 v2 嘅市況過濾本身亦確實減少咗熊市持倉（美股最大回撤 −20.6% vs 純持有 −21.4%）。
+    但「減少虧損」同「產生超額回報」係兩件事，我哋只證明咗前一半。
+    <b>實際意義：唔好預期呢條規則喺大市唔升嘅年份跑贏單純持有。</b>
   </p>
   <div class="callout" style="margin: var(--sp-4) 0; padding: var(--sp-4); border-left: 4px solid var(--red); background: var(--red-dim); border-radius: 4px;">
     <h3 style="margin-top: 0; font-size: var(--text-md);">三個未解決嘅限制</h3>
@@ -589,9 +653,14 @@ def build_body() -> str:
       <b>呢個過程記錄喺修正記錄一節，因為佢正正係點解絕對水平唔可以當真。</b>
     </p>
     <p style="margin: 0; font-size: var(--text-sm)">
-      <b>三、日股嗰 +6.9 個百分點未經 point-in-time 驗證。</b>
-      我哋冇 2016 年當時嘅日股 200 強名單，所以無法排除「呢個差距其實都係名單偏差」。
-      在搵到 point-in-time 名單之前，我哋唔會聲稱日股有 alpha。
+      <b>三、日股嗰 +6.9 個百分點拆開就冇咗，而且 point-in-time 偏差仍然未能量化。</b>
+      我哋用 Nikkei 官方 1970 年至今嘅成分股變更紀錄做咗 point-in-time 名單
+      （<code>scripts/portfolio_pit.py</code>）：剔除 17 隻 2016-09-01 之後先入選嘅股票，
+      差額只由 +6.9 變 +6.0 —— 即遲入選唔係主因。
+      但真正嘅偏差係<b>已經唔存在嘅股票</b>（2016 年係大盤、後來縮細／被剔除／除牌），
+      佢哋完全唔喺今日名單，所以兩邊都冇計到。而 Nikkei log 只覆蓋 Nikkei 225 成員，
+      同我哋嘅 TOPIX Core30 + Large70 只有 41/201 重疊，<b>重建唔到</b>。
+      再加上上面嘅市況拆分，我哋唔會聲稱日股有 alpha。
     </p>
   </div>
 
@@ -722,17 +791,21 @@ def main() -> None:
         PAGE.write_text(html, encoding="utf-8")
         print(f"rewrote {PAGE} ({len(orig):,} -> {len(html):,} bytes)")
 
-    # public/faq.html is a build orphan (faq was dropped from build_static's
-    # page list on 2026-08-29 and is not in hand_edited either), so it froze at
-    # the v1 FAQ text — "pick the best edge over 30/60/90/197-day backtests",
-    # the HIGH/MED/LOW reliability tiers, etc. Both /faq and /faq.html 301 to
-    # methodology.html, so visitors never reach it, but a crawler can still
-    # read the file and index a claim the correction record now retracts.
-    # Mirror methodology into it so no contradictory copy ships.
+    # 2026-10-06: delete public/faq.html rather than mirroring methodology into
+    # it. The file is a build orphan — build_static dropped it from its page
+    # list on 2026-08-29, so it is in neither the page list nor hand_edited, and
+    # /faq + /faq.html both 301 to methodology.html, so no visitor ever reaches
+    # it. It only existed so a crawler could read a second copy of the claims,
+    # which is the one artifact the correction log has just retracted.
+    #
+    # Mirroring was the previous answer and it was wrong: a synced duplicate is
+    # a second source of truth for the same claims, so every future retraction
+    # has to remember to update it. One page, no copy, no drift. The 301 in
+    # _redirects stays, so external links keep working.
     faq = PUB / "faq.html"
-    if faq.exists() and faq.read_text(encoding="utf-8") != html:
-        faq.write_text(html, encoding="utf-8")
-        print(f"synced {faq} from methodology (v1 FAQ text was contradictory)")
+    if faq.exists():
+        faq.unlink()
+        print(f"removed orphan {faq} (never served; /faq -> /methodology.html 301)")
 
 
 if __name__ == "__main__":

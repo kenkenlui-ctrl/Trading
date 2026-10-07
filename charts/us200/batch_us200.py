@@ -27,6 +27,10 @@ OUT_DIR = Path("/Users/kenken/dev/dsa-hk/charts/us200")
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 LOG_FILE = OUT_DIR / "progress.log"
 NEW_UNIVERSE_FILE = OUT_DIR / "us_top200_fresh.json"
+# 2026-10-06: the set the site actually publishes — today's top 200 plus every
+# name that has ever been published. Single source of truth for both the
+# fetch step and scripts/build_dashboard.py.
+PUBLISHED_FILE = OUT_DIR / "us_published.json"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -183,11 +187,38 @@ def main():
     )
     log.info(f"  universe saved → {NEW_UNIVERSE_FILE} ({len(top200_codes)} tickers)")
 
+    # 2026-10-06 — the published set is a UNION, not today's top 200.
+    #
+    # The universe rotates by 5-day turnover, so names fall out of it. But the
+    # site keeps publishing their pages forever, and nothing rebuilt them: 22
+    # US pages were frozen at bars as old as 2026-08-24 while still carrying the
+    # current T-1 badge and a sitemap entry. "In the sitemap" is not evidence of
+    # maintenance, and the published surface had quietly grown larger than the
+    # maintained one.
+    #
+    # So: once a name has been published it stays published, and every refresh
+    # fetches it. The cost is 22 extra fetches; the alternative is pages that
+    # lie about their data date.
+    prev_published: list[str] = []
+    if PUBLISHED_FILE.exists():
+        try:
+            prev_published = json.load(open(PUBLISHED_FILE))
+        except Exception:
+            prev_published = []
+    carried = [t for t in prev_published if t not in top200_codes]
+    codes = top200_codes + carried
+    PUBLISHED_FILE.write_text(json.dumps(codes, indent=2), encoding="utf-8")
+    if carried:
+        log.info(f"  +{len(carried)} carried-forward name(s) kept published: {', '.join(carried[:12])}"
+                 f"{' …' if len(carried) > 12 else ''}")
+    log.info(f"  published set → {PUBLISHED_FILE} ({len(codes)} tickers)")
+
     # Step 3: run analysis on each
-    log.info(f"STEP 2: run daily-sr-chart on {len(top200_codes)} tickers (yfinance source)")
+    log.info(f"STEP 2: run daily-sr-chart on {len(codes)} tickers (yfinance source)")
     summary_rows = []
-    total = len(top200_codes)
-    for i, (ticker, _) in enumerate(top200, 1):
+    total = len(codes)
+    for i, ticker in enumerate(codes, 1):
+        _tn = next((v for k, v in turnover_data if k == ticker), 0.0)
         snap = run_one(ticker)
         if snap:
             summary_rows.append({

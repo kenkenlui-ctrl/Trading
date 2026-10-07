@@ -22,7 +22,8 @@ import shutil
 from datetime import datetime, date, timedelta
 from pathlib import Path
 import sys
-from mobile_nav import mobile_bottom_nav, render_v2_block
+from functools import lru_cache
+from mobile_nav import mobile_bottom_nav, render_v2_block, render_v2_status_for_ticker
 
 
 def t_minus_1() -> date:
@@ -74,6 +75,7 @@ def edge_win_lower(edge: dict) -> float:
     return wilson_lower(round(edge.get("win_pct", 0) / 100 * n), n)
 
 
+@lru_cache(maxsize=8)
 def data_asof(market: str) -> str:
     """T-1 for a market, derived from that market's own bars.
 
@@ -84,6 +86,12 @@ def data_asof(market: str) -> str:
 
     Uses the modal (most common) last_bar date so a handful of suspended or
     data-starved tickers cannot drag the label off the real session.
+
+    Cached per process: the answer is a property of the snapshot JSONs, which
+    no builder rewrites. build_static restamp_t1_badges() asks for a label once
+    per published page (648 of them), and each miss re-parsed every JSON in
+    the market directory — half a million json.load calls for a value that
+    cannot change mid-build.
     """
     from collections import Counter
     src = {"HK": HK_OUT, "US": US_OUT, "JP": REPO / "data/jp200"}.get(market)
@@ -110,6 +118,7 @@ def data_asof(market: str) -> str:
     return c.most_common(1)[0][0]
 
 
+@lru_cache(maxsize=2048)
 def site_t1() -> str:
     """Site-wide T-1 for pages that are not market-specific.
 
@@ -126,6 +135,50 @@ def site_t1() -> str:
     """
     dates = [d for d in (data_asof(m) for m in ("HK", "US", "JP")) if d]
     return max(dates) if dates else t_minus_1().isoformat()
+
+
+@lru_cache(maxsize=2048)
+def site_label() -> str:
+    """Multi-market T-1 label for pages that serve more than one market.
+
+    2026-10-07: site_t1() returns the NEWEST of the three dates, which is only
+    correct for a page whose badge is a summary. It is NOT correct for a page
+    whose badge stands in for the data on that page — see page_label().
+    build_home already printed each market's own date ("2026-10-06 · US
+    2026-10-05"); this is that same format, moved here so there is one writer
+    for it. HK is the reference session and is printed bare; US and JP are
+    printed ONLY when they differ from it, so when all three close together —
+    most days — the label collapses back to a single date instead of repeating
+    it three times.
+    """
+    hk, us, jp = data_asof("HK"), data_asof("US"), data_asof("JP")
+    parts = [hk]
+    if us != hk:
+        parts.append(f"US {us}")
+    if jp != hk:
+        parts.append(f"JP {jp}")
+    return " · ".join(parts)
+
+
+@lru_cache(maxsize=2048)
+def page_label(rel_path: str) -> str:
+    """The T-1 label that is TRUE for one page under public/.
+
+    2026-10-07: build_static.restamp_t1_badges() wrote site_t1() into every
+    page's nav badge, so all 223 /us200/ pages read "T-1 · 2026-10-06" while
+    their own bars ended 2026-10-05 — the page claimed a session it does not
+    have. The inverse also happened: the homepage badge was collapsed from
+    "2026-10-06 · US 2026-10-05" to the single "2026-10-06", so the chrome
+    disagreed with the body right below it.
+
+    A market directory names the market, so its pages get that market's own
+    date. Everything else genuinely spans markets and gets the composite.
+    """
+    parts = rel_path.replace("\\", "/").split("/")
+    for frag, mkt in (("hk200", "HK"), ("us200", "US"), ("jp200", "JP")):
+        if frag in parts:
+            return data_asof(mkt)
+    return site_label()
 
 
 def snapshot_quote(tj: dict) -> dict:
@@ -182,10 +235,18 @@ def _cssver() -> str:
 
 HK_OUT = Path("/Users/kenken/dev/dsa-hk/charts/hk200")
 US_OUT = Path("/Users/kenken/dev/dsa-hk/charts/us200")
+JP_OUT = Path("/Users/kenken/dev/dsa-hk/charts/jp200")
 BACKTEST_OUT = Path("/Users/kenken/dev/dsa-hk/data/backtest_out")
 
 UNIVERSE_HK = REPO / "hk_universe_200.json"
 US_UNIVERSE = US_OUT / "us_top200_fresh.json"
+# 2026-10-06: build what the site PUBLISHES, not just today's turnover top 200.
+# us_published.json is the union (written by charts/us200/batch_us200.py) and is
+# the set every page on disk was built from. Reading the rotating top-200 here
+# is what left 22 live pages frozen on 2026-08-24 bars: they fell out of the
+# universe, so nothing rewrote them, while the sitemap and the nav badge kept
+# presenting them as current.
+US_PUBLISHED = US_OUT / "us_published.json"
 US_NAMES_PATH = REPO / "data" / "us_names.json"
 US_NAMES: dict[str, str] = (
     json.loads(US_NAMES_PATH.read_text(encoding="utf-8")) if US_NAMES_PATH.exists() else {}
@@ -516,7 +577,7 @@ def build_dashboard_page(
       <a href="/backtest.html">Backtest</a>
       <a href="/insights.html">Insights</a>
       <a href="/methodology.html">Methodology</a>
-      <a href="/faq.html">FAQ</a>
+      <a href="/track-record/">Track record</a>
       <a href="/disclaimer/">Disclaimer</a>
       <a href="/privacy.html">Privacy</a>
     '''
@@ -763,6 +824,49 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
     _mnav = {"HK": "hk", "US": "us", "JP": "jp"}.get(market, "")
     _t1 = data_asof(t.get("market", market))
 
+    # 2026-10-06 — fail-closed data-freshness banner.
+    #
+    # The nav badge is restamped across every page in public/**, including
+    # pages whose body was never rebuilt because their name had fallen out of
+    # the build universe. That produced live pages advertising the current T-1
+    # while their body held bars from six weeks earlier. A page must never
+    # claim a data date it does not have.
+    #
+    # Detected automatically from the ticker's own last_bar rather than from a
+    # hand-maintained "dead tickers" list, so it clears itself the moment the
+    # upstream source recovers — AVB and BRK-B both died because the data
+    # vendor changed, which is not something a list would predict.
+    _own_bar = ""
+    try:
+        _src = (HK_OUT if market == "HK" else (US_OUT if market == "US" else JP_OUT)) / f"{safe}.json"
+        _own_bar = (json.load(open(_src)).get("last_bar") or {}).get("date", "")
+    except Exception:
+        _own_bar = ""
+    stale_banner = ""
+    if _own_bar and _t1 and _own_bar < _t1:
+        _n = (__import__("datetime").date.fromisoformat(_t1)
+              - __import__("datetime").date.fromisoformat(_own_bar)).days
+        stale_banner = (
+            '<div class="container" style="margin:18px 0 0">'
+            '<div class="info-card" style="border-left:3px solid var(--amber)">'
+            '<h2 style="margin-top:0;font-size:1rem">數據未更新</h2>'
+            f'<p style="font-size:0.85rem;opacity:0.8;margin:6px 0 0">'
+            f'本頁嘅最後有效 bar 係 <b>{_own_bar}</b>，而 {market} 市場最新係 <b>{_t1}</b>'
+            f'（差 {_n} 個曆日）。上游數據源（Yahoo Finance）目前對呢隻代號攞唔到'
+            f'已成交價格，所以頁面不會重建 —— '
+            f'<b>以下所有價位、訊號同回測數字都係 {_own_bar} 或之前嘅資料</b>，'
+            f'唔可以當成現行數據使用。</p>'
+            # 2026-10-07: tell the reader how to tell this apart from a delisting.
+            # "上游死" and "隻股票冇交易" look identical on the page but need
+            # opposite responses, and the reader is the only one who can check
+            # their own broker. Without this the banner is a dead end.
+            f'<p style="font-size:0.8rem;opacity:0.7;margin:6px 0 0">'
+            f'呢個係<b>本網站上游數據源</b>嘅問題，唔等於隻股票冇報價。'
+            f'如果你喺券商 App 見到 {t.get("ticker", safe)} 有正常成交，即係代表我哋呢邊'
+            f'暫時攞唔到 —— 唔好因為呢一頁就當佢冇交易。</p>'
+            '</div></div>'
+        )
+
     phase_label_map = {
         "uptrend": ("Uptrend", "var(--bull)"),
         "base_building": ("Base building", "var(--amber)"),
@@ -885,6 +989,10 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
       唔等於今日 {verdict} 嘅預測成功率；今日決策以下方 Action Plan 為準。
     </p>''' if edge else '')
 
+    # 2026-10-06: the live v2 verdict for THIS ticker, so a detail page is not
+    # silently a v1 page. HK gets an explicit "not covered by v2" notice.
+    v2_status = render_v2_status_for_ticker(market, safe)
+
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant-HK">
 <head>
@@ -934,7 +1042,7 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
       <a href="/backtest.html">Backtest</a>
       <a href="/insights.html">Insights</a>
       <a href="/methodology.html">Methodology</a>
-      <a href="/faq.html">FAQ</a>
+      <a href="/track-record/">Track record</a>
       <a href="/disclaimer/">Disclaimer</a>
       <a href="/privacy.html">Privacy</a>
     </div>
@@ -995,6 +1103,8 @@ function toggleTheme(){{
 
 <div class="container">
   <main role="main">
+{stale_banner}
+{v2_status}
 <div class="detail-grid">
     <div>
       <div class="chart-frame fade-in">
@@ -1117,7 +1227,7 @@ function toggleTheme(){{
     <a href="{back_url}" class="btn btn-ghost">← Back to {market} Signals</a>
     <a href="/methodology" class="btn btn-ghost">Methodology</a>
     <a href="/backtest" class="btn btn-ghost">Backtest</a>
-    <a href="/faq" class="btn btn-ghost">FAQ</a>
+    <a href="/methodology.html" class="btn btn-ghost">Methodology</a>
     <a href="/compare/" class="btn btn-ghost">Compare</a>
     <a href="/hk200/" class="btn btn-ghost">HK</a>
     <a href="/us200/" class="btn btn-ghost">US</a>
@@ -1164,7 +1274,9 @@ def build_for_market(market: str):
         title_lede = "日股 200 (Topix Core30 + Large70) by 5-day 平均成交額排序。即日鮮信號 — 200 隻個股一表答晒：邊隻做 BUY/SELL/WAIT、trigger/target/stop 喺邊、win% 60d backtest 點。T-1 收市 data。已扣 0.05% round-trip 成本。"
     else:
         universe = []
-        if US_UNIVERSE.exists():
+        if US_PUBLISHED.exists():
+            universe = json.load(open(US_PUBLISHED))
+        elif US_UNIVERSE.exists():
             universe = json.load(open(US_UNIVERSE))
         elif (US_OUT / "us_top200.json").exists():
             universe = json.load(open(US_OUT / "us_top200.json"))

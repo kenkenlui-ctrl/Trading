@@ -3,20 +3,20 @@
   "ticker_user": "BLK",
   "name": "BlackRock, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
+  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-02",
-    "O": 1075.42,
-    "H": 1089.37,
-    "L": 1058.23,
-    "C": 1059.63,
-    "prev_close": 1064.36,
-    "chg_pct": -0.44
+    "date": "2026-10-06",
+    "O": 1079.01,
+    "H": 1086.45,
+    "L": 1069.42,
+    "C": 1079.42,
+    "prev_close": 1066.45,
+    "chg_pct": 1.22
   },
   "phase": "downtrend_active",
-  "adx": 22.46,
-  "plus_di": 20.23,
-  "minus_di": 22.56,
+  "adx": 21.02,
+  "plus_di": 20.7,
+  "minus_di": 24.03,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 1187.17 (2026-08-27), trough 1017.46 (2026-09-16), box top 1098.11 (2026-09-22)",
@@ -32,23 +32,35 @@
     "top": 1098.11,
     "top_date": "2026-09-22",
     "bottom": 1017.46,
-    "period": "2026-09-16 to 2026-10-02"
+    "period": "2026-09-16 to 2026-10-06"
   },
-  "drop_from_peak_pct": 10.7,
-  "recovery_from_crash_pct": 4.1,
+  "drop_from_peak_pct": 9.1,
+  "recovery_from_crash_pct": 6.1,
   "supports": [
     {
-      "level": 1028.0,
-      "label": "S1 bottom",
-      "touches": 0,
+      "level": 1056.0,
+      "label": "S1 KEY",
+      "touches": 5,
+      "evidence": "tested 5x in base period; 2.2% below current"
+    },
+    {
+      "level": 1052.0,
+      "label": "S2",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 1048.0,
+      "label": "S3 bottom",
+      "touches": 3,
       "evidence": "structural bottom, near crash low 1017.46"
     }
   ],
   "resistances": [
     {
-      "level": 1089.37,
+      "level": 1086.45,
       "label": "R1 today high",
-      "evidence": "today's high 1089.3699951171875"
+      "evidence": "today's high 1086.449951171875"
     },
     {
       "level": 1098.11,
@@ -57,28 +69,28 @@
     }
   ],
   "position": {
-    "current": 1059.63,
-    "in_box_pct": 45.1,
-    "nearest_support": "S1 bottom (1028.0)",
-    "nearest_resistance": "R1 today high (1089.37)"
+    "current": 1079.42,
+    "in_box_pct": 62.7,
+    "nearest_support": "S1 KEY (1056.0)",
+    "nearest_resistance": "R1 today high (1086.45)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 1075.42,
-    "H": 1089.37,
-    "L": 1058.23,
-    "C": 1059.63,
-    "body_pct": 50.7,
-    "upper_wick_pct": 44.8,
-    "lower_wick_pct": 4.5
+    "close_position": "upper_half",
+    "O": 1079.01,
+    "H": 1086.45,
+    "L": 1069.42,
+    "C": 1079.42,
+    "body_pct": 2.4,
+    "upper_wick_pct": 41.3,
+    "lower_wick_pct": 56.3
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (45% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -91,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 1028.0 (KEY support)",
-      "then": "still range; watch 1089.37 for next test"
+      "if": "hold 1056.0 (KEY support)",
+      "then": "still range; watch 1086.45 for next test"
     },
     {
-      "if": "break 1028.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 1056.0 on close",
+      "then": "target 1052.0 → 1048.0 (short-term bearish)"
     },
     {
-      "if": "break 1028.0 (crash low)",
+      "if": "break 1048.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1089.37 on close",
+      "if": "reclaim 1086.45 on close",
       "then": "short-term bullish; next test 1098.11"
     },
     {
@@ -131,7 +143,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -139,14 +151,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 1124.82,
+    "r1": 1098.11,
     "s1": 1017.46,
-    "s2": 1015.97,
+    "s2": 1023.05,
     "r2": 1187.17,
     "r3": 1111.09,
     "s3": 947.21,
     "s4": 917.39,
-    "current_position_pct": 39.3,
-    "notes": "WAIT_RANGE: in box (1017-1125), pos 39%, no clear setup"
+    "current_position_pct": 76.8,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 1098.11）：① 跌到 1098.11、收市守住喺 1098.11 上面 → 照 BUY 條 plan 做（入場 1098.11，止蝕 1133.76，目標 1057.79）。② 收市跌穿 1098.11 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1098.11 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }

@@ -1,39 +1,54 @@
 {
-  "ticker": "9432.T",
-  "asof": "2026-10-05",
-  "close": 170.0,
-  "chg_pct": 0.05886174638507491,
+  "ticker": "JP.9432",
+  "ticker_user": "9432.T",
+  "name": "NTT INC",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 169.8000030517578,
-    "H": 170.0,
-    "L": 167.1999969482422,
-    "C": 170.0,
-    "prev_close": 169.89999389648438,
-    "chg_pct": 0.05886174638507491
+    "date": "2026-10-06",
+    "O": 170.5,
+    "H": 171.8,
+    "L": 169.7,
+    "C": 170.1,
+    "prev_close": 170.0,
+    "chg_pct": 0.06
   },
-  "name": "NTT, Inc.",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 169.9,
-    "in_box_pct": 49.3,
-    "nearest_support": "S1 bottom (160.0)",
-    "nearest_resistance": "R1 today high (170.2)"
+  "adx": 27.28,
+  "plus_di": 20.75,
+  "minus_di": 24.02,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 180.1 (2026-09-18), trough 161.7 (2026-08-21), box top 180.1 (2026-09-18)",
+  "peak": {
+    "date": "2026-09-18",
+    "price": 180.1
   },
+  "trough": {
+    "date": "2026-08-21",
+    "price": 161.7
+  },
+  "box": {
+    "top": 180.1,
+    "top_date": "2026-09-18",
+    "bottom": 161.7,
+    "period": "2026-08-21 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 5.6,
+  "recovery_from_crash_pct": 5.2,
   "supports": [
     {
-      "level": 160.0,
+      "level": 164.0,
       "label": "S1 bottom",
-      "touches": 6,
-      "evidence": "structural bottom, near crash low 158.9"
+      "touches": 0,
+      "evidence": "structural bottom, near crash low 161.7"
     }
   ],
   "resistances": [
     {
-      "level": 170.2,
+      "level": 171.8,
       "label": "R1 today high",
-      "evidence": "today's high 170.1999969482422"
+      "evidence": "rejection at 171.8000030517578 (long upper wick, close weak)"
     },
     {
       "level": 175.0,
@@ -44,6 +59,79 @@
       "level": 180.1,
       "label": "R3 Sep high",
       "evidence": "box top 180.1, base period high"
+    }
+  ],
+  "position": {
+    "current": 170.1,
+    "in_box_pct": 37.9,
+    "nearest_support": "S1 bottom (164.0)",
+    "nearest_resistance": "R1 today high (171.8)"
+  },
+  "kline_today": {
+    "type": "bearish_rejection",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 170.5,
+    "H": 171.8,
+    "L": 169.7,
+    "C": 170.1,
+    "body_pct": 19.0,
+    "upper_wick_pct": 61.9,
+    "lower_wick_pct": 19.0
+  },
+  "bias": {
+    "short": {
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (38% of box)"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 164.0 (KEY support)",
+      "then": "still range; watch 171.8 for next test"
+    },
+    {
+      "if": "break 164.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 164.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 171.8 on close",
+      "then": "short-term bullish; next test 175.0"
+    },
+    {
+      "if": "break 180.1 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -57,13 +145,13 @@
     "rr_ratio": 0.0,
     "phase_match": false,
     "r1": 180.1,
-    "s1": 167.4,
-    "s2": 146.2,
-    "r2": 175.6,
-    "r3": 158.1,
+    "s1": 167.2,
+    "s2": 147.6,
+    "r2": 176.0,
+    "r3": 156.9,
     "s3": 142.6,
     "s4": 150.1,
-    "current_position_pct": 19.7,
-    "notes": "WAIT_RANGE: in box (167-180), pos 20%, no clear setup"
+    "current_position_pct": 22.5,
+    "notes": "WAIT_RANGE: in box (167-180), pos 22%, no clear setup"
   }
 }

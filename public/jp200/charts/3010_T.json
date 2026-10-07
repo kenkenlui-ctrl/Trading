@@ -1,31 +1,46 @@
 {
-  "ticker": "3010.T",
-  "asof": "2026-10-05",
-  "close": 189.0,
-  "chg_pct": 0.5319148936170137,
+  "ticker": "JP.3010",
+  "ticker_user": "3010.T",
+  "name": "POLARIS HOLDINGS CO LTD",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
+    "date": "2026-10-06",
     "O": 189.0,
-    "H": 190.0,
-    "L": 189.0,
-    "C": 189.0,
-    "prev_close": 188.0,
-    "chg_pct": 0.5319148936170137
+    "H": 191.0,
+    "L": 188.0,
+    "C": 190.0,
+    "prev_close": 189.0,
+    "chg_pct": 0.53
   },
-  "name": "Polaris Holdings Co., Ltd.",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 188.0,
-    "in_box_pct": 14.3,
-    "nearest_support": "S1 bottom (184.0)",
-    "nearest_resistance": "R1 today high (191.0)"
+  "adx": 21.48,
+  "plus_di": 8.32,
+  "minus_di": 18.49,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 212.0 (2026-06-25), trough 186.0 (2026-06-25), box top 212.0 (2026-06-25)",
+  "peak": {
+    "date": "2026-06-25",
+    "price": 212.0
   },
+  "trough": {
+    "date": "2026-06-25",
+    "price": 186.0
+  },
+  "box": {
+    "top": 212.0,
+    "top_date": "2026-06-25",
+    "bottom": 186.0,
+    "period": "2026-06-25 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 10.4,
+  "recovery_from_crash_pct": 2.2,
   "supports": [
     {
       "level": 184.0,
       "label": "S1 bottom",
-      "touches": 0,
+      "touches": 3,
       "evidence": "structural bottom, near crash low 186.0"
     }
   ],
@@ -46,9 +61,82 @@
       "evidence": "box top 212.0, base period high"
     }
   ],
+  "position": {
+    "current": 190.0,
+    "in_box_pct": 21.4,
+    "nearest_support": "S1 bottom (184.0)",
+    "nearest_resistance": "R1 today high (191.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 189.0,
+    "H": 191.0,
+    "L": 188.0,
+    "C": 190.0,
+    "body_pct": 33.3,
+    "upper_wick_pct": 33.3,
+    "lower_wick_pct": 33.3
+  },
+  "bias": {
+    "short": {
+      "bias": "defensive",
+      "reason": "near box bottom (21% of box)"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 184.0 (KEY support)",
+      "then": "still range; watch 191.0 for next test"
+    },
+    {
+      "if": "break 184.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 184.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 191.0 on close",
+      "then": "short-term bullish; next test 200.0"
+    },
+    {
+      "if": "break 212.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -59,11 +147,11 @@
     "r1": 192.0,
     "s1": 186.0,
     "s2": 188.0,
-    "r2": 202.0,
+    "r2": 201.0,
     "r3": 212.0,
     "s3": 161.0,
     "s4": 170.0,
-    "current_position_pct": 33.3,
-    "notes": "WAIT_RANGE: in box (186-192), pos 33%, no clear setup"
+    "current_position_pct": 66.7,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 192.00）：① 跌到 192.00、收市守住喺 192.00 上面 → 照 BUY 條 plan 做（入場 192.00，止蝕 195.84，目標 189.00）。② 收市跌穿 192.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 192.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }

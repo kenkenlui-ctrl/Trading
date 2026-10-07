@@ -1,26 +1,41 @@
 {
-  "ticker": "6841.T",
-  "asof": "2026-10-05",
-  "close": 4733.0,
-  "chg_pct": 0.5523688124070558,
+  "ticker": "JP.6841",
+  "ticker_user": "6841.T",
+  "name": "YOKOGAWA ELECTRIC CORP",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 4690.0,
-    "H": 4792.0,
-    "L": 4688.0,
-    "C": 4733.0,
-    "prev_close": 4707.0,
-    "chg_pct": 0.5523688124070558
+    "date": "2026-10-06",
+    "O": 4745.0,
+    "H": 4772.0,
+    "L": 4664.0,
+    "C": 4743.0,
+    "prev_close": 4733.0,
+    "chg_pct": 0.21
   },
-  "name": "Yokogawa Electric Corporation",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 4707.0,
-    "in_box_pct": 70.0,
-    "nearest_support": "S1 bottom (4532.0)",
-    "nearest_resistance": "R1 today high (4716.0)"
+  "adx": 24.09,
+  "plus_di": 19.76,
+  "minus_di": 23.11,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 6317.0 (2026-02-27), trough 4477.0 (2026-09-11), box top 4792.0 (2026-10-05)",
+  "peak": {
+    "date": "2026-02-27",
+    "price": 6317.0
   },
+  "trough": {
+    "date": "2026-09-11",
+    "price": 4477.0
+  },
+  "box": {
+    "top": 4792.0,
+    "top_date": "2026-10-05",
+    "bottom": 4477.0,
+    "period": "2026-09-11 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 24.9,
+  "recovery_from_crash_pct": 5.9,
   "supports": [
     {
       "level": 4532.0,
@@ -31,19 +46,83 @@
   ],
   "resistances": [
     {
-      "level": 4716.0,
+      "level": 4772.0,
       "label": "R1 today high",
-      "evidence": "today's high 4716.0"
+      "evidence": "today's high 4772.0"
+    }
+  ],
+  "position": {
+    "current": 4743.0,
+    "in_box_pct": 87.9,
+    "nearest_support": "S1 bottom (4532.0)",
+    "nearest_resistance": "R1 today high (4772.0)"
+  },
+  "kline_today": {
+    "type": "bearish_rejection",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 4745.0,
+    "H": 4772.0,
+    "L": 4664.0,
+    "C": 4743.0,
+    "body_pct": 1.9,
+    "upper_wick_pct": 25.0,
+    "lower_wick_pct": 73.1
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 4532.0 (KEY support)",
+      "then": "still range; watch 4772.0 for next test"
     },
     {
-      "level": 4782.0,
-      "label": "R3 Sep high",
-      "evidence": "box top 4782.0, base period high"
+      "if": "break 4532.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 4532.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 4772.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -51,14 +130,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 5041.0,
+    "r1": 4807.0,
     "s1": 4477.0,
-    "s2": 4941.0,
+    "s2": 4672.0,
     "r2": 6022.0,
-    "r3": 5876.0,
+    "r3": 5934.0,
     "s3": 4584.0,
     "s4": 4585.0,
-    "current_position_pct": 40.8,
-    "notes": "WAIT_RANGE: in box (4477-5041), pos 41%, no clear setup"
+    "current_position_pct": 80.6,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 4807.00）：① 跌到 4807.00、收市守住喺 4807.00 上面 → 照 BUY 條 plan 做（入場 4807.00，止蝕 4946.97，目標 4642.00）。② 收市跌穿 4807.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 4807.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }

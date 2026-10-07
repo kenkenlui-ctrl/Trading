@@ -1,32 +1,47 @@
 {
-  "ticker": "6594.T",
-  "asof": "2026-10-05",
-  "close": 2180.0,
-  "chg_pct": 2.9759093056211716,
+  "ticker": "JP.6594",
+  "ticker_user": "6594.T",
+  "name": "NIDEC CORPORATION",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 2166.0,
-    "H": 2229.0,
-    "L": 2096.0,
-    "C": 2180.0,
-    "prev_close": 2117.0,
-    "chg_pct": 2.9759093056211716
+    "date": "2026-10-06",
+    "O": 2186.0,
+    "H": 2214.0,
+    "L": 2161.0,
+    "C": 2165.0,
+    "prev_close": 2180.0,
+    "chg_pct": -0.69
   },
-  "name": "Nidec Corporation",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 2117.0,
-    "in_box_pct": 21.7,
-    "nearest_support": "S1 KEY (2052.0)",
-    "nearest_resistance": "R1 today high (2183.0)"
+  "adx": 24.05,
+  "plus_di": 19.43,
+  "minus_di": 41.09,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 2922.0 (2026-06-01), trough 1888.0 (2026-10-01), box top 2941.0 (2026-09-24)",
+  "peak": {
+    "date": "2026-06-01",
+    "price": 2922.0
   },
+  "trough": {
+    "date": "2026-10-01",
+    "price": 1888.0
+  },
+  "box": {
+    "top": 2941.0,
+    "top_date": "2026-09-24",
+    "bottom": 1888.0,
+    "period": "2026-10-01 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 25.9,
+  "recovery_from_crash_pct": 14.7,
   "supports": [
     {
-      "level": 2052.0,
+      "level": 2100.0,
       "label": "S1 KEY",
       "touches": 0,
-      "evidence": "structural level near current; 3.1% below current"
+      "evidence": "structural level near current; 3.0% below current"
     },
     {
       "level": 1888.0,
@@ -37,14 +52,87 @@
   ],
   "resistances": [
     {
-      "level": 2183.0,
+      "level": 2214.0,
       "label": "R1 today high",
-      "evidence": "today's high 2183.0"
+      "evidence": "rejection at 2214.0 (long upper wick, close weak)"
     },
     {
       "level": 2941.0,
       "label": "R3 Sep high",
       "evidence": "box top 2941.0, base period high"
+    }
+  ],
+  "position": {
+    "current": 2165.0,
+    "in_box_pct": 26.3,
+    "nearest_support": "S1 KEY (2100.0)",
+    "nearest_resistance": "R1 today high (2214.0)"
+  },
+  "kline_today": {
+    "type": "bearish_pullback",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 2186.0,
+    "H": 2214.0,
+    "L": 2161.0,
+    "C": 2165.0,
+    "body_pct": 39.6,
+    "upper_wick_pct": 52.8,
+    "lower_wick_pct": 7.5
+  },
+  "bias": {
+    "short": {
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (26% of box)"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 2100.0 (KEY support)",
+      "then": "still range; watch 2214.0 for next test"
+    },
+    {
+      "if": "break 2100.0 on close",
+      "then": "target 1888.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 1888.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 2214.0 on close",
+      "then": "short-term bullish; next test 2941.0"
+    },
+    {
+      "if": "break 2941.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -62,9 +150,9 @@
     "s2": 2406.0,
     "r2": 2847.0,
     "r3": 2922.0,
-    "s3": 2120.0,
+    "s3": 2177.0,
     "s4": 1929.0,
-    "current_position_pct": 21.7,
-    "notes": "WAIT_RANGE: in box (1888-2941), pos 22%, no clear setup"
+    "current_position_pct": 26.3,
+    "notes": "WAIT_RANGE: in box (1888-2941), pos 26%, no clear setup"
   }
 }

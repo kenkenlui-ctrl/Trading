@@ -1,44 +1,135 @@
 {
-  "ticker": "7167.T",
-  "asof": "2026-10-05",
-  "close": 1680.5,
-  "chg_pct": 1.2349397590361466,
+  "ticker": "JP.7167",
+  "ticker_user": "7167.T",
+  "name": "MEBUKI FINANCIAL GROUP INC",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 1677.0,
-    "H": 1686.5,
-    "L": 1652.5,
-    "C": 1680.5,
-    "prev_close": 1660.0,
-    "chg_pct": 1.2349397590361466
+    "date": "2026-10-06",
+    "O": 1690.0,
+    "H": 1737.0,
+    "L": 1687.5,
+    "C": 1732.0,
+    "prev_close": 1680.5,
+    "chg_pct": 3.06
   },
-  "name": "Mebuki Financial Group,Inc.",
-  "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 1660.0,
-    "in_box_pct": 34.9,
-    "nearest_support": "S1 bottom (1616.0)",
-    "nearest_resistance": "R1 today high (1697.0)"
+  "phase": "uptrend",
+  "adx": 12.67,
+  "plus_di": 26.91,
+  "minus_di": 19.0,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 1742.0 (2026-09-28), trough 1606.5 (2026-08-21), box top 1742.0 (2026-09-28)",
+  "peak": {
+    "date": "2026-09-28",
+    "price": 1742.0
   },
+  "trough": {
+    "date": "2026-08-21",
+    "price": 1606.5
+  },
+  "box": {
+    "top": 1742.0,
+    "top_date": "2026-09-28",
+    "bottom": 1606.5,
+    "period": "2026-08-21 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 0.6,
+  "recovery_from_crash_pct": 7.8,
   "supports": [
     {
-      "level": 1616.0,
-      "label": "S1 bottom",
-      "touches": 3,
-      "evidence": "structural bottom, near crash low 1601.5"
+      "level": 1680.0,
+      "label": "S1 KEY",
+      "touches": 6,
+      "evidence": "tested 6x in base period; 3.0% below current"
+    },
+    {
+      "level": 1676.0,
+      "label": "S2",
+      "touches": 6,
+      "evidence": "mid-base support, tested 6x"
+    },
+    {
+      "level": 1672.0,
+      "label": "S3 bottom",
+      "touches": 6,
+      "evidence": "structural bottom, near crash low 1606.5"
     }
   ],
   "resistances": [
     {
-      "level": 1697.0,
+      "level": 1737.0,
       "label": "R1 today high",
-      "evidence": "today's high 1697.0"
+      "evidence": "today's high 1737.0"
+    }
+  ],
+  "position": {
+    "current": 1732.0,
+    "in_box_pct": 92.3,
+    "nearest_support": "S1 KEY (1680.0)",
+    "nearest_resistance": "R1 today high (1737.0)"
+  },
+  "kline_today": {
+    "type": "bullish_reclaim",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 1690.0,
+    "H": 1737.0,
+    "L": 1687.5,
+    "C": 1732.0,
+    "body_pct": 84.8,
+    "upper_wick_pct": 10.1,
+    "lower_wick_pct": 5.1
+  },
+  "bias": {
+    "short": {
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
+    },
+    "mid": {
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 1680.0 (KEY support)",
+      "then": "still range; watch 1737.0 for next test"
     },
     {
-      "level": 1742.0,
-      "label": "R3 Sep high",
-      "evidence": "box top 1742.0, base period high"
+      "if": "break 1680.0 on close",
+      "then": "target 1676.0 → 1672.0 (short-term bearish)"
+    },
+    {
+      "if": "break 1672.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 1737.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -54,11 +145,11 @@
     "r1": 1742.0,
     "s1": 1614.0,
     "s2": 1408.0,
-    "r2": 1720.0,
-    "r3": 1512.5,
+    "r2": 1726.5,
+    "r3": 1572.0,
     "s3": 1192.0,
     "s4": 1017.0,
-    "current_position_pct": 35.9,
-    "notes": "WAIT_RANGE: in box (1614-1742), pos 36%, no clear setup"
+    "current_position_pct": 92.2,
+    "notes": "WAIT_RANGE: in box (1614-1742), pos 92%, no clear setup"
   }
 }

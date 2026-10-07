@@ -1,41 +1,56 @@
 {
-  "ticker": "3023.T",
-  "asof": "2026-10-05",
-  "close": 2081.0,
-  "chg_pct": -0.28749401054144474,
+  "ticker": "JP.3023",
+  "ticker_user": "3023.T",
+  "name": "RASA CORPORATION",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 2085.0,
-    "H": 2095.0,
-    "L": 2065.0,
-    "C": 2081.0,
-    "prev_close": 2087.0,
-    "chg_pct": -0.28749401054144474
+    "date": "2026-10-06",
+    "O": 2081.0,
+    "H": 2119.0,
+    "L": 2081.0,
+    "C": 2102.0,
+    "prev_close": 2081.0,
+    "chg_pct": 1.01
   },
-  "name": "Rasa Corporation",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 2087.0,
-    "in_box_pct": 87.7,
-    "nearest_support": "S1 KEY (2040.0)",
-    "nearest_resistance": "R1 today high (2111.0)"
+  "adx": 13.32,
+  "plus_di": 30.7,
+  "minus_di": 21.6,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 2502.0 (2026-01-20), trough 1675.0 (2026-06-02), box top 2145.0 (2026-08-26)",
+  "peak": {
+    "date": "2026-01-20",
+    "price": 2502.0
   },
+  "trough": {
+    "date": "2026-06-02",
+    "price": 1675.0
+  },
+  "box": {
+    "top": 2145.0,
+    "top_date": "2026-08-26",
+    "bottom": 1675.0,
+    "period": "2026-06-02 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 16.0,
+  "recovery_from_crash_pct": 25.5,
   "supports": [
     {
-      "level": 2040.0,
+      "level": 2052.0,
       "label": "S1 KEY",
-      "touches": 3,
-      "evidence": "tested 3x in base period; 2.3% below current"
+      "touches": 4,
+      "evidence": "tested 4x in base period; 2.4% below current"
     },
     {
-      "level": 2024.0,
+      "level": 2048.0,
       "label": "S2",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
     },
     {
-      "level": 2008.0,
+      "level": 2024.0,
       "label": "S3",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
@@ -49,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 2111.0,
+      "level": 2119.0,
       "label": "R1 today high",
-      "evidence": "rejection at 2111.0 (long upper wick, close weak)"
+      "evidence": "today's high 2119.0"
     },
     {
       "level": 2145.0,
@@ -59,15 +74,88 @@
       "evidence": "box top 2145.0, base period high"
     }
   ],
+  "position": {
+    "current": 2102.0,
+    "in_box_pct": 90.9,
+    "nearest_support": "S1 KEY (2052.0)",
+    "nearest_resistance": "R1 today high (2119.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 2081.0,
+    "H": 2119.0,
+    "L": 2081.0,
+    "C": 2102.0,
+    "body_pct": 55.3,
+    "upper_wick_pct": 44.7,
+    "lower_wick_pct": 0.0
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 2052.0 (KEY support)",
+      "then": "still range; watch 2119.0 for next test"
+    },
+    {
+      "if": "break 2052.0 on close",
+      "then": "target 2048.0 → 2024.0 (short-term bearish)"
+    },
+    {
+      "if": "break 1675.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 2119.0 on close",
+      "then": "short-term bullish; next test 2145.0"
+    },
+    {
+      "if": "break 2145.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
     "trigger_price": 2121.0,
     "target_price": 2048.5,
-    "stop_price": 2173.27,
-    "risk_pct": 2.46,
+    "stop_price": 2174.08,
+    "risk_pct": 2.5,
     "reward_pct": 3.42,
-    "rr_ratio": 1.39,
+    "rr_ratio": 1.37,
     "phase_match": true,
     "r1": 2121.0,
     "s1": 1976.0,
@@ -75,8 +163,8 @@
     "r2": 2145.0,
     "r3": 2015.0,
     "s3": 1675.0,
-    "s4": 1726.0,
-    "current_position_pct": 76.6,
-    "notes": "SELL_R1: in box (1976-2121), entry at R1 2121, target mid 2048, stop 2173 ｜ 52.2 條規則（SELL plan，resistance 2121.00）：① 跌到 2121.00、收市守住喺 2121.00 上面 → 照 BUY 條 plan 做（入場 2121.00，止蝕 2173.27，目標 2048.50）。② 收市跌穿 2121.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2121.00 上面』。"
+    "s4": 1743.0,
+    "current_position_pct": 86.9,
+    "notes": "SELL_R1: in box (1976-2121), entry at R1 2121, target mid 2048, stop 2174 ｜ 52.2 條規則（SELL plan，resistance 2121.00）：① 跌到 2121.00、收市守住喺 2121.00 上面 → 照 BUY 條 plan 做（入場 2121.00，止蝕 2174.08，目標 2048.50）。② 收市跌穿 2121.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2121.00 上面』。"
   }
 }

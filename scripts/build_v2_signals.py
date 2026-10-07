@@ -102,7 +102,26 @@ MARKETS = {
     "hk200": {"index": "2800.HK", "fallback": ["^HSI", "2800.HK"],
               "tz": "Asia/Hong_Kong", "close": (16, 40)},
 }
-INCLUDE_HK = False  # study found HK is ~0 edge after 0.45% round-trip
+# 2026-10-07 — this was an unsourced remembered number. Now measured.
+#
+# The old comment read "study found HK is ~0 edge after 0.45% round-trip", but
+# no HK 10-year bar store existed on this project (refetch_10y_clean.py skips
+# HK; data/bt10y2/ had zero HK files), so it had never been measured here. The
+# 0.45% was also the wrong figure for this audience: core.FEES["hk200"] is
+# 0.0025 = 0.25%, which is what the site publishes and what a commission-free
+# HK$100k Futu trade actually costs. 0.45% is the *realistic* scenario.
+#
+# scripts/hk_edge_test.py now runs the same machinery as portfolio_test.py over
+# 181 HK names (data/bt10y2_hk/, glitch-masked), against an equal-weight hold of
+# the SAME names. v2 minus that hold, per year:
+#
+#     zero cost (ceiling)     -1.4 pp     2016-20  -9.9
+#     site 0.25%              -4.6 pp     2016-20 -12.0
+#     realistic ~0.45%        -7.1 pp     2016-20 -14.2
+#
+# Cost is not the reason: at ZERO cost it still loses, and the good half
+# (2021-26) is +0.1pp, i.e. dead even. The rule does not work in HK.
+INCLUDE_HK = False  # measured 2026-10-07: -4.6pp/yr at the 0.25% cost this site assumes
 
 
 def bars_from_public(market: str) -> dict[str, pd.DataFrame]:

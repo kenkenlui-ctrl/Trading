@@ -1,44 +1,144 @@
 {
-  "ticker": "8766.T",
-  "asof": "2026-10-05",
-  "close": 509.5,
-  "chg_pct": 0.4138758629831596,
+  "ticker": "JP.8766",
+  "ticker_user": "8766.T",
+  "name": "TOKIO MARINE HOLDINGS INC",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 501.0,
-    "H": 512.5,
-    "L": 501.0,
-    "C": 509.5,
-    "prev_close": 507.3999938964844,
-    "chg_pct": 0.4138758629831596
+    "date": "2026-10-06",
+    "O": 510.0,
+    "H": 526.2,
+    "L": 510.0,
+    "C": 522.3,
+    "prev_close": 509.5,
+    "chg_pct": 2.51
   },
-  "name": "Tokio Marine Holdings, Inc.",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 507.4,
-    "in_box_pct": 35.4,
-    "nearest_support": "S1 bottom (480.0)",
-    "nearest_resistance": "R1 today high (518.9)"
+  "adx": 18.51,
+  "plus_di": 26.2,
+  "minus_di": 24.91,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 564.53 (2026-07-29), trough 479.07 (2026-08-20), box top 557.47 (2026-09-18)",
+  "peak": {
+    "date": "2026-07-29",
+    "price": 564.53
   },
+  "trough": {
+    "date": "2026-08-20",
+    "price": 479.07
+  },
+  "box": {
+    "top": 557.47,
+    "top_date": "2026-09-18",
+    "bottom": 479.07,
+    "period": "2026-08-20 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 7.5,
+  "recovery_from_crash_pct": 9.0,
   "supports": [
     {
+      "level": 512.0,
+      "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; 2.0% below current"
+    },
+    {
+      "level": 504.0,
+      "label": "S2",
+      "touches": 8,
+      "evidence": "mid-base support, tested 8x"
+    },
+    {
       "level": 480.0,
-      "label": "S1 bottom",
-      "touches": 5,
+      "label": "S3 bottom",
+      "touches": 3,
       "evidence": "structural bottom, near crash low 479.07"
     }
   ],
   "resistances": [
     {
-      "level": 518.9,
+      "level": 526.2,
       "label": "R1 today high",
-      "evidence": "today's high 518.9000244140625"
+      "evidence": "today's high 526.2000122070312"
     },
     {
       "level": 557.47,
       "label": "R3 Sep high",
       "evidence": "box top 557.47, base period high"
+    }
+  ],
+  "position": {
+    "current": 522.3,
+    "in_box_pct": 54.6,
+    "nearest_support": "S1 KEY (512.0)",
+    "nearest_resistance": "R1 today high (526.2)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 510.0,
+    "H": 526.2,
+    "L": 510.0,
+    "C": 522.3,
+    "body_pct": 75.9,
+    "upper_wick_pct": 24.1,
+    "lower_wick_pct": 0.0
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 512.0 (KEY support)",
+      "then": "still range; watch 526.2 for next test"
+    },
+    {
+      "if": "break 512.0 on close",
+      "then": "target 504.0 → 480.0 (short-term bearish)"
+    },
+    {
+      "if": "break 480.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 526.2 on close",
+      "then": "short-term bullish; next test 557.47"
+    },
+    {
+      "if": "break 557.47 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -52,13 +152,13 @@
     "rr_ratio": 0.0,
     "phase_match": false,
     "r1": 557.47,
-    "s1": 504.3,
+    "s1": 501.0,
     "s2": 479.07,
     "r2": 564.53,
     "r3": 535.87,
     "s3": 453.2,
-    "s4": 364.2,
-    "current_position_pct": 5.8,
-    "notes": "WAIT_RANGE: in box (504-557), pos 6%, no clear setup"
+    "s4": 367.67,
+    "current_position_pct": 37.7,
+    "notes": "WAIT_RANGE: in box (501-557), pos 38%, no clear setup"
   }
 }

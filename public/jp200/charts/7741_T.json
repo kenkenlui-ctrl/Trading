@@ -1,29 +1,44 @@
 {
-  "ticker": "7741.T",
-  "asof": "2026-10-05",
-  "close": 24500.0,
-  "chg_pct": 1.3234077750206685,
+  "ticker": "JP.7741",
+  "ticker_user": "7741.T",
+  "name": "HOYA CORP",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 24580.0,
-    "H": 24780.0,
-    "L": 24230.0,
-    "C": 24500.0,
-    "prev_close": 24180.0,
-    "chg_pct": 1.3234077750206685
+    "date": "2026-10-06",
+    "O": 24855.0,
+    "H": 25400.0,
+    "L": 24630.0,
+    "C": 25300.0,
+    "prev_close": 24500.0,
+    "chg_pct": 3.27
   },
-  "name": "HOYA Corporation",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 24180.0,
-    "in_box_pct": 90.6,
-    "nearest_support": "S1 KEY (23456.0)",
-    "nearest_resistance": "R3 Oct high (24390.0)"
+  "adx": 18.62,
+  "plus_di": 36.5,
+  "minus_di": 18.47,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 30400.0 (2026-04-15), trough 22165.0 (2026-09-16), box top 25400.0 (2026-10-06)",
+  "peak": {
+    "date": "2026-04-15",
+    "price": 30400.0
   },
+  "trough": {
+    "date": "2026-09-16",
+    "price": 22165.0
+  },
+  "box": {
+    "top": 25400.0,
+    "top_date": "2026-10-06",
+    "bottom": 22165.0,
+    "period": "2026-09-16 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 16.8,
+  "recovery_from_crash_pct": 14.1,
   "supports": [
     {
-      "level": 23456.0,
+      "level": 24540.0,
       "label": "S1 KEY",
       "touches": 0,
       "evidence": "structural level near current; 3.0% below current"
@@ -37,34 +52,98 @@
   ],
   "resistances": [
     {
-      "level": 24180.0,
+      "level": 25400.0,
       "label": "R1 today high",
-      "evidence": "today's high 24180.0"
+      "evidence": "today's high 25400.0"
+    }
+  ],
+  "position": {
+    "current": 25300.0,
+    "in_box_pct": 96.9,
+    "nearest_support": "S1 KEY (24540.0)",
+    "nearest_resistance": "R1 today high (25400.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 24855.0,
+    "H": 25400.0,
+    "L": 24630.0,
+    "C": 25300.0,
+    "body_pct": 57.8,
+    "upper_wick_pct": 13.0,
+    "lower_wick_pct": 29.2
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 24540.0 (KEY support)",
+      "then": "still range; watch 25400.0 for next test"
     },
     {
-      "level": 24390.0,
-      "label": "R3 Oct high",
-      "evidence": "box top 24390.0, base period high"
+      "if": "break 24540.0 on close",
+      "then": "target 22165.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 22165.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 25400.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
-    "trigger_price": 24880.0,
-    "target_price": 23522.5,
-    "stop_price": 25764.16,
+    "trigger_price": 25400.0,
+    "target_price": 23782.5,
+    "stop_price": 26301.41,
     "risk_pct": 3.55,
-    "reward_pct": 5.46,
-    "rr_ratio": 1.54,
+    "reward_pct": 6.37,
+    "rr_ratio": 1.79,
     "phase_match": true,
-    "r1": 24880.0,
+    "r1": 25400.0,
     "s1": 22165.0,
     "s2": 23340.0,
     "r2": 26925.0,
     "r3": 30400.0,
     "s3": 25020.0,
     "s4": 23320.0,
-    "current_position_pct": 74.2,
-    "notes": "SELL_R1: in box (22165-24880), entry at R1 24880, target mid 23522, stop 25764 ｜ 52.2 條規則（SELL plan，resistance 24880.00）：① 跌到 24880.00、收市守住喺 24880.00 上面 → 照 BUY 條 plan 做（入場 24880.00，止蝕 25764.16，目標 23522.50）。② 收市跌穿 24880.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 24880.00 上面』。"
+    "current_position_pct": 96.9,
+    "notes": "SELL_R1: in box (22165-25400), entry at R1 25400, target mid 23782, stop 26301 ｜ 52.2 條規則（SELL plan，resistance 25400.00）：① 跌到 25400.00、收市守住喺 25400.00 上面 → 照 BUY 條 plan 做（入場 25400.00，止蝕 26301.41，目標 23782.50）。② 收市跌穿 25400.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 25400.00 上面』。"
   }
 }

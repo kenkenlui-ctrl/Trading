@@ -1,29 +1,44 @@
 {
-  "ticker": "3003.T",
-  "asof": "2026-10-05",
-  "close": 1678.5,
-  "chg_pct": -0.32660332541567527,
+  "ticker": "JP.3003",
+  "ticker_user": "3003.T",
+  "name": "HULIC CO LTD",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 1683.5,
-    "H": 1686.5,
-    "L": 1671.0,
-    "C": 1678.5,
-    "prev_close": 1684.0,
-    "chg_pct": -0.32660332541567527
+    "date": "2026-10-06",
+    "O": 1678.0,
+    "H": 1685.5,
+    "L": 1671.5,
+    "C": 1671.5,
+    "prev_close": 1678.5,
+    "chg_pct": -0.42
   },
-  "name": "Hulic Co., Ltd.",
   "phase": "downtrend_recovery",
-  "kline": {},
-  "position": {
-    "current": 1684.0,
-    "in_box_pct": 18.4,
-    "nearest_support": "S1 bottom (1632.0)",
-    "nearest_resistance": "R1 today high (1707.0)"
+  "adx": 27.15,
+  "plus_di": 9.89,
+  "minus_di": 30.39,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 2094.0 (2026-02-26), trough 1621.0 (2026-06-02), box top 1915.0 (2026-07-29)",
+  "peak": {
+    "date": "2026-02-26",
+    "price": 2094.0
   },
+  "trough": {
+    "date": "2026-06-02",
+    "price": 1621.0
+  },
+  "box": {
+    "top": 1915.0,
+    "top_date": "2026-07-29",
+    "bottom": 1621.0,
+    "period": "2026-06-02 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 20.2,
+  "recovery_from_crash_pct": 3.1,
   "supports": [
     {
-      "level": 1632.0,
+      "level": 1620.0,
       "label": "S1 bottom",
       "touches": 0,
       "evidence": "structural bottom, near crash low 1621.0"
@@ -31,9 +46,9 @@
   ],
   "resistances": [
     {
-      "level": 1707.0,
+      "level": 1685.5,
       "label": "R1 today high",
-      "evidence": "today's high 1707.0"
+      "evidence": "rejection at 1685.5 (long upper wick, close weak)"
     },
     {
       "level": 1915.0,
@@ -41,24 +56,97 @@
       "evidence": "box top 1915.0, base period high"
     }
   ],
+  "position": {
+    "current": 1671.5,
+    "in_box_pct": 17.5,
+    "nearest_support": "S1 bottom (1620.0)",
+    "nearest_resistance": "R1 today high (1685.5)"
+  },
+  "kline_today": {
+    "type": "bearish_pullback",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 1678.0,
+    "H": 1685.5,
+    "L": 1671.5,
+    "C": 1671.5,
+    "body_pct": 46.4,
+    "upper_wick_pct": 53.6,
+    "lower_wick_pct": 0.0
+  },
+  "bias": {
+    "short": {
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (18% of box)"
+    },
+    "mid": {
+      "bias": "neutral",
+      "reason": ""
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 1620.0 (KEY support)",
+      "then": "still range; watch 1685.5 for next test"
+    },
+    {
+      "if": "break 1620.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 1620.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 1685.5 on close",
+      "then": "short-term bullish; next test 1915.0"
+    },
+    {
+      "if": "break 1915.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 1684.0,
-    "target_price": 1733.25,
-    "stop_price": 1643.45,
-    "risk_pct": 2.41,
-    "reward_pct": 2.92,
-    "rr_ratio": 1.21,
-    "phase_match": true,
-    "r1": 1782.5,
-    "s1": 1684.0,
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 1778.0,
+    "s1": 1671.0,
     "s2": 1699.0,
     "r2": 1915.0,
-    "r3": 1948.0,
+    "r3": 1940.0,
     "s3": 1621.0,
-    "s4": 1666.0,
-    "current_position_pct": 0.0,
-    "notes": "BUY_S1: in box (1684-1782), entry at S1 1684, target mid 1733, stop 1643 ｜ 52.2 條規則（BUY plan，support 1684.00）：① 跌到 1684.00、收市守住喺 1684.00 上面 → 照 BUY 條 plan 做（入場 1684.00，止蝕 1643.45，目標 1733.25）。② 收市跌穿 1684.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1684.00 上面』。"
+    "s4": 1677.0,
+    "current_position_pct": 0.5,
+    "notes": "WAIT_RANGE: in box (1671-1778), pos 0%, no clear setup"
   }
 }

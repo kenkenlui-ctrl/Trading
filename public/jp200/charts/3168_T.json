@@ -1,39 +1,72 @@
 {
-  "ticker": "3168.T",
-  "asof": "2026-10-05",
-  "close": 1246.0,
-  "chg_pct": -1.424050632911389,
+  "ticker": "JP.3168",
+  "ticker_user": "3168.T",
+  "name": "MERF INC",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 1279.0,
-    "H": 1279.0,
-    "L": 1244.0,
-    "C": 1246.0,
-    "prev_close": 1264.0,
-    "chg_pct": -1.424050632911389
+    "date": "2026-10-06",
+    "O": 1245.0,
+    "H": 1310.0,
+    "L": 1227.0,
+    "C": 1283.0,
+    "prev_close": 1246.0,
+    "chg_pct": 2.97
   },
-  "name": "MERF Inc.",
-  "phase": "downtrend_recovery",
-  "kline": {},
-  "position": {
-    "current": 1264.0,
-    "in_box_pct": 14.2,
-    "nearest_support": "S1 bottom (1200.0)",
-    "nearest_resistance": "R1 today high (1302.0)"
+  "phase": "base_building",
+  "adx": 17.97,
+  "plus_di": 17.89,
+  "minus_di": 18.92,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 1935.0 (2026-03-03), trough 1147.0 (2026-06-26), box top 1651.0 (2026-08-18)",
+  "peak": {
+    "date": "2026-03-03",
+    "price": 1935.0
   },
+  "trough": {
+    "date": "2026-06-26",
+    "price": 1147.0
+  },
+  "box": {
+    "top": 1651.0,
+    "top_date": "2026-08-18",
+    "bottom": 1147.0,
+    "period": "2026-06-26 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 33.7,
+  "recovery_from_crash_pct": 11.9,
   "supports": [
     {
-      "level": 1200.0,
-      "label": "S1 bottom",
+      "level": 1256.0,
+      "label": "S1 KEY",
+      "touches": 5,
+      "evidence": "tested 5x in base period; 2.1% below current"
+    },
+    {
+      "level": 1248.0,
+      "label": "S2",
       "touches": 6,
-      "evidence": "structural bottom, near crash low 1147.0"
+      "evidence": "mid-base support, tested 6x"
+    },
+    {
+      "level": 1240.0,
+      "label": "S3",
+      "touches": 5,
+      "evidence": "mid-base support, tested 5x"
+    },
+    {
+      "level": 1147.0,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-06-26, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 1302.0,
+      "level": 1310.0,
       "label": "R1 today high",
-      "evidence": "today's high 1302.0"
+      "evidence": "today's high 1310.0"
     },
     {
       "level": 1515.0,
@@ -46,9 +79,82 @@
       "evidence": "box top 1651.0, base period high"
     }
   ],
+  "position": {
+    "current": 1283.0,
+    "in_box_pct": 27.0,
+    "nearest_support": "S1 KEY (1256.0)",
+    "nearest_resistance": "R1 today high (1310.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 1245.0,
+    "H": 1310.0,
+    "L": 1227.0,
+    "C": 1283.0,
+    "body_pct": 45.8,
+    "upper_wick_pct": 32.5,
+    "lower_wick_pct": 21.7
+  },
+  "bias": {
+    "short": {
+      "bias": "defensive",
+      "reason": "near box bottom (27% of box)"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 1256.0 (KEY support)",
+      "then": "still range; watch 1310.0 for next test"
+    },
+    {
+      "if": "break 1256.0 on close",
+      "then": "target 1248.0 → 1240.0 (short-term bearish)"
+    },
+    {
+      "if": "break 1147.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 1310.0 on close",
+      "then": "short-term bullish; next test 1515.0"
+    },
+    {
+      "if": "break 1651.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -56,14 +162,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 1369.0,
+    "r1": 1330.0,
     "s1": 1201.0,
     "s2": 1155.0,
     "r2": 1651.0,
     "r3": 1894.0,
     "s3": 1147.0,
-    "s4": 569.0,
-    "current_position_pct": 37.5,
-    "notes": "WAIT_RANGE: in box (1201-1369), pos 38%, no clear setup"
+    "s4": 574.0,
+    "current_position_pct": 63.6,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 1330.00）：① 跌到 1330.00、收市守住喺 1330.00 上面 → 照 BUY 條 plan 做（入場 1330.00，止蝕 1395.42，目標 1265.50）。② 收市跌穿 1330.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1330.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }

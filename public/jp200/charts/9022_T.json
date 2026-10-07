@@ -1,29 +1,44 @@
 {
-  "ticker": "9022.T",
-  "asof": "2026-10-05",
-  "close": 3603.0,
-  "chg_pct": -0.4971002485501197,
+  "ticker": "JP.9022",
+  "ticker_user": "9022.T",
+  "name": "CENTRAL JAPAN RAILWAY CO",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 3643.0,
-    "H": 3643.0,
-    "L": 3603.0,
-    "C": 3603.0,
-    "prev_close": 3621.0,
-    "chg_pct": -0.4971002485501197
+    "date": "2026-10-06",
+    "O": 3638.0,
+    "H": 3649.0,
+    "L": 3585.0,
+    "C": 3585.0,
+    "prev_close": 3603.0,
+    "chg_pct": -0.5
   },
-  "name": "Central Japan Railway Company",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 3621.0,
-    "in_box_pct": 38.5,
-    "nearest_support": "S1 KEY (3512.0)",
-    "nearest_resistance": "R1 today high (3651.0)"
+  "adx": 20.51,
+  "plus_di": 12.23,
+  "minus_di": 27.51,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 4830.0 (2026-02-19), trough 3202.0 (2026-06-22), box top 4291.0 (2026-07-29)",
+  "peak": {
+    "date": "2026-02-19",
+    "price": 4830.0
   },
+  "trough": {
+    "date": "2026-06-22",
+    "price": 3202.0
+  },
+  "box": {
+    "top": 4291.0,
+    "top_date": "2026-07-29",
+    "bottom": 3202.0,
+    "period": "2026-06-22 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 25.8,
+  "recovery_from_crash_pct": 12.0,
   "supports": [
     {
-      "level": 3512.0,
+      "level": 3476.0,
       "label": "S1 KEY",
       "touches": 0,
       "evidence": "structural level near current; 3.0% below current"
@@ -37,9 +52,9 @@
   ],
   "resistances": [
     {
-      "level": 3651.0,
+      "level": 3649.0,
       "label": "R1 today high",
-      "evidence": "rejection at 3651.0 (long upper wick, close weak)"
+      "evidence": "today's high 3649.0"
     },
     {
       "level": 4291.0,
@@ -47,24 +62,97 @@
       "evidence": "box top 4291.0, base period high"
     }
   ],
+  "position": {
+    "current": 3585.0,
+    "in_box_pct": 35.2,
+    "nearest_support": "S1 KEY (3476.0)",
+    "nearest_resistance": "R1 today high (3649.0)"
+  },
+  "kline_today": {
+    "type": "bearish_pullback",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 3638.0,
+    "H": 3649.0,
+    "L": 3585.0,
+    "C": 3585.0,
+    "body_pct": 82.8,
+    "upper_wick_pct": 17.2,
+    "lower_wick_pct": 0.0
+  },
+  "bias": {
+    "short": {
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (35% of box)"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 3476.0 (KEY support)",
+      "then": "still range; watch 3649.0 for next test"
+    },
+    {
+      "if": "break 3476.0 on close",
+      "then": "target 3202.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 3202.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 3649.0 on close",
+      "then": "short-term bullish; next test 4291.0"
+    },
+    {
+      "if": "break 4291.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "BUY",
     "strategy": "BUY_S1",
-    "trigger_price": 3602.0,
-    "target_price": 3798.0,
-    "stop_price": 3497.87,
-    "risk_pct": 2.89,
-    "reward_pct": 5.44,
-    "rr_ratio": 1.88,
+    "trigger_price": 3585.0,
+    "target_price": 3756.0,
+    "stop_price": 3482.14,
+    "risk_pct": 2.87,
+    "reward_pct": 4.77,
+    "rr_ratio": 1.66,
     "phase_match": true,
-    "r1": 3994.0,
-    "s1": 3602.0,
-    "s2": 3515.0,
+    "r1": 3927.0,
+    "s1": 3585.0,
+    "s2": 3586.0,
     "r2": 4291.0,
     "r3": 4430.0,
     "s3": 3202.0,
-    "s4": 4043.0,
-    "current_position_pct": 4.8,
-    "notes": "BUY_S1: in box (3602-3994), entry at S1 3602, target mid 3798, stop 3498 ｜ 52.2 條規則（BUY plan，support 3602.00）：① 跌到 3602.00、收市守住喺 3602.00 上面 → 照 BUY 條 plan 做（入場 3602.00，止蝕 3497.87，目標 3798.00）。② 收市跌穿 3602.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 3602.00 上面』。"
+    "s4": 4032.0,
+    "current_position_pct": 0.0,
+    "notes": "BUY_S1: in box (3585-3927), entry at S1 3585, target mid 3756, stop 3482 ｜ 52.2 條規則（BUY plan，support 3585.00）：① 跌到 3585.00、收市守住喺 3585.00 上面 → 照 BUY 條 plan 做（入場 3585.00，止蝕 3482.14，目標 3756.00）。② 收市跌穿 3585.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 3585.00 上面』。"
   }
 }

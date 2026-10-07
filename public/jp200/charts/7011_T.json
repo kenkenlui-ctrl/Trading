@@ -1,41 +1,56 @@
 {
-  "ticker": "7011.T",
-  "asof": "2026-10-05",
-  "close": 3871.0,
-  "chg_pct": 1.5211119853133948,
+  "ticker": "JP.7011",
+  "ticker_user": "7011.T",
+  "name": "MITSUBISHI HEAVY INDUSTRIES",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 3883.0,
-    "H": 3943.0,
-    "L": 3854.0,
-    "C": 3871.0,
-    "prev_close": 3813.0,
-    "chg_pct": 1.5211119853133948
+    "date": "2026-10-06",
+    "O": 3854.0,
+    "H": 3897.0,
+    "L": 3780.0,
+    "C": 3787.0,
+    "prev_close": 3871.0,
+    "chg_pct": -2.17
   },
-  "name": "Mitsubishi Heavy Industries, Ltd.",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 3813.0,
-    "in_box_pct": 39.5,
-    "nearest_support": "S1 KEY (3716.0)",
-    "nearest_resistance": "R1 today high (3876.0)"
+  "adx": 11.46,
+  "plus_di": 19.69,
+  "minus_di": 25.3,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 5208.0 (2026-03-02), trough 3404.0 (2026-06-11), box top 4439.0 (2026-08-18)",
+  "peak": {
+    "date": "2026-03-02",
+    "price": 5208.0
   },
+  "trough": {
+    "date": "2026-06-11",
+    "price": 3404.0
+  },
+  "box": {
+    "top": 4439.0,
+    "top_date": "2026-08-18",
+    "bottom": 3404.0,
+    "period": "2026-06-11 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 27.3,
+  "recovery_from_crash_pct": 11.3,
   "supports": [
     {
-      "level": 3716.0,
+      "level": 3708.0,
       "label": "S1 KEY",
       "touches": 4,
-      "evidence": "tested 4x in base period; 2.5% below current"
+      "evidence": "tested 4x in base period; 2.1% below current"
     },
     {
-      "level": 3712.0,
+      "level": 3704.0,
       "label": "S2",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
     },
     {
-      "level": 3708.0,
+      "level": 3680.0,
       "label": "S3",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
@@ -49,14 +64,87 @@
   ],
   "resistances": [
     {
-      "level": 3876.0,
+      "level": 3897.0,
       "label": "R1 today high",
-      "evidence": "rejection at 3876.0 (long upper wick, close weak)"
+      "evidence": "today's high 3897.0"
     },
     {
       "level": 4439.0,
       "label": "R3 Aug high",
       "evidence": "box top 4439.0, base period high"
+    }
+  ],
+  "position": {
+    "current": 3787.0,
+    "in_box_pct": 37.0,
+    "nearest_support": "S1 KEY (3708.0)",
+    "nearest_resistance": "R1 today high (3897.0)"
+  },
+  "kline_today": {
+    "type": "bearish_pullback",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 3854.0,
+    "H": 3897.0,
+    "L": 3780.0,
+    "C": 3787.0,
+    "body_pct": 57.3,
+    "upper_wick_pct": 36.8,
+    "lower_wick_pct": 6.0
+  },
+  "bias": {
+    "short": {
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (37% of box)"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 3708.0 (KEY support)",
+      "then": "still range; watch 3897.0 for next test"
+    },
+    {
+      "if": "break 3708.0 on close",
+      "then": "target 3704.0 → 3680.0 (short-term bearish)"
+    },
+    {
+      "if": "break 3404.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 3897.0 on close",
+      "then": "short-term bullish; next test 4439.0"
+    },
+    {
+      "if": "break 4439.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -73,10 +161,10 @@
     "s1": 3581.0,
     "s2": 3621.0,
     "r2": 4439.0,
-    "r3": 4924.0,
+    "r3": 4854.0,
     "s3": 3404.0,
     "s4": 3762.0,
-    "current_position_pct": 58.9,
-    "notes": "WAIT_RANGE: in box (3581-3975), pos 59%, no clear setup"
+    "current_position_pct": 52.3,
+    "notes": "WAIT_RANGE: in box (3581-3975), pos 52%, no clear setup"
   }
 }

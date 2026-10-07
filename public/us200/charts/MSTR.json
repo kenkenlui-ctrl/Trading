@@ -3,20 +3,20 @@
   "ticker_user": "MSTR",
   "name": "Strategy Inc",
   "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
+  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-02",
-    "O": 165.89,
-    "H": 170.17,
-    "L": 155.89,
-    "C": 160.01,
-    "prev_close": 160.5,
-    "chg_pct": -0.31
+    "date": "2026-10-06",
+    "O": 165.82,
+    "H": 168.73,
+    "L": 163.18,
+    "C": 164.55,
+    "prev_close": 164.43,
+    "chg_pct": 0.07
   },
   "phase": "base_building",
-  "adx": 39.22,
-  "plus_di": 33.89,
-  "minus_di": 14.19,
+  "adx": 39.65,
+  "plus_di": 32.84,
+  "minus_di": 12.89,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 197.0 (2026-05-11), trough 81.81 (2026-06-26), box top 171.19 (2026-09-22)",
@@ -32,16 +32,16 @@
     "top": 171.19,
     "top_date": "2026-09-22",
     "bottom": 81.81,
-    "period": "2026-06-26 to 2026-10-02"
+    "period": "2026-06-26 to 2026-10-06"
   },
-  "drop_from_peak_pct": 18.8,
-  "recovery_from_crash_pct": 95.6,
+  "drop_from_peak_pct": 16.5,
+  "recovery_from_crash_pct": 101.1,
   "supports": [
     {
       "level": 128.0,
       "label": "S1 KEY",
       "touches": 10,
-      "evidence": "tested 10x in base period; 20.0% below current"
+      "evidence": "tested 10x in base period; 22.2% below current"
     },
     {
       "level": 124.0,
@@ -52,8 +52,8 @@
     {
       "level": 120.0,
       "label": "S3",
-      "touches": 8,
-      "evidence": "mid-base support, tested 8x"
+      "touches": 7,
+      "evidence": "mid-base support, tested 7x"
     },
     {
       "level": 81.81,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 170.17,
+      "level": 168.73,
       "label": "R1 today high",
-      "evidence": "today's high 170.1699981689453"
+      "evidence": "rejection at 168.72999572753906 (long upper wick, close weak)"
     },
     {
       "level": 171.19,
@@ -75,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 160.01,
-    "in_box_pct": 87.5,
+    "current": 164.55,
+    "in_box_pct": 92.6,
     "nearest_support": "S1 KEY (128.0)",
-    "nearest_resistance": "R1 today high (170.17)"
+    "nearest_resistance": "R1 today high (168.73)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 165.89,
-    "H": 170.17,
-    "L": 155.89,
-    "C": 160.01,
-    "body_pct": 41.2,
-    "upper_wick_pct": 30.0,
-    "lower_wick_pct": 28.9
+    "O": 165.82,
+    "H": 168.73,
+    "L": 163.18,
+    "C": 164.55,
+    "body_pct": 22.9,
+    "upper_wick_pct": 52.4,
+    "lower_wick_pct": 24.7
   },
   "bias": {
     "short": {
@@ -103,14 +103,14 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 128.0 (KEY support)",
-      "then": "still range; watch 170.17 for next test"
+      "then": "still range; watch 168.73 for next test"
     },
     {
       "if": "break 128.0 on close",
@@ -121,7 +121,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 170.17 on close",
+      "if": "reclaim 168.73 on close",
       "then": "short-term bullish; next test 171.19"
     },
     {
@@ -149,7 +149,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_VOLATILE",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -164,7 +164,7 @@
     "r3": 197.0,
     "s3": 81.81,
     "s4": 104.17,
-    "current_position_pct": 76.6,
-    "notes": "WAIT_VOLATILE: ATR14 6.2% / box width 30% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
+    "current_position_pct": 86.1,
+    "notes": "WAIT_RANGE: in box (123-171), pos 86%, no clear setup"
   }
 }

@@ -1,61 +1,140 @@
 {
-  "ticker": "3054.T",
-  "asof": "2026-10-05",
-  "close": 384.0,
-  "chg_pct": 0.7874015748031482,
+  "ticker": "JP.3054",
+  "ticker_user": "3054.T",
+  "name": "HYPER INC",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 383.0,
-    "H": 385.0,
-    "L": 381.0,
-    "C": 384.0,
-    "prev_close": 381.0,
-    "chg_pct": 0.7874015748031482
+    "date": "2026-10-06",
+    "O": 385.0,
+    "H": 386.0,
+    "L": 383.0,
+    "C": 386.0,
+    "prev_close": 384.0,
+    "chg_pct": 0.52
   },
-  "name": "HYPER Inc.",
-  "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 381.0,
-    "in_box_pct": 86.2,
-    "nearest_support": "S1 KEY (368.0)",
-    "nearest_resistance": "R1 today high (383.0)"
+  "phase": "uptrend",
+  "adx": 51.63,
+  "plus_di": 37.3,
+  "minus_di": 12.7,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 389.0 (2026-09-01), trough 345.0 (2026-09-15), box top 386.0 (2026-10-06)",
+  "peak": {
+    "date": "2026-09-01",
+    "price": 389.0
   },
+  "trough": {
+    "date": "2026-09-15",
+    "price": 345.0
+  },
+  "box": {
+    "top": 386.0,
+    "top_date": "2026-10-06",
+    "bottom": 345.0,
+    "period": "2026-09-15 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 0.8,
+  "recovery_from_crash_pct": 11.9,
   "supports": [
     {
-      "level": 368.0,
+      "level": 376.0,
       "label": "S1 KEY",
+      "touches": 5,
+      "evidence": "tested 5x in base period; 2.6% below current"
+    },
+    {
+      "level": 368.0,
+      "label": "S2",
       "touches": 12,
-      "evidence": "tested 12x in base period; 3.4% below current"
+      "evidence": "mid-base support, tested 12x"
     },
     {
       "level": 360.0,
-      "label": "S2",
-      "touches": 6,
-      "evidence": "mid-base support, tested 6x"
-    },
-    {
-      "level": 356.0,
       "label": "S3 bottom",
-      "touches": 3,
+      "touches": 6,
       "evidence": "structural bottom, near crash low 345.0"
     }
   ],
   "resistances": [
     {
-      "level": 383.0,
+      "level": 386.0,
       "label": "R1 today high",
-      "evidence": "today's high 383.0"
+      "evidence": "today's high 386.0"
+    }
+  ],
+  "position": {
+    "current": 386.0,
+    "in_box_pct": 100.0,
+    "nearest_support": "S1 KEY (376.0)",
+    "nearest_resistance": null
+  },
+  "kline_today": {
+    "type": "bullish_hold",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 385.0,
+    "H": 386.0,
+    "L": 383.0,
+    "C": 386.0,
+    "body_pct": 33.3,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 66.7
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 376.0 (KEY support)",
+      "then": "still range; watch 386.0 for next test"
     },
     {
-      "level": 385.0,
-      "label": "R3 Sep high",
-      "evidence": "box top 385.0, base period high"
+      "if": "break 376.0 on close",
+      "then": "target 368.0 → 360.0 (short-term bearish)"
+    },
+    {
+      "if": "break 360.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 386.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -63,14 +142,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 389.0,
+    "r1": 386.0,
     "s1": 345.0,
     "s2": 234.0,
     "r2": 389.0,
     "r3": 272.0,
     "s3": 228.0,
     "s4": 246.0,
-    "current_position_pct": 81.8,
-    "notes": "WAIT_RANGE: in box (345-389), pos 82%, no clear setup"
+    "current_position_pct": 100.0,
+    "notes": "WAIT_RANGE: in box (345-386), pos 100%, no clear setup"
   }
 }

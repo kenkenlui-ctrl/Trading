@@ -1,51 +1,66 @@
 {
-  "ticker": "2982.T",
-  "asof": "2026-10-05",
-  "close": 399.0,
-  "chg_pct": -1.2376237623762387,
+  "ticker": "JP.2982",
+  "ticker_user": "2982.T",
+  "name": "AD WORKS GRP CO LTD",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 402.0,
+    "date": "2026-10-06",
+    "O": 398.0,
     "H": 403.0,
-    "L": 398.0,
-    "C": 399.0,
-    "prev_close": 404.0,
-    "chg_pct": -1.2376237623762387
+    "L": 397.0,
+    "C": 401.0,
+    "prev_close": 399.0,
+    "chg_pct": 0.5
   },
-  "name": "A.D.Works Group Co.,Ltd.",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 404.0,
-    "in_box_pct": 28.6,
-    "nearest_support": "S1 KEY (396.0)",
-    "nearest_resistance": "R1 today high (413.0)"
+  "adx": 20.79,
+  "plus_di": 13.96,
+  "minus_di": 32.69,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 512.0 (2026-02-12), trough 370.0 (2026-05-14), box top 444.0 (2026-09-07)",
+  "peak": {
+    "date": "2026-02-12",
+    "price": 512.0
   },
+  "trough": {
+    "date": "2026-05-14",
+    "price": 370.0
+  },
+  "box": {
+    "top": 444.0,
+    "top_date": "2026-09-07",
+    "bottom": 370.0,
+    "period": "2026-05-14 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 21.7,
+  "recovery_from_crash_pct": 8.4,
   "supports": [
     {
-      "level": 396.0,
-      "label": "S1 KEY",
-      "touches": 3,
-      "evidence": "tested 3x in base period; 2.0% below current"
-    },
-    {
       "level": 392.0,
-      "label": "S2",
-      "touches": 10,
-      "evidence": "mid-base support, tested 10x"
+      "label": "S1 KEY",
+      "touches": 6,
+      "evidence": "tested 6x in base period; 2.2% below current"
     },
     {
       "level": 388.0,
-      "label": "S3 bottom",
+      "label": "S2",
       "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 384.0,
+      "label": "S3 bottom",
+      "touches": 5,
       "evidence": "structural bottom, near crash low 370.0"
     }
   ],
   "resistances": [
     {
-      "level": 413.0,
+      "level": 403.0,
       "label": "R1 today high",
-      "evidence": "today's high 413.0"
+      "evidence": "today's high 403.0"
     },
     {
       "level": 444.0,
@@ -53,24 +68,97 @@
       "evidence": "box top 444.0, base period high"
     }
   ],
+  "position": {
+    "current": 401.0,
+    "in_box_pct": 28.3,
+    "nearest_support": "S1 KEY (392.0)",
+    "nearest_resistance": "R1 today high (403.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 398.0,
+    "H": 403.0,
+    "L": 397.0,
+    "C": 401.0,
+    "body_pct": 50.0,
+    "upper_wick_pct": 33.3,
+    "lower_wick_pct": 16.7
+  },
+  "bias": {
+    "short": {
+      "bias": "defensive",
+      "reason": "near box bottom (28% of box)"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 392.0 (KEY support)",
+      "then": "still range; watch 403.0 for next test"
+    },
+    {
+      "if": "break 392.0 on close",
+      "then": "target 388.0 → 384.0 (short-term bearish)"
+    },
+    {
+      "if": "break 384.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 403.0 on close",
+      "then": "short-term bullish; next test 444.0"
+    },
+    {
+      "if": "break 444.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "BUY",
     "strategy": "BUY_S1",
-    "trigger_price": 401.0,
-    "target_price": 422.5,
-    "stop_price": 388.45,
-    "risk_pct": 3.13,
-    "reward_pct": 5.36,
-    "rr_ratio": 1.71,
+    "trigger_price": 397.0,
+    "target_price": 420.5,
+    "stop_price": 384.91,
+    "risk_pct": 3.05,
+    "reward_pct": 5.92,
+    "rr_ratio": 1.94,
     "phase_match": true,
     "r1": 444.0,
-    "s1": 401.0,
+    "s1": 397.0,
     "s2": 389.0,
     "r2": 439.0,
-    "r3": 442.0,
+    "r3": 441.0,
     "s3": 370.0,
     "s4": 382.0,
-    "current_position_pct": 7.0,
-    "notes": "BUY_S1: in box (401-444), entry at S1 401, target mid 422, stop 388 ｜ 52.2 條規則（BUY plan，support 401.00）：① 跌到 401.00、收市守住喺 401.00 上面 → 照 BUY 條 plan 做（入場 401.00，止蝕 388.45，目標 422.50）。② 收市跌穿 401.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 401.00 上面』。"
+    "current_position_pct": 8.5,
+    "notes": "BUY_S1: in box (397-444), entry at S1 397, target mid 420, stop 385 ｜ 52.2 條規則（BUY plan，support 397.00）：① 跌到 397.00、收市守住喺 397.00 上面 → 照 BUY 條 plan 做（入場 397.00，止蝕 384.91，目標 420.50）。② 收市跌穿 397.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 397.00 上面』。"
   }
 }

@@ -1,32 +1,47 @@
 {
-  "ticker": "1376.T",
-  "asof": "2026-10-05",
-  "close": 1520.0,
-  "chg_pct": -1.041666666666663,
+  "ticker": "JP.1376",
+  "ticker_user": "1376.T",
+  "name": "KANEKO SEEDS CO",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 1540.0,
-    "H": 1565.0,
-    "L": 1503.0,
-    "C": 1520.0,
-    "prev_close": 1536.0,
-    "chg_pct": -1.041666666666663
+    "date": "2026-10-06",
+    "O": 1519.0,
+    "H": 1540.0,
+    "L": 1509.0,
+    "C": 1509.0,
+    "prev_close": 1520.0,
+    "chg_pct": -0.72
   },
-  "name": "Kaneko Seeds Co., Ltd.",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 1536.0,
-    "in_box_pct": 50.0,
-    "nearest_support": "S1 KEY (1440.0)",
-    "nearest_resistance": "R1 today high (1555.0)"
+  "adx": 19.25,
+  "plus_di": 14.84,
+  "minus_di": 26.83,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 1672.0 (2026-01-07), trough 1364.0 (2026-06-02), box top 1664.0 (2026-08-24)",
+  "peak": {
+    "date": "2026-01-07",
+    "price": 1672.0
   },
+  "trough": {
+    "date": "2026-06-02",
+    "price": 1364.0
+  },
+  "box": {
+    "top": 1664.0,
+    "top_date": "2026-08-24",
+    "bottom": 1364.0,
+    "period": "2026-06-02 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 9.7,
+  "recovery_from_crash_pct": 10.6,
   "supports": [
     {
       "level": 1440.0,
       "label": "S1 KEY",
       "touches": 3,
-      "evidence": "tested 3x in base period; 6.2% below current"
+      "evidence": "tested 3x in base period; 4.6% below current"
     },
     {
       "level": 1412.0,
@@ -43,9 +58,9 @@
   ],
   "resistances": [
     {
-      "level": 1555.0,
+      "level": 1540.0,
       "label": "R1 today high",
-      "evidence": "today's high 1555.0"
+      "evidence": "rejection at 1540.0 (long upper wick, close weak)"
     },
     {
       "level": 1664.0,
@@ -53,24 +68,97 @@
       "evidence": "box top 1664.0, base period high"
     }
   ],
+  "position": {
+    "current": 1509.0,
+    "in_box_pct": 39.5,
+    "nearest_support": "S1 KEY (1440.0)",
+    "nearest_resistance": "R1 today high (1540.0)"
+  },
+  "kline_today": {
+    "type": "bearish_rejection",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 1519.0,
+    "H": 1540.0,
+    "L": 1509.0,
+    "C": 1509.0,
+    "body_pct": 32.3,
+    "upper_wick_pct": 67.7,
+    "lower_wick_pct": 0.0
+  },
+  "bias": {
+    "short": {
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (40% of box)"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 1440.0 (KEY support)",
+      "then": "still range; watch 1540.0 for next test"
+    },
+    {
+      "if": "break 1440.0 on close",
+      "then": "target 1412.0 → 1408.0 (short-term bearish)"
+    },
+    {
+      "if": "break 1408.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 1540.0 on close",
+      "then": "short-term bullish; next test 1664.0"
+    },
+    {
+      "if": "break 1664.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "BUY",
     "strategy": "BUY_S1",
-    "trigger_price": 1536.0,
-    "target_price": 1591.0,
-    "stop_price": 1496.25,
-    "risk_pct": 2.59,
-    "reward_pct": 3.58,
-    "rr_ratio": 1.38,
+    "trigger_price": 1503.0,
+    "target_price": 1574.5,
+    "stop_price": 1457.75,
+    "risk_pct": 3.01,
+    "reward_pct": 4.76,
+    "rr_ratio": 1.58,
     "phase_match": true,
     "r1": 1646.0,
-    "s1": 1536.0,
-    "s2": 1466.0,
+    "s1": 1503.0,
+    "s2": 1476.0,
     "r2": 1664.0,
-    "r3": 1492.0,
+    "r3": 1494.0,
     "s3": 1364.0,
     "s4": 1421.0,
-    "current_position_pct": 0.0,
-    "notes": "BUY_S1: in box (1536-1646), entry at S1 1536, target mid 1591, stop 1496 ｜ 52.2 條規則（BUY plan，support 1536.00）：① 跌到 1536.00、收市守住喺 1536.00 上面 → 照 BUY 條 plan 做（入場 1536.00，止蝕 1496.25，目標 1591.00）。② 收市跌穿 1536.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1536.00 上面』。"
+    "current_position_pct": 4.2,
+    "notes": "BUY_S1: in box (1503-1646), entry at S1 1503, target mid 1574, stop 1458 ｜ 52.2 條規則（BUY plan，support 1503.00）：① 跌到 1503.00、收市守住喺 1503.00 上面 → 照 BUY 條 plan 做（入場 1503.00，止蝕 1457.75，目標 1574.50）。② 收市跌穿 1503.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1503.00 上面』。"
   }
 }

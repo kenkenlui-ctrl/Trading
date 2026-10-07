@@ -1,44 +1,138 @@
 {
-  "ticker": "3159.T",
-  "asof": "2026-10-05",
-  "close": 372.0,
-  "chg_pct": 0.540540540540535,
+  "ticker": "JP.3159",
+  "ticker_user": "3159.T",
+  "name": "MARUZEN CHI HOLDINGS CO LTD",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 370.0,
-    "H": 372.0,
+    "date": "2026-10-06",
+    "O": 372.0,
+    "H": 374.0,
     "L": 370.0,
-    "C": 372.0,
-    "prev_close": 370.0,
-    "chg_pct": 0.540540540540535
+    "C": 374.0,
+    "prev_close": 372.0,
+    "chg_pct": 0.54
   },
-  "name": "Maruzen CHI Holdings Co.,Ltd.",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 370.0,
-    "in_box_pct": 18.9,
-    "nearest_support": "S1 bottom (360.0)",
-    "nearest_resistance": "R1 today high (378.0)"
+  "adx": 22.79,
+  "plus_di": 16.19,
+  "minus_di": 31.04,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 430.0 (2026-08-10), trough 367.0 (2026-10-02), box top 413.0 (2026-08-25)",
+  "peak": {
+    "date": "2026-08-10",
+    "price": 430.0
   },
+  "trough": {
+    "date": "2026-10-02",
+    "price": 367.0
+  },
+  "box": {
+    "top": 413.0,
+    "top_date": "2026-08-25",
+    "bottom": 367.0,
+    "period": "2026-10-02 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 13.0,
+  "recovery_from_crash_pct": 1.9,
   "supports": [
     {
+      "level": 364.0,
+      "label": "S1 KEY",
+      "touches": 11,
+      "evidence": "tested 11x in base period; 2.7% below current"
+    },
+    {
       "level": 360.0,
-      "label": "S1 bottom",
-      "touches": 9,
+      "label": "S2 bottom",
+      "touches": 7,
       "evidence": "structural bottom, near crash low 367.0"
     }
   ],
   "resistances": [
     {
-      "level": 378.0,
+      "level": 374.0,
       "label": "R1 today high",
-      "evidence": "today's high 378.0"
+      "evidence": "today's high 374.0"
     },
     {
       "level": 413.0,
       "label": "R3 Aug high",
       "evidence": "box top 413.0, base period high"
+    }
+  ],
+  "position": {
+    "current": 374.0,
+    "in_box_pct": 26.4,
+    "nearest_support": "S1 KEY (364.0)",
+    "nearest_resistance": "R3 Aug high (413.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 372.0,
+    "H": 374.0,
+    "L": 370.0,
+    "C": 374.0,
+    "body_pct": 50.0,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 50.0
+  },
+  "bias": {
+    "short": {
+      "bias": "defensive",
+      "reason": "near box bottom (26% of box)"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 364.0 (KEY support)",
+      "then": "still range; watch 374.0 for next test"
+    },
+    {
+      "if": "break 364.0 on close",
+      "then": "target 360.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 360.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 374.0 on close",
+      "then": "short-term bullish; next test 413.0"
+    },
+    {
+      "if": "break 413.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -58,7 +152,7 @@
     "r3": 364.0,
     "s3": 340.0,
     "s4": 329.0,
-    "current_position_pct": 6.5,
-    "notes": "WAIT_RANGE: in box (367-413), pos 7%, no clear setup"
+    "current_position_pct": 15.2,
+    "notes": "WAIT_RANGE: in box (367-413), pos 15%, no clear setup"
   }
 }

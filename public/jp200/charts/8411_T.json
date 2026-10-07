@@ -1,44 +1,138 @@
 {
-  "ticker": "8411.T",
-  "asof": "2026-10-05",
-  "close": 8668.0,
-  "chg_pct": 2.6284631778356715,
+  "ticker": "JP.8411",
+  "ticker_user": "8411.T",
+  "name": "MIZUHO FINANCIAL GROUP",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 8480.0,
-    "H": 8701.0,
-    "L": 8478.0,
-    "C": 8668.0,
-    "prev_close": 8446.0,
-    "chg_pct": 2.6284631778356715
+    "date": "2026-10-06",
+    "O": 8721.0,
+    "H": 8857.0,
+    "L": 8705.0,
+    "C": 8857.0,
+    "prev_close": 8668.0,
+    "chg_pct": 2.18
   },
-  "name": "Mizuho Financial Group, Inc.",
-  "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 8446.0,
-    "in_box_pct": 35.7,
-    "nearest_support": "S1 bottom (8192.0)",
-    "nearest_resistance": "R1 today high (8610.0)"
+  "phase": "uptrend",
+  "adx": 11.64,
+  "plus_di": 25.47,
+  "minus_di": 16.85,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 8903.0 (2026-09-30), trough 8012.0 (2026-08-21), box top 8903.0 (2026-09-30)",
+  "peak": {
+    "date": "2026-09-30",
+    "price": 8903.0
   },
+  "trough": {
+    "date": "2026-08-21",
+    "price": 8012.0
+  },
+  "box": {
+    "top": 8903.0,
+    "top_date": "2026-09-30",
+    "bottom": 8012.0,
+    "period": "2026-08-21 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 0.5,
+  "recovery_from_crash_pct": 10.5,
   "supports": [
     {
-      "level": 8192.0,
-      "label": "S1 bottom",
-      "touches": 0,
-      "evidence": "structural bottom, near crash low 7966.0"
+      "level": 8672.0,
+      "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; 2.1% below current"
+    },
+    {
+      "level": 8012.0,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-08-21, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 8610.0,
+      "level": 8857.0,
       "label": "R1 today high",
-      "evidence": "rejection at 8610.0 (long upper wick, close weak)"
+      "evidence": "today's high 8857.0"
     },
     {
       "level": 8903.0,
       "label": "R3 Sep high",
       "evidence": "box top 8903.0, base period high"
+    }
+  ],
+  "position": {
+    "current": 8857.0,
+    "in_box_pct": 94.8,
+    "nearest_support": "S1 KEY (8672.0)",
+    "nearest_resistance": "R3 Sep high (8903.0)"
+  },
+  "kline_today": {
+    "type": "bullish_reclaim",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 8721.0,
+    "H": 8857.0,
+    "L": 8705.0,
+    "C": 8857.0,
+    "body_pct": 89.5,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 10.5
+  },
+  "bias": {
+    "short": {
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
+    },
+    "mid": {
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 8672.0 (KEY support)",
+      "then": "still range; watch 8857.0 for next test"
+    },
+    {
+      "if": "break 8672.0 on close",
+      "then": "target 8012.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 8012.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 8857.0 on close",
+      "then": "short-term bullish; next test 8903.0"
+    },
+    {
+      "if": "break 8903.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -54,11 +148,11 @@
     "r1": 8903.0,
     "s1": 8278.0,
     "s2": 7761.0,
-    "r2": 8819.0,
-    "r3": 8304.0,
+    "r2": 8894.0,
+    "r3": 8551.0,
     "s3": 6350.0,
-    "s4": 5564.0,
-    "current_position_pct": 26.9,
-    "notes": "WAIT_RANGE: in box (8278-8903), pos 27%, no clear setup"
+    "s4": 5571.0,
+    "current_position_pct": 92.6,
+    "notes": "WAIT_RANGE: in box (8278-8903), pos 93%, no clear setup"
   }
 }

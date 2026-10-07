@@ -1,32 +1,53 @@
 {
-  "ticker": "6952.T",
-  "asof": "2026-10-05",
-  "close": 2240.5,
-  "chg_pct": 3.058877644894209,
+  "ticker": "JP.6952",
+  "ticker_user": "6952.T",
+  "name": "CASIO COMPUTER CO",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 2188.5,
-    "H": 2257.0,
-    "L": 2171.0,
-    "C": 2240.5,
-    "prev_close": 2174.0,
-    "chg_pct": 3.058877644894209
+    "date": "2026-10-06",
+    "O": 2237.0,
+    "H": 2295.5,
+    "L": 2205.5,
+    "C": 2274.0,
+    "prev_close": 2240.5,
+    "chg_pct": 1.5
   },
-  "name": "Casio Computer Co.,Ltd.",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 2174.0,
-    "in_box_pct": 86.1,
-    "nearest_support": "S1 KEY (2072.0)",
-    "nearest_resistance": "R1 today high (2187.0)"
+  "adx": 15.07,
+  "plus_di": 31.12,
+  "minus_di": 20.42,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 2536.0 (2026-09-01), trough 1951.0 (2026-09-14), box top 2295.5 (2026-10-06)",
+  "peak": {
+    "date": "2026-09-01",
+    "price": 2536.0
   },
+  "trough": {
+    "date": "2026-09-14",
+    "price": 1951.0
+  },
+  "box": {
+    "top": 2295.5,
+    "top_date": "2026-10-06",
+    "bottom": 1951.0,
+    "period": "2026-09-14 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 10.3,
+  "recovery_from_crash_pct": 16.6,
   "supports": [
     {
-      "level": 2072.0,
+      "level": 2132.0,
       "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; 6.2% below current"
+    },
+    {
+      "level": 2072.0,
+      "label": "S2",
       "touches": 3,
-      "evidence": "tested 3x in base period; 4.7% below current"
+      "evidence": "mid-base support, tested 3x"
     },
     {
       "level": 1951.0,
@@ -37,39 +58,98 @@
   ],
   "resistances": [
     {
-      "level": 2187.0,
+      "level": 2295.5,
       "label": "R1 today high",
-      "evidence": "today's high 2187.0"
+      "evidence": "today's high 2295.5"
+    }
+  ],
+  "position": {
+    "current": 2274.0,
+    "in_box_pct": 93.8,
+    "nearest_support": "S1 KEY (2132.0)",
+    "nearest_resistance": "R1 today high (2295.5)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 2237.0,
+    "H": 2295.5,
+    "L": 2205.5,
+    "C": 2274.0,
+    "body_pct": 41.1,
+    "upper_wick_pct": 23.9,
+    "lower_wick_pct": 35.0
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 2132.0 (KEY support)",
+      "then": "still range; watch 2295.5 for next test"
     },
     {
-      "level": 2210.0,
-      "label": "R3 Sep high",
-      "evidence": "box top 2210.0, base period high"
+      "if": "break 2132.0 on close",
+      "then": "target 2072.0 → 1951.0 (short-term bearish)"
     },
     {
-      "level": 2535.0,
-      "label": "R5",
-      "evidence": "pre-crash supply, top before breakdown"
+      "if": "break 1951.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 2295.5 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 2502.0,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 2350.0,
+    "target_price": 2150.5,
+    "stop_price": 2451.64,
+    "risk_pct": 4.33,
+    "reward_pct": 8.49,
+    "rr_ratio": 1.96,
+    "phase_match": true,
+    "r1": 2350.0,
     "s1": 1951.0,
     "s2": 1697.5,
     "r2": 2536.0,
     "r3": 1998.0,
     "s3": 1524.0,
     "s4": 1243.5,
-    "current_position_pct": 40.5,
-    "notes": "WAIT_RANGE: in box (1951-2502), pos 40%, no clear setup"
+    "current_position_pct": 81.0,
+    "notes": "SELL_R1: in box (1951-2350), entry at R1 2350, target mid 2150, stop 2452 ｜ 52.2 條規則（SELL plan，resistance 2350.00）：① 跌到 2350.00、收市守住喺 2350.00 上面 → 照 BUY 條 plan 做（入場 2350.00，止蝕 2451.64，目標 2150.50）。② 收市跌穿 2350.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2350.00 上面』。"
   }
 }

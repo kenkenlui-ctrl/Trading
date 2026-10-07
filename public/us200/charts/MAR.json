@@ -3,20 +3,20 @@
   "ticker_user": "MAR",
   "name": "Marriott International",
   "data_source": "yfinance",
-  "data_range": "2025-12-12 → 2026-09-30 (200 daily bars)",
+  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-30",
-    "O": 363.69,
-    "H": 363.69,
-    "L": 355.67,
-    "C": 355.67,
-    "prev_close": 361.62,
-    "chg_pct": -1.65
+    "date": "2026-10-06",
+    "O": 357.52,
+    "H": 362.46,
+    "L": 356.76,
+    "C": 361.28,
+    "prev_close": 355.89,
+    "chg_pct": 1.51
   },
   "phase": "downtrend_active",
-  "adx": 20.69,
-  "plus_di": 26.91,
-  "minus_di": 15.99,
+  "adx": 20.39,
+  "plus_di": 27.48,
+  "minus_di": 17.08,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 410.98 (2026-06-15), trough 320.91 (2026-09-09), box top 364.09 (2026-09-29)",
@@ -32,85 +32,91 @@
     "top": 364.09,
     "top_date": "2026-09-29",
     "bottom": 320.91,
-    "period": "2026-09-09 to 2026-09-30"
+    "period": "2026-09-09 to 2026-10-06"
   },
-  "drop_from_peak_pct": 13.5,
-  "recovery_from_crash_pct": 10.8,
+  "drop_from_peak_pct": 12.1,
+  "recovery_from_crash_pct": 12.6,
   "supports": [
     {
-      "level": 344.0,
+      "level": 352.0,
       "label": "S1 KEY",
       "touches": 4,
-      "evidence": "tested 4x in base period; 3.3% below current"
+      "evidence": "tested 4x in base period; 2.6% below current"
     },
     {
-      "level": 336.0,
+      "level": 348.0,
       "label": "S2",
-      "touches": 5,
-      "evidence": "mid-base support, tested 5x"
+      "touches": 6,
+      "evidence": "mid-base support, tested 6x"
     },
     {
-      "level": 332.0,
-      "label": "S3 bottom",
-      "touches": 13,
-      "evidence": "structural bottom, near crash low 320.91"
+      "level": 344.0,
+      "label": "S3",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 320.91,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-09-09, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 363.69,
+      "level": 362.46,
       "label": "R1 today high",
-      "evidence": "today's high 363.69000244140625"
+      "evidence": "today's high 362.4599914550781"
     }
   ],
   "position": {
-    "current": 355.67,
-    "in_box_pct": 74.7,
-    "nearest_support": "S1 KEY (344.0)",
-    "nearest_resistance": "R1 today high (363.69)"
+    "current": 361.28,
+    "in_box_pct": 97.2,
+    "nearest_support": "S1 KEY (352.0)",
+    "nearest_resistance": "R1 today high (362.46)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 363.69,
-    "H": 363.69,
-    "L": 355.67,
-    "C": 355.67,
-    "body_pct": 100.0,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 0.0
+    "close_position": "upper_half",
+    "O": 357.52,
+    "H": 362.46,
+    "L": 356.76,
+    "C": 361.28,
+    "body_pct": 66.0,
+    "upper_wick_pct": 20.7,
+    "lower_wick_pct": 13.3
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "bearish_continuation",
       "reason": "making new lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 344.0 (KEY support)",
-      "then": "still range; watch 363.69 for next test"
+      "if": "hold 352.0 (KEY support)",
+      "then": "still range; watch 362.46 for next test"
     },
     {
-      "if": "break 344.0 on close",
-      "then": "target 336.0 → 332.0 (short-term bearish)"
+      "if": "break 352.0 on close",
+      "then": "target 348.0 → 344.0 (short-term bearish)"
     },
     {
-      "if": "break 332.0 (crash low)",
+      "if": "break 320.91 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 363.69 on close",
+      "if": "reclaim 362.46 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -137,19 +143,19 @@
     "strategy": "SELL_R1",
     "trigger_price": 364.09,
     "target_price": 342.5,
-    "stop_price": 375.49,
-    "risk_pct": 3.13,
+    "stop_price": 374.4,
+    "risk_pct": 2.83,
     "reward_pct": 5.93,
-    "rr_ratio": 1.89,
+    "rr_ratio": 2.09,
     "phase_match": true,
     "r1": 364.09,
     "s1": 320.91,
-    "s2": 333.74,
+    "s2": 328.24,
     "r2": 384.23,
     "r3": 410.98,
     "s3": 345.38,
-    "s4": 296.64,
-    "current_position_pct": 80.5,
-    "notes": "SELL_R1: in box (321-364), entry at R1 364, target mid 342, stop 375 ｜ 52.2 條規則（SELL plan，resistance 364.09）：① 跌到 364.09、收市守住喺 364.09 上面 → 照 BUY 條 plan 做（入場 364.09，止蝕 375.49，目標 342.50）。② 收市跌穿 364.09 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 364.09 上面』。"
+    "s4": 304.4,
+    "current_position_pct": 93.5,
+    "notes": "SELL_R1: in box (321-364), entry at R1 364, target mid 342, stop 374 ｜ 52.2 條規則（SELL plan，resistance 364.09）：① 跌到 364.09、收市守住喺 364.09 上面 → 照 BUY 條 plan 做（入場 364.09，止蝕 374.40，目標 342.50）。② 收市跌穿 364.09 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 364.09 上面』。"
   }
 }

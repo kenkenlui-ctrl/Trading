@@ -1,32 +1,47 @@
 {
-  "ticker": "3139.T",
-  "asof": "2026-10-05",
-  "close": 3395.0,
-  "chg_pct": -0.14705882352941124,
+  "ticker": "JP.3139",
+  "ticker_user": "3139.T",
+  "name": "LACTO JAPAN CO.LTD",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 3400.0,
-    "H": 3435.0,
-    "L": 3375.0,
-    "C": 3395.0,
-    "prev_close": 3400.0,
-    "chg_pct": -0.14705882352941124
+    "date": "2026-10-06",
+    "O": 3395.0,
+    "H": 3430.0,
+    "L": 3395.0,
+    "C": 3415.0,
+    "prev_close": 3395.0,
+    "chg_pct": 0.59
   },
-  "name": "Lacto Japan Co., Ltd.",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 3400.0,
-    "in_box_pct": 56.1,
-    "nearest_support": "S1 KEY (3232.0)",
-    "nearest_resistance": "R1 today high (3440.0)"
+  "adx": 14.54,
+  "plus_di": 14.66,
+  "minus_di": 24.32,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 3830.0 (2026-02-27), trough 3065.0 (2026-06-03), box top 3550.0 (2026-07-29)",
+  "peak": {
+    "date": "2026-02-27",
+    "price": 3830.0
   },
+  "trough": {
+    "date": "2026-06-03",
+    "price": 3065.0
+  },
+  "box": {
+    "top": 3550.0,
+    "top_date": "2026-07-29",
+    "bottom": 3065.0,
+    "period": "2026-06-03 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 10.8,
+  "recovery_from_crash_pct": 11.4,
   "supports": [
     {
       "level": 3232.0,
       "label": "S1 KEY",
       "touches": 4,
-      "evidence": "tested 4x in base period; 4.9% below current"
+      "evidence": "tested 4x in base period; 5.4% below current"
     },
     {
       "level": 3208.0,
@@ -37,14 +52,87 @@
   ],
   "resistances": [
     {
-      "level": 3440.0,
+      "level": 3430.0,
       "label": "R1 today high",
-      "evidence": "today's high 3440.0"
+      "evidence": "today's high 3430.0"
     },
     {
       "level": 3550.0,
       "label": "R3 Jul high",
       "evidence": "box top 3550.0, base period high"
+    }
+  ],
+  "position": {
+    "current": 3415.0,
+    "in_box_pct": 60.5,
+    "nearest_support": "S1 KEY (3232.0)",
+    "nearest_resistance": "R1 today high (3430.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 3395.0,
+    "H": 3430.0,
+    "L": 3395.0,
+    "C": 3415.0,
+    "body_pct": 57.1,
+    "upper_wick_pct": 42.9,
+    "lower_wick_pct": 0.0
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 3232.0 (KEY support)",
+      "then": "still range; watch 3430.0 for next test"
+    },
+    {
+      "if": "break 3232.0 on close",
+      "then": "target 3208.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 3208.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 3430.0 on close",
+      "then": "short-term bullish; next test 3550.0"
+    },
+    {
+      "if": "break 3550.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -64,7 +152,7 @@
     "r3": 3750.0,
     "s3": 3065.0,
     "s4": 3385.0,
-    "current_position_pct": 34.5,
-    "notes": "WAIT_RANGE: in box (3350-3495), pos 34%, no clear setup"
+    "current_position_pct": 44.8,
+    "notes": "WAIT_RANGE: in box (3350-3495), pos 45%, no clear setup"
   }
 }

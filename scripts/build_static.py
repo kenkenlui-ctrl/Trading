@@ -910,6 +910,123 @@ _T1_FOOTER_RE = re.compile(
 
 
 
+_FAQ_LINK_RE = re.compile(r'href="/faq(?:\.html)?"')
+
+
+_NAV_LINKS_RE = re.compile(r'(<div class="nav-links">)(.*?)(</div>)', re.S)
+_ANCHOR_RE = re.compile(r'<a\s[^>]*>.*?</a>', re.S)
+
+
+_EN_STALE_BRAND = ("Multi-Horizon AI Trading Decision Dashboard",
+                   "多週期 AI 交易決策儀表板")
+
+
+def sync_en_brand_line() -> list[str]:
+    """Point the /en/ mirrors at the current product subtitle.
+
+    2026-10-07. build_home.py owns home_subtitle_zh, in both languages. The
+    zh homepage is regenerated every build, but public/en/** is only rebuilt
+    when someone runs scripts/build_i18n.py by hand — which we must not do,
+    because it overwrites the whole tree. So when the subtitle changed, the
+    zh page moved and the en mirror kept advertising "Multi-Horizon AI
+    Trading Decision Dashboard" three times in its own <title>, og:title and
+    <h1>. Two homepages, two product names.
+
+    A hand-run i18n rebuild would fix this on its own; this pass means the fix
+    does not have to wait for one. It only substitutes the known stale
+    literals for the live subtitle string, so an unrelated en page cannot be
+    damaged, and it is a no-op once build_i18n has been run for real.
+    """
+    try:
+        from build_home import _STRINGS
+        sub = _STRINGS["home_subtitle_zh"]
+        live = {"en": sub.get("en", ""), "zh": sub.get("zh", "")}
+    except Exception:
+        return []
+    changed: list[str] = []
+    for p in sorted(PUBLIC_DIR.rglob("*.html")):
+        try:
+            html = p.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        lang = "en" if "/en/" in p.as_posix() else "zh"
+        new = html
+        for stale in _EN_STALE_BRAND:
+            if stale in new:
+                new = new.replace(stale, live[lang])
+        if new != html:
+            p.write_text(new, encoding="utf-8")
+            changed.append(str(p.relative_to(PUBLIC_DIR)))
+    return changed
+
+
+def collapse_duplicate_nav_links() -> list[str]:
+    """Drop a nav link that is immediately repeated inside .nav-links.
+
+    2026-10-07: three nav templates (the zh hub, the ticker detail page and
+    the homepage) each carried two identical adjacent Methodology lines, so
+    the desktop bar showed it twice. The templates are fixed at source; this
+    is the cheap guard for the hand-edited pages and /en/ translations, whose
+    bodies are not ours to regenerate. Same reasoning as restamp_css_version():
+    one normalising pass over public/** that a new builder cannot bypass.
+
+    Scope note — "Methodology" legitimately appears twice per page, once in
+    the desktop nav and once in the mobile bottom bar, so counting occurrences
+    in the whole file is a false positive. Only an EXACT adjacent repeat inside
+    .nav-links is removed, and only within that one div, so the mobile bar and
+    any two links that merely share a label both survive.
+    """
+    changed: list[str] = []
+    for p in sorted(PUBLIC_DIR.rglob("*.html")):
+        try:
+            html = p.read_text(encoding="utf-8")
+        except Exception:
+            continue
+
+        def _fix(m: re.Match) -> str:
+            found = _ANCHOR_RE.findall(m.group(2))
+            kept: list[str] = []
+            for a in found:
+                if kept and a == kept[-1]:
+                    continue
+                kept.append(a)
+            if len(kept) == len(found):
+                return m.group(0)
+            return m.group(1) + "".join(kept) + m.group(3)
+
+        new = _NAV_LINKS_RE.sub(_fix, html)
+        if new != html:
+            p.write_text(new, encoding="utf-8")
+            changed.append(str(p.relative_to(PUBLIC_DIR)))
+    return changed
+
+
+def repoint_faq_links() -> list[str]:
+    """Send the surviving hand-edited /en/ FAQ links straight at methodology.
+
+    2026-10-06: public/faq.html is deleted (it was a duplicate of the
+    methodology claims that no builder owned and no redirect let a visitor
+    reach). /faq and /faq.html still 301 to /methodology.html, so the links in
+    hand-edited pages kept working — but they cost a redirect hop, and on
+    methodology.html itself they pointed from the destination back to itself.
+
+    Only the href changes; no copy, no layout. Run over public/** so the
+    hand-edited pages and the /en/ translations (whose bodies are not ours to
+    regenerate) both converge without rerunning build_i18n.py.
+    """
+    changed: list[str] = []
+    for p in sorted(PUBLIC_DIR.rglob("*.html")):
+        try:
+            html = p.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        new, n = _FAQ_LINK_RE.subn('href="/methodology.html"', html)
+        if n and new != html:
+            p.write_text(new, encoding="utf-8")
+            changed.append(str(p.relative_to(PUBLIC_DIR)))
+    return changed
+
+
 def ensure_mobile_nav() -> list[str]:
     """Give the hand-edited pages the same mobile bottom bar as the built ones.
 
@@ -972,35 +1089,41 @@ def restamp_t1_badges() -> list[str]:
     legitimately mentions a dated session (e.g. insights.html's
     "T-1 2026-09-03 記錄") is never touched.
 
+    2026-10-07: the value written is per page, not one site-wide constant.
+    HK/JP closed 2026-10-06 while US closed 2026-10-05, and stamping the
+    newest of the three made all 223 /us200/ pages claim a session their bars
+    do not contain — while collapsing the homepage's own per-market label
+    ("2026-10-06 · US 2026-10-05") into a single date that then contradicted
+    the body printed right underneath it. build_dashboard.page_label() decides
+    which date each page may honestly claim.
+
     Scope is public/**, which includes public/en/. The /en/ pages are rebuilt
     only when someone runs scripts/build_i18n.py by hand, so their badges had
     frozen at 2026-08-28 while the zh pages read 2026-10-02.
 
     Returns the relative paths changed.
     """
-    t1 = site_t1()
+    from build_dashboard import page_label
+
     changed: list[str] = []
-
-    def _sub(m: re.Match) -> str:
-        return f"{m.group(1)}{t1}{m.group(3)}"
-
-    def _sub_f(m: re.Match) -> str:
-        return f"{m.group(1)}{t1}{m.group(3)}"
 
     for p in sorted(PUBLIC_DIR.rglob("*.html")):
         try:
             html = p.read_text(encoding="utf-8")
         except Exception:
             continue
-        new, n_nav = _T1_BADGE_RE.subn(_sub, html)
-        new, n_foot = _T1_FOOTER_RE.subn(_sub_f, new)
+        rel = str(p.relative_to(PUBLIC_DIR))
+        label = page_label(rel)
+        stamp = lambda m: f"{m.group(1)}{label}{m.group(3)}"
+        new, n_nav = _T1_BADGE_RE.subn(stamp, html)
+        new, n_foot = _T1_FOOTER_RE.subn(stamp, new)
         # Compare against the ORIGINAL, not against `new` — the first
         # subn already mutated it. Testing `n_foot and new != html` made the
         # write unreachable for any page carrying a nav badge but no footer
         # stamp, which is exactly how /en/backtest/ kept its "T-1 · —".
         if (n_nav or n_foot) and new != html:
             p.write_text(new, encoding="utf-8")
-            changed.append(str(p.relative_to(PUBLIC_DIR)))
+            changed.append(rel)
     return changed
 
 
@@ -1060,7 +1183,10 @@ def nav_html(active_path: str) -> str:
         ("/backtest.html", "Backtest", "Backtest"),
         ("/insights.html", "Insights", "Insights"),
         ("/methodology.html", "Methodology", "Methodology"),
-        ("/faq.html", "FAQ", "FAQ"),
+        # 2026-10-07: the page that publishes the measured bar and the
+        # user's own trade log. Unreachable without a nav entry, and an
+        # unreachable honesty page is worse than none.
+        ("/track-record/", "Track record", "Track record"),
         ("/disclaimer/", "Disclaimer", "Disclaimer"),
         ("/privacy.html", "Privacy", "Privacy"),
     ]
@@ -2627,7 +2753,7 @@ def build_dashboard_hub(dates: list[str]) -> str:
         '<li><a href="/hk-stock-screener.html">港股 stock screener</a> · 4 維度 filter 教學</li>'
         '<li><a href="/methodology.html">分析方法論</a> · 4-dim 評分模型 + 操作建議</li>'
         '<li><a href="/insights.html">信號審計研究</a> · 9-day audit · LLM 點解會做錯 · rule-based 修正 (NEW)</li>'
-        '<li><a href="/faq.html">FAQ</a> · 常見問題</li>'
+        '<li><a href="/methodology.html">Methodology</a> · 常見問題</li>'
         '<li><a href="/about.html">關於 Leeks Terminal</a> · 由來 + 使命 + 團隊</li>'
         '</ul>'
         '</section>'
@@ -3443,7 +3569,6 @@ Leeks Terminal 唔同嘅地方：</p>
         ("/", "1.0", "daily"),
         ("/dashboard/", "0.9", "daily"),
         ("/methodology.html", "0.8", "weekly"),
-        ("/faq.html", "0.8", "weekly"),
         ("/about.html", "0.5", "monthly"),
         ("/disclaimer.html", "0.3", "monthly"),
         ("/privacy.html", "0.3", "monthly"),
@@ -3754,13 +3879,32 @@ def main():
     #    Idempotent: strips any previously injected value before writing.
     restamped = restamp_t1_badges()
     if restamped:
-        print(f"✅ Re-stamped T-1 badge on {restamped} hand-edited page(s) → {site_t1()}")
+        from build_dashboard import site_label
+        print(f"✅ Re-stamped T-1 badge on {len(restamped)} page(s) → "
+              f"market pages use their own date, cross-market pages → {site_label()}")
         written.extend(restamped)
 
     naved = ensure_mobile_nav()
     if naved:
         print(f"📱 Injected mobile bottom nav on {len(naved)} hand-edited page(s): {naved}")
         written.extend(naved)
+
+    duped = collapse_duplicate_nav_links()
+    if duped:
+        print(f"🧭 Collapsed a repeated nav link on {len(duped)} page(s): {duped[:6]}"
+              f"{' …' if len(duped) > 6 else ''}")
+        written.extend(duped)
+
+    branded = sync_en_brand_line()
+    if branded:
+        print(f"🏷  Synced the product subtitle on {len(branded)} page(s): {branded[:6]}")
+        written.extend(branded)
+
+    faqd = repoint_faq_links()
+    if faqd:
+        print(f"🔗 Re-pointed {len(faqd)} /faq link(s) → /methodology.html: {faqd[:6]}"
+              f"{' …' if len(faqd) > 6 else ''}")
+        written.extend(faqd)
 
     # LAST step, deliberately. _CSS_VERSION() reads public/leeks.css, and this
     # must run after everything that could have touched the sheet, so the hash

@@ -1,29 +1,44 @@
 {
-  "ticker": "6367.T",
-  "asof": "2026-10-05",
-  "close": 20525.0,
-  "chg_pct": -0.2914743745445758,
+  "ticker": "JP.6367",
+  "ticker_user": "6367.T",
+  "name": "DAIKIN INDUSTRIES",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 20755.0,
-    "H": 20755.0,
-    "L": 20255.0,
-    "C": 20525.0,
-    "prev_close": 20585.0,
-    "chg_pct": -0.2914743745445758
+    "date": "2026-10-06",
+    "O": 20730.0,
+    "H": 20935.0,
+    "L": 20675.0,
+    "C": 20885.0,
+    "prev_close": 20525.0,
+    "chg_pct": 1.75
   },
-  "name": "Daikin Industries,Ltd.",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 20585.0,
-    "in_box_pct": 55.5,
-    "nearest_support": "S1 bottom (19968.0)",
-    "nearest_resistance": "R1 today high (20780.0)"
+  "adx": 31.35,
+  "plus_di": 18.47,
+  "minus_di": 26.8,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 26440.0 (2026-07-07), trough 20210.0 (2026-09-16), box top 21080.0 (2026-10-01)",
+  "peak": {
+    "date": "2026-07-07",
+    "price": 26440.0
   },
+  "trough": {
+    "date": "2026-09-16",
+    "price": 20210.0
+  },
+  "box": {
+    "top": 21080.0,
+    "top_date": "2026-10-01",
+    "bottom": 20210.0,
+    "period": "2026-09-16 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 21.0,
+  "recovery_from_crash_pct": 3.3,
   "supports": [
     {
-      "level": 19968.0,
+      "level": 20260.0,
       "label": "S1 bottom",
       "touches": 0,
       "evidence": "structural bottom, near crash low 20210.0"
@@ -31,9 +46,9 @@
   ],
   "resistances": [
     {
-      "level": 20780.0,
+      "level": 20935.0,
       "label": "R1 today high",
-      "evidence": "today's high 20780.0"
+      "evidence": "today's high 20935.0"
     },
     {
       "level": 21080.0,
@@ -41,9 +56,82 @@
       "evidence": "box top 21080.0, base period high"
     }
   ],
+  "position": {
+    "current": 20885.0,
+    "in_box_pct": 76.2,
+    "nearest_support": "S1 bottom (20260.0)",
+    "nearest_resistance": "R1 today high (20935.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 20730.0,
+    "H": 20935.0,
+    "L": 20675.0,
+    "C": 20885.0,
+    "body_pct": 59.6,
+    "upper_wick_pct": 19.2,
+    "lower_wick_pct": 21.2
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 20260.0 (KEY support)",
+      "then": "still range; watch 20935.0 for next test"
+    },
+    {
+      "if": "break 20260.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 20260.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 20935.0 on close",
+      "then": "short-term bullish; next test 21080.0"
+    },
+    {
+      "if": "break 21080.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -53,12 +141,12 @@
     "phase_match": false,
     "r1": 21105.0,
     "s1": 20210.0,
-    "s2": 20560.0,
-    "r2": 26440.0,
-    "r3": 25900.0,
-    "s3": 19470.0,
+    "s2": 20515.0,
+    "r2": 25880.0,
+    "r3": 26440.0,
+    "s3": 20095.0,
     "s4": 17380.0,
-    "current_position_pct": 41.9,
-    "notes": "WAIT_RANGE: in box (20210-21105), pos 42%, no clear setup"
+    "current_position_pct": 75.4,
+    "notes": "WAIT_RANGE: in box (20210-21105), pos 75%, no clear setup"
   }
 }

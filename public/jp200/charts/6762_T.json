@@ -1,32 +1,47 @@
 {
-  "ticker": "6762.T",
-  "asof": "2026-10-05",
-  "close": 3447.0,
-  "chg_pct": 7.786116322701697,
+  "ticker": "JP.6762",
+  "ticker_user": "6762.T",
+  "name": "TDK CORP",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 3367.0,
-    "H": 3499.0,
-    "L": 3336.0,
-    "C": 3447.0,
-    "prev_close": 3198.0,
-    "chg_pct": 7.786116322701697
+    "date": "2026-10-06",
+    "O": 3505.0,
+    "H": 3698.0,
+    "L": 3441.0,
+    "C": 3628.0,
+    "prev_close": 3447.0,
+    "chg_pct": 5.25
   },
-  "name": "TDK Corporation",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 3198.0,
-    "in_box_pct": 84.3,
-    "nearest_support": "S1 KEY (3008.0)",
-    "nearest_resistance": "R1 today high (3205.0)"
+  "adx": 22.53,
+  "plus_di": 46.73,
+  "minus_di": 13.09,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 4315.0 (2026-06-01), trough 2651.0 (2026-07-29), box top 3698.0 (2026-10-06)",
+  "peak": {
+    "date": "2026-06-01",
+    "price": 4315.0
   },
+  "trough": {
+    "date": "2026-07-29",
+    "price": 2651.0
+  },
+  "box": {
+    "top": 3698.0,
+    "top_date": "2026-10-06",
+    "bottom": 2651.0,
+    "period": "2026-07-29 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 15.9,
+  "recovery_from_crash_pct": 36.9,
   "supports": [
     {
       "level": 3008.0,
       "label": "S1 KEY",
       "touches": 3,
-      "evidence": "tested 3x in base period; 5.9% below current"
+      "evidence": "tested 3x in base period; 17.1% below current"
     },
     {
       "level": 3000.0,
@@ -49,34 +64,98 @@
   ],
   "resistances": [
     {
-      "level": 3205.0,
+      "level": 3698.0,
       "label": "R1 today high",
-      "evidence": "today's high 3205.0"
+      "evidence": "today's high 3698.0"
+    }
+  ],
+  "position": {
+    "current": 3628.0,
+    "in_box_pct": 93.3,
+    "nearest_support": "S1 KEY (3008.0)",
+    "nearest_resistance": "R1 today high (3698.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 3505.0,
+    "H": 3698.0,
+    "L": 3441.0,
+    "C": 3628.0,
+    "body_pct": 47.9,
+    "upper_wick_pct": 27.2,
+    "lower_wick_pct": 24.9
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 3008.0 (KEY support)",
+      "then": "still range; watch 3698.0 for next test"
     },
     {
-      "level": 3300.0,
-      "label": "R3 Aug high",
-      "evidence": "box top 3300.0, base period high"
+      "if": "break 3008.0 on close",
+      "then": "target 3000.0 → 2996.0 (short-term bearish)"
+    },
+    {
+      "if": "break 2651.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 3698.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
-    "trigger_price": 3205.0,
-    "target_price": 2964.5,
-    "stop_price": 3373.37,
-    "risk_pct": 5.25,
-    "reward_pct": 7.5,
-    "rr_ratio": 1.43,
+    "trigger_price": 3698.0,
+    "target_price": 3211.0,
+    "stop_price": 3908.34,
+    "risk_pct": 5.69,
+    "reward_pct": 13.17,
+    "rr_ratio": 2.32,
     "phase_match": true,
-    "r1": 3205.0,
+    "r1": 3698.0,
     "s1": 2724.0,
     "s2": 2651.0,
-    "r2": 3705.0,
+    "r2": 3460.0,
     "r3": 4315.0,
-    "s3": 2018.5,
+    "s3": 2167.0,
     "s4": 1893.0,
-    "current_position_pct": 98.5,
-    "notes": "SELL_R1: in box (2724-3205), entry at R1 3205, target mid 2964, stop 3373 ｜ 52.2 條規則（SELL plan，resistance 3205.00）：① 跌到 3205.00、收市守住喺 3205.00 上面 → 照 BUY 條 plan 做（入場 3205.00，止蝕 3373.37，目標 2964.50）。② 收市跌穿 3205.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 3205.00 上面』。"
+    "current_position_pct": 92.8,
+    "notes": "SELL_R1: in box (2724-3698), entry at R1 3698, target mid 3211, stop 3908 ｜ 52.2 條規則（SELL plan，resistance 3698.00）：① 跌到 3698.00、收市守住喺 3698.00 上面 → 照 BUY 條 plan 做（入場 3698.00，止蝕 3908.34，目標 3211.00）。② 收市跌穿 3698.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 3698.00 上面』。"
   }
 }

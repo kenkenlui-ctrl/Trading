@@ -3,21 +3,21 @@
   "ticker_user": "RIVN",
   "name": "Rivian Automotive, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
+  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-02",
-    "O": 15.27,
-    "H": 15.36,
-    "L": 13.96,
-    "C": 14.3,
-    "prev_close": 14.76,
-    "chg_pct": -3.12
+    "date": "2026-10-06",
+    "O": 14.58,
+    "H": 14.83,
+    "L": 14.43,
+    "C": 14.51,
+    "prev_close": 14.6,
+    "chg_pct": -0.62
   },
   "phase": "base_building",
-  "adx": 18.09,
-  "plus_di": 13.17,
-  "minus_di": 30.64,
-  "regime": "range",
+  "adx": 20.55,
+  "plus_di": 14.22,
+  "minus_di": 27.78,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 20.95 (2026-01-08), trough 12.65 (2026-05-19), box top 20.2 (2026-07-06)",
   "peak": {
@@ -32,23 +32,29 @@
     "top": 20.2,
     "top_date": "2026-07-06",
     "bottom": 12.65,
-    "period": "2026-05-19 to 2026-10-02"
+    "period": "2026-05-19 to 2026-10-06"
   },
-  "drop_from_peak_pct": 31.7,
-  "recovery_from_crash_pct": 13.0,
+  "drop_from_peak_pct": 30.7,
+  "recovery_from_crash_pct": 14.7,
   "supports": [
     {
+      "level": 16.0,
+      "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; -10.3% below current"
+    },
+    {
       "level": 12.0,
-      "label": "S1 bottom",
+      "label": "S2 bottom",
       "touches": 5,
       "evidence": "structural bottom, near crash low 12.65"
     }
   ],
   "resistances": [
     {
-      "level": 15.36,
+      "level": 14.83,
       "label": "R1 today high",
-      "evidence": "today's high 15.359999656677246"
+      "evidence": "rejection at 14.829999923706055 (long upper wick, close weak)"
     },
     {
       "level": 20.2,
@@ -57,28 +63,28 @@
     }
   ],
   "position": {
-    "current": 14.3,
-    "in_box_pct": 28.0,
-    "nearest_support": "S1 bottom (12.0)",
-    "nearest_resistance": "R1 today high (15.36)"
+    "current": 14.51,
+    "in_box_pct": 30.6,
+    "nearest_support": "S1 KEY (16.0)",
+    "nearest_resistance": "R1 today high (14.83)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bearish_rejection",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "lower_half",
-    "O": 15.27,
-    "H": 15.36,
-    "L": 13.96,
-    "C": 14.3,
-    "body_pct": 69.3,
-    "upper_wick_pct": 6.4,
-    "lower_wick_pct": 24.3
+    "O": 14.58,
+    "H": 14.83,
+    "L": 14.43,
+    "C": 14.51,
+    "body_pct": 17.3,
+    "upper_wick_pct": 61.7,
+    "lower_wick_pct": 21.0
   },
   "bias": {
     "short": {
       "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (28% of box)"
+      "reason": "rejection at R1 + near support (31% of box)"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -91,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 12.0 (KEY support)",
-      "then": "still range; watch 15.36 for next test"
+      "if": "hold 16.0 (KEY support)",
+      "then": "still range; watch 14.83 for next test"
     },
     {
-      "if": "break 12.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 16.0 on close",
+      "then": "target 12.0 → lower (short-term bearish)"
     },
     {
       "if": "break 12.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 15.36 on close",
+      "if": "reclaim 14.83 on close",
       "then": "short-term bullish; next test 20.2"
     },
     {
@@ -134,19 +140,19 @@
     "strategy": "BUY_S1",
     "trigger_price": 13.96,
     "target_price": 15.38,
-    "stop_price": 12.95,
-    "risk_pct": 7.2,
+    "stop_price": 13.03,
+    "risk_pct": 6.65,
     "reward_pct": 10.21,
-    "rr_ratio": 1.42,
+    "rr_ratio": 1.53,
     "phase_match": true,
     "r1": 16.81,
     "s1": 13.96,
     "s2": 14.4,
-    "r2": 18.79,
+    "r2": 18.78,
     "r3": 20.2,
     "s3": 12.65,
     "s4": 13.58,
-    "current_position_pct": 11.9,
-    "notes": "BUY_S1: in box (14-17), entry at S1 14, target mid 15, stop 13 ｜ 52.2 條規則（BUY plan，support 13.96）：① 跌到 13.96、收市守住喺 13.96 上面 → 照 BUY 條 plan 做（入場 13.96，止蝕 12.95，目標 15.38）。② 收市跌穿 13.96 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 13.96 上面』。"
+    "current_position_pct": 19.3,
+    "notes": "BUY_S1: in box (14-17), entry at S1 14, target mid 15, stop 13 ｜ 52.2 條規則（BUY plan，support 13.96）：① 跌到 13.96、收市守住喺 13.96 上面 → 照 BUY 條 plan 做（入場 13.96，止蝕 13.03，目標 15.38）。② 收市跌穿 13.96 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 13.96 上面』。"
   }
 }

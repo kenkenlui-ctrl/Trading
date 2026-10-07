@@ -1,39 +1,59 @@
 {
-  "ticker": "3189.T",
-  "asof": "2026-10-05",
-  "close": 92.0,
-  "chg_pct": -4.1666666666666625,
+  "ticker": "JP.3189",
+  "ticker_user": "3189.T",
+  "name": "ANAP HOLDINGS INC",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 97.0,
-    "H": 98.0,
-    "L": 92.0,
-    "C": 92.0,
-    "prev_close": 96.0,
-    "chg_pct": -4.1666666666666625
+    "date": "2026-10-06",
+    "O": 94.0,
+    "H": 94.0,
+    "L": 91.0,
+    "C": 93.0,
+    "prev_close": 92.0,
+    "chg_pct": 1.09
   },
-  "name": "Anap Holdings Inc.",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 96.0,
-    "in_box_pct": 4.1,
-    "nearest_support": "S1 bottom (92.0)",
-    "nearest_resistance": "R1 today high (101.0)"
+  "adx": 18.75,
+  "plus_di": 23.56,
+  "minus_di": 27.95,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 349.0 (2026-01-05), trough 91.0 (2026-10-06), box top 190.0 (2026-08-24)",
+  "peak": {
+    "date": "2026-01-05",
+    "price": 349.0
   },
+  "trough": {
+    "date": "2026-10-06",
+    "price": 91.0
+  },
+  "box": {
+    "top": 190.0,
+    "top_date": "2026-08-24",
+    "bottom": 91.0,
+    "period": "2026-10-06 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 73.4,
+  "recovery_from_crash_pct": 2.2,
   "supports": [
     {
       "level": 92.0,
       "label": "S1 bottom",
       "touches": 0,
-      "evidence": "structural bottom, near crash low 95.0"
+      "evidence": "structural bottom, near crash low 91.0"
     }
   ],
   "resistances": [
     {
-      "level": 101.0,
+      "level": 94.0,
       "label": "R1 today high",
-      "evidence": "today's high 101.0"
+      "evidence": "today's high 94.0"
+    },
+    {
+      "level": 120.0,
+      "label": "R5",
+      "evidence": "pre-crash supply, top before breakdown"
     },
     {
       "level": 150.0,
@@ -51,6 +71,79 @@
       "evidence": "box top 190.0, base period high"
     }
   ],
+  "position": {
+    "current": 93.0,
+    "in_box_pct": 1.0,
+    "nearest_support": "S1 bottom (92.0)",
+    "nearest_resistance": "R1 today high (94.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 94.0,
+    "H": 94.0,
+    "L": 91.0,
+    "C": 93.0,
+    "body_pct": 33.3,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 66.7
+  },
+  "bias": {
+    "short": {
+      "bias": "defensive",
+      "reason": "near box bottom (1% of box)"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 92.0 (KEY support)",
+      "then": "still range; watch 94.0 for next test"
+    },
+    {
+      "if": "break 92.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 92.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 94.0 on close",
+      "then": "short-term bullish; next test 120.0"
+    },
+    {
+      "if": "break 190.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
     "strategy": "WAIT_RANGE",
@@ -61,14 +154,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 123.0,
-    "s1": 95.0,
+    "r1": 121.0,
+    "s1": 91.0,
     "s2": 95.0,
     "r2": 190.0,
-    "r3": 202.0,
+    "r3": 201.0,
     "s3": 99.0,
     "s4": 194.0,
-    "current_position_pct": 3.6,
-    "notes": "WAIT_RANGE: in box (95-123), pos 4%, no clear setup"
+    "current_position_pct": 6.7,
+    "notes": "WAIT_RANGE: in box (91-121), pos 7%, no clear setup"
   }
 }

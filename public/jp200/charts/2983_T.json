@@ -1,44 +1,59 @@
 {
-  "ticker": "2983.T",
-  "asof": "2026-10-05",
-  "close": 1605.0,
-  "chg_pct": -0.24860161591050423,
+  "ticker": "JP.2983",
+  "ticker_user": "2983.T",
+  "name": "ARR PLANNER CO LTD",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 1623.0,
-    "H": 1623.0,
+    "date": "2026-10-06",
+    "O": 1596.0,
+    "H": 1612.0,
     "L": 1596.0,
     "C": 1605.0,
-    "prev_close": 1609.0,
-    "chg_pct": -0.24860161591050423
+    "prev_close": 1605.0,
+    "chg_pct": 0.0
   },
-  "name": "Arr Planner Co., Ltd.",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 1609.0,
-    "in_box_pct": 57.3,
-    "nearest_support": "S1 KEY (1560.0)",
-    "nearest_resistance": "R1 today high (1651.0)"
+  "adx": 18.33,
+  "plus_di": 19.13,
+  "minus_di": 22.54,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 2400.0 (2026-02-16), trough 1327.0 (2026-06-03), box top 1819.0 (2026-09-04)",
+  "peak": {
+    "date": "2026-02-16",
+    "price": 2400.0
   },
+  "trough": {
+    "date": "2026-06-03",
+    "price": 1327.0
+  },
+  "box": {
+    "top": 1819.0,
+    "top_date": "2026-09-04",
+    "bottom": 1327.0,
+    "period": "2026-06-03 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 33.1,
+  "recovery_from_crash_pct": 20.9,
   "supports": [
     {
-      "level": 1560.0,
+      "level": 1516.0,
       "label": "S1 KEY",
       "touches": 3,
-      "evidence": "tested 3x in base period; 3.0% below current"
-    },
-    {
-      "level": 1516.0,
-      "label": "S2",
-      "touches": 3,
-      "evidence": "mid-base support, tested 3x"
+      "evidence": "tested 3x in base period; 5.5% below current"
     },
     {
       "level": 1504.0,
-      "label": "S3",
+      "label": "S2",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 1408.0,
+      "label": "S3",
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
     },
     {
       "level": 1327.0,
@@ -49,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 1651.0,
+      "level": 1612.0,
       "label": "R1 today high",
-      "evidence": "today's high 1651.0"
+      "evidence": "today's high 1612.0"
     },
     {
       "level": 1819.0,
@@ -59,24 +74,97 @@
       "evidence": "box top 1819.0, base period high"
     }
   ],
+  "position": {
+    "current": 1605.0,
+    "in_box_pct": 56.5,
+    "nearest_support": "S1 KEY (1516.0)",
+    "nearest_resistance": "R1 today high (1612.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 1596.0,
+    "H": 1612.0,
+    "L": 1596.0,
+    "C": 1605.0,
+    "body_pct": 56.2,
+    "upper_wick_pct": 43.8,
+    "lower_wick_pct": 0.0
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 1516.0 (KEY support)",
+      "then": "still range; watch 1612.0 for next test"
+    },
+    {
+      "if": "break 1516.0 on close",
+      "then": "target 1504.0 → 1408.0 (short-term bearish)"
+    },
+    {
+      "if": "break 1327.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 1612.0 on close",
+      "then": "short-term bullish; next test 1819.0"
+    },
+    {
+      "if": "break 1819.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "BUY",
     "strategy": "BUY_S1",
     "trigger_price": 1580.0,
     "target_price": 1699.5,
-    "stop_price": 1502.14,
-    "risk_pct": 4.93,
+    "stop_price": 1516.4,
+    "risk_pct": 4.03,
     "reward_pct": 7.56,
-    "rr_ratio": 1.53,
+    "rr_ratio": 1.88,
     "phase_match": true,
     "r1": 1819.0,
     "s1": 1580.0,
     "s2": 1394.0,
-    "r2": 1710.0,
-    "r3": 1699.0,
+    "r2": 1765.0,
+    "r3": 1690.0,
     "s3": 1327.0,
     "s4": 1318.0,
-    "current_position_pct": 12.1,
-    "notes": "BUY_S1: in box (1580-1819), entry at S1 1580, target mid 1700, stop 1502 ｜ 52.2 條規則（BUY plan，support 1580.00）：① 跌到 1580.00、收市守住喺 1580.00 上面 → 照 BUY 條 plan 做（入場 1580.00，止蝕 1502.14，目標 1699.50）。② 收市跌穿 1580.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1580.00 上面』。"
+    "current_position_pct": 10.5,
+    "notes": "BUY_S1: in box (1580-1819), entry at S1 1580, target mid 1700, stop 1516 ｜ 52.2 條規則（BUY plan，support 1580.00）：① 跌到 1580.00、收市守住喺 1580.00 上面 → 照 BUY 條 plan 做（入場 1580.00，止蝕 1516.40，目標 1699.50）。② 收市跌穿 1580.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1580.00 上面』。"
   }
 }

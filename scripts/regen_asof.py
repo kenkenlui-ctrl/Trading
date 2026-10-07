@@ -32,7 +32,16 @@ SKILL = Path("/Users/kenken/.minimax/skills/daily-sr-chart/scripts/daily_sr.py")
 # universe, so it is derived from the filenames instead.
 MARKETS = {
     "hk": (REPO / "hk_universe_200.json", REPO / "charts/hk200", "hk"),
-    "us": (REPO / "charts/us200/us_top200_fresh.json", REPO / "charts/us200", "us"),
+    # 2026-10-07: refresh what the SITE PUBLISHES, not what a re-selection
+    # would pick today. us_published.json is the persistent union (today's
+    # turnover top 200 ∪ everything ever shipped = 222). Pointing this at
+    # us_top200_fresh.json meant the 22 tickers that once shipped and then
+    # dropped out of the top-200 re-selection were never refreshed again —
+    # they silently froze and drifted further behind every session, and their
+    # pages only ever showed the stale banner instead of data. A page nobody
+    # can get current numbers for is a page we should not be publishing at
+    # all; at minimum it must not be one we silently stopped updating.
+    "us": (REPO / "charts/us200/us_published.json", REPO / "charts/us200", "us"),
     "jp": (None, REPO / "data/jp200", "jp"),
 }
 

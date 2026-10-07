@@ -19,6 +19,7 @@ Usage:
 from __future__ import annotations
 import argparse
 import json
+import math
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -29,10 +30,14 @@ REPO = Path("/Users/kenken/dev/dsa-hk")
 
 MARKETS = {
     "hk": (REPO / "hk_universe_200.json", REPO / "charts/hk200"),
-    "us": (REPO / "charts/us200/us_top200_fresh.json", REPO / "charts/us200"),
+    "us": (REPO / "charts/us200/us_published.json", REPO / "charts/us200"),
     "jp": (None, REPO / "data/jp200"),
 }
 COLS = ("date", "open", "high", "low", "close", "volume")
+# Price columns must be present and positive for a bar to be a bar. Volume is
+# NOT in this set: a genuine zero-volume session is a real session, and
+# dropping those bars would silently punch holes in the chart's x-axis.
+PRICE_COLS = ("open", "high", "low", "close")
 
 
 def universe(upath, out_dir: Path):
@@ -72,25 +77,93 @@ def one(tk: str, safe: str, out_dir: Path, asof: str, days: int, source: str):
     if len(df) == 0:
         return False, f"{tk}: nothing at or before {asof}"
     rows = []
+    dropped = 0
     for _, r in df.iterrows():
         d = r["date"]
         # daily_sr returns a pandas Timestamp for the date column; the rest of
         # the pipeline stores plain YYYY-MM-DD strings, so normalise here.
         ds = d.strftime("%Y-%m-%d") if hasattr(d, "strftime") else str(d)[:10]
-        rows.append({**{c: float(r[c]) for c in COLS if c != "date"}, "date": ds})
+        vals = {}
+        bad = False
+        for c in COLS:
+            if c == "date":
+                continue
+            v = r[c]
+            # 2026-10-07: yfinance hands back a NaN close for 16 of the 200 HK
+            # names on sessions it has a row for but no settled price (72800,
+            # 7709, 2882 …). Those rows have a real DATE, so the old
+            # `last != asof` guard saw 2026-10-06 and passed — and the file it
+            # wrote carried a NaN candle. canvas-chart.js drew that candle, so
+            # the page showed a bar the market never printed, and the "數據未
+            # 更新" banner sat directly above a chart that claimed to be
+            # fresher. daily_sr.fetch_ohlc rejects exactly these names
+            # (last_bar=2026-10-02), which is why the analysis payload and the
+            # chart disagreed. A bar is only a bar if it has a price.
+            if c in PRICE_COLS:
+                if v is None or not math.isfinite(float(v)) or float(v) <= 0:
+                    bad = True
+                    break
+            elif v is None or not math.isfinite(float(v)) or float(v) < 0:
+                # volume: must be a real number, but zero is allowed
+                bad = True
+                break
+            vals[c] = float(v)
+        if bad:
+            dropped += 1
+            continue
+        rows.append({**vals, "date": ds})
+    if not rows:
+        return False, f"{tk}: every bar was null"
     last = rows[-1]["date"]
+    note = f" (dropped {dropped} null bar(s))" if dropped else ""
+
+    # 2026-10-07: writing the cleaned series is right, but only when it is at
+    # least as long as what we already have. Yahoo intermittently answers a
+    # request with a handful of rows (QRVO returned 5, ending 2026-09-14,
+    # instead of 400). Writing that "cleaned" result is how a 400-bar series
+    # becomes a 5-bar one — the null-bar fix silently turned into a
+    # history-destroying pass. Fail-closed on the WRITE solves the NaN case
+    # and creates this one; the two rules have to coexist, so a SHORTER
+    # result is never allowed to overwrite a longer file.
+    path = out_dir / f"{safe}_ohlc.json"
+    have = None
+    if path.exists():
+        try:
+            old = json.loads(path.read_text(encoding="utf-8"))
+            have = len(old) if isinstance(old, list) else None
+        except Exception:
+            have = None
+    if have is not None and len(rows) < have:
+        return False, (f"{tk}: upstream returned only {len(rows)} bars, file has "
+                       f"{have} — kept the longer series{note}")
+
+    path.write_text(json.dumps(rows), encoding="utf-8")
     if last != asof:
-        return False, f"{tk}: last bar {last} != {asof}"
-    (out_dir / f"{safe}_ohlc.json").write_text(json.dumps(rows), encoding="utf-8")
-    return True, f"{tk} ✓ {len(rows)} bars → {last}"
+        return False, f"{tk}: last bar {last} != {asof}{note}"
+    return True, f"{tk} ✓ {len(rows)} bars → {last}{note}"
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--asof", required=True)
+    ap.add_argument("--asof", required=True,
+                    help="default close date for every market")
+    # 2026-10-07: markets do not share a calendar. Kenneth asked for HK/JP on
+    # the 06 close and the US on the 05 close in the same run; a single --asof
+    # silently stamped one date onto all three, which is how the chart/analysis
+    # mismatch class of bug keeps returning. Per-market overrides are explicit
+    # and default to --asof, so existing single-date calls are unchanged.
+    ap.add_argument("--asof-hk", help="HK close date (default: --asof)")
+    ap.add_argument("--asof-jp", help="JP close date (default: --asof)")
+    ap.add_argument("--asof-us", help="US close date (default: --asof)")
     ap.add_argument("--markets", default="hk,us,jp")
     ap.add_argument("--workers", type=int, default=8)
-    ap.add_argument("--days", type=int, default=200)
+    # 2026-10-07: default was 200, which produced files of exactly 200 bars —
+    # and build_v2_signals.bars_from_public() drops any file with < 260 bars
+    # because features() needs a 200-day average plus warm-up. Refreshing with
+    # the default silently emptied the published signal set (178 -> 1) while
+    # every page still looked fine, because the charts render happily with
+    # fewer bars. Keep this above the 260 gate with room to spare.
+    ap.add_argument("--days", type=int, default=400)
     ap.add_argument("--source", default="yfinance", choices=["yfinance", "futu", "auto"])
     a = ap.parse_args()
 
@@ -103,11 +176,12 @@ def main() -> None:
         if not uni:
             print(f"[{mkt}] universe 空 — skip")
             continue
-        print(f"[{mkt}] {len(uni)} tickers ohlc -> {out_dir} (asof {a.asof})", flush=True)
+        mkt_asof = getattr(a, f"asof_{mkt}", None) or a.asof
+        print(f"[{mkt}] {len(uni)} tickers ohlc -> {out_dir} (asof {mkt_asof})", flush=True)
         ok = fail = 0
         fails = []
         with ThreadPoolExecutor(max_workers=a.workers) as ex:
-            futs = {ex.submit(one, tk, safe, out_dir, a.asof, a.days, a.source): tk for tk, safe in uni}
+            futs = {ex.submit(one, tk, safe, out_dir, mkt_asof, a.days, a.source): tk for tk, safe in uni}
             for f in as_completed(futs):
                 good, msg = f.result()
                 ok += good

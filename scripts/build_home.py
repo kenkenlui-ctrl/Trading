@@ -13,19 +13,29 @@ import shutil
 from datetime import datetime, date, timedelta
 from pathlib import Path
 from mobile_nav import mobile_bottom_nav
+from build_dashboard import site_label
 import os as _os_i18n
 
 # 2026-08-30: i18n — zh / en per-string translation
 _SITE_LANG = _os_i18n.environ.get("SITE_LANG", "zh")
 _STRINGS = {
-    "home_subtitle_zh": {"zh": "多週期 AI 交易決策儀表板", "en": "Multi-Horizon AI Trading Decision Dashboard"},
+    # 2026-10-07: dropped "AI". The hero one screen below says every number is
+    # computed deterministically in Python from T-1 close OHLC with zero LLM
+    # involvement, and the methodology page documents the same. Calling the
+    # product an "AI trading dashboard" one line above that is the kind of
+    # claim the site has just spent a month retracting elsewhere — a visitor
+    # who reads both halves sees the contradiction. What it actually does is
+    # deterministic multi-horizon signal generation; that is the stronger
+    # sell because it is checkable. To restore the old wording, put "AI " back
+    # in front of the two strings below.
+    "home_subtitle_zh": {"zh": "多週期交易決策儀表板", "en": "Multi-Horizon Trading Decision Dashboard"},
     "home_meta_desc": {
-        "zh": "每晚收市後為港股、美股、日股計行動計劃：入場價、止損位、離場規則。只做多，收市企穩支持位先成交，3 倍 ATR 止損，第 10 個交易日離場。全部數字由 Python 對 T-1 收市 OHLC 確定性計出，零 LLM 幻覺。每單優勢不等於跑贏大市 —— 實測與限制見方法論頁。",
-        "en": "After each close, an action plan for Hong Kong, US and Japanese stocks: entry, stop and exit. Long only, fills only if the session closes back above support, 3x ATR stop, time exit on the 10th session. Every number is computed deterministically in Python from T-1 close OHLC — zero LLM hallucination. A per-trade edge is not the same as beating the market; measured results and limits on the methodology page."
+        "zh": "每晚收市後為美股、日股計行動計劃：入場價、止損位、離場規則。只做多，收市企穩支持位先成交，3 倍 ATR 止損，第 10 個交易日離場。全部數字由 Python 對 T-1 收市 OHLC 確定性計出，零 LLM 幻覺。每單優勢不等於跑贏大市 —— 實測與限制見方法論頁。港股目前仍用舊版引擎，未納入 v2。",
+        "en": "After each close, an action plan for US and Japanese stocks: entry, stop and exit. Long only, fills only if the session closes back above support, 3x ATR stop, time exit on the 10th session. Every number is computed deterministically in Python from T-1 close OHLC — zero LLM hallucination. A per-trade edge is not the same as beating the market; measured results and limits on the methodology page. Hong Kong still runs the older engine and is not part of v2."
     },
     "home_lede_zh": {
         "zh": (
-            "每晚收市後，對 <b>{HK} 隻港股、{US} 隻美股、{JP} 隻日股</b>"
+            "每晚收市後，對 <b>{US} 隻美股、{JP} 隻日股</b>"
             "計一次行動計劃：入場價、止損位、離場規則。"
             "<b>全部數字由 Python 對 T-1 收市 OHLC 確定性計出，零 LLM 幻覺</b>。"
             "<br><br>"
@@ -34,10 +44,18 @@ _STRINGS = {
             "<b>而且收市要企穩 S1 先算成交</b>；止損 S1 下方 3 倍 ATR；"
             "冇目標價，第 10 個交易日收市離場。"
             "<br><br>"
+            "<b style=\"color: var(--amber);\">港股未納入 v2。</b>"
+            "實測之後港股喺 v2 之下係負數：按 <b>0.25%</b> 來回成本（本頁假設嘅成本，"
+            "亦即免佣 HK$100k 單嘅實際成本），2016–26 年化落後同一批股票等權持有 "
+            "<b>4.6 個百分點</b>；成本收到零都仲係落後 1.4 點。唔係成本問題，係規則本身喺港股冇效，"
+            "所以引擎目前只行美股同日股；<a href=\"/hk200/\">/hk200/</a> 顯示嘅仍然係舊版引擎。"
+            "<br><br>"
             "<b style=\"color: var(--amber);\">呢個係一個規則，唔係一個保證。</b>"
             "每單表現係實測，但<b>每單有優勢 ≠ 跑贏大市</b>：用同一批美股等權單純持有，"
             "2016–26 年化 +27.4%，我哋嘅規則 +27.2% —— 差額係零。"
-            "日股暫時領先 6.9 個百分點/年，但未用 point-in-time 名單驗證，唔算已證實 alpha。"
+            "<b>日股全期 +6.9 個百分點/年，但拆開睇就唔成立</b>：2016–20 落後純持有 "
+            "<b>7.9 個百分點/年</b>，2021–26 先領先 16.7。差額幾乎全部來自單一大市 regime，"
+            "唔係一個跨市況都成立嘅優勢，所以唔當佢係 alpha。"
             "<a href=\"/methodology\">完整方法論同修正記錄 →</a>"
         ),
         "en": (
@@ -53,8 +71,9 @@ _STRINGS = {
             "<b style=\"color: var(--amber);\">This is a rule, not a promise.</b> The per-trade result is measured, "
             "but <b>a per-trade edge is not the same as beating the market</b>: holding the same US names "
             "passively and equally weighted returned 27.4%/yr over 2016-26, against 27.2% for this rule — "
-            "a difference of zero. Japan is currently ahead by 6.9pp/yr, but that has not been validated "
-            "against a point-in-time universe and is not established alpha. "
+            "a difference of zero. Japan's full-period +6.9pp/yr does not survive being split: "
+            "2016-20 trails passive by 7.9pp/yr, and only 2021-26 leads by 16.7. Almost the entire "
+            "difference comes from one market regime, so it is not treated as alpha. "
             "<a href=\"/methodology\">Full methodology and correction log →</a>"
         ),
     },
@@ -461,8 +480,10 @@ def build_home_page():
     today = t_minus_1("HK")
     # 2026-10-02: JP traded 10-01 while HK/US last closed 09-30. A single date
     # in the header would be wrong for two of three markets, so print each.
-    _hk, _us, _jp = data_asof("HK"), data_asof("US"), data_asof("JP")
-    t1_label = f"{_hk} · US {_us}" + (f" · JP {_jp}" if _jp != _hk else "")
+    # 2026-10-07: moved to build_dashboard.site_label() — build_static's badge
+    # restamper needs the exact same string, and two copies of one format is
+    # how the chrome and the body drifted apart in the first place.
+    t1_label = site_label()
     v2_payload, v2_sigs = load_v2_signals()
 
     # 2026-10-06: rank by distance to the S1 trigger, not by a v1 win rate.
@@ -481,7 +502,7 @@ def build_home_page():
     hk_in_v2 = by_mkt.get("hk200", 0)
     mkt_bits = " + ".join(f"{v} {k.upper()}" for k, v in sorted(by_mkt.items())) or "—"
 
-    cards = "".join(render_v2_card(s) for s in top)
+    cards = "\n".join(render_v2_card(s) for s in top)
 
     # 2026-08-30: i18n strings for hero (built once, used in template below)
     subtitle = T("home_subtitle_zh")
@@ -508,7 +529,7 @@ def build_home_page():
 <meta property="og:site_name" content="Leeks Terminal">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Leeks Terminal · {T('home_subtitle_zh')}">
-<meta property="og:description" content="AI 港美股多週期 AI 交易決策儀表板 · 200+200 隻主流股票 · T-1 數據 · 10 步價格行為框架 · 4 個持倉期 backtest（T+1 / T+3 / T+5 / T+10）。">
+<meta property="og:description" content="美股 + 日股多週期交易決策儀表板 · T-1 數據 · 只做多，收市企穩 S1 先成交 · 3 倍 ATR 止損 · 第 10 個交易日離場。港股未納入 v2。">
 <meta property="og:url" content="https://www.win9you.com/">
 <meta property="og:image" content="https://www.win9you.com/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -524,7 +545,7 @@ def build_home_page():
       "name": "Leeks Terminal",
       "url": "https://www.win9you.com/",
       "inLanguage": "zh-Hant-HK",
-      "description": "Rule-based trading decision dashboard covering Hong Kong, US and Japanese stocks. Signals are computed in Python from T-1 daily OHLC. Educational use only, not investment advice. Per-trade results are not evidence of excess return: in the US the same 201 stocks held passively outperformed the strategy over 2016-26. See the methodology page for the measured results and their limits.",
+      "description": "Rule-based trading decision dashboard for US and Japanese stocks. Hong Kong still runs an older engine and is not part of v2. Signals are computed in Python from T-1 daily OHLC. Educational use only, not investment advice. Per-trade results are not evidence of excess return: in the US the same 201 stocks held passively outperformed the strategy over 2016-26. See the methodology page for the measured results and their limits.",
       "publisher": {{
         "@type": "Organization",
         "name": "Leeks Terminal",
@@ -539,14 +560,14 @@ def build_home_page():
       "applicationSubCategory": "Trading Signal Dashboard",
       "operatingSystem": "Web",
       "inLanguage": ["zh-Hant-HK", "en"],
-      "description": "Rule-based signal engine for Hong Kong, US and Japanese stocks. Signals are computed deterministically in Python from T-1 daily OHLC bars (long-only; stock above a rising 200-day average; market index above its own 200-day average; limit entry at the 20-day support with a close-hold confirmation; 3xATR stop; 10-session time exit). No language model produces any number, price level or verdict.",
+      "description": "Rule-based signal engine for US and Japanese stocks. Signals are computed deterministically in Python from T-1 daily OHLC bars (long-only; stock above a rising 200-day average; market index above its own 200-day average; limit entry at the 20-day support with a close-hold confirmation; 3xATR stop; 10-session time exit). No language model produces any number, price level or verdict. Hong Kong is not covered by this engine: an internal study found roughly zero edge after HK round-trip costs, so /hk200/ still serves the older (v1) engine and must not be read as a v2 signal.",
       "offers": {{
         "@type": "Offer",
         "price": "0",
         "priceCurrency": "USD"
       }},
       "featureList": [
-        "Hong Kong, US and Japanese stocks, one action plan per stock per session",
+        "US and Japanese stocks, one action plan per stock per session; Hong Kong not covered by v2",
         "Deterministic Python on T-1 OHLC; no LLM in the number path",
         "Long-only v2 rule: rising 200-day average filter, limit entry at support with close-hold, 3xATR stop, 10-session exit",
         "10-year backtests run against a re-fetched bar store with a data gate that excludes corrupted price windows",
@@ -581,7 +602,7 @@ def build_home_page():
       <a href="/backtest.html">Backtest</a>
       <a href="/insights.html">Insights</a>
       <a href="/methodology.html">Methodology</a>
-      <a href="/faq.html">FAQ</a>
+      <a href="/track-record/">Track record</a>
       <a href="/disclaimer/">Disclaimer</a>
       <a href="/privacy.html">Privacy</a>
     </div>
@@ -643,7 +664,7 @@ function toggleTheme(){{
       {cards if cards else '<div class="card text-dim">今日未有 v2 訊號 — 全部個股都未企穩 S1</div>'}
     </div>
     {f'<p class="text-dim" style="margin-top: var(--sp-3); font-size: var(--text-sm);">以上 6 個係 {n_v2} 個訊號中最接近觸發入場位嘅，按距 S1 距離排序。完整名單 → <a href="/us200/">US</a> · <a href="/jp200/">JP</a></p>' if cards else ''}
-    {f'<p class="text-dim" style="margin-top: var(--sp-3); font-size: var(--text-sm);"><b style="color: var(--amber);">港股未包含喺呢版。</b>v2 引擎目前只行 US 同 JP（{mkt_bits}）—— 我哋自己嘅研究發現港股喺 0.45% 來回成本之後 edge 大約係零，所以 <code>INCLUDE_HK=False</code>。<a href="/hk200/">/hk200/</a> 仍然顯示舊版 (v1) 引擎嘅號，唔應該當成 v2 訊號用。</p>' if hk_in_v2 == 0 else ''}
+    {f'<p class="text-dim" style="margin-top: var(--sp-3); font-size: var(--text-sm);"><b style="color: var(--amber);">港股未包含喺呢版。</b>v2 引擎目前只行 US 同 JP（{mkt_bits}）—— 實測港股喺 0.25% 實際成本下落後等權持有 <b>4.6 個百分點/年</b>，零成本都仲係落後 1.4 點，所以 <code>INCLUDE_HK=False</code>。<a href="/hk200/">/hk200/</a> 仍然顯示舊版 (v1) 引擎嘅號，唔應該當成 v2 訊號用。</p>' if hk_in_v2 == 0 else ''}
   </div>
 </section>
 

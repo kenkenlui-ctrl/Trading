@@ -1,153 +1,152 @@
 {
- "ticker": "00388.HK",
- "ticker_user": "00388.HK",
- "name": "香港交易所",
- "data_source": "futu",
- "data_range": "2025-12-10 → 2026-10-05 (200 daily bars)",
- "last_bar": {
-  "date": "2026-10-05",
-  "O": 376.0,
-  "H": 379.2,
-  "L": 373.0,
-  "C": 378.0,
-  "prev_close": 375.8,
-  "chg_pct": 0.59
- },
- "phase": "base_building",
- "adx": 26.97,
- "plus_di": 12.35,
- "minus_di": 38.75,
- "regime": "trend",
- "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
- "phase_evidence": "Peak 430.85 (2026-01-29), trough 352.57 (2026-06-29), box top 418.57 (2026-08-28)",
- "peak": {
-  "date": "2026-01-29",
-  "price": 430.85
- },
- "trough": {
-  "date": "2026-06-29",
-  "price": 352.57
- },
- "box": {
-  "top": 418.57,
-  "top_date": "2026-08-28",
-  "bottom": 352.57,
-  "period": "2026-06-29 to 2026-10-05"
- },
- "drop_from_peak_pct": 12.3,
- "recovery_from_crash_pct": 7.2,
- "supports": [
-  {
-   "level": 368.0,
-   "label": "S1 bottom",
-   "touches": 4,
-   "evidence": "structural bottom, near crash low 352.57"
+  "ticker": "HK.00388",
+  "ticker_user": "00388.HK",
+  "name": "HKEX",
+  "data_source": "yfinance",
+  "data_range": "2025-12-11 → 2026-10-06 (200 daily bars)",
+  "last_bar": {
+    "date": "2026-10-06",
+    "O": 381.4,
+    "H": 382.0,
+    "L": 378.4,
+    "C": 380.0,
+    "prev_close": 378.0,
+    "chg_pct": 0.53
+  },
+  "phase": "base_building",
+  "adx": 30.66,
+  "plus_di": 14.85,
+  "minus_di": 37.85,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 444.8 (2026-01-29), trough 360.0 (2026-06-29), box top 426.0 (2026-08-28)",
+  "peak": {
+    "date": "2026-01-29",
+    "price": 444.8
+  },
+  "trough": {
+    "date": "2026-06-29",
+    "price": 360.0
+  },
+  "box": {
+    "top": 426.0,
+    "top_date": "2026-08-28",
+    "bottom": 360.0,
+    "period": "2026-06-29 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 14.6,
+  "recovery_from_crash_pct": 5.6,
+  "supports": [
+    {
+      "level": 368.0,
+      "label": "S1 bottom",
+      "touches": 0,
+      "evidence": "structural bottom, near crash low 360.0"
+    }
+  ],
+  "resistances": [
+    {
+      "level": 382.0,
+      "label": "R1 today high",
+      "evidence": "today's high 382.0"
+    },
+    {
+      "level": 426.0,
+      "label": "R3 Aug high",
+      "evidence": "box top 426.0, base period high"
+    }
+  ],
+  "position": {
+    "current": 380.0,
+    "in_box_pct": 20.7,
+    "nearest_support": "S1 bottom (368.0)",
+    "nearest_resistance": "R1 today high (382.0)"
+  },
+  "kline_today": {
+    "type": "bearish_pullback",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 381.4,
+    "H": 382.0,
+    "L": 378.4,
+    "C": 380.0,
+    "body_pct": 38.9,
+    "upper_wick_pct": 16.7,
+    "lower_wick_pct": 44.4
+  },
+  "bias": {
+    "short": {
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (21% of box)"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 368.0 (KEY support)",
+      "then": "still range; watch 382.0 for next test"
+    },
+    {
+      "if": "break 368.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 368.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 382.0 on close",
+      "then": "short-term bullish; next test 426.0"
+    },
+    {
+      "if": "break 426.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
+  "action_plan": {
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 403.4,
+    "s1": 373.0,
+    "s2": 380.8,
+    "r2": 426.0,
+    "r3": 431.0,
+    "s3": 360.0,
+    "s4": 379.0,
+    "current_position_pct": 23.0,
+    "notes": "WAIT_RANGE: in box (373-403), pos 23%, no clear setup"
   }
- ],
- "resistances": [
-  {
-   "level": 379.2,
-   "label": "R1 today high",
-   "evidence": "today's high 379.2"
-  },
-  {
-   "level": 418.57,
-   "label": "R3 Aug high",
-   "evidence": "box top 418.57, base period high"
-  }
- ],
- "position": {
-  "current": 378.0,
-  "in_box_pct": 19.8,
-  "nearest_support": "S1 bottom (368.0)",
-  "nearest_resistance": "R1 today high (379.2)"
- },
- "kline_today": {
-  "type": "neutral",
-  "touched_R1": true,
-  "touched_S1": false,
-  "close_position": "upper_half",
-  "O": 376.0,
-  "H": 379.2,
-  "L": 373.0,
-  "C": 378.0,
-  "body_pct": 32.3,
-  "upper_wick_pct": 19.4,
-  "lower_wick_pct": 48.4
- },
- "bias": {
-  "short": {
-   "bias": "defensive",
-   "reason": "near box bottom (20% of box)"
-  },
-  "mid": {
-   "bias": "neutral_consolidation",
-   "reason": "consolidating after big move"
-  },
-  "long": {
-   "bias": "below_peak_recovery",
-   "reason": "still well below all-time peak"
-  }
- },
- "scenarios": [
-  {
-   "if": "hold 368.0 (KEY support)",
-   "then": "still range; watch 379.2 for next test"
-  },
-  {
-   "if": "break 368.0 on close",
-   "then": "target next S → lower (short-term bearish)"
-  },
-  {
-   "if": "break 368.0 (crash low)",
-   "then": "base invalidation; mid-term bearish"
-  },
-  {
-   "if": "reclaim 379.2 on close",
-   "then": "short-term bullish; next test 418.57"
-  },
-  {
-   "if": "break 418.57 (box top)",
-   "then": "leave consolidation; mid-term recovery, watch next R"
-  }
- ],
- "common_misjudgments": [
-  {
-   "claim": "跌過好多，所以一定牛",
-   "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
-  },
-  {
-   "claim": "今日陰燭，所以一定破位",
-   "refute": "陰燭在支持之上，只是弱，不是已破"
-  },
-  {
-   "claim": "MACD 綠箭就一定上",
-   "refute": "震盪市指標反覆；以水平位收市確認為優先"
-  },
-  {
-   "claim": "把歷史高位當短線目標",
-   "refute": "路徑依賴，中間有多層供應；分段過關"
-  }
- ],
- "action_plan": {
-  "verdict": "WAIT",
-  "strategy": "WAIT_REGIME",
-  "trigger_price": null,
-  "target_price": null,
-  "stop_price": null,
-  "risk_pct": 0.0,
-  "reward_pct": 0.0,
-  "rr_ratio": 0.0,
-  "phase_match": false,
-  "r1": 409.8,
-  "s1": 373.0,
-  "s2": 373.37,
-  "r2": 418.57,
-  "r3": 423.57,
-  "s3": 352.57,
-  "s4": 371.57,
-  "current_position_pct": 13.6,
-  "notes": "WAIT_RANGE: in box (373-410), pos 14%, no clear setup"
- },
- "asof": "2026-10-05"
 }

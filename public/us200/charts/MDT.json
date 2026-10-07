@@ -3,20 +3,20 @@
   "ticker_user": "MDT",
   "name": "Medtronic plc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
+  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-02",
-    "O": 86.55,
-    "H": 87.94,
-    "L": 85.59,
-    "C": 86.38,
-    "prev_close": 86.44,
-    "chg_pct": -0.07
+    "date": "2026-10-06",
+    "O": 87.97,
+    "H": 88.5,
+    "L": 86.45,
+    "C": 87.09,
+    "prev_close": 87.97,
+    "chg_pct": -1.0
   },
   "phase": "base_building",
-  "adx": 24.33,
-  "plus_di": 15.66,
-  "minus_di": 23.47,
+  "adx": 23.14,
+  "plus_di": 15.15,
+  "minus_di": 19.91,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 105.5 (2026-02-04), trough 73.31 (2026-06-02), box top 95.41 (2026-09-01)",
@@ -32,16 +32,22 @@
     "top": 95.41,
     "top_date": "2026-09-01",
     "bottom": 73.31,
-    "period": "2026-06-02 to 2026-10-02"
+    "period": "2026-06-02 to 2026-10-06"
   },
-  "drop_from_peak_pct": 18.1,
-  "recovery_from_crash_pct": 17.8,
+  "drop_from_peak_pct": 17.5,
+  "recovery_from_crash_pct": 18.8,
   "supports": [
     {
-      "level": 80.0,
+      "level": 84.0,
       "label": "S1 KEY",
+      "touches": 14,
+      "evidence": "tested 14x in base period; 3.5% below current"
+    },
+    {
+      "level": 80.0,
+      "label": "S2",
       "touches": 28,
-      "evidence": "tested 28x in base period; 7.4% below current"
+      "evidence": "mid-base support, tested 28x"
     },
     {
       "level": 73.31,
@@ -52,9 +58,9 @@
   ],
   "resistances": [
     {
-      "level": 87.94,
+      "level": 88.5,
       "label": "R1 today high",
-      "evidence": "rejection at 87.94000244140625 (long upper wick, close weak)"
+      "evidence": "today's high 88.5"
     },
     {
       "level": 95.41,
@@ -63,23 +69,23 @@
     }
   ],
   "position": {
-    "current": 86.38,
-    "in_box_pct": 59.1,
-    "nearest_support": "S1 KEY (80.0)",
-    "nearest_resistance": "R1 today high (87.94)"
+    "current": 87.09,
+    "in_box_pct": 62.4,
+    "nearest_support": "S1 KEY (84.0)",
+    "nearest_resistance": "R1 today high (88.5)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 86.55,
-    "H": 87.94,
-    "L": 85.59,
-    "C": 86.38,
-    "body_pct": 7.2,
-    "upper_wick_pct": 59.1,
-    "lower_wick_pct": 33.6
+    "O": 87.97,
+    "H": 88.5,
+    "L": 86.45,
+    "C": 87.09,
+    "body_pct": 42.9,
+    "upper_wick_pct": 25.9,
+    "lower_wick_pct": 31.2
   },
   "bias": {
     "short": {
@@ -97,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 80.0 (KEY support)",
-      "then": "still range; watch 87.94 for next test"
+      "if": "hold 84.0 (KEY support)",
+      "then": "still range; watch 88.5 for next test"
     },
     {
-      "if": "break 80.0 on close",
-      "then": "target 73.31 → lower (short-term bearish)"
+      "if": "break 84.0 on close",
+      "then": "target 80.0 → 73.31 (short-term bearish)"
     },
     {
       "if": "break 73.31 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 87.94 on close",
+      "if": "reclaim 88.5 on close",
       "then": "short-term bullish; next test 95.41"
     },
     {
@@ -139,20 +145,20 @@
     "verdict": "BUY",
     "strategy": "BUY_S1",
     "trigger_price": 85.22,
-    "target_price": 89.98,
-    "stop_price": 82.45,
-    "risk_pct": 3.25,
-    "reward_pct": 5.59,
-    "rr_ratio": 1.72,
+    "target_price": 89.96,
+    "stop_price": 82.42,
+    "risk_pct": 3.29,
+    "reward_pct": 5.56,
+    "rr_ratio": 1.69,
     "phase_match": true,
-    "r1": 94.74,
+    "r1": 94.7,
     "s1": 85.22,
     "s2": 78.97,
     "r2": 95.41,
-    "r3": 88.67,
+    "r3": 87.58,
     "s3": 73.31,
     "s4": 84.92,
-    "current_position_pct": 12.2,
-    "notes": "BUY_S1: in box (85-95), entry at S1 85, target mid 90, stop 82 ｜ 52.2 條規則（BUY plan，support 85.22）：① 跌到 85.22、收市守住喺 85.22 上面 → 照 BUY 條 plan 做（入場 85.22，止蝕 82.45，目標 89.98）。② 收市跌穿 85.22 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 85.22 上面』。"
+    "current_position_pct": 19.7,
+    "notes": "BUY_S1: in box (85-95), entry at S1 85, target mid 90, stop 82 ｜ 52.2 條規則（BUY plan，support 85.22）：① 跌到 85.22、收市守住喺 85.22 上面 → 照 BUY 條 plan 做（入場 85.22，止蝕 82.42，目標 89.96）。② 收市跌穿 85.22 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 85.22 上面』。"
   }
 }

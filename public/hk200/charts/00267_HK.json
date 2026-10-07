@@ -1,153 +1,157 @@
 {
- "ticker": "00267.HK",
- "ticker_user": "00267.HK",
- "name": "中信股份",
- "data_source": "futu",
- "data_range": "2025-12-10 → 2026-10-05 (200 daily bars)",
- "last_bar": {
-  "date": "2026-10-05",
-  "O": 12.66,
-  "H": 12.77,
-  "L": 12.6,
-  "C": 12.77,
-  "prev_close": 12.77,
-  "chg_pct": 0.0
- },
- "phase": "downtrend_active",
- "adx": 34.23,
- "plus_di": 22.8,
- "minus_di": 18.1,
- "regime": "trend",
- "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
- "phase_evidence": "Peak 13.71 (2026-09-04), trough 12.42 (2026-08-31), box top 13.71 (2026-09-04)",
- "peak": {
-  "date": "2026-09-04",
-  "price": 13.71
- },
- "trough": {
-  "date": "2026-08-31",
-  "price": 12.42
- },
- "box": {
-  "top": 13.71,
-  "top_date": "2026-09-04",
-  "bottom": 12.42,
-  "period": "2026-08-31 to 2026-10-05"
- },
- "drop_from_peak_pct": 6.8,
- "recovery_from_crash_pct": 2.8,
- "supports": [
-  {
-   "level": 12.0,
-   "label": "S1 bottom",
-   "touches": 4,
-   "evidence": "structural bottom, near crash low 12.42"
+  "ticker": "HK.00267",
+  "ticker_user": "00267.HK",
+  "name": "CITIC",
+  "data_source": "yfinance",
+  "data_range": "2025-12-11 → 2026-10-06 (200 daily bars)",
+  "last_bar": {
+    "date": "2026-10-06",
+    "O": 12.96,
+    "H": 12.96,
+    "L": 12.66,
+    "C": 12.78,
+    "prev_close": 12.77,
+    "chg_pct": 0.08
+  },
+  "phase": "downtrend_active",
+  "adx": 25.32,
+  "plus_di": 24.56,
+  "minus_di": 18.48,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 13.95 (2026-09-04), trough 12.6 (2026-10-05), box top 13.95 (2026-09-04)",
+  "peak": {
+    "date": "2026-09-04",
+    "price": 13.95
+  },
+  "trough": {
+    "date": "2026-10-05",
+    "price": 12.6
+  },
+  "box": {
+    "top": 13.95,
+    "top_date": "2026-09-04",
+    "bottom": 12.6,
+    "period": "2026-10-05 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 8.4,
+  "recovery_from_crash_pct": 1.4,
+  "supports": [
+    {
+      "level": 12.0,
+      "label": "S1 bottom",
+      "touches": 29,
+      "evidence": "structural bottom, near crash low 12.6"
+    }
+  ],
+  "resistances": [
+    {
+      "level": 12.96,
+      "label": "R1 today high",
+      "evidence": "today's high 12.960000038146973"
+    },
+    {
+      "level": 13.95,
+      "label": "R3 Sep high",
+      "evidence": "box top 13.95, base period high"
+    },
+    {
+      "level": 15.0,
+      "label": "R5",
+      "evidence": "pre-crash supply, top before breakdown"
+    }
+  ],
+  "position": {
+    "current": 12.78,
+    "in_box_pct": 40.0,
+    "nearest_support": "S1 bottom (12.0)",
+    "nearest_resistance": "R1 today high (12.96)"
+  },
+  "kline_today": {
+    "type": "bearish_pullback",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 12.96,
+    "H": 12.96,
+    "L": 12.66,
+    "C": 12.78,
+    "body_pct": 60.0,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 40.0
+  },
+  "bias": {
+    "short": {
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (40% of box)"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 12.0 (KEY support)",
+      "then": "still range; watch 12.96 for next test"
+    },
+    {
+      "if": "break 12.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 12.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 12.96 on close",
+      "then": "short-term bullish; next test 13.95"
+    },
+    {
+      "if": "break 13.95 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
+  "action_plan": {
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 13.85,
+    "s1": 12.6,
+    "s2": 10.96,
+    "r2": 13.95,
+    "r3": 13.9,
+    "s3": 10.42,
+    "s4": 11.08,
+    "current_position_pct": 14.4,
+    "notes": "WAIT_RANGE: in box (13-14), pos 14%, no clear setup"
   }
- ],
- "resistances": [
-  {
-   "level": 12.77,
-   "label": "R1 today high",
-   "evidence": "today's high 12.77"
-  },
-  {
-   "level": 13.71,
-   "label": "R3 Sep high",
-   "evidence": "box top 13.71, base period high"
-  }
- ],
- "position": {
-  "current": 12.77,
-  "in_box_pct": 45.0,
-  "nearest_support": "S1 bottom (12.0)",
-  "nearest_resistance": "R3 Sep high (13.71)"
- },
- "kline_today": {
-  "type": "bullish_reclaim",
-  "touched_R1": true,
-  "touched_S1": false,
-  "close_position": "upper_half",
-  "O": 12.66,
-  "H": 12.77,
-  "L": 12.6,
-  "C": 12.77,
-  "body_pct": 64.7,
-  "upper_wick_pct": 0.0,
-  "lower_wick_pct": 35.3
- },
- "bias": {
-  "short": {
-   "bias": "neutral",
-   "reason": "mid-box, no clear signal"
-  },
-  "mid": {
-   "bias": "bearish_continuation",
-   "reason": "making new lows"
-  },
-  "long": {
-   "bias": "below_peak_recovery",
-   "reason": "still well below all-time peak"
-  }
- },
- "scenarios": [
-  {
-   "if": "hold 12.0 (KEY support)",
-   "then": "still range; watch 12.77 for next test"
-  },
-  {
-   "if": "break 12.0 on close",
-   "then": "target next S → lower (short-term bearish)"
-  },
-  {
-   "if": "break 12.0 (crash low)",
-   "then": "base invalidation; mid-term bearish"
-  },
-  {
-   "if": "reclaim 12.77 on close",
-   "then": "short-term bullish; next test 13.71"
-  },
-  {
-   "if": "break 13.71 (box top)",
-   "then": "leave consolidation; mid-term recovery, watch next R"
-  }
- ],
- "common_misjudgments": [
-  {
-   "claim": "跌過好多，所以一定牛",
-   "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
-  },
-  {
-   "claim": "今日陰燭，所以一定破位",
-   "refute": "陰燭在支持之上，只是弱，不是已破"
-  },
-  {
-   "claim": "MACD 綠箭就一定上",
-   "refute": "震盪市指標反覆；以水平位收市確認為優先"
-  },
-  {
-   "claim": "把歷史高位當短線目標",
-   "refute": "路徑依賴，中間有多層供應；分段過關"
-  }
- ],
- "action_plan": {
-  "verdict": "WAIT",
-  "strategy": "WAIT_RANGE",
-  "trigger_price": null,
-  "target_price": null,
-  "stop_price": null,
-  "risk_pct": 0.0,
-  "reward_pct": 0.0,
-  "rr_ratio": 0.0,
-  "phase_match": false,
-  "r1": 13.65,
-  "s1": 12.6,
-  "s2": 10.62,
-  "r2": 13.71,
-  "r3": 13.21,
-  "s3": 10.18,
-  "s4": 10.39,
-  "current_position_pct": 16.2,
-  "notes": "WAIT_RANGE: in box (13-14), pos 16%, no clear setup"
- },
- "asof": "2026-10-05"
 }

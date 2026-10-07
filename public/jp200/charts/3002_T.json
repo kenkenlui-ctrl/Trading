@@ -1,32 +1,47 @@
 {
-  "ticker": "3002.T",
-  "asof": "2026-10-05",
-  "close": 4020.0,
-  "chg_pct": 0.0,
+  "ticker": "JP.3002",
+  "ticker_user": "3002.T",
+  "name": "GUNZE LTD",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
+    "date": "2026-10-06",
     "O": 4025.0,
-    "H": 4045.0,
+    "H": 4055.0,
     "L": 3995.0,
-    "C": 4020.0,
+    "C": 4040.0,
     "prev_close": 4020.0,
-    "chg_pct": 0.0
+    "chg_pct": 0.5
   },
-  "name": "Gunze Limited",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 4020.0,
-    "in_box_pct": 59.3,
-    "nearest_support": "S1 KEY (3816.0)",
-    "nearest_resistance": "R1 today high (4065.0)"
+  "adx": 12.82,
+  "plus_di": 18.41,
+  "minus_di": 20.5,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 4765.0 (2026-03-02), trough 3545.0 (2026-05-14), box top 4270.0 (2026-08-17)",
+  "peak": {
+    "date": "2026-03-02",
+    "price": 4765.0
   },
+  "trough": {
+    "date": "2026-05-14",
+    "price": 3545.0
+  },
+  "box": {
+    "top": 4270.0,
+    "top_date": "2026-08-17",
+    "bottom": 3545.0,
+    "period": "2026-05-14 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 15.2,
+  "recovery_from_crash_pct": 14.0,
   "supports": [
     {
       "level": 3816.0,
       "label": "S1 KEY",
       "touches": 3,
-      "evidence": "tested 3x in base period; 5.1% below current"
+      "evidence": "tested 3x in base period; 5.5% below current"
     },
     {
       "level": 3696.0,
@@ -43,9 +58,9 @@
   ],
   "resistances": [
     {
-      "level": 4065.0,
+      "level": 4055.0,
       "label": "R1 today high",
-      "evidence": "today's high 4065.0"
+      "evidence": "today's high 4055.0"
     },
     {
       "level": 4270.0,
@@ -53,24 +68,97 @@
       "evidence": "box top 4270.0, base period high"
     }
   ],
+  "position": {
+    "current": 4040.0,
+    "in_box_pct": 62.5,
+    "nearest_support": "S1 KEY (3816.0)",
+    "nearest_resistance": "R1 today high (4055.0)"
+  },
+  "kline_today": {
+    "type": "bullish_hold",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 4025.0,
+    "H": 4055.0,
+    "L": 3995.0,
+    "C": 4040.0,
+    "body_pct": 25.0,
+    "upper_wick_pct": 25.0,
+    "lower_wick_pct": 50.0
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 3816.0 (KEY support)",
+      "then": "still range; watch 4055.0 for next test"
+    },
+    {
+      "if": "break 3816.0 on close",
+      "then": "target 3696.0 → 3656.0 (short-term bearish)"
+    },
+    {
+      "if": "break 3656.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 4055.0 on close",
+      "then": "short-term bullish; next test 4270.0"
+    },
+    {
+      "if": "break 4270.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 3980.0,
-    "target_price": 4085.0,
-    "stop_price": 3894.61,
-    "risk_pct": 2.15,
-    "reward_pct": 2.64,
-    "rr_ratio": 1.23,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
     "phase_match": true,
-    "r1": 4190.0,
+    "r1": 4165.0,
     "s1": 3980.0,
     "s2": 3900.0,
     "r2": 4270.0,
-    "r3": 4020.0,
+    "r3": 4070.0,
     "s3": 3545.0,
     "s4": 3695.0,
-    "current_position_pct": 19.0,
-    "notes": "BUY_S1: in box (3980-4190), entry at S1 3980, target mid 4085, stop 3895 ｜ 52.2 條規則（BUY plan，support 3980.00）：① 跌到 3980.00、收市守住喺 3980.00 上面 → 照 BUY 條 plan 做（入場 3980.00，止蝕 3894.61，目標 4085.00）。② 收市跌穿 3980.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 3980.00 上面』。"
+    "current_position_pct": 32.4,
+    "notes": "WAIT_RANGE: in box (3980-4165), pos 32%, no clear setup"
   }
 }

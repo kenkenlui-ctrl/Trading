@@ -1,29 +1,44 @@
 {
-  "ticker": "2914.T",
-  "asof": "2026-10-05",
-  "close": 6930.0,
-  "chg_pct": 1.4641288433382194,
+  "ticker": "JP.2914",
+  "ticker_user": "2914.T",
+  "name": "JAPAN TOBACCO INC",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 6848.0,
-    "H": 6930.0,
-    "L": 6824.0,
-    "C": 6930.0,
-    "prev_close": 6830.0,
-    "chg_pct": 1.4641288433382194
+    "date": "2026-10-06",
+    "O": 6939.0,
+    "H": 6958.0,
+    "L": 6880.0,
+    "C": 6936.0,
+    "prev_close": 6930.0,
+    "chg_pct": 0.09
   },
-  "name": "Japan Tobacco Inc.",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 6830.0,
-    "in_box_pct": 54.6,
-    "nearest_support": "S1 bottom (6624.0)",
-    "nearest_resistance": "R1 today high (6863.0)"
+  "adx": 13.37,
+  "plus_di": 24.64,
+  "minus_di": 19.77,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 7218.0 (2026-07-31), trough 6500.0 (2026-09-11), box top 7001.0 (2026-09-30)",
+  "peak": {
+    "date": "2026-07-31",
+    "price": 7218.0
   },
+  "trough": {
+    "date": "2026-09-11",
+    "price": 6500.0
+  },
+  "box": {
+    "top": 7001.0,
+    "top_date": "2026-09-30",
+    "bottom": 6500.0,
+    "period": "2026-09-11 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 3.9,
+  "recovery_from_crash_pct": 6.7,
   "supports": [
     {
-      "level": 6624.0,
+      "level": 6728.0,
       "label": "S1 bottom",
       "touches": 0,
       "evidence": "structural bottom, near crash low 6500.0"
@@ -31,9 +46,9 @@
   ],
   "resistances": [
     {
-      "level": 6863.0,
+      "level": 6958.0,
       "label": "R1 today high",
-      "evidence": "today's high 6863.0"
+      "evidence": "today's high 6958.0"
     },
     {
       "level": 7001.0,
@@ -41,24 +56,97 @@
       "evidence": "box top 7001.0, base period high"
     }
   ],
+  "position": {
+    "current": 6936.0,
+    "in_box_pct": 76.2,
+    "nearest_support": "S1 bottom (6728.0)",
+    "nearest_resistance": "R1 today high (6958.0)"
+  },
+  "kline_today": {
+    "type": "bearish_rejection",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 6939.0,
+    "H": 6958.0,
+    "L": 6880.0,
+    "C": 6936.0,
+    "body_pct": 3.8,
+    "upper_wick_pct": 24.4,
+    "lower_wick_pct": 71.8
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 6728.0 (KEY support)",
+      "then": "still range; watch 6958.0 for next test"
+    },
+    {
+      "if": "break 6728.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 6728.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 6958.0 on close",
+      "then": "short-term bullish; next test 7001.0"
+    },
+    {
+      "if": "break 7001.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 7072.0,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 7001.0,
+    "target_price": 6750.5,
+    "stop_price": 7172.41,
+    "risk_pct": 2.45,
+    "reward_pct": 3.58,
+    "rr_ratio": 1.46,
+    "phase_match": true,
+    "r1": 7001.0,
     "s1": 6500.0,
     "s2": 6049.0,
     "r2": 7218.0,
     "r3": 6474.0,
     "s3": 5646.0,
     "s4": 5451.0,
-    "current_position_pct": 57.7,
-    "notes": "WAIT_RANGE: in box (6500-7072), pos 58%, no clear setup"
+    "current_position_pct": 87.0,
+    "notes": "SELL_R1: in box (6500-7001), entry at R1 7001, target mid 6750, stop 7172 ｜ 52.2 條規則（SELL plan，resistance 7001.00）：① 跌到 7001.00、收市守住喺 7001.00 上面 → 照 BUY 條 plan 做（入場 7001.00，止蝕 7172.41，目標 6750.50）。② 收市跌穿 7001.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 7001.00 上面』。"
   }
 }

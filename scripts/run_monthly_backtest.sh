@@ -101,7 +101,9 @@ fi
 # ---- Steps 2+3: rebuild pages only now that we have fresh data -----------------
 "$PY" scripts/build_backtest_page.py    >>"$RUN_LOG" 2>&1 || echo "WARN: backtest page build failed" | tee -a "$RUN_LOG"
 "$PY" scripts/build_equity_curves.py    >>"$RUN_LOG" 2>&1 || echo "WARN: equity curves build failed" | tee -a "$RUN_LOG"
-"$PY" scripts/build_equity_curve.py     >>"$RUN_LOG" 2>&1 || echo "WARN: equity curve build failed"  | tee -a "$RUN_LOG"
+"$PY" scripts/build_track_record.py >>"$RUN_LOG" 2>&1 || echo "WARN: track record build failed" | tee -a "$RUN_LOG"
+# 2026-10-07: build_equity_curve.py retired (v1 swing engine).
+# build_equity_curves.py above now also renders the family index at /equity_curve_t10.
 
 echo "[monthly-backtest] done: $REC_N records, BUY rows $BUY_N" | tee -a "$RUN_LOG"
 emit_receipt "ok" "rebuilt pages from $REC_N records"

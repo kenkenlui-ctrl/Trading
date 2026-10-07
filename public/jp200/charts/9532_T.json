@@ -1,41 +1,56 @@
 {
-  "ticker": "9532.T",
-  "asof": "2026-10-05",
-  "close": 5669.0,
-  "chg_pct": -1.631094915842446,
+  "ticker": "JP.9532",
+  "ticker_user": "9532.T",
+  "name": "OSAKA GAS CO",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 5716.0,
-    "H": 5761.0,
-    "L": 5662.0,
-    "C": 5669.0,
-    "prev_close": 5763.0,
-    "chg_pct": -1.631094915842446
+    "date": "2026-10-06",
+    "O": 5654.0,
+    "H": 5663.0,
+    "L": 5569.0,
+    "C": 5663.0,
+    "prev_close": 5669.0,
+    "chg_pct": -0.11
   },
-  "name": "Osaka Gas Co., Ltd.",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 5763.0,
-    "in_box_pct": 35.3,
-    "nearest_support": "S1 KEY (5644.0)",
-    "nearest_resistance": "R3 Sep high (6259.0)"
+  "adx": 22.33,
+  "plus_di": 16.3,
+  "minus_di": 27.29,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 6828.0 (2026-03-05), trough 5236.0 (2026-06-01), box top 6259.0 (2026-09-16)",
+  "peak": {
+    "date": "2026-03-05",
+    "price": 6828.0
   },
+  "trough": {
+    "date": "2026-06-01",
+    "price": 5236.0
+  },
+  "box": {
+    "top": 6259.0,
+    "top_date": "2026-09-16",
+    "bottom": 5236.0,
+    "period": "2026-06-01 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 17.1,
+  "recovery_from_crash_pct": 8.2,
   "supports": [
     {
-      "level": 5644.0,
+      "level": 5500.0,
       "label": "S1 KEY",
-      "touches": 6,
-      "evidence": "tested 6x in base period; 2.1% below current"
+      "touches": 4,
+      "evidence": "tested 4x in base period; 2.9% below current"
     },
     {
-      "level": 5500.0,
+      "level": 5492.0,
       "label": "S2",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
     },
     {
-      "level": 5492.0,
+      "level": 5476.0,
       "label": "S3 bottom",
       "touches": 4,
       "evidence": "structural bottom, near crash low 5236.0"
@@ -43,9 +58,9 @@
   ],
   "resistances": [
     {
-      "level": 5763.0,
+      "level": 5663.0,
       "label": "R1 today high",
-      "evidence": "today's high 5763.0"
+      "evidence": "today's high 5663.0"
     },
     {
       "level": 6259.0,
@@ -53,24 +68,97 @@
       "evidence": "box top 6259.0, base period high"
     }
   ],
+  "position": {
+    "current": 5663.0,
+    "in_box_pct": 23.9,
+    "nearest_support": "S1 KEY (5500.0)",
+    "nearest_resistance": "R3 Sep high (6259.0)"
+  },
+  "kline_today": {
+    "type": "bullish_hold",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 5654.0,
+    "H": 5663.0,
+    "L": 5569.0,
+    "C": 5663.0,
+    "body_pct": 9.6,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 90.4
+  },
+  "bias": {
+    "short": {
+      "bias": "defensive",
+      "reason": "near box bottom (24% of box)"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 5500.0 (KEY support)",
+      "then": "still range; watch 5663.0 for next test"
+    },
+    {
+      "if": "break 5500.0 on close",
+      "then": "target 5492.0 → 5476.0 (short-term bearish)"
+    },
+    {
+      "if": "break 5476.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 5663.0 on close",
+      "then": "short-term bullish; next test 6259.0"
+    },
+    {
+      "if": "break 6259.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "BUY",
     "strategy": "BUY_S1",
-    "trigger_price": 5624.0,
-    "target_price": 5941.5,
-    "stop_price": 5399.51,
-    "risk_pct": 3.99,
-    "reward_pct": 5.65,
-    "rr_ratio": 1.41,
+    "trigger_price": 5569.0,
+    "target_price": 5914.0,
+    "stop_price": 5361.85,
+    "risk_pct": 3.72,
+    "reward_pct": 6.2,
+    "rr_ratio": 1.67,
     "phase_match": true,
     "r1": 6259.0,
-    "s1": 5624.0,
+    "s1": 5569.0,
     "s2": 5264.0,
     "r2": 5907.0,
-    "r3": 6705.0,
+    "r3": 6636.0,
     "s3": 5236.0,
-    "s4": 5148.0,
-    "current_position_pct": 21.9,
-    "notes": "BUY_S1: in box (5624-6259), entry at S1 5624, target mid 5942, stop 5400 ｜ 52.2 條規則（BUY plan，support 5624.00）：① 跌到 5624.00、收市守住喺 5624.00 上面 → 照 BUY 條 plan 做（入場 5624.00，止蝕 5399.51，目標 5941.50）。② 收市跌穿 5624.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 5624.00 上面』。"
+    "s4": 5251.0,
+    "current_position_pct": 13.6,
+    "notes": "BUY_S1: in box (5569-6259), entry at S1 5569, target mid 5914, stop 5362 ｜ 52.2 條規則（BUY plan，support 5569.00）：① 跌到 5569.00、收市守住喺 5569.00 上面 → 照 BUY 條 plan 做（入場 5569.00，止蝕 5361.85，目標 5914.00）。② 收市跌穿 5569.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 5569.00 上面』。"
   }
 }

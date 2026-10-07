@@ -1,26 +1,41 @@
 {
-  "ticker": "2997.T",
-  "asof": "2026-10-05",
-  "close": 1322.0,
-  "chg_pct": 0.0,
+  "ticker": "JP.2997",
+  "ticker_user": "2997.T",
+  "name": "STORAGE-OH CO LTD",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
+    "date": "2026-10-06",
     "O": 1322.0,
     "H": 1323.0,
     "L": 1322.0,
-    "C": 1322.0,
+    "C": 1323.0,
     "prev_close": 1322.0,
-    "chg_pct": 0.0
+    "chg_pct": 0.08
   },
-  "name": "STORAGE-OH Co.,Ltd.",
   "phase": "uptrend",
-  "kline": {},
-  "position": {
-    "current": 1322.0,
-    "in_box_pct": 94.2,
-    "nearest_support": "S1 KEY (960.0)",
-    "nearest_resistance": "R3 Jul high (1349.0)"
+  "adx": 52.41,
+  "plus_di": 44.27,
+  "minus_di": 15.47,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 1275.0 (2025-12-29), trough 881.0 (2026-03-23), box top 1349.0 (2026-07-10)",
+  "peak": {
+    "date": "2025-12-29",
+    "price": 1275.0
   },
+  "trough": {
+    "date": "2026-03-23",
+    "price": 881.0
+  },
+  "box": {
+    "top": 1349.0,
+    "top_date": "2026-07-10",
+    "bottom": 881.0,
+    "period": "2026-03-23 to 2026-10-06"
+  },
+  "drop_from_peak_pct": -3.8,
+  "recovery_from_crash_pct": 50.2,
   "supports": [
     {
       "level": 960.0,
@@ -49,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 1322.0,
+      "level": 1323.0,
       "label": "R1 today high",
-      "evidence": "today's high 1322.0"
+      "evidence": "today's high 1323.0"
     },
     {
       "level": 1349.0,
@@ -59,9 +74,82 @@
       "evidence": "box top 1349.0, base period high"
     }
   ],
+  "position": {
+    "current": 1323.0,
+    "in_box_pct": 94.4,
+    "nearest_support": "S1 KEY (960.0)",
+    "nearest_resistance": "R3 Jul high (1349.0)"
+  },
+  "kline_today": {
+    "type": "bullish_reclaim",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 1322.0,
+    "H": 1323.0,
+    "L": 1322.0,
+    "C": 1323.0,
+    "body_pct": 100.0,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 0.0
+  },
+  "bias": {
+    "short": {
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
+    },
+    "mid": {
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 960.0 (KEY support)",
+      "then": "still range; watch 1323.0 for next test"
+    },
+    {
+      "if": "break 960.0 on close",
+      "then": "target 956.0 → 944.0 (short-term bearish)"
+    },
+    {
+      "if": "break 881.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 1323.0 on close",
+      "then": "short-term bullish; next test 1349.0"
+    },
+    {
+      "if": "break 1349.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -71,12 +159,12 @@
     "phase_match": false,
     "r1": 1325.0,
     "s1": 1321.0,
-    "s2": 937.0,
+    "s2": 943.0,
     "r2": 1349.0,
-    "r3": 1019.0,
+    "r3": 1015.0,
     "s3": 936.0,
     "s4": 881.0,
-    "current_position_pct": 25.0,
-    "notes": "WAIT_RANGE: in box (1321-1325), pos 25%, no clear setup"
+    "current_position_pct": 50.0,
+    "notes": "WAIT_RANGE: in box (1321-1325), pos 50%, no clear setup"
   }
 }

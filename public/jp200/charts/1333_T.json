@@ -1,26 +1,41 @@
 {
-  "ticker": "1333.T",
-  "asof": "2026-10-05",
-  "close": 1207.0,
-  "chg_pct": -0.20669698222406385,
+  "ticker": "JP.1333",
+  "ticker_user": "1333.T",
+  "name": "UMIOS CORP",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 1209.0,
-    "H": 1213.5,
-    "L": 1204.5,
-    "C": 1207.0,
-    "prev_close": 1209.5,
-    "chg_pct": -0.20669698222406385
+    "date": "2026-10-06",
+    "O": 1212.0,
+    "H": 1217.0,
+    "L": 1205.0,
+    "C": 1207.5,
+    "prev_close": 1207.0,
+    "chg_pct": 0.04
   },
-  "name": "Umios Corporation",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 1209.5,
-    "in_box_pct": 18.2,
-    "nearest_support": "S1 bottom (1172.0)",
-    "nearest_resistance": "R1 today high (1232.0)"
+  "adx": 23.47,
+  "plus_di": 13.98,
+  "minus_di": 32.61,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 1589.0 (2026-02-27), trough 1189.0 (2026-05-12), box top 1378.5 (2026-07-29)",
+  "peak": {
+    "date": "2026-02-27",
+    "price": 1589.0
   },
+  "trough": {
+    "date": "2026-05-12",
+    "price": 1189.0
+  },
+  "box": {
+    "top": 1378.5,
+    "top_date": "2026-07-29",
+    "bottom": 1189.0,
+    "period": "2026-05-12 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 24.0,
+  "recovery_from_crash_pct": 1.6,
   "supports": [
     {
       "level": 1172.0,
@@ -31,14 +46,87 @@
   ],
   "resistances": [
     {
-      "level": 1232.0,
+      "level": 1217.0,
       "label": "R1 today high",
-      "evidence": "today's high 1232.0"
+      "evidence": "today's high 1217.0"
     },
     {
       "level": 1378.5,
       "label": "R3 Jul high",
       "evidence": "box top 1378.5, base period high"
+    }
+  ],
+  "position": {
+    "current": 1207.5,
+    "in_box_pct": 17.2,
+    "nearest_support": "S1 bottom (1172.0)",
+    "nearest_resistance": "R1 today high (1217.0)"
+  },
+  "kline_today": {
+    "type": "bearish_pullback",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 1212.0,
+    "H": 1217.0,
+    "L": 1205.0,
+    "C": 1207.5,
+    "body_pct": 37.5,
+    "upper_wick_pct": 41.7,
+    "lower_wick_pct": 20.8
+  },
+  "bias": {
+    "short": {
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (17% of box)"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 1172.0 (KEY support)",
+      "then": "still range; watch 1217.0 for next test"
+    },
+    {
+      "if": "break 1172.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 1172.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 1217.0 on close",
+      "then": "short-term bullish; next test 1378.5"
+    },
+    {
+      "if": "break 1378.5 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -51,14 +139,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 1311.5,
-    "s1": 1206.0,
+    "r1": 1310.5,
+    "s1": 1204.5,
     "s2": 1230.0,
     "r2": 1378.5,
-    "r3": 1507.0,
+    "r3": 1506.0,
     "s3": 1189.0,
-    "s4": 1223.0,
-    "current_position_pct": 3.3,
-    "notes": "WAIT_RANGE: in box (1206-1312), pos 3%, no clear setup"
+    "s4": 1227.67,
+    "current_position_pct": 2.8,
+    "notes": "WAIT_RANGE: in box (1204-1310), pos 3%, no clear setup"
   }
 }

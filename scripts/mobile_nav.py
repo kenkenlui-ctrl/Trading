@@ -11,7 +11,8 @@ MOBILE_BOTTOM_NAV = '''
       <a href="/insights.html">Insights · 研究</a>
       <a href="/compare/">Compare · 對比</a>
       <a href="/methodology">Methodology · 方法論</a>
-      <a href="/faq.html">FAQ</a>
+      <a href="/methodology.html">Methodology</a>
+      <a href="/track-record/">Track record</a>
       <a href="/about/">About</a>
       <a href="/disclaimer/">Disclaimer</a>
       <a href="/privacy/">Privacy</a>
@@ -72,6 +73,21 @@ def render_v2_block(market: str) -> str:
     key = market.lower() + "200"
     rows = [r for r in d.get("signals", []) if r.get("market") == key]
     if not rows:
+        # 2026-10-06: an empty result used to mean "render nothing", which made
+        # the HK hub indistinguishable from a v2 page that simply found no
+        # signals. HK has no v2 signals *by design* (INCLUDE_HK=False), and
+        # saying nothing there is the one case a reader most needs told.
+        if key == "hk200":
+            return (
+                '<div class="container" style="margin:22px 0 6px">'
+                '<div class="info-card" style="border-left:3px solid var(--amber)">'
+                '<h2 style="margin-top:0">呢一版未涵蓋港股</h2>'
+                '<p style="font-size:0.85rem;opacity:0.75;margin:6px 0 0">'
+                '港股行緊舊版 (v1) 引擎，<b>唔屬於 v2</b>。我哋自己嘅研究發現港股喺 '
+                '按 0.25% 來回成本實測，2016–26 年化落後同一批股票等權持有 4.6 個百分點，'
+                '零成本都仲係落後 1.4 點，所以 v2 暫時只行美股同日股。'
+                '下面嘅表格由 v1 產生，唔應該當成 v2 訊號。</p></div></div>'
+            )
         return ""
 
     rules = d.get("rules", {})
@@ -163,6 +179,91 @@ def render_v2_block(market: str) -> str:
     <p style="font-size:0.72rem;opacity:0.55;margin-top:10px">
       績效數字來源：{src}（{prov}）。
       過往表現不代表未來結果，非投資建議。每單優勢不等於跑贏大市 —— 限制見方法論頁。
+    </p>
+  </div>
+</div>
+"""
+
+
+def render_v2_status_for_ticker(market: str, safe: str) -> str:
+    """Per-ticker v2 verdict for a detail page, injected above the v1 content.
+
+    2026-10-06: only build_dashboard_page (the hub) called render_v2_block, so
+    the 422 US/JP detail pages carried no v2 state at all — a visitor landing
+    on /us200/ticker/AAPL saw only the retired v1 action plan and its v1
+    strategy name, with nothing on the page saying the live engine had
+    replaced it. The hub already stated that the four v1 strategies had no
+    positive expectancy over 2016-2026; the detail pages did not.
+
+    Additive on purpose: the v1 block below is still what HK (and any
+    not-yet-screened name) is served, and deleting it would hide which engine
+    produced a number. This states the v2 answer first and labels the rest.
+
+    Returns "" for markets the live engine does not scan (HK), so the page
+    says nothing it cannot support.
+    """
+    import json
+    from pathlib import Path
+
+    key = (market or "").lower() + "200"
+    if key == "hk200":
+        return (
+            '<div class="container" style="margin:22px 0 6px">'
+            '<div class="info-card" style="border-left:3px solid var(--amber)">'
+            '<h2 style="margin-top:0">呢一頁未涵蓋於現行引擎</h2>'
+            '<p style="font-size:0.85rem;opacity:0.75;margin:6px 0 0">'
+            '港股目前行緊舊版 (v1) 引擎，<b>唔屬於 v2</b>。我哋自己嘅研究發現港股喺 '
+            '按 0.25% 來回成本實測，2016–26 年化落後同一批股票等權持有 4.6 個百分點，'
+            '零成本都仲係落後 1.4 點，所以 v2 暫時只行美股同日股。'
+            '下面嘅內容由 v1 產生，唔應該當成 v2 訊號。'
+            '</p></div></div>'
+        )
+
+    p = Path(__file__).resolve().parent.parent / "public" / "v2-signals.json"
+    if not p.exists():
+        return ""
+    try:
+        d = json.loads(p.read_text(encoding="utf-8"))
+    except Exception:
+        return ""
+
+    rows = [r for r in d.get("signals", []) if r.get("market") == key]
+    hit = next((r for r in rows if r["symbol"] == safe), None)
+    asof = rows[0].get("asof", "") if rows else ""
+
+    if hit:
+        dist = hit.get("dist_to_entry_pct")
+        d_txt = "已到入場位" if abs(dist or 0) < 0.05 else f"距入場位 {abs(dist):.2f}%"
+        body = (
+            f'<div style="font-size:1.15rem;margin:2px 0">{d_txt}</div>'
+            f'<div style="font-size:0.78rem;opacity:0.75">'
+            f'T-1 收市 {hit["last_close"]} · 入場 S1 <b>{hit["entry_s1"]}</b> · '
+            f'止損 {hit["stop"]}（{hit["stop_dist_pct"]:.2f}%）</div>'
+        )
+        tag = "v2 訊號"
+        col = "var(--bull)"
+    else:
+        body = (
+            '<div style="font-size:1.15rem;margin:2px 0">今日無 v2 訊號</div>'
+            f'<div style="font-size:0.78rem;opacity:0.75">'
+            f'該股今日未通過 v2 篩選（{key.upper()} 今日共 {len(rows)} 隻通過）。</div>'
+        )
+        tag = "v2"
+        col = "var(--fg-2)"
+
+    return f"""
+<div class="container" style="margin:22px 0 6px">
+  <div class="info-card" style="border-left:3px solid {col}">
+    <div style="font-size:0.7rem;letter-spacing:0.08em;opacity:0.6">{tag} · T-1 {asof} 收市</div>
+    {body}
+    <p style="font-size:0.75rem;opacity:0.6;margin:8px 0 0">
+      v2 規則：只做多 · 股價喺向上嘅 200 天線之上 · 大市過濾 · 跌到 20 日低位 S1 掛限價單，
+      收市企穩 S1 先算成交 · 止損 S1 下方 3 倍 ATR · 冇目標價，第 10 個交易日收市離場。
+    </p>
+    <p style="font-size:0.75rem;opacity:0.6;margin:6px 0 0">
+      下面仍然顯示舊版 (v1) 引擎嘅 action plan。10 年回測顯示嗰四個策略
+      （SELL_R1 / BUY_S1 / BREAK_LONG / BREAK_SHORT）於 2016–2026 並無正期望值，
+      已由 v2 取代。<a href="/methodology">修正記錄 →</a>
     </p>
   </div>
 </div>

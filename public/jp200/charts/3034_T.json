@@ -1,39 +1,60 @@
 {
-  "ticker": "3034.T",
-  "asof": "2026-10-05",
-  "close": 2338.0,
-  "chg_pct": -0.7218683651804669,
+  "ticker": "JP.3034",
+  "ticker_user": "3034.T",
+  "name": "QOL HOLDINGS CO LTD",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 2350.0,
-    "H": 2361.0,
-    "L": 2308.0,
-    "C": 2338.0,
-    "prev_close": 2355.0,
-    "chg_pct": -0.7218683651804669
+    "date": "2026-10-06",
+    "O": 2359.0,
+    "H": 2409.0,
+    "L": 2359.0,
+    "C": 2386.0,
+    "prev_close": 2338.0,
+    "chg_pct": 2.05
   },
-  "name": "Qol Holdings Co., Ltd.",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 2355.0,
-    "in_box_pct": 55.7,
-    "nearest_support": "S1 bottom (2232.0)",
-    "nearest_resistance": "R1 today high (2372.0)"
+  "adx": 15.84,
+  "plus_di": 26.74,
+  "minus_di": 25.02,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 2655.0 (2026-08-14), trough 2175.0 (2026-09-10), box top 2453.0 (2026-09-28)",
+  "peak": {
+    "date": "2026-08-14",
+    "price": 2655.0
   },
+  "trough": {
+    "date": "2026-09-10",
+    "price": 2175.0
+  },
+  "box": {
+    "top": 2453.0,
+    "top_date": "2026-09-28",
+    "bottom": 2175.0,
+    "period": "2026-09-10 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 10.1,
+  "recovery_from_crash_pct": 9.7,
   "supports": [
     {
+      "level": 2312.0,
+      "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; 3.1% below current"
+    },
+    {
       "level": 2232.0,
-      "label": "S1 bottom",
+      "label": "S2 bottom",
       "touches": 3,
       "evidence": "structural bottom, near crash low 2175.0"
     }
   ],
   "resistances": [
     {
-      "level": 2372.0,
+      "level": 2409.0,
       "label": "R1 today high",
-      "evidence": "today's high 2372.0"
+      "evidence": "today's high 2409.0"
     },
     {
       "level": 2453.0,
@@ -41,24 +62,97 @@
       "evidence": "box top 2453.0, base period high"
     }
   ],
+  "position": {
+    "current": 2386.0,
+    "in_box_pct": 69.7,
+    "nearest_support": "S1 KEY (2312.0)",
+    "nearest_resistance": "R1 today high (2409.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 2359.0,
+    "H": 2409.0,
+    "L": 2359.0,
+    "C": 2386.0,
+    "body_pct": 54.0,
+    "upper_wick_pct": 46.0,
+    "lower_wick_pct": 0.0
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 2312.0 (KEY support)",
+      "then": "still range; watch 2409.0 for next test"
+    },
+    {
+      "if": "break 2312.0 on close",
+      "then": "target 2232.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 2232.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 2409.0 on close",
+      "then": "short-term bullish; next test 2453.0"
+    },
+    {
+      "if": "break 2453.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
     "trigger_price": 2453.0,
     "target_price": 2314.0,
-    "stop_price": 2555.0,
-    "risk_pct": 4.16,
+    "stop_price": 2555.22,
+    "risk_pct": 4.17,
     "reward_pct": 5.67,
     "rr_ratio": 1.36,
     "phase_match": true,
     "r1": 2453.0,
     "s1": 2175.0,
-    "s2": 1937.0,
+    "s2": 1968.0,
     "r2": 2655.0,
-    "r3": 2004.0,
+    "r3": 2017.0,
     "s3": 1681.0,
     "s4": 1727.0,
-    "current_position_pct": 64.7,
-    "notes": "SELL_R1: in box (2175-2453), entry at R1 2453, target mid 2314, stop 2555 ｜ 52.2 條規則（SELL plan，resistance 2453.00）：① 跌到 2453.00、收市守住喺 2453.00 上面 → 照 BUY 條 plan 做（入場 2453.00，止蝕 2555.00，目標 2314.00）。② 收市跌穿 2453.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2453.00 上面』。"
+    "current_position_pct": 75.9,
+    "notes": "SELL_R1: in box (2175-2453), entry at R1 2453, target mid 2314, stop 2555 ｜ 52.2 條規則（SELL plan，resistance 2453.00）：① 跌到 2453.00、收市守住喺 2453.00 上面 → 照 BUY 條 plan 做（入場 2453.00，止蝕 2555.22，目標 2314.00）。② 收市跌穿 2453.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2453.00 上面』。"
   }
 }

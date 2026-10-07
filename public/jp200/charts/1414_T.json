@@ -1,44 +1,132 @@
 {
-  "ticker": "1414.T",
-  "asof": "2026-10-05",
-  "close": 1225.0,
-  "chg_pct": -1.7642341619887758,
+  "ticker": "JP.1414",
+  "ticker_user": "1414.T",
+  "name": "SHO-BOND HOLDINGS CO LTD",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 1244.0,
-    "H": 1244.0,
-    "L": 1222.0,
-    "C": 1225.0,
-    "prev_close": 1247.0,
-    "chg_pct": -1.7642341619887758
+    "date": "2026-10-06",
+    "O": 1225.0,
+    "H": 1232.0,
+    "L": 1217.0,
+    "C": 1222.5,
+    "prev_close": 1225.0,
+    "chg_pct": -0.2
   },
-  "name": "SHO-BOND Holdings Co.,Ltd.",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 1247.0,
-    "in_box_pct": 23.3,
-    "nearest_support": "S1 bottom (1208.0)",
-    "nearest_resistance": "R1 today high (1254.5)"
+  "adx": 11.04,
+  "plus_di": 16.84,
+  "minus_di": 30.52,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 1537.0 (2026-02-10), trough 1217.0 (2026-10-06), box top 1299.5 (2026-09-17)",
+  "peak": {
+    "date": "2026-02-10",
+    "price": 1537.0
   },
+  "trough": {
+    "date": "2026-10-06",
+    "price": 1217.0
+  },
+  "box": {
+    "top": 1299.5,
+    "top_date": "2026-09-17",
+    "bottom": 1217.0,
+    "period": "2026-10-06 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 20.5,
+  "recovery_from_crash_pct": 0.5,
   "supports": [
     {
-      "level": 1208.0,
+      "level": 1184.0,
       "label": "S1 bottom",
       "touches": 0,
-      "evidence": "structural bottom, near crash low 1225.5"
+      "evidence": "structural bottom, near crash low 1217.0"
     }
   ],
   "resistances": [
     {
-      "level": 1254.5,
+      "level": 1232.0,
       "label": "R1 today high",
-      "evidence": "today's high 1254.5"
+      "evidence": "today's high 1232.0"
     },
     {
-      "level": 1375.5,
-      "label": "R3 Jul high",
-      "evidence": "box top 1375.5, base period high"
+      "level": 1299.5,
+      "label": "R3 Sep high",
+      "evidence": "box top 1299.5, base period high"
+    }
+  ],
+  "position": {
+    "current": 1222.5,
+    "in_box_pct": 33.3,
+    "nearest_support": "S1 bottom (1184.0)",
+    "nearest_resistance": "R1 today high (1232.0)"
+  },
+  "kline_today": {
+    "type": "bearish_rejection",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 1225.0,
+    "H": 1232.0,
+    "L": 1217.0,
+    "C": 1222.5,
+    "body_pct": 16.7,
+    "upper_wick_pct": 46.7,
+    "lower_wick_pct": 36.7
+  },
+  "bias": {
+    "short": {
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (33% of box)"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 1184.0 (KEY support)",
+      "then": "still range; watch 1232.0 for next test"
+    },
+    {
+      "if": "break 1184.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 1184.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 1232.0 on close",
+      "then": "short-term bullish; next test 1299.5"
+    },
+    {
+      "if": "break 1299.5 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -52,13 +140,13 @@
     "rr_ratio": 0.0,
     "phase_match": false,
     "r1": 1299.5,
-    "s1": 1231.0,
+    "s1": 1217.0,
     "s2": 1249.0,
     "r2": 1375.5,
     "r3": 1470.0,
     "s3": 1225.5,
-    "s4": 1258.5,
-    "current_position_pct": 23.4,
-    "notes": "WAIT_RANGE: in box (1231-1300), pos 23%, no clear setup"
+    "s4": 1265.0,
+    "current_position_pct": 6.7,
+    "notes": "WAIT_RANGE: in box (1217-1300), pos 7%, no clear setup"
   }
 }

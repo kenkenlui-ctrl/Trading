@@ -1,29 +1,44 @@
 {
-  "ticker": "7974.T",
-  "asof": "2026-10-05",
-  "close": 7742.0,
-  "chg_pct": -1.3632309848388369,
+  "ticker": "JP.7974",
+  "ticker_user": "7974.T",
+  "name": "NINTENDO CO LTD",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 7870.0,
-    "H": 7952.0,
-    "L": 7742.0,
-    "C": 7742.0,
-    "prev_close": 7849.0,
-    "chg_pct": -1.3632309848388369
+    "date": "2026-10-06",
+    "O": 7727.0,
+    "H": 7863.0,
+    "L": 7727.0,
+    "C": 7815.0,
+    "prev_close": 7742.0,
+    "chg_pct": 0.94
   },
-  "name": "Nintendo Co., Ltd.",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 7849.0,
-    "in_box_pct": 49.5,
-    "nearest_support": "S1 KEY (7612.0)",
-    "nearest_resistance": "R1 today high (7982.0)"
+  "adx": 17.22,
+  "plus_di": 19.79,
+  "minus_di": 29.32,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 10950.0 (2025-12-26), trough 6544.0 (2026-06-26), box top 9180.0 (2026-09-01)",
+  "peak": {
+    "date": "2025-12-26",
+    "price": 10950.0
   },
+  "trough": {
+    "date": "2026-06-26",
+    "price": 6544.0
+  },
+  "box": {
+    "top": 9180.0,
+    "top_date": "2026-09-01",
+    "bottom": 6544.0,
+    "period": "2026-06-26 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 28.6,
+  "recovery_from_crash_pct": 19.4,
   "supports": [
     {
-      "level": 7612.0,
+      "level": 7580.0,
       "label": "S1 KEY",
       "touches": 0,
       "evidence": "structural level near current; 3.0% below current"
@@ -37,9 +52,9 @@
   ],
   "resistances": [
     {
-      "level": 7982.0,
+      "level": 7863.0,
       "label": "R1 today high",
-      "evidence": "rejection at 7982.0 (long upper wick, close weak)"
+      "evidence": "today's high 7863.0"
     },
     {
       "level": 9180.0,
@@ -47,24 +62,97 @@
       "evidence": "box top 9180.0, base period high"
     }
   ],
+  "position": {
+    "current": 7815.0,
+    "in_box_pct": 48.2,
+    "nearest_support": "S1 KEY (7580.0)",
+    "nearest_resistance": "R1 today high (7863.0)"
+  },
+  "kline_today": {
+    "type": "bullish_reclaim",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 7727.0,
+    "H": 7863.0,
+    "L": 7727.0,
+    "C": 7815.0,
+    "body_pct": 64.7,
+    "upper_wick_pct": 35.3,
+    "lower_wick_pct": 0.0
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 7580.0 (KEY support)",
+      "then": "still range; watch 7863.0 for next test"
+    },
+    {
+      "if": "break 7580.0 on close",
+      "then": "target 6544.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 6544.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 7863.0 on close",
+      "then": "short-term bullish; next test 9180.0"
+    },
+    {
+      "if": "break 9180.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "BUY",
     "strategy": "BUY_S1",
-    "trigger_price": 7808.0,
-    "target_price": 8401.5,
-    "stop_price": 7457.66,
-    "risk_pct": 4.49,
-    "reward_pct": 7.6,
-    "rr_ratio": 1.69,
+    "trigger_price": 7727.0,
+    "target_price": 8361.0,
+    "stop_price": 7424.55,
+    "risk_pct": 3.91,
+    "reward_pct": 8.2,
+    "rr_ratio": 2.1,
     "phase_match": true,
     "r1": 8995.0,
-    "s1": 7808.0,
+    "s1": 7727.0,
     "s2": 6905.0,
     "r2": 9180.0,
-    "r3": 9086.0,
+    "r3": 8726.0,
     "s3": 6544.0,
     "s4": 8326.0,
-    "current_position_pct": 3.5,
-    "notes": "BUY_S1: in box (7808-8995), entry at S1 7808, target mid 8402, stop 7458 ｜ 52.2 條規則（BUY plan，support 7808.00）：① 跌到 7808.00、收市守住喺 7808.00 上面 → 照 BUY 條 plan 做（入場 7808.00，止蝕 7457.66，目標 8401.50）。② 收市跌穿 7808.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 7808.00 上面』。"
+    "current_position_pct": 6.9,
+    "notes": "BUY_S1: in box (7727-8995), entry at S1 7727, target mid 8361, stop 7425 ｜ 52.2 條規則（BUY plan，support 7727.00）：① 跌到 7727.00、收市守住喺 7727.00 上面 → 照 BUY 條 plan 做（入場 7727.00，止蝕 7424.55，目標 8361.00）。② 收市跌穿 7727.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 7727.00 上面』。"
   }
 }

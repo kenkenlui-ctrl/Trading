@@ -3,20 +3,20 @@
   "ticker_user": "V",
   "name": "Visa Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
+  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-02",
-    "O": 360.21,
-    "H": 361.38,
-    "L": 356.75,
-    "C": 360.66,
-    "prev_close": 359.85,
-    "chg_pct": 0.23
+    "date": "2026-10-06",
+    "O": 368.79,
+    "H": 371.84,
+    "L": 368.15,
+    "C": 370.64,
+    "prev_close": 369.71,
+    "chg_pct": 0.25
   },
   "phase": "downtrend_active",
-  "adx": 16.77,
-  "plus_di": 14.13,
-  "minus_di": 26.46,
+  "adx": 14.78,
+  "plus_di": 23.56,
+  "minus_di": 22.01,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 385.57 (2026-08-26), trough 356.75 (2026-10-02), box top 385.57 (2026-08-26)",
@@ -32,23 +32,29 @@
     "top": 385.57,
     "top_date": "2026-08-26",
     "bottom": 356.75,
-    "period": "2026-10-02 to 2026-10-02"
+    "period": "2026-10-02 to 2026-10-06"
   },
-  "drop_from_peak_pct": 6.5,
-  "recovery_from_crash_pct": 1.1,
+  "drop_from_peak_pct": 3.9,
+  "recovery_from_crash_pct": 3.9,
   "supports": [
     {
-      "level": 352.0,
-      "label": "S1 bottom",
-      "touches": 3,
+      "level": 360.0,
+      "label": "S1 KEY",
+      "touches": 21,
+      "evidence": "tested 21x in base period; 2.9% below current"
+    },
+    {
+      "level": 356.0,
+      "label": "S2 bottom",
+      "touches": 9,
       "evidence": "structural bottom, near crash low 356.75"
     }
   ],
   "resistances": [
     {
-      "level": 361.38,
+      "level": 371.84,
       "label": "R1 today high",
-      "evidence": "today's high 361.3800048828125"
+      "evidence": "today's high 371.8399963378906"
     },
     {
       "level": 385.57,
@@ -57,28 +63,28 @@
     }
   ],
   "position": {
-    "current": 360.66,
-    "in_box_pct": 25.8,
-    "nearest_support": "S1 bottom (352.0)",
-    "nearest_resistance": "R1 today high (361.38)"
+    "current": 370.64,
+    "in_box_pct": 49.5,
+    "nearest_support": "S1 KEY (360.0)",
+    "nearest_resistance": "R1 today high (371.84)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 360.21,
-    "H": 361.38,
-    "L": 356.75,
-    "C": 360.66,
-    "body_pct": 9.7,
-    "upper_wick_pct": 15.6,
-    "lower_wick_pct": 74.7
+    "O": 368.79,
+    "H": 371.84,
+    "L": 368.15,
+    "C": 370.64,
+    "body_pct": 50.1,
+    "upper_wick_pct": 32.5,
+    "lower_wick_pct": 17.3
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (26% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -91,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 352.0 (KEY support)",
-      "then": "still range; watch 361.38 for next test"
+      "if": "hold 360.0 (KEY support)",
+      "then": "still range; watch 371.84 for next test"
     },
     {
-      "if": "break 352.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 360.0 on close",
+      "then": "target 356.0 → lower (short-term bearish)"
     },
     {
-      "if": "break 352.0 (crash low)",
+      "if": "break 356.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 361.38 on close",
+      "if": "reclaim 371.84 on close",
       "then": "short-term bullish; next test 385.57"
     },
     {
@@ -131,7 +137,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -139,14 +145,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 377.5,
+    "r1": 377.17,
     "s1": 356.75,
-    "s2": 345.33,
+    "s2": 348.5,
     "r2": 385.57,
     "r3": 365.02,
     "s3": 304.5,
     "s4": 293.89,
-    "current_position_pct": 18.8,
-    "notes": "WAIT_RANGE: in box (357-378), pos 19%, no clear setup"
+    "current_position_pct": 68.0,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 377.17）：① 跌到 377.17、收市守住喺 377.17 上面 → 照 BUY 條 plan 做（入場 377.17，止蝕 386.12，目標 366.96）。② 收市跌穿 377.17 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 377.17 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }

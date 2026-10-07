@@ -1,29 +1,44 @@
 {
-  "ticker": "6861.T",
-  "asof": "2026-10-05",
-  "close": 81680.0,
-  "chg_pct": 1.75657157094804,
+  "ticker": "JP.6861",
+  "ticker_user": "6861.T",
+  "name": "KEYENCE CORP",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 81770.0,
-    "H": 82210.0,
-    "L": 81550.0,
-    "C": 81680.0,
-    "prev_close": 80270.0,
-    "chg_pct": 1.75657157094804
+    "date": "2026-10-06",
+    "O": 81580.0,
+    "H": 81780.0,
+    "L": 81020.0,
+    "C": 81490.0,
+    "prev_close": 81680.0,
+    "chg_pct": -0.23
   },
-  "name": "Keyence Corporation",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 80270.0,
-    "in_box_pct": 82.3,
-    "nearest_support": "S1 KEY (77860.0)",
-    "nearest_resistance": "R1 today high (80910.0)"
+  "adx": 16.8,
+  "plus_di": 26.09,
+  "minus_di": 22.31,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 87920.0 (2026-08-06), trough 73510.0 (2026-09-11), box top 82210.0 (2026-10-05)",
+  "peak": {
+    "date": "2026-08-06",
+    "price": 87920.0
   },
+  "trough": {
+    "date": "2026-09-11",
+    "price": 73510.0
+  },
+  "box": {
+    "top": 82210.0,
+    "top_date": "2026-10-05",
+    "bottom": 73510.0,
+    "period": "2026-09-11 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 7.3,
+  "recovery_from_crash_pct": 10.9,
   "supports": [
     {
-      "level": 77860.0,
+      "level": 79044.0,
       "label": "S1 KEY",
       "touches": 0,
       "evidence": "structural level near current; 3.0% below current"
@@ -37,34 +52,107 @@
   ],
   "resistances": [
     {
-      "level": 80910.0,
+      "level": 81780.0,
       "label": "R1 today high",
-      "evidence": "today's high 80910.0"
+      "evidence": "today's high 81780.0"
     },
     {
-      "level": 81720.0,
+      "level": 82210.0,
       "label": "R3 Oct high",
-      "evidence": "box top 81720.0, base period high"
+      "evidence": "box top 82210.0, base period high"
+    }
+  ],
+  "position": {
+    "current": 81490.0,
+    "in_box_pct": 91.7,
+    "nearest_support": "S1 KEY (79044.0)",
+    "nearest_resistance": "R1 today high (81780.0)"
+  },
+  "kline_today": {
+    "type": "bearish_rejection",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 81580.0,
+    "H": 81780.0,
+    "L": 81020.0,
+    "C": 81490.0,
+    "body_pct": 11.8,
+    "upper_wick_pct": 26.3,
+    "lower_wick_pct": 61.8
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 79044.0 (KEY support)",
+      "then": "still range; watch 81780.0 for next test"
+    },
+    {
+      "if": "break 79044.0 on close",
+      "then": "target 73510.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 73510.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 81780.0 on close",
+      "then": "short-term bullish; next test 82210.0"
+    },
+    {
+      "if": "break 82210.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
-    "trigger_price": 81720.0,
-    "target_price": 77615.0,
-    "stop_price": 84517.86,
-    "risk_pct": 3.42,
-    "reward_pct": 5.02,
-    "rr_ratio": 1.47,
+    "trigger_price": 82210.0,
+    "target_price": 77860.0,
+    "stop_price": 84723.08,
+    "risk_pct": 3.06,
+    "reward_pct": 5.29,
+    "rr_ratio": 1.73,
     "phase_match": true,
-    "r1": 81720.0,
+    "r1": 82210.0,
     "s1": 73510.0,
     "s2": 68930.0,
     "r2": 87920.0,
     "r3": 84170.0,
-    "s3": 57670.0,
+    "s3": 60340.0,
     "s4": 51550.0,
-    "current_position_pct": 82.3,
-    "notes": "SELL_R1: in box (73510-81720), entry at R1 81720, target mid 77615, stop 84518 ｜ 52.2 條規則（SELL plan，resistance 81720.00）：① 跌到 81720.00、收市守住喺 81720.00 上面 → 照 BUY 條 plan 做（入場 81720.00，止蝕 84517.86，目標 77615.00）。② 收市跌穿 81720.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 81720.00 上面』。"
+    "current_position_pct": 91.7,
+    "notes": "SELL_R1: in box (73510-82210), entry at R1 82210, target mid 77860, stop 84723 ｜ 52.2 條規則（SELL plan，resistance 82210.00）：① 跌到 82210.00、收市守住喺 82210.00 上面 → 照 BUY 條 plan 做（入場 82210.00，止蝕 84723.08，目標 77860.00）。② 收市跌穿 82210.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 82210.00 上面』。"
   }
 }

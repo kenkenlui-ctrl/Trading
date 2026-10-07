@@ -1,29 +1,44 @@
 {
-  "ticker": "4452.T",
-  "asof": "2026-10-05",
-  "close": 3470.0,
-  "chg_pct": 0.9014248328002239,
+  "ticker": "JP.4452",
+  "ticker_user": "4452.T",
+  "name": "KAO CORP",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 3440.0,
-    "H": 3485.0,
-    "L": 3432.0,
-    "C": 3470.0,
-    "prev_close": 3439.0,
-    "chg_pct": 0.9014248328002239
+    "date": "2026-10-06",
+    "O": 3490.0,
+    "H": 3495.0,
+    "L": 3462.0,
+    "C": 3484.0,
+    "prev_close": 3470.0,
+    "chg_pct": 0.4
   },
-  "name": "Kao Corporation",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 3439.0,
-    "in_box_pct": 48.6,
-    "nearest_support": "S1 bottom (3336.0)",
-    "nearest_resistance": "R1 today high (3468.0)"
+  "adx": 10.58,
+  "plus_di": 21.78,
+  "minus_di": 20.81,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 3782.0 (2026-08-10), trough 3360.0 (2026-09-11), box top 3548.0 (2026-09-28)",
+  "peak": {
+    "date": "2026-08-10",
+    "price": 3782.0
   },
+  "trough": {
+    "date": "2026-09-11",
+    "price": 3360.0
+  },
+  "box": {
+    "top": 3548.0,
+    "top_date": "2026-09-28",
+    "bottom": 3360.0,
+    "period": "2026-09-11 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 7.9,
+  "recovery_from_crash_pct": 3.7,
   "supports": [
     {
-      "level": 3336.0,
+      "level": 3380.0,
       "label": "S1 bottom",
       "touches": 0,
       "evidence": "structural bottom, near crash low 3360.0"
@@ -31,9 +46,9 @@
   ],
   "resistances": [
     {
-      "level": 3468.0,
+      "level": 3495.0,
       "label": "R1 today high",
-      "evidence": "rejection at 3468.0 (long upper wick, close weak)"
+      "evidence": "today's high 3495.0"
     },
     {
       "level": 3548.0,
@@ -41,9 +56,82 @@
       "evidence": "box top 3548.0, base period high"
     }
   ],
+  "position": {
+    "current": 3484.0,
+    "in_box_pct": 61.9,
+    "nearest_support": "S1 bottom (3380.0)",
+    "nearest_resistance": "R1 today high (3495.0)"
+  },
+  "kline_today": {
+    "type": "bearish_pullback",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 3490.0,
+    "H": 3495.0,
+    "L": 3462.0,
+    "C": 3484.0,
+    "body_pct": 18.2,
+    "upper_wick_pct": 15.2,
+    "lower_wick_pct": 66.7
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 3380.0 (KEY support)",
+      "then": "still range; watch 3495.0 for next test"
+    },
+    {
+      "if": "break 3380.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 3380.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 3495.0 on close",
+      "then": "short-term bullish; next test 3548.0"
+    },
+    {
+      "if": "break 3548.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -51,14 +139,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 3661.0,
+    "r1": 3548.0,
     "s1": 3360.0,
     "s2": 3140.0,
     "r2": 3782.0,
     "r3": 3359.0,
     "s3": 2880.0,
     "s4": 2965.5,
-    "current_position_pct": 26.2,
-    "notes": "WAIT_RANGE: in box (3360-3661), pos 26%, no clear setup"
+    "current_position_pct": 66.0,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 3548.00）：① 跌到 3548.00、收市守住喺 3548.00 上面 → 照 BUY 條 plan 做（入場 3548.00，止蝕 3628.52，目標 3454.00）。② 收市跌穿 3548.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 3548.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }

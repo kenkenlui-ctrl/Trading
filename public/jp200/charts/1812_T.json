@@ -1,29 +1,44 @@
 {
-  "ticker": "1812.T",
-  "asof": "2026-10-05",
-  "close": 4838.0,
-  "chg_pct": -0.9418509418509413,
+  "ticker": "JP.1812",
+  "ticker_user": "1812.T",
+  "name": "KAJIMA CORP",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 4884.0,
-    "H": 4891.0,
-    "L": 4818.0,
-    "C": 4838.0,
-    "prev_close": 4884.0,
-    "chg_pct": -0.9418509418509413
+    "date": "2026-10-06",
+    "O": 4879.0,
+    "H": 4888.0,
+    "L": 4791.0,
+    "C": 4793.0,
+    "prev_close": 4838.0,
+    "chg_pct": -0.93
   },
-  "name": "Kajima Corporation",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 4884.0,
-    "in_box_pct": 29.8,
-    "nearest_support": "S1 bottom (4736.0)",
-    "nearest_resistance": "R1 today high (4943.0)"
+  "adx": 15.74,
+  "plus_di": 16.89,
+  "minus_di": 24.17,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 8040.0 (2026-02-12), trough 4670.0 (2026-08-19), box top 5232.0 (2026-09-09)",
+  "peak": {
+    "date": "2026-02-12",
+    "price": 8040.0
   },
+  "trough": {
+    "date": "2026-08-19",
+    "price": 4670.0
+  },
+  "box": {
+    "top": 5232.0,
+    "top_date": "2026-09-09",
+    "bottom": 4670.0,
+    "period": "2026-08-19 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 40.4,
+  "recovery_from_crash_pct": 2.6,
   "supports": [
     {
-      "level": 4736.0,
+      "level": 4648.0,
       "label": "S1 bottom",
       "touches": 0,
       "evidence": "structural bottom, near crash low 4670.0"
@@ -31,14 +46,87 @@
   ],
   "resistances": [
     {
-      "level": 4943.0,
+      "level": 4888.0,
       "label": "R1 today high",
-      "evidence": "rejection at 4943.0 (long upper wick, close weak)"
+      "evidence": "today's high 4888.0"
     },
     {
       "level": 5232.0,
       "label": "R3 Sep high",
       "evidence": "box top 5232.0, base period high"
+    }
+  ],
+  "position": {
+    "current": 4793.0,
+    "in_box_pct": 24.8,
+    "nearest_support": "S1 bottom (4648.0)",
+    "nearest_resistance": "R1 today high (4888.0)"
+  },
+  "kline_today": {
+    "type": "bearish_pullback",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 4879.0,
+    "H": 4888.0,
+    "L": 4791.0,
+    "C": 4793.0,
+    "body_pct": 88.7,
+    "upper_wick_pct": 9.3,
+    "lower_wick_pct": 2.1
+  },
+  "bias": {
+    "short": {
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (25% of box)"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 4648.0 (KEY support)",
+      "then": "still range; watch 4888.0 for next test"
+    },
+    {
+      "if": "break 4648.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 4648.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 4888.0 on close",
+      "then": "short-term bullish; next test 5232.0"
+    },
+    {
+      "if": "break 5232.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -54,11 +142,11 @@
     "r1": 5232.0,
     "s1": 4779.0,
     "s2": 4670.0,
-    "r2": 6339.0,
+    "r2": 6033.0,
     "r3": 6751.0,
     "s3": 5296.0,
-    "s4": 5608.0,
-    "current_position_pct": 23.2,
-    "notes": "WAIT_RANGE: in box (4779-5232), pos 23%, no clear setup"
+    "s4": 5637.0,
+    "current_position_pct": 3.1,
+    "notes": "WAIT_RANGE: in box (4779-5232), pos 3%, no clear setup"
   }
 }

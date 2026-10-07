@@ -3,82 +3,99 @@
   "ticker_user": "TGT",
   "name": "Target Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
+  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-02",
-    "O": 157.0,
-    "H": 157.08,
-    "L": 154.72,
-    "C": 156.0,
-    "prev_close": 156.7,
-    "chg_pct": -0.45
+    "date": "2026-10-06",
+    "O": 152.86,
+    "H": 154.56,
+    "L": 152.3,
+    "C": 154.33,
+    "prev_close": 152.99,
+    "chg_pct": 0.88
   },
   "phase": "downtrend_active",
-  "adx": 12.58,
-  "plus_di": 19.56,
-  "minus_di": 19.98,
+  "adx": 13.36,
+  "plus_di": 16.87,
+  "minus_di": 24.39,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 170.75 (2026-08-24), trough 153.55 (2026-09-16), box top 160.8 (2026-09-28)",
+  "phase_evidence": "Peak 170.75 (2026-08-24), trough 150.67 (2026-10-05), box top 167.13 (2026-08-27)",
   "peak": {
     "date": "2026-08-24",
     "price": 170.75
   },
   "trough": {
-    "date": "2026-09-16",
-    "price": 153.55
+    "date": "2026-10-05",
+    "price": 150.67
   },
   "box": {
-    "top": 160.8,
-    "top_date": "2026-09-28",
-    "bottom": 153.55,
-    "period": "2026-09-16 to 2026-10-02"
+    "top": 167.13,
+    "top_date": "2026-08-27",
+    "bottom": 150.67,
+    "period": "2026-10-05 to 2026-10-06"
   },
-  "drop_from_peak_pct": 8.6,
-  "recovery_from_crash_pct": 1.6,
+  "drop_from_peak_pct": 9.6,
+  "recovery_from_crash_pct": 2.4,
   "supports": [
     {
       "level": 152.0,
-      "label": "S1 bottom",
-      "touches": 0,
-      "evidence": "structural bottom, near crash low 153.55"
+      "label": "S1 KEY",
+      "touches": 5,
+      "evidence": "tested 5x in base period; 1.5% below current"
+    },
+    {
+      "level": 148.0,
+      "label": "S2",
+      "touches": 6,
+      "evidence": "mid-base support, tested 6x"
+    },
+    {
+      "level": 144.0,
+      "label": "S3 bottom",
+      "touches": 3,
+      "evidence": "structural bottom, near crash low 150.67"
     }
   ],
   "resistances": [
     {
-      "level": 157.08,
+      "level": 154.56,
       "label": "R1 today high",
-      "evidence": "today's high 157.0800018310547"
+      "evidence": "today's high 154.55999755859375"
     },
     {
-      "level": 160.8,
-      "label": "R3 Sep high",
-      "evidence": "box top 160.8, base period high"
+      "level": 160.0,
+      "label": "R2",
+      "evidence": "mid-box supply, round number 160"
+    },
+    {
+      "level": 167.13,
+      "label": "R3 Aug high",
+      "evidence": "box top 167.13, base period high"
     }
   ],
   "position": {
-    "current": 156.0,
-    "in_box_pct": 45.5,
-    "nearest_support": "S1 bottom (152.0)",
-    "nearest_resistance": "R1 today high (157.08)"
+    "current": 154.33,
+    "in_box_pct": 44.7,
+    "nearest_support": "S1 KEY (152.0)",
+    "nearest_resistance": "R1 today high (154.56)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 157.0,
-    "H": 157.08,
-    "L": 154.72,
-    "C": 156.0,
-    "body_pct": 42.4,
-    "upper_wick_pct": 3.4,
-    "lower_wick_pct": 54.2
+    "O": 152.86,
+    "H": 154.56,
+    "L": 152.3,
+    "C": 154.33,
+    "body_pct": 65.0,
+    "upper_wick_pct": 10.2,
+    "lower_wick_pct": 24.8
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (46% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -92,22 +109,22 @@
   "scenarios": [
     {
       "if": "hold 152.0 (KEY support)",
-      "then": "still range; watch 157.08 for next test"
+      "then": "still range; watch 154.56 for next test"
     },
     {
       "if": "break 152.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "then": "target 148.0 → 144.0 (short-term bearish)"
     },
     {
-      "if": "break 152.0 (crash low)",
+      "if": "break 144.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 157.08 on close",
-      "then": "short-term bullish; next test 160.8"
+      "if": "reclaim 154.56 on close",
+      "then": "short-term bullish; next test 160.0"
     },
     {
-      "if": "break 160.8 (box top)",
+      "if": "break 167.13 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -139,14 +156,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 164.82,
-    "s1": 153.55,
+    "r1": 162.38,
+    "s1": 150.67,
     "s2": 132.55,
     "r2": 170.75,
     "r3": 142.82,
-    "s3": 116.83,
+    "s3": 117.05,
     "s4": 93.77,
-    "current_position_pct": 21.7,
-    "notes": "WAIT_RANGE: in box (154-165), pos 22%, no clear setup"
+    "current_position_pct": 31.3,
+    "notes": "WAIT_RANGE: in box (151-162), pos 31%, no clear setup"
   }
 }

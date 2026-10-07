@@ -3,20 +3,20 @@
   "ticker_user": "BA",
   "name": "Boeing Company (The)",
   "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
+  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-02",
-    "O": 193.87,
-    "H": 196.93,
-    "L": 190.27,
-    "C": 193.56,
-    "prev_close": 192.28,
-    "chg_pct": 0.67
+    "date": "2026-10-06",
+    "O": 193.0,
+    "H": 193.23,
+    "L": 189.33,
+    "C": 189.82,
+    "prev_close": 192.72,
+    "chg_pct": -1.5
   },
   "phase": "downtrend_active",
-  "adx": 31.25,
-  "plus_di": 15.36,
-  "minus_di": 25.94,
+  "adx": 30.78,
+  "plus_di": 14.01,
+  "minus_di": 26.01,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 254.35 (2026-01-27), trough 184.01 (2026-09-28), box top 196.93 (2026-10-02)",
@@ -32,10 +32,10 @@
     "top": 196.93,
     "top_date": "2026-10-02",
     "bottom": 184.01,
-    "period": "2026-09-28 to 2026-10-02"
+    "period": "2026-09-28 to 2026-10-06"
   },
-  "drop_from_peak_pct": 23.9,
-  "recovery_from_crash_pct": 5.2,
+  "drop_from_peak_pct": 25.4,
+  "recovery_from_crash_pct": 3.2,
   "supports": [
     {
       "level": 184.0,
@@ -46,34 +46,39 @@
   ],
   "resistances": [
     {
-      "level": 196.93,
+      "level": 193.23,
       "label": "R1 today high",
-      "evidence": "today's high 196.92999267578125"
+      "evidence": "today's high 193.22999572753906"
+    },
+    {
+      "level": 196.93,
+      "label": "R3 Oct high",
+      "evidence": "box top 196.93, base period high"
     }
   ],
   "position": {
-    "current": 193.56,
-    "in_box_pct": 73.9,
+    "current": 189.82,
+    "in_box_pct": 45.0,
     "nearest_support": "S1 bottom (184.0)",
-    "nearest_resistance": "R1 today high (196.93)"
+    "nearest_resistance": "R1 today high (193.23)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 193.87,
-    "H": 196.93,
-    "L": 190.27,
-    "C": 193.56,
-    "body_pct": 4.7,
-    "upper_wick_pct": 45.9,
-    "lower_wick_pct": 49.4
+    "O": 193.0,
+    "H": 193.23,
+    "L": 189.33,
+    "C": 189.82,
+    "body_pct": 81.5,
+    "upper_wick_pct": 5.9,
+    "lower_wick_pct": 12.6
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (45% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -87,7 +92,7 @@
   "scenarios": [
     {
       "if": "hold 184.0 (KEY support)",
-      "then": "still range; watch 196.93 for next test"
+      "then": "still range; watch 193.23 for next test"
     },
     {
       "if": "break 184.0 on close",
@@ -98,8 +103,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 196.93 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 193.23 on close",
+      "then": "short-term bullish; next test 196.93"
+    },
+    {
+      "if": "break 196.93 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -130,14 +139,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 215.29,
+    "r1": 212.4,
     "s1": 184.01,
     "s2": 203.9,
     "r2": 241.09,
     "r3": 244.07,
     "s3": 207.95,
     "s4": 187.72,
-    "current_position_pct": 30.5,
-    "notes": "WAIT_RANGE: in box (184-215), pos 31%, no clear setup"
+    "current_position_pct": 20.5,
+    "notes": "WAIT_RANGE: in box (184-212), pos 20%, no clear setup"
   }
 }

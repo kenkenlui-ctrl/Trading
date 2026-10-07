@@ -1,32 +1,47 @@
 {
-  "ticker": "6752.T",
-  "asof": "2026-10-05",
-  "close": 4710.0,
-  "chg_pct": 3.1085814360770625,
+  "ticker": "JP.6752",
+  "ticker_user": "6752.T",
+  "name": "PANASONIC HOLDINGS CORP",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 4640.0,
-    "H": 4740.0,
-    "L": 4608.0,
-    "C": 4710.0,
-    "prev_close": 4568.0,
-    "chg_pct": 3.1085814360770625
+    "date": "2026-10-06",
+    "O": 4717.0,
+    "H": 4809.0,
+    "L": 4655.0,
+    "C": 4769.0,
+    "prev_close": 4710.0,
+    "chg_pct": 1.25
   },
-  "name": "Panasonic Holdings Corporation",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 4568.0,
-    "in_box_pct": 88.6,
-    "nearest_support": "S1 KEY (4244.0)",
-    "nearest_resistance": "R1 today high (4589.0)"
+  "adx": 19.87,
+  "plus_di": 35.27,
+  "minus_di": 14.55,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 4982.0 (2026-08-14), trough 4083.0 (2026-09-14), box top 4809.0 (2026-10-06)",
+  "peak": {
+    "date": "2026-08-14",
+    "price": 4982.0
   },
+  "trough": {
+    "date": "2026-09-14",
+    "price": 4083.0
+  },
+  "box": {
+    "top": 4809.0,
+    "top_date": "2026-10-06",
+    "bottom": 4083.0,
+    "period": "2026-09-14 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 4.3,
+  "recovery_from_crash_pct": 16.8,
   "supports": [
     {
       "level": 4244.0,
       "label": "S1 KEY",
       "touches": 4,
-      "evidence": "tested 4x in base period; 7.1% below current"
+      "evidence": "tested 4x in base period; 11.0% below current"
     },
     {
       "level": 4100.0,
@@ -37,34 +52,98 @@
   ],
   "resistances": [
     {
-      "level": 4589.0,
+      "level": 4809.0,
       "label": "R1 today high",
-      "evidence": "today's high 4589.0"
+      "evidence": "today's high 4809.0"
+    }
+  ],
+  "position": {
+    "current": 4769.0,
+    "in_box_pct": 94.4,
+    "nearest_support": "S1 KEY (4244.0)",
+    "nearest_resistance": "R1 today high (4809.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 4717.0,
+    "H": 4809.0,
+    "L": 4655.0,
+    "C": 4769.0,
+    "body_pct": 33.8,
+    "upper_wick_pct": 26.0,
+    "lower_wick_pct": 40.3
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 4244.0 (KEY support)",
+      "then": "still range; watch 4809.0 for next test"
     },
     {
-      "level": 4628.0,
-      "label": "R3 Sep high",
-      "evidence": "box top 4628.0, base period high"
+      "if": "break 4244.0 on close",
+      "then": "target 4100.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 4100.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 4809.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 4628.0,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 4809.0,
+    "target_price": 4446.0,
+    "stop_price": 5054.58,
+    "risk_pct": 5.11,
+    "reward_pct": 7.55,
+    "rr_ratio": 1.48,
+    "phase_match": true,
+    "r1": 4809.0,
     "s1": 4083.0,
     "s2": 3364.0,
     "r2": 4982.0,
     "r3": 4770.0,
-    "s3": 2785.0,
-    "s4": 1828.0,
-    "current_position_pct": 89.0,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 4628.00）：① 跌到 4628.00、收市守住喺 4628.00 上面 → 照 BUY 條 plan 做（入場 4628.00，止蝕 4884.50，目標 4355.50）。② 收市跌穿 4628.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 4628.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "s3": 2810.0,
+    "s4": 1861.5,
+    "current_position_pct": 94.5,
+    "notes": "SELL_R1: in box (4083-4809), entry at R1 4809, target mid 4446, stop 5055 ｜ 52.2 條規則（SELL plan，resistance 4809.00）：① 跌到 4809.00、收市守住喺 4809.00 上面 → 照 BUY 條 plan 做（入場 4809.00，止蝕 5054.58，目標 4446.00）。② 收市跌穿 4809.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 4809.00 上面』。"
   }
 }

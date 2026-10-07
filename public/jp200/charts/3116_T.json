@@ -1,29 +1,44 @@
 {
-  "ticker": "3116.T",
-  "asof": "2026-10-05",
-  "close": 2157.5,
-  "chg_pct": 1.2435476302205428,
+  "ticker": "JP.3116",
+  "ticker_user": "3116.T",
+  "name": "TOYOTA BOSHOKU CORP",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 2139.0,
-    "H": 2158.0,
-    "L": 2135.0,
-    "C": 2157.5,
-    "prev_close": 2131.0,
-    "chg_pct": 1.2435476302205428
+    "date": "2026-10-06",
+    "O": 2169.0,
+    "H": 2172.0,
+    "L": 2150.5,
+    "C": 2172.0,
+    "prev_close": 2157.5,
+    "chg_pct": 0.67
   },
-  "name": "Toyota Boshoku Corporation",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 2131.0,
-    "in_box_pct": 16.5,
-    "nearest_support": "S1 bottom (2068.0)",
-    "nearest_resistance": "R1 today high (2163.5)"
+  "adx": 14.28,
+  "plus_di": 18.03,
+  "minus_di": 28.21,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 3288.0 (2026-02-18), trough 2105.0 (2026-06-24), box top 2450.0 (2026-07-30)",
+  "peak": {
+    "date": "2026-02-18",
+    "price": 3288.0
   },
+  "trough": {
+    "date": "2026-06-24",
+    "price": 2105.0
+  },
+  "box": {
+    "top": 2450.0,
+    "top_date": "2026-07-30",
+    "bottom": 2105.0,
+    "period": "2026-06-24 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 33.9,
+  "recovery_from_crash_pct": 3.2,
   "supports": [
     {
-      "level": 2068.0,
+      "level": 2108.0,
       "label": "S1 bottom",
       "touches": 0,
       "evidence": "structural bottom, near crash low 2105.0"
@@ -31,14 +46,87 @@
   ],
   "resistances": [
     {
-      "level": 2163.5,
+      "level": 2172.0,
       "label": "R1 today high",
-      "evidence": "today's high 2163.5"
+      "evidence": "today's high 2172.0"
     },
     {
       "level": 2450.0,
       "label": "R3 Jul high",
       "evidence": "box top 2450.0, base period high"
+    }
+  ],
+  "position": {
+    "current": 2172.0,
+    "in_box_pct": 18.7,
+    "nearest_support": "S1 bottom (2108.0)",
+    "nearest_resistance": "R3 Jul high (2450.0)"
+  },
+  "kline_today": {
+    "type": "bullish_hold",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 2169.0,
+    "H": 2172.0,
+    "L": 2150.5,
+    "C": 2172.0,
+    "body_pct": 14.0,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 86.0
+  },
+  "bias": {
+    "short": {
+      "bias": "defensive",
+      "reason": "near box bottom (19% of box)"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 2108.0 (KEY support)",
+      "then": "still range; watch 2172.0 for next test"
+    },
+    {
+      "if": "break 2108.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 2108.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 2172.0 on close",
+      "then": "short-term bullish; next test 2450.0"
+    },
+    {
+      "if": "break 2450.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -57,8 +145,8 @@
     "r2": 2450.0,
     "r3": 2510.0,
     "s3": 2105.0,
-    "s4": 2378.0,
-    "current_position_pct": 0.0,
-    "notes": "WAIT_RANGE: in box (2131-2322), pos 0%, no clear setup"
+    "s4": 2373.0,
+    "current_position_pct": 21.4,
+    "notes": "WAIT_RANGE: in box (2131-2322), pos 21%, no clear setup"
   }
 }

@@ -3,21 +3,21 @@
   "ticker_user": "GILD",
   "name": "Gilead Sciences, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
+  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-02",
-    "O": 147.65,
-    "H": 148.0,
-    "L": 144.0,
-    "C": 144.74,
-    "prev_close": 147.5,
-    "chg_pct": -1.87
+    "date": "2026-10-06",
+    "O": 145.11,
+    "H": 146.14,
+    "L": 142.6,
+    "C": 144.23,
+    "prev_close": 144.63,
+    "chg_pct": -0.28
   },
   "phase": "base_building",
-  "adx": 26.32,
-  "plus_di": 19.62,
-  "minus_di": 22.11,
-  "regime": "trend",
+  "adx": 23.9,
+  "plus_di": 19.32,
+  "minus_di": 21.8,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 157.29 (2026-02-11), trough 121.39 (2026-06-10), box top 154.2 (2026-09-23)",
   "peak": {
@@ -32,16 +32,16 @@
     "top": 154.2,
     "top_date": "2026-09-23",
     "bottom": 121.39,
-    "period": "2026-06-10 to 2026-10-02"
+    "period": "2026-06-10 to 2026-10-06"
   },
-  "drop_from_peak_pct": 8.0,
-  "recovery_from_crash_pct": 19.2,
+  "drop_from_peak_pct": 8.3,
+  "recovery_from_crash_pct": 18.8,
   "supports": [
     {
       "level": 136.0,
       "label": "S1 KEY",
       "touches": 5,
-      "evidence": "tested 5x in base period; 6.0% below current"
+      "evidence": "tested 5x in base period; 5.7% below current"
     },
     {
       "level": 132.0,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 148.0,
+      "level": 146.14,
       "label": "R1 today high",
-      "evidence": "today's high 148.0"
+      "evidence": "today's high 146.13999938964844"
     },
     {
       "level": 150.0,
@@ -80,23 +80,23 @@
     }
   ],
   "position": {
-    "current": 144.74,
-    "in_box_pct": 71.2,
+    "current": 144.23,
+    "in_box_pct": 69.6,
     "nearest_support": "S1 KEY (136.0)",
-    "nearest_resistance": "R1 today high (148.0)"
+    "nearest_resistance": "R1 today high (146.14)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 147.65,
-    "H": 148.0,
-    "L": 144.0,
-    "C": 144.74,
-    "body_pct": 72.7,
-    "upper_wick_pct": 8.8,
-    "lower_wick_pct": 18.5
+    "O": 145.11,
+    "H": 146.14,
+    "L": 142.6,
+    "C": 144.23,
+    "body_pct": 24.9,
+    "upper_wick_pct": 29.1,
+    "lower_wick_pct": 46.0
   },
   "bias": {
     "short": {
@@ -115,7 +115,7 @@
   "scenarios": [
     {
       "if": "hold 136.0 (KEY support)",
-      "then": "still range; watch 148.0 for next test"
+      "then": "still range; watch 146.14 for next test"
     },
     {
       "if": "break 136.0 on close",
@@ -126,7 +126,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 148.0 on close",
+      "if": "reclaim 146.14 on close",
       "then": "short-term bullish; next test 150.0"
     },
     {
@@ -154,7 +154,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -163,13 +163,13 @@
     "rr_ratio": 0.0,
     "phase_match": false,
     "r1": 154.2,
-    "s1": 142.94,
+    "s1": 142.6,
     "s2": 127.61,
     "r2": 152.55,
-    "r3": 141.4,
+    "r3": 140.27,
     "s3": 121.39,
     "s4": 116.88,
-    "current_position_pct": 16.0,
-    "notes": "WAIT_RANGE: in box (143-154), pos 16%, no clear setup"
+    "current_position_pct": 14.1,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（BUY plan，support 142.60）：① 跌到 142.60、收市守住喺 142.60 上面 → 照 BUY 條 plan 做（入場 142.60，止蝕 137.47，目標 148.40）。② 收市跌穿 142.60 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 142.60 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }

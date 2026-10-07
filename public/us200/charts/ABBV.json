@@ -3,20 +3,20 @@
   "ticker_user": "ABBV",
   "name": "AbbVie Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
+  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-02",
-    "O": 259.74,
-    "H": 264.06,
-    "L": 257.87,
-    "C": 262.82,
-    "prev_close": 259.93,
-    "chg_pct": 1.11
+    "date": "2026-10-06",
+    "O": 267.74,
+    "H": 268.86,
+    "L": 260.62,
+    "C": 266.69,
+    "prev_close": 265.76,
+    "chg_pct": 0.35
   },
-  "phase": "downtrend_active",
-  "adx": 17.05,
-  "plus_di": 20.72,
-  "minus_di": 16.57,
+  "phase": "uptrend",
+  "adx": 17.96,
+  "plus_di": 22.67,
+  "minus_di": 13.39,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 269.39 (2026-09-23), trough 246.77 (2026-09-09), box top 269.39 (2026-09-23)",
@@ -32,22 +32,22 @@
     "top": 269.39,
     "top_date": "2026-09-23",
     "bottom": 246.77,
-    "period": "2026-09-09 to 2026-10-02"
+    "period": "2026-09-09 to 2026-10-06"
   },
-  "drop_from_peak_pct": 2.4,
-  "recovery_from_crash_pct": 6.5,
+  "drop_from_peak_pct": 1.0,
+  "recovery_from_crash_pct": 8.1,
   "supports": [
     {
-      "level": 256.0,
+      "level": 260.0,
       "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 2.6% below current"
+      "touches": 15,
+      "evidence": "tested 15x in base period; 2.5% below current"
     },
     {
-      "level": 252.0,
+      "level": 256.0,
       "label": "S2",
-      "touches": 3,
-      "evidence": "mid-base support, tested 3x"
+      "touches": 10,
+      "evidence": "mid-base support, tested 10x"
     },
     {
       "level": 248.0,
@@ -58,34 +58,29 @@
   ],
   "resistances": [
     {
-      "level": 264.06,
+      "level": 268.86,
       "label": "R1 today high",
-      "evidence": "today's high 264.05999755859375"
-    },
-    {
-      "level": 269.39,
-      "label": "R3 Sep high",
-      "evidence": "box top 269.39, base period high"
+      "evidence": "today's high 268.8599853515625"
     }
   ],
   "position": {
-    "current": 262.82,
-    "in_box_pct": 69.3,
-    "nearest_support": "S1 KEY (256.0)",
-    "nearest_resistance": "R1 today high (264.06)"
+    "current": 266.69,
+    "in_box_pct": 89.6,
+    "nearest_support": "S1 KEY (260.0)",
+    "nearest_resistance": "R1 today high (268.86)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 259.74,
-    "H": 264.06,
-    "L": 257.87,
-    "C": 262.82,
-    "body_pct": 49.8,
-    "upper_wick_pct": 20.0,
-    "lower_wick_pct": 30.2
+    "O": 267.74,
+    "H": 268.86,
+    "L": 260.62,
+    "C": 266.69,
+    "body_pct": 12.7,
+    "upper_wick_pct": 13.6,
+    "lower_wick_pct": 73.7
   },
   "bias": {
     "short": {
@@ -93,8 +88,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bearish_continuation",
-      "reason": "making new lows"
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -103,24 +98,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 256.0 (KEY support)",
-      "then": "still range; watch 264.06 for next test"
+      "if": "hold 260.0 (KEY support)",
+      "then": "still range; watch 268.86 for next test"
     },
     {
-      "if": "break 256.0 on close",
-      "then": "target 252.0 → 248.0 (short-term bearish)"
+      "if": "break 260.0 on close",
+      "then": "target 256.0 → 248.0 (short-term bearish)"
     },
     {
       "if": "break 248.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 264.06 on close",
-      "then": "short-term bullish; next test 269.39"
-    },
-    {
-      "if": "break 269.39 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 268.86 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -142,15 +133,15 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 269.39,
-    "target_price": 258.08,
-    "stop_price": 276.67,
-    "risk_pct": 2.7,
-    "reward_pct": 4.2,
-    "rr_ratio": 1.55,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 269.39,
     "s1": 246.77,
     "s2": 241.2,
@@ -158,7 +149,7 @@
     "r3": 261.64,
     "s3": 190.75,
     "s4": 201.66,
-    "current_position_pct": 71.0,
-    "notes": "SELL_R1: in box (247-269), entry at R1 269, target mid 258, stop 277 ｜ 52.2 條規則（SELL plan，resistance 269.39）：① 跌到 269.39、收市守住喺 269.39 上面 → 照 BUY 條 plan 做（入場 269.39，止蝕 276.67，目標 258.08）。② 收市跌穿 269.39 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 269.39 上面』。"
+    "current_position_pct": 88.1,
+    "notes": "WAIT_RANGE: in box (247-269), pos 88%, no clear setup"
   }
 }

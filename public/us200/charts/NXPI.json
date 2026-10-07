@@ -3,20 +3,20 @@
   "ticker_user": "NXPI",
   "name": "NXP Semiconductors N.V.",
   "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-02 (200 daily bars)",
+  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-02",
-    "O": 245.37,
-    "H": 248.86,
-    "L": 242.73,
-    "C": 243.66,
-    "prev_close": 239.19,
-    "chg_pct": 1.87
+    "date": "2026-10-06",
+    "O": 242.98,
+    "H": 245.35,
+    "L": 240.45,
+    "C": 244.38,
+    "prev_close": 241.97,
+    "chg_pct": 1.0
   },
   "phase": "downtrend_active",
-  "adx": 16.96,
-  "plus_di": 28.04,
-  "minus_di": 16.05,
+  "adx": 17.33,
+  "plus_di": 27.64,
+  "minus_di": 17.85,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 339.95 (2026-05-27), trough 216.66 (2026-09-16), box top 248.86 (2026-10-02)",
@@ -32,16 +32,16 @@
     "top": 248.86,
     "top_date": "2026-10-02",
     "bottom": 216.66,
-    "period": "2026-09-16 to 2026-10-02"
+    "period": "2026-09-16 to 2026-10-06"
   },
-  "drop_from_peak_pct": 28.3,
-  "recovery_from_crash_pct": 12.5,
+  "drop_from_peak_pct": 28.1,
+  "recovery_from_crash_pct": 12.8,
   "supports": [
     {
       "level": 236.0,
       "label": "S1 KEY",
       "touches": 4,
-      "evidence": "tested 4x in base period; 3.1% below current"
+      "evidence": "tested 4x in base period; 3.4% below current"
     },
     {
       "level": 232.0,
@@ -58,29 +58,34 @@
   ],
   "resistances": [
     {
-      "level": 248.86,
+      "level": 245.35,
       "label": "R1 today high",
-      "evidence": "rejection at 248.86000061035156 (long upper wick, close weak)"
+      "evidence": "today's high 245.35000610351562"
+    },
+    {
+      "level": 248.86,
+      "label": "R3 Oct high",
+      "evidence": "box top 248.86, base period high"
     }
   ],
   "position": {
-    "current": 243.66,
-    "in_box_pct": 75.1,
+    "current": 244.38,
+    "in_box_pct": 78.5,
     "nearest_support": "S1 KEY (236.0)",
-    "nearest_resistance": "R1 today high (248.86)"
+    "nearest_resistance": "R1 today high (245.35)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 245.37,
-    "H": 248.86,
-    "L": 242.73,
-    "C": 243.66,
-    "body_pct": 27.9,
-    "upper_wick_pct": 56.9,
-    "lower_wick_pct": 15.2
+    "close_position": "upper_half",
+    "O": 242.98,
+    "H": 245.35,
+    "L": 240.45,
+    "C": 244.38,
+    "body_pct": 28.6,
+    "upper_wick_pct": 19.8,
+    "lower_wick_pct": 51.6
   },
   "bias": {
     "short": {
@@ -99,7 +104,7 @@
   "scenarios": [
     {
       "if": "hold 236.0 (KEY support)",
-      "then": "still range; watch 248.86 for next test"
+      "then": "still range; watch 245.35 for next test"
     },
     {
       "if": "break 236.0 on close",
@@ -110,8 +115,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 248.86 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 245.35 on close",
+      "then": "short-term bullish; next test 248.86"
+    },
+    {
+      "if": "break 248.86 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -137,19 +146,19 @@
     "strategy": "SELL_R1",
     "trigger_price": 248.86,
     "target_price": 232.76,
-    "stop_price": 259.92,
-    "risk_pct": 4.44,
+    "stop_price": 259.13,
+    "risk_pct": 4.13,
     "reward_pct": 6.47,
-    "rr_ratio": 1.46,
+    "rr_ratio": 1.57,
     "phase_match": true,
     "r1": 248.86,
     "s1": 216.66,
     "s2": 217.3,
-    "r2": 293.9,
+    "r2": 289.78,
     "r3": 339.95,
-    "s3": 206.54,
+    "s3": 209.48,
     "s4": 184.68,
-    "current_position_pct": 83.9,
-    "notes": "SELL_R1: in box (217-249), entry at R1 249, target mid 233, stop 260 ｜ 52.2 條規則（SELL plan，resistance 248.86）：① 跌到 248.86、收市守住喺 248.86 上面 → 照 BUY 條 plan 做（入場 248.86，止蝕 259.92，目標 232.76）。② 收市跌穿 248.86 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 248.86 上面』。"
+    "current_position_pct": 86.1,
+    "notes": "SELL_R1: in box (217-249), entry at R1 249, target mid 233, stop 259 ｜ 52.2 條規則（SELL plan，resistance 248.86）：① 跌到 248.86、收市守住喺 248.86 上面 → 照 BUY 條 plan 做（入場 248.86，止蝕 259.13，目標 232.76）。② 收市跌穿 248.86 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 248.86 上面』。"
   }
 }

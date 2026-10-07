@@ -1,61 +1,134 @@
 {
-  "ticker": "3131.T",
-  "asof": "2026-10-05",
-  "close": 8150.0,
-  "chg_pct": 2.6448362720403074,
+  "ticker": "JP.3131",
+  "ticker_user": "3131.T",
+  "name": "SHINDEN HIGHTEX CORPORATION",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
+    "date": "2026-10-06",
+    "O": 8060.0,
+    "H": 8290.0,
+    "L": 8000.0,
+    "C": 8210.0,
+    "prev_close": 8150.0,
+    "chg_pct": 0.74
+  },
+  "phase": "uptrend",
+  "adx": 43.64,
+  "plus_di": 31.66,
+  "minus_di": 8.01,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 8330.0 (2026-10-05), trough 5950.0 (2026-09-14), box top 8330.0 (2026-10-05)",
+  "peak": {
     "date": "2026-10-05",
-    "O": 8160.0,
-    "H": 8330.0,
-    "L": 8030.0,
-    "C": 8150.0,
-    "prev_close": 7940.0,
-    "chg_pct": 2.6448362720403074
+    "price": 8330.0
   },
-  "name": "Shinden Hightex Corporation",
-  "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 7940.0,
-    "in_box_pct": 85.6,
-    "nearest_support": "S1 KEY (7672.0)",
-    "nearest_resistance": "R1 today high (8240.0)"
+  "trough": {
+    "date": "2026-09-14",
+    "price": 5950.0
   },
+  "box": {
+    "top": 8330.0,
+    "top_date": "2026-10-05",
+    "bottom": 5950.0,
+    "period": "2026-09-14 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 1.4,
+  "recovery_from_crash_pct": 38.0,
   "supports": [
     {
       "level": 7672.0,
       "label": "S1 KEY",
       "touches": 4,
-      "evidence": "tested 4x in base period; 3.4% below current"
+      "evidence": "tested 4x in base period; 6.6% below current"
     },
     {
-      "level": 6592.0,
-      "label": "S2",
-      "touches": 3,
-      "evidence": "mid-base support, tested 3x"
-    },
-    {
-      "level": 5808.0,
-      "label": "S3 bottom",
-      "touches": 4,
-      "evidence": "structural bottom, near crash low 7670.0"
+      "level": 5950.0,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-09-14, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 8240.0,
+      "level": 8290.0,
       "label": "R1 today high",
-      "evidence": "rejection at 8240.0 (long upper wick, close weak)"
+      "evidence": "today's high 8290.0"
+    }
+  ],
+  "position": {
+    "current": 8210.0,
+    "in_box_pct": 96.6,
+    "nearest_support": "S1 KEY (7672.0)",
+    "nearest_resistance": "R1 today high (8290.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 8060.0,
+    "H": 8290.0,
+    "L": 8000.0,
+    "C": 8210.0,
+    "body_pct": 51.7,
+    "upper_wick_pct": 27.6,
+    "lower_wick_pct": 20.7
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 7672.0 (KEY support)",
+      "then": "still range; watch 8290.0 for next test"
     },
     {
-      "level": 8300.0,
-      "label": "R3 Sep high",
-      "evidence": "box top 8300.0, base period high"
+      "if": "break 7672.0 on close",
+      "then": "target 5950.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 5950.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 8290.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -63,14 +136,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 8300.0,
-    "s1": 5930.0,
+    "r1": 8330.0,
+    "s1": 5950.0,
     "s2": 3210.0,
     "r2": 7200.0,
-    "r3": 4040.0,
-    "s3": 2693.0,
+    "r3": 4140.0,
+    "s3": 2704.0,
     "s4": 2605.0,
-    "current_position_pct": 84.8,
-    "notes": "WAIT_RANGE: in box (5930-8300), pos 85%, no clear setup"
+    "current_position_pct": 95.0,
+    "notes": "WAIT_RANGE: in box (5950-8330), pos 95%, no clear setup"
   }
 }

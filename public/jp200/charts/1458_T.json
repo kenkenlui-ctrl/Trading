@@ -1,8 +1,9 @@
 {
-  "ticker": "1458.T",
-  "asof": "2026-10-05",
-  "close": 93000.0,
-  "chg_pct": 5.084745762711873,
+  "ticker": "JP.1458",
+  "ticker_user": "1458.T",
+  "name": "RAKUTEN INVESTMENT NIKKEI 225 L",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-05 (199 daily bars)",
   "last_bar": {
     "date": "2026-10-05",
     "O": 92060.0,
@@ -10,20 +11,34 @@
     "L": 91920.0,
     "C": 93000.0,
     "prev_close": 88500.0,
-    "chg_pct": 5.084745762711873
+    "chg_pct": 5.08
   },
-  "name": "Rakuten ETF-Nikkei 225 Leveraged Index",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 88500.0,
-    "in_box_pct": 85.0,
-    "nearest_support": "S1 KEY (85844.0)",
-    "nearest_resistance": "R1 today high (89860.0)"
+  "adx": 18.17,
+  "plus_di": 40.81,
+  "minus_di": 19.27,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 103100.0 (2026-06-22), trough 69530.0 (2026-07-29), box top 93320.0 (2026-10-05)",
+  "peak": {
+    "date": "2026-06-22",
+    "price": 103100.0
   },
+  "trough": {
+    "date": "2026-07-29",
+    "price": 69530.0
+  },
+  "box": {
+    "top": 93320.0,
+    "top_date": "2026-10-05",
+    "bottom": 69530.0,
+    "period": "2026-07-29 to 2026-10-05"
+  },
+  "drop_from_peak_pct": 9.8,
+  "recovery_from_crash_pct": 33.8,
   "supports": [
     {
-      "level": 85844.0,
+      "level": 90208.0,
       "label": "S1 KEY",
       "touches": 0,
       "evidence": "structural level near current; 3.0% below current"
@@ -37,34 +52,98 @@
   ],
   "resistances": [
     {
-      "level": 89860.0,
+      "level": 93320.0,
       "label": "R1 today high",
-      "evidence": "today's high 89860.0"
+      "evidence": "today's high 93320.0"
+    }
+  ],
+  "position": {
+    "current": 93000.0,
+    "in_box_pct": 98.7,
+    "nearest_support": "S1 KEY (90208.0)",
+    "nearest_resistance": "R1 today high (93320.0)"
+  },
+  "kline_today": {
+    "type": "bullish_reclaim",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 92060.0,
+    "H": 93320.0,
+    "L": 91920.0,
+    "C": 93000.0,
+    "body_pct": 67.1,
+    "upper_wick_pct": 22.9,
+    "lower_wick_pct": 10.0
+  },
+  "bias": {
+    "short": {
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 90208.0 (KEY support)",
+      "then": "still range; watch 93320.0 for next test"
     },
     {
-      "level": 91840.0,
-      "label": "R3 Aug high",
-      "evidence": "box top 91840.0, base period high"
+      "if": "break 90208.0 on close",
+      "then": "target 69530.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 69530.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 93320.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
-    "trigger_price": 90540.0,
-    "target_price": 82295.0,
-    "stop_price": 95197.44,
-    "risk_pct": 5.14,
-    "reward_pct": 9.11,
-    "rr_ratio": 1.77,
+    "trigger_price": 93320.0,
+    "target_price": 83685.0,
+    "stop_price": 98128.99,
+    "risk_pct": 5.15,
+    "reward_pct": 10.32,
+    "rr_ratio": 2.0,
     "phase_match": true,
-    "r1": 90540.0,
+    "r1": 93320.0,
     "s1": 74050.0,
     "s2": 69530.0,
-    "r2": 95350.0,
+    "r2": 94220.0,
     "r3": 103100.0,
-    "s3": 56080.0,
+    "s3": 61300.0,
     "s4": 47730.0,
-    "current_position_pct": 87.6,
-    "notes": "SELL_R1: in box (74050-90540), entry at R1 90540, target mid 82295, stop 95197 ｜ 52.2 條規則（SELL plan，resistance 90540.00）：① 跌到 90540.00、收市守住喺 90540.00 上面 → 照 BUY 條 plan 做（入場 90540.00，止蝕 95197.44，目標 82295.00）。② 收市跌穿 90540.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 90540.00 上面』。"
+    "current_position_pct": 98.3,
+    "notes": "SELL_R1: in box (74050-93320), entry at R1 93320, target mid 83685, stop 98129 ｜ 52.2 條規則（SELL plan，resistance 93320.00）：① 跌到 93320.00、收市守住喺 93320.00 上面 → 照 BUY 條 plan 做（入場 93320.00，止蝕 98128.99，目標 83685.00）。② 收市跌穿 93320.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 93320.00 上面』。"
   }
 }

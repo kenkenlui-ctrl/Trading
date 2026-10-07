@@ -1,82 +1,155 @@
 {
-  "ticker": "3106.T",
-  "asof": "2026-10-05",
-  "close": 2454.0,
-  "chg_pct": 6.004319654427648,
+  "ticker": "JP.3106",
+  "ticker_user": "3106.T",
+  "name": "KURABO INDUSTRIES",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 2342.0,
-    "H": 2454.0,
-    "L": 2301.0,
-    "C": 2454.0,
-    "prev_close": 2315.0,
-    "chg_pct": 6.004319654427648
+    "date": "2026-10-06",
+    "O": 2475.0,
+    "H": 2525.0,
+    "L": 2440.0,
+    "C": 2500.0,
+    "prev_close": 2454.0,
+    "chg_pct": 1.87
   },
-  "name": "Kurabo Industries Ltd.",
-  "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 2315.0,
-    "in_box_pct": 72.7,
-    "nearest_support": "S1 KEY (2224.0)",
-    "nearest_resistance": "R1 today high (2381.0)"
+  "phase": "uptrend",
+  "adx": 18.79,
+  "plus_di": 29.67,
+  "minus_di": 14.55,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 2525.0 (2026-10-06), trough 2096.0 (2026-09-11), box top 2525.0 (2026-10-06)",
+  "peak": {
+    "date": "2026-10-06",
+    "price": 2525.0
   },
+  "trough": {
+    "date": "2026-09-11",
+    "price": 2096.0
+  },
+  "box": {
+    "top": 2525.0,
+    "top_date": "2026-10-06",
+    "bottom": 2096.0,
+    "period": "2026-09-11 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 1.0,
+  "recovery_from_crash_pct": 19.3,
   "supports": [
     {
       "level": 2224.0,
       "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 3.9% below current"
+      "touches": 3,
+      "evidence": "tested 3x in base period; 11.0% below current"
     },
     {
       "level": 2192.0,
       "label": "S2",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
     },
     {
-      "level": 2136.0,
-      "label": "S3",
+      "level": 2112.0,
+      "label": "S3 bottom",
       "touches": 4,
-      "evidence": "mid-base support, tested 4x"
-    },
-    {
-      "level": 2016.0,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-08-20, structural bottom"
+      "evidence": "structural bottom, near crash low 2096.0"
     }
   ],
   "resistances": [
     {
-      "level": 2381.0,
+      "level": 2525.0,
       "label": "R1 today high",
-      "evidence": "today's high 2381.0"
+      "evidence": "today's high 2525.0"
+    }
+  ],
+  "position": {
+    "current": 2500.0,
+    "in_box_pct": 93.9,
+    "nearest_support": "S1 KEY (2224.0)",
+    "nearest_resistance": "R1 today high (2525.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 2475.0,
+    "H": 2525.0,
+    "L": 2440.0,
+    "C": 2500.0,
+    "body_pct": 29.4,
+    "upper_wick_pct": 29.4,
+    "lower_wick_pct": 41.2
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 2224.0 (KEY support)",
+      "then": "still range; watch 2525.0 for next test"
     },
     {
-      "level": 2427.0,
-      "label": "R3 Sep high",
-      "evidence": "box top 2427.0, base period high"
+      "if": "break 2224.0 on close",
+      "then": "target 2192.0 → 2112.0 (short-term bearish)"
+    },
+    {
+      "if": "break 2112.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 2525.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 2427.0,
-    "target_price": 2261.5,
-    "stop_price": 2542.47,
-    "risk_pct": 4.76,
-    "reward_pct": 6.82,
-    "rr_ratio": 1.43,
-    "phase_match": true,
-    "r1": 2427.0,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 2525.0,
     "s1": 2096.0,
     "s2": 1800.0,
     "r2": 2286.0,
     "r3": 2316.0,
     "s3": 1730.0,
-    "s4": 1522.0,
-    "current_position_pct": 66.2,
-    "notes": "SELL_R1: in box (2096-2427), entry at R1 2427, target mid 2262, stop 2542 ｜ 52.2 條規則（SELL plan，resistance 2427.00）：① 跌到 2427.00、收市守住喺 2427.00 上面 → 照 BUY 條 plan 做（入場 2427.00，止蝕 2542.47，目標 2261.50）。② 收市跌穿 2427.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2427.00 上面』。"
+    "s4": 1540.0,
+    "current_position_pct": 94.2,
+    "notes": "WAIT_RANGE: in box (2096-2525), pos 94%, no clear setup"
   }
 }

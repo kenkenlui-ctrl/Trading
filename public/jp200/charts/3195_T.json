@@ -1,26 +1,41 @@
 {
-  "ticker": "3195.T",
-  "asof": "2026-10-05",
-  "close": 439.0,
-  "chg_pct": 0.4576659038901587,
+  "ticker": "JP.3195",
+  "ticker_user": "3195.T",
+  "name": "GENERATION PASS CO LTD",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
+    "date": "2026-10-06",
     "O": 439.0,
     "H": 444.0,
-    "L": 439.0,
-    "C": 439.0,
-    "prev_close": 437.0,
-    "chg_pct": 0.4576659038901587
+    "L": 437.0,
+    "C": 437.0,
+    "prev_close": 439.0,
+    "chg_pct": -0.46
   },
-  "name": "Generation Pass Co.,Ltd.",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 437.0,
-    "in_box_pct": 4.0,
-    "nearest_support": "S1 bottom (424.0)",
-    "nearest_resistance": "R1 today high (443.0)"
+  "adx": 47.23,
+  "plus_di": 12.04,
+  "minus_di": 44.95,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 746.0 (2026-09-01), trough 436.0 (2026-10-02), box top 746.0 (2026-09-01)",
+  "peak": {
+    "date": "2026-09-01",
+    "price": 746.0
   },
+  "trough": {
+    "date": "2026-10-02",
+    "price": 436.0
+  },
+  "box": {
+    "top": 746.0,
+    "top_date": "2026-09-01",
+    "bottom": 436.0,
+    "period": "2026-10-02 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 41.4,
+  "recovery_from_crash_pct": 0.2,
   "supports": [
     {
       "level": 424.0,
@@ -31,14 +46,87 @@
   ],
   "resistances": [
     {
-      "level": 443.0,
+      "level": 444.0,
       "label": "R1 today high",
-      "evidence": "today's high 443.0"
+      "evidence": "rejection at 444.0 (long upper wick, close weak)"
     },
     {
       "level": 746.0,
       "label": "R3 Sep high",
       "evidence": "box top 746.0, base period high"
+    }
+  ],
+  "position": {
+    "current": 437.0,
+    "in_box_pct": 4.0,
+    "nearest_support": "S1 bottom (424.0)",
+    "nearest_resistance": "R1 today high (444.0)"
+  },
+  "kline_today": {
+    "type": "bearish_rejection",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 439.0,
+    "H": 444.0,
+    "L": 437.0,
+    "C": 437.0,
+    "body_pct": 28.6,
+    "upper_wick_pct": 71.4,
+    "lower_wick_pct": 0.0
+  },
+  "bias": {
+    "short": {
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (4% of box)"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 424.0 (KEY support)",
+      "then": "still range; watch 444.0 for next test"
+    },
+    {
+      "if": "break 424.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 424.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 444.0 on close",
+      "then": "short-term bullish; next test 746.0"
+    },
+    {
+      "if": "break 746.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -51,7 +139,7 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 731.0,
+    "r1": 723.0,
     "s1": 436.0,
     "s2": 490.0,
     "r2": 746.0,
@@ -59,6 +147,6 @@
     "s3": 393.0,
     "s4": 396.0,
     "current_position_pct": 0.3,
-    "notes": "WAIT_RANGE: in box (436-731), pos 0%, no clear setup"
+    "notes": "WAIT_RANGE: in box (436-723), pos 0%, no clear setup"
   }
 }

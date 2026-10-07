@@ -1,32 +1,47 @@
 {
-  "ticker": "8035.T",
-  "asof": "2026-10-05",
-  "close": 12765.0,
-  "chg_pct": 5.495867768595031,
+  "ticker": "JP.8035",
+  "ticker_user": "8035.T",
+  "name": "TOKYO ELECTRON",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 12400.0,
-    "H": 12820.0,
-    "L": 12295.0,
-    "C": 12765.0,
-    "prev_close": 12100.0,
-    "chg_pct": 5.495867768595031
+    "date": "2026-10-06",
+    "O": 12735.0,
+    "H": 12915.0,
+    "L": 12575.0,
+    "C": 12805.0,
+    "prev_close": 12765.0,
+    "chg_pct": 0.31
   },
-  "name": "Tokyo Electron Limited",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 12100.0,
-    "in_box_pct": 82.7,
-    "nearest_support": "S1 KEY (10680.0)",
-    "nearest_resistance": "R1 today high (12435.0)"
+  "adx": 22.9,
+  "plus_di": 35.49,
+  "minus_di": 13.51,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 16252.0 (2026-07-01), trough 9716.0 (2026-07-29), box top 12915.0 (2026-10-06)",
+  "peak": {
+    "date": "2026-07-01",
+    "price": 16252.0
   },
+  "trough": {
+    "date": "2026-07-29",
+    "price": 9716.0
+  },
+  "box": {
+    "top": 12915.0,
+    "top_date": "2026-10-06",
+    "bottom": 9716.0,
+    "period": "2026-07-29 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 21.2,
+  "recovery_from_crash_pct": 31.8,
   "supports": [
     {
       "level": 10680.0,
       "label": "S1 KEY",
       "touches": 3,
-      "evidence": "tested 3x in base period; 11.7% below current"
+      "evidence": "tested 3x in base period; 16.6% below current"
     },
     {
       "level": 10584.0,
@@ -43,14 +58,9 @@
   ],
   "resistances": [
     {
-      "level": 12435.0,
+      "level": 12915.0,
       "label": "R1 today high",
-      "evidence": "today's high 12435.0"
-    },
-    {
-      "level": 12600.0,
-      "label": "R3 Oct high",
-      "evidence": "box top 12600.0, base period high"
+      "evidence": "today's high 12915.0"
     },
     {
       "level": 14960.0,
@@ -58,24 +68,93 @@
       "evidence": "pre-crash supply, top before breakdown"
     }
   ],
+  "position": {
+    "current": 12805.0,
+    "in_box_pct": 58.9,
+    "nearest_support": "S1 KEY (10680.0)",
+    "nearest_resistance": "R1 today high (12915.0)"
+  },
+  "kline_today": {
+    "type": "bullish_hold",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 12735.0,
+    "H": 12915.0,
+    "L": 12575.0,
+    "C": 12805.0,
+    "body_pct": 20.6,
+    "upper_wick_pct": 32.4,
+    "lower_wick_pct": 47.1
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 10680.0 (KEY support)",
+      "then": "still range; watch 12915.0 for next test"
+    },
+    {
+      "if": "break 10680.0 on close",
+      "then": "target 10584.0 → 9716.0 (short-term bearish)"
+    },
+    {
+      "if": "break 9716.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 12915.0 on close",
+      "then": "short-term bullish; next test 14960.0"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
-    "trigger_price": 12600.0,
-    "target_price": 11200.0,
-    "stop_price": 13325.99,
-    "risk_pct": 5.76,
-    "reward_pct": 11.11,
-    "rr_ratio": 1.93,
+    "trigger_price": 12915.0,
+    "target_price": 11357.5,
+    "stop_price": 13625.08,
+    "risk_pct": 5.5,
+    "reward_pct": 12.06,
+    "rr_ratio": 2.19,
     "phase_match": true,
-    "r1": 12600.0,
+    "r1": 12915.0,
     "s1": 9800.0,
     "s2": 9716.0,
-    "r2": 15058.0,
+    "r2": 14962.0,
     "r3": 16252.0,
-    "s3": 7654.0,
+    "s3": 8350.0,
     "s4": 6012.0,
-    "current_position_pct": 82.1,
-    "notes": "SELL_R1: in box (9800-12600), entry at R1 12600, target mid 11200, stop 13326 ｜ 52.2 條規則（SELL plan，resistance 12600.00）：① 跌到 12600.00、收市守住喺 12600.00 上面 → 照 BUY 條 plan 做（入場 12600.00，止蝕 13325.99，目標 11200.00）。② 收市跌穿 12600.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 12600.00 上面』。"
+    "current_position_pct": 96.5,
+    "notes": "SELL_R1: in box (9800-12915), entry at R1 12915, target mid 11358, stop 13625 ｜ 52.2 條規則（SELL plan，resistance 12915.00）：① 跌到 12915.00、收市守住喺 12915.00 上面 → 照 BUY 條 plan 做（入場 12915.00，止蝕 13625.08，目標 11357.50）。② 收市跌穿 12915.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 12915.00 上面』。"
   }
 }

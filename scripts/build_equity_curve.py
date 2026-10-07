@@ -421,21 +421,25 @@ def render_html(result: dict) -> str:
     return html
 
 
+RETIRED = """RETIRED 2026-10-07 — do not run.
+
+This script owned public/equity_curve_t10.html and ran the v1 swing engine
+(fixed −2/−5/−7/−10% stops, +2/+5/+10/+15% targets, HK$1,000,000). It shipped
+32 trades over a 2-month window and printed "Sharpe-like 5.63" next to an
+average PnL of −92.40. One URL away, equity_curve_t_10.html published the v2
+rules and a +27.18% CAGR — same site, two engines, two currencies, two answers
+for the same horizon.
+
+build_equity_curves.py now owns this URL and renders the v2 family index.
+The simulation code below is kept only as a record of what was retracted; it
+writes nothing and must not be reactivated without re-deriving its numbers.
+"""
+
+
 def main():
-    trades = load_trades()
-    print(f"Loaded {len(trades)} T+10 trades")
-    result = simulate(trades)
-    print(f"Initial: HK${result['initial_capital']:,.0f}")
-    print(f"Final:   HK${result['final_equity']:,.0f}")
-    print(f"Return:  +{result['total_return_pct']}%")
-    print(f"CAGR:    +{result['cagr_pct']}%")
-    print(f"MaxDD:   -{result['max_drawdown_pct']}%")
-    print(f"Win:     {result['win_rate']}% ({result['n_wins']}W / {result['n_losses']}L)")
-    print(f"Skipped: {result['skipped_signals']}")
-    html = render_html(result)
-    OUT.write_text(html, encoding="utf-8")
-    print(f"Wrote {OUT} ({OUT.stat().st_size:,} bytes)")
+    print(RETIRED)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

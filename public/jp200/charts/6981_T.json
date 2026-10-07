@@ -1,41 +1,56 @@
 {
-  "ticker": "6981.T",
-  "asof": "2026-10-05",
-  "close": 8745.0,
-  "chg_pct": 3.283335301759771,
+  "ticker": "JP.6981",
+  "ticker_user": "6981.T",
+  "name": "MURATA MANUFACTURING CO",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 8752.0,
-    "H": 8860.0,
-    "L": 8637.0,
-    "C": 8745.0,
-    "prev_close": 8467.0,
-    "chg_pct": 3.283335301759771
+    "date": "2026-10-06",
+    "O": 8700.0,
+    "H": 8980.0,
+    "L": 8656.0,
+    "C": 8829.0,
+    "prev_close": 8745.0,
+    "chg_pct": 0.96
   },
-  "name": "Murata Manufacturing Co., Ltd.",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 8467.0,
-    "in_box_pct": 97.5,
-    "nearest_support": "S1 KEY (7304.0)",
-    "nearest_resistance": "R1 today high (8534.0)"
+  "adx": 22.95,
+  "plus_di": 32.59,
+  "minus_di": 12.71,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 12895.0 (2026-06-22), trough 5861.0 (2026-07-29), box top 8980.0 (2026-10-06)",
+  "peak": {
+    "date": "2026-06-22",
+    "price": 12895.0
   },
+  "trough": {
+    "date": "2026-07-29",
+    "price": 5861.0
+  },
+  "box": {
+    "top": 8980.0,
+    "top_date": "2026-10-06",
+    "bottom": 5861.0,
+    "period": "2026-07-29 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 31.5,
+  "recovery_from_crash_pct": 50.6,
   "supports": [
     {
       "level": 7304.0,
       "label": "S1 KEY",
       "touches": 3,
-      "evidence": "tested 3x in base period; 13.7% below current"
-    },
-    {
-      "level": 7160.0,
-      "label": "S2",
-      "touches": 3,
-      "evidence": "mid-base support, tested 3x"
+      "evidence": "tested 3x in base period; 17.3% below current"
     },
     {
       "level": 6976.0,
+      "label": "S2",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 6872.0,
       "label": "S3",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
@@ -49,29 +64,98 @@
   ],
   "resistances": [
     {
-      "level": 8534.0,
+      "level": 8980.0,
       "label": "R1 today high",
-      "evidence": "today's high 8534.0"
+      "evidence": "today's high 8980.0"
+    }
+  ],
+  "position": {
+    "current": 8829.0,
+    "in_box_pct": 95.2,
+    "nearest_support": "S1 KEY (7304.0)",
+    "nearest_resistance": "R1 today high (8980.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 8700.0,
+    "H": 8980.0,
+    "L": 8656.0,
+    "C": 8829.0,
+    "body_pct": 39.8,
+    "upper_wick_pct": 46.6,
+    "lower_wick_pct": 13.6
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 7304.0 (KEY support)",
+      "then": "still range; watch 8980.0 for next test"
+    },
+    {
+      "if": "break 7304.0 on close",
+      "then": "target 6976.0 → 6872.0 (short-term bearish)"
+    },
+    {
+      "if": "break 5861.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 8980.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
-    "trigger_price": 8557.0,
-    "target_price": 7667.0,
-    "stop_price": 9176.91,
-    "risk_pct": 7.24,
-    "reward_pct": 10.4,
-    "rr_ratio": 1.44,
+    "trigger_price": 8980.0,
+    "target_price": 7893.0,
+    "stop_price": 9577.29,
+    "risk_pct": 6.65,
+    "reward_pct": 12.1,
+    "rr_ratio": 1.82,
     "phase_match": true,
-    "r1": 8557.0,
-    "s1": 6777.0,
+    "r1": 8980.0,
+    "s1": 6806.0,
     "s2": 5861.0,
-    "r2": 11090.0,
+    "r2": 10085.0,
     "r3": 12895.0,
-    "s3": 3761.0,
+    "s3": 3913.0,
     "s4": 2821.5,
-    "current_position_pct": 94.9,
-    "notes": "SELL_R1: in box (6777-8557), entry at R1 8557, target mid 7667, stop 9177 ｜ 52.2 條規則（SELL plan，resistance 8557.00）：① 跌到 8557.00、收市守住喺 8557.00 上面 → 照 BUY 條 plan 做（入場 8557.00，止蝕 9176.91，目標 7667.00）。② 收市跌穿 8557.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 8557.00 上面』。"
+    "current_position_pct": 93.1,
+    "notes": "SELL_R1: in box (6806-8980), entry at R1 8980, target mid 7893, stop 9577 ｜ 52.2 條規則（SELL plan，resistance 8980.00）：① 跌到 8980.00、收市守住喺 8980.00 上面 → 照 BUY 條 plan 做（入場 8980.00，止蝕 9577.29，目標 7893.00）。② 收市跌穿 8980.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 8980.00 上面』。"
   }
 }

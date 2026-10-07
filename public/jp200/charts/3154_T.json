@@ -1,64 +1,155 @@
 {
-  "ticker": "3154.T",
-  "asof": "2026-10-05",
-  "close": 785.0,
-  "chg_pct": 1.029601029601035,
+  "ticker": "JP.3154",
+  "ticker_user": "3154.T",
+  "name": "MEDIUS HLDG CO LTD",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 777.0,
-    "H": 785.0,
-    "L": 777.0,
-    "C": 785.0,
-    "prev_close": 777.0,
-    "chg_pct": 1.029601029601035
+    "date": "2026-10-06",
+    "O": 808.0,
+    "H": 808.0,
+    "L": 788.0,
+    "C": 799.0,
+    "prev_close": 785.0,
+    "chg_pct": 1.78
   },
-  "name": "Medius Holdings Co., Ltd.",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 777.0,
-    "in_box_pct": 42.5,
-    "nearest_support": "S1 bottom (760.0)",
-    "nearest_resistance": "R1 today high (795.0)"
+  "adx": 14.32,
+  "plus_di": 27.58,
+  "minus_di": 19.51,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 884.0 (2026-06-08), trough 759.0 (2026-09-11), box top 808.0 (2026-10-06)",
+  "peak": {
+    "date": "2026-06-08",
+    "price": 884.0
   },
+  "trough": {
+    "date": "2026-09-11",
+    "price": 759.0
+  },
+  "box": {
+    "top": 808.0,
+    "top_date": "2026-10-06",
+    "bottom": 759.0,
+    "period": "2026-09-11 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 9.6,
+  "recovery_from_crash_pct": 5.3,
   "supports": [
     {
-      "level": 760.0,
-      "label": "S1 bottom",
+      "level": 780.0,
+      "label": "S1 KEY",
+      "touches": 7,
+      "evidence": "tested 7x in base period; 2.4% below current"
+    },
+    {
+      "level": 776.0,
+      "label": "S2",
+      "touches": 6,
+      "evidence": "mid-base support, tested 6x"
+    },
+    {
+      "level": 772.0,
+      "label": "S3 bottom",
       "touches": 4,
       "evidence": "structural bottom, near crash low 759.0"
     }
   ],
   "resistances": [
     {
-      "level": 795.0,
+      "level": 808.0,
       "label": "R1 today high",
-      "evidence": "today's high 795.0"
+      "evidence": "today's high 808.0"
+    }
+  ],
+  "position": {
+    "current": 799.0,
+    "in_box_pct": 75.0,
+    "nearest_support": "S1 KEY (780.0)",
+    "nearest_resistance": "R1 today high (808.0)"
+  },
+  "kline_today": {
+    "type": "bearish_pullback",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 808.0,
+    "H": 808.0,
+    "L": 788.0,
+    "C": 799.0,
+    "body_pct": 45.0,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 55.0
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 780.0 (KEY support)",
+      "then": "still range; watch 808.0 for next test"
     },
     {
-      "level": 800.0,
-      "label": "R3 Sep high",
-      "evidence": "box top 800.0, base period high"
+      "if": "break 780.0 on close",
+      "then": "target 776.0 → 772.0 (short-term bearish)"
+    },
+    {
+      "if": "break 772.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 808.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 807.0,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 808.0,
+    "target_price": 783.5,
+    "stop_price": 827.83,
+    "risk_pct": 2.45,
+    "reward_pct": 3.03,
+    "rr_ratio": 1.24,
+    "phase_match": true,
+    "r1": 808.0,
     "s1": 759.0,
     "s2": 770.0,
     "r2": 828.0,
     "r3": 884.0,
     "s3": 786.0,
     "s4": 775.0,
-    "current_position_pct": 37.5,
-    "notes": "WAIT_RANGE: in box (759-807), pos 38%, no clear setup"
+    "current_position_pct": 81.6,
+    "notes": "SELL_R1: in box (759-808), entry at R1 808, target mid 784, stop 828 ｜ 52.2 條規則（SELL plan，resistance 808.00）：① 跌到 808.00、收市守住喺 808.00 上面 → 照 BUY 條 plan 做（入場 808.00，止蝕 827.83，目標 783.50）。② 收市跌穿 808.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 808.00 上面』。"
   }
 }

@@ -1,44 +1,132 @@
 {
-  "ticker": "4661.T",
-  "asof": "2026-10-05",
-  "close": 2837.0,
-  "chg_pct": 0.7278537191549805,
+  "ticker": "JP.4661",
+  "ticker_user": "4661.T",
+  "name": "ORIENTAL LAND CO",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-05",
-    "O": 2805.0,
-    "H": 2849.0,
-    "L": 2796.0,
-    "C": 2837.0,
-    "prev_close": 2816.5,
-    "chg_pct": 0.7278537191549805
+    "date": "2026-10-06",
+    "O": 2855.0,
+    "H": 2876.0,
+    "L": 2828.5,
+    "C": 2840.0,
+    "prev_close": 2837.0,
+    "chg_pct": 0.11
   },
-  "name": "Oriental Land Co., Ltd.",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 2816.5,
-    "in_box_pct": 18.2,
-    "nearest_support": "S1 bottom (2732.0)",
-    "nearest_resistance": "R1 today high (2866.5)"
+  "adx": 21.66,
+  "plus_di": 15.57,
+  "minus_di": 24.77,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 3196.0 (2026-09-14), trough 2796.0 (2026-10-05), box top 3196.0 (2026-09-14)",
+  "peak": {
+    "date": "2026-09-14",
+    "price": 3196.0
   },
+  "trough": {
+    "date": "2026-10-05",
+    "price": 2796.0
+  },
+  "box": {
+    "top": 3196.0,
+    "top_date": "2026-09-14",
+    "bottom": 2796.0,
+    "period": "2026-10-05 to 2026-10-06"
+  },
+  "drop_from_peak_pct": 11.1,
+  "recovery_from_crash_pct": 1.6,
   "supports": [
     {
-      "level": 2732.0,
+      "level": 2756.0,
       "label": "S1 bottom",
       "touches": 0,
-      "evidence": "structural bottom, near crash low 2810.0"
+      "evidence": "structural bottom, near crash low 2796.0"
     }
   ],
   "resistances": [
     {
-      "level": 2866.5,
+      "level": 2876.0,
       "label": "R1 today high",
-      "evidence": "today's high 2866.5"
+      "evidence": "today's high 2876.0"
     },
     {
       "level": 3196.0,
       "label": "R3 Sep high",
       "evidence": "box top 3196.0, base period high"
+    }
+  ],
+  "position": {
+    "current": 2840.0,
+    "in_box_pct": 19.1,
+    "nearest_support": "S1 bottom (2756.0)",
+    "nearest_resistance": "R1 today high (2876.0)"
+  },
+  "kline_today": {
+    "type": "bearish_pullback",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 2855.0,
+    "H": 2876.0,
+    "L": 2828.5,
+    "C": 2840.0,
+    "body_pct": 31.6,
+    "upper_wick_pct": 44.2,
+    "lower_wick_pct": 24.2
+  },
+  "bias": {
+    "short": {
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (19% of box)"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 2756.0 (KEY support)",
+      "then": "still range; watch 2876.0 for next test"
+    },
+    {
+      "if": "break 2756.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 2756.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 2876.0 on close",
+      "then": "short-term bullish; next test 3196.0"
+    },
+    {
+      "if": "break 3196.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -52,13 +140,13 @@
     "rr_ratio": 0.0,
     "phase_match": false,
     "r1": 3196.0,
-    "s1": 2810.0,
-    "s2": 2502.0,
+    "s1": 2796.0,
+    "s2": 2546.0,
     "r2": 3167.0,
     "r3": 2696.0,
     "s3": 2103.0,
     "s4": 2601.0,
-    "current_position_pct": 1.7,
-    "notes": "WAIT_RANGE: in box (2810-3196), pos 2%, no clear setup"
+    "current_position_pct": 11.0,
+    "notes": "WAIT_RANGE: in box (2796-3196), pos 11%, no clear setup"
   }
 }

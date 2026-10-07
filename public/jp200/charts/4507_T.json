@@ -1,64 +1,152 @@
 {
-  "ticker": "4507.T",
-  "asof": "2026-10-05",
-  "close": 2661.0,
-  "chg_pct": -4.486719310839915,
+  "ticker": "JP.4507",
+  "ticker_user": "4507.T",
+  "name": "SHIONOGI & CO",
+  "data_source": "yfinance",
+  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
   "last_bar": {
+    "date": "2026-10-06",
+    "O": 2694.0,
+    "H": 2763.0,
+    "L": 2686.5,
+    "C": 2763.0,
+    "prev_close": 2661.0,
+    "chg_pct": 3.83
+  },
+  "phase": "downtrend_active",
+  "adx": 17.64,
+  "plus_di": 14.45,
+  "minus_di": 34.24,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 3758.0 (2026-04-08), trough 2649.0 (2026-10-05), box top 3026.0 (2026-09-03)",
+  "peak": {
+    "date": "2026-04-08",
+    "price": 3758.0
+  },
+  "trough": {
     "date": "2026-10-05",
-    "O": 2767.5,
-    "H": 2784.0,
-    "L": 2649.0,
-    "C": 2661.0,
-    "prev_close": 2786.0,
-    "chg_pct": -4.486719310839915
+    "price": 2649.0
   },
-  "name": "Shionogi & Co., Ltd.",
-  "phase": "downtrend_recovery",
-  "kline": {},
-  "position": {
-    "current": 2786.0,
-    "in_box_pct": 21.7,
-    "nearest_support": "S1 bottom (2704.0)",
-    "nearest_resistance": "R1 today high (2831.5)"
+  "box": {
+    "top": 3026.0,
+    "top_date": "2026-09-03",
+    "bottom": 2649.0,
+    "period": "2026-10-05 to 2026-10-06"
   },
+  "drop_from_peak_pct": 26.5,
+  "recovery_from_crash_pct": 4.3,
   "supports": [
     {
-      "level": 2704.0,
+      "level": 2680.0,
       "label": "S1 bottom",
       "touches": 0,
-      "evidence": "structural bottom, near crash low 2665.0"
+      "evidence": "structural bottom, near crash low 2649.0"
     }
   ],
   "resistances": [
     {
-      "level": 2831.5,
+      "level": 2763.0,
       "label": "R1 today high",
-      "evidence": "today's high 2831.5"
+      "evidence": "today's high 2763.0"
     },
     {
-      "level": 3082.0,
-      "label": "R3 Jul high",
-      "evidence": "box top 3082.0, base period high"
+      "level": 3026.0,
+      "label": "R3 Sep high",
+      "evidence": "box top 3026.0, base period high"
+    }
+  ],
+  "position": {
+    "current": 2763.0,
+    "in_box_pct": 24.0,
+    "nearest_support": "S1 bottom (2680.0)",
+    "nearest_resistance": "R3 Sep high (3026.0)"
+  },
+  "kline_today": {
+    "type": "bullish_reclaim",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 2694.0,
+    "H": 2763.0,
+    "L": 2686.5,
+    "C": 2763.0,
+    "body_pct": 90.2,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 9.8
+  },
+  "bias": {
+    "short": {
+      "bias": "defensive",
+      "reason": "near box bottom (24% of box)"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 2680.0 (KEY support)",
+      "then": "still range; watch 2763.0 for next test"
+    },
+    {
+      "if": "break 2680.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 2680.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 2763.0 on close",
+      "then": "short-term bullish; next test 3026.0"
+    },
+    {
+      "if": "break 3026.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 2766.0,
-    "target_price": 2896.0,
-    "stop_price": 2674.47,
-    "risk_pct": 3.31,
-    "reward_pct": 4.7,
-    "rr_ratio": 1.42,
-    "phase_match": true,
-    "r1": 3026.0,
-    "s1": 2766.0,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 3005.0,
+    "s1": 2649.0,
     "s2": 2732.0,
     "r2": 3082.0,
-    "r3": 3758.0,
+    "r3": 3573.0,
     "s3": 2665.0,
-    "s4": 2627.0,
-    "current_position_pct": 7.7,
-    "notes": "BUY_S1: in box (2766-3026), entry at S1 2766, target mid 2896, stop 2674 ｜ 52.2 條規則（BUY plan，support 2766.00）：① 跌到 2766.00、收市守住喺 2766.00 上面 → 照 BUY 條 plan 做（入場 2766.00，止蝕 2674.47，目標 2896.00）。② 收市跌穿 2766.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2766.00 上面』。"
+    "s4": 2651.0,
+    "current_position_pct": 32.0,
+    "notes": "WAIT_RANGE: in box (2649-3005), pos 32%, no clear setup"
   }
 }
