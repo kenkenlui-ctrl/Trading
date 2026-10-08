@@ -3,20 +3,20 @@
   "ticker_user": "7220.T",
   "name": "MUSASHI SEIMITSU IND",
   "data_source": "yfinance",
-  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-11 → 2026-10-08 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 3190.0,
-    "H": 3215.0,
-    "L": 3120.0,
-    "C": 3195.0,
-    "prev_close": 3170.0,
-    "chg_pct": 0.79
+    "date": "2026-10-08",
+    "O": 3050.0,
+    "H": 3090.0,
+    "L": 3005.0,
+    "C": 3020.0,
+    "prev_close": 3090.0,
+    "chg_pct": -2.27
   },
   "phase": "downtrend_active",
-  "adx": 17.88,
-  "plus_di": 27.01,
-  "minus_di": 19.42,
+  "adx": 16.49,
+  "plus_di": 24.33,
+  "minus_di": 22.82,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 10550.0 (2026-06-01), trough 2635.0 (2026-09-15), box top 3230.0 (2026-09-28)",
@@ -32,16 +32,16 @@
     "top": 3230.0,
     "top_date": "2026-09-28",
     "bottom": 2635.0,
-    "period": "2026-09-15 to 2026-10-06"
+    "period": "2026-09-15 to 2026-10-08"
   },
-  "drop_from_peak_pct": 69.7,
-  "recovery_from_crash_pct": 21.3,
+  "drop_from_peak_pct": 71.4,
+  "recovery_from_crash_pct": 14.6,
   "supports": [
     {
-      "level": 3116.0,
+      "level": 2928.0,
       "label": "S1 KEY",
-      "touches": 3,
-      "evidence": "tested 3x in base period; 2.5% below current"
+      "touches": 0,
+      "evidence": "structural level near current; 3.0% below current"
     },
     {
       "level": 2635.0,
@@ -52,29 +52,34 @@
   ],
   "resistances": [
     {
-      "level": 3215.0,
+      "level": 3090.0,
       "label": "R1 today high",
-      "evidence": "today's high 3215.0"
+      "evidence": "today's high 3090.0"
+    },
+    {
+      "level": 3230.0,
+      "label": "R3 Sep high",
+      "evidence": "box top 3230.0, base period high"
     }
   ],
   "position": {
-    "current": 3195.0,
-    "in_box_pct": 96.6,
-    "nearest_support": "S1 KEY (3116.0)",
-    "nearest_resistance": "R1 today high (3215.0)"
+    "current": 3020.0,
+    "in_box_pct": 64.7,
+    "nearest_support": "S1 KEY (2928.0)",
+    "nearest_resistance": "R1 today high (3090.0)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_pullback",
     "touched_R1": true,
-    "touched_S1": true,
-    "close_position": "upper_half",
-    "O": 3190.0,
-    "H": 3215.0,
-    "L": 3120.0,
-    "C": 3195.0,
-    "body_pct": 5.3,
-    "upper_wick_pct": 21.1,
-    "lower_wick_pct": 73.7
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 3050.0,
+    "H": 3090.0,
+    "L": 3005.0,
+    "C": 3020.0,
+    "body_pct": 35.3,
+    "upper_wick_pct": 47.1,
+    "lower_wick_pct": 17.6
   },
   "bias": {
     "short": {
@@ -86,17 +91,17 @@
       "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 3116.0 (KEY support)",
-      "then": "still range; watch 3215.0 for next test"
+      "if": "hold 2928.0 (KEY support)",
+      "then": "still range; watch 3090.0 for next test"
     },
     {
-      "if": "break 3116.0 on close",
+      "if": "break 2928.0 on close",
       "then": "target 2635.0 → lower (short-term bearish)"
     },
     {
@@ -104,8 +109,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 3215.0 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 3090.0 on close",
+      "then": "short-term bullish; next test 3230.0"
+    },
+    {
+      "if": "break 3230.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -131,19 +140,19 @@
     "strategy": "SELL_R1",
     "trigger_price": 3230.0,
     "target_price": 2932.5,
-    "stop_price": 3440.03,
-    "risk_pct": 6.5,
+    "stop_price": 3453.23,
+    "risk_pct": 6.91,
     "reward_pct": 9.21,
-    "rr_ratio": 1.42,
+    "rr_ratio": 1.33,
     "phase_match": true,
     "r1": 3230.0,
     "s1": 2635.0,
-    "s2": 2803.0,
+    "s2": 2790.0,
     "r2": 3835.0,
     "r3": 10550.0,
-    "s3": 2911.0,
+    "s3": 3040.0,
     "s4": 2210.0,
-    "current_position_pct": 94.1,
-    "notes": "SELL_R1: in box (2635-3230), entry at R1 3230, target mid 2932, stop 3440 ｜ 52.2 條規則（SELL plan，resistance 3230.00）：① 跌到 3230.00、收市守住喺 3230.00 上面 → 照 BUY 條 plan 做（入場 3230.00，止蝕 3440.03，目標 2932.50）。② 收市跌穿 3230.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 3230.00 上面』。"
+    "current_position_pct": 64.7,
+    "notes": "SELL_R1: in box (2635-3230), entry at R1 3230, target mid 2932, stop 3453 ｜ 52.2 條規則（SELL plan，resistance 3230.00）：① 跌到 3230.00、收市守住喺 3230.00 上面 → 照 BUY 條 plan 做（入場 3230.00，止蝕 3453.23，目標 2932.50）。② 收市跌穿 3230.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 3230.00 上面』。"
   }
 }

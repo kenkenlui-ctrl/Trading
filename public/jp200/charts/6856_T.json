@@ -3,23 +3,23 @@
   "ticker_user": "6856.T",
   "name": "HORIBA LTD",
   "data_source": "yfinance",
-  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-11 → 2026-10-08 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 26135.0,
-    "H": 26545.0,
-    "L": 25930.0,
-    "C": 26495.0,
-    "prev_close": 26345.0,
-    "chg_pct": 0.57
+    "date": "2026-10-08",
+    "O": 25855.0,
+    "H": 26015.0,
+    "L": 25505.0,
+    "C": 25560.0,
+    "prev_close": 26140.0,
+    "chg_pct": -2.22
   },
   "phase": "downtrend_active",
-  "adx": 26.14,
-  "plus_di": 36.42,
-  "minus_di": 14.39,
+  "adx": 27.29,
+  "plus_di": 31.55,
+  "minus_di": 16.25,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 30100.0 (2026-06-19), trough 20980.0 (2026-09-14), box top 26555.0 (2026-10-05)",
+  "phase_evidence": "Peak 30100.0 (2026-06-19), trough 20980.0 (2026-09-14), box top 26570.0 (2026-10-07)",
   "peak": {
     "date": "2026-06-19",
     "price": 30100.0
@@ -29,16 +29,16 @@
     "price": 20980.0
   },
   "box": {
-    "top": 26555.0,
-    "top_date": "2026-10-05",
+    "top": 26570.0,
+    "top_date": "2026-10-07",
     "bottom": 20980.0,
-    "period": "2026-09-14 to 2026-10-06"
+    "period": "2026-09-14 to 2026-10-08"
   },
-  "drop_from_peak_pct": 12.0,
-  "recovery_from_crash_pct": 26.3,
+  "drop_from_peak_pct": 15.1,
+  "recovery_from_crash_pct": 21.8,
   "supports": [
     {
-      "level": 25700.0,
+      "level": 24792.0,
       "label": "S1 KEY",
       "touches": 0,
       "evidence": "structural level near current; 3.0% below current"
@@ -52,29 +52,34 @@
   ],
   "resistances": [
     {
-      "level": 26545.0,
+      "level": 26015.0,
       "label": "R1 today high",
-      "evidence": "today's high 26545.0"
+      "evidence": "today's high 26015.0"
+    },
+    {
+      "level": 26570.0,
+      "label": "R3 Oct high",
+      "evidence": "box top 26570.0, base period high"
     }
   ],
   "position": {
-    "current": 26495.0,
-    "in_box_pct": 99.1,
-    "nearest_support": "S1 KEY (25700.0)",
-    "nearest_resistance": "R1 today high (26545.0)"
+    "current": 25560.0,
+    "in_box_pct": 81.9,
+    "nearest_support": "S1 KEY (24792.0)",
+    "nearest_resistance": "R1 today high (26015.0)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 26135.0,
-    "H": 26545.0,
-    "L": 25930.0,
-    "C": 26495.0,
-    "body_pct": 58.5,
-    "upper_wick_pct": 8.1,
-    "lower_wick_pct": 33.3
+    "close_position": "lower_half",
+    "O": 25855.0,
+    "H": 26015.0,
+    "L": 25505.0,
+    "C": 25560.0,
+    "body_pct": 57.8,
+    "upper_wick_pct": 31.4,
+    "lower_wick_pct": 10.8
   },
   "bias": {
     "short": {
@@ -86,17 +91,17 @@
       "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 25700.0 (KEY support)",
-      "then": "still range; watch 26545.0 for next test"
+      "if": "hold 24792.0 (KEY support)",
+      "then": "still range; watch 26015.0 for next test"
     },
     {
-      "if": "break 25700.0 on close",
+      "if": "break 24792.0 on close",
       "then": "target 20980.0 → lower (short-term bearish)"
     },
     {
@@ -104,8 +109,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 26545.0 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 26015.0 on close",
+      "then": "short-term bullish; next test 26570.0"
+    },
+    {
+      "if": "break 26570.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -136,14 +145,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 26555.0,
+    "r1": 26570.0,
     "s1": 20980.0,
     "s2": 22350.0,
     "r2": 28985.0,
     "r3": 30100.0,
-    "s3": 19585.0,
+    "s3": 20830.0,
     "s4": 15210.0,
-    "current_position_pct": 98.9,
-    "notes": "WAIT_RANGE: in box (20980-26555), pos 99%, no clear setup"
+    "current_position_pct": 81.9,
+    "notes": "WAIT_RANGE: in box (20980-26570), pos 82%, no clear setup"
   }
 }

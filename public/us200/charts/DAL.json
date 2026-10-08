@@ -3,20 +3,20 @@
   "ticker_user": "DAL",
   "name": "Delta Air Lines, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 84.24,
-    "H": 85.76,
-    "L": 82.82,
-    "C": 83.66,
-    "prev_close": 83.08,
-    "chg_pct": 0.7
+    "date": "2026-10-07",
+    "O": 82.19,
+    "H": 83.46,
+    "L": 81.8,
+    "C": 82.97,
+    "prev_close": 83.66,
+    "chg_pct": -0.82
   },
   "phase": "downtrend_active",
-  "adx": 15.53,
-  "plus_di": 23.0,
-  "minus_di": 17.85,
+  "adx": 14.72,
+  "plus_di": 21.71,
+  "minus_di": 19.93,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 95.68 (2026-07-02), trough 75.99 (2026-09-01), box top 86.17 (2026-10-02)",
@@ -32,16 +32,16 @@
     "top": 86.17,
     "top_date": "2026-10-02",
     "bottom": 75.99,
-    "period": "2026-09-01 to 2026-10-06"
+    "period": "2026-09-01 to 2026-10-07"
   },
-  "drop_from_peak_pct": 12.6,
-  "recovery_from_crash_pct": 10.1,
+  "drop_from_peak_pct": 13.3,
+  "recovery_from_crash_pct": 9.2,
   "supports": [
     {
       "level": 80.0,
       "label": "S1 KEY",
-      "touches": 18,
-      "evidence": "tested 18x in base period; 4.4% below current"
+      "touches": 16,
+      "evidence": "tested 16x in base period; 3.6% below current"
     },
     {
       "level": 76.0,
@@ -52,29 +52,34 @@
   ],
   "resistances": [
     {
-      "level": 85.76,
+      "level": 83.46,
       "label": "R1 today high",
-      "evidence": "rejection at 85.76000213623047 (long upper wick, close weak)"
+      "evidence": "today's high 83.45999908447266"
+    },
+    {
+      "level": 86.17,
+      "label": "R3 Oct high",
+      "evidence": "box top 86.17, base period high"
     }
   ],
   "position": {
-    "current": 83.66,
-    "in_box_pct": 78.5,
+    "current": 82.97,
+    "in_box_pct": 68.5,
     "nearest_support": "S1 KEY (80.0)",
-    "nearest_resistance": "R1 today high (85.76)"
+    "nearest_resistance": "R1 today high (83.46)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 84.24,
-    "H": 85.76,
-    "L": 82.82,
-    "C": 83.66,
-    "body_pct": 19.7,
-    "upper_wick_pct": 51.7,
-    "lower_wick_pct": 28.6
+    "close_position": "upper_half",
+    "O": 82.19,
+    "H": 83.46,
+    "L": 81.8,
+    "C": 82.97,
+    "body_pct": 47.0,
+    "upper_wick_pct": 29.5,
+    "lower_wick_pct": 23.5
   },
   "bias": {
     "short": {
@@ -93,7 +98,7 @@
   "scenarios": [
     {
       "if": "hold 80.0 (KEY support)",
-      "then": "still range; watch 85.76 for next test"
+      "then": "still range; watch 83.46 for next test"
     },
     {
       "if": "break 80.0 on close",
@@ -104,8 +109,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 85.76 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 83.46 on close",
+      "then": "short-term bullish; next test 86.17"
+    },
+    {
+      "if": "break 86.17 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -131,10 +140,10 @@
     "strategy": "SELL_R1",
     "trigger_price": 86.17,
     "target_price": 81.53,
-    "stop_price": 89.93,
-    "risk_pct": 4.36,
+    "stop_price": 89.94,
+    "risk_pct": 4.38,
     "reward_pct": 5.38,
-    "rr_ratio": 1.24,
+    "rr_ratio": 1.23,
     "phase_match": true,
     "r1": 86.17,
     "s1": 76.89,
@@ -143,7 +152,7 @@
     "r3": 95.68,
     "s3": 65.82,
     "s4": 55.28,
-    "current_position_pct": 73.0,
-    "notes": "SELL_R1: in box (77-86), entry at R1 86, target mid 82, stop 90 ｜ 52.2 條規則（SELL plan，resistance 86.17）：① 跌到 86.17、收市守住喺 86.17 上面 → 照 BUY 條 plan 做（入場 86.17，止蝕 89.93，目標 81.53）。② 收市跌穿 86.17 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 86.17 上面』。"
+    "current_position_pct": 65.5,
+    "notes": "SELL_R1: in box (77-86), entry at R1 86, target mid 82, stop 90 ｜ 52.2 條規則（SELL plan，resistance 86.17）：① 跌到 86.17、收市守住喺 86.17 上面 → 照 BUY 條 plan 做（入場 86.17，止蝕 89.94，目標 81.53）。② 收市跌穿 86.17 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 86.17 上面』。"
   }
 }

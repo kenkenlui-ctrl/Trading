@@ -3,21 +3,21 @@
   "ticker_user": "MRVL",
   "name": "Marvell Technology, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 271.26,
-    "H": 301.27,
-    "L": 267.26,
-    "C": 287.01,
-    "prev_close": 271.25,
-    "chg_pct": 5.81
+    "date": "2026-10-07",
+    "O": 281.3,
+    "H": 287.03,
+    "L": 276.5,
+    "C": 284.68,
+    "prev_close": 287.01,
+    "chg_pct": -0.81
   },
   "phase": "base_building",
-  "adx": 24.39,
-  "plus_di": 38.83,
-  "minus_di": 15.47,
-  "regime": "dead",
+  "adx": 25.72,
+  "plus_di": 36.76,
+  "minus_di": 14.65,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 329.88 (2026-06-18), trough 162.9 (2026-07-29), box top 301.27 (2026-10-06)",
   "peak": {
@@ -32,22 +32,22 @@
     "top": 301.27,
     "top_date": "2026-10-06",
     "bottom": 162.9,
-    "period": "2026-07-29 to 2026-10-06"
+    "period": "2026-07-29 to 2026-10-07"
   },
-  "drop_from_peak_pct": 13.0,
-  "recovery_from_crash_pct": 76.2,
+  "drop_from_peak_pct": 13.7,
+  "recovery_from_crash_pct": 74.8,
   "supports": [
     {
       "level": 256.0,
       "label": "S1 KEY",
       "touches": 12,
-      "evidence": "tested 12x in base period; 10.8% below current"
+      "evidence": "tested 12x in base period; 10.1% below current"
     },
     {
       "level": 236.0,
       "label": "S2",
-      "touches": 7,
-      "evidence": "mid-base support, tested 7x"
+      "touches": 6,
+      "evidence": "mid-base support, tested 6x"
     },
     {
       "level": 228.0,
@@ -64,29 +64,34 @@
   ],
   "resistances": [
     {
-      "level": 301.27,
+      "level": 287.03,
       "label": "R1 today high",
-      "evidence": "today's high 301.2699890136719"
+      "evidence": "today's high 287.0299987792969"
+    },
+    {
+      "level": 301.27,
+      "label": "R3 Oct high",
+      "evidence": "box top 301.27, base period high"
     }
   ],
   "position": {
-    "current": 287.01,
-    "in_box_pct": 89.7,
+    "current": 284.68,
+    "in_box_pct": 88.0,
     "nearest_support": "S1 KEY (256.0)",
-    "nearest_resistance": "R1 today high (301.27)"
+    "nearest_resistance": "R1 today high (287.03)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 271.26,
-    "H": 301.27,
-    "L": 267.26,
-    "C": 287.01,
-    "body_pct": 46.3,
-    "upper_wick_pct": 41.9,
-    "lower_wick_pct": 11.8
+    "O": 281.3,
+    "H": 287.03,
+    "L": 276.5,
+    "C": 284.68,
+    "body_pct": 32.1,
+    "upper_wick_pct": 22.3,
+    "lower_wick_pct": 45.6
   },
   "bias": {
     "short": {
@@ -105,7 +110,7 @@
   "scenarios": [
     {
       "if": "hold 256.0 (KEY support)",
-      "then": "still range; watch 301.27 for next test"
+      "then": "still range; watch 287.03 for next test"
     },
     {
       "if": "break 256.0 on close",
@@ -116,8 +121,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 301.27 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 287.03 on close",
+      "then": "short-term bullish; next test 301.27"
+    },
+    {
+      "if": "break 301.27 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -139,23 +148,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 301.27,
-    "target_price": 257.45,
-    "stop_price": 322.59,
-    "risk_pct": 7.08,
-    "reward_pct": 14.55,
-    "rr_ratio": 2.06,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 301.27,
     "s1": 213.63,
     "s2": 162.9,
     "r2": 254.6,
     "r3": 329.88,
-    "s3": 128.42,
+    "s3": 133.16,
     "s4": 70.69,
-    "current_position_pct": 83.7,
-    "notes": "SELL_R1: in box (214-301), entry at R1 301, target mid 257, stop 323 ｜ 52.2 條規則（SELL plan，resistance 301.27）：① 跌到 301.27、收市守住喺 301.27 上面 → 照 BUY 條 plan 做（入場 301.27，止蝕 322.59，目標 257.45）。② 收市跌穿 301.27 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 301.27 上面』。"
+    "current_position_pct": 81.1,
+    "notes": "WAIT_RANGE: in box (214-301), pos 81%, no clear setup"
   }
 }

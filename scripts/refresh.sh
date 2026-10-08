@@ -45,7 +45,34 @@ python3 /Users/kenken/dev/dsa-hk/charts/us200/batch_us200.py --date "$DATA_DATE"
 # A repair that is not in the pipeline is not a repair.
 echo
 echo "[1b/7] Refreshing <market>/ohlc/*_ohlc.json (chart + v2 signal source)..."
-python3 scripts/update_ohlc.py --asof "$DATA_DATE" --markets hk,us,jp --workers 8 2>&1 | tail -3
+# 2026-10-08: one DATA_DATE cannot describe three markets. They do not share a
+# trading calendar — on 2026-10-08 HK and JP had closed the 10-08 session while
+# the US had only closed 10-07, and passing 10-08 for the US would have asked
+# Yahoo for a session that has not happened yet.
+#
+# Ownership (Kenneth, 2026-10-08): Kenneth states the date per market when he
+# asks for a refresh, and I pass it straight through. Nothing here infers or
+# auto-derives a session — an inferred "T-1" is a guess, and a guess that is
+# one session ahead silently asks the vendor for data that does not exist yet.
+# Set ASOF_HK / ASOF_US / ASOF_JP explicitly when the markets differ; any market
+# left unset falls back to DATA_DATE.
+ASOF_HK="${ASOF_HK:-$DATA_DATE}"
+ASOF_US="${ASOF_US:-$DATA_DATE}"
+ASOF_JP="${ASOF_JP:-$DATA_DATE}"
+python3 scripts/update_ohlc.py \
+  --asof "$DATA_DATE" --asof-hk "$ASOF_HK" --asof-us "$ASOF_US" --asof-jp "$ASOF_JP" \
+  --markets hk,us,jp --workers 8 2>&1 | tail -3
+
+# --- Universe lists are NOT regenerated here ------------------------------
+# Owner decision (Kenneth, 2026-10-08): universe regen runs weekly on cloud
+# (Undercover), and the resulting hk_universe_200.json / us_universe_200.json /
+# jp_universe_200.json are pushed into the repo. This pipeline only READS them.
+#
+# That is a deliberate split: the universe turns over on a weekly clock while
+# the market data turns over daily, and running a yfinance-wide re-rank inside
+# the daily refresh would put an unaudited 200-name change in front of every
+# build. regen_all.py remains the entry point for whoever runs it on cloud —
+# do NOT re-wire it into this script.
 
 # --- Step 2: Generate per-ticker charts + action_plan JSON (daily-sr-chart skill) ---
 echo

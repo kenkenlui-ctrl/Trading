@@ -3,25 +3,25 @@
   "ticker_user": "3088.T",
   "name": "MATSUKIYOCOCOKARA & CO",
   "data_source": "yfinance",
-  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-11 → 2026-10-08 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 2431.5,
-    "H": 2435.0,
-    "L": 2413.5,
-    "C": 2428.0,
-    "prev_close": 2431.5,
-    "chg_pct": -0.14
+    "date": "2026-10-08",
+    "O": 2460.0,
+    "H": 2463.5,
+    "L": 2419.5,
+    "C": 2460.5,
+    "prev_close": 2439.0,
+    "chg_pct": 0.88
   },
   "phase": "base_building",
-  "adx": 17.05,
-  "plus_di": 17.49,
-  "minus_di": 28.92,
+  "adx": 17.03,
+  "plus_di": 19.01,
+  "minus_di": 27.58,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 2924.5 (2025-12-10), trough 2171.5 (2026-05-27), box top 2719.5 (2026-07-29)",
+  "phase_evidence": "Peak 2924.5 (2025-12-15), trough 2171.5 (2026-05-27), box top 2719.5 (2026-07-29)",
   "peak": {
-    "date": "2025-12-10",
+    "date": "2025-12-15",
     "price": 2924.5
   },
   "trough": {
@@ -32,23 +32,35 @@
     "top": 2719.5,
     "top_date": "2026-07-29",
     "bottom": 2171.5,
-    "period": "2026-05-27 to 2026-10-06"
+    "period": "2026-05-27 to 2026-10-08"
   },
-  "drop_from_peak_pct": 17.0,
-  "recovery_from_crash_pct": 11.8,
+  "drop_from_peak_pct": 15.9,
+  "recovery_from_crash_pct": 13.3,
   "supports": [
     {
+      "level": 2404.0,
+      "label": "S1 KEY",
+      "touches": 6,
+      "evidence": "tested 6x in base period; 2.3% below current"
+    },
+    {
+      "level": 2384.0,
+      "label": "S2",
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
+    },
+    {
       "level": 2220.0,
-      "label": "S1 bottom",
+      "label": "S3 bottom",
       "touches": 3,
       "evidence": "structural bottom, near crash low 2171.5"
     }
   ],
   "resistances": [
     {
-      "level": 2435.0,
+      "level": 2463.5,
       "label": "R1 today high",
-      "evidence": "today's high 2435.0"
+      "evidence": "today's high 2463.5"
     },
     {
       "level": 2719.5,
@@ -57,28 +69,28 @@
     }
   ],
   "position": {
-    "current": 2428.0,
-    "in_box_pct": 41.6,
-    "nearest_support": "S1 bottom (2220.0)",
-    "nearest_resistance": "R1 today high (2435.0)"
+    "current": 2460.5,
+    "in_box_pct": 48.1,
+    "nearest_support": "S1 KEY (2404.0)",
+    "nearest_resistance": "R1 today high (2463.5)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 2431.5,
-    "H": 2435.0,
-    "L": 2413.5,
-    "C": 2428.0,
-    "body_pct": 16.3,
-    "upper_wick_pct": 16.3,
-    "lower_wick_pct": 67.4
+    "O": 2460.0,
+    "H": 2463.5,
+    "L": 2419.5,
+    "C": 2460.5,
+    "body_pct": 1.1,
+    "upper_wick_pct": 6.8,
+    "lower_wick_pct": 92.0
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (42% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -91,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 2220.0 (KEY support)",
-      "then": "still range; watch 2435.0 for next test"
+      "if": "hold 2404.0 (KEY support)",
+      "then": "still range; watch 2463.5 for next test"
     },
     {
-      "if": "break 2220.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 2404.0 on close",
+      "then": "target 2384.0 → 2220.0 (short-term bearish)"
     },
     {
       "if": "break 2220.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 2435.0 on close",
+      "if": "reclaim 2463.5 on close",
       "then": "short-term bullish; next test 2719.5"
     },
     {
@@ -130,23 +142,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 2382.5,
-    "target_price": 2503.75,
-    "stop_price": 2304.28,
-    "risk_pct": 3.28,
-    "reward_pct": 5.09,
-    "rr_ratio": 1.55,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
     "phase_match": true,
-    "r1": 2625.0,
+    "r1": 2608.0,
     "s1": 2382.5,
     "s2": 2392.0,
     "r2": 2719.5,
-    "r3": 2614.0,
+    "r3": 2541.0,
     "s3": 2171.5,
     "s4": 2358.5,
-    "current_position_pct": 18.8,
-    "notes": "BUY_S1: in box (2382-2625), entry at S1 2382, target mid 2504, stop 2304 ｜ 52.2 條規則（BUY plan，support 2382.50）：① 跌到 2382.50、收市守住喺 2382.50 上面 → 照 BUY 條 plan 做（入場 2382.50，止蝕 2304.28，目標 2503.75）。② 收市跌穿 2382.50 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2382.50 上面』。"
+    "current_position_pct": 34.6,
+    "notes": "WAIT_RANGE: in box (2382-2608), pos 35%, no clear setup"
   }
 }

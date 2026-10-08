@@ -3,52 +3,62 @@
   "ticker_user": "09880.HK",
   "name": "UBTECH ROBOTICS",
   "data_source": "yfinance",
-  "data_range": "2025-12-11 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-15 → 2026-10-08 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 75.0,
-    "H": 75.2,
-    "L": 73.1,
-    "C": 75.05,
-    "prev_close": 75.0,
-    "chg_pct": 0.07
+    "date": "2026-10-08",
+    "O": 73.2,
+    "H": 74.5,
+    "L": 69.0,
+    "C": 69.2,
+    "prev_close": 74.4,
+    "chg_pct": -6.99
   },
   "phase": "downtrend_active",
-  "adx": 16.95,
-  "plus_di": 16.18,
-  "minus_di": 28.24,
+  "adx": 19.51,
+  "plus_di": 13.44,
+  "minus_di": 32.13,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 156.4 (2026-02-20), trough 70.15 (2026-09-29), box top 75.2 (2026-10-06)",
+  "phase_evidence": "Peak 156.4 (2026-02-20), trough 69.0 (2026-10-08), box top 89.0 (2026-09-07)",
   "peak": {
     "date": "2026-02-20",
     "price": 156.4
   },
   "trough": {
-    "date": "2026-09-29",
-    "price": 70.15
+    "date": "2026-10-08",
+    "price": 69.0
   },
   "box": {
-    "top": 75.2,
-    "top_date": "2026-10-06",
-    "bottom": 70.15,
-    "period": "2026-09-29 to 2026-10-06"
+    "top": 89.0,
+    "top_date": "2026-09-07",
+    "bottom": 69.0,
+    "period": "2026-10-08 to 2026-10-08"
   },
-  "drop_from_peak_pct": 52.0,
-  "recovery_from_crash_pct": 7.0,
+  "drop_from_peak_pct": 55.8,
+  "recovery_from_crash_pct": 0.3,
   "supports": [
     {
-      "level": 72.0,
+      "level": 68.0,
       "label": "S1 bottom",
-      "touches": 12,
-      "evidence": "structural bottom, near crash low 70.15"
+      "touches": 0,
+      "evidence": "structural bottom, near crash low 69.0"
     }
   ],
   "resistances": [
     {
-      "level": 75.2,
+      "level": 74.5,
       "label": "R1 today high",
-      "evidence": "today's high 75.19999694824219"
+      "evidence": "today's high 74.5"
+    },
+    {
+      "level": 80.0,
+      "label": "R5",
+      "evidence": "pre-crash supply, top before breakdown"
+    },
+    {
+      "level": 89.0,
+      "label": "R3 Sep high",
+      "evidence": "box top 89.0, base period high"
     },
     {
       "level": 150.0,
@@ -57,28 +67,28 @@
     }
   ],
   "position": {
-    "current": 75.05,
-    "in_box_pct": 3.9,
-    "nearest_support": "S1 bottom (72.0)",
-    "nearest_resistance": "R1 today high (75.2)"
+    "current": 69.2,
+    "in_box_pct": 5.7,
+    "nearest_support": "S1 bottom (68.0)",
+    "nearest_resistance": "R1 today high (74.5)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 75.0,
-    "H": 75.2,
-    "L": 73.1,
-    "C": 75.05,
-    "body_pct": 2.4,
-    "upper_wick_pct": 7.1,
-    "lower_wick_pct": 90.5
+    "close_position": "lower_half",
+    "O": 73.2,
+    "H": 74.5,
+    "L": 69.0,
+    "C": 69.2,
+    "body_pct": 72.7,
+    "upper_wick_pct": 23.6,
+    "lower_wick_pct": 3.6
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (4% of box)"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (6% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -91,20 +101,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 72.0 (KEY support)",
-      "then": "still range; watch 75.2 for next test"
+      "if": "hold 68.0 (KEY support)",
+      "then": "still range; watch 74.5 for next test"
     },
     {
-      "if": "break 72.0 on close",
+      "if": "break 68.0 on close",
       "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 72.0 (crash low)",
+      "if": "break 68.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 75.2 on close",
-      "then": "short-term bullish; next test 150.0"
+      "if": "reclaim 74.5 on close",
+      "then": "short-term bullish; next test 80.0"
+    },
+    {
+      "if": "break 89.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -135,14 +149,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 88.4,
-    "s1": 70.15,
+    "r1": 84.8,
+    "s1": 69.0,
     "s2": 74.4,
     "r2": 95.45,
     "r3": 125.0,
-    "s3": 80.55,
+    "s3": 79.3,
     "s4": 84.6,
-    "current_position_pct": 26.8,
-    "notes": "WAIT_RANGE: in box (70-88), pos 27%, no clear setup"
+    "current_position_pct": 1.3,
+    "notes": "WAIT_RANGE: in box (69-85), pos 1%, no clear setup"
   }
 }

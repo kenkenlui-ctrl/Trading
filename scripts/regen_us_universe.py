@@ -17,6 +17,7 @@ cycle. Run via `python3 scripts/regen_all.py` — NOT standalone.
 from __future__ import annotations
 
 import json
+import math
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -56,24 +57,40 @@ def build_candidate_pool() -> list[str]:
         return []
 
 
-def fetch_avg_dollar_vol(code: str) -> tuple[str, float]:
+def fetch_avg_dollar_vol(code: str) -> tuple[str, float | None]:
     """Fetch 20d avg $ volume (USD millions) for a US ticker via yfinance.
 
-    Returns (code, avg_m_usd). On any error, returns (code, 0.0).
+    Returns (code, avg_m_usd), or (code, None) when the measurement itself
+    could not be taken.
+
+    2026-10-08: this used to return 0.0 on every failure, and the filter read
+    0.0 as "below the $20M threshold" — so a throttled or empty Yahoo response
+    was indistinguishable from a genuinely illiquid ticker. WBD came back with
+    a single row that day (the same run that produced "every bar was null" in
+    update_ohlc.py) and was therefore REMOVED from the universe. Because the
+    universe is the candidate pool for batch_us200.py, that one bad response
+    made a name permanently unfetchable: its page would have stayed published
+    while silently freezing. A missing measurement is not evidence of low
+    volume, and it must never be acted on as if it were.
     """
     try:
         t = yf.Ticker(code)
         hist = t.history(period=FETCH_PERIOD, auto_adjust=True)
         if hist is None or hist.empty or "Close" not in hist.columns or "Volume" not in hist.columns:
-            return code, 0.0
+            return code, None
+        # A truncated response cannot support a 20-day average.
+        if len(hist) < 20:
+            return code, None
         # $ volume per day = Close * Volume
         dv = (hist["Close"] * hist["Volume"]).tail(20)
-        if dv.empty:
-            return code, 0.0
+        if dv.empty or not dv.notna().any():
+            return code, None
         avg = float(dv.mean()) / 1_000_000  # → millions
+        if not math.isfinite(avg):
+            return code, None
         return code, avg
     except Exception:
-        return code, 0.0
+        return code, None
 
 
 def update_cadence_log(market: str, count: int) -> None:
@@ -106,7 +123,7 @@ def main() -> int:
     print(f"  Pool size: {len(pool)} codes")
 
     print(f"  Fetching 20d avg $ volume via yfinance ({PARALLEL_WORKERS} workers)...")
-    results: list[tuple[str, float]] = []
+    results: list[tuple[str, float | None]] = []
     with ThreadPoolExecutor(max_workers=PARALLEL_WORKERS) as ex:
         futures = {ex.submit(fetch_avg_dollar_vol, c): c for c in pool}
         done = 0
@@ -116,13 +133,26 @@ def main() -> int:
             if done % 25 == 0:
                 print(f"    ...{done}/{len(pool)}")
 
-    filtered = [
-        (c, v) for c, v in results
-        if v >= MIN_DOLLAR_VOL_M_USD and c not in DENY_LIST
-    ]
-    dropped_deny = sorted(DENY_LIST & set(c for c, _ in results))
+    # Three outcomes, and only ONE of them may remove a name:
+    #   measured and above threshold → keep, ranked
+    #   measured and below threshold → drop (a real liquidity decision)
+    #   could not measure          → KEEP (see fetch_avg_dollar_vol)
+    unmeasured = sorted(c for c, v in results if v is None)
+    measured = [(c, v) for c, v in results if v is not None]
+    filtered = [(c, v) for c, v in measured
+                if v >= MIN_DOLLAR_VOL_M_USD and c not in DENY_LIST]
+    dropped_deny = sorted(DENY_LIST & set(c for c, _ in measured))
+    # Unmeasured names are kept but cannot be ranked, so they sit behind every
+    # measured name rather than competing on a fabricated turnover figure.
+    candidates = filtered + [(c, 0.0) for c in unmeasured]
     filtered.sort(key=lambda x: -x[1])
-    top = [c for c, _ in filtered[:TOP_N]]
+    candidates.sort(key=lambda x: -x[1])
+    top = [c for c, _ in candidates[:TOP_N]]
+    demoted = [c for c, _ in candidates[TOP_N:]]
+    if unmeasured:
+        print(f"  ⚠ {len(unmeasured)} ticker(s) could not be measured — KEPT in the "
+              f"universe because a failed fetch is not evidence of low volume: "
+              f"{unmeasured[:10]}{' …' if len(unmeasured) > 10 else ''}")
 
     if len(top) < 100:
         print(
@@ -136,7 +166,8 @@ def main() -> int:
 
     elapsed = time.time() - t0
     print(f"  Wrote {len(top)} codes to {UNIVERSE_FILE.name}")
-    print(f"  Dropped {len(results) - len(filtered)} codes below ${MIN_DOLLAR_VOL_M_USD:.0f}M USD")
+    print(f"  Dropped {len(measured) - len(filtered)} codes below "
+          f"${MIN_DOLLAR_VOL_M_USD:.0f}M USD (measured, genuinely illiquid)")
     if dropped_deny:
         print(f"  Deny-list dropped: {dropped_deny}")
     print(f"  Top 10 by 20d avg $ volume:")

@@ -3,20 +3,20 @@
   "ticker_user": "3176.T",
   "name": "SANYO TRADING CO LIMITED",
   "data_source": "yfinance",
-  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-11 → 2026-10-08 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 1196.0,
-    "H": 1209.0,
-    "L": 1182.0,
-    "C": 1194.0,
-    "prev_close": 1197.0,
-    "chg_pct": -0.25
+    "date": "2026-10-08",
+    "O": 1169.0,
+    "H": 1170.0,
+    "L": 1150.0,
+    "C": 1161.0,
+    "prev_close": 1189.0,
+    "chg_pct": -2.35
   },
   "phase": "downtrend_active",
-  "adx": 34.77,
-  "plus_di": 25.75,
-  "minus_di": 15.37,
+  "adx": 31.72,
+  "plus_di": 22.11,
+  "minus_di": 19.86,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 1227.0 (2026-08-31), trough 1107.0 (2026-09-09), box top 1209.0 (2026-10-06)",
@@ -32,60 +32,65 @@
     "top": 1209.0,
     "top_date": "2026-10-06",
     "bottom": 1107.0,
-    "period": "2026-09-09 to 2026-10-06"
+    "period": "2026-09-09 to 2026-10-08"
   },
-  "drop_from_peak_pct": 2.7,
-  "recovery_from_crash_pct": 7.9,
+  "drop_from_peak_pct": 5.4,
+  "recovery_from_crash_pct": 4.9,
   "supports": [
     {
-      "level": 1160.0,
+      "level": 1132.0,
       "label": "S1 KEY",
       "touches": 3,
-      "evidence": "tested 3x in base period; 2.8% below current"
+      "evidence": "tested 3x in base period; 2.5% below current"
     },
     {
-      "level": 1156.0,
+      "level": 1128.0,
       "label": "S2",
       "touches": 6,
       "evidence": "mid-base support, tested 6x"
     },
     {
-      "level": 1140.0,
+      "level": 1120.0,
       "label": "S3 bottom",
-      "touches": 4,
+      "touches": 3,
       "evidence": "structural bottom, near crash low 1107.0"
     }
   ],
   "resistances": [
     {
-      "level": 1209.0,
+      "level": 1170.0,
       "label": "R1 today high",
-      "evidence": "today's high 1209.0"
+      "evidence": "today's high 1170.0"
+    },
+    {
+      "level": 1209.0,
+      "label": "R3 Oct high",
+      "evidence": "box top 1209.0, base period high"
     }
   ],
   "position": {
-    "current": 1194.0,
-    "in_box_pct": 78.3,
-    "nearest_support": "S1 KEY (1160.0)",
-    "nearest_resistance": "R1 today high (1209.0)"
+    "current": 1161.0,
+    "in_box_pct": 46.1,
+    "nearest_support": "S1 KEY (1132.0)",
+    "nearest_resistance": "R1 today high (1170.0)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 1196.0,
-    "H": 1209.0,
-    "L": 1182.0,
-    "C": 1194.0,
-    "body_pct": 7.4,
-    "upper_wick_pct": 48.1,
-    "lower_wick_pct": 44.4
+    "close_position": "upper_half",
+    "O": 1169.0,
+    "H": 1170.0,
+    "L": 1150.0,
+    "C": 1161.0,
+    "body_pct": 40.0,
+    "upper_wick_pct": 5.0,
+    "lower_wick_pct": 55.0
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (46% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -98,20 +103,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 1160.0 (KEY support)",
-      "then": "still range; watch 1209.0 for next test"
+      "if": "hold 1132.0 (KEY support)",
+      "then": "still range; watch 1170.0 for next test"
     },
     {
-      "if": "break 1160.0 on close",
-      "then": "target 1156.0 → 1140.0 (short-term bearish)"
+      "if": "break 1132.0 on close",
+      "then": "target 1128.0 → 1120.0 (short-term bearish)"
     },
     {
-      "if": "break 1140.0 (crash low)",
+      "if": "break 1120.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1209.0 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 1170.0 on close",
+      "then": "short-term bullish; next test 1209.0"
+    },
+    {
+      "if": "break 1209.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -134,7 +143,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -144,12 +153,12 @@
     "phase_match": false,
     "r1": 1209.0,
     "s1": 1107.0,
-    "s2": 804.0,
+    "s2": 806.0,
     "r2": 1227.0,
-    "r3": 844.5,
+    "r3": 822.5,
     "s3": 742.5,
     "s4": 723.0,
-    "current_position_pct": 85.3,
-    "notes": "WAIT_RANGE: in box (1107-1209), pos 85%, no clear setup"
+    "current_position_pct": 52.9,
+    "notes": "WAIT_RANGE: in box (1107-1209), pos 53%, no clear setup"
   }
 }

@@ -3,20 +3,20 @@
   "ticker_user": "03200.HK",
   "name": "HANS CNC",
   "data_source": "yfinance",
-  "data_range": "2026-02-06 → 2026-10-06 (162 daily bars)",
+  "data_range": "2026-02-06 → 2026-10-08 (164 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 98.4,
-    "H": 99.35,
-    "L": 96.9,
-    "C": 99.0,
-    "prev_close": 98.4,
-    "chg_pct": 0.61
+    "date": "2026-10-08",
+    "O": 97.0,
+    "H": 97.9,
+    "L": 87.0,
+    "C": 87.0,
+    "prev_close": 96.4,
+    "chg_pct": -9.75
   },
   "phase": "downtrend_recovery",
-  "adx": 11.49,
-  "plus_di": 17.71,
-  "minus_di": 20.54,
+  "adx": 12.86,
+  "plus_di": 14.98,
+  "minus_di": 27.44,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 205.8 (2026-06-18), trough 83.75 (2026-07-30), box top 120.8 (2026-08-18)",
@@ -32,35 +32,23 @@
     "top": 120.8,
     "top_date": "2026-08-18",
     "bottom": 83.75,
-    "period": "2026-07-30 to 2026-10-06"
+    "period": "2026-07-30 to 2026-10-08"
   },
-  "drop_from_peak_pct": 51.9,
-  "recovery_from_crash_pct": 18.2,
+  "drop_from_peak_pct": 57.7,
+  "recovery_from_crash_pct": 3.9,
   "supports": [
     {
-      "level": 96.0,
-      "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 3.0% below current"
-    },
-    {
-      "level": 92.0,
-      "label": "S2",
-      "touches": 12,
-      "evidence": "mid-base support, tested 12x"
-    },
-    {
-      "level": 83.75,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-07-30, structural bottom"
+      "level": 84.0,
+      "label": "S1 bottom",
+      "touches": 0,
+      "evidence": "structural bottom, near crash low 83.75"
     }
   ],
   "resistances": [
     {
-      "level": 99.35,
+      "level": 97.9,
       "label": "R1 today high",
-      "evidence": "today's high 99.3499984741211"
+      "evidence": "today's high 97.9000015258789"
     },
     {
       "level": 120.8,
@@ -74,28 +62,28 @@
     }
   ],
   "position": {
-    "current": 99.0,
-    "in_box_pct": 41.2,
-    "nearest_support": "S1 KEY (96.0)",
-    "nearest_resistance": "R1 today high (99.35)"
+    "current": 87.0,
+    "in_box_pct": 8.2,
+    "nearest_support": "S1 bottom (84.0)",
+    "nearest_resistance": "R1 today high (97.9)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 98.4,
-    "H": 99.35,
-    "L": 96.9,
-    "C": 99.0,
-    "body_pct": 24.5,
-    "upper_wick_pct": 14.3,
-    "lower_wick_pct": 61.2
+    "close_position": "lower_half",
+    "O": 97.0,
+    "H": 97.9,
+    "L": 87.0,
+    "C": 87.0,
+    "body_pct": 91.7,
+    "upper_wick_pct": 8.3,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (8% of box)"
     },
     "mid": {
       "bias": "neutral",
@@ -108,19 +96,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 96.0 (KEY support)",
-      "then": "still range; watch 99.35 for next test"
+      "if": "hold 84.0 (KEY support)",
+      "then": "still range; watch 97.9 for next test"
     },
     {
-      "if": "break 96.0 on close",
-      "then": "target 92.0 → 83.75 (short-term bearish)"
+      "if": "break 84.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 83.75 (crash low)",
+      "if": "break 84.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 99.35 on close",
+      "if": "reclaim 97.9 on close",
       "then": "short-term bullish; next test 120.8"
     },
     {
@@ -157,13 +145,13 @@
     "rr_ratio": 0.0,
     "phase_match": false,
     "r1": 119.7,
-    "s1": 92.8,
+    "s1": 87.0,
     "s2": 83.75,
-    "r2": 131.1,
+    "r2": 129.0,
     "r3": 205.8,
-    "s3": 118.8,
+    "s3": 117.6,
     "s4": 93.25,
-    "current_position_pct": 23.0,
-    "notes": "WAIT_VOLATILE: ATR14 6.4% / box width 27% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
+    "current_position_pct": 0.0,
+    "notes": "WAIT_VOLATILE: ATR14 7.3% / box width 38% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
   }
 }

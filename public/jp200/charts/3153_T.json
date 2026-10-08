@@ -3,21 +3,21 @@
   "ticker_user": "3153.T",
   "name": "YASHIMA DENKI CO LTD",
   "data_source": "yfinance",
-  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-11 → 2026-10-08 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 3185.0,
-    "H": 3200.0,
-    "L": 3105.0,
-    "C": 3130.0,
-    "prev_close": 3145.0,
-    "chg_pct": -0.48
+    "date": "2026-10-08",
+    "O": 3070.0,
+    "H": 3070.0,
+    "L": 2920.0,
+    "C": 2954.0,
+    "prev_close": 3130.0,
+    "chg_pct": -5.62
   },
   "phase": "base_building",
-  "adx": 20.16,
-  "plus_di": 23.61,
-  "minus_di": 17.12,
-  "regime": "dead",
+  "adx": 19.56,
+  "plus_di": 19.31,
+  "minus_di": 26.46,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 3655.0 (2026-02-12), trough 2642.0 (2026-06-11), box top 3300.0 (2026-09-17)",
   "peak": {
@@ -32,41 +32,35 @@
     "top": 3300.0,
     "top_date": "2026-09-17",
     "bottom": 2642.0,
-    "period": "2026-06-11 to 2026-10-06"
+    "period": "2026-06-11 to 2026-10-08"
   },
-  "drop_from_peak_pct": 14.4,
-  "recovery_from_crash_pct": 18.5,
+  "drop_from_peak_pct": 19.2,
+  "recovery_from_crash_pct": 11.8,
   "supports": [
     {
-      "level": 3048.0,
+      "level": 2832.0,
       "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 2.6% below current"
+      "touches": 3,
+      "evidence": "tested 3x in base period; 4.1% below current"
     },
     {
-      "level": 3024.0,
+      "level": 2768.0,
       "label": "S2",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
     },
     {
-      "level": 2964.0,
-      "label": "S3",
+      "level": 2752.0,
+      "label": "S3 bottom",
       "touches": 5,
-      "evidence": "mid-base support, tested 5x"
-    },
-    {
-      "level": 2642.0,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-06-11, structural bottom"
+      "evidence": "structural bottom, near crash low 2642.0"
     }
   ],
   "resistances": [
     {
-      "level": 3200.0,
+      "level": 3070.0,
       "label": "R1 today high",
-      "evidence": "today's high 3200.0"
+      "evidence": "today's high 3070.0"
     },
     {
       "level": 3300.0,
@@ -75,28 +69,28 @@
     }
   ],
   "position": {
-    "current": 3130.0,
-    "in_box_pct": 74.2,
-    "nearest_support": "S1 KEY (3048.0)",
-    "nearest_resistance": "R1 today high (3200.0)"
+    "current": 2954.0,
+    "in_box_pct": 36.9,
+    "nearest_support": "S1 KEY (2832.0)",
+    "nearest_resistance": "R1 today high (3070.0)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 3185.0,
-    "H": 3200.0,
-    "L": 3105.0,
-    "C": 3130.0,
-    "body_pct": 57.9,
-    "upper_wick_pct": 15.8,
-    "lower_wick_pct": 26.3
+    "O": 3070.0,
+    "H": 3070.0,
+    "L": 2920.0,
+    "C": 2954.0,
+    "body_pct": 77.3,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 22.7
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (37% of box)"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -109,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 3048.0 (KEY support)",
-      "then": "still range; watch 3200.0 for next test"
+      "if": "hold 2832.0 (KEY support)",
+      "then": "still range; watch 3070.0 for next test"
     },
     {
-      "if": "break 3048.0 on close",
-      "then": "target 3024.0 → 2964.0 (short-term bearish)"
+      "if": "break 2832.0 on close",
+      "then": "target 2768.0 → 2752.0 (short-term bearish)"
     },
     {
-      "if": "break 2642.0 (crash low)",
+      "if": "break 2752.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 3200.0 on close",
+      "if": "reclaim 3070.0 on close",
       "then": "short-term bullish; next test 3300.0"
     },
     {
@@ -149,22 +143,22 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
+    "phase_match": false,
     "r1": 3300.0,
-    "s1": 2929.0,
+    "s1": 2920.0,
     "s2": 2661.0,
     "r2": 3160.0,
-    "r3": 3220.0,
+    "r3": 3195.0,
     "s3": 2642.0,
-    "s4": 2763.0,
-    "current_position_pct": 54.2,
-    "notes": "WAIT_RANGE: in box (2929-3300), pos 54%, no clear setup"
+    "s4": 2764.0,
+    "current_position_pct": 8.9,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（BUY plan，support 2920.00）：① 跌到 2920.00、收市守住喺 2920.00 上面 → 照 BUY 條 plan 做（入場 2920.00，止蝕 2747.37，目標 3110.00）。② 收市跌穿 2920.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2920.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }

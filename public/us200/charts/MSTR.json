@@ -3,20 +3,20 @@
   "ticker_user": "MSTR",
   "name": "Strategy Inc",
   "data_source": "yfinance",
-  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 165.82,
-    "H": 168.73,
-    "L": 163.18,
-    "C": 164.55,
-    "prev_close": 164.43,
-    "chg_pct": 0.07
+    "date": "2026-10-07",
+    "O": 157.7,
+    "H": 158.66,
+    "L": 152.53,
+    "C": 153.37,
+    "prev_close": 164.55,
+    "chg_pct": -6.79
   },
   "phase": "base_building",
-  "adx": 39.65,
-  "plus_di": 32.84,
-  "minus_di": 12.89,
+  "adx": 38.21,
+  "plus_di": 29.74,
+  "minus_di": 20.05,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 197.0 (2026-05-11), trough 81.81 (2026-06-26), box top 171.19 (2026-09-22)",
@@ -32,28 +32,28 @@
     "top": 171.19,
     "top_date": "2026-09-22",
     "bottom": 81.81,
-    "period": "2026-06-26 to 2026-10-06"
+    "period": "2026-06-26 to 2026-10-07"
   },
-  "drop_from_peak_pct": 16.5,
-  "recovery_from_crash_pct": 101.1,
+  "drop_from_peak_pct": 22.1,
+  "recovery_from_crash_pct": 87.5,
   "supports": [
     {
-      "level": 128.0,
+      "level": 136.0,
       "label": "S1 KEY",
-      "touches": 10,
-      "evidence": "tested 10x in base period; 22.2% below current"
+      "touches": 6,
+      "evidence": "tested 6x in base period; 11.3% below current"
     },
     {
-      "level": 124.0,
+      "level": 128.0,
       "label": "S2",
       "touches": 10,
       "evidence": "mid-base support, tested 10x"
     },
     {
-      "level": 120.0,
+      "level": 124.0,
       "label": "S3",
-      "touches": 7,
-      "evidence": "mid-base support, tested 7x"
+      "touches": 10,
+      "evidence": "mid-base support, tested 10x"
     },
     {
       "level": 81.81,
@@ -64,34 +64,44 @@
   ],
   "resistances": [
     {
-      "level": 168.73,
+      "level": 158.66,
       "label": "R1 today high",
-      "evidence": "rejection at 168.72999572753906 (long upper wick, close weak)"
+      "evidence": "today's high 158.66000366210938"
+    },
+    {
+      "level": 160.0,
+      "label": "R2",
+      "evidence": "mid-box supply, round number 160"
     },
     {
       "level": 171.19,
       "label": "R3 Sep high",
       "evidence": "box top 171.19, base period high"
+    },
+    {
+      "level": 185.0,
+      "label": "R4",
+      "evidence": "psychological round number, pre-crash zone 185"
     }
   ],
   "position": {
-    "current": 164.55,
-    "in_box_pct": 92.6,
-    "nearest_support": "S1 KEY (128.0)",
-    "nearest_resistance": "R1 today high (168.73)"
+    "current": 153.37,
+    "in_box_pct": 80.1,
+    "nearest_support": "S1 KEY (136.0)",
+    "nearest_resistance": "R1 today high (158.66)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 165.82,
-    "H": 168.73,
-    "L": 163.18,
-    "C": 164.55,
-    "body_pct": 22.9,
-    "upper_wick_pct": 52.4,
-    "lower_wick_pct": 24.7
+    "O": 157.7,
+    "H": 158.66,
+    "L": 152.53,
+    "C": 153.37,
+    "body_pct": 70.6,
+    "upper_wick_pct": 15.7,
+    "lower_wick_pct": 13.7
   },
   "bias": {
     "short": {
@@ -103,26 +113,26 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 128.0 (KEY support)",
-      "then": "still range; watch 168.73 for next test"
+      "if": "hold 136.0 (KEY support)",
+      "then": "still range; watch 158.66 for next test"
     },
     {
-      "if": "break 128.0 on close",
-      "then": "target 124.0 → 120.0 (short-term bearish)"
+      "if": "break 136.0 on close",
+      "then": "target 128.0 → 124.0 (short-term bearish)"
     },
     {
       "if": "break 81.81 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 168.73 on close",
-      "then": "short-term bullish; next test 171.19"
+      "if": "reclaim 158.66 on close",
+      "then": "short-term bullish; next test 160.0"
     },
     {
       "if": "break 171.19 (box top)",
@@ -149,7 +159,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_VOLATILE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -164,7 +174,7 @@
     "r3": 197.0,
     "s3": 81.81,
     "s4": 104.17,
-    "current_position_pct": 86.1,
-    "notes": "WAIT_RANGE: in box (123-171), pos 86%, no clear setup"
+    "current_position_pct": 62.8,
+    "notes": "WAIT_VOLATILE: ATR14 6.4% / box width 31% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
   }
 }

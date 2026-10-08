@@ -3,20 +3,20 @@
   "ticker_user": "00669.HK",
   "name": "TECHTRONIC IND",
   "data_source": "yfinance",
-  "data_range": "2025-12-11 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-15 → 2026-10-08 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 130.6,
-    "H": 132.1,
-    "L": 129.4,
-    "C": 130.3,
-    "prev_close": 130.3,
-    "chg_pct": 0.0
+    "date": "2026-10-08",
+    "O": 129.6,
+    "H": 130.8,
+    "L": 127.5,
+    "C": 127.9,
+    "prev_close": 131.4,
+    "chg_pct": -2.66
   },
   "phase": "downtrend_active",
-  "adx": 17.37,
-  "plus_di": 19.23,
-  "minus_di": 17.31,
+  "adx": 15.59,
+  "plus_di": 16.52,
+  "minus_di": 18.85,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 150.0 (2026-08-10), trough 124.3 (2026-09-28), box top 132.1 (2026-10-06)",
@@ -32,54 +32,53 @@
     "top": 132.1,
     "top_date": "2026-10-06",
     "bottom": 124.3,
-    "period": "2026-09-28 to 2026-10-06"
+    "period": "2026-09-28 to 2026-10-08"
   },
-  "drop_from_peak_pct": 13.1,
-  "recovery_from_crash_pct": 4.8,
+  "drop_from_peak_pct": 14.7,
+  "recovery_from_crash_pct": 2.9,
   "supports": [
     {
-      "level": 128.0,
-      "label": "S1 KEY",
-      "touches": 20,
-      "evidence": "tested 20x in base period; 1.8% below current"
-    },
-    {
       "level": 124.0,
-      "label": "S2 bottom",
-      "touches": 16,
+      "label": "S1 bottom",
+      "touches": 7,
       "evidence": "structural bottom, near crash low 124.3"
     }
   ],
   "resistances": [
     {
-      "level": 132.1,
+      "level": 130.8,
       "label": "R1 today high",
-      "evidence": "rejection at 132.10000610351562 (long upper wick, close weak)"
+      "evidence": "today's high 130.8000030517578"
+    },
+    {
+      "level": 132.1,
+      "label": "R3 Oct high",
+      "evidence": "box top 132.1, base period high"
     }
   ],
   "position": {
-    "current": 130.3,
-    "in_box_pct": 77.8,
-    "nearest_support": "S1 KEY (128.0)",
-    "nearest_resistance": "R1 today high (132.1)"
+    "current": 127.9,
+    "in_box_pct": 48.1,
+    "nearest_support": "S1 bottom (124.0)",
+    "nearest_resistance": "R1 today high (130.8)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 130.6,
-    "H": 132.1,
-    "L": 129.4,
-    "C": 130.3,
-    "body_pct": 11.1,
-    "upper_wick_pct": 55.6,
-    "lower_wick_pct": 33.3
+    "O": 129.6,
+    "H": 130.8,
+    "L": 127.5,
+    "C": 127.9,
+    "body_pct": 51.5,
+    "upper_wick_pct": 36.4,
+    "lower_wick_pct": 12.1
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (48% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -92,20 +91,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 128.0 (KEY support)",
-      "then": "still range; watch 132.1 for next test"
+      "if": "hold 124.0 (KEY support)",
+      "then": "still range; watch 130.8 for next test"
     },
     {
-      "if": "break 128.0 on close",
-      "then": "target 124.0 → lower (short-term bearish)"
+      "if": "break 124.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
       "if": "break 124.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 132.1 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 130.8 on close",
+      "then": "short-term bullish; next test 132.1"
+    },
+    {
+      "if": "break 132.1 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -136,14 +139,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 134.4,
+    "r1": 132.1,
     "s1": 124.3,
-    "s2": 120.4,
+    "s2": 125.0,
     "r2": 150.0,
     "r3": 136.2,
     "s3": 108.5,
     "s4": 87.55,
-    "current_position_pct": 59.4,
-    "notes": "WAIT_RANGE: in box (124-134), pos 59%, no clear setup"
+    "current_position_pct": 46.2,
+    "notes": "WAIT_RANGE: in box (124-132), pos 46%, no clear setup"
   }
 }

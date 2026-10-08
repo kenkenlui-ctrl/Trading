@@ -3,109 +3,130 @@
   "ticker_user": "3156.T",
   "name": "RESTAR CORPORATION",
   "data_source": "yfinance",
-  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-11 → 2026-10-08 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 6240.0,
-    "H": 6470.0,
-    "L": 6200.0,
-    "C": 6410.0,
-    "prev_close": 6300.0,
-    "chg_pct": 1.75
+    "date": "2026-10-08",
+    "O": 6310.0,
+    "H": 6330.0,
+    "L": 6080.0,
+    "C": 6220.0,
+    "prev_close": 6310.0,
+    "chg_pct": -1.43
   },
   "phase": "uptrend",
-  "adx": 49.02,
-  "plus_di": 35.41,
-  "minus_di": 9.4,
+  "adx": 49.29,
+  "plus_di": 31.03,
+  "minus_di": 11.92,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 6470.0 (2026-10-06), trough 4975.0 (2026-09-10), box top 6470.0 (2026-10-06)",
+  "phase_evidence": "Peak 6470.0 (2026-10-06), trough 4680.0 (2026-08-25), box top 6470.0 (2026-10-06)",
   "peak": {
     "date": "2026-10-06",
     "price": 6470.0
   },
   "trough": {
-    "date": "2026-09-10",
-    "price": 4975.0
+    "date": "2026-08-25",
+    "price": 4680.0
   },
   "box": {
     "top": 6470.0,
     "top_date": "2026-10-06",
-    "bottom": 4975.0,
-    "period": "2026-09-10 to 2026-10-06"
+    "bottom": 4680.0,
+    "period": "2026-08-25 to 2026-10-08"
   },
-  "drop_from_peak_pct": 0.9,
-  "recovery_from_crash_pct": 28.8,
+  "drop_from_peak_pct": 3.9,
+  "recovery_from_crash_pct": 32.9,
   "supports": [
     {
       "level": 6040.0,
       "label": "S1 KEY",
       "touches": 4,
-      "evidence": "tested 4x in base period; 5.8% below current"
+      "evidence": "tested 4x in base period; 2.9% below current"
     },
     {
-      "level": 4975.0,
+      "level": 5168.0,
+      "label": "S2",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 5128.0,
+      "label": "S3",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 4680.0,
       "label": "S4 crash low",
       "touches": 1,
-      "evidence": "crash low 2026-09-10, structural bottom"
+      "evidence": "crash low 2026-08-25, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 6470.0,
+      "level": 6330.0,
       "label": "R1 today high",
-      "evidence": "today's high 6470.0"
+      "evidence": "today's high 6330.0"
+    },
+    {
+      "level": 6470.0,
+      "label": "R3 Oct high",
+      "evidence": "box top 6470.0, base period high"
     }
   ],
   "position": {
-    "current": 6410.0,
-    "in_box_pct": 96.0,
+    "current": 6220.0,
+    "in_box_pct": 86.0,
     "nearest_support": "S1 KEY (6040.0)",
-    "nearest_resistance": "R1 today high (6470.0)"
+    "nearest_resistance": "R1 today high (6330.0)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 6240.0,
-    "H": 6470.0,
-    "L": 6200.0,
-    "C": 6410.0,
-    "body_pct": 63.0,
-    "upper_wick_pct": 22.2,
-    "lower_wick_pct": 14.8
+    "O": 6310.0,
+    "H": 6330.0,
+    "L": 6080.0,
+    "C": 6220.0,
+    "body_pct": 36.0,
+    "upper_wick_pct": 8.0,
+    "lower_wick_pct": 56.0
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bullish_continuation",
       "reason": "higher highs / higher lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 6040.0 (KEY support)",
-      "then": "still range; watch 6470.0 for next test"
+      "then": "still range; watch 6330.0 for next test"
     },
     {
       "if": "break 6040.0 on close",
-      "then": "target 4975.0 → lower (short-term bearish)"
+      "then": "target 5168.0 → 5128.0 (short-term bearish)"
     },
     {
-      "if": "break 4975.0 (crash low)",
+      "if": "break 4680.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 6470.0 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 6330.0 on close",
+      "then": "short-term bullish; next test 6470.0"
+    },
+    {
+      "if": "break 6470.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -143,7 +164,7 @@
     "r3": 4760.0,
     "s3": 2750.0,
     "s4": 2580.0,
-    "current_position_pct": 96.0,
-    "notes": "WAIT_RANGE: in box (4975-6470), pos 96%, no clear setup"
+    "current_position_pct": 83.3,
+    "notes": "WAIT_RANGE: in box (4975-6470), pos 83%, no clear setup"
   }
 }

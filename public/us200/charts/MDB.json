@@ -3,20 +3,20 @@
   "ticker_user": "MDB",
   "name": "MongoDB, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 364.8,
-    "H": 374.79,
-    "L": 359.45,
-    "C": 360.71,
-    "prev_close": 359.23,
-    "chg_pct": 0.41
+    "date": "2026-10-07",
+    "O": 362.13,
+    "H": 367.44,
+    "L": 357.36,
+    "C": 363.03,
+    "prev_close": 360.71,
+    "chg_pct": 0.64
   },
   "phase": "downtrend_active",
-  "adx": 20.43,
-  "plus_di": 23.22,
-  "minus_di": 30.89,
+  "adx": 20.05,
+  "plus_di": 22.53,
+  "minus_di": 30.58,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 473.1 (2026-08-14), trough 300.0 (2026-09-28), box top 374.79 (2026-10-06)",
@@ -32,35 +32,46 @@
     "top": 374.79,
     "top_date": "2026-10-06",
     "bottom": 300.0,
-    "period": "2026-09-28 to 2026-10-06"
+    "period": "2026-09-28 to 2026-10-07"
   },
-  "drop_from_peak_pct": 23.8,
-  "recovery_from_crash_pct": 20.2,
+  "drop_from_peak_pct": 23.3,
+  "recovery_from_crash_pct": 21.0,
   "supports": [
     {
-      "level": 340.0,
+      "level": 356.0,
       "label": "S1 KEY",
+      "touches": 5,
+      "evidence": "tested 5x in base period; 1.9% below current"
+    },
+    {
+      "level": 340.0,
+      "label": "S2",
       "touches": 3,
-      "evidence": "tested 3x in base period; 5.7% below current"
+      "evidence": "mid-base support, tested 3x"
     },
     {
       "level": 320.0,
-      "label": "S2",
+      "label": "S3",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
     },
     {
-      "level": 296.0,
-      "label": "S3 bottom",
-      "touches": 3,
-      "evidence": "structural bottom, near crash low 300.0"
+      "level": 300.0,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-09-28, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 374.79,
+      "level": 367.44,
       "label": "R1 today high",
-      "evidence": "rejection at 374.7900085449219 (long upper wick, close weak)"
+      "evidence": "today's high 367.44000244140625"
+    },
+    {
+      "level": 374.79,
+      "label": "R3 Oct high",
+      "evidence": "box top 374.79, base period high"
     },
     {
       "level": 440.0,
@@ -69,28 +80,28 @@
     }
   ],
   "position": {
-    "current": 360.71,
-    "in_box_pct": 44.9,
-    "nearest_support": "S1 KEY (340.0)",
-    "nearest_resistance": "R1 today high (374.79)"
+    "current": 363.03,
+    "in_box_pct": 84.3,
+    "nearest_support": "S1 KEY (356.0)",
+    "nearest_resistance": "R1 today high (367.44)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 364.8,
-    "H": 374.79,
-    "L": 359.45,
-    "C": 360.71,
-    "body_pct": 26.7,
-    "upper_wick_pct": 65.1,
-    "lower_wick_pct": 8.2
+    "close_position": "upper_half",
+    "O": 362.13,
+    "H": 367.44,
+    "L": 357.36,
+    "C": 363.03,
+    "body_pct": 8.9,
+    "upper_wick_pct": 43.8,
+    "lower_wick_pct": 47.3
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (45% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -103,20 +114,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 340.0 (KEY support)",
-      "then": "still range; watch 374.79 for next test"
+      "if": "hold 356.0 (KEY support)",
+      "then": "still range; watch 367.44 for next test"
     },
     {
-      "if": "break 340.0 on close",
-      "then": "target 320.0 → 296.0 (short-term bearish)"
+      "if": "break 356.0 on close",
+      "then": "target 340.0 → 320.0 (short-term bearish)"
     },
     {
-      "if": "break 296.0 (crash low)",
+      "if": "break 300.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 374.79 on close",
-      "then": "short-term bullish; next test 440.0"
+      "if": "reclaim 367.44 on close",
+      "then": "short-term bullish; next test 374.79"
+    },
+    {
+      "if": "break 374.79 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -154,7 +169,7 @@
     "r3": 412.0,
     "s3": 240.62,
     "s4": 215.68,
-    "current_position_pct": 43.4,
-    "notes": "WAIT_RANGE: in box (300-440), pos 43%, no clear setup"
+    "current_position_pct": 45.1,
+    "notes": "WAIT_RANGE: in box (300-440), pos 45%, no clear setup"
   }
 }

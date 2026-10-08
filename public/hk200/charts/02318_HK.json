@@ -3,21 +3,21 @@
   "ticker_user": "02318.HK",
   "name": "PING AN",
   "data_source": "yfinance",
-  "data_range": "2025-12-11 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-15 → 2026-10-08 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 52.0,
-    "H": 52.2,
-    "L": 51.35,
-    "C": 51.55,
-    "prev_close": 51.75,
+    "date": "2026-10-08",
+    "O": 51.5,
+    "H": 52.05,
+    "L": 51.25,
+    "C": 51.3,
+    "prev_close": 51.5,
     "chg_pct": -0.39
   },
   "phase": "downtrend_recovery",
-  "adx": 23.8,
-  "plus_di": 13.95,
-  "minus_di": 30.3,
-  "regime": "dead",
+  "adx": 25.23,
+  "plus_di": 15.29,
+  "minus_di": 28.41,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 74.15 (2026-02-10), trough 50.0 (2026-06-26), box top 59.0 (2026-08-03)",
   "peak": {
@@ -32,13 +32,13 @@
     "top": 59.0,
     "top_date": "2026-08-03",
     "bottom": 50.0,
-    "period": "2026-06-26 to 2026-10-06"
+    "period": "2026-06-26 to 2026-10-08"
   },
-  "drop_from_peak_pct": 30.5,
-  "recovery_from_crash_pct": 3.1,
+  "drop_from_peak_pct": 30.8,
+  "recovery_from_crash_pct": 2.6,
   "supports": [
     {
-      "level": 52.0,
+      "level": 48.0,
       "label": "S1 bottom",
       "touches": 0,
       "evidence": "structural bottom, near crash low 50.0"
@@ -46,9 +46,9 @@
   ],
   "resistances": [
     {
-      "level": 52.2,
+      "level": 52.05,
       "label": "R1 today high",
-      "evidence": "today's high 52.20000076293945"
+      "evidence": "rejection at 52.04999923706055 (long upper wick, close weak)"
     },
     {
       "level": 59.0,
@@ -57,28 +57,28 @@
     }
   ],
   "position": {
-    "current": 51.55,
-    "in_box_pct": 0.0,
-    "nearest_support": "S1 bottom (52.0)",
-    "nearest_resistance": "R1 today high (52.2)"
+    "current": 51.3,
+    "in_box_pct": 30.0,
+    "nearest_support": "S1 bottom (48.0)",
+    "nearest_resistance": "R1 today high (52.05)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_rejection",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "lower_half",
-    "O": 52.0,
-    "H": 52.2,
-    "L": 51.35,
-    "C": 51.55,
-    "body_pct": 52.9,
-    "upper_wick_pct": 23.5,
-    "lower_wick_pct": 23.5
+    "O": 51.5,
+    "H": 52.05,
+    "L": 51.25,
+    "C": 51.3,
+    "body_pct": 25.0,
+    "upper_wick_pct": 68.7,
+    "lower_wick_pct": 6.2
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (0% of box)"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (30% of box)"
     },
     "mid": {
       "bias": "neutral",
@@ -91,19 +91,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 52.0 (KEY support)",
-      "then": "still range; watch 52.2 for next test"
+      "if": "hold 48.0 (KEY support)",
+      "then": "still range; watch 52.05 for next test"
     },
     {
-      "if": "break 52.0 on close",
+      "if": "break 48.0 on close",
       "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 52.0 (crash low)",
+      "if": "break 48.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 52.2 on close",
+      "if": "reclaim 52.05 on close",
       "then": "short-term bullish; next test 59.0"
     },
     {
@@ -130,23 +130,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 51.35,
-    "target_price": 53.77,
-    "stop_price": 50.13,
-    "risk_pct": 2.37,
-    "reward_pct": 4.72,
-    "rr_ratio": 1.99,
-    "phase_match": true,
-    "r1": 56.2,
-    "s1": 51.35,
-    "s2": 52.3,
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 55.05,
+    "s1": 51.2,
+    "s2": 53.45,
     "r2": 59.0,
     "r3": 66.5,
     "s3": 50.0,
     "s4": 57.1,
-    "current_position_pct": 4.1,
-    "notes": "BUY_S1: in box (51-56), entry at S1 51, target mid 54, stop 50 ｜ 52.2 條規則（BUY plan，support 51.35）：① 跌到 51.35、收市守住喺 51.35 上面 → 照 BUY 條 plan 做（入場 51.35，止蝕 50.13，目標 53.77）。② 收市跌穿 51.35 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 51.35 上面』。"
+    "current_position_pct": 2.6,
+    "notes": "WAIT_RANGE: in box (51-55), pos 3%, no clear setup"
   }
 }

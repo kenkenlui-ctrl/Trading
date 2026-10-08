@@ -3,20 +3,20 @@
   "ticker_user": "3154.T",
   "name": "MEDIUS HLDG CO LTD",
   "data_source": "yfinance",
-  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-11 → 2026-10-08 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 808.0,
-    "H": 808.0,
-    "L": 788.0,
-    "C": 799.0,
-    "prev_close": 785.0,
-    "chg_pct": 1.78
+    "date": "2026-10-08",
+    "O": 774.0,
+    "H": 774.0,
+    "L": 763.0,
+    "C": 763.0,
+    "prev_close": 783.0,
+    "chg_pct": -2.55
   },
   "phase": "downtrend_active",
-  "adx": 14.32,
-  "plus_di": 27.58,
-  "minus_di": 19.51,
+  "adx": 13.53,
+  "plus_di": 22.1,
+  "minus_di": 27.88,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 884.0 (2026-06-08), trough 759.0 (2026-09-11), box top 808.0 (2026-10-06)",
@@ -32,60 +32,53 @@
     "top": 808.0,
     "top_date": "2026-10-06",
     "bottom": 759.0,
-    "period": "2026-09-11 to 2026-10-06"
+    "period": "2026-09-11 to 2026-10-08"
   },
-  "drop_from_peak_pct": 9.6,
-  "recovery_from_crash_pct": 5.3,
+  "drop_from_peak_pct": 13.7,
+  "recovery_from_crash_pct": 0.5,
   "supports": [
     {
-      "level": 780.0,
-      "label": "S1 KEY",
-      "touches": 7,
-      "evidence": "tested 7x in base period; 2.4% below current"
-    },
-    {
-      "level": 776.0,
-      "label": "S2",
-      "touches": 6,
-      "evidence": "mid-base support, tested 6x"
-    },
-    {
-      "level": 772.0,
-      "label": "S3 bottom",
-      "touches": 4,
+      "level": 740.0,
+      "label": "S1 bottom",
+      "touches": 0,
       "evidence": "structural bottom, near crash low 759.0"
     }
   ],
   "resistances": [
     {
-      "level": 808.0,
+      "level": 774.0,
       "label": "R1 today high",
-      "evidence": "today's high 808.0"
+      "evidence": "today's high 774.0"
+    },
+    {
+      "level": 808.0,
+      "label": "R3 Oct high",
+      "evidence": "box top 808.0, base period high"
     }
   ],
   "position": {
-    "current": 799.0,
-    "in_box_pct": 75.0,
-    "nearest_support": "S1 KEY (780.0)",
-    "nearest_resistance": "R1 today high (808.0)"
+    "current": 763.0,
+    "in_box_pct": 33.8,
+    "nearest_support": "S1 bottom (740.0)",
+    "nearest_resistance": "R1 today high (774.0)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 808.0,
-    "H": 808.0,
-    "L": 788.0,
-    "C": 799.0,
-    "body_pct": 45.0,
+    "close_position": "lower_half",
+    "O": 774.0,
+    "H": 774.0,
+    "L": 763.0,
+    "C": 763.0,
+    "body_pct": 100.0,
     "upper_wick_pct": 0.0,
-    "lower_wick_pct": 55.0
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (34% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -98,20 +91,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 780.0 (KEY support)",
-      "then": "still range; watch 808.0 for next test"
+      "if": "hold 740.0 (KEY support)",
+      "then": "still range; watch 774.0 for next test"
     },
     {
-      "if": "break 780.0 on close",
-      "then": "target 776.0 → 772.0 (short-term bearish)"
+      "if": "break 740.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 772.0 (crash low)",
+      "if": "break 740.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 808.0 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 774.0 on close",
+      "then": "short-term bullish; next test 808.0"
+    },
+    {
+      "if": "break 808.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -133,15 +130,15 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 808.0,
-    "target_price": 783.5,
-    "stop_price": 827.83,
-    "risk_pct": 2.45,
-    "reward_pct": 3.03,
-    "rr_ratio": 1.24,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 808.0,
     "s1": 759.0,
     "s2": 770.0,
@@ -149,7 +146,7 @@
     "r3": 884.0,
     "s3": 786.0,
     "s4": 775.0,
-    "current_position_pct": 81.6,
-    "notes": "SELL_R1: in box (759-808), entry at R1 808, target mid 784, stop 828 ｜ 52.2 條規則（SELL plan，resistance 808.00）：① 跌到 808.00、收市守住喺 808.00 上面 → 照 BUY 條 plan 做（入場 808.00，止蝕 827.83，目標 783.50）。② 收市跌穿 808.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 808.00 上面』。"
+    "current_position_pct": 8.2,
+    "notes": "WAIT_RANGE: in box (759-808), pos 8%, no clear setup"
   }
 }

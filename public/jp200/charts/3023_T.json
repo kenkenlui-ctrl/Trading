@@ -3,20 +3,20 @@
   "ticker_user": "3023.T",
   "name": "RASA CORPORATION",
   "data_source": "yfinance",
-  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-11 → 2026-10-08 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 2081.0,
-    "H": 2119.0,
-    "L": 2081.0,
-    "C": 2102.0,
-    "prev_close": 2081.0,
-    "chg_pct": 1.01
+    "date": "2026-10-08",
+    "O": 2030.0,
+    "H": 2030.0,
+    "L": 1967.0,
+    "C": 1999.0,
+    "prev_close": 2056.0,
+    "chg_pct": -2.77
   },
   "phase": "base_building",
-  "adx": 13.32,
-  "plus_di": 30.7,
-  "minus_di": 21.6,
+  "adx": 13.36,
+  "plus_di": 23.46,
+  "minus_di": 36.15,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 2502.0 (2026-01-20), trough 1675.0 (2026-06-02), box top 2145.0 (2026-08-26)",
@@ -32,41 +32,35 @@
     "top": 2145.0,
     "top_date": "2026-08-26",
     "bottom": 1675.0,
-    "period": "2026-06-02 to 2026-10-06"
+    "period": "2026-06-02 to 2026-10-08"
   },
-  "drop_from_peak_pct": 16.0,
-  "recovery_from_crash_pct": 25.5,
+  "drop_from_peak_pct": 20.1,
+  "recovery_from_crash_pct": 19.3,
   "supports": [
     {
-      "level": 2052.0,
+      "level": 1816.0,
       "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 2.4% below current"
+      "touches": 3,
+      "evidence": "tested 3x in base period; 9.2% below current"
     },
     {
-      "level": 2048.0,
+      "level": 1796.0,
       "label": "S2",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
     },
     {
-      "level": 2024.0,
-      "label": "S3",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
-    },
-    {
-      "level": 1675.0,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-06-02, structural bottom"
+      "level": 1752.0,
+      "label": "S3 bottom",
+      "touches": 3,
+      "evidence": "structural bottom, near crash low 1675.0"
     }
   ],
   "resistances": [
     {
-      "level": 2119.0,
+      "level": 2030.0,
       "label": "R1 today high",
-      "evidence": "today's high 2119.0"
+      "evidence": "today's high 2030.0"
     },
     {
       "level": 2145.0,
@@ -75,23 +69,23 @@
     }
   ],
   "position": {
-    "current": 2102.0,
-    "in_box_pct": 90.9,
-    "nearest_support": "S1 KEY (2052.0)",
-    "nearest_resistance": "R1 today high (2119.0)"
+    "current": 1999.0,
+    "in_box_pct": 62.8,
+    "nearest_support": "S1 KEY (1816.0)",
+    "nearest_resistance": "R1 today high (2030.0)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 2081.0,
-    "H": 2119.0,
-    "L": 2081.0,
-    "C": 2102.0,
-    "body_pct": 55.3,
-    "upper_wick_pct": 44.7,
-    "lower_wick_pct": 0.0
+    "O": 2030.0,
+    "H": 2030.0,
+    "L": 1967.0,
+    "C": 1999.0,
+    "body_pct": 49.2,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 50.8
   },
   "bias": {
     "short": {
@@ -103,25 +97,25 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 2052.0 (KEY support)",
-      "then": "still range; watch 2119.0 for next test"
+      "if": "hold 1816.0 (KEY support)",
+      "then": "still range; watch 2030.0 for next test"
     },
     {
-      "if": "break 2052.0 on close",
-      "then": "target 2048.0 → 2024.0 (short-term bearish)"
+      "if": "break 1816.0 on close",
+      "then": "target 1796.0 → 1752.0 (short-term bearish)"
     },
     {
-      "if": "break 1675.0 (crash low)",
+      "if": "break 1752.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 2119.0 on close",
+      "if": "reclaim 2030.0 on close",
       "then": "short-term bullish; next test 2145.0"
     },
     {
@@ -148,23 +142,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 2121.0,
-    "target_price": 2048.5,
-    "stop_price": 2174.08,
-    "risk_pct": 2.5,
-    "reward_pct": 3.42,
-    "rr_ratio": 1.37,
+    "verdict": "BUY",
+    "strategy": "BUY_S1",
+    "trigger_price": 1967.0,
+    "target_price": 2044.0,
+    "stop_price": 1908.7,
+    "risk_pct": 2.96,
+    "reward_pct": 3.91,
+    "rr_ratio": 1.32,
     "phase_match": true,
     "r1": 2121.0,
-    "s1": 1976.0,
+    "s1": 1967.0,
     "s2": 1784.0,
     "r2": 2145.0,
-    "r3": 2015.0,
+    "r3": 1979.0,
     "s3": 1675.0,
     "s4": 1743.0,
-    "current_position_pct": 86.9,
-    "notes": "SELL_R1: in box (1976-2121), entry at R1 2121, target mid 2048, stop 2174 ｜ 52.2 條規則（SELL plan，resistance 2121.00）：① 跌到 2121.00、收市守住喺 2121.00 上面 → 照 BUY 條 plan 做（入場 2121.00，止蝕 2174.08，目標 2048.50）。② 收市跌穿 2121.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2121.00 上面』。"
+    "current_position_pct": 20.8,
+    "notes": "BUY_S1: in box (1967-2121), entry at S1 1967, target mid 2044, stop 1909 ｜ 52.2 條規則（BUY plan，support 1967.00）：① 跌到 1967.00、收市守住喺 1967.00 上面 → 照 BUY 條 plan 做（入場 1967.00，止蝕 1908.70，目標 2044.00）。② 收市跌穿 1967.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1967.00 上面』。"
   }
 }

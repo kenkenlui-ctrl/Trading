@@ -3,20 +3,20 @@
   "ticker_user": "00006.HK",
   "name": "POWER ASSETS",
   "data_source": "yfinance",
-  "data_range": "2025-12-11 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-15 → 2026-10-08 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 59.0,
-    "H": 59.65,
-    "L": 59.0,
-    "C": 59.35,
-    "prev_close": 59.1,
-    "chg_pct": 0.42
+    "date": "2026-10-08",
+    "O": 59.25,
+    "H": 59.35,
+    "L": 58.85,
+    "C": 59.3,
+    "prev_close": 59.3,
+    "chg_pct": 0.0
   },
   "phase": "base_building",
-  "adx": 16.83,
-  "plus_di": 10.07,
-  "minus_di": 17.48,
+  "adx": 18.02,
+  "plus_di": 9.88,
+  "minus_di": 17.47,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 67.05 (2026-05-07), trough 54.85 (2026-06-22), box top 62.45 (2026-08-21)",
@@ -32,10 +32,10 @@
     "top": 62.45,
     "top_date": "2026-08-21",
     "bottom": 54.85,
-    "period": "2026-06-22 to 2026-10-06"
+    "period": "2026-06-22 to 2026-10-08"
   },
-  "drop_from_peak_pct": 11.5,
-  "recovery_from_crash_pct": 8.2,
+  "drop_from_peak_pct": 11.6,
+  "recovery_from_crash_pct": 8.1,
   "supports": [
     {
       "level": 56.0,
@@ -46,9 +46,9 @@
   ],
   "resistances": [
     {
-      "level": 59.65,
+      "level": 59.35,
       "label": "R1 today high",
-      "evidence": "today's high 59.650001525878906"
+      "evidence": "today's high 59.349998474121094"
     },
     {
       "level": 62.45,
@@ -57,23 +57,23 @@
     }
   ],
   "position": {
-    "current": 59.35,
-    "in_box_pct": 51.9,
+    "current": 59.3,
+    "in_box_pct": 51.2,
     "nearest_support": "S1 bottom (56.0)",
-    "nearest_resistance": "R1 today high (59.65)"
+    "nearest_resistance": "R1 today high (59.35)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 59.0,
-    "H": 59.65,
-    "L": 59.0,
-    "C": 59.35,
-    "body_pct": 53.8,
-    "upper_wick_pct": 46.2,
-    "lower_wick_pct": 0.0
+    "O": 59.25,
+    "H": 59.35,
+    "L": 58.85,
+    "C": 59.3,
+    "body_pct": 10.0,
+    "upper_wick_pct": 10.0,
+    "lower_wick_pct": 80.0
   },
   "bias": {
     "short": {
@@ -92,7 +92,7 @@
   "scenarios": [
     {
       "if": "hold 56.0 (KEY support)",
-      "then": "still range; watch 59.65 for next test"
+      "then": "still range; watch 59.35 for next test"
     },
     {
       "if": "break 56.0 on close",
@@ -103,7 +103,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 59.65 on close",
+      "if": "reclaim 59.35 on close",
       "then": "short-term bullish; next test 62.45"
     },
     {
@@ -130,23 +130,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
+    "verdict": "BUY",
+    "strategy": "BUY_S1",
+    "trigger_price": 58.7,
+    "target_price": 60.12,
+    "stop_price": 57.53,
+    "risk_pct": 2.0,
+    "reward_pct": 2.43,
+    "rr_ratio": 1.21,
+    "phase_match": true,
     "r1": 61.55,
     "s1": 58.7,
     "s2": 56.9,
     "r2": 62.45,
     "r3": 67.05,
     "s3": 54.85,
-    "s4": 51.5,
-    "current_position_pct": 22.8,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（BUY plan，support 58.70）：① 跌到 58.70、收市守住喺 58.70 上面 → 照 BUY 條 plan 做（入場 58.70，止蝕 57.47，目標 60.12）。② 收市跌穿 58.70 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 58.70 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "s4": 51.75,
+    "current_position_pct": 21.1,
+    "notes": "BUY_S1: in box (59-62), entry at S1 59, target mid 60, stop 58 ｜ 52.2 條規則（BUY plan，support 58.70）：① 跌到 58.70、收市守住喺 58.70 上面 → 照 BUY 條 plan 做（入場 58.70，止蝕 57.53，目標 60.12）。② 收市跌穿 58.70 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 58.70 上面』。"
   }
 }

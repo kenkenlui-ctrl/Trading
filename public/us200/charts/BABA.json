@@ -3,20 +3,20 @@
   "ticker_user": "BABA",
   "name": "Alibaba Group Holding Limited",
   "data_source": "yfinance",
-  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 110.16,
-    "H": 110.16,
-    "L": 108.05,
-    "C": 109.26,
-    "prev_close": 110.8,
-    "chg_pct": -1.39
+    "date": "2026-10-07",
+    "O": 106.75,
+    "H": 107.42,
+    "L": 106.26,
+    "C": 107.0,
+    "prev_close": 109.26,
+    "chg_pct": -2.07
   },
   "phase": "base_building",
-  "adx": 14.63,
-  "plus_di": 30.11,
-  "minus_di": 31.46,
+  "adx": 14.23,
+  "plus_di": 27.95,
+  "minus_di": 33.48,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 181.1 (2026-01-22), trough 91.99 (2026-06-26), box top 132.57 (2026-08-10)",
@@ -32,35 +32,23 @@
     "top": 132.57,
     "top_date": "2026-08-10",
     "bottom": 91.99,
-    "period": "2026-06-26 to 2026-10-06"
+    "period": "2026-06-26 to 2026-10-07"
   },
-  "drop_from_peak_pct": 39.7,
-  "recovery_from_crash_pct": 18.8,
+  "drop_from_peak_pct": 40.9,
+  "recovery_from_crash_pct": 16.3,
   "supports": [
     {
-      "level": 108.0,
-      "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 1.2% below current"
-    },
-    {
-      "level": 104.0,
-      "label": "S2",
-      "touches": 3,
-      "evidence": "mid-base support, tested 3x"
-    },
-    {
       "level": 96.0,
-      "label": "S3 bottom",
+      "label": "S1 bottom",
       "touches": 6,
       "evidence": "structural bottom, near crash low 91.99"
     }
   ],
   "resistances": [
     {
-      "level": 110.16,
+      "level": 107.42,
       "label": "R1 today high",
-      "evidence": "today's high 110.16000366210938"
+      "evidence": "today's high 107.41999816894531"
     },
     {
       "level": 130.0,
@@ -79,23 +67,23 @@
     }
   ],
   "position": {
-    "current": 109.26,
-    "in_box_pct": 36.3,
-    "nearest_support": "S1 KEY (108.0)",
-    "nearest_resistance": "R1 today high (110.16)"
+    "current": 107.0,
+    "in_box_pct": 30.1,
+    "nearest_support": "S1 bottom (96.0)",
+    "nearest_resistance": "R1 today high (107.42)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_hold",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 110.16,
-    "H": 110.16,
-    "L": 108.05,
-    "C": 109.26,
-    "body_pct": 42.7,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 57.3
+    "O": 106.75,
+    "H": 107.42,
+    "L": 106.26,
+    "C": 107.0,
+    "body_pct": 21.1,
+    "upper_wick_pct": 36.2,
+    "lower_wick_pct": 42.7
   },
   "bias": {
     "short": {
@@ -113,19 +101,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 108.0 (KEY support)",
-      "then": "still range; watch 110.16 for next test"
+      "if": "hold 96.0 (KEY support)",
+      "then": "still range; watch 107.42 for next test"
     },
     {
-      "if": "break 108.0 on close",
-      "then": "target 104.0 → 96.0 (short-term bearish)"
+      "if": "break 96.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
       "if": "break 96.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 110.16 on close",
+      "if": "reclaim 107.42 on close",
       "then": "short-term bullish; next test 130.0"
     },
     {
@@ -156,19 +144,19 @@
     "strategy": "BUY_S1",
     "trigger_price": 105.0,
     "target_price": 112.7,
-    "stop_price": 100.71,
-    "risk_pct": 4.09,
+    "stop_price": 100.5,
+    "risk_pct": 4.29,
     "reward_pct": 7.33,
-    "rr_ratio": 1.79,
+    "rr_ratio": 1.71,
     "phase_match": true,
     "r1": 120.4,
     "s1": 105.0,
-    "s2": 109.67,
+    "s2": 109.39,
     "r2": 132.57,
     "r3": 146.87,
     "s3": 91.99,
     "s4": 117.93,
-    "current_position_pct": 27.7,
-    "notes": "BUY_S1: in box (105-120), entry at S1 105, target mid 113, stop 101 ｜ 52.2 條規則（BUY plan，support 105.00）：① 跌到 105.00、收市守住喺 105.00 上面 → 照 BUY 條 plan 做（入場 105.00，止蝕 100.71，目標 112.70）。② 收市跌穿 105.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 105.00 上面』。"
+    "current_position_pct": 13.0,
+    "notes": "BUY_S1: in box (105-120), entry at S1 105, target mid 113, stop 100 ｜ 52.2 條規則（BUY plan，support 105.00）：① 跌到 105.00、收市守住喺 105.00 上面 → 照 BUY 條 plan 做（入場 105.00，止蝕 100.50，目標 112.70）。② 收市跌穿 105.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 105.00 上面』。"
   }
 }

@@ -3,20 +3,20 @@
   "ticker_user": "00883.HK",
   "name": "CNOOC",
   "data_source": "yfinance",
-  "data_range": "2025-12-11 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-15 → 2026-10-08 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 23.48,
-    "H": 23.72,
-    "L": 23.44,
-    "C": 23.44,
-    "prev_close": 23.42,
-    "chg_pct": 0.09
+    "date": "2026-10-08",
+    "O": 23.62,
+    "H": 24.4,
+    "L": 23.62,
+    "C": 24.04,
+    "prev_close": 23.52,
+    "chg_pct": 2.21
   },
   "phase": "base_building",
-  "adx": 13.69,
-  "plus_di": 18.01,
-  "minus_di": 18.94,
+  "adx": 13.5,
+  "plus_di": 25.38,
+  "minus_di": 16.64,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 30.98 (2026-03-23), trough 19.92 (2026-07-02), box top 26.0 (2026-09-08)",
@@ -32,29 +32,29 @@
     "top": 26.0,
     "top_date": "2026-09-08",
     "bottom": 19.92,
-    "period": "2026-07-02 to 2026-10-06"
+    "period": "2026-07-02 to 2026-10-08"
   },
-  "drop_from_peak_pct": 24.3,
-  "recovery_from_crash_pct": 17.7,
+  "drop_from_peak_pct": 22.4,
+  "recovery_from_crash_pct": 20.7,
   "supports": [
     {
       "level": 24.0,
       "label": "S1 KEY",
-      "touches": 9,
-      "evidence": "tested 9x in base period; -2.4% below current"
+      "touches": 45,
+      "evidence": "tested 45x in base period; 0.2% below current"
     },
     {
-      "level": 20.0,
-      "label": "S2 bottom",
-      "touches": 8,
-      "evidence": "structural bottom, near crash low 19.92"
+      "level": 19.92,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-07-02, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 23.72,
+      "level": 24.4,
       "label": "R1 today high",
-      "evidence": "rejection at 23.719999313354492 (long upper wick, close weak)"
+      "evidence": "today's high 24.399999618530273"
     },
     {
       "level": 26.0,
@@ -63,22 +63,22 @@
     }
   ],
   "position": {
-    "current": 23.44,
-    "in_box_pct": 57.3,
+    "current": 24.04,
+    "in_box_pct": 67.8,
     "nearest_support": "S1 KEY (24.0)",
-    "nearest_resistance": "R1 today high (23.72)"
+    "nearest_resistance": "R1 today high (24.4)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": true,
-    "close_position": "lower_half",
-    "O": 23.48,
-    "H": 23.72,
-    "L": 23.44,
-    "C": 23.44,
-    "body_pct": 14.3,
-    "upper_wick_pct": 85.7,
+    "close_position": "upper_half",
+    "O": 23.62,
+    "H": 24.4,
+    "L": 23.62,
+    "C": 24.04,
+    "body_pct": 53.8,
+    "upper_wick_pct": 46.2,
     "lower_wick_pct": 0.0
   },
   "bias": {
@@ -98,18 +98,18 @@
   "scenarios": [
     {
       "if": "hold 24.0 (KEY support)",
-      "then": "still range; watch 23.72 for next test"
+      "then": "still range; watch 24.4 for next test"
     },
     {
       "if": "break 24.0 on close",
-      "then": "target 20.0 → lower (short-term bearish)"
+      "then": "target 19.92 → lower (short-term bearish)"
     },
     {
-      "if": "break 20.0 (crash low)",
+      "if": "break 19.92 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 23.72 on close",
+      "if": "reclaim 24.4 on close",
       "then": "short-term bullish; next test 26.0"
     },
     {
@@ -136,23 +136,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 23.26,
-    "target_price": 24.63,
-    "stop_price": 22.43,
-    "risk_pct": 3.56,
-    "reward_pct": 5.89,
-    "rr_ratio": 1.66,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
     "phase_match": true,
-    "r1": 26.0,
+    "r1": 25.42,
     "s1": 23.26,
     "s2": 22.36,
-    "r2": 25.66,
+    "r2": 26.0,
     "r3": 29.8,
     "s3": 19.92,
     "s4": 19.92,
-    "current_position_pct": 6.6,
-    "notes": "BUY_S1: in box (23-26), entry at S1 23, target mid 25, stop 22 ｜ 52.2 條規則（BUY plan，support 23.26）：① 跌到 23.26、收市守住喺 23.26 上面 → 照 BUY 條 plan 做（入場 23.26，止蝕 22.43，目標 24.63）。② 收市跌穿 23.26 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 23.26 上面』。"
+    "current_position_pct": 36.1,
+    "notes": "WAIT_RANGE: in box (23-25), pos 36%, no clear setup"
   }
 }

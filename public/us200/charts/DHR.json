@@ -3,20 +3,20 @@
   "ticker_user": "DHR",
   "name": "Danaher Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 223.5,
-    "H": 227.61,
-    "L": 215.09,
-    "C": 215.61,
-    "prev_close": 221.21,
-    "chg_pct": -2.53
+    "date": "2026-10-07",
+    "O": 217.77,
+    "H": 220.48,
+    "L": 214.39,
+    "C": 218.49,
+    "prev_close": 215.61,
+    "chg_pct": 1.34
   },
   "phase": "base_building",
-  "adx": 26.62,
-  "plus_di": 29.07,
-  "minus_di": 15.3,
+  "adx": 26.76,
+  "plus_di": 27.15,
+  "minus_di": 15.05,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 242.8 (2026-01-22), trough 160.93 (2026-05-15), box top 228.38 (2026-09-28)",
@@ -32,28 +32,28 @@
     "top": 228.38,
     "top_date": "2026-09-28",
     "bottom": 160.93,
-    "period": "2026-05-15 to 2026-10-06"
+    "period": "2026-05-15 to 2026-10-07"
   },
-  "drop_from_peak_pct": 11.2,
-  "recovery_from_crash_pct": 34.0,
+  "drop_from_peak_pct": 10.0,
+  "recovery_from_crash_pct": 35.8,
   "supports": [
     {
-      "level": 208.0,
+      "level": 212.0,
       "label": "S1 KEY",
+      "touches": 19,
+      "evidence": "tested 19x in base period; 3.0% below current"
+    },
+    {
+      "level": 208.0,
+      "label": "S2",
       "touches": 14,
-      "evidence": "tested 14x in base period; 3.5% below current"
+      "evidence": "mid-base support, tested 14x"
     },
     {
       "level": 204.0,
-      "label": "S2",
+      "label": "S3",
       "touches": 9,
       "evidence": "mid-base support, tested 9x"
-    },
-    {
-      "level": 200.0,
-      "label": "S3",
-      "touches": 19,
-      "evidence": "mid-base support, tested 19x"
     },
     {
       "level": 160.93,
@@ -64,29 +64,34 @@
   ],
   "resistances": [
     {
-      "level": 227.61,
+      "level": 220.48,
       "label": "R1 today high",
-      "evidence": "today's high 227.61000061035156"
+      "evidence": "today's high 220.47999572753906"
+    },
+    {
+      "level": 228.38,
+      "label": "R3 Sep high",
+      "evidence": "box top 228.38, base period high"
     }
   ],
   "position": {
-    "current": 215.61,
-    "in_box_pct": 82.0,
-    "nearest_support": "S1 KEY (208.0)",
-    "nearest_resistance": "R1 today high (227.61)"
+    "current": 218.49,
+    "in_box_pct": 85.3,
+    "nearest_support": "S1 KEY (212.0)",
+    "nearest_resistance": "R1 today high (220.48)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 223.5,
-    "H": 227.61,
-    "L": 215.09,
-    "C": 215.61,
-    "body_pct": 63.0,
-    "upper_wick_pct": 32.8,
-    "lower_wick_pct": 4.2
+    "close_position": "upper_half",
+    "O": 217.77,
+    "H": 220.48,
+    "L": 214.39,
+    "C": 218.49,
+    "body_pct": 11.8,
+    "upper_wick_pct": 32.7,
+    "lower_wick_pct": 55.5
   },
   "bias": {
     "short": {
@@ -104,20 +109,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 208.0 (KEY support)",
-      "then": "still range; watch 227.61 for next test"
+      "if": "hold 212.0 (KEY support)",
+      "then": "still range; watch 220.48 for next test"
     },
     {
-      "if": "break 208.0 on close",
-      "then": "target 204.0 → 200.0 (short-term bearish)"
+      "if": "break 212.0 on close",
+      "then": "target 208.0 → 204.0 (short-term bearish)"
     },
     {
       "if": "break 160.93 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 227.61 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 220.48 on close",
+      "then": "short-term bullish; next test 228.38"
+    },
+    {
+      "if": "break 228.38 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -140,22 +149,22 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
+    "phase_match": false,
     "r1": 228.38,
     "s1": 199.09,
     "s2": 165.75,
     "r2": 220.67,
-    "r3": 200.84,
+    "r3": 202.33,
     "s3": 160.93,
     "s4": 181.01,
-    "current_position_pct": 56.4,
-    "notes": "WAIT_RANGE: in box (199-228), pos 56%, no clear setup"
+    "current_position_pct": 66.2,
+    "notes": "WAIT_RANGE: in box (199-228), pos 66%, no clear setup"
   }
 }

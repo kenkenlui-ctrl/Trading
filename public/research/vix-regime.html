@@ -1,0 +1,104 @@
+<!doctype html><html lang="zh-Hant-HK"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VIX regime-filter 研究 · Leeks Terminal</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="/leeks.css">
+<style>
+body{font-family:system-ui,sans-serif;max-width:1000px;margin:0 auto;padding:24px;line-height:1.6}
+table{border-collapse:collapse;width:100%;font-size:.9rem;margin:12px 0}
+th,td{padding:6px 10px;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--dim)}
+.r{text-align:right;font-family:var(--font-mono)}
+.box{padding:14px 18px;border-left:4px solid var(--amber);background:var(--amber-dim);margin:16px 0;border-radius:4px}
+.verdict{padding:18px 22px;border-left:5px solid var(--bear);background:var(--bear-dim);margin:20px 0;border-radius:4px}
+code{background:var(--bg-2);padding:1px 5px;border-radius:3px}
+</style></head><body>
+<h1>VIX regime-filter 研究（JP）</h1>
+<p style="color:var(--dim)">Spec: <code>docs/vix-regime-filter-test-spec.md</code> ·
+VIX 來源 <b>FRED VIXCLS</b>（9,289 行，1990→2026）·
+flag <code>vix_regime_filter=False</code>（OFF，無 production 影響）</p>
+
+<div class="verdict">
+<strong>結論：VIX 解釋唔到日股嘅 regime 分化。</strong><br>
+1. 假設預測「VIX 高 → 日股回報差」。實測 <b>水平形式符號相反</b>：高 VIX 三分位平均
+2.4%/單，
+高過低 VIX 嘅 1.371%/單。<br>
+2. 三種形式嘅解釋力 R² 全部 ≤ 0.003。<br>
+3. 唯一在隨機 VIX placebo 之上嘅係「剔除最高 VIX 分位」，但佢只係將 9 年總回報由
+701.95% 推到 706.63%（+4.68 pp），
+同時要剷走 19% 嘅單。回撤由 -28.16% 降到
+-14.19% —— 呢個係**風險管理**效果，唔係假設預測嘅 alpha。<br>
+4. <b>建議：唔開 filter。</b> 保持 <code>vix_regime_filter=False</code>。
+</div>
+
+<h2>1. Regime split 重現</h2>
+<p>訊號數 4,576（glitch mask 剔走 9），
+曲線區間 2017-07-26 → 2026-10-01。</p>
+<table><tr><th>期間</th><th class="r">訊號</th><th class="r">每單平均淨值</th><th class="r">勝率</th></tr>
+<tr><td>2016–2020</td><td class="r">1,396</td>
+<td class="r">0.898%</td><td class="r">54.3%</td></tr>
+<tr><td>2021–2026</td><td class="r">3,180</td>
+<td class="r">2.163%</td><td class="r">64.1%</td></tr></table>
+
+<div class="box"><strong>斷點掃描：2021 唔係唯一斷點。</strong>
+最大差距年份 = 2018，但 2021–2025 任何一年都給出 ~23–29 pp 差距。
+即係「前半段差、後半段好」，唔係「2021 有咩特定市場事件」。</div>
+<table><tr><th>假設斷點</th><th class="r">之前 CAGR%</th><th class="r">之後 CAGR%</th><th class="r">差距 pp</th></tr><tr><td>2018</td><td class='r'>54.69</td><td class='r'>24.17</td><td class='r'><b>-30.52</b></td></tr><tr><td>2019</td><td class='r'>19.48</td><td class='r'>26.66</td><td class='r'><b>7.18</b></td></tr><tr><td>2020</td><td class='r'>16.34</td><td class='r'>29.08</td><td class='r'><b>12.74</b></td></tr><tr><td>2021</td><td class='r'>8.08</td><td class='r'>37.21</td><td class='r'><b>29.13</b></td></tr><tr><td>2022</td><td class='r'>13.3</td><td class='r'>38.08</td><td class='r'><b>24.78</b></td></tr><tr><td>2023</td><td class='r'>14.45</td><td class='r'>43.57</td><td class='r'><b>29.12</b></td></tr><tr><td>2024</td><td class='r'>18.86</td><td class='r'>42.56</td><td class='r'><b>23.7</b></td></tr><tr><td>2025</td><td class='r'>21.35</td><td class='r'>45.81</td><td class='r'><b>24.46</b></td></tr></table>
+
+<h2>2. 三種 VIX 形式（全部測，無擇一）</h2>
+<table><tr><th>形式</th><th class="r">低 VIX</th><th class="r">中</th><th class="r">高 VIX</th>
+<th class="r">高低差 pp</th><th class="r">R²</th><th class="r">placebo 之下比例</th></tr><tr><td>level</td><td class='r'>1.371</td><td class='r'>1.56</td><td class='r'>2.4</td><td class='r'><b>1.029</b></td><td class='r'>0.00297</td><td class='r'>0.855</td></tr><tr><td>spike</td><td class='r'>1.974</td><td class='r'>1.773</td><td class='r'>1.585</td><td class='r'><b>-0.3895</b></td><td class='r'>0.00093</td><td class='r'>0.145</td></tr><tr><td>percentile_20d</td><td class='r'>1.798</td><td class='r'>1.727</td><td class='r'>1.806</td><td class='r'><b>0.0076</b></td><td class='r'>0.00016</td><td class='r'>0.4</td></tr><tr><td>percentile_60d</td><td class='r'>1.519</td><td class='r'>2.047</td><td class='r'>1.766</td><td class='r'><b>0.2474</b></td><td class='r'>6e-05</td><td class='r'>—</td></tr></table>
+<p style="font-size:.85rem;color:var(--dim)">「placebo 之下比例」越低越好；要達顯著水平需 &lt;5%。
+多重比較：我哋測咗 4 種形式，單一形式嘅 p 值唔構成證據。</p>
+
+<h2>3. Filter before / after（32 格網格，入樣本）</h2>
+<table><tr><th></th><th class="r">總回報%</th><th class="r">CAGR%</th><th class="r">最大回撤%</th>
+<th class="r">Sharpe-like</th><th class="r">單數</th><th class="r">勝率%</th></tr>
+<tr><td>無 filter</td><td class="r'>701.95</td><td class="r'>25.45</td>
+<td class="r'>-28.16</td><td class="r'>2.187</td>
+<td class="r'>4,576</td><td class="r'>61.1</td></tr>
+<tr><td>skip_above vix_pct60=0.9333</td><td class="r'><b>706.63</b></td>
+<td class="r'>25.53</td><td class="r'><b>-14.19</b></td>
+<td class="r'>—</td><td class="r'>3,709</td><td class="r'>—</td></tr></table>
+
+<h3>Filter 層面 placebo（決定性測試）</h3>
+<table><tr><th>指標</th><th class="r">值</th></tr>
+<tr><td>實測改善（總回報）</td><td class="r'><b>4.68 pp</b></td></tr>
+<tr><td>placebo 平均改善</td><td class="r'>-208.19 pp</td></tr>
+<tr><td>placebo 95 分位</td><td class="r'>-29.18 pp</td></tr>
+<tr><td>placebo 最好一次</td><td class="r'>50.41 pp</td></tr>
+<tr><td>placebo 贏過實測嘅比例</td><td class="r'><b>5%</b></td></tr></table>
+
+<h3>Fillable supply（防止「淨係剪單嚟靚比率」）</h3>
+<table><tr><th></th><th class="r">訊號數</th><th class="r">中位穿透%</th><th class="r">≤0.5%</th><th class="r">≤2%</th></tr>
+<tr><td>無 filter</td><td class="r'>4,576</td>
+<td class="r'>0.36</td>
+<td class="r'>62.04%</td>
+<td class="r'>96.85%</td></tr>
+<tr><td>有 filter</td><td class="r'>3,620</td>
+<td class="r'>0.348</td>
+<td class="r'>63.2%</td>
+<td class="r'>97.1%</td></tr></table>
+<p style="font-size:.85rem;color:var(--dim)">供給未被削走（62.0% → 63.2%），即係 filter 唔係靠減少
+「夠得着入場位」嘅訊號嚟改善比率。</p>
+
+<h2>4. Event dominance（剔走 2020-03 同 2022）</h2>
+<p>剔走兩個事件窗之後，條件差距由
+0.0076 pp 變成
+0.4717 pp；每單平均由
+1.777% 升至 2.045%。
+即係<b>效果唔係由兩個事件撐住</b> —— 但亦即係話，連事件都唔需要去解釋。</p>
+
+<h2>5. 無偷睇未來</h2>
+<p>T-1 探針：訊號日 2026-01-06，
+當日 VIX = 99.0（假尖峰），
+實際採用 = 11.0（T-1 值）。<b style='color:var(--bull)'>YES</b></p>
+
+<h2>限制（誠實聲明）</h2>
+<ul style="font-size:.9rem">
+<li>上面最佳 filter 係喺 <b>同一份數據</b>上由 32 格網格選出（入樣本）。
+ placebo 只證明「呢條規則好過隨機 VIX 對齊」，<b>唔證明</b>「好過 32 次挑選之後嘅機會成本」。</li>
+<li>回撤減半很可能係「喺高波動期少做幾單」嘅一般性質，唔係假設預測嘅傳導機制。</li>
+<li>本頁 <code>noindex</code>，屬研究記錄，唔係產品頁。flag 維持 OFF。</li>
+</ul>
+</body></html>

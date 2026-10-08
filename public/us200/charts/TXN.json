@@ -3,20 +3,20 @@
   "ticker_user": "TXN",
   "name": "Texas Instruments Incorporated",
   "data_source": "yfinance",
-  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 295.45,
-    "H": 298.75,
-    "L": 294.23,
-    "C": 297.23,
-    "prev_close": 294.9,
-    "chg_pct": 0.79
+    "date": "2026-10-07",
+    "O": 290.5,
+    "H": 291.64,
+    "L": 284.81,
+    "C": 288.98,
+    "prev_close": 297.23,
+    "chg_pct": -2.78
   },
   "phase": "downtrend_active",
-  "adx": 21.98,
-  "plus_di": 31.3,
-  "minus_di": 11.52,
+  "adx": 21.85,
+  "plus_di": 27.88,
+  "minus_di": 18.55,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 334.03 (2026-06-22), trough 248.13 (2026-09-03), box top 298.75 (2026-10-06)",
@@ -32,28 +32,28 @@
     "top": 298.75,
     "top_date": "2026-10-06",
     "bottom": 248.13,
-    "period": "2026-09-03 to 2026-10-06"
+    "period": "2026-09-03 to 2026-10-07"
   },
-  "drop_from_peak_pct": 11.0,
-  "recovery_from_crash_pct": 19.8,
+  "drop_from_peak_pct": 13.5,
+  "recovery_from_crash_pct": 16.5,
   "supports": [
     {
-      "level": 288.0,
-      "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 3.1% below current"
-    },
-    {
       "level": 280.0,
-      "label": "S2",
+      "label": "S1 KEY",
       "touches": 6,
-      "evidence": "mid-base support, tested 6x"
+      "evidence": "tested 6x in base period; 3.1% below current"
     },
     {
       "level": 268.0,
-      "label": "S3",
+      "label": "S2",
       "touches": 8,
       "evidence": "mid-base support, tested 8x"
+    },
+    {
+      "level": 264.0,
+      "label": "S3",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
     },
     {
       "level": 248.13,
@@ -64,29 +64,34 @@
   ],
   "resistances": [
     {
-      "level": 298.75,
+      "level": 291.64,
       "label": "R1 today high",
-      "evidence": "today's high 298.75"
+      "evidence": "today's high 291.6400146484375"
+    },
+    {
+      "level": 298.75,
+      "label": "R3 Oct high",
+      "evidence": "box top 298.75, base period high"
     }
   ],
   "position": {
-    "current": 297.23,
-    "in_box_pct": 97.0,
-    "nearest_support": "S1 KEY (288.0)",
-    "nearest_resistance": "R1 today high (298.75)"
+    "current": 288.98,
+    "in_box_pct": 80.7,
+    "nearest_support": "S1 KEY (280.0)",
+    "nearest_resistance": "R1 today high (291.64)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 295.45,
-    "H": 298.75,
-    "L": 294.23,
-    "C": 297.23,
-    "body_pct": 39.4,
-    "upper_wick_pct": 33.6,
-    "lower_wick_pct": 27.0
+    "O": 290.5,
+    "H": 291.64,
+    "L": 284.81,
+    "C": 288.98,
+    "body_pct": 22.3,
+    "upper_wick_pct": 16.7,
+    "lower_wick_pct": 61.1
   },
   "bias": {
     "short": {
@@ -98,26 +103,30 @@
       "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 288.0 (KEY support)",
-      "then": "still range; watch 298.75 for next test"
+      "if": "hold 280.0 (KEY support)",
+      "then": "still range; watch 291.64 for next test"
     },
     {
-      "if": "break 288.0 on close",
-      "then": "target 280.0 → 268.0 (short-term bearish)"
+      "if": "break 280.0 on close",
+      "then": "target 268.0 → 264.0 (short-term bearish)"
     },
     {
       "if": "break 248.13 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 298.75 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 291.64 on close",
+      "then": "short-term bullish; next test 298.75"
+    },
+    {
+      "if": "break 298.75 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -143,19 +152,19 @@
     "strategy": "SELL_R1",
     "trigger_price": 298.75,
     "target_price": 277.29,
-    "stop_price": 309.86,
-    "risk_pct": 3.72,
+    "stop_price": 310.47,
+    "risk_pct": 3.92,
     "reward_pct": 7.18,
-    "rr_ratio": 1.93,
+    "rr_ratio": 1.83,
     "phase_match": true,
     "r1": 298.75,
     "s1": 255.82,
     "s2": 248.13,
     "r2": 312.01,
     "r3": 334.03,
-    "s3": 216.72,
+    "s3": 224.67,
     "s4": 173.44,
-    "current_position_pct": 96.5,
-    "notes": "SELL_R1: in box (256-299), entry at R1 299, target mid 277, stop 310 ｜ 52.2 條規則（SELL plan，resistance 298.75）：① 跌到 298.75、收市守住喺 298.75 上面 → 照 BUY 條 plan 做（入場 298.75，止蝕 309.86，目標 277.29）。② 收市跌穿 298.75 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 298.75 上面』。"
+    "current_position_pct": 77.2,
+    "notes": "SELL_R1: in box (256-299), entry at R1 299, target mid 277, stop 310 ｜ 52.2 條規則（SELL plan，resistance 298.75）：① 跌到 298.75、收市守住喺 298.75 上面 → 照 BUY 條 plan 做（入場 298.75，止蝕 310.47，目標 277.29）。② 收市跌穿 298.75 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 298.75 上面』。"
   }
 }

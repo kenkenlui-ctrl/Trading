@@ -3,20 +3,20 @@
   "ticker_user": "SHW",
   "name": "Sherwin-Williams Company (The)",
   "data_source": "yfinance",
-  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 320.36,
-    "H": 322.85,
-    "L": 318.19,
-    "C": 321.16,
-    "prev_close": 318.46,
-    "chg_pct": 0.85
+    "date": "2026-10-07",
+    "O": 317.55,
+    "H": 318.17,
+    "L": 311.12,
+    "C": 315.0,
+    "prev_close": 321.16,
+    "chg_pct": -1.92
   },
   "phase": "base_building",
-  "adx": 18.63,
-  "plus_di": 22.17,
-  "minus_di": 29.96,
+  "adx": 19.1,
+  "plus_di": 20.13,
+  "minus_di": 33.68,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 377.77 (2026-02-13), trough 289.86 (2026-06-02), box top 372.16 (2026-08-07)",
@@ -32,35 +32,29 @@
     "top": 372.16,
     "top_date": "2026-08-07",
     "bottom": 289.86,
-    "period": "2026-06-02 to 2026-10-06"
+    "period": "2026-06-02 to 2026-10-07"
   },
-  "drop_from_peak_pct": 15.0,
-  "recovery_from_crash_pct": 10.8,
+  "drop_from_peak_pct": 16.6,
+  "recovery_from_crash_pct": 8.7,
   "supports": [
     {
-      "level": 312.0,
-      "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 2.9% below current"
-    },
-    {
       "level": 304.0,
-      "label": "S2",
+      "label": "S1 KEY",
       "touches": 3,
-      "evidence": "mid-base support, tested 3x"
+      "evidence": "tested 3x in base period; 3.5% below current"
     },
     {
       "level": 300.0,
-      "label": "S3 bottom",
+      "label": "S2 bottom",
       "touches": 3,
       "evidence": "structural bottom, near crash low 289.86"
     }
   ],
   "resistances": [
     {
-      "level": 322.85,
+      "level": 318.17,
       "label": "R1 today high",
-      "evidence": "today's high 322.8500061035156"
+      "evidence": "today's high 318.1700134277344"
     },
     {
       "level": 372.16,
@@ -69,28 +63,28 @@
     }
   ],
   "position": {
-    "current": 321.16,
-    "in_box_pct": 29.3,
-    "nearest_support": "S1 KEY (312.0)",
-    "nearest_resistance": "R1 today high (322.85)"
+    "current": 315.0,
+    "in_box_pct": 20.8,
+    "nearest_support": "S1 KEY (304.0)",
+    "nearest_resistance": "R1 today high (318.17)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 320.36,
-    "H": 322.85,
-    "L": 318.19,
-    "C": 321.16,
-    "body_pct": 17.2,
-    "upper_wick_pct": 36.3,
-    "lower_wick_pct": 46.6
+    "O": 317.55,
+    "H": 318.17,
+    "L": 311.12,
+    "C": 315.0,
+    "body_pct": 36.2,
+    "upper_wick_pct": 8.8,
+    "lower_wick_pct": 55.0
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (29% of box)"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (21% of box)"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -103,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 312.0 (KEY support)",
-      "then": "still range; watch 322.85 for next test"
+      "if": "hold 304.0 (KEY support)",
+      "then": "still range; watch 318.17 for next test"
     },
     {
-      "if": "break 312.0 on close",
-      "then": "target 304.0 → 300.0 (short-term bearish)"
+      "if": "break 304.0 on close",
+      "then": "target 300.0 → lower (short-term bearish)"
     },
     {
       "if": "break 300.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 322.85 on close",
+      "if": "reclaim 318.17 on close",
       "then": "short-term bullish; next test 372.16"
     },
     {
@@ -143,22 +137,22 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
+    "phase_match": false,
     "r1": 336.54,
-    "s1": 313.26,
+    "s1": 311.12,
     "s2": 301.1,
     "r2": 372.16,
     "r3": 353.67,
     "s3": 289.86,
     "s4": 301.58,
-    "current_position_pct": 33.9,
-    "notes": "WAIT_RANGE: in box (313-337), pos 34%, no clear setup"
+    "current_position_pct": 15.3,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（BUY plan，support 311.12）：① 跌到 311.12、收市守住喺 311.12 上面 → 照 BUY 條 plan 做（入場 311.12，止蝕 299.50，目標 323.83）。② 收市跌穿 311.12 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 311.12 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }

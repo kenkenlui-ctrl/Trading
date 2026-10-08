@@ -3,20 +3,20 @@
   "ticker_user": "HLT",
   "name": "Hilton Worldwide Holdings Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 318.06,
-    "H": 324.66,
-    "L": 317.95,
-    "C": 322.61,
-    "prev_close": 316.12,
-    "chg_pct": 2.05
+    "date": "2026-10-07",
+    "O": 321.47,
+    "H": 323.02,
+    "L": 319.88,
+    "C": 320.53,
+    "prev_close": 322.61,
+    "chg_pct": -0.64
   },
   "phase": "downtrend_active",
-  "adx": 21.82,
-  "plus_di": 26.65,
-  "minus_di": 15.76,
+  "adx": 22.09,
+  "plus_di": 25.69,
+  "minus_di": 15.19,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 358.0 (2026-06-17), trough 300.0 (2026-09-09), box top 325.93 (2026-09-29)",
@@ -32,86 +32,89 @@
     "top": 325.93,
     "top_date": "2026-09-29",
     "bottom": 300.0,
-    "period": "2026-09-09 to 2026-10-06"
+    "period": "2026-09-09 to 2026-10-07"
   },
-  "drop_from_peak_pct": 9.9,
-  "recovery_from_crash_pct": 7.5,
+  "drop_from_peak_pct": 10.5,
+  "recovery_from_crash_pct": 6.8,
   "supports": [
     {
-      "level": 316.0,
-      "label": "S1 KEY",
-      "touches": 3,
-      "evidence": "tested 3x in base period; 2.0% below current"
-    },
-    {
       "level": 312.0,
-      "label": "S2",
+      "label": "S1 KEY",
       "touches": 9,
-      "evidence": "mid-base support, tested 9x"
+      "evidence": "tested 9x in base period; 2.7% below current"
     },
     {
       "level": 304.0,
-      "label": "S3 bottom",
+      "label": "S2 bottom",
       "touches": 19,
       "evidence": "structural bottom, near crash low 300.0"
     }
   ],
   "resistances": [
     {
-      "level": 324.66,
+      "level": 323.02,
       "label": "R1 today high",
-      "evidence": "today's high 324.6600036621094"
+      "evidence": "today's high 323.0199890136719"
+    },
+    {
+      "level": 325.93,
+      "label": "R3 Sep high",
+      "evidence": "box top 325.93, base period high"
     }
   ],
   "position": {
-    "current": 322.61,
-    "in_box_pct": 90.1,
-    "nearest_support": "S1 KEY (316.0)",
-    "nearest_resistance": "R1 today high (324.66)"
+    "current": 320.53,
+    "in_box_pct": 75.4,
+    "nearest_support": "S1 KEY (312.0)",
+    "nearest_resistance": "R1 today high (323.02)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 318.06,
-    "H": 324.66,
-    "L": 317.95,
-    "C": 322.61,
-    "body_pct": 67.8,
-    "upper_wick_pct": 30.6,
-    "lower_wick_pct": 1.6
+    "close_position": "lower_half",
+    "O": 321.47,
+    "H": 323.02,
+    "L": 319.88,
+    "C": 320.53,
+    "body_pct": 29.9,
+    "upper_wick_pct": 49.4,
+    "lower_wick_pct": 20.7
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
       "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 316.0 (KEY support)",
-      "then": "still range; watch 324.66 for next test"
+      "if": "hold 312.0 (KEY support)",
+      "then": "still range; watch 323.02 for next test"
     },
     {
-      "if": "break 316.0 on close",
-      "then": "target 312.0 → 304.0 (short-term bearish)"
+      "if": "break 312.0 on close",
+      "then": "target 304.0 → lower (short-term bearish)"
     },
     {
       "if": "break 304.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 324.66 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 323.02 on close",
+      "then": "short-term bullish; next test 325.93"
+    },
+    {
+      "if": "break 325.93 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -136,20 +139,20 @@
     "verdict": "SELL",
     "strategy": "SELL_R1",
     "trigger_price": 325.93,
-    "target_price": 312.96,
-    "stop_price": 335.5,
-    "risk_pct": 2.94,
-    "reward_pct": 3.98,
-    "rr_ratio": 1.35,
+    "target_price": 314.02,
+    "stop_price": 335.24,
+    "risk_pct": 2.86,
+    "reward_pct": 3.65,
+    "rr_ratio": 1.28,
     "phase_match": true,
     "r1": 325.93,
-    "s1": 300.0,
-    "s2": 304.37,
+    "s1": 302.11,
+    "s2": 300.0,
     "r2": 335.8,
     "r3": 358.0,
     "s3": 308.06,
     "s4": 285.11,
-    "current_position_pct": 87.2,
-    "notes": "SELL_R1: in box (300-326), entry at R1 326, target mid 313, stop 335 ｜ 52.2 條規則（SELL plan，resistance 325.93）：① 跌到 325.93、收市守住喺 325.93 上面 → 照 BUY 條 plan 做（入場 325.93，止蝕 335.50，目標 312.96）。② 收市跌穿 325.93 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 325.93 上面』。"
+    "current_position_pct": 77.3,
+    "notes": "SELL_R1: in box (302-326), entry at R1 326, target mid 314, stop 335 ｜ 52.2 條規則（SELL plan，resistance 325.93）：① 跌到 325.93、收市守住喺 325.93 上面 → 照 BUY 條 plan 做（入場 325.93，止蝕 335.24，目標 314.02）。② 收市跌穿 325.93 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 325.93 上面』。"
   }
 }

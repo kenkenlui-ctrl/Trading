@@ -3,20 +3,20 @@
   "ticker_user": "PWR",
   "name": "Quanta Services, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 689.9,
-    "H": 722.21,
-    "L": 685.95,
-    "C": 719.56,
-    "prev_close": 683.42,
-    "chg_pct": 5.29
+    "date": "2026-10-07",
+    "O": 706.5,
+    "H": 710.98,
+    "L": 684.37,
+    "C": 701.07,
+    "prev_close": 719.56,
+    "chg_pct": -2.57
   },
   "phase": "base_building",
-  "adx": 15.54,
-  "plus_di": 32.66,
-  "minus_di": 12.25,
+  "adx": 17.56,
+  "plus_di": 29.21,
+  "minus_di": 11.43,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 788.75 (2026-05-06), trough 554.12 (2026-07-29), box top 724.8 (2026-08-17)",
@@ -32,16 +32,16 @@
     "top": 724.8,
     "top_date": "2026-08-17",
     "bottom": 554.12,
-    "period": "2026-07-29 to 2026-10-06"
+    "period": "2026-07-29 to 2026-10-07"
   },
-  "drop_from_peak_pct": 8.8,
-  "recovery_from_crash_pct": 29.9,
+  "drop_from_peak_pct": 11.1,
+  "recovery_from_crash_pct": 26.5,
   "supports": [
     {
       "level": 636.0,
       "label": "S1 KEY",
       "touches": 8,
-      "evidence": "tested 8x in base period; 11.6% below current"
+      "evidence": "tested 8x in base period; 9.3% below current"
     },
     {
       "level": 628.0,
@@ -64,48 +64,53 @@
   ],
   "resistances": [
     {
-      "level": 722.21,
+      "level": 710.98,
       "label": "R1 today high",
-      "evidence": "today's high 722.2100219726562"
+      "evidence": "today's high 710.97998046875"
+    },
+    {
+      "level": 724.8,
+      "label": "R3 Aug high",
+      "evidence": "box top 724.8, base period high"
     }
   ],
   "position": {
-    "current": 719.56,
-    "in_box_pct": 98.4,
+    "current": 701.07,
+    "in_box_pct": 86.1,
     "nearest_support": "S1 KEY (636.0)",
-    "nearest_resistance": "R1 today high (722.21)"
+    "nearest_resistance": "R1 today high (710.98)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 689.9,
-    "H": 722.21,
-    "L": 685.95,
-    "C": 719.56,
-    "body_pct": 81.8,
-    "upper_wick_pct": 7.3,
-    "lower_wick_pct": 10.9
+    "O": 706.5,
+    "H": 710.98,
+    "L": 684.37,
+    "C": 701.07,
+    "body_pct": 20.4,
+    "upper_wick_pct": 16.8,
+    "lower_wick_pct": 62.8
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 636.0 (KEY support)",
-      "then": "still range; watch 722.21 for next test"
+      "then": "still range; watch 710.98 for next test"
     },
     {
       "if": "break 636.0 on close",
@@ -116,8 +121,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 722.21 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 710.98 on close",
+      "then": "short-term bullish; next test 724.8"
+    },
+    {
+      "if": "break 724.8 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -143,19 +152,19 @@
     "strategy": "SELL_R1",
     "trigger_price": 722.21,
     "target_price": 664.83,
-    "stop_price": 754.33,
-    "risk_pct": 4.45,
+    "stop_price": 755.73,
+    "risk_pct": 4.64,
     "reward_pct": 7.95,
-    "rr_ratio": 1.79,
+    "rr_ratio": 1.71,
     "phase_match": true,
     "r1": 722.21,
     "s1": 607.45,
     "s2": 554.12,
     "r2": 724.8,
     "r3": 788.75,
-    "s3": 580.13,
+    "s3": 584.58,
     "s4": 408.36,
-    "current_position_pct": 97.7,
-    "notes": "SELL_R1: in box (607-722), entry at R1 722, target mid 665, stop 754 ｜ 52.2 條規則（SELL plan，resistance 722.21）：① 跌到 722.21、收市守住喺 722.21 上面 → 照 BUY 條 plan 做（入場 722.21，止蝕 754.33，目標 664.83）。② 收市跌穿 722.21 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 722.21 上面』。"
+    "current_position_pct": 81.6,
+    "notes": "SELL_R1: in box (607-722), entry at R1 722, target mid 665, stop 756 ｜ 52.2 條規則（SELL plan，resistance 722.21）：① 跌到 722.21、收市守住喺 722.21 上面 → 照 BUY 條 plan 做（入場 722.21，止蝕 755.73，目標 664.83）。② 收市跌穿 722.21 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 722.21 上面』。"
   }
 }

@@ -3,20 +3,20 @@
   "ticker_user": "AMGN",
   "name": "Amgen Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-18 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 403.3,
-    "H": 405.0,
-    "L": 396.01,
-    "C": 402.6,
-    "prev_close": 402.98,
-    "chg_pct": -0.09
+    "date": "2026-10-07",
+    "O": 403.06,
+    "H": 415.79,
+    "L": 401.85,
+    "C": 413.08,
+    "prev_close": 402.6,
+    "chg_pct": 2.6
   },
   "phase": "downtrend_active",
-  "adx": 23.26,
-  "plus_di": 26.86,
-  "minus_di": 27.81,
+  "adx": 22.43,
+  "plus_di": 31.76,
+  "minus_di": 25.12,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 447.03 (2026-08-25), trough 374.46 (2026-09-16), box top 426.59 (2026-09-30)",
@@ -32,29 +32,41 @@
     "top": 426.59,
     "top_date": "2026-09-30",
     "bottom": 374.46,
-    "period": "2026-09-16 to 2026-10-06"
+    "period": "2026-09-16 to 2026-10-07"
   },
-  "drop_from_peak_pct": 9.9,
-  "recovery_from_crash_pct": 7.5,
+  "drop_from_peak_pct": 7.6,
+  "recovery_from_crash_pct": 10.3,
   "supports": [
     {
-      "level": 380.0,
+      "level": 404.0,
       "label": "S1 KEY",
-      "touches": 5,
-      "evidence": "tested 5x in base period; 5.6% below current"
+      "touches": 6,
+      "evidence": "tested 6x in base period; 2.2% below current"
     },
     {
-      "level": 376.0,
-      "label": "S2 bottom",
-      "touches": 7,
-      "evidence": "structural bottom, near crash low 374.46"
+      "level": 400.0,
+      "label": "S2",
+      "touches": 6,
+      "evidence": "mid-base support, tested 6x"
+    },
+    {
+      "level": 396.0,
+      "label": "S3",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 374.46,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-09-16, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 405.0,
+      "level": 415.79,
       "label": "R1 today high",
-      "evidence": "today's high 405.0"
+      "evidence": "today's high 415.7900085449219"
     },
     {
       "level": 426.59,
@@ -63,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 402.6,
-    "in_box_pct": 52.6,
-    "nearest_support": "S1 KEY (380.0)",
-    "nearest_resistance": "R1 today high (405.0)"
+    "current": 413.08,
+    "in_box_pct": 74.1,
+    "nearest_support": "S1 KEY (404.0)",
+    "nearest_resistance": "R1 today high (415.79)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 403.3,
-    "H": 405.0,
-    "L": 396.01,
-    "C": 402.6,
-    "body_pct": 7.8,
-    "upper_wick_pct": 18.9,
-    "lower_wick_pct": 73.3
+    "O": 403.06,
+    "H": 415.79,
+    "L": 401.85,
+    "C": 413.08,
+    "body_pct": 71.9,
+    "upper_wick_pct": 19.4,
+    "lower_wick_pct": 8.7
   },
   "bias": {
     "short": {
@@ -97,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 380.0 (KEY support)",
-      "then": "still range; watch 405.0 for next test"
+      "if": "hold 404.0 (KEY support)",
+      "then": "still range; watch 415.79 for next test"
     },
     {
-      "if": "break 380.0 on close",
-      "then": "target 376.0 → lower (short-term bearish)"
+      "if": "break 404.0 on close",
+      "then": "target 400.0 → 396.0 (short-term bearish)"
     },
     {
-      "if": "break 376.0 (crash low)",
+      "if": "break 374.46 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 405.0 on close",
+      "if": "reclaim 415.79 on close",
       "then": "short-term bullish; next test 426.59"
     },
     {
@@ -136,15 +148,15 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 426.59,
+    "target_price": 400.52,
+    "stop_price": 442.85,
+    "risk_pct": 3.81,
+    "reward_pct": 6.11,
+    "rr_ratio": 1.6,
+    "phase_match": true,
     "r1": 426.59,
     "s1": 374.46,
     "s2": 353.95,
@@ -152,7 +164,7 @@
     "r3": 375.25,
     "s3": 320.52,
     "s4": 318.21,
-    "current_position_pct": 54.0,
-    "notes": "WAIT_RANGE: in box (374-427), pos 54%, no clear setup"
+    "current_position_pct": 74.1,
+    "notes": "SELL_R1: in box (374-427), entry at R1 427, target mid 401, stop 443 ｜ 52.2 條規則（SELL plan，resistance 426.59）：① 跌到 426.59、收市守住喺 426.59 上面 → 照 BUY 條 plan 做（入場 426.59，止蝕 442.85，目標 400.52）。② 收市跌穿 426.59 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 426.59 上面』。"
   }
 }

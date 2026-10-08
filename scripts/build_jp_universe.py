@@ -10,11 +10,16 @@ This matches hk_universe_200.json and us_top200_fresh.json methodology
 from __future__ import annotations
 import json
 import time
+from datetime import date
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 REPO = Path("/Users/kenken/dev/dsa-hk")
 OUT = REPO / "jp_universe_200.json"
+# 2026-10-08: JP had no cadence entry, so regen_all.py's gate could not see it
+# as stale even in principle — JP only looked maintained because nobody was
+# looking. Same log the HK and US scripts write into.
+CADENCE_LOG = REPO / "data" / "radar_regen.json"
 
 # Tier 1: Topix Core30 + Large70 (100+ tickers, all confirmed valid)
 TIER1 = [
@@ -123,9 +128,25 @@ def main():
     print(f"\nGot {len(results)} valid; top {args.top} written to {OUT}")
     OUT.write_text(json.dumps(top, indent=2), encoding="utf-8")
 
+    # Cadence log — read-modify-write so a partial run (HK ok, US failed)
+    # cannot wipe the other markets' entries.
+    try:
+        log = json.loads(CADENCE_LOG.read_text()) if CADENCE_LOG.exists() else {}
+    except Exception:
+        log = {}
+    log["jp"] = {
+        "last_regen": date.today().isoformat(),
+        "count": len(top),
+        "scanned": len(candidates),
+        "valid": len(results),
+        "metric": "top 20-day avg turnover (close x volume), TOPIX Core30+Large70 first",
+    }
+    CADENCE_LOG.write_text(json.dumps(log, indent=2, ensure_ascii=False))
+
     print(f"\nTop 20 by 20-day avg turnover (JPY):")
     for adv, t in results[:20]:
         print(f"  {t}: {adv / 1e9:.1f}B JPY/day")
+    print(f"\n✓ Cadence log updated: jp @ {log['jp']['last_regen']} ({len(top)} codes)")
 
 
 if __name__ == "__main__":

@@ -729,12 +729,10 @@ for mkt in ("hk200", "us200", "jp200"):
             continue
         stale.setdefault(mkt, {}).setdefault(d, []).append(p.stem)
 if stale:
-    for mkt, bydate in stale.items():
+    for mkt, bydate in sorted(stale.items()):
         newest = max(bydate)
         behind = {d: v for d, v in bydate.items() if d != newest}
-        if not behind:
-            continue
-        # The invariant is NOT "every page is fresh" — AVB and BRK-B are
+        # The invariant is NOT "every page is fresh" — AVB and QRVO are
         # genuinely unfetchable upstream and no build can fix that. It is
         # "no page may CLAIM a data date its body does not have". A page
         # that carries the stale banner is telling the truth and passes;
@@ -747,12 +745,20 @@ if stale:
                     continue
                 if "數據未更新" not in page.read_text(encoding="utf-8"):
                     silent.append(f"{mkt}/{sym}@{d}")
+        n_behind = sum(len(v) for v in behind.values())
+        # Always record, even at zero. This used to `continue` when a market
+        # had nothing behind it, which meant the day JP came back 200/200 its
+        # assertion silently vanished from the run — and the assertion count
+        # is the only signal that coverage changed. A test that disappears is
+        # indistinguishable from a test that passes.
         record(f"{mkt}/a page behind the market either fresh or self-declared",
                not silent,
-               f"{sum(len(v) for v in behind.values())} page(s) behind {newest}; "
+               f"{n_behind} page(s) behind {newest}; "
                f"{len(silent)} of them do not declare it"
                + (f" e.g. {silent[:5]}" if silent else "")
-               + " — they advertise the current T-1 over older bars")
+               + (" — market fully current, nothing behind it"
+                  if not n_behind
+                  else " — they advertise the current T-1 over older bars"))
 
 
 def t_track_record_page() -> None:
@@ -801,6 +807,104 @@ def t_track_record_page() -> None:
     record("track-record/ builder reads the benchmark instead of hardcoding it",
            "CONTROL" in src and "load_bench" in src and "control_test.csv" in src,
            "builder no longer references data/control_test.csv")
+
+
+def t_universe_keeps_published_fetchable() -> None:
+    """A published page must still be reachable by the daily fetch.
+
+    2026-10-08. The universe regen is the candidate POOL for batch_us200.py,
+    so a name it drops is a name nothing ever fetches again. Its pages stay in
+    the sitemap forever and quietly freeze — the exact "in the sitemap is not
+    evidence of maintenance" failure the persistent published list was built to
+    end.
+
+    It happened for real: fetch_avg_dollar_vol() returned 0.0 on every
+    failure, and the filter read 0.0 as "below the $20M threshold", so WBD —
+    whose Yahoo response that day was a single truncated row — was removed from
+    the universe for being illiquid. One bad upstream response would have made
+    a published page permanently unfetchable.
+
+    The invariant is structural: everything ever published must remain inside
+    a universe the daily fetch actually reads.
+    """
+    pub_f = REPO / "charts" / "us200" / "us_published.json"
+    uni_f = REPO / "us_universe_200.json"
+    if not (pub_f.exists() and uni_f.exists()):
+        record("universe/every published US ticker is still fetchable",
+               False, "universe or published list missing")
+        return
+    pub = set(json.load(open(pub_f)))
+    uni = set(json.load(open(uni_f)))
+    batch = (REPO / "charts" / "us200" / "batch_us200.py").read_text(encoding="utf-8")
+    extra: set[str] = set()
+    m = re.search(r"EXTRA_US\s*=\s*\[(.*?)\]", batch, re.S)
+    if m:
+        extra = set(re.findall(r'"([A-Z][A-Z0-9.\-]{0,5})"', m.group(1)))
+    fetchable = uni | extra
+    lost = sorted(pub - fetchable)
+    record("universe/every published US ticker is still fetchable",
+           not lost,
+           f"published={len(pub)} universe={len(uni)} extra={len(extra)} "
+           f"lost={len(lost)}" + (f" e.g. {lost[:6]}" if lost
+                                  else " — the persistent published set is still fetchable"))
+
+    # Owner decision (Kenneth, 2026-10-08): universe regen runs WEEKLY ON CLOUD
+    # and pushes the three *_universe_200.json files into the repo. The daily
+    # refresh only reads them. Comment lines are excluded — naming the script
+    # in a "do not call this" note is the opposite of calling it.
+    ref = (Path(__file__).resolve().parent / "refresh.sh").read_text(encoding="utf-8")
+    code = "\n".join(l for l in ref.splitlines() if not l.lstrip().startswith("#"))
+    record("universe/refresh.sh does not regenerate the universe (cloud owns it)",
+           "regen_all.py" not in code and "build_jp_universe.py" not in code
+           and "regen_us_universe.py" not in code,
+           "refresh.sh still runs a universe regen — cloud owns that step")
+
+    # The three market lists must each carry a cadence entry, or the gate
+    # cannot see them as stale. JP never wrote one, so it was invisible to the
+    # gate for its entire life.
+    log = json.loads((REPO / "data" / "radar_regen.json").read_text())
+    missing = [m for m in ("hk", "us", "jp") if not log.get(m, {}).get("last_regen")]
+    record("universe/all three markets are cadence-gated",
+           not missing,
+           f"logged: {sorted(log)}" if not missing
+           else f"no cadence entry for: {missing} — the gate cannot see them as stale")
+
+
+def t_vix_study_is_research_only() -> None:
+    """The VIX regime study must not be reachable from any build path.
+
+    2026-10-08. The spec requires the work to sit behind a `vix_regime_filter`
+    flag that defaults OFF, with no change to production signal generation. The
+    cheapest correct branch is one nothing in the daily build can import.
+    """
+    cfg = (REPO / "scripts" / "vix_config.py").read_text(encoding="utf-8")
+    record("vix/study config flag defaults to OFF",
+           "vix_regime_filter: bool = False" in cfg,
+           "scripts/vix_config.py does not default vix_regime_filter to False")
+
+    # Nothing on the build path may import it. build_v2_signals.py is the
+    # production generator; if it ever imports vix_config, the flag has one
+    # import away from changing published signals.
+    offenders = []
+    for p in sorted((REPO / "scripts").glob("*.py")):
+        # Exclude the study itself and this checker — both name vix_config on
+        # purpose, and a guard that flags its own source is a false positive.
+        if p.name.startswith("vix_") or p.name == "self_test.py":
+            continue
+        if "vix_config" in p.read_text(encoding="utf-8", errors="ignore"):
+            offenders.append(p.name)
+    build = (REPO / "charts" / "us200" / "batch_us200.py").read_text(encoding="utf-8")
+    if "vix" in build.lower():
+        offenders.append("batch_us200.py")
+    record("vix/no production script imports the study config",
+           not offenders, f"importers: {offenders}")
+
+    # And the generator's own parameters must be untouched by the study.
+    gen = (REPO / "scripts" / "build_v2_signals.py").read_text(encoding="utf-8")
+    record("vix/production v2 PARAMS unchanged",
+           "PARAMS = dict(stop_atr=3.0, hold=10, atr_max=0.06, box_max=0.35," in gen
+           and "risk=0.01, max_notional=0.10)" in gen,
+           "build_v2_signals.py PARAMS no longer match the published rule set")
 
 
 def t_no_ai_engine_claim() -> None:
@@ -943,7 +1047,9 @@ def main() -> int:
     for fn in (t_quote_never_zero, t_badge_is_data_driven, t_no_zero_prices,
                t_badges_agree, t_restamp_idempotent, t_sitemap_guard, t_v2_bars_fresh,
                t_glitch_mask, t_css_cachebuster, t_no_retired_v1_claims,
-               t_candles_have_prices, t_track_record_page, t_no_ai_engine_claim):
+               t_candles_have_prices, t_track_record_page, t_vix_study_is_research_only,
+               t_no_ai_engine_claim,
+               t_universe_keeps_published_fetchable):
         print(f"\n{fn.__doc__.splitlines()[0] if fn.__doc__ else fn.__name__}")
         try:
             fn()

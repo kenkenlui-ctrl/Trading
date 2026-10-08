@@ -3,21 +3,21 @@
   "ticker_user": "6762.T",
   "name": "TDK CORP",
   "data_source": "yfinance",
-  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-11 → 2026-10-08 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 3505.0,
-    "H": 3698.0,
-    "L": 3441.0,
-    "C": 3628.0,
-    "prev_close": 3447.0,
-    "chg_pct": 5.25
+    "date": "2026-10-08",
+    "O": 3460.0,
+    "H": 3515.0,
+    "L": 3353.0,
+    "C": 3353.0,
+    "prev_close": 3530.0,
+    "chg_pct": -5.01
   },
   "phase": "base_building",
-  "adx": 22.53,
-  "plus_di": 46.73,
-  "minus_di": 13.09,
-  "regime": "dead",
+  "adx": 25.57,
+  "plus_di": 40.21,
+  "minus_di": 19.87,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 4315.0 (2026-06-01), trough 2651.0 (2026-07-29), box top 3698.0 (2026-10-06)",
   "peak": {
@@ -32,25 +32,25 @@
     "top": 3698.0,
     "top_date": "2026-10-06",
     "bottom": 2651.0,
-    "period": "2026-07-29 to 2026-10-06"
+    "period": "2026-07-29 to 2026-10-08"
   },
-  "drop_from_peak_pct": 15.9,
-  "recovery_from_crash_pct": 36.9,
+  "drop_from_peak_pct": 22.3,
+  "recovery_from_crash_pct": 26.5,
   "supports": [
     {
-      "level": 3008.0,
-      "label": "S1 KEY",
-      "touches": 3,
-      "evidence": "tested 3x in base period; 17.1% below current"
-    },
-    {
       "level": 3000.0,
-      "label": "S2",
+      "label": "S1 KEY",
       "touches": 5,
-      "evidence": "mid-base support, tested 5x"
+      "evidence": "tested 5x in base period; 10.5% below current"
     },
     {
       "level": 2996.0,
+      "label": "S2",
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
+    },
+    {
+      "level": 2944.0,
       "label": "S3",
       "touches": 3,
       "evidence": "mid-base support, tested 3x"
@@ -64,29 +64,34 @@
   ],
   "resistances": [
     {
-      "level": 3698.0,
+      "level": 3515.0,
       "label": "R1 today high",
-      "evidence": "today's high 3698.0"
+      "evidence": "today's high 3515.0"
+    },
+    {
+      "level": 3698.0,
+      "label": "R3 Oct high",
+      "evidence": "box top 3698.0, base period high"
     }
   ],
   "position": {
-    "current": 3628.0,
-    "in_box_pct": 93.3,
-    "nearest_support": "S1 KEY (3008.0)",
-    "nearest_resistance": "R1 today high (3698.0)"
+    "current": 3353.0,
+    "in_box_pct": 67.0,
+    "nearest_support": "S1 KEY (3000.0)",
+    "nearest_resistance": "R1 today high (3515.0)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 3505.0,
-    "H": 3698.0,
-    "L": 3441.0,
-    "C": 3628.0,
-    "body_pct": 47.9,
-    "upper_wick_pct": 27.2,
-    "lower_wick_pct": 24.9
+    "close_position": "lower_half",
+    "O": 3460.0,
+    "H": 3515.0,
+    "L": 3353.0,
+    "C": 3353.0,
+    "body_pct": 66.0,
+    "upper_wick_pct": 34.0,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
@@ -98,26 +103,30 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 3008.0 (KEY support)",
-      "then": "still range; watch 3698.0 for next test"
+      "if": "hold 3000.0 (KEY support)",
+      "then": "still range; watch 3515.0 for next test"
     },
     {
-      "if": "break 3008.0 on close",
-      "then": "target 3000.0 → 2996.0 (short-term bearish)"
+      "if": "break 3000.0 on close",
+      "then": "target 2996.0 → 2944.0 (short-term bearish)"
     },
     {
       "if": "break 2651.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 3698.0 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 3515.0 on close",
+      "then": "short-term bullish; next test 3698.0"
+    },
+    {
+      "if": "break 3698.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -139,23 +148,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 3698.0,
-    "target_price": 3211.0,
-    "stop_price": 3908.34,
-    "risk_pct": 5.69,
-    "reward_pct": 13.17,
-    "rr_ratio": 2.32,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 3698.0,
     "s1": 2724.0,
     "s2": 2651.0,
     "r2": 3460.0,
     "r3": 4315.0,
-    "s3": 2167.0,
+    "s3": 2226.0,
     "s4": 1893.0,
-    "current_position_pct": 92.8,
-    "notes": "SELL_R1: in box (2724-3698), entry at R1 3698, target mid 3211, stop 3908 ｜ 52.2 條規則（SELL plan，resistance 3698.00）：① 跌到 3698.00、收市守住喺 3698.00 上面 → 照 BUY 條 plan 做（入場 3698.00，止蝕 3908.34，目標 3211.00）。② 收市跌穿 3698.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 3698.00 上面』。"
+    "current_position_pct": 64.6,
+    "notes": "WAIT_RANGE: in box (2724-3698), pos 65%, no clear setup"
   }
 }

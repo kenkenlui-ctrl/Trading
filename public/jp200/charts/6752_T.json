@@ -3,23 +3,23 @@
   "ticker_user": "6752.T",
   "name": "PANASONIC HOLDINGS CORP",
   "data_source": "yfinance",
-  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-11 → 2026-10-08 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 4717.0,
-    "H": 4809.0,
-    "L": 4655.0,
-    "C": 4769.0,
-    "prev_close": 4710.0,
-    "chg_pct": 1.25
+    "date": "2026-10-08",
+    "O": 4612.0,
+    "H": 4628.0,
+    "L": 4443.0,
+    "C": 4493.0,
+    "prev_close": 4668.0,
+    "chg_pct": -3.75
   },
   "phase": "downtrend_active",
-  "adx": 19.87,
-  "plus_di": 35.27,
-  "minus_di": 14.55,
-  "regime": "range",
+  "adx": 21.1,
+  "plus_di": 30.14,
+  "minus_di": 21.57,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 4982.0 (2026-08-14), trough 4083.0 (2026-09-14), box top 4809.0 (2026-10-06)",
+  "phase_evidence": "Peak 4982.0 (2026-08-14), trough 4083.0 (2026-09-14), box top 4816.0 (2026-10-07)",
   "peak": {
     "date": "2026-08-14",
     "price": 4982.0
@@ -29,19 +29,19 @@
     "price": 4083.0
   },
   "box": {
-    "top": 4809.0,
-    "top_date": "2026-10-06",
+    "top": 4816.0,
+    "top_date": "2026-10-07",
     "bottom": 4083.0,
-    "period": "2026-09-14 to 2026-10-06"
+    "period": "2026-09-14 to 2026-10-08"
   },
-  "drop_from_peak_pct": 4.3,
-  "recovery_from_crash_pct": 16.8,
+  "drop_from_peak_pct": 9.8,
+  "recovery_from_crash_pct": 10.0,
   "supports": [
     {
       "level": 4244.0,
       "label": "S1 KEY",
       "touches": 4,
-      "evidence": "tested 4x in base period; 11.0% below current"
+      "evidence": "tested 4x in base period; 5.5% below current"
     },
     {
       "level": 4100.0,
@@ -52,29 +52,34 @@
   ],
   "resistances": [
     {
-      "level": 4809.0,
+      "level": 4628.0,
       "label": "R1 today high",
-      "evidence": "today's high 4809.0"
+      "evidence": "today's high 4628.0"
+    },
+    {
+      "level": 4816.0,
+      "label": "R3 Oct high",
+      "evidence": "box top 4816.0, base period high"
     }
   ],
   "position": {
-    "current": 4769.0,
-    "in_box_pct": 94.4,
+    "current": 4493.0,
+    "in_box_pct": 54.9,
     "nearest_support": "S1 KEY (4244.0)",
-    "nearest_resistance": "R1 today high (4809.0)"
+    "nearest_resistance": "R1 today high (4628.0)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 4717.0,
-    "H": 4809.0,
-    "L": 4655.0,
-    "C": 4769.0,
-    "body_pct": 33.8,
-    "upper_wick_pct": 26.0,
-    "lower_wick_pct": 40.3
+    "close_position": "lower_half",
+    "O": 4612.0,
+    "H": 4628.0,
+    "L": 4443.0,
+    "C": 4493.0,
+    "body_pct": 64.3,
+    "upper_wick_pct": 8.6,
+    "lower_wick_pct": 27.0
   },
   "bias": {
     "short": {
@@ -86,14 +91,14 @@
       "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 4244.0 (KEY support)",
-      "then": "still range; watch 4809.0 for next test"
+      "then": "still range; watch 4628.0 for next test"
     },
     {
       "if": "break 4244.0 on close",
@@ -104,8 +109,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 4809.0 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 4628.0 on close",
+      "then": "short-term bullish; next test 4816.0"
+    },
+    {
+      "if": "break 4816.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -127,23 +136,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 4809.0,
-    "target_price": 4446.0,
-    "stop_price": 5054.58,
-    "risk_pct": 5.11,
-    "reward_pct": 7.55,
-    "rr_ratio": 1.48,
-    "phase_match": true,
-    "r1": 4809.0,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 4816.0,
     "s1": 4083.0,
     "s2": 3364.0,
     "r2": 4982.0,
     "r3": 4770.0,
     "s3": 2810.0,
-    "s4": 1861.5,
-    "current_position_pct": 94.5,
-    "notes": "SELL_R1: in box (4083-4809), entry at R1 4809, target mid 4446, stop 5055 ｜ 52.2 條規則（SELL plan，resistance 4809.00）：① 跌到 4809.00、收市守住喺 4809.00 上面 → 照 BUY 條 plan 做（入場 4809.00，止蝕 5054.58，目標 4446.00）。② 收市跌穿 4809.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 4809.00 上面』。"
+    "s4": 1940.5,
+    "current_position_pct": 55.9,
+    "notes": "WAIT_RANGE: in box (4083-4816), pos 56%, no clear setup"
   }
 }

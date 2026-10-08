@@ -3,20 +3,20 @@
   "ticker_user": "6841.T",
   "name": "YOKOGAWA ELECTRIC CORP",
   "data_source": "yfinance",
-  "data_range": "2025-12-09 → 2026-10-06 (200 daily bars)",
+  "data_range": "2025-12-11 → 2026-10-08 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-06",
-    "O": 4745.0,
-    "H": 4772.0,
-    "L": 4664.0,
-    "C": 4743.0,
-    "prev_close": 4733.0,
-    "chg_pct": 0.21
+    "date": "2026-10-08",
+    "O": 4624.0,
+    "H": 4648.0,
+    "L": 4557.0,
+    "C": 4565.0,
+    "prev_close": 4667.0,
+    "chg_pct": -2.19
   },
   "phase": "downtrend_active",
-  "adx": 24.09,
-  "plus_di": 19.76,
-  "minus_di": 23.11,
+  "adx": 22.68,
+  "plus_di": 16.89,
+  "minus_di": 25.06,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 6317.0 (2026-02-27), trough 4477.0 (2026-09-11), box top 4792.0 (2026-10-05)",
@@ -32,48 +32,53 @@
     "top": 4792.0,
     "top_date": "2026-10-05",
     "bottom": 4477.0,
-    "period": "2026-09-11 to 2026-10-06"
+    "period": "2026-09-11 to 2026-10-08"
   },
-  "drop_from_peak_pct": 24.9,
-  "recovery_from_crash_pct": 5.9,
+  "drop_from_peak_pct": 27.7,
+  "recovery_from_crash_pct": 2.0,
   "supports": [
     {
-      "level": 4532.0,
+      "level": 4428.0,
       "label": "S1 bottom",
-      "touches": 3,
+      "touches": 0,
       "evidence": "structural bottom, near crash low 4477.0"
     }
   ],
   "resistances": [
     {
-      "level": 4772.0,
+      "level": 4648.0,
       "label": "R1 today high",
-      "evidence": "today's high 4772.0"
+      "evidence": "today's high 4648.0"
+    },
+    {
+      "level": 4792.0,
+      "label": "R3 Oct high",
+      "evidence": "box top 4792.0, base period high"
     }
   ],
   "position": {
-    "current": 4743.0,
-    "in_box_pct": 87.9,
-    "nearest_support": "S1 bottom (4532.0)",
-    "nearest_resistance": "R1 today high (4772.0)"
+    "current": 4565.0,
+    "in_box_pct": 37.6,
+    "nearest_support": "S1 bottom (4428.0)",
+    "nearest_resistance": "R1 today high (4648.0)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 4745.0,
-    "H": 4772.0,
-    "L": 4664.0,
-    "C": 4743.0,
-    "body_pct": 1.9,
-    "upper_wick_pct": 25.0,
-    "lower_wick_pct": 73.1
+    "close_position": "lower_half",
+    "O": 4624.0,
+    "H": 4648.0,
+    "L": 4557.0,
+    "C": 4565.0,
+    "body_pct": 64.8,
+    "upper_wick_pct": 26.4,
+    "lower_wick_pct": 8.8
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (38% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -86,20 +91,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 4532.0 (KEY support)",
-      "then": "still range; watch 4772.0 for next test"
+      "if": "hold 4428.0 (KEY support)",
+      "then": "still range; watch 4648.0 for next test"
     },
     {
-      "if": "break 4532.0 on close",
+      "if": "break 4428.0 on close",
       "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 4532.0 (crash low)",
+      "if": "break 4428.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 4772.0 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 4648.0 on close",
+      "then": "short-term bullish; next test 4792.0"
+    },
+    {
+      "if": "break 4792.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -122,7 +131,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -130,14 +139,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 4807.0,
+    "r1": 4792.0,
     "s1": 4477.0,
     "s2": 4672.0,
     "r2": 6022.0,
     "r3": 5934.0,
     "s3": 4584.0,
     "s4": 4585.0,
-    "current_position_pct": 80.6,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 4807.00）：① 跌到 4807.00、收市守住喺 4807.00 上面 → 照 BUY 條 plan 做（入場 4807.00，止蝕 4946.97，目標 4642.00）。② 收市跌穿 4807.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 4807.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 27.9,
+    "notes": "WAIT_RANGE: in box (4477-4792), pos 28%, no clear setup"
   }
 }
