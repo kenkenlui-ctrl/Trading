@@ -40,9 +40,17 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "scripts" / "v2engine"))
 from core import features  # noqa: E402
+from lot_size import floor_to_lot, lot_for  # noqa: E402
 
 PARAMS = dict(stop_atr=3.0, hold=10, atr_max=0.06, box_max=0.35,
                risk=0.01, max_notional=0.10)
+
+# Capital each market's share counts are sized against when no override is set.
+# US 100,000 is unchanged from the years this ran hardcoded. JP 5,000,000 is
+# Kenneth's stated book (2026-10-08): at 100,000 every one of the 81 JP signals
+# floored to zero lots, which is honest but useless, because the old number was
+# never anyone's actual size — it was a default nobody chose.
+EQUITY_DEFAULT = {"us200": 100_000.0, "jp200": 5_000_000.0, "hk200": 100_000.0}
 
 # 2026-10-05: close-hold requirement, measured on our own bars.
 #
@@ -226,8 +234,37 @@ def plan(market: str, symbol: str, df: pd.DataFrame, equity: float):
     risk_ps = s1 - stop
     if risk_ps <= 0:
         return None, "degenerate risk"
-    shares = PARAMS["risk"] * equity / risk_ps
-    shares = min(shares, PARAMS["max_notional"] * equity / s1)
+    # 2026-10-08 — this used to publish int(min(risk_size, notional_cap)), which
+    # is not an orderable quantity. On JP one 単元 is 100 shares, so the plan
+    # was telling readers to buy "3 shares of 2503", and names whose per-share
+    # risk exceeded the whole budget shipped as 0. Neither can be sent to a
+    # broker. Size is now floored to whole units and the achieved risk is
+    # published next to it, so a position that cannot be sized at this equity
+    # says so instead of printing a fraction.
+    shares_raw = min(PARAMS["risk"] * equity / risk_ps,
+                     PARAMS["max_notional"] * equity / s1)
+    lot, lot_src = lot_for(market, symbol)
+    shares = floor_to_lot(shares_raw, lot)
+    risk_now = shares * risk_ps / equity * 100
+    notional_now = shares * s1 / equity * 100
+    size_note = ""
+    if shares <= 0:
+        # Report the constraint that ACTUALLY binds. Reporting only the risk
+        # leg produced nonsense such as "needs 0.9% equity, above the 1% limit"
+        # for names that were blocked purely by the 10% notional cap — the note
+        # named the wrong limit, which is worse than printing no note.
+        lot_risk_pct = lot * risk_ps / equity * 100
+        lot_notional_pct = lot * s1 / equity * 100
+        binding = []
+        if lot_risk_pct > PARAMS["risk"] * 100:
+            binding.append(f"風險需 {lot_risk_pct:.1f}% 本金（上限 "
+                           f"{PARAMS['risk'] * 100:.0f}%）")
+        if lot_notional_pct > PARAMS["max_notional"] * 100:
+            binding.append(f"名義需 {lot_notional_pct:.1f}% 本金（上限 "
+                           f"{PARAMS['max_notional'] * 100:.0f}%）")
+        size_note = (f"按 1 手（{lot} 股）計，"
+                     + "、".join(binding) + " —— 本日唔落單"
+                     if binding else f"按 1 手（{lot} 股）計 —— 本日唔落單")
     return {
         "market": market,
         "symbol": symbol,
@@ -240,7 +277,12 @@ def plan(market: str, symbol: str, df: pd.DataFrame, equity: float):
         "r1": round(float(f.R1), 2),
         "atr_pct": round(float(f.atr_pct) * 100, 2),
         "ret_5d_pct": round(float(f.ret_5d) * 100, 2),
-        "shares_at_1pct_risk": int(shares),
+        "shares_at_1pct_risk": shares,
+        "lot_size": lot,
+        "lot_size_source": lot_src,
+        "risk_pct_actual": round(risk_now, 2),
+        "notional_pct": round(notional_now, 1),
+        "size_note": size_note,
         "exit_rule": f"buy fill 後第 {PARAMS['hold']} 個交易日收市離場（無固定目標）",
     }, "ok"
 
@@ -268,8 +310,41 @@ def bars_freshness(bars: dict[str, pd.DataFrame]) -> tuple[str, int, int]:
     return d, n, sum(c.values())
 
 
+def equity_basis(market: str) -> float:
+    """Trading capital the share counts for ONE market are sized against.
+
+    The published share count is only meaningful relative to a capital figure.
+    Hardcoding one made every number on the site look like a recommendation for
+    the reader's own account, which it never was. It is now an explicit,
+    per-market input that travels with the payload, so the page can state the
+    basis instead of implying it.
+
+    Per market rather than one global value on purpose. Kenneth sizes US at
+    ~$20k/trade and JP at a multi-million yen book; a single number would mean
+    silently inflating one market's positions to fit the other. Overrides:
+        V2_EQUITY_JP / V2_EQUITY_US / V2_EQUITY_HK, then V2_EQUITY, then the default.
+    """
+    import os
+    mk = market.split("200")[0].upper()
+    for var in (f"V2_EQUITY_{mk}", "V2_EQUITY"):
+        raw = os.environ.get(var, "").strip()
+        if raw:
+            try:
+                v = float(raw)
+            except ValueError:
+                print(f"  !! {var}={raw!r} is not a number — falling back")
+                continue
+            if v > 0:
+                return v
+            print(f"  !! {var}={v} is not positive — falling back")
+    return EQUITY_DEFAULT.get(market, 100_000.0)
+
+
 def main() -> None:
-    equity = 100_000.0
+    equity = equity_basis("us200")
+    for m in ("jp200", "hk200"):
+        if m != "hk200" or INCLUDE_HK:
+            print(f"v2 sizing basis: {m} {equity_basis(m):,.0f} / us200 {equity:,.0f}")
     mkts = [m for m in ("us200", "jp200")] + (["hk200"] if INCLUDE_HK else [])
     out_rows, screen = [], {}
     market_state = {}
@@ -309,7 +384,7 @@ def main() -> None:
             continue
 
         for sym, df in bars.items():
-            p, why = plan(mkt, sym, df, equity)
+            p, why = plan(mkt, sym, df, equity_basis(mkt))
             screen[why] = screen.get(why, 0) + 1
             if p:
                 out_rows.append(p)
@@ -331,7 +406,11 @@ def main() -> None:
             "stock_filter": "T-1 close > 200d MA and 200d MA rising over 20 sessions",
             "market_filter": "index T-1 close > its 200d MA",
             "guard_rails": "ATR% < 6%, 20d box width < 35%",
-            "sizing": "1% equity risk per trade, capped at 10% notional per name",
+            "sizing": ("每單 1% 風險，單名上限 10% 名義；股數按交易所最小交易單位"
+                       "（単元株数）向下取整，未能買到 1 個單位者標示為當日不落單。"
+                       + "；".join(f"{m} 以 {equity_basis(m):,.0f} 本金計算"
+                                  for m in ("us200", "jp200") if m in mkts)),
+            "sizing_equity": {m: equity_basis(m) for m in ("us200", "jp200") if m in mkts},
             "markets": [m for m in ("us200", "jp200") if m in mkts],
         },
         "performance_source": V2_SOURCE,

@@ -51,6 +51,25 @@ def mobile_bottom_nav(active: str = "", en: bool = False) -> str:
     )
 
 
+def _size_cell(r: dict) -> str:
+    """The tradeable order quantity, or an honest "not sizeable today".
+
+    Before 2026-10-08 this column did not exist and the plan shipped only S1
+    and a stop, so the reader had no way to know how many shares the sizing
+    rule actually allowed — and the JSON's number was a fraction of a share
+    on Japan. Now the count is floored to whole trading units, and a name that
+    needs more risk than one unit costs says so in the row rather than
+    printing a number nobody can send to a broker.
+    """
+    sh = int(r.get("shares_at_1pct_risk") or 0)
+    if sh > 0:
+        lot = int(r.get("lot_size") or 1)
+        unit = f"{sh:,} 股" + (f"（{sh // lot} 手）" if lot > 1 else "")
+        return f"{unit}<div style=\"font-size:.68rem;opacity:.6\">風險 {r.get('risk_pct_actual', 0):.2f}%</div>"
+    return ('<span style="opacity:.75">唔落單</span>'
+            f'<div style="font-size:.68rem;opacity:.6">{r.get("size_note", "")}</div>')
+
+
 def render_v2_block(market: str) -> str:
     """Primary v2 limit-buy plan block for a hub page.
 
@@ -135,7 +154,8 @@ def render_v2_block(market: str) -> str:
         f"<td class=\"cell-right mono\">{r['dist_to_entry_pct']:.2f}%</td>"
         f"<td class=\"cell-right mono text-bear\">{r['stop']:.2f}</td>"
         f"<td class=\"cell-right mono\">{r['stop_dist_pct']:.2f}%</td>"
-        f"<td class=\"cell-right mono\">{r['ret_5d_pct']:.2f}%</td></tr>"
+        f"<td class=\"cell-right mono\">{r['ret_5d_pct']:.2f}%</td>"
+        f"<td class=\"cell-right mono\">{_size_cell(r)}</td></tr>"
         for r in rows[:40]
     )
     more = (f'<p style="font-size:0.75rem;opacity:0.6;margin-top:8px">'
@@ -162,7 +182,11 @@ def render_v2_block(market: str) -> str:
       <b>規則：</b>{rule_lines}<br>
       <b>股票篩選：</b>T-1 收市價 &gt; 200 天線且 200 天線 20 日內向上 ·
       <b>大市過濾：</b>指數 T-1 收市價 &gt; 其 200 天線 ·
-      <b>倉位：</b>每單 1% 風險，單名上限 10% 名義
+      <b>倉位：</b>每單 1% 風險，單名上限 10% 名義；股數按交易所最小交易單位
+      （単元株数）向下取整，買唔到 1 個單位嘅標示為當日不落單 ——
+      {rules.get('sizing_equity') and ' · '.join(
+          f'{"US$" if m == "us200" else "¥"}{v:,.0f}'
+          for m, v in rules['sizing_equity'].items()) or ''}
     </div>
     <div style="overflow-x:auto">
     <table style="width:100%;font-size:0.82rem">
@@ -171,6 +195,7 @@ def render_v2_block(market: str) -> str:
         <th style="text-align:right">入場 S1</th><th style="text-align:right">距離</th>
         <th style="text-align:right">止損</th><th style="text-align:right">止損幅度</th>
         <th style="text-align:right">5 日</th>
+        <th style="text-align:right">股數</th>
       </tr></thead>
       <tbody>{trs}</tbody>
     </table>

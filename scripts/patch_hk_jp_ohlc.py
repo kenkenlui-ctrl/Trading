@@ -136,7 +136,16 @@ def patch_one(ticker: str, src_path: Path, market: str, dry: bool = False) -> tu
     # Merge into existing OHLC
     ohlc_dir = OHLC_DIR[market]
     ohlc_dir.mkdir(parents=True, exist_ok=True)
-    ohlc_path = ohlc_dir / f"{safe}_ohlc.json"
+    # 2026-10-08: public filenames follow the project convention (NNN_T), not
+    # the Futu feed's "JP.NNNN" -> "JP_NNNN". The prefixed form wrote a SECOND
+    # parallel file per ticker — 192 of them, every one holding 5 bars from a
+    # truncated 2026-09-24 fetch. bars_from_public() drops anything under 260
+    # bars, so those tickers looked fetched and contributed nothing, and the
+    # directory carried two naming schemes with no overlap to spot the mistake.
+    # `safe` still names the SOURCE-side file below; only the public name is
+    # canonicalised here.
+    pub_name = safe[3:] + "_T" if market == "JP" and safe.startswith("JP_") else safe
+    ohlc_path = ohlc_dir / f"{pub_name}_ohlc.json"
     if ohlc_path.exists():
         try:
             existing = json.load(open(ohlc_path))

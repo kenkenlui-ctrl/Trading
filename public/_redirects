@@ -37,17 +37,54 @@
 /about.html                /                    301
 /about                     /                    301
 /about/                    /                    301
-/en/about.html             /en/                 301
-/en/about                  /en/                 301
-/en/about/                 /en/                 301
 
+# 2026-08-29/30 i18n rules (/en/*.html -> /en/<page>/, /en/ ->
+# /en/index/) were removed 2026-10-08: superseded by the
+# retire_en_pages.py block below, which sends /en/ to the Chinese
+# pages in one hop instead of chaining through /en/ first.
 # 2026-08-29 i18n: /en/ subpath EN pages. CF Pages serves /en/index.html
 # directly; .html stripping needs a target. Only redirect when target differs.
-/en/methodology.html        /en/methodology/    301
-/en/backtest.html           /en/backtest/       301
-/en/insights.html           /en/insights/       301
 # 2026-08-30: /en/ root — map to /en/index/ subpath
-/en/                       /en/index/          301
-/en                        /en/index/          301
-/en/index.html              /en/index/          301
 /disclaimer/             /disclaimer.html    301
+# >>> retire_en_pages.py — /en/ retired 2026-10-08 (frozen v1 snapshot)
+# The English tree is a frozen v1 snapshot: retired strategies,
+# a six-week-old data as-of, and an AI claim already retracted on
+# the Chinese site. Redirect rather than delete so links survive.
+
+/en                          /                    301
+/en/                         /                    301
+/en/about                    /about/              301
+/en/about.html               /about/              301
+/en/about/                   /about/              301
+/en/about/index.html         /about/              301
+/en/backtest                 /backtest.html       301
+/en/backtest.html            /backtest.html       301
+/en/backtest/                /backtest.html       301
+/en/backtest/index.html      /backtest.html       301
+/en/disclaimer               /disclaimer.html     301
+/en/disclaimer.html          /disclaimer.html     301
+/en/disclaimer/              /disclaimer.html     301
+/en/disclaimer/index.html    /disclaimer.html     301
+/en/faq                      /methodology.html    301
+/en/faq.html                 /methodology.html    301
+/en/faq/                     /methodology.html    301
+/en/hk200                    /hk200/              301
+/en/hk200.html               /hk200/              301
+/en/hk200/                   /hk200/              301
+/en/hk200/index.html         /hk200/              301
+/en/index                    /                    301
+/en/index.html               /                    301
+/en/index/                   /                    301
+/en/insights                 /insights.html       301
+/en/insights.html            /insights.html       301
+/en/insights/                /insights.html       301
+/en/insights/index.html      /insights.html       301
+/en/methodology              /methodology.html    301
+/en/methodology.html         /methodology.html    301
+/en/methodology/             /methodology.html    301
+/en/methodology/index.html   /methodology.html    301
+/en/privacy                  /privacy.html        301
+/en/privacy.html             /privacy.html        301
+/en/privacy/                 /privacy.html        301
+/en/privacy/index.html       /privacy.html        301
+# <<< retire_en_pages.py

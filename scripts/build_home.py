@@ -541,16 +541,22 @@ def build_home_page():
   "@context": "https://schema.org",
   "@graph": [
     {{
+      "@type": "Organization",
+      "@id": "https://www.win9you.com/#organization",
+      "name": "Leeks Terminal",
+      "url": "https://www.win9you.com/",
+      "description": "Rule-based trading decision-support publisher. Every published signal is computed deterministically in Python from T-1 daily OHLC bars; no language model produces any number, price level or verdict. Runs the v2 engine over US and Japanese stocks; Hong Kong still serves the older v1 engine and is explicitly not a v2 signal.",
+      "disambiguatingDescription": "Not a broker, not a licensed investment adviser, and not a provider of personalised investment advice. Educational use only.",
+      "knowsAbout": ["US equities", "Japanese equities", "trend-following", "time-series signals"]
+    }},
+    {{
       "@type": "WebSite",
+      "@id": "https://www.win9you.com/#website",
       "name": "Leeks Terminal",
       "url": "https://www.win9you.com/",
       "inLanguage": "zh-Hant-HK",
       "description": "Rule-based trading decision dashboard for US and Japanese stocks. Hong Kong still runs an older engine and is not part of v2. Signals are computed in Python from T-1 daily OHLC. Educational use only, not investment advice. Per-trade results are not evidence of excess return: in the US the same 201 stocks held passively outperformed the strategy over 2016-26. See the methodology page for the measured results and their limits.",
-      "publisher": {{
-        "@type": "Organization",
-        "name": "Leeks Terminal",
-        "url": "https://www.win9you.com/"
-      }}
+      "publisher": {{"@id": "https://www.win9you.com/#organization"}}
     }},
     {{
       "@type": "SoftwareApplication",

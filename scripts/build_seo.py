@@ -157,8 +157,10 @@ def write_llms_txt(hk_count: int, us_count: int) -> Path:
 > Signals always use the previous session's close (T-1), never live intraday data.
 > Educational use only — not investment advice.
 
-Data as of the T-1 session. Market coverage: {hk_count} Hong Kong, {us_count} US,
-{counts.get('jp', 'JP')} Japanese stocks.
+Data as of the T-1 session. v2 engine coverage: {us_count} US and
+{counts.get('jp', 'JP')} Japanese stocks. Hong Kong ({hk_count} stocks) is served by
+the older v1 engine and is NOT covered by v2 — read /hk200/ as a legacy signal set,
+not a v2 one.
 
 ## Key pages
 - [Home]({BASE}/): today's action plan and market regime summary
@@ -182,7 +184,10 @@ Data as of the T-1 session. Market coverage: {hk_count} Hong Kong, {us_count} US
 6. **Stop** — S1 x (1 - 3 x ATR%), fixed at entry and never widened.
 7. **Exit** — no price target; time exit at the close of the 10th session after entry.
 8. **Sizing** — 1% of equity risked per trade, 10% notional per name, max 10
-   concurrent positions.
+   concurrent positions. Share counts are floored to whole trading units
+   (100 shares for Japan); a name that cannot be sized within those limits at
+   the stated capital is published as "no order today", not as a fraction of a
+   share. The capital basis travels with the data in `rules.sizing_equity`.
 
 The four older strategies (SELL_R1, BREAK_LONG, BREAK_SHORT, and the per-stock
 rolling 60/90/197-day win-rate badges) were **switched off in October 2026** after

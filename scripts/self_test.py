@@ -1037,6 +1037,293 @@ def t_candles_have_prices() -> None:
            else f"{len(undisclosed)} presented as a normal chart: {undisclosed[:4]}")
 
 
+def t_v2_sizing_is_tradable() -> None:
+    """A published share count must be an order a broker would accept.
+
+    2026-10-08. plan() sized every position as int(min(1% risk, 10% notional))
+    and shipped that integer as `shares_at_1pct_risk`. On Japan one 単元 is 100
+    shares, so the published plan told readers to buy "3 shares of 2503" — a
+    quantity no broker will take — and names whose per-share risk exceeded the
+    whole budget shipped as 0. The number was never wrong arithmetically; it
+    just described a position that cannot exist.
+
+    Two things have to hold together. The count must be a whole multiple of the
+    tradable unit, and a name that cannot be sized must SAY SO rather than
+    publishing a bare 0, because a silent 0 reads as "not applicable" while a
+    note reads as "we checked and this one is out of reach at this equity".
+    """
+    f = PUBLIC / "v2-signals.json"
+    if not f.exists():
+        record("v2 sizing/published counts are tradable units", False, "v2-signals.json missing")
+        return
+    d = json.loads(f.read_text(encoding="utf-8"))
+    sigs = d.get("signals", [])
+
+    bad_multiple, silent_zero, no_basis = [], [], []
+    for s in sigs:
+        lot = int(s.get("lot_size") or 1)
+        sh = int(s.get("shares_at_1pct_risk") or 0)
+        if sh < 0 or (lot > 1 and sh % lot != 0):
+            bad_multiple.append(f"{s.get('symbol')}={sh}shares/lot{lot}")
+        if sh == 0 and not (s.get("size_note") or "").strip():
+            silent_zero.append(str(s.get("symbol")))
+        if not (s.get("lot_size_source") or "").strip():
+            no_basis.append(str(s.get("symbol")))
+
+    record("v2 sizing/every published count is a whole multiple of the tradable unit",
+           not bad_multiple,
+           f"{len(sigs)} signals, all lot-aligned" if not bad_multiple
+           else f"{len(bad_multiple)} not lot-aligned: {bad_multiple[:5]}")
+    record("v2 sizing/a signal that cannot be sized must say so, not print a bare 0",
+           not silent_zero,
+           f"{sum(1 for s in sigs if int(s.get('shares_at_1pct_risk') or 0) == 0)} "
+           f"unsizeable, all explained" if not silent_zero
+           else f"{len(silent_zero)} publish 0 with no reason: {silent_zero[:5]}")
+
+    # A note that names the wrong constraint is worse than no note. The first
+    # version reported only the risk leg, so names blocked purely by the 10%
+    # notional cap said "needs 0.9% equity, above the 1% limit" — which is
+    # self-contradictory and sends the reader to the wrong limit.
+    self_contradict = []
+    for s in sigs:
+        note = (s.get("size_note") or "")
+        m = re.search(r"需\s*([\d.]+)%\s*本金（上限\s*([\d.]+)%", note)
+        if m and float(m.group(1)) <= float(m.group(2)):
+            self_contradict.append(f"{s.get('symbol')}={note[:48]}")
+    record("v2 sizing/an unsizeable note must not quote a limit it does not breach",
+           not self_contradict,
+           f"{sum(1 for s in sigs if (s.get('size_note') or '').strip())} notes, "
+           f"each naming a real breach" if not self_contradict
+           else f"{len(self_contradict)} self-contradictory: {self_contradict[:3]}")
+    record("v2 sizing/the unit size carries its provenance (measured vs assumed)",
+           not no_basis,
+           "every signal records lot_size_source" if not no_basis
+           else f"{len(no_basis)} missing: {no_basis[:5]}")
+
+    # The unit is only a number relative to a capital figure. If the basis is
+    # not published next to it, every share count on the site impersonates a
+    # recommendation for the reader's own account.
+    basis = (d.get("rules") or {}).get("sizing_equity")
+    markets = {s.get("market") for s in sigs}
+    ok = isinstance(basis, dict) and bool(basis) and all(
+        isinstance(v, (int, float)) and v > 0 for v in basis.values())
+    # Every market that published a count must declare the capital behind it,
+    # otherwise one market is sized against a number nobody can see.
+    covered = markets <= set(basis or {})
+    record("v2 sizing/the capital basis travels with the numbers",
+           ok and covered,
+           f"sizing_equity={basis} covering {sorted(markets)}" if ok and covered
+           else f"sizing_equity={basis} does not cover {sorted(markets - set(basis or {}))}")
+
+
+def t_structured_data_is_present_and_true() -> None:
+    """JSON-LD must exist, parse, and describe what the page actually shows.
+
+    2026-10-08. Three of the four requested schemas were already there; the
+    homepage had WebSite + SoftwareApplication but no standalone Organization
+    node, so the site had no entity for a knowledge graph to attach to. The
+    FAQPage blocks on /methodology and /backtest were complete because both
+    draw from the same Q&A list that renders the visible questions — so the
+    guard below is the thing that KEEPS them honest rather than the thing that
+    fixed them. Schema.org explicitly requires FAQPage questions to match
+    visible content; a hand-maintained copy drifts the first time copy is
+    edited.
+    """
+    def graph_of(path: Path) -> dict:
+        h = path.read_text(encoding="utf-8")
+        blocks = re.findall(r'<script type="application/ld\+json">(.*?)</script>', h, re.S)
+        for b in blocks:
+            try:
+                d = json.loads(b)
+            except Exception:
+                continue
+            if "@graph" in d:
+                return d
+        return {}
+
+    # Both language versions are the same page to a search engine. Checking only
+    # the Chinese one left /en/index/ free to keep a stale graph — which is how
+    # it kept claiming "AI trading decision dashboard" for 200 HK + 200 US
+    # after the Chinese site had dropped AI and moved to US+JP.
+    for label, home in (("homepage", PUBLIC / "index.html"),
+                        ("/en/ homepage", PUBLIC / "en" / "index" / "index.html")):
+        if not home.exists():
+            record(f"seo/{label} declares an Organization entity", True, "absent")
+            continue
+        g = graph_of(home)
+        types = {n.get("@type") for n in g.get("@graph", [])}
+        record(f"seo/{label} declares an Organization entity",
+               "Organization" in types,
+               f"@graph types: {sorted(types)}")
+        ws = next((n for n in g.get("@graph", []) if n.get("@type") == "WebSite"), {})
+        org = next((n for n in g.get("@graph", []) if n.get("@type") == "Organization"), {})
+        linked = (isinstance(ws.get("publisher"), dict)
+                  and bool(org.get("@id"))
+                  and ws["publisher"].get("@id") == org["@id"])
+        record(f"seo/{label} WebSite publishes the same Organization entity",
+               linked,
+               f"publisher={ws.get('publisher')} org @id={org.get('@id')}")
+
+        # A page must not advertise a retired engine or an AI claim the rest of
+        # the site has retracted. This is checked on the machine-readable copy
+        # because that is what an LLM or a crawler is most likely to consume.
+        blob = json.dumps(g, ensure_ascii=False)
+        stale = [w for w in ("10-step price-action", "multi-horizon AI",
+                             "30/60/90/197", "60-day win rate gate", "plan-strategy")
+                 if w.lower() in blob.lower()]
+        record(f"seo/{label} structured data describes v2, not the retired v1 engine",
+               not stale,
+               "no retired-engine claims" if not stale
+               else f"still advertises: {stale}")
+
+    # FAQPage must not out-claim the page. Compare on question text.
+    for page in ("methodology.html", "backtest.html"):
+        p = PUBLIC / page
+        if not p.exists():
+            continue
+        faq = next((n for n in graph_of(p).get("@graph", [])
+                    if n.get("@type") == "FAQPage"), {})
+        ld_q = {q.get("name") for q in faq.get("mainEntity", [])}
+        html = p.read_text(encoding="utf-8")
+        vis_q = {re.sub(r"<[^>]+>", "", m).strip()
+                 for m in re.findall(r"<h3[^>]*>(.*?)</h3>", html, re.S)}
+        # Only questions that read like questions; methodology has section h3s too.
+        vis_q = {q for q in vis_q if q.endswith("？") or q.endswith("?")}
+        # Slice to the FAQ section first. Methodology's section headings are
+        # also <h3> and several end in "？" ("4.6 對照組測試：…？"), so scanning
+        # the whole page reported them as undeclared questions — a guard that
+        # fires on correct output gets ignored, which is worse than no guard.
+        m_faq = re.search(r"常見問題(.*?)(?=<h2|</body>)", html, re.S)
+        if m_faq:
+            vis_q = {re.sub(r"<[^>]+>", "", x).strip()
+                     for x in re.findall(r"<h3[^>]*>(.*?)</h3>", m_faq.group(1), re.S)}
+            vis_q = {q for q in vis_q if q.endswith("？") or q.endswith("?")}
+        stray = ld_q - vis_q          # claims a Q the page does not show
+        missing = vis_q - ld_q        # shows a Q the schema omits
+        record(f"seo/{page} FAQPage claims exactly the questions on the page",
+               not stray and not missing,
+               f"{len(ld_q)} declared, {len(vis_q)} visible, identical"
+               if not stray and not missing
+               else f"{len(stray)} not on page, {len(missing)} not declared: "
+                    f"{sorted(stray | missing)[:2]}")
+
+
+def t_llms_txt_says_which_engine_covers_which_market() -> None:
+    """llms.txt must not imply Hong Kong is a v2 market.
+
+    2026-10-08: it read "Market coverage: 200 Hong Kong, 222 US, 200 Japanese
+    stocks" — a flat list that an LLM reading it would take as one engine over
+    three markets. Hong Kong runs the older v1 engine and is not part of v2;
+    the site says so everywhere else, and llms.txt is the file aimed at exactly
+    the reader most likely to miss the nuance.
+    """
+    f = PUBLIC / "llms.txt"
+    if not f.exists():
+        record("seo/llms.txt marks Hong Kong as outside v2", False, "llms.txt missing")
+        return
+    t = f.read_text(encoding="utf-8")
+    has_split = ("not covered by v2" in t.lower() or "not part of v2" in t.lower()
+                 or "legacy" in t.lower())
+    # The old failure mode: a flat "Market coverage: ... Hong Kong ..." list.
+    flat = re.search(r"Market coverage:[^\n]*Hong Kong", t)
+    record("seo/llms.txt marks Hong Kong as outside v2",
+           has_split and not flat,
+           "v1/v2 split stated" if has_split and not flat
+           else ("still a flat market-coverage list" if flat
+                 else "no statement separating HK from v2"))
+
+
+def t_jp_ohlc_has_one_naming_scheme() -> None:
+    """public/jp200/ohlc must not carry two parallel filenames per ticker.
+
+    2026-10-08: a Futu-format patch script wrote "JP.NNNN" as "JP_NNNN" while
+    the rest of the pipeline writes "NNNN_T", so the directory held 392 files
+    for 200 tickers. The 192 prefixed files each had 5 bars from a truncated
+    fetch and were dropped by bars_from_public()'s 260-bar floor — invisible,
+    because the directory still looked populated and no published page broke.
+    """
+    d = PUBLIC / "jp200" / "ohlc"
+    if not d.exists():
+        record("ohlc/jp200 uses a single filename scheme", True, "dir absent, nothing to check")
+        return
+    files = sorted(p.name for p in d.glob("*_ohlc.json"))
+    pref = [n for n in files if n.startswith("JP_")]
+    dup = [n for n in files if n[3:].startswith("JP_")]   # a prefixed twin exists
+    record("ohlc/jp200 uses a single filename scheme",
+           not pref,
+           f"{len(files)} files, none with a JP_ prefix"
+           if not pref else f"{len(pref)} leftover JP_-prefixed files: {pref[:3]}")
+
+
+def t_en_tree_is_retired() -> None:
+    """/en/ must be out of service, or rebuilt — never silently stale.
+
+    2026-10-08. The English tree was a frozen snapshot of the v1 engine: live
+    at HTTP 200, all seven pages in sitemap.xml, data as-of 2026-08-28, still
+    advertising SELL_R1 / BUY_S1 (switched off in October 2026) and the
+    per-stock 60-day win-rate badge (audited out, rank correlation -0.001 with
+    the next trade). A crawler or an LLM reading the site was therefore being
+    told, in the operator's own voice, that a retired strategy was current.
+
+    Retired in place rather than deleted: noindex on every page (which also
+    drops them from sitemap.xml, since build_sitemap skips noindex), and 301s
+    from every /en/ URL form to its Chinese counterpart.
+    """
+    en = PUBLIC / "en"
+    pages = sorted(en.rglob("*.html")) if en.exists() else []
+    if not pages:
+        record("seo/retired /en/ pages carry noindex", True, "no /en/ tree present")
+        return
+
+    missing = [str(p.relative_to(PUBLIC)) for p in pages
+               if not re.search(r'name=["\']robots["\'][^>]*noindex',
+                                p.read_text(encoding="utf-8")[:4000], re.I)]
+    record("seo/retired /en/ pages carry noindex",
+           not missing,
+           f"{len(pages)} pages all noindex" if not missing
+           else f"{len(missing)} indexable: {missing[:3]}")
+
+    sm = PUBLIC / "sitemap.xml"
+    if sm.exists():
+        n = sm.read_text(encoding="utf-8").count("/en/")
+        record("seo/retired /en/ is out of sitemap.xml",
+               n == 0,
+               "no /en/ URLs listed" if n == 0 else f"{n} /en/ URLs still listed")
+
+    # A 301 that points at another /en/ page is not a retirement, it is a
+    # detour — the old i18n rules chained /en/x.html -> /en/x/ -> target, and
+    # Cloudflare Pages applies the FIRST match, so the chain rule kept winning.
+    rf = PUBLIC / "_redirects"
+    if rf.exists():
+        rules = rf.read_text(encoding="utf-8").splitlines()
+        chains = [ln for ln in rules
+                  if ln.startswith("/en") and re.search(r"^\S+\s+/en\S*\s+301", ln)]
+        record("seo/no /en/ redirect chains back into the retired tree",
+               not chains,
+               "every /en/ rule lands on a Chinese page" if not chains
+               else f"{len(chains)} chain rules: {chains[:2]}")
+
+        # Coverage, not just correctness: removing the legacy rules without
+        # replacing their whole URL space silently 404s the forms you did not
+        # think of. /en/methodology.html returned 404 on the first deployment
+        # for exactly this reason while every other URL looked fine.
+        covered = {ln.split()[0] for ln in rules
+                   if ln.startswith("/en") and " 301" in ln}
+        need = set()
+        for p in pages:
+            rel = "/" + "/".join(p.relative_to(PUBLIC).parts)
+            stem = rel[: -len("index.html")] if rel.endswith("/index.html") else rel
+            base = stem[:-len(".html")] if stem.endswith(".html") else stem
+            base = base.rstrip("/")          # /en/backtest/ -> /en/backtest
+            need |= {base, base + "/", base + ".html"}
+        need |= {"/en", "/en/"}
+        gaps = sorted(need - covered)
+        record("seo/every /en/ URL form has a redirect, not a 404",
+               not gaps,
+               f"{len(covered)} rules cover all {len(need)} reachable forms"
+               if not gaps else f"{len(gaps)} uncovered: {gaps[:5]}")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--json", action="store_true")
@@ -1049,7 +1336,10 @@ def main() -> int:
                t_glitch_mask, t_css_cachebuster, t_no_retired_v1_claims,
                t_candles_have_prices, t_track_record_page, t_vix_study_is_research_only,
                t_no_ai_engine_claim,
-               t_universe_keeps_published_fetchable):
+               t_universe_keeps_published_fetchable, t_v2_sizing_is_tradable,
+               t_structured_data_is_present_and_true,
+               t_llms_txt_says_which_engine_covers_which_market,
+               t_jp_ohlc_has_one_naming_scheme, t_en_tree_is_retired):
         print(f"\n{fn.__doc__.splitlines()[0] if fn.__doc__ else fn.__name__}")
         try:
             fn()
