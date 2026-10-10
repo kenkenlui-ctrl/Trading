@@ -3,73 +3,83 @@
   "ticker_user": "01860.HK",
   "name": "MOBVISTA",
   "data_source": "yfinance",
-  "data_range": "2025-10-06 → 2026-07-31 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-07-31",
-    "O": 10.81,
-    "H": 11.74,
-    "L": 10.5,
-    "C": 11.15,
-    "prev_close": 10.52,
-    "chg_pct": 5.99
+    "date": "2026-10-09",
+    "O": 11.28,
+    "H": 12.07,
+    "L": 11.0,
+    "C": 11.9,
+    "prev_close": 11.24,
+    "chg_pct": 5.87
   },
   "phase": "downtrend_active",
-  "phase_evidence": "Peak 20.64 (2026-01-14), trough 9.65 (2026-07-14), box top 11.74 (2026-07-31)",
+  "adx": 19.59,
+  "plus_di": 18.97,
+  "minus_di": 23.03,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 20.64 (2026-01-14), trough 9.52 (2026-09-03), box top 13.95 (2026-09-30)",
   "peak": {
     "date": "2026-01-14",
     "price": 20.64
   },
   "trough": {
-    "date": "2026-07-14",
-    "price": 9.65
+    "date": "2026-09-03",
+    "price": 9.52
   },
   "box": {
-    "top": 11.74,
-    "top_date": "2026-07-31",
-    "bottom": 9.65,
-    "period": "2026-07-14 to 2026-07-31"
+    "top": 13.95,
+    "top_date": "2026-09-30",
+    "bottom": 9.52,
+    "period": "2026-09-03 to 2026-10-09"
   },
-  "drop_from_peak_pct": 46.0,
-  "recovery_from_crash_pct": 15.5,
+  "drop_from_peak_pct": 42.3,
+  "recovery_from_crash_pct": 25.0,
   "supports": [
     {
       "level": 12.0,
       "label": "S1 KEY",
-      "touches": 34,
-      "evidence": "tested 34x in base period; -7.6% below current"
+      "touches": 21,
+      "evidence": "tested 21x in base period; -0.8% below current"
     },
     {
-      "level": 9.65,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-07-14, structural bottom"
+      "level": 8.0,
+      "label": "S2 bottom",
+      "touches": 13,
+      "evidence": "structural bottom, near crash low 9.52"
     }
   ],
   "resistances": [
     {
-      "level": 11.74,
+      "level": 12.07,
       "label": "R1 today high",
-      "evidence": "today's high 11.739999771118164"
+      "evidence": "today's high 12.069999694824219"
+    },
+    {
+      "level": 13.95,
+      "label": "R3 Sep high",
+      "evidence": "box top 13.95, base period high"
     }
   ],
   "position": {
-    "current": 11.15,
-    "in_box_pct": 71.8,
+    "current": 11.9,
+    "in_box_pct": 65.5,
     "nearest_support": "S1 KEY (12.0)",
-    "nearest_resistance": "R1 today high (11.74)"
+    "nearest_resistance": "R1 today high (12.07)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": true,
     "close_position": "upper_half",
-    "O": 10.81,
-    "H": 11.74,
-    "L": 10.5,
-    "C": 11.15,
-    "body_pct": 27.4,
-    "upper_wick_pct": 47.6,
-    "lower_wick_pct": 25.0
+    "O": 11.28,
+    "H": 12.07,
+    "L": 11.0,
+    "C": 11.9,
+    "body_pct": 57.9,
+    "upper_wick_pct": 15.9,
+    "lower_wick_pct": 26.2
   },
   "bias": {
     "short": {
@@ -88,19 +98,23 @@
   "scenarios": [
     {
       "if": "hold 12.0 (KEY support)",
-      "then": "still range; watch 11.74 for next test"
+      "then": "still range; watch 12.07 for next test"
     },
     {
       "if": "break 12.0 on close",
-      "then": "target 9.65 → lower (short-term bearish)"
+      "then": "target 8.0 → lower (short-term bearish)"
     },
     {
-      "if": "break 9.65 (crash low)",
+      "if": "break 8.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 11.74 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 12.07 on close",
+      "then": "short-term bullish; next test 13.95"
+    },
+    {
+      "if": "break 13.95 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -120,5 +134,25 @@
       "claim": "把歷史高位當短線目標",
       "refute": "路徑依賴，中間有多層供應；分段過關"
     }
-  ]
+  ],
+  "action_plan": {
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 13.95,
+    "s1": 9.55,
+    "s2": 9.52,
+    "r2": 12.11,
+    "r3": 18.82,
+    "s3": 9.65,
+    "s4": 11.27,
+    "current_position_pct": 53.4,
+    "notes": "WAIT_RANGE: in box (10-14), pos 53%, no clear setup"
+  }
 }

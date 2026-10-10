@@ -3,116 +3,112 @@
   "ticker_user": "02888.HK",
   "name": "STANCHART",
   "data_source": "yfinance",
-  "data_range": "2025-10-06 → 2026-07-31 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-07-31",
-    "O": 235.0,
-    "H": 240.0,
-    "L": 234.0,
-    "C": 237.6,
-    "prev_close": 231.0,
-    "chg_pct": 2.86
+    "date": "2026-10-09",
+    "O": 219.6,
+    "H": 221.8,
+    "L": 218.2,
+    "C": 221.0,
+    "prev_close": 218.0,
+    "chg_pct": 1.38
   },
-  "phase": "uptrend",
-  "phase_evidence": "Peak 240.0 (2026-07-31), trough 184.3 (2026-06-10), box top 240.0 (2026-07-31)",
+  "phase": "downtrend_active",
+  "adx": 17.05,
+  "plus_di": 19.2,
+  "minus_di": 38.06,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 248.8 (2026-09-18), trough 216.0 (2026-10-08), box top 248.8 (2026-09-18)",
   "peak": {
-    "date": "2026-07-31",
-    "price": 240.0
+    "date": "2026-09-18",
+    "price": 248.8
   },
   "trough": {
-    "date": "2026-06-10",
-    "price": 184.3
+    "date": "2026-10-08",
+    "price": 216.0
   },
   "box": {
-    "top": 240.0,
-    "top_date": "2026-07-31",
-    "bottom": 184.3,
-    "period": "2026-06-10 to 2026-07-31"
+    "top": 248.8,
+    "top_date": "2026-09-18",
+    "bottom": 216.0,
+    "period": "2026-10-08 to 2026-10-09"
   },
-  "drop_from_peak_pct": 1.0,
-  "recovery_from_crash_pct": 28.9,
+  "drop_from_peak_pct": 11.2,
+  "recovery_from_crash_pct": 2.3,
   "supports": [
     {
-      "level": 224.0,
-      "label": "S1 KEY",
-      "touches": 14,
-      "evidence": "tested 14x in base period; 5.7% below current"
-    },
-    {
-      "level": 220.0,
-      "label": "S2",
-      "touches": 18,
-      "evidence": "mid-base support, tested 18x"
-    },
-    {
       "level": 216.0,
-      "label": "S3",
-      "touches": 8,
-      "evidence": "mid-base support, tested 8x"
-    },
-    {
-      "level": 184.3,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-06-10, structural bottom"
+      "label": "S1 bottom",
+      "touches": 0,
+      "evidence": "structural bottom, near crash low 216.0"
     }
   ],
   "resistances": [
     {
-      "level": 240.0,
+      "level": 221.8,
       "label": "R1 today high",
-      "evidence": "today's high 240.0"
+      "evidence": "today's high 221.8000030517578"
+    },
+    {
+      "level": 248.8,
+      "label": "R3 Sep high",
+      "evidence": "box top 248.8, base period high"
     }
   ],
   "position": {
-    "current": 237.6,
-    "in_box_pct": 95.7,
-    "nearest_support": "S1 KEY (224.0)",
-    "nearest_resistance": "R1 today high (240.0)"
+    "current": 221.0,
+    "in_box_pct": 15.2,
+    "nearest_support": "S1 bottom (216.0)",
+    "nearest_resistance": "R1 today high (221.8)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 235.0,
-    "H": 240.0,
-    "L": 234.0,
-    "C": 237.6,
-    "body_pct": 43.3,
-    "upper_wick_pct": 40.0,
-    "lower_wick_pct": 16.7
+    "O": 219.6,
+    "H": 221.8,
+    "L": 218.2,
+    "C": 221.0,
+    "body_pct": 38.9,
+    "upper_wick_pct": 22.2,
+    "lower_wick_pct": 38.9
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "defensive",
+      "reason": "near box bottom (15% of box)"
     },
     "mid": {
-      "bias": "bullish_continuation",
-      "reason": "higher highs / higher lows"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 224.0 (KEY support)",
-      "then": "still range; watch 240.0 for next test"
+      "if": "hold 216.0 (KEY support)",
+      "then": "still range; watch 221.8 for next test"
     },
     {
-      "if": "break 224.0 on close",
-      "then": "target 220.0 → 216.0 (short-term bearish)"
+      "if": "break 216.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 184.3 (crash low)",
+      "if": "break 216.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 240.0 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 221.8 on close",
+      "then": "short-term bullish; next test 248.8"
+    },
+    {
+      "if": "break 248.8 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -132,5 +128,25 @@
       "claim": "把歷史高位當短線目標",
       "refute": "路徑依賴，中間有多層供應；分段過關"
     }
-  ]
+  ],
+  "action_plan": {
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 248.8,
+    "s1": 216.0,
+    "s2": 217.4,
+    "r2": 244.8,
+    "r3": 231.0,
+    "s3": 182.2,
+    "s4": 154.2,
+    "current_position_pct": 15.2,
+    "notes": "WAIT_RANGE: in box (216-249), pos 15%, no clear setup"
+  }
 }

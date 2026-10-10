@@ -3,18 +3,23 @@
   "ticker_user": "00322.HK",
   "name": "TINGYI",
   "data_source": "yfinance",
-  "data_range": "2025-10-17 → 2026-08-12 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-08-12",
-    "O": 11.78,
-    "H": 12.29,
-    "L": 11.58,
-    "C": 12.29,
-    "prev_close": 11.44,
-    "chg_pct": 7.43
+    "date": "2026-10-09",
+    "O": 12.09,
+    "H": 12.45,
+    "L": 12.0,
+    "C": 12.37,
+    "prev_close": 12.14,
+    "chg_pct": 1.89
   },
   "phase": "base_building",
-  "phase_evidence": "Peak 13.7 (2026-04-08), trough 9.42 (2026-06-25), box top 12.29 (2026-08-12)",
+  "adx": 16.91,
+  "plus_di": 27.19,
+  "minus_di": 12.44,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 13.7 (2026-04-08), trough 9.42 (2026-06-25), box top 14.14 (2026-08-21)",
   "peak": {
     "date": "2026-04-08",
     "price": 13.7
@@ -24,19 +29,19 @@
     "price": 9.42
   },
   "box": {
-    "top": 12.29,
-    "top_date": "2026-08-12",
+    "top": 14.14,
+    "top_date": "2026-08-21",
     "bottom": 9.42,
-    "period": "2026-06-25 to 2026-08-12"
+    "period": "2026-06-25 to 2026-10-09"
   },
-  "drop_from_peak_pct": 10.3,
-  "recovery_from_crash_pct": 30.5,
+  "drop_from_peak_pct": 9.7,
+  "recovery_from_crash_pct": 31.3,
   "supports": [
     {
       "level": 12.0,
       "label": "S1 KEY",
-      "touches": 58,
-      "evidence": "tested 58x in base period; 2.4% below current"
+      "touches": 73,
+      "evidence": "tested 73x in base period; 3.0% below current"
     },
     {
       "level": 9.42,
@@ -47,29 +52,34 @@
   ],
   "resistances": [
     {
-      "level": 12.29,
+      "level": 12.45,
       "label": "R1 today high",
-      "evidence": "today's high 12.289999961853027"
+      "evidence": "today's high 12.449999809265137"
+    },
+    {
+      "level": 14.14,
+      "label": "R3 Aug high",
+      "evidence": "box top 14.14, base period high"
     }
   ],
   "position": {
-    "current": 12.29,
-    "in_box_pct": 100.0,
+    "current": 12.37,
+    "in_box_pct": 62.5,
     "nearest_support": "S1 KEY (12.0)",
-    "nearest_resistance": "R1 today high (12.29)"
+    "nearest_resistance": "R1 today high (12.45)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": true,
     "close_position": "upper_half",
-    "O": 11.78,
-    "H": 12.29,
-    "L": 11.58,
-    "C": 12.29,
-    "body_pct": 71.8,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 28.2
+    "O": 12.09,
+    "H": 12.45,
+    "L": 12.0,
+    "C": 12.37,
+    "body_pct": 62.2,
+    "upper_wick_pct": 17.8,
+    "lower_wick_pct": 20.0
   },
   "bias": {
     "short": {
@@ -81,14 +91,14 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 12.0 (KEY support)",
-      "then": "still range; watch 12.29 for next test"
+      "then": "still range; watch 12.45 for next test"
     },
     {
       "if": "break 12.0 on close",
@@ -99,8 +109,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 12.29 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 12.45 on close",
+      "then": "short-term bullish; next test 14.14"
+    },
+    {
+      "if": "break 14.14 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -120,5 +134,25 @@
       "claim": "把歷史高位當短線目標",
       "refute": "路徑依賴，中間有多層供應；分段過關"
     }
-  ]
+  ],
+  "action_plan": {
+    "verdict": "WAIT",
+    "strategy": "WAIT_RR_TOO_THIN",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 12.45,
+    "s1": 11.25,
+    "s2": 11.08,
+    "r2": 14.14,
+    "r3": 13.2,
+    "s3": 9.42,
+    "s4": 11.4,
+    "current_position_pct": 93.3,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 12.45）：① 跌到 12.45、收市守住喺 12.45 上面 → 照 BUY 條 plan 做（入場 12.45，止蝕 12.96，目標 11.85）。② 收市跌穿 12.45 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 12.45 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+  }
 }

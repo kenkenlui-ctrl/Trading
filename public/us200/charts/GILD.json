@@ -3,20 +3,20 @@
   "ticker_user": "GILD",
   "name": "Gilead Sciences, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
+  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-07",
-    "O": 145.28,
-    "H": 148.6,
-    "L": 144.85,
-    "C": 146.85,
-    "prev_close": 144.23,
-    "chg_pct": 1.82
+    "date": "2026-10-09",
+    "O": 147.23,
+    "H": 151.44,
+    "L": 146.1,
+    "C": 151.17,
+    "prev_close": 147.1,
+    "chg_pct": 2.77
   },
   "phase": "base_building",
-  "adx": 22.67,
-  "plus_di": 22.66,
-  "minus_di": 19.83,
+  "adx": 21.5,
+  "plus_di": 26.72,
+  "minus_di": 16.99,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 157.29 (2026-02-11), trough 121.39 (2026-06-10), box top 154.2 (2026-09-23)",
@@ -32,22 +32,22 @@
     "top": 154.2,
     "top_date": "2026-09-23",
     "bottom": 121.39,
-    "period": "2026-06-10 to 2026-10-07"
+    "period": "2026-06-10 to 2026-10-09"
   },
-  "drop_from_peak_pct": 6.6,
-  "recovery_from_crash_pct": 21.0,
+  "drop_from_peak_pct": 3.9,
+  "recovery_from_crash_pct": 24.5,
   "supports": [
     {
-      "level": 144.0,
+      "level": 148.0,
       "label": "S1 KEY",
-      "touches": 16,
-      "evidence": "tested 16x in base period; 1.9% below current"
+      "touches": 14,
+      "evidence": "tested 14x in base period; 2.1% below current"
     },
     {
-      "level": 136.0,
+      "level": 144.0,
       "label": "S2",
-      "touches": 5,
-      "evidence": "mid-base support, tested 5x"
+      "touches": 31,
+      "evidence": "mid-base support, tested 31x"
     },
     {
       "level": 132.0,
@@ -64,14 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 148.6,
+      "level": 151.44,
       "label": "R1 today high",
-      "evidence": "today's high 148.60000610351562"
-    },
-    {
-      "level": 150.0,
-      "label": "R2",
-      "evidence": "mid-box supply, round number 150"
+      "evidence": "today's high 151.44000244140625"
     },
     {
       "level": 154.2,
@@ -80,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 146.85,
-    "in_box_pct": 77.6,
-    "nearest_support": "S1 KEY (144.0)",
-    "nearest_resistance": "R1 today high (148.6)"
+    "current": 151.17,
+    "in_box_pct": 90.8,
+    "nearest_support": "S1 KEY (148.0)",
+    "nearest_resistance": "R1 today high (151.44)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 145.28,
-    "H": 148.6,
-    "L": 144.85,
-    "C": 146.85,
-    "body_pct": 41.9,
-    "upper_wick_pct": 46.7,
-    "lower_wick_pct": 11.5
+    "O": 147.23,
+    "H": 151.44,
+    "L": 146.1,
+    "C": 151.17,
+    "body_pct": 73.8,
+    "upper_wick_pct": 5.1,
+    "lower_wick_pct": 21.2
   },
   "bias": {
     "short": {
@@ -108,26 +103,26 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 144.0 (KEY support)",
-      "then": "still range; watch 148.6 for next test"
+      "if": "hold 148.0 (KEY support)",
+      "then": "still range; watch 151.44 for next test"
     },
     {
-      "if": "break 144.0 on close",
-      "then": "target 136.0 → 132.0 (short-term bearish)"
+      "if": "break 148.0 on close",
+      "then": "target 144.0 → 132.0 (short-term bearish)"
     },
     {
       "if": "break 121.39 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 148.6 on close",
-      "then": "short-term bullish; next test 150.0"
+      "if": "reclaim 151.44 on close",
+      "then": "short-term bullish; next test 154.2"
     },
     {
       "if": "break 154.2 (box top)",
@@ -154,22 +149,22 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
+    "phase_match": false,
     "r1": 154.2,
     "s1": 142.6,
     "s2": 127.61,
     "r2": 152.55,
-    "r3": 139.76,
+    "r3": 137.7,
     "s3": 121.39,
     "s4": 116.88,
-    "current_position_pct": 36.6,
-    "notes": "WAIT_RANGE: in box (143-154), pos 37%, no clear setup"
+    "current_position_pct": 73.9,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 154.20）：① 跌到 154.20、收市守住喺 154.20 上面 → 照 BUY 條 plan 做（入場 154.20，止蝕 159.60，目標 148.40）。② 收市跌穿 154.20 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 154.20 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }

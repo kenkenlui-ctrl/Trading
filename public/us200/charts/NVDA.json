@@ -3,20 +3,20 @@
   "ticker_user": "NVDA",
   "name": "NVIDIA Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
+  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-07",
-    "O": 237.69,
-    "H": 239.08,
-    "L": 236.38,
-    "C": 237.47,
-    "prev_close": 239.24,
-    "chg_pct": -0.74
+    "date": "2026-10-09",
+    "O": 233.84,
+    "H": 233.92,
+    "L": 229.11,
+    "C": 229.28,
+    "prev_close": 230.48,
+    "chg_pct": -0.52
   },
   "phase": "downtrend_active",
-  "adx": 19.46,
-  "plus_di": 34.96,
-  "minus_di": 18.77,
+  "adx": 18.23,
+  "plus_di": 29.74,
+  "minus_di": 24.52,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 243.37 (2026-10-06), trough 208.93 (2026-09-14), box top 243.37 (2026-10-06)",
@@ -32,41 +32,35 @@
     "top": 243.37,
     "top_date": "2026-10-06",
     "bottom": 208.93,
-    "period": "2026-09-14 to 2026-10-07"
+    "period": "2026-09-14 to 2026-10-09"
   },
-  "drop_from_peak_pct": 2.4,
-  "recovery_from_crash_pct": 13.7,
+  "drop_from_peak_pct": 5.8,
+  "recovery_from_crash_pct": 9.7,
   "supports": [
     {
-      "level": 228.0,
-      "label": "S1 KEY",
-      "touches": 11,
-      "evidence": "tested 11x in base period; 4.0% below current"
-    },
-    {
       "level": 224.0,
-      "label": "S2",
-      "touches": 7,
-      "evidence": "mid-base support, tested 7x"
+      "label": "S1 KEY",
+      "touches": 5,
+      "evidence": "tested 5x in base period; 2.3% below current"
     },
     {
       "level": 220.0,
-      "label": "S3",
-      "touches": 9,
-      "evidence": "mid-base support, tested 9x"
+      "label": "S2",
+      "touches": 8,
+      "evidence": "mid-base support, tested 8x"
     },
     {
-      "level": 208.93,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-09-14, structural bottom"
+      "level": 216.0,
+      "label": "S3 bottom",
+      "touches": 6,
+      "evidence": "structural bottom, near crash low 208.93"
     }
   ],
   "resistances": [
     {
-      "level": 239.08,
+      "level": 233.92,
       "label": "R1 today high",
-      "evidence": "rejection at 239.0800018310547 (long upper wick, close weak)"
+      "evidence": "today's high 233.9199981689453"
     },
     {
       "level": 243.37,
@@ -75,28 +69,28 @@
     }
   ],
   "position": {
-    "current": 237.47,
-    "in_box_pct": 82.9,
-    "nearest_support": "S1 KEY (228.0)",
-    "nearest_resistance": "R1 today high (239.08)"
+    "current": 229.28,
+    "in_box_pct": 48.5,
+    "nearest_support": "S1 KEY (224.0)",
+    "nearest_resistance": "R1 today high (233.92)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 237.69,
-    "H": 239.08,
-    "L": 236.38,
-    "C": 237.47,
-    "body_pct": 8.1,
-    "upper_wick_pct": 51.5,
-    "lower_wick_pct": 40.4
+    "O": 233.84,
+    "H": 233.92,
+    "L": 229.11,
+    "C": 229.28,
+    "body_pct": 94.8,
+    "upper_wick_pct": 1.7,
+    "lower_wick_pct": 3.5
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (48% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -109,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 228.0 (KEY support)",
-      "then": "still range; watch 239.08 for next test"
+      "if": "hold 224.0 (KEY support)",
+      "then": "still range; watch 233.92 for next test"
     },
     {
-      "if": "break 228.0 on close",
-      "then": "target 224.0 → 220.0 (short-term bearish)"
+      "if": "break 224.0 on close",
+      "then": "target 220.0 → 216.0 (short-term bearish)"
     },
     {
-      "if": "break 208.93 (crash low)",
+      "if": "break 216.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 239.08 on close",
+      "if": "reclaim 233.92 on close",
       "then": "short-term bullish; next test 243.37"
     },
     {
@@ -148,15 +142,15 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 243.37,
-    "target_price": 226.15,
-    "stop_price": 251.28,
-    "risk_pct": 3.25,
-    "reward_pct": 7.08,
-    "rr_ratio": 2.18,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 243.37,
     "s1": 208.93,
     "s2": 190.01,
@@ -164,7 +158,7 @@
     "r3": 236.54,
     "s3": 189.8,
     "s4": 164.27,
-    "current_position_pct": 82.9,
-    "notes": "SELL_R1: in box (209-243), entry at R1 243, target mid 226, stop 251 ｜ 52.2 條規則（SELL plan，resistance 243.37）：① 跌到 243.37、收市守住喺 243.37 上面 → 照 BUY 條 plan 做（入場 243.37，止蝕 251.28，目標 226.15）。② 收市跌穿 243.37 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 243.37 上面』。"
+    "current_position_pct": 59.1,
+    "notes": "WAIT_RANGE: in box (209-243), pos 59%, no clear setup"
   }
 }

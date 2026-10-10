@@ -3,20 +3,20 @@
   "ticker_user": "00006.HK",
   "name": "POWER ASSETS",
   "data_source": "yfinance",
-  "data_range": "2025-12-15 → 2026-10-08 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-08",
-    "O": 59.25,
-    "H": 59.35,
+    "date": "2026-10-09",
+    "O": 58.85,
+    "H": 60.65,
     "L": 58.85,
-    "C": 59.3,
+    "C": 60.4,
     "prev_close": 59.3,
-    "chg_pct": 0.0
+    "chg_pct": 1.85
   },
   "phase": "base_building",
-  "adx": 18.02,
-  "plus_di": 9.88,
-  "minus_di": 17.47,
+  "adx": 17.49,
+  "plus_di": 18.58,
+  "minus_di": 15.03,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 67.05 (2026-05-07), trough 54.85 (2026-06-22), box top 62.45 (2026-08-21)",
@@ -32,23 +32,29 @@
     "top": 62.45,
     "top_date": "2026-08-21",
     "bottom": 54.85,
-    "period": "2026-06-22 to 2026-10-08"
+    "period": "2026-06-22 to 2026-10-09"
   },
-  "drop_from_peak_pct": 11.6,
-  "recovery_from_crash_pct": 8.1,
+  "drop_from_peak_pct": 9.9,
+  "recovery_from_crash_pct": 10.1,
   "supports": [
     {
+      "level": 60.0,
+      "label": "S1 KEY",
+      "touches": 32,
+      "evidence": "tested 32x in base period; 0.7% below current"
+    },
+    {
       "level": 56.0,
-      "label": "S1 bottom",
+      "label": "S2 bottom",
       "touches": 27,
       "evidence": "structural bottom, near crash low 54.85"
     }
   ],
   "resistances": [
     {
-      "level": 59.35,
+      "level": 60.65,
       "label": "R1 today high",
-      "evidence": "today's high 59.349998474121094"
+      "evidence": "today's high 60.650001525878906"
     },
     {
       "level": 62.45,
@@ -57,23 +63,23 @@
     }
   ],
   "position": {
-    "current": 59.3,
-    "in_box_pct": 51.2,
-    "nearest_support": "S1 bottom (56.0)",
-    "nearest_resistance": "R1 today high (59.35)"
+    "current": 60.4,
+    "in_box_pct": 68.2,
+    "nearest_support": "S1 KEY (60.0)",
+    "nearest_resistance": "R1 today high (60.65)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 59.25,
-    "H": 59.35,
+    "O": 58.85,
+    "H": 60.65,
     "L": 58.85,
-    "C": 59.3,
-    "body_pct": 10.0,
-    "upper_wick_pct": 10.0,
-    "lower_wick_pct": 80.0
+    "C": 60.4,
+    "body_pct": 86.1,
+    "upper_wick_pct": 13.9,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
@@ -91,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 56.0 (KEY support)",
-      "then": "still range; watch 59.35 for next test"
+      "if": "hold 60.0 (KEY support)",
+      "then": "still range; watch 60.65 for next test"
     },
     {
-      "if": "break 56.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 60.0 on close",
+      "then": "target 56.0 → lower (short-term bearish)"
     },
     {
       "if": "break 56.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 59.35 on close",
+      "if": "reclaim 60.65 on close",
       "then": "short-term bullish; next test 62.45"
     },
     {
@@ -130,14 +136,14 @@
     }
   ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 58.7,
-    "target_price": 60.12,
-    "stop_price": 57.53,
-    "risk_pct": 2.0,
-    "reward_pct": 2.43,
-    "rr_ratio": 1.21,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
     "phase_match": true,
     "r1": 61.55,
     "s1": 58.7,
@@ -146,7 +152,7 @@
     "r3": 67.05,
     "s3": 54.85,
     "s4": 51.75,
-    "current_position_pct": 21.1,
-    "notes": "BUY_S1: in box (59-62), entry at S1 59, target mid 60, stop 58 ｜ 52.2 條規則（BUY plan，support 58.70）：① 跌到 58.70、收市守住喺 58.70 上面 → 照 BUY 條 plan 做（入場 58.70，止蝕 57.53，目標 60.12）。② 收市跌穿 58.70 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 58.70 上面』。"
+    "current_position_pct": 59.6,
+    "notes": "WAIT_RANGE: in box (59-62), pos 60%, no clear setup"
   }
 }

@@ -3,39 +3,44 @@
   "ticker_user": "01918.HK",
   "name": "SUNAC",
   "data_source": "yfinance",
-  "data_range": "2025-10-17 → 2026-08-12 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-08-12",
-    "O": 0.56,
+    "date": "2026-10-09",
+    "O": 0.6,
     "H": 0.62,
-    "L": 0.55,
-    "C": 0.61,
-    "prev_close": 0.56,
-    "chg_pct": 8.93
+    "L": 0.59,
+    "C": 0.62,
+    "prev_close": 0.61,
+    "chg_pct": 3.31
   },
-  "phase": "downtrend_active",
-  "phase_evidence": "Peak 1.54 (2025-11-06), trough 0.51 (2026-07-21), box top 0.63 (2026-08-05)",
+  "phase": "downtrend_recovery",
+  "adx": 32.17,
+  "plus_di": 25.06,
+  "minus_di": 14.58,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 1.36 (2026-01-06), trough 0.51 (2026-07-21), box top 0.81 (2026-08-31)",
   "peak": {
-    "date": "2025-11-06",
-    "price": 1.54
+    "date": "2026-01-06",
+    "price": 1.36
   },
   "trough": {
     "date": "2026-07-21",
     "price": 0.51
   },
   "box": {
-    "top": 0.63,
-    "top_date": "2026-08-05",
+    "top": 0.81,
+    "top_date": "2026-08-31",
     "bottom": 0.51,
-    "period": "2026-07-21 to 2026-08-12"
+    "period": "2026-07-21 to 2026-10-09"
   },
-  "drop_from_peak_pct": 60.4,
-  "recovery_from_crash_pct": 19.6,
+  "drop_from_peak_pct": 54.0,
+  "recovery_from_crash_pct": 22.5,
   "supports": [
     {
       "level": 0.0,
       "label": "S1 bottom",
-      "touches": 44,
+      "touches": 74,
       "evidence": "structural bottom, near crash low 0.51"
     }
   ],
@@ -43,32 +48,32 @@
     {
       "level": 0.62,
       "label": "R1 today high",
-      "evidence": "today's high 0.6150000095367432"
+      "evidence": "today's high 0.625"
     },
     {
-      "level": 0.63,
+      "level": 0.81,
       "label": "R3 Aug high",
-      "evidence": "box top 0.63, base period high"
+      "evidence": "box top 0.81, base period high"
     }
   ],
   "position": {
-    "current": 0.61,
-    "in_box_pct": 96.8,
+    "current": 0.62,
+    "in_box_pct": 77.2,
     "nearest_support": "S1 bottom (0.0)",
-    "nearest_resistance": "R1 today high (0.62)"
+    "nearest_resistance": "R3 Aug high (0.81)"
   },
   "kline_today": {
     "type": "bullish_reclaim",
-    "touched_R1": false,
+    "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 0.56,
+    "O": 0.6,
     "H": 0.62,
-    "L": 0.55,
-    "C": 0.61,
-    "body_pct": 76.9,
-    "upper_wick_pct": 7.7,
-    "lower_wick_pct": 15.4
+    "L": 0.59,
+    "C": 0.62,
+    "body_pct": 71.4,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 28.6
   },
   "bias": {
     "short": {
@@ -76,12 +81,12 @@
       "reason": "reclaim above mid-box"
     },
     "mid": {
-      "bias": "bearish_continuation",
-      "reason": "making new lows"
+      "bias": "neutral",
+      "reason": ""
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
@@ -99,10 +104,10 @@
     },
     {
       "if": "reclaim 0.62 on close",
-      "then": "short-term bullish; next test 0.63"
+      "then": "short-term bullish; next test 0.81"
     },
     {
-      "if": "break 0.63 (box top)",
+      "if": "break 0.81 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -123,5 +128,25 @@
       "claim": "把歷史高位當短線目標",
       "refute": "路徑依賴，中間有多層供應；分段過關"
     }
-  ]
+  ],
+  "action_plan": {
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 0.72,
+    "s1": 0.54,
+    "s2": 0.51,
+    "r2": 0.81,
+    "r3": 1.24,
+    "s3": 0.54,
+    "s4": 0.97,
+    "current_position_pct": 48.6,
+    "notes": "WAIT_RANGE: in box (1-1), pos 49%, no clear setup"
+  }
 }

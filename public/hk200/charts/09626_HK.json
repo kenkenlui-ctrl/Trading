@@ -3,23 +3,23 @@
   "ticker_user": "09626.HK",
   "name": "BILIBILI-W",
   "data_source": "yfinance",
-  "data_range": "2025-12-15 → 2026-10-08 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-08",
-    "O": 117.0,
-    "H": 119.4,
-    "L": 114.9,
-    "C": 115.7,
-    "prev_close": 117.4,
-    "chg_pct": -1.45
+    "date": "2026-10-09",
+    "O": 116.0,
+    "H": 120.5,
+    "L": 115.8,
+    "C": 120.4,
+    "prev_close": 115.7,
+    "chg_pct": 4.06
   },
   "phase": "downtrend_active",
-  "adx": 26.91,
-  "plus_di": 21.73,
-  "minus_di": 25.73,
+  "adx": 25.26,
+  "plus_di": 21.83,
+  "minus_di": 23.6,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 285.6 (2026-01-29), trough 112.2 (2026-10-02), box top 119.4 (2026-10-08)",
+  "phase_evidence": "Peak 285.6 (2026-01-29), trough 112.2 (2026-10-02), box top 120.5 (2026-10-09)",
   "peak": {
     "date": "2026-01-29",
     "price": 285.6
@@ -29,26 +29,32 @@
     "price": 112.2
   },
   "box": {
-    "top": 119.4,
-    "top_date": "2026-10-08",
+    "top": 120.5,
+    "top_date": "2026-10-09",
     "bottom": 112.2,
-    "period": "2026-10-02 to 2026-10-08"
+    "period": "2026-10-02 to 2026-10-09"
   },
-  "drop_from_peak_pct": 59.5,
-  "recovery_from_crash_pct": 3.1,
+  "drop_from_peak_pct": 57.8,
+  "recovery_from_crash_pct": 7.3,
   "supports": [
     {
+      "level": 116.0,
+      "label": "S1 KEY",
+      "touches": 28,
+      "evidence": "tested 28x in base period; 3.7% below current"
+    },
+    {
       "level": 112.0,
-      "label": "S1 bottom",
-      "touches": 8,
+      "label": "S2 bottom",
+      "touches": 10,
       "evidence": "structural bottom, near crash low 112.2"
     }
   ],
   "resistances": [
     {
-      "level": 119.4,
+      "level": 120.5,
       "label": "R1 today high",
-      "evidence": "rejection at 119.4000015258789 (long upper wick, close weak)"
+      "evidence": "today's high 120.5"
     },
     {
       "level": 150.0,
@@ -57,28 +63,28 @@
     }
   ],
   "position": {
-    "current": 115.7,
-    "in_box_pct": 9.7,
-    "nearest_support": "S1 bottom (112.0)",
-    "nearest_resistance": "R1 today high (119.4)"
+    "current": 120.4,
+    "in_box_pct": 22.1,
+    "nearest_support": "S1 KEY (116.0)",
+    "nearest_resistance": "R1 today high (120.5)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 117.0,
-    "H": 119.4,
-    "L": 114.9,
-    "C": 115.7,
-    "body_pct": 28.9,
-    "upper_wick_pct": 53.3,
-    "lower_wick_pct": 17.8
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 116.0,
+    "H": 120.5,
+    "L": 115.8,
+    "C": 120.4,
+    "body_pct": 93.6,
+    "upper_wick_pct": 2.1,
+    "lower_wick_pct": 4.3
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (10% of box)"
+      "bias": "defensive",
+      "reason": "near box bottom (22% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -91,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 112.0 (KEY support)",
-      "then": "still range; watch 119.4 for next test"
+      "if": "hold 116.0 (KEY support)",
+      "then": "still range; watch 120.5 for next test"
     },
     {
-      "if": "break 112.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 116.0 on close",
+      "then": "target 112.0 → lower (short-term bearish)"
     },
     {
       "if": "break 112.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 119.4 on close",
+      "if": "reclaim 120.5 on close",
       "then": "short-term bullish; next test 150.0"
     }
   ],
@@ -127,7 +133,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -139,10 +145,10 @@
     "s1": 112.2,
     "s2": 116.4,
     "r2": 153.8,
-    "r3": 197.3,
+    "r3": 196.8,
     "s3": 123.5,
     "s4": 168.5,
-    "current_position_pct": 26.7,
-    "notes": "WAIT_RANGE: in box (112-125), pos 27%, no clear setup"
+    "current_position_pct": 62.6,
+    "notes": "WAIT_RANGE: in box (112-125), pos 63%, no clear setup"
   }
 }

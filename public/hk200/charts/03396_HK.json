@@ -3,18 +3,23 @@
   "ticker_user": "03396.HK",
   "name": "LEGENDHOLDING",
   "data_source": "yfinance",
-  "data_range": "2025-10-17 → 2026-08-12 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-08-12",
-    "O": 17.12,
-    "H": 17.44,
-    "L": 16.92,
-    "C": 17.31,
-    "prev_close": 17.43,
-    "chg_pct": -0.69
+    "date": "2026-10-09",
+    "O": 22.4,
+    "H": 22.44,
+    "L": 20.5,
+    "C": 21.74,
+    "prev_close": 22.02,
+    "chg_pct": -1.27
   },
-  "phase": "downtrend_active",
-  "phase_evidence": "Peak 18.64 (2026-06-02), trough 11.87 (2026-07-17), box top 18.07 (2026-08-11)",
+  "phase": "uptrend",
+  "adx": 35.72,
+  "plus_di": 18.58,
+  "minus_di": 23.42,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 18.64 (2026-06-02), trough 11.87 (2026-07-17), box top 26.22 (2026-09-28)",
   "peak": {
     "date": "2026-06-02",
     "price": 18.64
@@ -24,57 +29,63 @@
     "price": 11.87
   },
   "box": {
-    "top": 18.07,
-    "top_date": "2026-08-11",
+    "top": 26.22,
+    "top_date": "2026-09-28",
     "bottom": 11.87,
-    "period": "2026-07-17 to 2026-08-12"
+    "period": "2026-07-17 to 2026-10-09"
   },
-  "drop_from_peak_pct": 7.1,
-  "recovery_from_crash_pct": 45.8,
+  "drop_from_peak_pct": -16.6,
+  "recovery_from_crash_pct": 83.2,
   "supports": [
     {
-      "level": 16.0,
+      "level": 20.0,
       "label": "S1 KEY",
-      "touches": 13,
-      "evidence": "tested 13x in base period; 7.6% below current"
+      "touches": 23,
+      "evidence": "tested 23x in base period; 8.0% below current"
+    },
+    {
+      "level": 16.0,
+      "label": "S2",
+      "touches": 28,
+      "evidence": "mid-base support, tested 28x"
     },
     {
       "level": 12.0,
-      "label": "S2 bottom",
-      "touches": 36,
+      "label": "S3 bottom",
+      "touches": 13,
       "evidence": "structural bottom, near crash low 11.87"
     }
   ],
   "resistances": [
     {
-      "level": 17.44,
+      "level": 22.44,
       "label": "R1 today high",
-      "evidence": "today's high 17.440000534057617"
+      "evidence": "today's high 22.440000534057617"
     },
     {
-      "level": 18.07,
-      "label": "R3 Aug high",
-      "evidence": "box top 18.07, base period high"
+      "level": 26.22,
+      "label": "R3 Sep high",
+      "evidence": "box top 26.22, base period high"
     }
   ],
   "position": {
-    "current": 17.31,
-    "in_box_pct": 87.5,
-    "nearest_support": "S1 KEY (16.0)",
-    "nearest_resistance": "R1 today high (17.44)"
+    "current": 21.74,
+    "in_box_pct": 68.5,
+    "nearest_support": "S1 KEY (20.0)",
+    "nearest_resistance": "R1 today high (22.44)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 17.12,
-    "H": 17.44,
-    "L": 16.92,
-    "C": 17.31,
-    "body_pct": 36.5,
-    "upper_wick_pct": 25.0,
-    "lower_wick_pct": 38.5
+    "O": 22.4,
+    "H": 22.44,
+    "L": 20.5,
+    "C": 21.74,
+    "body_pct": 34.0,
+    "upper_wick_pct": 2.1,
+    "lower_wick_pct": 63.9
   },
   "bias": {
     "short": {
@@ -82,8 +93,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bearish_continuation",
-      "reason": "making new lows"
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -92,23 +103,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 16.0 (KEY support)",
-      "then": "still range; watch 17.44 for next test"
+      "if": "hold 20.0 (KEY support)",
+      "then": "still range; watch 22.44 for next test"
     },
     {
-      "if": "break 16.0 on close",
-      "then": "target 12.0 → lower (short-term bearish)"
+      "if": "break 20.0 on close",
+      "then": "target 16.0 → 12.0 (short-term bearish)"
     },
     {
       "if": "break 12.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 17.44 on close",
-      "then": "short-term bullish; next test 18.07"
+      "if": "reclaim 22.44 on close",
+      "then": "short-term bullish; next test 26.22"
     },
     {
-      "if": "break 18.07 (box top)",
+      "if": "break 26.22 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -129,5 +140,25 @@
       "claim": "把歷史高位當短線目標",
       "refute": "路徑依賴，中間有多層供應；分段過關"
     }
-  ]
+  ],
+  "action_plan": {
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 26.22,
+    "s1": 17.88,
+    "s2": 11.87,
+    "r2": 20.6,
+    "r3": 18.64,
+    "s3": 9.14,
+    "s4": 7.76,
+    "current_position_pct": 46.3,
+    "notes": "WAIT_RANGE: in box (18-26), pos 46%, no clear setup"
+  }
 }

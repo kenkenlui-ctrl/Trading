@@ -3,23 +3,23 @@
   "ticker_user": "MO",
   "name": "Altria Group, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
+  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-07",
-    "O": 69.08,
-    "H": 69.62,
-    "L": 68.74,
-    "C": 69.38,
-    "prev_close": 68.55,
-    "chg_pct": 1.21
+    "date": "2026-10-09",
+    "O": 71.43,
+    "H": 71.95,
+    "L": 71.22,
+    "C": 71.68,
+    "prev_close": 71.42,
+    "chg_pct": 0.36
   },
   "phase": "base_building",
-  "adx": 10.08,
-  "plus_di": 23.51,
-  "minus_di": 25.65,
+  "adx": 11.1,
+  "plus_di": 31.09,
+  "minus_di": 21.64,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 77.06 (2026-07-28), trough 63.92 (2026-08-17), box top 71.05 (2026-09-14)",
+  "phase_evidence": "Peak 77.06 (2026-07-28), trough 63.92 (2026-08-17), box top 71.95 (2026-10-09)",
   "peak": {
     "date": "2026-07-28",
     "price": 77.06
@@ -29,57 +29,52 @@
     "price": 63.92
   },
   "box": {
-    "top": 71.05,
-    "top_date": "2026-09-14",
+    "top": 71.95,
+    "top_date": "2026-10-09",
     "bottom": 63.92,
-    "period": "2026-08-17 to 2026-10-07"
+    "period": "2026-08-17 to 2026-10-09"
   },
-  "drop_from_peak_pct": 10.0,
-  "recovery_from_crash_pct": 8.5,
+  "drop_from_peak_pct": 7.0,
+  "recovery_from_crash_pct": 12.1,
   "supports": [
     {
       "level": 68.0,
       "label": "S1 KEY",
-      "touches": 22,
-      "evidence": "tested 22x in base period; 2.0% below current"
+      "touches": 56,
+      "evidence": "tested 56x in base period; 5.1% below current"
     },
     {
-      "level": 64.0,
-      "label": "S2 bottom",
-      "touches": 7,
-      "evidence": "structural bottom, near crash low 63.92"
+      "level": 63.92,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-08-17, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 69.62,
+      "level": 71.95,
       "label": "R1 today high",
-      "evidence": "today's high 69.62000274658203"
-    },
-    {
-      "level": 71.05,
-      "label": "R3 Sep high",
-      "evidence": "box top 71.05, base period high"
+      "evidence": "today's high 71.94999694824219"
     }
   ],
   "position": {
-    "current": 69.38,
-    "in_box_pct": 76.3,
+    "current": 71.68,
+    "in_box_pct": 96.6,
     "nearest_support": "S1 KEY (68.0)",
-    "nearest_resistance": "R1 today high (69.62)"
+    "nearest_resistance": "R1 today high (71.95)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 69.08,
-    "H": 69.62,
-    "L": 68.74,
-    "C": 69.38,
-    "body_pct": 34.1,
-    "upper_wick_pct": 27.3,
-    "lower_wick_pct": 38.6
+    "O": 71.43,
+    "H": 71.95,
+    "L": 71.22,
+    "C": 71.68,
+    "body_pct": 34.2,
+    "upper_wick_pct": 37.0,
+    "lower_wick_pct": 28.8
   },
   "bias": {
     "short": {
@@ -91,30 +86,26 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 68.0 (KEY support)",
-      "then": "still range; watch 69.62 for next test"
+      "then": "still range; watch 71.95 for next test"
     },
     {
       "if": "break 68.0 on close",
-      "then": "target 64.0 → lower (short-term bearish)"
+      "then": "target 63.92 → lower (short-term bearish)"
     },
     {
-      "if": "break 64.0 (crash low)",
+      "if": "break 63.92 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 69.62 on close",
-      "then": "short-term bullish; next test 71.05"
-    },
-    {
-      "if": "break 71.05 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 71.95 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -138,21 +129,21 @@
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
-    "trigger_price": 71.05,
-    "target_price": 68.42,
-    "stop_price": 72.95,
-    "risk_pct": 2.68,
-    "reward_pct": 3.71,
-    "rr_ratio": 1.38,
+    "trigger_price": 71.95,
+    "target_price": 68.86,
+    "stop_price": 73.89,
+    "risk_pct": 2.7,
+    "reward_pct": 4.29,
+    "rr_ratio": 1.59,
     "phase_match": true,
-    "r1": 71.05,
+    "r1": 71.95,
     "s1": 65.78,
     "s2": 63.92,
     "r2": 77.06,
     "r3": 74.56,
-    "s3": 64.08,
+    "s3": 64.12,
     "s4": 54.7,
-    "current_position_pct": 68.3,
-    "notes": "SELL_R1: in box (66-71), entry at R1 71, target mid 68, stop 73 ｜ 52.2 條規則（SELL plan，resistance 71.05）：① 跌到 71.05、收市守住喺 71.05 上面 → 照 BUY 條 plan 做（入場 71.05，止蝕 72.95，目標 68.42）。② 收市跌穿 71.05 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 71.05 上面』。"
+    "current_position_pct": 95.6,
+    "notes": "SELL_R1: in box (66-72), entry at R1 72, target mid 69, stop 74 ｜ 52.2 條規則（SELL plan，resistance 71.95）：① 跌到 71.95、收市守住喺 71.95 上面 → 照 BUY 條 plan 做（入場 71.95，止蝕 73.89，目標 68.86）。② 收市跌穿 71.95 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 71.95 上面』。"
   }
 }

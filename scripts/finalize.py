@@ -41,6 +41,12 @@ def main() -> int:
               f"(market pages use their own date, cross-market → {site_label()})")
         total += len(restamped)
 
+    stale_marked = bs.stamp_stale_ticker_banners()
+    if stale_marked:
+        print(f"✅ stale-data banner added to {len(stale_marked)} ticker page(s) "
+              f"that are no longer rebuilt: {', '.join(stale_marked[:5])}")
+        total += len(stale_marked)
+
     duped = bs.collapse_duplicate_nav_links()
     if duped:
         print(f"🧭 Collapsed a repeated nav link on {len(duped)} page(s)")

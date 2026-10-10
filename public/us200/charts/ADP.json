@@ -3,23 +3,23 @@
   "ticker_user": "ADP",
   "name": "Automatic Data Processing, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
+  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-07",
-    "O": 263.5,
-    "H": 266.15,
-    "L": 262.16,
-    "C": 264.0,
-    "prev_close": 262.36,
-    "chg_pct": 0.63
+    "date": "2026-10-09",
+    "O": 271.1,
+    "H": 273.02,
+    "L": 270.11,
+    "C": 270.88,
+    "prev_close": 270.73,
+    "chg_pct": 0.06
   },
   "phase": "downtrend_active",
-  "adx": 18.06,
-  "plus_di": 20.52,
-  "minus_di": 22.78,
+  "adx": 17.25,
+  "plus_di": 25.97,
+  "minus_di": 19.71,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 288.0 (2026-09-01), trough 255.96 (2026-10-05), box top 288.0 (2026-09-01)",
+  "phase_evidence": "Peak 288.0 (2026-09-01), trough 255.96 (2026-10-05), box top 273.02 (2026-10-09)",
   "peak": {
     "date": "2026-09-01",
     "price": 288.0
@@ -29,63 +29,58 @@
     "price": 255.96
   },
   "box": {
-    "top": 288.0,
-    "top_date": "2026-09-01",
+    "top": 273.02,
+    "top_date": "2026-10-09",
     "bottom": 255.96,
-    "period": "2026-10-05 to 2026-10-07"
+    "period": "2026-10-05 to 2026-10-09"
   },
-  "drop_from_peak_pct": 8.3,
-  "recovery_from_crash_pct": 3.1,
+  "drop_from_peak_pct": 5.9,
+  "recovery_from_crash_pct": 5.8,
   "supports": [
     {
-      "level": 260.0,
+      "level": 264.0,
       "label": "S1 KEY",
-      "touches": 3,
-      "evidence": "tested 3x in base period; 1.5% below current"
+      "touches": 13,
+      "evidence": "tested 13x in base period; 2.5% below current"
+    },
+    {
+      "level": 260.0,
+      "label": "S2",
+      "touches": 15,
+      "evidence": "mid-base support, tested 15x"
     },
     {
       "level": 256.0,
-      "label": "S2",
-      "touches": 7,
-      "evidence": "mid-base support, tested 7x"
-    },
-    {
-      "level": 252.0,
       "label": "S3 bottom",
-      "touches": 4,
+      "touches": 7,
       "evidence": "structural bottom, near crash low 255.96"
     }
   ],
   "resistances": [
     {
-      "level": 266.15,
+      "level": 273.02,
       "label": "R1 today high",
-      "evidence": "today's high 266.1499938964844"
-    },
-    {
-      "level": 288.0,
-      "label": "R3 Sep high",
-      "evidence": "box top 288.0, base period high"
+      "evidence": "rejection at 273.0199890136719 (long upper wick, close weak)"
     }
   ],
   "position": {
-    "current": 264.0,
-    "in_box_pct": 33.3,
-    "nearest_support": "S1 KEY (260.0)",
-    "nearest_resistance": "R1 today high (266.15)"
+    "current": 270.88,
+    "in_box_pct": 87.4,
+    "nearest_support": "S1 KEY (264.0)",
+    "nearest_resistance": "R1 today high (273.02)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 263.5,
-    "H": 266.15,
-    "L": 262.16,
-    "C": 264.0,
-    "body_pct": 12.5,
-    "upper_wick_pct": 53.9,
-    "lower_wick_pct": 33.6
+    "O": 271.1,
+    "H": 273.02,
+    "L": 270.11,
+    "C": 270.88,
+    "body_pct": 7.6,
+    "upper_wick_pct": 66.0,
+    "lower_wick_pct": 26.5
   },
   "bias": {
     "short": {
@@ -103,24 +98,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 260.0 (KEY support)",
-      "then": "still range; watch 266.15 for next test"
+      "if": "hold 264.0 (KEY support)",
+      "then": "still range; watch 273.02 for next test"
     },
     {
-      "if": "break 260.0 on close",
-      "then": "target 256.0 → 252.0 (short-term bearish)"
+      "if": "break 264.0 on close",
+      "then": "target 260.0 → 256.0 (short-term bearish)"
     },
     {
-      "if": "break 252.0 (crash low)",
+      "if": "break 256.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 266.15 on close",
-      "then": "short-term bullish; next test 288.0"
-    },
-    {
-      "if": "break 288.0 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 273.02 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -142,23 +133,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 278.52,
+    "target_price": 267.24,
+    "stop_price": 287.52,
+    "risk_pct": 3.23,
+    "reward_pct": 4.05,
+    "rr_ratio": 1.25,
+    "phase_match": true,
     "r1": 278.52,
     "s1": 255.96,
     "s2": 240.4,
     "r2": 288.0,
-    "r3": 251.64,
+    "r3": 257.36,
     "s3": 194.9,
     "s4": 188.16,
-    "current_position_pct": 35.6,
-    "notes": "WAIT_RANGE: in box (256-279), pos 36%, no clear setup"
+    "current_position_pct": 66.1,
+    "notes": "SELL_R1: in box (256-279), entry at R1 279, target mid 267, stop 288 ｜ 52.2 條規則（SELL plan，resistance 278.52）：① 跌到 278.52、收市守住喺 278.52 上面 → 照 BUY 條 plan 做（入場 278.52，止蝕 287.52，目標 267.24）。② 收市跌穿 278.52 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 278.52 上面』。"
   }
 }

@@ -3,84 +3,89 @@
   "ticker_user": "02359.HK",
   "name": "WUXI APPTEC",
   "data_source": "yfinance",
-  "data_range": "2025-12-15 → 2026-10-08 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-08",
-    "O": 217.6,
-    "H": 219.2,
-    "L": 209.0,
-    "C": 209.0,
-    "prev_close": 218.4,
-    "chg_pct": -4.3
+    "date": "2026-10-09",
+    "O": 210.8,
+    "H": 211.8,
+    "L": 198.5,
+    "C": 208.0,
+    "prev_close": 209.0,
+    "chg_pct": -0.48
   },
   "phase": "downtrend_active",
-  "adx": 38.75,
-  "plus_di": 22.87,
-  "minus_di": 10.85,
+  "adx": 36.16,
+  "plus_di": 20.1,
+  "minus_di": 19.11,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 219.2 (2026-10-07), trough 203.2 (2026-09-29), box top 219.2 (2026-10-07)",
+  "phase_evidence": "Peak 219.2 (2026-10-07), trough 186.0 (2026-09-14), box top 219.2 (2026-10-07)",
   "peak": {
     "date": "2026-10-07",
     "price": 219.2
   },
   "trough": {
-    "date": "2026-09-29",
-    "price": 203.2
+    "date": "2026-09-14",
+    "price": 186.0
   },
   "box": {
     "top": 219.2,
     "top_date": "2026-10-07",
-    "bottom": 203.2,
-    "period": "2026-09-29 to 2026-10-08"
+    "bottom": 186.0,
+    "period": "2026-09-14 to 2026-10-09"
   },
-  "drop_from_peak_pct": 4.7,
-  "recovery_from_crash_pct": 2.9,
+  "drop_from_peak_pct": 5.1,
+  "recovery_from_crash_pct": 11.8,
   "supports": [
     {
-      "level": 204.0,
-      "label": "S1 KEY",
-      "touches": 10,
-      "evidence": "tested 10x in base period; 2.4% below current"
-    },
-    {
       "level": 200.0,
-      "label": "S2",
-      "touches": 7,
-      "evidence": "mid-base support, tested 7x"
+      "label": "S1 KEY",
+      "touches": 6,
+      "evidence": "tested 6x in base period; 3.8% below current"
     },
     {
       "level": 196.0,
+      "label": "S2",
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
+    },
+    {
+      "level": 192.0,
       "label": "S3 bottom",
-      "touches": 14,
-      "evidence": "structural bottom, near crash low 203.2"
+      "touches": 8,
+      "evidence": "structural bottom, near crash low 186.0"
     }
   ],
   "resistances": [
     {
-      "level": 219.2,
+      "level": 211.8,
       "label": "R1 today high",
-      "evidence": "today's high 219.1999969482422"
+      "evidence": "today's high 211.8000030517578"
+    },
+    {
+      "level": 219.2,
+      "label": "R3 Oct high",
+      "evidence": "box top 219.2, base period high"
     }
   ],
   "position": {
-    "current": 209.0,
-    "in_box_pct": 56.0,
-    "nearest_support": "S1 KEY (204.0)",
-    "nearest_resistance": "R1 today high (219.2)"
+    "current": 208.0,
+    "in_box_pct": 58.8,
+    "nearest_support": "S1 KEY (200.0)",
+    "nearest_resistance": "R1 today high (211.8)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 217.6,
-    "H": 219.2,
-    "L": 209.0,
-    "C": 209.0,
-    "body_pct": 84.3,
-    "upper_wick_pct": 15.7,
-    "lower_wick_pct": 0.0
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 210.8,
+    "H": 211.8,
+    "L": 198.5,
+    "C": 208.0,
+    "body_pct": 21.1,
+    "upper_wick_pct": 7.5,
+    "lower_wick_pct": 71.4
   },
   "bias": {
     "short": {
@@ -98,20 +103,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 204.0 (KEY support)",
-      "then": "still range; watch 219.2 for next test"
+      "if": "hold 200.0 (KEY support)",
+      "then": "still range; watch 211.8 for next test"
     },
     {
-      "if": "break 204.0 on close",
-      "then": "target 200.0 → 196.0 (short-term bearish)"
+      "if": "break 200.0 on close",
+      "then": "target 196.0 → 192.0 (short-term bearish)"
     },
     {
-      "if": "break 196.0 (crash low)",
+      "if": "break 192.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 219.2 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 211.8 on close",
+      "then": "short-term bullish; next test 219.2"
+    },
+    {
+      "if": "break 219.2 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -149,7 +158,7 @@
     "r3": 167.6,
     "s3": 111.2,
     "s4": 98.55,
-    "current_position_pct": 69.3,
-    "notes": "WAIT_RANGE: in box (186-219), pos 69%, no clear setup"
+    "current_position_pct": 66.3,
+    "notes": "WAIT_RANGE: in box (186-219), pos 66%, no clear setup"
   }
 }

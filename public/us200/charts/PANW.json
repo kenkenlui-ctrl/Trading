@@ -3,20 +3,20 @@
   "ticker_user": "PANW",
   "name": "Palo Alto Networks, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
+  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-07",
-    "O": 413.41,
-    "H": 416.6,
-    "L": 404.63,
-    "C": 405.57,
-    "prev_close": 419.91,
-    "chg_pct": -3.42
+    "date": "2026-10-09",
+    "O": 404.39,
+    "H": 419.5,
+    "L": 401.89,
+    "C": 418.78,
+    "prev_close": 398.5,
+    "chg_pct": 5.09
   },
-  "phase": "downtrend_active",
-  "adx": 18.39,
-  "plus_di": 31.77,
-  "minus_di": 17.57,
+  "phase": "uptrend",
+  "adx": 18.88,
+  "plus_di": 30.2,
+  "minus_di": 18.35,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 432.33 (2026-10-06), trough 321.39 (2026-09-02), box top 432.33 (2026-10-06)",
@@ -32,28 +32,28 @@
     "top": 432.33,
     "top_date": "2026-10-06",
     "bottom": 321.39,
-    "period": "2026-09-02 to 2026-10-07"
+    "period": "2026-09-02 to 2026-10-09"
   },
-  "drop_from_peak_pct": 6.2,
-  "recovery_from_crash_pct": 26.2,
+  "drop_from_peak_pct": 3.1,
+  "recovery_from_crash_pct": 30.3,
   "supports": [
     {
-      "level": 388.0,
+      "level": 400.0,
       "label": "S1 KEY",
       "touches": 6,
-      "evidence": "tested 6x in base period; 4.3% below current"
+      "evidence": "tested 6x in base period; 4.5% below current"
+    },
+    {
+      "level": 388.0,
+      "label": "S2",
+      "touches": 6,
+      "evidence": "mid-base support, tested 6x"
     },
     {
       "level": 376.0,
-      "label": "S2",
+      "label": "S3",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
-    },
-    {
-      "level": 368.0,
-      "label": "S3",
-      "touches": 7,
-      "evidence": "mid-base support, tested 7x"
     },
     {
       "level": 321.39,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 416.6,
+      "level": 419.5,
       "label": "R1 today high",
-      "evidence": "today's high 416.6000061035156"
+      "evidence": "today's high 419.5"
     },
     {
       "level": 432.33,
@@ -75,32 +75,32 @@
     }
   ],
   "position": {
-    "current": 405.57,
-    "in_box_pct": 75.9,
-    "nearest_support": "S1 KEY (388.0)",
-    "nearest_resistance": "R1 today high (416.6)"
+    "current": 418.78,
+    "in_box_pct": 87.8,
+    "nearest_support": "S1 KEY (400.0)",
+    "nearest_resistance": "R1 today high (419.5)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 413.41,
-    "H": 416.6,
-    "L": 404.63,
-    "C": 405.57,
-    "body_pct": 65.5,
-    "upper_wick_pct": 26.6,
-    "lower_wick_pct": 7.9
+    "close_position": "upper_half",
+    "O": 404.39,
+    "H": 419.5,
+    "L": 401.89,
+    "C": 418.78,
+    "body_pct": 81.7,
+    "upper_wick_pct": 4.1,
+    "lower_wick_pct": 14.2
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
-      "bias": "bearish_continuation",
-      "reason": "making new lows"
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -109,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 388.0 (KEY support)",
-      "then": "still range; watch 416.6 for next test"
+      "if": "hold 400.0 (KEY support)",
+      "then": "still range; watch 419.5 for next test"
     },
     {
-      "if": "break 388.0 on close",
-      "then": "target 376.0 → 368.0 (short-term bearish)"
+      "if": "break 400.0 on close",
+      "then": "target 388.0 → 376.0 (short-term bearish)"
     },
     {
       "if": "break 321.39 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 416.6 on close",
+      "if": "reclaim 419.5 on close",
       "then": "short-term bullish; next test 432.33"
     },
     {
@@ -148,23 +148,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 432.33,
-    "target_price": 379.69,
-    "stop_price": 458.31,
-    "risk_pct": 6.01,
-    "reward_pct": 12.18,
-    "rr_ratio": 2.03,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 432.33,
-    "s1": 327.05,
+    "s1": 340.25,
     "s2": 308.54,
     "r2": 398.88,
     "r3": 368.17,
-    "s3": 165.2,
+    "s3": 169.59,
     "s4": 139.57,
-    "current_position_pct": 74.6,
-    "notes": "SELL_R1: in box (327-432), entry at R1 432, target mid 380, stop 458 ｜ 52.2 條規則（SELL plan，resistance 432.33）：① 跌到 432.33、收市守住喺 432.33 上面 → 照 BUY 條 plan 做（入場 432.33，止蝕 458.31，目標 379.69）。② 收市跌穿 432.33 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 432.33 上面』。"
+    "current_position_pct": 85.3,
+    "notes": "WAIT_RANGE: in box (340-432), pos 85%, no clear setup"
   }
 }

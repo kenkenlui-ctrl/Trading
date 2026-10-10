@@ -837,8 +837,16 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
     # upstream source recovers — AVB and BRK-B both died because the data
     # vendor changed, which is not something a list would predict.
     _own_bar = ""
+    # 2026-10-10: this read JP_OUT (charts/jp200), which holds PNGs and OHLC but
+    # NOT the snapshot JSON — fetch_jp_charts.py writes those to data/jp200.
+    # So _own_bar was always "" for every JP name, the banner below could never
+    # fire, and a JP page whose bars were a session behind still advertised the
+    # current market T-1. Seven out-of-universe names were caught showing
+    # "T-1 · 2026-10-09" over 2026-10-08 data. Read the directory the snapshots
+    # are actually written to, per market.
+    _SNAP_DIR = {"HK": HK_OUT, "US": US_OUT, "JP": REPO / "data" / "jp200"}
     try:
-        _src = (HK_OUT if market == "HK" else (US_OUT if market == "US" else JP_OUT)) / f"{safe}.json"
+        _src = _SNAP_DIR[market] / f"{safe}.json"
         _own_bar = (json.load(open(_src)).get("last_bar") or {}).get("date", "")
     except Exception:
         _own_bar = ""

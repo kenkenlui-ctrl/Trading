@@ -3,88 +3,93 @@
   "ticker_user": "01398.HK",
   "name": "ICBC",
   "data_source": "yfinance",
-  "data_range": "2025-12-15 → 2026-10-08 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-08",
-    "O": 7.56,
-    "H": 7.69,
-    "L": 7.54,
-    "C": 7.57,
-    "prev_close": 7.58,
-    "chg_pct": -0.2
+    "date": "2026-10-09",
+    "O": 7.53,
+    "H": 7.57,
+    "L": 7.45,
+    "C": 7.5,
+    "prev_close": 7.57,
+    "chg_pct": -0.86
   },
   "phase": "downtrend_active",
-  "adx": 17.65,
-  "plus_di": 22.56,
-  "minus_di": 13.53,
+  "adx": 17.25,
+  "plus_di": 21.31,
+  "minus_di": 16.72,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 7.77 (2026-09-28), trough 7.34 (2026-08-27), box top 7.77 (2026-09-28)",
+  "phase_evidence": "Peak 7.77 (2026-09-28), trough 7.41 (2026-10-05), box top 7.69 (2026-10-08)",
   "peak": {
     "date": "2026-09-28",
     "price": 7.77
   },
   "trough": {
-    "date": "2026-08-27",
-    "price": 7.34
+    "date": "2026-10-05",
+    "price": 7.41
   },
   "box": {
-    "top": 7.77,
-    "top_date": "2026-09-28",
-    "bottom": 7.34,
-    "period": "2026-08-27 to 2026-10-08"
+    "top": 7.69,
+    "top_date": "2026-10-08",
+    "bottom": 7.41,
+    "period": "2026-10-05 to 2026-10-09"
   },
-  "drop_from_peak_pct": 2.6,
-  "recovery_from_crash_pct": 3.0,
+  "drop_from_peak_pct": 3.5,
+  "recovery_from_crash_pct": 1.3,
   "supports": [
     {
       "level": 8.0,
       "label": "S1 KEY",
-      "touches": 10,
-      "evidence": "tested 10x in base period; -5.8% below current"
+      "touches": 25,
+      "evidence": "tested 25x in base period; -6.7% below current"
     },
     {
-      "level": 7.34,
+      "level": 7.41,
       "label": "S4 crash low",
       "touches": 1,
-      "evidence": "crash low 2026-08-27, structural bottom"
+      "evidence": "crash low 2026-10-05, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 7.69,
+      "level": 7.57,
       "label": "R1 today high",
-      "evidence": "today's high 7.690000057220459"
+      "evidence": "today's high 7.574999809265137"
     },
     {
-      "level": 7.77,
-      "label": "R3 Sep high",
-      "evidence": "box top 7.77, base period high"
+      "level": 7.69,
+      "label": "R3 Oct high",
+      "evidence": "box top 7.69, base period high"
+    },
+    {
+      "level": 10.0,
+      "label": "R5",
+      "evidence": "pre-crash supply, top before breakdown"
     }
   ],
   "position": {
-    "current": 7.57,
-    "in_box_pct": 52.3,
+    "current": 7.5,
+    "in_box_pct": 32.1,
     "nearest_support": "S1 KEY (8.0)",
-    "nearest_resistance": "R1 today high (7.69)"
+    "nearest_resistance": "R1 today high (7.57)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": true,
     "close_position": "lower_half",
-    "O": 7.56,
-    "H": 7.69,
-    "L": 7.54,
-    "C": 7.57,
-    "body_pct": 3.3,
-    "upper_wick_pct": 83.3,
-    "lower_wick_pct": 13.3
+    "O": 7.53,
+    "H": 7.57,
+    "L": 7.45,
+    "C": 7.5,
+    "body_pct": 20.8,
+    "upper_wick_pct": 41.7,
+    "lower_wick_pct": 37.5
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (32% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -98,22 +103,22 @@
   "scenarios": [
     {
       "if": "hold 8.0 (KEY support)",
-      "then": "still range; watch 7.69 for next test"
+      "then": "still range; watch 7.57 for next test"
     },
     {
       "if": "break 8.0 on close",
-      "then": "target 7.34 → lower (short-term bearish)"
+      "then": "target 7.41 → lower (short-term bearish)"
     },
     {
-      "if": "break 7.34 (crash low)",
+      "if": "break 7.41 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 7.69 on close",
-      "then": "short-term bullish; next test 7.77"
+      "if": "reclaim 7.57 on close",
+      "then": "short-term bullish; next test 7.69"
     },
     {
-      "if": "break 7.77 (box top)",
+      "if": "break 7.69 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -152,7 +157,7 @@
     "r3": 7.32,
     "s3": 6.29,
     "s4": 5.96,
-    "current_position_pct": 46.1,
-    "notes": "WAIT_RANGE: in box (7-8), pos 46%, no clear setup"
+    "current_position_pct": 28.9,
+    "notes": "WAIT_RANGE: in box (7-8), pos 29%, no clear setup"
   }
 }

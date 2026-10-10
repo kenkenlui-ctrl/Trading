@@ -1080,6 +1080,82 @@ def _CSS_VERSION() -> str:
         import datetime
         return datetime.date.today().isoformat()
 
+def stamp_stale_ticker_banners() -> list[str]:
+    """Mark any ticker page whose own bars are older than its market's T-1.
+
+    2026-10-10. build_dashboard stamps this banner while it BUILDS a page, so
+    it only ever covered tickers still in the universe. Seven JP names were
+    swapped out by the 2026-10-08 universe regen: their pages stopped being
+    rebuilt, but restamp_t1_badges() kept re-stamping their nav with the
+    market's current T-1. Result — seven live pages headed "T-1 · 2026-10-09"
+    over 2026-10-08 data. Not a stale-data problem; a false-date problem.
+
+    This runs as a post-pass over public/** so it covers pages nothing rebuilds,
+    which is the only place a dropped-from-universe page is ever touched again.
+    """
+    import json as _json
+    from datetime import date as _date
+
+    changed: list[str] = []
+    mkt_t1: dict[str, str] = {}
+    # Where each market's own snapshots live — NOT charts/jp200, which has PNGs
+    # and OHLC but no snapshot JSON (the reason JP never self-declared at all).
+    snap_dir = {
+        "hk200": PROJECT_ROOT / "charts" / "hk200",
+        "us200": PROJECT_ROOT / "charts" / "us200",
+        "jp200": PROJECT_ROOT / "data" / "jp200",
+    }
+
+    for p in sorted(PUBLIC_DIR.rglob("ticker/*.html")):
+        rel = str(p.relative_to(PUBLIC_DIR))
+        mkt = rel.split("/")[0]
+        if mkt not in snap_dir:
+            continue
+        if mkt not in mkt_t1:
+            try:
+                from build_dashboard import data_asof
+                mkt_t1[mkt] = data_asof({"hk200": "HK", "us200": "US", "jp200": "JP"}[mkt])
+            except Exception:
+                mkt_t1[mkt] = ""
+        t1 = mkt_t1[mkt]
+        if not t1:
+            continue
+        sym = p.stem
+        try:
+            snap = _json.loads((snap_dir[mkt] / f"{sym}.json").read_text(encoding="utf-8"))
+            own = (snap.get("last_bar") or {}).get("date") or snap.get("asof") or ""
+        except Exception:
+            own = ""
+        if not own or own >= t1:
+            continue
+        try:
+            html = p.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        if "數據未更新" in html:
+            continue
+        n = (_date.fromisoformat(t1) - _date.fromisoformat(own)).days
+        banner = (
+            '<div class="container" style="margin:18px 0 0">'
+            '<div class="info-card" style="border-left:3px solid var(--amber)">'
+            '<h2 style="margin-top:0;font-size:1rem">數據未更新</h2>'
+            '<p style="font-size:0.85rem;opacity:0.8;margin:6px 0 0">'
+            f'本頁嘅最後有效 bar 係 <b>{own}</b>，而 {mkt[:2].upper()} 市場最新係 '
+            f'<b>{t1}</b>（差 {n} 個曆日）。呢隻代號已經唔喺現行跟蹤名單內，'
+            f'頁面不會再重建 —— '
+            f'<b>以下所有價位、訊號同回測數字都係 {own} 或之前嘅資料</b>，'
+            f'唔可以當成現行數據使用。</p></div></div>'
+        )
+        if "</main>" in html:
+            new = html.replace("</main>", banner + "</main>", 1)
+        else:
+            new = html.replace("</body>", banner + "</body>", 1)
+        if new != html:
+            p.write_text(new, encoding="utf-8")
+            changed.append(rel)
+    return changed
+
+
 def restamp_t1_badges() -> list[str]:
     """Rewrite the T-1 date inside nav/footer chrome on every built page.
 

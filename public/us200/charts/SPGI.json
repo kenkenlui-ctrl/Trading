@@ -3,21 +3,21 @@
   "ticker_user": "SPGI",
   "name": "S&P Global Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
+  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-07",
-    "O": 394.09,
-    "H": 395.92,
-    "L": 389.28,
-    "C": 395.18,
-    "prev_close": 396.13,
-    "chg_pct": -0.24
+    "date": "2026-10-09",
+    "O": 404.0,
+    "H": 408.66,
+    "L": 402.94,
+    "C": 407.82,
+    "prev_close": 402.73,
+    "chg_pct": 1.26
   },
   "phase": "base_building",
-  "adx": 20.46,
-  "plus_di": 19.15,
-  "minus_di": 28.12,
-  "regime": "dead",
+  "adx": 18.23,
+  "plus_di": 26.64,
+  "minus_di": 24.81,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 522.47 (2026-01-15), trough 361.03 (2026-02-12), box top 462.02 (2026-07-17)",
   "peak": {
@@ -32,35 +32,41 @@
     "top": 462.02,
     "top_date": "2026-07-17",
     "bottom": 361.03,
-    "period": "2026-02-12 to 2026-10-07"
+    "period": "2026-02-12 to 2026-10-09"
   },
-  "drop_from_peak_pct": 24.4,
-  "recovery_from_crash_pct": 9.5,
+  "drop_from_peak_pct": 21.9,
+  "recovery_from_crash_pct": 13.0,
   "supports": [
     {
-      "level": 388.0,
+      "level": 396.0,
       "label": "S1 KEY",
-      "touches": 7,
-      "evidence": "tested 7x in base period; 1.8% below current"
+      "touches": 15,
+      "evidence": "tested 15x in base period; 2.9% below current"
     },
     {
-      "level": 384.0,
+      "level": 392.0,
       "label": "S2",
-      "touches": 13,
-      "evidence": "mid-base support, tested 13x"
+      "touches": 19,
+      "evidence": "mid-base support, tested 19x"
     },
     {
-      "level": 380.0,
-      "label": "S3 bottom",
-      "touches": 9,
-      "evidence": "structural bottom, near crash low 361.03"
+      "level": 388.0,
+      "label": "S3",
+      "touches": 16,
+      "evidence": "mid-base support, tested 16x"
+    },
+    {
+      "level": 361.03,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-02-12, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 395.92,
+      "level": 408.66,
       "label": "R1 today high",
-      "evidence": "today's high 395.9200134277344"
+      "evidence": "today's high 408.6600036621094"
     },
     {
       "level": 462.02,
@@ -69,28 +75,28 @@
     }
   ],
   "position": {
-    "current": 395.18,
-    "in_box_pct": 18.5,
-    "nearest_support": "S1 KEY (388.0)",
-    "nearest_resistance": "R1 today high (395.92)"
+    "current": 407.82,
+    "in_box_pct": 46.3,
+    "nearest_support": "S1 KEY (396.0)",
+    "nearest_resistance": "R1 today high (408.66)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 394.09,
-    "H": 395.92,
-    "L": 389.28,
-    "C": 395.18,
-    "body_pct": 16.4,
-    "upper_wick_pct": 11.1,
-    "lower_wick_pct": 72.4
+    "O": 404.0,
+    "H": 408.66,
+    "L": 402.94,
+    "C": 407.82,
+    "body_pct": 66.8,
+    "upper_wick_pct": 14.7,
+    "lower_wick_pct": 18.5
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (18% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -103,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 388.0 (KEY support)",
-      "then": "still range; watch 395.92 for next test"
+      "if": "hold 396.0 (KEY support)",
+      "then": "still range; watch 408.66 for next test"
     },
     {
-      "if": "break 388.0 on close",
-      "then": "target 384.0 → 380.0 (short-term bearish)"
+      "if": "break 396.0 on close",
+      "then": "target 392.0 → 388.0 (short-term bearish)"
     },
     {
-      "if": "break 380.0 (crash low)",
+      "if": "break 361.03 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 395.92 on close",
+      "if": "reclaim 408.66 on close",
       "then": "short-term bullish; next test 462.02"
     },
     {
@@ -142,23 +148,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 423.32,
+    "target_price": 402.76,
+    "stop_price": 436.02,
+    "risk_pct": 3.0,
+    "reward_pct": 4.86,
+    "rr_ratio": 1.62,
     "phase_match": true,
     "r1": 423.32,
     "s1": 382.21,
     "s2": 403.45,
     "r2": 462.02,
-    "r3": 450.32,
+    "r3": 457.55,
     "s3": 371.84,
     "s4": 361.03,
-    "current_position_pct": 31.5,
-    "notes": "WAIT_RANGE: in box (382-423), pos 32%, no clear setup"
+    "current_position_pct": 62.3,
+    "notes": "SELL_R1: in box (382-423), entry at R1 423, target mid 403, stop 436 ｜ 52.2 條規則（SELL plan，resistance 423.32）：① 跌到 423.32、收市守住喺 423.32 上面 → 照 BUY 條 plan 做（入場 423.32，止蝕 436.02，目標 402.76）。② 收市跌穿 423.32 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 423.32 上面』。"
   }
 }

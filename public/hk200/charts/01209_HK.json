@@ -3,18 +3,23 @@
   "ticker_user": "01209.HK",
   "name": "CHINA RES MIXC",
   "data_source": "yfinance",
-  "data_range": "2025-10-17 → 2026-08-12 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-08-12",
-    "O": 39.5,
-    "H": 41.14,
-    "L": 39.2,
-    "C": 41.0,
-    "prev_close": 39.82,
-    "chg_pct": 2.96
+    "date": "2026-10-09",
+    "O": 37.4,
+    "H": 38.6,
+    "L": 37.4,
+    "C": 38.6,
+    "prev_close": 37.32,
+    "chg_pct": 3.43
   },
-  "phase": "base_building",
-  "phase_evidence": "Peak 51.15 (2026-05-14), trough 36.14 (2026-06-26), box top 41.2 (2026-07-30)",
+  "phase": "downtrend_active",
+  "adx": 18.12,
+  "plus_di": 18.96,
+  "minus_di": 17.45,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 51.15 (2026-05-14), trough 36.14 (2026-06-26), box top 42.3 (2026-08-31)",
   "peak": {
     "date": "2026-05-14",
     "price": 51.15
@@ -24,52 +29,56 @@
     "price": 36.14
   },
   "box": {
-    "top": 41.2,
-    "top_date": "2026-07-30",
+    "top": 42.3,
+    "top_date": "2026-08-31",
     "bottom": 36.14,
-    "period": "2026-06-26 to 2026-08-12"
+    "period": "2026-06-26 to 2026-10-09"
   },
-  "drop_from_peak_pct": 19.8,
-  "recovery_from_crash_pct": 13.4,
+  "drop_from_peak_pct": 24.5,
+  "recovery_from_crash_pct": 6.8,
   "supports": [
     {
-      "level": 40.0,
-      "label": "S1 KEY",
-      "touches": 42,
-      "evidence": "tested 42x in base period; 2.4% below current"
-    },
-    {
       "level": 36.0,
-      "label": "S2 bottom",
-      "touches": 21,
+      "label": "S1 bottom",
+      "touches": 50,
       "evidence": "structural bottom, near crash low 36.14"
     }
   ],
   "resistances": [
     {
-      "level": 41.14,
+      "level": 38.6,
       "label": "R1 today high",
-      "evidence": "today's high 41.13999938964844"
+      "evidence": "today's high 38.599998474121094"
+    },
+    {
+      "level": 42.3,
+      "label": "R3 Aug high",
+      "evidence": "box top 42.3, base period high"
+    },
+    {
+      "level": 45.0,
+      "label": "R5",
+      "evidence": "pre-crash supply, top before breakdown"
     }
   ],
   "position": {
-    "current": 41.0,
-    "in_box_pct": 97.3,
-    "nearest_support": "S1 KEY (40.0)",
-    "nearest_resistance": "R1 today high (41.14)"
+    "current": 38.6,
+    "in_box_pct": 41.3,
+    "nearest_support": "S1 bottom (36.0)",
+    "nearest_resistance": "R1 today high (38.6)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_reclaim",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 39.5,
-    "H": 41.14,
-    "L": 39.2,
-    "C": 41.0,
-    "body_pct": 77.3,
-    "upper_wick_pct": 7.2,
-    "lower_wick_pct": 15.5
+    "O": 37.4,
+    "H": 38.6,
+    "L": 37.4,
+    "C": 38.6,
+    "body_pct": 100.0,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
@@ -77,30 +86,34 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 40.0 (KEY support)",
-      "then": "still range; watch 41.14 for next test"
+      "if": "hold 36.0 (KEY support)",
+      "then": "still range; watch 38.6 for next test"
     },
     {
-      "if": "break 40.0 on close",
-      "then": "target 36.0 → lower (short-term bearish)"
+      "if": "break 36.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
       "if": "break 36.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 41.14 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 38.6 on close",
+      "then": "short-term bullish; next test 42.3"
+    },
+    {
+      "if": "break 42.3 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -120,5 +133,25 @@
       "claim": "把歷史高位當短線目標",
       "refute": "路徑依賴，中間有多層供應；分段過關"
     }
-  ]
+  ],
+  "action_plan": {
+    "verdict": "WAIT",
+    "strategy": "WAIT_RR_TOO_THIN",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 38.92,
+    "s1": 36.46,
+    "s2": 37.72,
+    "r2": 42.3,
+    "r3": 51.15,
+    "s3": 36.14,
+    "s4": 41.52,
+    "current_position_pct": 87.0,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 38.92）：① 跌到 38.92、收市守住喺 38.92 上面 → 照 BUY 條 plan 做（入場 38.92，止蝕 40.70，目標 37.69）。② 收市跌穿 38.92 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 38.92 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+  }
 }

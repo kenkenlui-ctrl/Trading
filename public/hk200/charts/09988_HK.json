@@ -3,20 +3,20 @@
   "ticker_user": "09988.HK",
   "name": "BABA-W",
   "data_source": "yfinance",
-  "data_range": "2025-12-15 → 2026-10-08 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-08",
-    "O": 104.4,
-    "H": 106.7,
-    "L": 103.3,
-    "C": 104.3,
-    "prev_close": 105.4,
-    "chg_pct": -1.04
+    "date": "2026-10-09",
+    "O": 104.5,
+    "H": 107.3,
+    "L": 104.3,
+    "C": 107.0,
+    "prev_close": 104.3,
+    "chg_pct": 2.59
   },
   "phase": "base_building",
-  "adx": 11.45,
-  "plus_di": 24.79,
-  "minus_di": 31.67,
+  "adx": 11.33,
+  "plus_di": 24.51,
+  "minus_di": 29.81,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 174.2 (2026-01-29), trough 88.65 (2026-06-26), box top 130.3 (2026-08-11)",
@@ -32,23 +32,29 @@
     "top": 130.3,
     "top_date": "2026-08-11",
     "bottom": 88.65,
-    "period": "2026-06-26 to 2026-10-08"
+    "period": "2026-06-26 to 2026-10-09"
   },
-  "drop_from_peak_pct": 40.1,
-  "recovery_from_crash_pct": 17.7,
+  "drop_from_peak_pct": 38.6,
+  "recovery_from_crash_pct": 20.7,
   "supports": [
     {
+      "level": 104.0,
+      "label": "S1 KEY",
+      "touches": 16,
+      "evidence": "tested 16x in base period; 2.8% below current"
+    },
+    {
       "level": 92.0,
-      "label": "S1 bottom",
+      "label": "S2 bottom",
       "touches": 5,
       "evidence": "structural bottom, near crash low 88.65"
     }
   ],
   "resistances": [
     {
-      "level": 106.7,
+      "level": 107.3,
       "label": "R1 today high",
-      "evidence": "rejection at 106.69999694824219 (long upper wick, close weak)"
+      "evidence": "today's high 107.30000305175781"
     },
     {
       "level": 120.0,
@@ -67,28 +73,28 @@
     }
   ],
   "position": {
-    "current": 104.3,
-    "in_box_pct": 32.1,
-    "nearest_support": "S1 bottom (92.0)",
-    "nearest_resistance": "R1 today high (106.7)"
+    "current": 107.0,
+    "in_box_pct": 39.2,
+    "nearest_support": "S1 KEY (104.0)",
+    "nearest_resistance": "R1 today high (107.3)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 104.4,
-    "H": 106.7,
-    "L": 103.3,
-    "C": 104.3,
-    "body_pct": 2.9,
-    "upper_wick_pct": 67.6,
-    "lower_wick_pct": 29.4
+    "close_position": "upper_half",
+    "O": 104.5,
+    "H": 107.3,
+    "L": 104.3,
+    "C": 107.0,
+    "body_pct": 83.3,
+    "upper_wick_pct": 10.0,
+    "lower_wick_pct": 6.7
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (32% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -101,19 +107,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 92.0 (KEY support)",
-      "then": "still range; watch 106.7 for next test"
+      "if": "hold 104.0 (KEY support)",
+      "then": "still range; watch 107.3 for next test"
     },
     {
-      "if": "break 92.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 104.0 on close",
+      "then": "target 92.0 → lower (short-term bearish)"
     },
     {
       "if": "break 92.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 106.7 on close",
+      "if": "reclaim 107.3 on close",
       "then": "short-term bullish; next test 120.0"
     },
     {
@@ -144,19 +150,19 @@
     "strategy": "BUY_S1",
     "trigger_price": 102.6,
     "target_price": 110.45,
-    "stop_price": 96.93,
-    "risk_pct": 5.53,
+    "stop_price": 97.34,
+    "risk_pct": 5.13,
     "reward_pct": 7.65,
-    "rr_ratio": 1.38,
+    "rr_ratio": 1.49,
     "phase_match": true,
     "r1": 118.3,
     "s1": 102.6,
-    "s2": 106.5,
+    "s2": 105.2,
     "r2": 130.3,
     "r3": 144.0,
     "s3": 88.65,
     "s4": 117.5,
-    "current_position_pct": 10.8,
-    "notes": "BUY_S1: in box (103-118), entry at S1 103, target mid 110, stop 97 ｜ 52.2 條規則（BUY plan，support 102.60）：① 跌到 102.60、收市守住喺 102.60 上面 → 照 BUY 條 plan 做（入場 102.60，止蝕 96.93，目標 110.45）。② 收市跌穿 102.60 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 102.60 上面』。"
+    "current_position_pct": 28.0,
+    "notes": "BUY_S1: in box (103-118), entry at S1 103, target mid 110, stop 97 ｜ 52.2 條規則（BUY plan，support 102.60）：① 跌到 102.60、收市守住喺 102.60 上面 → 照 BUY 條 plan 做（入場 102.60，止蝕 97.34，目標 110.45）。② 收市跌穿 102.60 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 102.60 上面』。"
   }
 }

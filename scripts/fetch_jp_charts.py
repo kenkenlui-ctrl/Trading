@@ -129,7 +129,21 @@ def process_one(code: str) -> tuple[str, bool]:
             (JP_JSON_DIR / f"{safe}_ohlc.json").write_text(
                 json.dumps(bars, ensure_ascii=False), encoding="utf-8"
             )
-        snap_out = {
+        # 2026-10-10: the name cache is keyed by ticker, so any universe regen that
+    # swaps names in leaves the newcomers with no entry, and _jp_name() returns
+    # "" — /jp200/ then rendered a ticker with a blank company name and
+    # self_test's fabricated-price guard caught it. A lookup that cannot find a
+    # value must not blank one we already published, so fall back to the
+    # previous snapshot before giving up.
+    _prev_name = ""
+    _pj = JP_JSON_DIR / f"{safe}.json"
+    if _pj.exists():
+        try:
+            _prev_name = (json.loads(_pj.read_text(encoding="utf-8")) or {}).get("name") or ""
+        except Exception:
+            _prev_name = ""
+
+    snap_out = {
             "ticker": code,
             "asof": data_asof or snapshot.get("asof", ""),
             "close": close,
@@ -153,7 +167,7 @@ def process_one(code: str) -> tuple[str, bool]:
                 if df is not None and len(df)
                 else None
             ),
-            "name": _jp_name(code),
+            "name": _jp_name(code) or _prev_name,
             "phase": snapshot.get("phase"),
             "kline": snapshot.get("kline", {}),
             "position": snapshot.get("position", {}),

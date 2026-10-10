@@ -1009,32 +1009,44 @@ def t_candles_have_prices() -> None:
     from build_dashboard import data_asof
     for mkt, code in (("hk200", "HK"), ("us200", "US"), ("jp200", "JP")):
         pages = {q.stem for q in (PUBLIC / mkt / "ticker").glob("*.html")}
-        src = REPO / "charts" / ("jp200" if code == "JP" else mkt)
+        # 2026-10-10: this used to read snapshots from charts/jp200 for every
+        # market, but fetch_jp_charts.py writes JP snapshots to data/jp200 —
+        # charts/jp200 holds PNGs and OHLC only. _own_bar was therefore always
+        # "" for JP and the banner could never fire, and the "short series"
+        # filter below meant seven full-length pages (dropped from the universe
+        # on 10-08, so never rebuilt) sat on 10-08 data under a 10-09 headline.
+        src = {"HK": REPO / "charts" / "hk200", "US": REPO / "charts" / "us200",
+               "JP": REPO / "data" / "jp200"}[code]
         market_t1 = None
         for sym in sorted(pages):
             op = PUBLIC / mkt / "ohlc" / f"{sym}_ohlc.json"
             rows = json.load(open(op)) if op.exists() else None
-            if not isinstance(rows, list) or len(rows) >= 260:
-                continue
-            if market_t1 is None:
-                market_t1 = data_asof(code)
+            n_bars = len(rows) if isinstance(rows, list) else 0
             payload = src / f"{sym}.json"
             own = ""
             try:
                 own = (json.load(open(payload)).get("last_bar") or {}).get("date", "")
             except Exception:
                 pass
+            if market_t1 is None:
+                market_t1 = data_asof(code)
+            # Staleness is the thing that must be declared. A short series whose own bar
+            # date IS the market T-1 is plot-disabled but current, and the
+            # original intent ("fresh ones may be short") must survive the
+            # widening. The old 260-bar filter was a proxy for staleness that
+            # happened to miss every full-length series — the majority of pages.
             stale = bool(own and market_t1 and own < market_t1)
-            if stale:
-                short_pages.append(f"{mkt}/{sym}={len(rows)}bars")
-                pg = PUBLIC / mkt / "ticker" / f"{sym}.html"
-                if not pg.exists() or "數據未更新" not in pg.read_text(encoding="utf-8"):
-                    undisclosed.append(f"{mkt}/{sym}={len(rows)}bars")
+            if not stale:
+                continue
+            pg = PUBLIC / mkt / "ticker" / f"{sym}.html"
+            short_pages.append(f"{mkt}/{sym}={own}(vs {market_t1},{n_bars}bars)")
+            if not (pg.exists() and "數據未更新" in pg.read_text(encoding="utf-8")):
+                undisclosed.append(f"{mkt}/{sym} own={own} t1={market_t1} bars={n_bars}")
     record("ohlc/a too-short-to-plot series must be self-declared, fresh ones may be short",
            not undisclosed,
-           f"{len(short_pages)} short AND stale series, all self-declared"
+           f"{len(short_pages)} stale-or-short series, all self-declared"
            if not undisclosed
-           else f"{len(undisclosed)} presented as a normal chart: {undisclosed[:4]}")
+           else f"{len(undisclosed)} presented as current: {undisclosed[:4]}")
 
 
 def t_v2_sizing_is_tradable() -> None:
@@ -1272,7 +1284,25 @@ def t_en_tree_is_retired() -> None:
     en = PUBLIC / "en"
     pages = sorted(en.rglob("*.html")) if en.exists() else []
     if not pages:
-        record("seo/retired /en/ pages carry noindex", True, "no /en/ tree present")
+        # The files were deleted on 2026-10-10. The REDIRECTS are the whole
+        # point of the retirement once the files are gone — without them every
+        # /en/ link anyone ever pasted turns into a 404. So this branch must NOT
+        # return early; it has to fall through to the sitemap and redirect
+        # checks, which are the only thing left standing.
+        record("seo/retired /en/ pages carry noindex", True,
+               "files deleted; redirects carry the retirement")
+        sm0 = PUBLIC / "sitemap.xml"
+        if sm0.exists():
+            record("seo/retired /en/ is out of sitemap.xml",
+                   sm0.read_text(encoding="utf-8").count("/en/") == 0,
+                   "no /en/ URLs listed")
+        rf0 = PUBLIC / "_redirects"
+        n0 = sum(1 for ln in rf0.read_text(encoding="utf-8").splitlines()
+                 if ln.startswith("/en") and " 301" in ln) if rf0.exists() else 0
+        record("seo/the /en/ redirects outlive the files they served",
+               n0 >= 10,
+               f"{n0} /en/ 301 rules still in place" if n0 >= 10
+               else f"only {n0} /en/ rules — /en/ links would 404")
         return
 
     missing = [str(p.relative_to(PUBLIC)) for p in pages

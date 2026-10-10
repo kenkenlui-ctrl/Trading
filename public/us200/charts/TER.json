@@ -3,21 +3,21 @@
   "ticker_user": "TER",
   "name": "Teradyne, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
+  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-07",
-    "O": 415.18,
-    "H": 416.69,
-    "L": 404.8,
-    "C": 411.78,
-    "prev_close": 430.32,
-    "chg_pct": -4.31
+    "date": "2026-10-09",
+    "O": 405.19,
+    "H": 414.26,
+    "L": 399.31,
+    "C": 402.68,
+    "prev_close": 398.72,
+    "chg_pct": 0.99
   },
   "phase": "base_building",
-  "adx": 20.31,
-  "plus_di": 34.94,
-  "minus_di": 24.64,
-  "regime": "dead",
+  "adx": 18.56,
+  "plus_di": 31.64,
+  "minus_di": 26.66,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 487.91 (2026-06-30), trough 296.82 (2026-07-17), box top 451.86 (2026-10-02)",
   "peak": {
@@ -32,16 +32,16 @@
     "top": 451.86,
     "top_date": "2026-10-02",
     "bottom": 296.82,
-    "period": "2026-07-17 to 2026-10-07"
+    "period": "2026-07-17 to 2026-10-09"
   },
-  "drop_from_peak_pct": 15.6,
-  "recovery_from_crash_pct": 38.7,
+  "drop_from_peak_pct": 17.5,
+  "recovery_from_crash_pct": 35.7,
   "supports": [
     {
-      "level": 400.0,
+      "level": 388.0,
       "label": "S1 KEY",
-      "touches": 6,
-      "evidence": "tested 6x in base period; 2.9% below current"
+      "touches": 5,
+      "evidence": "tested 5x in base period; 3.6% below current"
     },
     {
       "level": 376.0,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 416.69,
+      "level": 414.26,
       "label": "R1 today high",
-      "evidence": "today's high 416.69000244140625"
+      "evidence": "rejection at 414.260009765625 (long upper wick, close weak)"
     },
     {
       "level": 451.86,
@@ -80,23 +80,23 @@
     }
   ],
   "position": {
-    "current": 411.78,
-    "in_box_pct": 74.1,
-    "nearest_support": "S1 KEY (400.0)",
-    "nearest_resistance": "R1 today high (416.69)"
+    "current": 402.68,
+    "in_box_pct": 68.3,
+    "nearest_support": "S1 KEY (388.0)",
+    "nearest_resistance": "R1 today high (414.26)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 415.18,
-    "H": 416.69,
-    "L": 404.8,
-    "C": 411.78,
-    "body_pct": 28.6,
-    "upper_wick_pct": 12.7,
-    "lower_wick_pct": 58.7
+    "close_position": "lower_half",
+    "O": 405.19,
+    "H": 414.26,
+    "L": 399.31,
+    "C": 402.68,
+    "body_pct": 16.8,
+    "upper_wick_pct": 60.7,
+    "lower_wick_pct": 22.5
   },
   "bias": {
     "short": {
@@ -114,11 +114,11 @@
   },
   "scenarios": [
     {
-      "if": "hold 400.0 (KEY support)",
-      "then": "still range; watch 416.69 for next test"
+      "if": "hold 388.0 (KEY support)",
+      "then": "still range; watch 414.26 for next test"
     },
     {
-      "if": "break 400.0 on close",
+      "if": "break 388.0 on close",
       "then": "target 376.0 → 372.0 (short-term bearish)"
     },
     {
@@ -126,7 +126,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 416.69 on close",
+      "if": "reclaim 414.26 on close",
       "then": "short-term bullish; next test 451.86"
     },
     {
@@ -157,10 +157,10 @@
     "strategy": "SELL_R1",
     "trigger_price": 451.86,
     "target_price": 389.11,
-    "stop_price": 483.37,
-    "risk_pct": 6.97,
+    "stop_price": 484.78,
+    "risk_pct": 7.28,
     "reward_pct": 13.89,
-    "rr_ratio": 1.99,
+    "rr_ratio": 1.91,
     "phase_match": true,
     "r1": 451.86,
     "s1": 326.37,
@@ -168,8 +168,8 @@
     "r2": 444.17,
     "r3": 487.91,
     "s3": 301.86,
-    "s4": 191.51,
-    "current_position_pct": 68.1,
-    "notes": "SELL_R1: in box (326-452), entry at R1 452, target mid 389, stop 483 ｜ 52.2 條規則（SELL plan，resistance 451.86）：① 跌到 451.86、收市守住喺 451.86 上面 → 照 BUY 條 plan 做（入場 451.86，止蝕 483.37，目標 389.11）。② 收市跌穿 451.86 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 451.86 上面』。"
+    "s4": 193.4,
+    "current_position_pct": 60.8,
+    "notes": "SELL_R1: in box (326-452), entry at R1 452, target mid 389, stop 485 ｜ 52.2 條規則（SELL plan，resistance 451.86）：① 跌到 451.86、收市守住喺 451.86 上面 → 照 BUY 條 plan 做（入場 451.86，止蝕 484.78，目標 389.11）。② 收市跌穿 451.86 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 451.86 上面』。"
   }
 }

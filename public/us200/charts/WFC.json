@@ -3,21 +3,21 @@
   "ticker_user": "WFC",
   "name": "Wells Fargo & Company",
   "data_source": "yfinance",
-  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
+  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-07",
-    "O": 80.48,
-    "H": 80.82,
-    "L": 79.07,
-    "C": 80.26,
-    "prev_close": 81.51,
-    "chg_pct": -1.53
+    "date": "2026-10-09",
+    "O": 81.95,
+    "H": 84.06,
+    "L": 81.62,
+    "C": 83.55,
+    "prev_close": 82.03,
+    "chg_pct": 1.85
   },
   "phase": "base_building",
-  "adx": 25.85,
-  "plus_di": 16.43,
-  "minus_di": 36.7,
-  "regime": "trend",
+  "adx": 24.58,
+  "plus_di": 25.25,
+  "minus_di": 30.23,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 97.76 (2026-01-05), trough 72.78 (2026-05-15), box top 91.99 (2026-09-15)",
   "peak": {
@@ -32,29 +32,29 @@
     "top": 91.99,
     "top_date": "2026-09-15",
     "bottom": 72.78,
-    "period": "2026-05-15 to 2026-10-07"
+    "period": "2026-05-15 to 2026-10-09"
   },
-  "drop_from_peak_pct": 17.9,
-  "recovery_from_crash_pct": 10.3,
+  "drop_from_peak_pct": 14.5,
+  "recovery_from_crash_pct": 14.8,
   "supports": [
     {
-      "level": 76.0,
+      "level": 80.0,
       "label": "S1 KEY",
-      "touches": 9,
-      "evidence": "tested 9x in base period; 5.3% below current"
+      "touches": 32,
+      "evidence": "tested 32x in base period; 4.2% below current"
     },
     {
-      "level": 72.0,
-      "label": "S2 bottom",
-      "touches": 4,
-      "evidence": "structural bottom, near crash low 72.78"
+      "level": 72.78,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-05-15, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 80.82,
+      "level": 84.06,
       "label": "R1 today high",
-      "evidence": "today's high 80.81999969482422"
+      "evidence": "today's high 84.05999755859375"
     },
     {
       "level": 91.99,
@@ -63,28 +63,28 @@
     }
   ],
   "position": {
-    "current": 80.26,
-    "in_box_pct": 41.3,
-    "nearest_support": "S1 KEY (76.0)",
-    "nearest_resistance": "R1 today high (80.82)"
+    "current": 83.55,
+    "in_box_pct": 56.1,
+    "nearest_support": "S1 KEY (80.0)",
+    "nearest_resistance": "R1 today high (84.06)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 80.48,
-    "H": 80.82,
-    "L": 79.07,
-    "C": 80.26,
-    "body_pct": 12.6,
-    "upper_wick_pct": 19.4,
-    "lower_wick_pct": 68.0
+    "O": 81.95,
+    "H": 84.06,
+    "L": 81.62,
+    "C": 83.55,
+    "body_pct": 65.6,
+    "upper_wick_pct": 20.9,
+    "lower_wick_pct": 13.5
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (41% of box)"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -97,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 76.0 (KEY support)",
-      "then": "still range; watch 80.82 for next test"
+      "if": "hold 80.0 (KEY support)",
+      "then": "still range; watch 84.06 for next test"
     },
     {
-      "if": "break 76.0 on close",
-      "then": "target 72.0 → lower (short-term bearish)"
+      "if": "break 80.0 on close",
+      "then": "target 72.78 → lower (short-term bearish)"
     },
     {
-      "if": "break 72.0 (crash low)",
+      "if": "break 72.78 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 80.82 on close",
+      "if": "reclaim 84.06 on close",
       "then": "short-term bullish; next test 91.99"
     },
     {
@@ -137,22 +137,22 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": false,
+    "phase_match": true,
     "r1": 91.99,
     "s1": 78.0,
     "s2": 83.48,
-    "r2": 90.34,
-    "r3": 88.68,
+    "r2": 91.16,
+    "r3": 88.9,
     "s3": 72.78,
     "s4": 74.03,
-    "current_position_pct": 16.2,
-    "notes": "WAIT_RANGE: in box (78-92), pos 16%, no clear setup"
+    "current_position_pct": 39.7,
+    "notes": "WAIT_RANGE: in box (78-92), pos 40%, no clear setup"
   }
 }

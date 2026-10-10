@@ -3,23 +3,23 @@
   "ticker_user": "DDOG",
   "name": "Datadog, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
+  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-07",
-    "O": 278.7,
-    "H": 281.25,
-    "L": 270.81,
-    "C": 271.34,
-    "prev_close": 278.24,
-    "chg_pct": -2.48
+    "date": "2026-10-09",
+    "O": 275.42,
+    "H": 294.0,
+    "L": 274.83,
+    "C": 293.26,
+    "prev_close": 273.8,
+    "chg_pct": 7.11
   },
-  "phase": "downtrend_active",
-  "adx": 29.68,
-  "plus_di": 30.67,
-  "minus_di": 13.44,
+  "phase": "uptrend",
+  "adx": 31.46,
+  "plus_di": 34.42,
+  "minus_di": 11.88,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 292.72 (2026-08-05), trough 203.24 (2026-09-08), box top 285.68 (2026-10-06)",
+  "phase_evidence": "Peak 292.72 (2026-08-05), trough 203.24 (2026-09-08), box top 294.0 (2026-10-09)",
   "peak": {
     "date": "2026-08-05",
     "price": 292.72
@@ -29,31 +29,31 @@
     "price": 203.24
   },
   "box": {
-    "top": 285.68,
-    "top_date": "2026-10-06",
+    "top": 294.0,
+    "top_date": "2026-10-09",
     "bottom": 203.24,
-    "period": "2026-09-08 to 2026-10-07"
+    "period": "2026-09-08 to 2026-10-09"
   },
-  "drop_from_peak_pct": 7.3,
-  "recovery_from_crash_pct": 33.5,
+  "drop_from_peak_pct": -0.2,
+  "recovery_from_crash_pct": 44.3,
   "supports": [
     {
-      "level": 260.0,
+      "level": 276.0,
       "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 4.2% below current"
+      "touches": 8,
+      "evidence": "tested 8x in base period; 5.9% below current"
     },
     {
-      "level": 248.0,
+      "level": 272.0,
       "label": "S2",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
     },
     {
-      "level": 228.0,
+      "level": 268.0,
       "label": "S3",
-      "touches": 8,
-      "evidence": "mid-base support, tested 8x"
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
     },
     {
       "level": 203.24,
@@ -64,34 +64,29 @@
   ],
   "resistances": [
     {
-      "level": 281.25,
+      "level": 294.0,
       "label": "R1 today high",
-      "evidence": "today's high 281.25"
-    },
-    {
-      "level": 285.68,
-      "label": "R3 Oct high",
-      "evidence": "box top 285.68, base period high"
+      "evidence": "today's high 294.0"
     }
   ],
   "position": {
-    "current": 271.34,
-    "in_box_pct": 82.6,
-    "nearest_support": "S1 KEY (260.0)",
-    "nearest_resistance": "R1 today high (281.25)"
+    "current": 293.26,
+    "in_box_pct": 99.2,
+    "nearest_support": "S1 KEY (276.0)",
+    "nearest_resistance": "R1 today high (294.0)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 278.7,
-    "H": 281.25,
-    "L": 270.81,
-    "C": 271.34,
-    "body_pct": 70.5,
-    "upper_wick_pct": 24.4,
-    "lower_wick_pct": 5.1
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 275.42,
+    "H": 294.0,
+    "L": 274.83,
+    "C": 293.26,
+    "body_pct": 93.1,
+    "upper_wick_pct": 3.9,
+    "lower_wick_pct": 3.1
   },
   "bias": {
     "short": {
@@ -99,34 +94,30 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bearish_continuation",
-      "reason": "making new lows"
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 260.0 (KEY support)",
-      "then": "still range; watch 281.25 for next test"
+      "if": "hold 276.0 (KEY support)",
+      "then": "still range; watch 294.0 for next test"
     },
     {
-      "if": "break 260.0 on close",
-      "then": "target 248.0 → 228.0 (short-term bearish)"
+      "if": "break 276.0 on close",
+      "then": "target 272.0 → 268.0 (short-term bearish)"
     },
     {
       "if": "break 203.24 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 281.25 on close",
-      "then": "short-term bullish; next test 285.68"
-    },
-    {
-      "if": "break 285.68 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 294.0 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -149,7 +140,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -157,14 +148,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 285.68,
-    "s1": 218.27,
+    "r1": 294.0,
+    "s1": 220.72,
     "s2": 203.24,
     "r2": 292.72,
     "r3": 278.7,
-    "s3": 123.5,
+    "s3": 124.32,
     "s4": 98.01,
-    "current_position_pct": 78.7,
-    "notes": "WAIT_RANGE: in box (218-286), pos 79%, no clear setup"
+    "current_position_pct": 99.0,
+    "notes": "WAIT_RANGE: in box (221-294), pos 99%, no clear setup"
   }
 }

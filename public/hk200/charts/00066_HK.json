@@ -3,18 +3,23 @@
   "ticker_user": "00066.HK",
   "name": "MTR CORPORATION",
   "data_source": "yfinance",
-  "data_range": "2025-10-06 → 2026-07-31 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-07-31",
-    "O": 33.3,
-    "H": 33.46,
-    "L": 32.74,
-    "C": 33.12,
-    "prev_close": 33.38,
-    "chg_pct": -0.78
+    "date": "2026-10-09",
+    "O": 31.24,
+    "H": 31.96,
+    "L": 31.24,
+    "C": 31.72,
+    "prev_close": 31.0,
+    "chg_pct": 2.32
   },
   "phase": "downtrend_active",
-  "phase_evidence": "Peak 37.88 (2026-02-26), trough 30.2 (2026-07-02), box top 33.52 (2026-07-28)",
+  "adx": 17.11,
+  "plus_di": 18.7,
+  "minus_di": 27.31,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 37.88 (2026-02-26), trough 30.2 (2026-07-02), box top 33.92 (2026-08-21)",
   "peak": {
     "date": "2026-02-26",
     "price": 37.88
@@ -24,19 +29,19 @@
     "price": 30.2
   },
   "box": {
-    "top": 33.52,
-    "top_date": "2026-07-28",
+    "top": 33.92,
+    "top_date": "2026-08-21",
     "bottom": 30.2,
-    "period": "2026-07-02 to 2026-07-31"
+    "period": "2026-07-02 to 2026-10-09"
   },
-  "drop_from_peak_pct": 12.6,
-  "recovery_from_crash_pct": 9.7,
+  "drop_from_peak_pct": 16.3,
+  "recovery_from_crash_pct": 5.0,
   "supports": [
     {
       "level": 32.0,
       "label": "S1 KEY",
-      "touches": 44,
-      "evidence": "tested 44x in base period; 3.4% below current"
+      "touches": 16,
+      "evidence": "tested 16x in base period; -0.9% below current"
     },
     {
       "level": 30.2,
@@ -47,29 +52,34 @@
   ],
   "resistances": [
     {
-      "level": 33.46,
+      "level": 31.96,
       "label": "R1 today high",
-      "evidence": "today's high 33.459999084472656"
+      "evidence": "today's high 31.959999084472656"
+    },
+    {
+      "level": 33.92,
+      "label": "R3 Aug high",
+      "evidence": "box top 33.92, base period high"
     }
   ],
   "position": {
-    "current": 33.12,
-    "in_box_pct": 89.6,
+    "current": 31.72,
+    "in_box_pct": 40.9,
     "nearest_support": "S1 KEY (32.0)",
-    "nearest_resistance": "R1 today high (33.46)"
+    "nearest_resistance": "R1 today high (31.96)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 33.3,
-    "H": 33.46,
-    "L": 32.74,
-    "C": 33.12,
-    "body_pct": 25.0,
-    "upper_wick_pct": 22.2,
-    "lower_wick_pct": 52.8
+    "O": 31.24,
+    "H": 31.96,
+    "L": 31.24,
+    "C": 31.72,
+    "body_pct": 66.7,
+    "upper_wick_pct": 33.3,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
@@ -88,7 +98,7 @@
   "scenarios": [
     {
       "if": "hold 32.0 (KEY support)",
-      "then": "still range; watch 33.46 for next test"
+      "then": "still range; watch 31.96 for next test"
     },
     {
       "if": "break 32.0 on close",
@@ -99,8 +109,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 33.46 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 31.96 on close",
+      "then": "short-term bullish; next test 33.92"
+    },
+    {
+      "if": "break 33.92 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -120,5 +134,25 @@
       "claim": "把歷史高位當短線目標",
       "refute": "路徑依賴，中間有多層供應；分段過關"
     }
-  ]
+  ],
+  "action_plan": {
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 33.5,
+    "s1": 30.5,
+    "s2": 31.48,
+    "r2": 33.92,
+    "r3": 35.3,
+    "s3": 30.2,
+    "s4": 29.58,
+    "current_position_pct": 40.7,
+    "notes": "WAIT_RANGE: in box (30-34), pos 41%, no clear setup"
+  }
 }

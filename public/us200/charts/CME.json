@@ -3,21 +3,21 @@
   "ticker_user": "CME",
   "name": "CME Group Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
+  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-07",
-    "O": 269.81,
-    "H": 272.39,
-    "L": 267.87,
-    "C": 270.27,
-    "prev_close": 270.18,
-    "chg_pct": 0.03
+    "date": "2026-10-09",
+    "O": 278.38,
+    "H": 281.52,
+    "L": 277.0,
+    "C": 280.56,
+    "prev_close": 276.44,
+    "chg_pct": 1.49
   },
   "phase": "base_building",
-  "adx": 20.76,
-  "plus_di": 18.7,
-  "minus_di": 22.8,
-  "regime": "dead",
+  "adx": 19.42,
+  "plus_di": 26.11,
+  "minus_di": 19.33,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 329.16 (2026-03-03), trough 218.31 (2026-06-29), box top 289.9 (2026-09-01)",
   "peak": {
@@ -32,28 +32,28 @@
     "top": 289.9,
     "top_date": "2026-09-01",
     "bottom": 218.31,
-    "period": "2026-06-29 to 2026-10-07"
+    "period": "2026-06-29 to 2026-10-09"
   },
-  "drop_from_peak_pct": 17.9,
-  "recovery_from_crash_pct": 23.8,
+  "drop_from_peak_pct": 14.8,
+  "recovery_from_crash_pct": 28.5,
   "supports": [
     {
-      "level": 264.0,
+      "level": 272.0,
       "label": "S1 KEY",
-      "touches": 11,
-      "evidence": "tested 11x in base period; 2.3% below current"
-    },
-    {
-      "level": 260.0,
-      "label": "S2",
       "touches": 14,
-      "evidence": "mid-base support, tested 14x"
+      "evidence": "tested 14x in base period; 3.1% below current"
     },
     {
-      "level": 244.0,
+      "level": 268.0,
+      "label": "S2",
+      "touches": 17,
+      "evidence": "mid-base support, tested 17x"
+    },
+    {
+      "level": 264.0,
       "label": "S3",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
+      "touches": 13,
+      "evidence": "mid-base support, tested 13x"
     },
     {
       "level": 218.31,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 272.39,
+      "level": 281.52,
       "label": "R1 today high",
-      "evidence": "today's high 272.3900146484375"
+      "evidence": "today's high 281.5199890136719"
     },
     {
       "level": 289.9,
@@ -75,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 270.27,
-    "in_box_pct": 72.6,
-    "nearest_support": "S1 KEY (264.0)",
-    "nearest_resistance": "R1 today high (272.39)"
+    "current": 280.56,
+    "in_box_pct": 87.0,
+    "nearest_support": "S1 KEY (272.0)",
+    "nearest_resistance": "R1 today high (281.52)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 269.81,
-    "H": 272.39,
-    "L": 267.87,
-    "C": 270.27,
-    "body_pct": 10.2,
-    "upper_wick_pct": 46.9,
-    "lower_wick_pct": 42.9
+    "O": 278.38,
+    "H": 281.52,
+    "L": 277.0,
+    "C": 280.56,
+    "body_pct": 48.2,
+    "upper_wick_pct": 21.2,
+    "lower_wick_pct": 30.5
   },
   "bias": {
     "short": {
@@ -109,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 264.0 (KEY support)",
-      "then": "still range; watch 272.39 for next test"
+      "if": "hold 272.0 (KEY support)",
+      "then": "still range; watch 281.52 for next test"
     },
     {
-      "if": "break 264.0 on close",
-      "then": "target 260.0 → 244.0 (short-term bearish)"
+      "if": "break 272.0 on close",
+      "then": "target 268.0 → 264.0 (short-term bearish)"
     },
     {
       "if": "break 218.31 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 272.39 on close",
+      "if": "reclaim 281.52 on close",
       "then": "short-term bullish; next test 289.9"
     },
     {
@@ -149,22 +149,22 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
-    "r1": 281.36,
+    "phase_match": false,
+    "r1": 281.52,
     "s1": 258.87,
     "s2": 237.14,
     "r2": 289.9,
     "r3": 308.01,
     "s3": 218.31,
     "s4": 262.19,
-    "current_position_pct": 50.7,
-    "notes": "WAIT_RANGE: in box (259-281), pos 51%, no clear setup"
+    "current_position_pct": 95.8,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 281.52）：① 跌到 281.52、收市守住喺 281.52 上面 → 照 BUY 條 plan 做（入場 281.52，止蝕 291.20，目標 270.19）。② 收市跌穿 281.52 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 281.52 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }

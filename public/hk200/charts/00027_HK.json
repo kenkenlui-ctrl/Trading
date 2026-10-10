@@ -3,20 +3,20 @@
   "ticker_user": "00027.HK",
   "name": "GALAXY ENT",
   "data_source": "yfinance",
-  "data_range": "2025-12-15 → 2026-10-08 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-08",
-    "O": 30.72,
-    "H": 31.04,
-    "L": 30.46,
-    "C": 30.64,
-    "prev_close": 30.72,
-    "chg_pct": -0.26
+    "date": "2026-10-09",
+    "O": 31.04,
+    "H": 32.18,
+    "L": 31.04,
+    "C": 32.12,
+    "prev_close": 30.64,
+    "chg_pct": 4.83
   },
-  "phase": "downtrend_recovery",
-  "adx": 36.12,
-  "plus_di": 9.95,
-  "minus_di": 29.14,
+  "phase": "base_building",
+  "adx": 34.8,
+  "plus_di": 17.9,
+  "minus_di": 25.52,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 44.22 (2026-02-24), trough 28.68 (2026-06-26), box top 36.08 (2026-08-24)",
@@ -32,23 +32,29 @@
     "top": 36.08,
     "top_date": "2026-08-24",
     "bottom": 28.68,
-    "period": "2026-06-26 to 2026-10-08"
+    "period": "2026-06-26 to 2026-10-09"
   },
-  "drop_from_peak_pct": 30.7,
-  "recovery_from_crash_pct": 6.8,
+  "drop_from_peak_pct": 27.4,
+  "recovery_from_crash_pct": 12.0,
   "supports": [
     {
-      "level": 28.0,
-      "label": "S1 bottom",
-      "touches": 7,
-      "evidence": "structural bottom, near crash low 28.68"
+      "level": 32.0,
+      "label": "S1 KEY",
+      "touches": 30,
+      "evidence": "tested 30x in base period; 0.4% below current"
+    },
+    {
+      "level": 28.68,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-06-26, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 31.04,
+      "level": 32.18,
       "label": "R1 today high",
-      "evidence": "rejection at 31.040000915527344 (long upper wick, close weak)"
+      "evidence": "today's high 32.18000030517578"
     },
     {
       "level": 36.08,
@@ -57,32 +63,32 @@
     }
   ],
   "position": {
-    "current": 30.64,
-    "in_box_pct": 32.7,
-    "nearest_support": "S1 bottom (28.0)",
-    "nearest_resistance": "R1 today high (31.04)"
+    "current": 32.12,
+    "in_box_pct": 46.5,
+    "nearest_support": "S1 KEY (32.0)",
+    "nearest_resistance": "R1 today high (32.18)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 30.72,
-    "H": 31.04,
-    "L": 30.46,
-    "C": 30.64,
-    "body_pct": 13.8,
-    "upper_wick_pct": 55.2,
-    "lower_wick_pct": 31.0
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 31.04,
+    "H": 32.18,
+    "L": 31.04,
+    "C": 32.12,
+    "body_pct": 94.7,
+    "upper_wick_pct": 5.3,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (33% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": ""
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -91,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 28.0 (KEY support)",
-      "then": "still range; watch 31.04 for next test"
+      "if": "hold 32.0 (KEY support)",
+      "then": "still range; watch 32.18 for next test"
     },
     {
-      "if": "break 28.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 32.0 on close",
+      "then": "target 28.68 → lower (short-term bearish)"
     },
     {
-      "if": "break 28.0 (crash low)",
+      "if": "break 28.68 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 31.04 on close",
+      "if": "reclaim 32.18 on close",
       "then": "short-term bullish; next test 36.08"
     },
     {
@@ -131,7 +137,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -146,7 +152,7 @@
     "r3": 35.24,
     "s3": 28.68,
     "s4": 33.8,
-    "current_position_pct": 31.0,
-    "notes": "WAIT_RANGE: in box (29-33), pos 31%, no clear setup"
+    "current_position_pct": 68.5,
+    "notes": "WAIT_RANGE: in box (29-33), pos 69%, no clear setup"
   }
 }

@@ -93,10 +93,17 @@ def main() -> None:
 
     tickers = json.load(open(JP_UNIVERSE))
     names: dict[str, str] = {}
-    if not args.check and not JP_NAMES.exists():
+    if not args.check:
+        # Top up, do not only populate from scratch. The name cache is keyed by
+        # ticker, so a universe regen that swaps names in leaves the new ones
+        # with no entry — and the old branch (`not JP_NAMES.exists()`) meant
+        # that every regen after the first silently produced blank Name cells
+        # on /jp200/ until something else happened to notice.
         names = fetch_names(tickers, JP_NAMES)
     elif JP_NAMES.exists():
         names = json.load(open(JP_NAMES))
+    else:
+        names = {}
     print(f"jp_names.json: {len(names)}/{len(tickers)} names available")
 
     fixed_lb = fixed_nm = already = no_ohlc = 0

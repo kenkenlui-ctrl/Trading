@@ -3,23 +3,23 @@
   "ticker_user": "AAPL",
   "name": "Apple Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
+  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-07",
-    "O": 336.96,
-    "H": 338.67,
-    "L": 332.78,
-    "C": 336.67,
-    "prev_close": 333.63,
-    "chg_pct": 0.91
+    "date": "2026-10-09",
+    "O": 331.7,
+    "H": 338.61,
+    "L": 330.7,
+    "C": 336.64,
+    "prev_close": 340.42,
+    "chg_pct": -1.11
   },
   "phase": "downtrend_active",
-  "adx": 15.78,
-  "plus_di": 28.54,
-  "minus_di": 20.99,
+  "adx": 15.5,
+  "plus_di": 26.86,
+  "minus_di": 23.17,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 345.34 (2026-09-22), trough 325.81 (2026-10-01), box top 338.67 (2026-10-07)",
+  "phase_evidence": "Peak 345.34 (2026-09-22), trough 325.81 (2026-10-01), box top 341.57 (2026-10-08)",
   "peak": {
     "date": "2026-09-22",
     "price": 345.34
@@ -29,10 +29,10 @@
     "price": 325.81
   },
   "box": {
-    "top": 338.67,
-    "top_date": "2026-10-07",
+    "top": 341.57,
+    "top_date": "2026-10-08",
     "bottom": 325.81,
-    "period": "2026-10-01 to 2026-10-07"
+    "period": "2026-10-01 to 2026-10-09"
   },
   "drop_from_peak_pct": 2.5,
   "recovery_from_crash_pct": 3.3,
@@ -40,8 +40,8 @@
     {
       "level": 328.0,
       "label": "S1 KEY",
-      "touches": 9,
-      "evidence": "tested 9x in base period; 2.6% below current"
+      "touches": 8,
+      "evidence": "tested 8x in base period; 2.6% below current"
     },
     {
       "level": 324.0,
@@ -52,54 +52,59 @@
     {
       "level": 316.0,
       "label": "S3 bottom",
-      "touches": 11,
+      "touches": 10,
       "evidence": "structural bottom, near crash low 325.81"
     }
   ],
   "resistances": [
     {
-      "level": 338.67,
+      "level": 338.61,
       "label": "R1 today high",
-      "evidence": "today's high 338.6700134277344"
+      "evidence": "today's high 338.6099853515625"
+    },
+    {
+      "level": 341.57,
+      "label": "R3 Oct high",
+      "evidence": "box top 341.57, base period high"
     }
   ],
   "position": {
-    "current": 336.67,
-    "in_box_pct": 91.2,
+    "current": 336.64,
+    "in_box_pct": 80.7,
     "nearest_support": "S1 KEY (328.0)",
-    "nearest_resistance": "R1 today high (338.67)"
+    "nearest_resistance": "R1 today high (338.61)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 336.96,
-    "H": 338.67,
-    "L": 332.78,
-    "C": 336.67,
-    "body_pct": 4.9,
-    "upper_wick_pct": 29.0,
-    "lower_wick_pct": 66.0
+    "O": 331.7,
+    "H": 338.61,
+    "L": 330.7,
+    "C": 336.64,
+    "body_pct": 62.5,
+    "upper_wick_pct": 24.9,
+    "lower_wick_pct": 12.6
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "bearish_continuation",
       "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 328.0 (KEY support)",
-      "then": "still range; watch 338.67 for next test"
+      "then": "still range; watch 338.61 for next test"
     },
     {
       "if": "break 328.0 on close",
@@ -110,8 +115,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 338.67 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 338.61 on close",
+      "then": "short-term bullish; next test 341.57"
+    },
+    {
+      "if": "break 341.57 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -133,23 +142,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 345.34,
-    "target_price": 330.93,
-    "stop_price": 354.97,
-    "risk_pct": 2.79,
-    "reward_pct": 4.17,
-    "rr_ratio": 1.5,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 345.34,
-    "s1": 316.51,
+    "s1": 325.81,
     "s2": 300.0,
     "r2": 344.57,
-    "r3": 323.45,
+    "r3": 334.68,
     "s3": 265.07,
     "s4": 243.42,
-    "current_position_pct": 69.9,
-    "notes": "SELL_R1: in box (317-345), entry at R1 345, target mid 331, stop 355 ｜ 52.2 條規則（SELL plan，resistance 345.34）：① 跌到 345.34、收市守住喺 345.34 上面 → 照 BUY 條 plan 做（入場 345.34，止蝕 354.97，目標 330.93）。② 收市跌穿 345.34 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 345.34 上面』。"
+    "current_position_pct": 55.5,
+    "notes": "WAIT_RANGE: in box (326-345), pos 55%, no clear setup"
   }
 }

@@ -3,20 +3,20 @@
   "ticker_user": "JCI",
   "name": "Johnson Controls International ",
   "data_source": "yfinance",
-  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
+  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-07",
-    "O": 156.78,
-    "H": 157.79,
-    "L": 154.25,
-    "C": 155.93,
-    "prev_close": 158.76,
-    "chg_pct": -1.78
+    "date": "2026-10-09",
+    "O": 154.95,
+    "H": 158.14,
+    "L": 154.86,
+    "C": 157.44,
+    "prev_close": 154.0,
+    "chg_pct": 2.23
   },
-  "phase": "downtrend_active",
-  "adx": 19.53,
-  "plus_di": 33.01,
-  "minus_di": 17.14,
+  "phase": "uptrend",
+  "adx": 19.76,
+  "plus_di": 32.37,
+  "minus_di": 19.52,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 160.41 (2026-10-06), trough 135.79 (2026-09-14), box top 160.41 (2026-10-06)",
@@ -32,35 +32,41 @@
     "top": 160.41,
     "top_date": "2026-10-06",
     "bottom": 135.79,
-    "period": "2026-09-14 to 2026-10-07"
+    "period": "2026-09-14 to 2026-10-09"
   },
-  "drop_from_peak_pct": 2.8,
-  "recovery_from_crash_pct": 14.8,
+  "drop_from_peak_pct": 1.9,
+  "recovery_from_crash_pct": 15.9,
   "supports": [
     {
-      "level": 148.0,
+      "level": 156.0,
       "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; 0.9% below current"
+    },
+    {
+      "level": 148.0,
+      "label": "S2",
       "touches": 10,
-      "evidence": "tested 10x in base period; 5.1% below current"
+      "evidence": "mid-base support, tested 10x"
     },
     {
       "level": 144.0,
-      "label": "S2",
-      "touches": 14,
-      "evidence": "mid-base support, tested 14x"
+      "label": "S3",
+      "touches": 13,
+      "evidence": "mid-base support, tested 13x"
     },
     {
-      "level": 140.0,
-      "label": "S3 bottom",
-      "touches": 9,
-      "evidence": "structural bottom, near crash low 135.79"
+      "level": 135.79,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-09-14, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 157.79,
+      "level": 158.14,
       "label": "R1 today high",
-      "evidence": "today's high 157.7899932861328"
+      "evidence": "today's high 158.13999938964844"
     },
     {
       "level": 160.41,
@@ -69,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 155.93,
-    "in_box_pct": 78.0,
-    "nearest_support": "S1 KEY (148.0)",
-    "nearest_resistance": "R1 today high (157.79)"
+    "current": 157.44,
+    "in_box_pct": 87.9,
+    "nearest_support": "S1 KEY (156.0)",
+    "nearest_resistance": "R1 today high (158.14)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 156.78,
-    "H": 157.79,
-    "L": 154.25,
-    "C": 155.93,
-    "body_pct": 24.0,
-    "upper_wick_pct": 28.5,
-    "lower_wick_pct": 47.5
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 154.95,
+    "H": 158.14,
+    "L": 154.86,
+    "C": 157.44,
+    "body_pct": 75.9,
+    "upper_wick_pct": 21.3,
+    "lower_wick_pct": 2.7
   },
   "bias": {
     "short": {
@@ -93,8 +99,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bearish_continuation",
-      "reason": "making new lows"
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -103,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 148.0 (KEY support)",
-      "then": "still range; watch 157.79 for next test"
+      "if": "hold 156.0 (KEY support)",
+      "then": "still range; watch 158.14 for next test"
     },
     {
-      "if": "break 148.0 on close",
-      "then": "target 144.0 → 140.0 (short-term bearish)"
+      "if": "break 156.0 on close",
+      "then": "target 148.0 → 144.0 (short-term bearish)"
     },
     {
-      "if": "break 140.0 (crash low)",
+      "if": "break 135.79 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 157.79 on close",
+      "if": "reclaim 158.14 on close",
       "then": "short-term bullish; next test 160.41"
     },
     {
@@ -142,15 +148,15 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 160.41,
-    "target_price": 148.1,
-    "stop_price": 165.66,
-    "risk_pct": 3.27,
-    "reward_pct": 7.67,
-    "rr_ratio": 2.35,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 160.41,
     "s1": 135.79,
     "s2": 136.24,
@@ -158,7 +164,7 @@
     "r3": 151.18,
     "s3": 131.32,
     "s4": 108.41,
-    "current_position_pct": 81.8,
-    "notes": "SELL_R1: in box (136-160), entry at R1 160, target mid 148, stop 166 ｜ 52.2 條規則（SELL plan，resistance 160.41）：① 跌到 160.41、收市守住喺 160.41 上面 → 照 BUY 條 plan 做（入場 160.41，止蝕 165.66，目標 148.10）。② 收市跌穿 160.41 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 160.41 上面』。"
+    "current_position_pct": 87.9,
+    "notes": "WAIT_RANGE: in box (136-160), pos 88%, no clear setup"
   }
 }

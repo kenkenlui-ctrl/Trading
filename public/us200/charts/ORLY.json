@@ -3,20 +3,20 @@
   "ticker_user": "ORLY",
   "name": "O'Reilly Automotive, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
+  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-07",
-    "O": 85.19,
-    "H": 85.99,
-    "L": 84.47,
-    "C": 84.61,
-    "prev_close": 85.14,
-    "chg_pct": -0.62
+    "date": "2026-10-09",
+    "O": 85.58,
+    "H": 86.64,
+    "L": 85.58,
+    "C": 86.45,
+    "prev_close": 86.01,
+    "chg_pct": 0.51
   },
   "phase": "downtrend_active",
-  "adx": 19.67,
-  "plus_di": 17.39,
-  "minus_di": 22.46,
+  "adx": 17.64,
+  "plus_di": 17.87,
+  "minus_di": 19.72,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 102.11 (2026-01-26), trough 82.59 (2026-07-15), box top 94.12 (2026-08-05)",
@@ -32,23 +32,23 @@
     "top": 94.12,
     "top_date": "2026-08-05",
     "bottom": 82.59,
-    "period": "2026-07-15 to 2026-10-07"
+    "period": "2026-07-15 to 2026-10-09"
   },
-  "drop_from_peak_pct": 17.1,
-  "recovery_from_crash_pct": 2.4,
+  "drop_from_peak_pct": 15.3,
+  "recovery_from_crash_pct": 4.7,
   "supports": [
     {
       "level": 84.0,
       "label": "S1 bottom",
-      "touches": 3,
+      "touches": 27,
       "evidence": "structural bottom, near crash low 82.59"
     }
   ],
   "resistances": [
     {
-      "level": 85.99,
+      "level": 86.64,
       "label": "R1 today high",
-      "evidence": "rejection at 85.98999786376953 (long upper wick, close weak)"
+      "evidence": "today's high 86.63999938964844"
     },
     {
       "level": 94.12,
@@ -57,28 +57,28 @@
     }
   ],
   "position": {
-    "current": 84.61,
-    "in_box_pct": 6.0,
+    "current": 86.45,
+    "in_box_pct": 24.2,
     "nearest_support": "S1 bottom (84.0)",
-    "nearest_resistance": "R1 today high (85.99)"
+    "nearest_resistance": "R1 today high (86.64)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 85.19,
-    "H": 85.99,
-    "L": 84.47,
-    "C": 84.61,
-    "body_pct": 38.2,
-    "upper_wick_pct": 52.6,
-    "lower_wick_pct": 9.2
+    "close_position": "upper_half",
+    "O": 85.58,
+    "H": 86.64,
+    "L": 85.58,
+    "C": 86.45,
+    "body_pct": 82.1,
+    "upper_wick_pct": 17.9,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (6% of box)"
+      "bias": "defensive",
+      "reason": "near box bottom (24% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -92,7 +92,7 @@
   "scenarios": [
     {
       "if": "hold 84.0 (KEY support)",
-      "then": "still range; watch 85.99 for next test"
+      "then": "still range; watch 86.64 for next test"
     },
     {
       "if": "break 84.0 on close",
@@ -103,7 +103,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 85.99 on close",
+      "if": "reclaim 86.64 on close",
       "then": "short-term bullish; next test 94.12"
     },
     {
@@ -131,7 +131,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -141,12 +141,12 @@
     "phase_match": false,
     "r1": 87.46,
     "s1": 82.83,
-    "s2": 82.59,
+    "s2": 84.45,
     "r2": 94.12,
     "r3": 100.63,
-    "s3": 82.71,
+    "s3": 82.59,
     "s4": 86.77,
-    "current_position_pct": 38.4,
-    "notes": "WAIT_RANGE: in box (83-87), pos 38%, no clear setup"
+    "current_position_pct": 78.2,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 87.46）：① 跌到 87.46、收市守住喺 87.46 上面 → 照 BUY 條 plan 做（入場 87.46，止蝕 90.14，目標 85.15）。② 收市跌穿 87.46 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 87.46 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }

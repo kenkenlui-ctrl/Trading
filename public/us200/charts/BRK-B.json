@@ -3,20 +3,20 @@
   "ticker_user": "BRK-B",
   "name": "Berkshire Hathaway Inc. New",
   "data_source": "yfinance",
-  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
+  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-07",
-    "O": 506.12,
-    "H": 506.7,
-    "L": 504.3,
-    "C": 506.25,
-    "prev_close": 505.54,
-    "chg_pct": 0.14
+    "date": "2026-10-09",
+    "O": 510.0,
+    "H": 516.57,
+    "L": 509.71,
+    "C": 515.62,
+    "prev_close": 511.05,
+    "chg_pct": 0.89
   },
   "phase": "downtrend_active",
-  "adx": 9.59,
-  "plus_di": 24.42,
-  "minus_di": 20.42,
+  "adx": 12.12,
+  "plus_di": 31.94,
+  "minus_di": 16.76,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 537.74 (2026-08-10), trough 495.68 (2026-08-21), box top 523.74 (2026-09-16)",
@@ -32,23 +32,29 @@
     "top": 523.74,
     "top_date": "2026-09-16",
     "bottom": 495.68,
-    "period": "2026-08-21 to 2026-10-07"
+    "period": "2026-08-21 to 2026-10-09"
   },
-  "drop_from_peak_pct": 5.9,
-  "recovery_from_crash_pct": 2.1,
+  "drop_from_peak_pct": 4.1,
+  "recovery_from_crash_pct": 4.0,
   "supports": [
     {
-      "level": 496.0,
-      "label": "S1 bottom",
-      "touches": 3,
+      "level": 504.0,
+      "label": "S1 KEY",
+      "touches": 27,
+      "evidence": "tested 27x in base period; 2.3% below current"
+    },
+    {
+      "level": 500.0,
+      "label": "S2 bottom",
+      "touches": 19,
       "evidence": "structural bottom, near crash low 495.68"
     }
   ],
   "resistances": [
     {
-      "level": 506.7,
+      "level": 516.57,
       "label": "R1 today high",
-      "evidence": "today's high 506.70001220703125"
+      "evidence": "today's high 516.5700073242188"
     },
     {
       "level": 523.74,
@@ -57,28 +63,28 @@
     }
   ],
   "position": {
-    "current": 506.25,
-    "in_box_pct": 37.0,
-    "nearest_support": "S1 bottom (496.0)",
-    "nearest_resistance": "R1 today high (506.7)"
+    "current": 515.62,
+    "in_box_pct": 65.8,
+    "nearest_support": "S1 KEY (504.0)",
+    "nearest_resistance": "R1 today high (516.57)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 506.12,
-    "H": 506.7,
-    "L": 504.3,
-    "C": 506.25,
-    "body_pct": 5.4,
-    "upper_wick_pct": 18.8,
-    "lower_wick_pct": 75.8
+    "O": 510.0,
+    "H": 516.57,
+    "L": 509.71,
+    "C": 515.62,
+    "body_pct": 81.9,
+    "upper_wick_pct": 13.8,
+    "lower_wick_pct": 4.2
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -91,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 496.0 (KEY support)",
-      "then": "still range; watch 506.7 for next test"
+      "if": "hold 504.0 (KEY support)",
+      "then": "still range; watch 516.57 for next test"
     },
     {
-      "if": "break 496.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 504.0 on close",
+      "then": "target 500.0 → lower (short-term bearish)"
     },
     {
-      "if": "break 496.0 (crash low)",
+      "if": "break 500.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 506.7 on close",
+      "if": "reclaim 516.57 on close",
       "then": "short-term bullish; next test 523.74"
     },
     {
@@ -130,15 +136,15 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 523.74,
+    "target_price": 509.85,
+    "stop_price": 534.21,
+    "risk_pct": 2.0,
+    "reward_pct": 2.65,
+    "rr_ratio": 1.33,
+    "phase_match": true,
     "r1": 523.74,
     "s1": 495.96,
     "s2": 486.06,
@@ -146,7 +152,7 @@
     "r3": 512.58,
     "s3": 464.34,
     "s4": 464.01,
-    "current_position_pct": 37.0,
-    "notes": "WAIT_RANGE: in box (496-524), pos 37%, no clear setup"
+    "current_position_pct": 70.8,
+    "notes": "SELL_R1: in box (496-524), entry at R1 524, target mid 510, stop 534 ｜ 52.2 條規則（SELL plan，resistance 523.74）：① 跌到 523.74、收市守住喺 523.74 上面 → 照 BUY 條 plan 做（入場 523.74，止蝕 534.21，目標 509.85）。② 收市跌穿 523.74 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 523.74 上面』。"
   }
 }

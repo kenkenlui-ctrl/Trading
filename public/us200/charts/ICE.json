@@ -3,20 +3,20 @@
   "ticker_user": "ICE",
   "name": "Intercontinental Exchange Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-19 → 2026-10-07 (200 daily bars)",
+  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-07",
-    "O": 152.93,
-    "H": 154.0,
-    "L": 151.23,
-    "C": 152.59,
-    "prev_close": 153.49,
-    "chg_pct": -0.59
+    "date": "2026-10-09",
+    "O": 155.59,
+    "H": 157.04,
+    "L": 155.05,
+    "C": 156.19,
+    "prev_close": 155.35,
+    "chg_pct": 0.54
   },
   "phase": "base_building",
-  "adx": 18.19,
-  "plus_di": 16.66,
-  "minus_di": 23.86,
+  "adx": 16.08,
+  "plus_di": 20.82,
+  "minus_di": 20.84,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 176.05 (2026-01-29), trough 121.79 (2026-06-29), box top 164.66 (2026-09-03)",
@@ -32,25 +32,25 @@
     "top": 164.66,
     "top_date": "2026-09-03",
     "bottom": 121.79,
-    "period": "2026-06-29 to 2026-10-07"
+    "period": "2026-06-29 to 2026-10-09"
   },
-  "drop_from_peak_pct": 13.3,
-  "recovery_from_crash_pct": 25.3,
+  "drop_from_peak_pct": 11.3,
+  "recovery_from_crash_pct": 28.2,
   "supports": [
     {
-      "level": 148.0,
+      "level": 152.0,
       "label": "S1 KEY",
-      "touches": 9,
-      "evidence": "tested 9x in base period; 3.0% below current"
+      "touches": 31,
+      "evidence": "tested 31x in base period; 2.7% below current"
+    },
+    {
+      "level": 148.0,
+      "label": "S2",
+      "touches": 12,
+      "evidence": "mid-base support, tested 12x"
     },
     {
       "level": 140.0,
-      "label": "S2",
-      "touches": 6,
-      "evidence": "mid-base support, tested 6x"
-    },
-    {
-      "level": 136.0,
       "label": "S3",
       "touches": 6,
       "evidence": "mid-base support, tested 6x"
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 154.0,
+      "level": 157.04,
       "label": "R1 today high",
-      "evidence": "today's high 154.0"
+      "evidence": "today's high 157.0399932861328"
     },
     {
       "level": 160.0,
@@ -80,23 +80,23 @@
     }
   ],
   "position": {
-    "current": 152.59,
-    "in_box_pct": 71.8,
-    "nearest_support": "S1 KEY (148.0)",
-    "nearest_resistance": "R1 today high (154.0)"
+    "current": 156.19,
+    "in_box_pct": 80.2,
+    "nearest_support": "S1 KEY (152.0)",
+    "nearest_resistance": "R1 today high (157.04)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 152.93,
-    "H": 154.0,
-    "L": 151.23,
-    "C": 152.59,
-    "body_pct": 12.3,
-    "upper_wick_pct": 38.6,
-    "lower_wick_pct": 49.1
+    "close_position": "upper_half",
+    "O": 155.59,
+    "H": 157.04,
+    "L": 155.05,
+    "C": 156.19,
+    "body_pct": 30.2,
+    "upper_wick_pct": 42.7,
+    "lower_wick_pct": 27.1
   },
   "bias": {
     "short": {
@@ -114,19 +114,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 148.0 (KEY support)",
-      "then": "still range; watch 154.0 for next test"
+      "if": "hold 152.0 (KEY support)",
+      "then": "still range; watch 157.04 for next test"
     },
     {
-      "if": "break 148.0 on close",
-      "then": "target 140.0 → 136.0 (short-term bearish)"
+      "if": "break 152.0 on close",
+      "then": "target 148.0 → 140.0 (short-term bearish)"
     },
     {
       "if": "break 121.79 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 154.0 on close",
+      "if": "reclaim 157.04 on close",
       "then": "short-term bullish; next test 160.0"
     },
     {
@@ -153,23 +153,23 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 160.53,
+    "target_price": 154.01,
+    "stop_price": 165.77,
+    "risk_pct": 3.27,
+    "reward_pct": 4.06,
+    "rr_ratio": 1.24,
     "phase_match": true,
     "r1": 160.53,
     "s1": 147.5,
     "s2": 137.76,
     "r2": 164.66,
-    "r3": 164.33,
+    "r3": 161.93,
     "s3": 121.79,
     "s4": 144.18,
-    "current_position_pct": 39.1,
-    "notes": "WAIT_RANGE: in box (148-161), pos 39%, no clear setup"
+    "current_position_pct": 66.7,
+    "notes": "SELL_R1: in box (148-161), entry at R1 161, target mid 154, stop 166 ｜ 52.2 條規則（SELL plan，resistance 160.53）：① 跌到 160.53、收市守住喺 160.53 上面 → 照 BUY 條 plan 做（入場 160.53，止蝕 165.77，目標 154.01）。② 收市跌穿 160.53 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 160.53 上面』。"
   }
 }
