@@ -383,7 +383,30 @@ def main() -> None:
                   f"{idx_date} — {stale_days}d behind, refusing to publish stale signals")
             continue
 
+        # 2026-10-10: restrict to the CURRENT universe. bars_from_public() scans
+        # every *_ohlc.json on disk, and public/<mkt>/ohlc/ keeps the files of
+        # tickers a universe regen has since swapped out. Seven JP names dropped
+        # from jp_universe_200.json on 10-08 were still producing live v2
+        # signals two days later — the site published "today's plan" for stocks
+        # it no longer tracks, and built_dashboard cannot see the difference
+        # because it renders the same list from a different directory.
+        # US must use us_published.json, NOT us_universe_200.json: build_dashboard
+        # renders /us200/ from the published union (229 names, every ticker that
+        # has ever had a page), and 35 of those are no longer in the rotating
+        # 200. Filtering US by the universe would silently withdraw signals for
+        # tickers the site still publishes a row for.
+        _uni_path = {"jp200": REPO / "jp_universe_200.json",
+                     "us200": REPO / "charts" / "us200" / "us_published.json"}.get(mkt)
+        _uni: set[str] | None = None
+        if _uni_path and _uni_path.exists():
+            _uni = {str(t).replace(".", "_") for t in json.load(open(_uni_path))}
+        elif mkt == "jp200":
+            _uni = None
+
         for sym, df in bars.items():
+            if _uni is not None and sym not in _uni:
+                screen["dropped from universe"] = screen.get("dropped from universe", 0) + 1
+                continue
             p, why = plan(mkt, sym, df, equity_basis(mkt))
             screen[why] = screen.get(why, 0) + 1
             if p:

@@ -1267,6 +1267,64 @@ def t_jp_ohlc_has_one_naming_scheme() -> None:
            if not pref else f"{len(pref)} leftover JP_-prefixed files: {pref[:3]}")
 
 
+def t_signals_only_come_from_tracked_tickers() -> None:
+    """A published signal must belong to a ticker we actually track.
+
+    2026-10-10. build_v2_signals.py iterated bars_from_public(), which globs
+    every public/<mkt>/ohlc/*.json — including files left behind for tickers a
+    universe regen had swapped out. Seven JP names dropped from
+    jp_universe_200.json on 10-08 were still published as "today's limit
+    orders" on 10-10, and three of them appeared in the /jp200/ table. The
+    data was real and the maths was right; what was wrong was that nobody had
+    stopped trading a name we no longer cover.
+
+    The per-market source matters too: US is filtered by us_published.json
+    (every ticker that has ever had a page), not by us_universe_200.json.
+    Filtering US by the rotating 200 would withdraw signals for 35 tickers the
+    site still publishes a row for — the fix must not over-correct.
+    """
+    f = PUBLIC / "v2-signals.json"
+    if not f.exists():
+        record("v2/every published signal is a tracked ticker", False,
+               "v2-signals.json missing")
+        return
+    sigs = json.loads(f.read_text(encoding="utf-8")).get("signals", [])
+    if not sigs:
+        record("v2/every published signal is a tracked ticker", True, "no signals today")
+        return
+    srcs = {"jp200": REPO / "jp_universe_200.json",
+            "us200": REPO / "charts" / "us200" / "us_published.json",
+            "hk200": REPO / "hk_universe_200.json"}
+    keep = {m: {str(t).replace(".", "_") for t in json.load(open(p))}
+            for m, p in srcs.items() if p.exists()}
+    stray = sorted({f"{s['market']}/{s['symbol']}" for s in sigs
+                    if s.get("market") in keep and s["symbol"] not in keep[s["market"]]})
+    record("v2/every published signal is a tracked ticker",
+           not stray,
+           f"{len(sigs)} signals, all within {sorted(keep)}" if not stray
+           else f"{len(stray)} signals for untracked tickers: {stray[:5]}")
+
+    # And the mirror image: a page nothing will ever rebuild is a page whose
+    # date stamp will drift away from its data.
+    for mkt, path in FILTERS_FOR_PAGES.items():
+        if not (REPO / path).exists():
+            continue
+        keep_m = {str(t).replace(".", "_") for t in json.load(open(REPO / path))}
+        pages = {q.stem for q in (PUBLIC / mkt / "ticker").glob("*.html")}
+        orphans = sorted(pages - keep_m)
+        record(f"v2/{mkt} has no page for an untracked ticker",
+               not orphans,
+               f"{len(pages)} pages, all tracked" if not orphans
+               else f"{len(orphans)} orphan pages: {orphans[:5]}")
+
+
+FILTERS_FOR_PAGES = {
+    "jp200": "jp_universe_200.json",
+    "us200": "charts/us200/us_published.json",
+    "hk200": "hk_universe_200.json",
+}
+
+
 def t_en_tree_is_retired() -> None:
     """/en/ must be out of service, or rebuilt — never silently stale.
 
@@ -1369,7 +1427,8 @@ def main() -> int:
                t_universe_keeps_published_fetchable, t_v2_sizing_is_tradable,
                t_structured_data_is_present_and_true,
                t_llms_txt_says_which_engine_covers_which_market,
-               t_jp_ohlc_has_one_naming_scheme, t_en_tree_is_retired):
+               t_jp_ohlc_has_one_naming_scheme, t_en_tree_is_retired,
+               t_signals_only_come_from_tracked_tickers):
         print(f"\n{fn.__doc__.splitlines()[0] if fn.__doc__ else fn.__name__}")
         try:
             fn()
