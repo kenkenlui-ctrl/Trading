@@ -161,6 +161,63 @@ def walk(cands: list[dict], mkt: str) -> tuple[pd.DataFrame | None, int]:
     return pd.DataFrame(curve), peak_one_name
 
 
+
+def walk_signed(cands: list[dict], mkt: str) -> tuple[pd.DataFrame | None, int]:
+    """PT.walk generalised to short positions.
+
+    HK's v1 strategy emits SELL signals, so half the leg cannot be run
+    through a long-only walk: PT.walk settles `shares*(exit - entry)`, which
+    for a short whose price FELL books a loss. That would silently invert
+    every SELL trade's P&L.
+
+    With every side == +1 this is PT.walk line for line; assert_walk_matches_
+    production() proves that on this leg's own candidates rather than asking
+    the reader to take it on faith.
+    """
+    if not cands:
+        return None, 0
+    d = pd.DataFrame(cands)
+    if "side" not in d.columns:
+        d["side"] = 1
+    d = d.sort_values(["entry_date", "ret5d"]).reset_index(drop=True)
+    d["cost"] = [cost_rt(mkt, COST, w == "stop") for w in d.why]
+
+    dates = sorted(set(d.entry_date) | set(d.exit_date))
+    equity, pos, curve, peak_one_name = 100_000.0, [], [], 0
+    for dt in dates:
+        keep = []
+        for p in pos:
+            if p["exit_date"] <= dt:
+                equity += p["shares"] * p["side"] * (p["exit"] * (1 - p["cost"]) - p["entry"])
+            else:
+                keep.append(p)
+        pos = keep
+        for _, t in d[d.entry_date == dt].iterrows():
+            if len(pos) >= MAX_SLOTS:
+                break
+            rps = (t.entry - t.stop) if t.side > 0 else (t.stop - t.entry)
+            if rps <= 0:
+                continue
+            room = MAX_NOTIONAL * equity - sum(
+                p["shares"] * p["entry"] for p in pos if p["sym"] == t.sym)
+            if room <= 0:
+                continue
+            sh = min(RISK * equity / rps, room / t.entry)
+            if sh <= 0:
+                continue
+            if sum(p["shares"] * p["entry"] for p in pos) + sh * t.entry > equity:
+                continue
+            pos.append({"sym": t.sym, "entry": t.entry, "exit": t.exit,
+                        "exit_date": t.exit_date, "shares": sh,
+                        "cost": t.cost, "side": t.side})
+        seen: dict[str, int] = {}
+        for p in pos:
+            seen[p["sym"]] = seen.get(p["sym"], 0) + 1
+        if seen:
+            peak_one_name = max(peak_one_name, max(seen.values()))
+        curve.append({"date": dt, "equity": equity, "open": len(pos)})
+    return pd.DataFrame(curve), peak_one_name
+
 def stats(eq: pd.Series) -> dict:
     e = eq.to_numpy(float)
     yrs = (eq.index[-1] - eq.index[0]).days / 365.25

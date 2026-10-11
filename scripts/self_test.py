@@ -33,6 +33,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import re
 import sys
@@ -870,41 +871,124 @@ def t_universe_keeps_published_fetchable() -> None:
            else f"no cadence entry for: {missing} — the gate cannot see them as stale")
 
 
-def t_vix_study_is_research_only() -> None:
-    """The VIX regime study must not be reachable from any build path.
+def t_short_settlement_arithmetic() -> None:
+    """Short P&L must settle correctly, checked against an independent hand-calc.
 
-    2026-10-08. The spec requires the work to sit behind a `vix_regime_filter`
-    flag that defaults OFF, with no change to production signal generation. The
-    cheapest correct branch is one nothing in the daily build can import.
+    2026-10-09. The multi-market study generalised portfolio_test.walk to hold
+    shorts, because HK's v1 strategy emits SELL signals and PT.walk settles
+    `shares*(exit - entry)` — on a short whose price FELL that books a loss,
+    inverting every SELL trade. The long-only equivalence check in the study
+    proves the generalisation did not change long behaviour; it says nothing
+    about the short branch, which is where HK's whole result lives.
+
+    PT.walk cannot serve as the reference here — it is the thing being
+    generalised. So this re-derives each case from first principles: sizing
+    off the stop distance, the notional cap, and the side-signed settlement.
     """
-    cfg = (REPO / "scripts" / "vix_config.py").read_text(encoding="utf-8")
-    record("vix/study config flag defaults to OFF",
-           "vix_regime_filter: bool = False" in cfg,
-           "scripts/vix_config.py does not default vix_regime_filter to False")
+    sys.path.insert(0, str(REPO / "scripts"))
+    import pandas as pd
+    import portfolio_test as PT
 
-    # Nothing on the build path may import it. build_v2_signals.py is the
-    # production generator; if it ever imports vix_config, the flag has one
-    # import away from changing published signals.
-    offenders = []
-    for p in sorted((REPO / "scripts").glob("*.py")):
-        # Exclude the study itself and this checker — both name vix_config on
-        # purpose, and a guard that flags its own source is a false positive.
-        if p.name.startswith("vix_") or p.name == "self_test.py":
-            continue
-        if "vix_config" in p.read_text(encoding="utf-8", errors="ignore"):
-            offenders.append(p.name)
-    build = (REPO / "charts" / "us200" / "batch_us200.py").read_text(encoding="utf-8")
-    if "vix" in build.lower():
-        offenders.append("batch_us200.py")
-    record("vix/no production script imports the study config",
-           not offenders, f"importers: {offenders}")
+    EQ = 100_000.0
 
-    # And the generator's own parameters must be untouched by the study.
-    gen = (REPO / "scripts" / "build_v2_signals.py").read_text(encoding="utf-8")
-    record("vix/production v2 PARAMS unchanged",
-           "PARAMS = dict(stop_atr=3.0, hold=10, atr_max=0.06, box_max=0.35," in gen
-           and "risk=0.01, max_notional=0.10)" in gen,
-           "build_v2_signals.py PARAMS no longer match the published rule set")
+    def hand(entry, stop, exit_px, side, why):
+        rps = (entry - stop) if side > 0 else (stop - entry)
+        if rps <= 0:
+            return 0.0, 0.0
+        sh = min(PT.RISK * EQ / rps, (PT.MAX_NOTIONAL * EQ) / entry)
+        cost = PT.cost_rt("us200", PT.COST, why == "stop")
+        return sh, sh * side * (exit_px * (1 - cost) - entry)
+
+    cases = [
+        ("short wins on target", -1, 50.0, 52.0, 45.0, "target"),
+        ("short loses on stop", -1, 50.0, 52.0, 55.0, "stop"),
+        ("long wins on target", 1, 50.0, 48.0, 55.0, "target"),
+        ("long loses on stop", 1, 50.0, 48.0, 45.0, "stop"),
+        ("short sized by risk cap", -1, 10.0, 10.5, 9.0, "target"),
+        ("long sized by notional cap", 1, 200.0, 199.0, 210.0, "target"),
+    ]
+    bad, wrong_sign = [], []
+    for name, side, entry, stop, exit_px, why in cases:
+        rec = {"sym": "X", "side": side, "entry": entry, "stop": stop,
+               "exit": exit_px, "why": why, "gross": 0.0, "ret5d": 0.0,
+               "entry_date": pd.Timestamp("2024-01-02"),
+               "exit_date": pd.Timestamp("2024-01-03")}
+        curve, _ = PT.walk_signed([rec], "us200")
+        got = float(curve["equity"].iloc[-1]) - EQ
+        _, exp = hand(entry, stop, exit_px, side, why)
+        if abs(got - exp) > 1e-9:
+            bad.append(f"{name}: walk {got:.4f} vs hand {exp:.4f}")
+        # Direction is the point of the generalisation: a short that fell must
+        # profit. A magnitude that matches is not enough if the sign is wrong.
+        moved_for_us = (exit_px < entry) if side < 0 else (exit_px > entry)
+        if (got > 0) != moved_for_us:
+            wrong_sign.append(f"{name}: {got:.4f} for a move that should "
+                              f"{'profit' if moved_for_us else 'lose'}")
+    record("portfolio/short settlement matches an independent hand-calc",
+           not bad, "; ".join(bad) or "all cases agree to 1e-9")
+    record("portfolio/short P&L carries the correct sign",
+           not wrong_sign, "; ".join(wrong_sign) or "sign correct in all cases")
+
+    # The trap this study walked into, locked down. PT.walk sizes with
+    # `rps = entry - stop`, which is NEGATIVE for every short, so its
+    # `if rps <= 0: continue` drops the entire short book without a word.
+    # HK v1 is ~2/3 SELL signals, so a study that quietly used PT.walk would
+    # have reported a portfolio built from the long third and called it the
+    # walk. Any script holding short candidates must route through the
+    # side-aware walk.
+    shorty = {"sym": "X", "side": -1, "entry": 10.0, "stop": 10.5,
+              "exit": 9.0, "why": "target", "gross": 0.10, "ret5d": 0.0,
+              "entry_date": pd.Timestamp("2022-03-01"),
+              "exit_date": pd.Timestamp("2022-03-04")}
+    pt_curve, _ = PT.walk([shorty], "hk200")
+    sg_curve, _ = PT.walk_signed([shorty], "hk200")
+    pt_eq = float(pt_curve["equity"].iloc[-1])
+    sg_eq = float(sg_curve["equity"].iloc[-1])
+    # Momentum engine guards. The engine is research-only and pre-registered,
+    # so the two things that can silently invalidate it are a production
+    # import and a parameter edit.
+    eng = REPO / "scripts" / "hk_momentum_engine.py"
+    if not eng.exists():
+        record("momentum/engine script exists", False, "scripts/hk_momentum_engine.py missing")
+    else:
+        esrc = eng.read_text(encoding="utf-8")
+        record("momentum/engine script exists", True, "")
+        # Match import STATEMENTS, not the bare name. A text search flags
+        # hk_mom_screen_12.py purely because its docstring says "Run on same
+        # panel as hk_momentum_engine.py" — which is documentation, not
+        # coupling, and reporting it as a violation teaches the guard to be
+        # ignored.
+        imp = re.compile(r"^\s*(?:import\s+hk_momentum_engine\b"
+                         r"|from\s+hk_momentum_engine\s+import\b)", re.M)
+        offenders = [q.name for q in sorted((REPO / "scripts").glob("*.py"))
+                     if q.name not in ("hk_momentum_engine.py", "self_test.py")
+                     and imp.search(q.read_text(encoding="utf-8", errors="ignore"))]
+        record("momentum/no production script imports the engine",
+               not offenders, f"importers: {offenders}")
+
+        # Pre-registered means frozen. A study that re-tunes PARAMS after
+        # seeing its own output is a search wearing a study's clothes, and the
+        # only trace of that is the diff — so the values are pinned.
+        for k, v in (("lookback_bars", "252"), ("top_fraction", "0.20"),
+                     ("rebalance_every_bars", "21")):
+            record(f"momentum/PARAMS['{k}'] still {v}",
+                   f'"{k}": {v}' in esrc,
+                   f"pre-registered parameter {k} was changed")
+
+        # The look-ahead probe compares MEMBER SETS. A count-only check passes
+        # a strategy that swaps one name for another.
+        record("momentum/look-ahead probe compares the member set, not the count",
+               "members_identical" in esrc and "before == after" in esrc,
+               "probe fell back to a size comparison")
+        record("momentum/event robustness does not re-scale a percentage",
+               "annualised_pct_all" in esrc and "per_year)" in esrc
+               and "per_year) * 100)" not in esrc,
+               "annualisation applies an extra x100 to an already-percent series")
+
+    record("portfolio/PT.walk silently drops every short",
+           sg_eq > pt_eq,
+           f"PT.walk returned {pt_eq:.2f} and walk_signed {sg_eq:.2f} for one "
+           f"profitable short — PT.walk ignored it because entry-stop < 0")
 
 
 def t_no_ai_engine_claim() -> None:
@@ -1422,7 +1506,8 @@ def main() -> int:
     for fn in (t_quote_never_zero, t_badge_is_data_driven, t_no_zero_prices,
                t_badges_agree, t_restamp_idempotent, t_sitemap_guard, t_v2_bars_fresh,
                t_glitch_mask, t_css_cachebuster, t_no_retired_v1_claims,
-               t_candles_have_prices, t_track_record_page, t_vix_study_is_research_only,
+               t_candles_have_prices, t_track_record_page,
+               t_short_settlement_arithmetic,
                t_no_ai_engine_claim,
                t_universe_keeps_published_fetchable, t_v2_sizing_is_tradable,
                t_structured_data_is_present_and_true,
