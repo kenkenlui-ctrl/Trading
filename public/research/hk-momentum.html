@@ -1,0 +1,42 @@
+<!doctype html><html lang="zh-Hant-HK"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>港股 12 個月動量策略 · 研究記錄 · Leeks Terminal</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="/leeks.css">
+<style>body{font-family:system-ui,sans-serif;max-width:820px;margin:0 auto;padding:24px;line-height:1.65}
+table{border-collapse:collapse;width:100%;font-size:.92rem;margin:14px 0}
+th,td{padding:7px 10px;border-bottom:1px solid var(--border);text-align:left}
+th{color:var(--dim)} .r{text-align:right;font-family:var(--font-mono)}
+.big{font-size:2.2rem;font-weight:700;margin:6px 0}
+.box{padding:14px 18px;border-left:4px solid var(--amber);background:var(--amber-dim);border-radius:4px;margin:16px 0}
+code{background:var(--bg-2);padding:1px 5px;border-radius:3px}</style></head><body>
+<h1>港股 12 個月動量策略</h1>
+<p style="color:var(--dim)">每月買入過去一年最強嗰 20%，持有至下次調倉。純做多，無止蝕位。</p>
+
+<div class="big">15.11% <span style="font-size:1rem;color:var(--dim)">年化</span></div>
+<table>
+<tr><th></th><th class="r">年化</th><th class="r">夏普</th><th class="r">勝率</th><th class="r">最大回撤</th></tr>
+<tr><td>真實</td><td class='r'>15.11%</td><td class='r'>0.921</td><td class='r'>64.2%</td><td class='r'>-14.81%</td></tr><tr><td>位移 -63 bars</td><td class='r'>15.83%</td><td class='r'>0.993</td><td class='r'>64.2%</td><td class='r'>-14.81%</td></tr><tr><td>位移 -21 bars</td><td class='r'>15.24%</td><td class='r'>0.931</td><td class='r'>64.2%</td><td class='r'>-14.81%</td></tr><tr><td>位移 21 bars</td><td class='r'>14.54%</td><td class='r'>0.886</td><td class='r'>63.8%</td><td class='r'>-14.81%</td></tr><tr><td>位移 63 bars</td><td class='r'>15.0%</td><td class='r'>0.908</td><td class='r'>64.1%</td><td class='r'>-14.81%</td></tr></table>
+
+<h2>點樣讀呢個數</h2>
+<p>位移 ±21 / ±63 bars 係<b> placebo</b>：將調倉日推前推後一個月或一個季度。
+五個變體全部落喺 14.54%–15.83%，跨度 1.29 pp
+—— 窄區間代表結果對日期對齊唔敏感，唔係單一日期撞好運。</p>
+<p>剔除 2020 年疫情同 2022 年熊市窗口後，年化由 15.11% 升至 16.07%。
+即係<b>唔係靠大事件賺錢</b>，相反喺平靜期表現更好。</p>
+<p>T-1 前視探針：28 隻成分喺 D+1 人為插入假尖峰後<b>完全唔變</b>（True）。</p>
+
+<h2>三個不能忽略的限制</h2>
+<div class="box">
+<p><b>1. 存續者偏誤。</b>The universe is 174 CURRENT constituents. Stocks delisted, privatised or acquired since 2016-09-01 are absent, which inflates every figure here. Closing this gap needs point-in-time index membership, which this repository does not hold.</p>
+<p><b>2. 這條規則是從 12 個組合裡選出來的。</b>These parameters were chosen in a prior screening pass that compared 4 momentum descriptors x 3 rebalance frequencies = 12 combinations. This run tests ONE pre-registered rule, but that rule was chosen from 12, so its evidence carries the weight of 12 trials and the multiple-testing penalty applies in full. A clean test would re-run on a period or universe never seen during screening.</p>
+<p><b>3. 組合構造同 v2 不同。</b>Basket rebalance, not portfolio_test.walk. walk sizes off entry-to-stop distance and momentum has no stop. The guardrails are reimplemented here; the position-sizing engine is not shared.</p>
+</div>
+
+<h2>參數（預先登記，不可事後調整）</h2>
+<p><code>{"lookback_bars": 252, "top_fraction": 0.2, "rebalance_every_bars": 21, "min_history_bars": 253, "market": "hk200", "hold": "until next rebalance (no stop, no target)", "weighting": "equal weight across constituents"}</code></p>
+<p style="font-size:.85rem;color:var(--dim)">成本模型：0.25% round trip charged pro-rata on the fraction of the basket traded each rebalance；實際平均換手 42.9%／月。</p>
+<p style="font-size:.85rem;color:var(--dim)">股票池：174 隻現時成分（已剔除 7 隻數據有問題嘅）。</p>
+
+<p style="font-size:.85rem;color:var(--dim);margin-top:28px">本頁 <code>noindex</code>，屬研究記錄，未接入 production，未部署。</p>
+</body></html>
