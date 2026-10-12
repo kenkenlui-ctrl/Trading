@@ -3,20 +3,20 @@
   "ticker_user": "00293.HK",
   "name": "CATHAY PAC AIR",
   "data_source": "yfinance",
-  "data_range": "2025-12-09 → 2026-10-02 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-02",
-    "O": 14.74,
-    "H": 14.74,
-    "L": 14.32,
-    "C": 14.45,
-    "prev_close": 14.74,
-    "chg_pct": -1.97
+    "date": "2026-10-09",
+    "O": 14.15,
+    "H": 14.29,
+    "L": 14.1,
+    "C": 14.12,
+    "prev_close": 14.15,
+    "chg_pct": -0.21
   },
   "phase": "downtrend_active",
-  "adx": 16.01,
-  "plus_di": 22.31,
-  "minus_di": 17.8,
+  "adx": 12.89,
+  "plus_di": 17.16,
+  "minus_di": 19.05,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 15.22 (2026-08-07), trough 13.42 (2026-09-02), box top 14.78 (2026-09-30)",
@@ -32,49 +32,48 @@
     "top": 14.78,
     "top_date": "2026-09-30",
     "bottom": 13.42,
-    "period": "2026-09-02 to 2026-10-02"
+    "period": "2026-09-02 to 2026-10-09"
   },
-  "drop_from_peak_pct": 5.1,
-  "recovery_from_crash_pct": 7.7,
+  "drop_from_peak_pct": 7.2,
+  "recovery_from_crash_pct": 5.2,
   "supports": [
     {
-      "level": 16.0,
-      "label": "S1 KEY",
-      "touches": 10,
-      "evidence": "tested 10x in base period; -10.7% below current"
-    },
-    {
       "level": 12.0,
-      "label": "S2 bottom",
-      "touches": 18,
+      "label": "S1 bottom",
+      "touches": 6,
       "evidence": "structural bottom, near crash low 13.42"
     }
   ],
   "resistances": [
     {
-      "level": 14.74,
+      "level": 14.29,
       "label": "R1 today high",
-      "evidence": "today's high 14.739999771118164"
+      "evidence": "rejection at 14.289999961853027 (long upper wick, close weak)"
+    },
+    {
+      "level": 14.78,
+      "label": "R3 Sep high",
+      "evidence": "box top 14.78, base period high"
     }
   ],
   "position": {
-    "current": 14.45,
-    "in_box_pct": 89.4,
-    "nearest_support": "S1 KEY (16.0)",
-    "nearest_resistance": "R1 today high (14.74)"
+    "current": 14.12,
+    "in_box_pct": 76.3,
+    "nearest_support": "S1 bottom (12.0)",
+    "nearest_resistance": "R1 today high (14.29)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_rejection",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "lower_half",
-    "O": 14.74,
-    "H": 14.74,
-    "L": 14.32,
-    "C": 14.45,
-    "body_pct": 69.0,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 31.0
+    "O": 14.15,
+    "H": 14.29,
+    "L": 14.1,
+    "C": 14.12,
+    "body_pct": 15.8,
+    "upper_wick_pct": 73.7,
+    "lower_wick_pct": 10.5
   },
   "bias": {
     "short": {
@@ -92,20 +91,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 16.0 (KEY support)",
-      "then": "still range; watch 14.74 for next test"
+      "if": "hold 12.0 (KEY support)",
+      "then": "still range; watch 14.29 for next test"
     },
     {
-      "if": "break 16.0 on close",
-      "then": "target 12.0 → lower (short-term bearish)"
+      "if": "break 12.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
       "if": "break 12.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 14.74 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 14.29 on close",
+      "then": "short-term bullish; next test 14.78"
+    },
+    {
+      "if": "break 14.78 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -128,7 +131,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -141,9 +144,9 @@
     "s2": 12.82,
     "r2": 15.22,
     "r3": 13.75,
-    "s3": 11.42,
+    "s3": 11.43,
     "s4": 11.06,
-    "current_position_pct": 68.0,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 14.78）：① 跌到 14.78、收市守住喺 14.78 上面 → 照 BUY 條 plan 做（入場 14.78，止蝕 15.25，目標 14.26）。② 收市跌穿 14.78 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 14.78 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 35.9,
+    "notes": "WAIT_RANGE: in box (14-15), pos 36%, no clear setup"
   }
 }

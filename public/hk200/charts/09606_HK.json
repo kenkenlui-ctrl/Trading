@@ -1,19 +1,24 @@
 {
   "ticker": "HK.09606",
   "ticker_user": "09606.HK",
-  "name": "DUALITYBIO-B",
-  "data_source": "yfinance",
-  "data_range": "2025-12-05 → 2026-09-29 (200 daily bars)",
+  "name": "映恩生物-B",
+  "data_source": "futu",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-09-29",
-    "O": 199.8,
-    "H": 205.4,
-    "L": 193.5,
-    "C": 201.6,
-    "prev_close": 194.6,
-    "chg_pct": 3.5971
+    "date": "2026-10-09",
+    "O": 188.1,
+    "H": 189.4,
+    "L": 177.7,
+    "C": 182.7,
+    "prev_close": 186.7,
+    "chg_pct": -2.14
   },
-  "phase": "base_building",
+  "phase": "downtrend_recovery",
+  "adx": 13.23,
+  "plus_di": 19.84,
+  "minus_di": 26.55,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 376.8 (2026-01-13), trough 158.5 (2026-06-26), box top 250.6 (2026-07-16)",
   "peak": {
     "date": "2026-01-13",
@@ -27,35 +32,40 @@
     "top": 250.6,
     "top_date": "2026-07-16",
     "bottom": 158.5,
-    "period": "2026-06-26 to 2026-08-12"
+    "period": "2026-06-26 to 2026-10-09"
   },
-  "drop_from_peak_pct": 48.3,
-  "recovery_from_crash_pct": 23.0,
+  "drop_from_peak_pct": 51.5,
+  "recovery_from_crash_pct": 15.3,
   "supports": [
     {
       "level": 180.0,
       "label": "S1 KEY",
-      "touches": 7,
-      "evidence": "tested 7x in base period; 7.6% below current"
+      "touches": 8,
+      "evidence": "tested 8x in base period; 1.5% below current"
     },
     {
       "level": 176.0,
       "label": "S2",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
+      "touches": 17,
+      "evidence": "mid-base support, tested 17x"
     },
     {
       "level": 164.0,
       "label": "S3 bottom",
-      "touches": 3,
+      "touches": 6,
       "evidence": "structural bottom, near crash low 158.5"
     }
   ],
   "resistances": [
     {
-      "level": 203.0,
+      "level": 189.4,
       "label": "R1 today high",
-      "evidence": "today's high 203.0"
+      "evidence": "today's high 189.4"
+    },
+    {
+      "level": 200.0,
+      "label": "R2",
+      "evidence": "mid-box supply, round number 200"
     },
     {
       "level": 250.6,
@@ -64,32 +74,32 @@
     }
   ],
   "position": {
-    "current": 194.9,
-    "in_box_pct": 35.7,
+    "current": 182.7,
+    "in_box_pct": 21.6,
     "nearest_support": "S1 KEY (180.0)",
-    "nearest_resistance": "R1 today high (203.0)"
+    "nearest_resistance": "R1 today high (189.4)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "lower_half",
-    "O": 201.2,
-    "H": 203.0,
-    "L": 192.0,
-    "C": 194.9,
-    "body_pct": 57.3,
-    "upper_wick_pct": 16.4,
-    "lower_wick_pct": 26.4
+    "O": 188.1,
+    "H": 189.4,
+    "L": 177.7,
+    "C": 182.7,
+    "body_pct": 46.2,
+    "upper_wick_pct": 11.1,
+    "lower_wick_pct": 42.7
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (36% of box)"
+      "bias": "defensive",
+      "reason": "near box bottom (22% of box)"
     },
     "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
+      "bias": "neutral",
+      "reason": ""
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -99,7 +109,7 @@
   "scenarios": [
     {
       "if": "hold 180.0 (KEY support)",
-      "then": "still range; watch 203.0 for next test"
+      "then": "still range; watch 189.4 for next test"
     },
     {
       "if": "break 180.0 on close",
@@ -110,8 +120,8 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 203.0 on close",
-      "then": "short-term bullish; next test 250.6"
+      "if": "reclaim 189.4 on close",
+      "then": "short-term bullish; next test 200.0"
     },
     {
       "if": "break 250.6 (box top)",
@@ -138,7 +148,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_VOLATILE",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -149,15 +159,11 @@
     "r1": 220.4,
     "s1": 163.1,
     "s2": 164.9,
-    "r2": 250.6,
-    "r3": 325.8,
+    "r2": 247.0,
+    "r3": 318.2,
     "s3": 158.5,
     "s4": 244.2,
-    "current_position_pct": 67.2,
-    "notes": "WAIT_VOLATILE: ATR14 6.4% / box width 28% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
-  },
-  "adx": 15.68,
-  "plus_di": 27.16,
-  "minus_di": 19.03,
-  "regime": "range"
+    "current_position_pct": 34.2,
+    "notes": "WAIT_RANGE: in box (163-220), pos 34%, no clear setup"
+  }
 }

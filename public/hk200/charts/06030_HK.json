@@ -1,8 +1,8 @@
 {
   "ticker": "HK.06030",
   "ticker_user": "06030.HK",
-  "name": "CITIC SEC",
-  "data_source": "yfinance",
+  "name": "中信証券",
+  "data_source": "futu",
   "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-09",
@@ -14,52 +14,58 @@
     "chg_pct": 0.76
   },
   "phase": "downtrend_active",
-  "adx": 30.1,
-  "plus_di": 13.45,
+  "adx": 30.88,
+  "plus_di": 13.27,
   "minus_di": 28.32,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 30.8 (2026-01-06), trough 23.2 (2026-10-09), box top 28.04 (2026-09-04)",
+  "phase_evidence": "Peak 30.33 (2026-01-06), trough 22.77 (2026-03-23), box top 29.48 (2026-06-22)",
   "peak": {
     "date": "2026-01-06",
-    "price": 30.8
+    "price": 30.33
   },
   "trough": {
-    "date": "2026-10-09",
-    "price": 23.2
+    "date": "2026-03-23",
+    "price": 22.77
   },
   "box": {
-    "top": 28.04,
-    "top_date": "2026-09-04",
-    "bottom": 23.2,
-    "period": "2026-10-09 to 2026-10-09"
+    "top": 29.48,
+    "top_date": "2026-06-22",
+    "bottom": 22.77,
+    "period": "2026-03-23 to 2026-10-09"
   },
-  "drop_from_peak_pct": 23.0,
-  "recovery_from_crash_pct": 2.2,
+  "drop_from_peak_pct": 21.8,
+  "recovery_from_crash_pct": 4.2,
   "supports": [
     {
       "level": 24.0,
-      "label": "S1 bottom",
-      "touches": 4,
-      "evidence": "structural bottom, near crash low 23.2"
+      "label": "S1 KEY",
+      "touches": 9,
+      "evidence": "tested 9x in base period; -1.2% below current"
+    },
+    {
+      "level": 22.77,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-03-23, structural bottom"
     }
   ],
   "resistances": [
     {
       "level": 23.8,
       "label": "R1 today high",
-      "evidence": "today's high 23.799999237060547"
+      "evidence": "today's high 23.8"
     },
     {
-      "level": 28.04,
-      "label": "R3 Sep high",
-      "evidence": "box top 28.04, base period high"
+      "level": 29.48,
+      "label": "R3 Jun high",
+      "evidence": "box top 29.48, base period high"
     }
   ],
   "position": {
     "current": 23.72,
-    "in_box_pct": 0.0,
-    "nearest_support": "S1 bottom (24.0)",
+    "in_box_pct": 14.2,
+    "nearest_support": "S1 KEY (24.0)",
     "nearest_resistance": "R1 today high (23.8)"
   },
   "kline_today": {
@@ -78,7 +84,7 @@
   "bias": {
     "short": {
       "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (0% of box)"
+      "reason": "rejection at R1 + near support (14% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -96,18 +102,18 @@
     },
     {
       "if": "break 24.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "then": "target 22.77 → lower (short-term bearish)"
     },
     {
-      "if": "break 24.0 (crash low)",
+      "if": "break 22.77 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
       "if": "reclaim 23.8 on close",
-      "then": "short-term bullish; next test 28.04"
+      "then": "short-term bullish; next test 29.48"
     },
     {
-      "if": "break 28.04 (box top)",
+      "if": "break 29.48 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -145,7 +151,7 @@
     "r2": 28.86,
     "r3": 29.48,
     "s3": 24.28,
-    "s4": 23.24,
+    "s4": 22.77,
     "current_position_pct": 20.6,
     "notes": "WAIT_RANGE: in box (23-26), pos 21%, no clear setup"
   }

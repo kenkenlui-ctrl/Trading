@@ -3,20 +3,20 @@
   "ticker_user": "02313.HK",
   "name": "SHENZHOU INTL",
   "data_source": "yfinance",
-  "data_range": "2025-12-15 → 2026-10-08 (200 daily bars)",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-08",
-    "O": 34.02,
-    "H": 35.2,
-    "L": 34.02,
-    "C": 34.42,
-    "prev_close": 33.96,
-    "chg_pct": 1.35
+    "date": "2026-10-09",
+    "O": 35.0,
+    "H": 35.02,
+    "L": 34.5,
+    "C": 34.78,
+    "prev_close": 34.42,
+    "chg_pct": 1.05
   },
   "phase": "downtrend_active",
-  "adx": 27.76,
-  "plus_di": 25.34,
-  "minus_di": 23.54,
+  "adx": 26.04,
+  "plus_di": 24.24,
+  "minus_di": 22.52,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 66.3 (2026-02-23), trough 33.14 (2026-10-02), box top 35.2 (2026-10-08)",
@@ -32,43 +32,54 @@
     "top": 35.2,
     "top_date": "2026-10-08",
     "bottom": 33.14,
-    "period": "2026-10-02 to 2026-10-08"
+    "period": "2026-10-02 to 2026-10-09"
   },
-  "drop_from_peak_pct": 48.1,
-  "recovery_from_crash_pct": 3.9,
+  "drop_from_peak_pct": 47.5,
+  "recovery_from_crash_pct": 4.9,
   "supports": [
     {
+      "level": 36.0,
+      "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; -3.5% below current"
+    },
+    {
       "level": 32.0,
-      "label": "S1 bottom",
-      "touches": 8,
+      "label": "S2 bottom",
+      "touches": 10,
       "evidence": "structural bottom, near crash low 33.14"
     }
   ],
   "resistances": [
     {
-      "level": 35.2,
+      "level": 35.02,
       "label": "R1 today high",
-      "evidence": "today's high 35.20000076293945"
+      "evidence": "today's high 35.02000045776367"
+    },
+    {
+      "level": 35.2,
+      "label": "R3 Oct high",
+      "evidence": "box top 35.2, base period high"
     }
   ],
   "position": {
-    "current": 34.42,
-    "in_box_pct": 75.6,
-    "nearest_support": "S1 bottom (32.0)",
-    "nearest_resistance": "R1 today high (35.2)"
+    "current": 34.78,
+    "in_box_pct": 86.9,
+    "nearest_support": "S1 KEY (36.0)",
+    "nearest_resistance": "R1 today high (35.02)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 34.02,
-    "H": 35.2,
-    "L": 34.02,
-    "C": 34.42,
-    "body_pct": 33.9,
-    "upper_wick_pct": 66.1,
-    "lower_wick_pct": 0.0
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 35.0,
+    "H": 35.02,
+    "L": 34.5,
+    "C": 34.78,
+    "body_pct": 42.3,
+    "upper_wick_pct": 3.8,
+    "lower_wick_pct": 53.8
   },
   "bias": {
     "short": {
@@ -86,20 +97,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 32.0 (KEY support)",
-      "then": "still range; watch 35.2 for next test"
+      "if": "hold 36.0 (KEY support)",
+      "then": "still range; watch 35.02 for next test"
     },
     {
-      "if": "break 32.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 36.0 on close",
+      "then": "target 32.0 → lower (short-term bearish)"
     },
     {
       "if": "break 32.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 35.2 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 35.02 on close",
+      "then": "short-term bullish; next test 35.2"
+    },
+    {
+      "if": "break 35.2 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -130,14 +145,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 36.08,
+    "r1": 36.06,
     "s1": 33.14,
     "s2": 34.94,
     "r2": 46.24,
     "r3": 50.6,
     "s3": 38.66,
     "s4": 46.22,
-    "current_position_pct": 43.5,
-    "notes": "WAIT_RANGE: in box (33-36), pos 44%, no clear setup"
+    "current_position_pct": 56.2,
+    "notes": "WAIT_RANGE: in box (33-36), pos 56%, no clear setup"
   }
 }
