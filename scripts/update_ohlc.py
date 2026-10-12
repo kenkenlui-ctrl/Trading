@@ -137,7 +137,17 @@ def one(tk: str, safe: str, out_dir: Path, asof: str, days: int, source: str):
         return False, (f"{tk}: upstream returned only {len(rows)} bars, file has "
                        f"{have} — kept the longer series{note}")
 
-    path.write_text(json.dumps(rows), encoding="utf-8")
+    # 2026-10-13: round on write. Upstream float32 values survive a JSON round
+    # trip as full float64 noise — 1.7940000295639038 for a 1.794 price, ~15
+    # extra chars per field. At 400 bars x 671 files that was ~22 MB of the
+    # deploy for digits that carry no information: HK/US/JP all quote to 2-3
+    # dp, so 4 dp is lossless at any displayed precision.
+    rows = [{**r,
+             **{c: (round(float(r[c]), 4) if c in PRICE_COLS
+                   else int(float(r[c])))
+                for c in PRICE_COLS | {"volume"} if c in r}}
+            for r in rows]
+    path.write_text(json.dumps(rows, separators=(",", ":")), encoding="utf-8")
     if last != asof:
         return False, f"{tk}: last bar {last} != {asof}{note}"
     return True, f"{tk} ✓ {len(rows)} bars → {last}{note}"
