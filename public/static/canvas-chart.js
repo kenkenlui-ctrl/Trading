@@ -91,7 +91,11 @@
       };
 
       var padL=60, padR=60, padT=50, padB=40;
-      var priceH = H - padT - padB;
+      // Volume sub-panel: reserve a band under the price panel (2026-10-12).
+      var plotH = H - padT - padB;
+      var volH = Math.max(36, Math.round(plotH * 0.20));
+      var volTop = padT + (plotH - volH) + 6;
+      var priceH = plotH - volH - 6;
 
       if (!cur) {
         ctx.fillStyle = '#8892a4';
@@ -114,6 +118,70 @@
       var decimals = (max - min) < 5 ? 3 : 2;
       var pRange = max - min;
       var yOf = function(p){ return padT + ((max - p) / pRange) * priceH; };
+
+      /* ---- Volume sub-panel + candlestick pattern markers (2026-10-12) ----
+         Both read the SAME json/ohlc the price panel already has, so no extra
+         requests and no second source of truth. Patterns are precomputed in
+         daily_sr.py and shipped in the snapshot; they are annotation only and
+         never touch action_plan. */
+      (function () {
+        if (!ohlc || !ohlc.length) return;
+        var vmax = 0;
+        ohlc.forEach(function (k) { if (k.volume > vmax) vmax = k.volume; });
+        if (!vmax) return;
+        var vY = function (v) { return volTop + volH - (v / vmax) * volH; };
+
+        ohlc.forEach(function (k, i) {
+          if (!k.volume) return;
+          var x = padL + i * slotW + slotW / 2;
+          var up = k.close >= k.open;
+          ctx.fillStyle = up ? 'rgba(16,185,129,0.55)' : 'rgba(244,63,94,0.55)';
+          var y = vY(k.volume);
+          ctx.fillRect(x - Math.max(1, slotW * 0.32), y, Math.max(1.4, slotW * 0.64), volTop + volH - y);
+        });
+
+        /* 20-session average volume — "is this move backed by volume" */
+        if (ohlc.length >= 20) {
+          ctx.strokeStyle = 'rgba(148,163,184,0.9)';
+          ctx.lineWidth = 1.1;
+          ctx.beginPath();
+          var st2 = false;
+          for (var i2 = 19; i2 < ohlc.length; i2++) {
+            var s2 = 0;
+            for (var j3 = i2 - 19; j3 <= i2; j3++) s2 += (ohlc[j3].volume || 0);
+            var vv = s2 / 20;
+            var x2 = padL + i2 * slotW + slotW / 2;
+            var y2 = vY(vv);
+            if (!st2) { ctx.moveTo(x2, y2); st2 = true; } else ctx.lineTo(x2, y2);
+          }
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = 'rgba(148,163,184,0.75)';
+        ctx.font = '8px JetBrains Mono,monospace';
+        ctx.fillText('VOL ' + (vmax / 1e6).toFixed(0) + 'M', padL + 2, volTop + 9);
+
+        /* Pattern markers. patterns[].i indexes the FULL ohlc array; when the
+           chart is windowed to 30/90 the slice offset shifts them. */
+        var pats = (cachedChartJson && cachedChartJson.patterns) || [];
+        if (!pats.length) return;
+        var sliceOff = Math.max(0, (cachedOhlcAll ? cachedOhlcAll.length : ohlc.length) - ohlc.length);
+        ctx.font = '8px JetBrains Mono,monospace';
+        pats.forEach(function (pt) {
+          var li = pt.i - sliceOff;
+          if (li < 0 || li >= ohlc.length) return;
+          var x = padL + li * slotW + slotW / 2;
+          var low = ohlc[li].low;
+          var y = yOf(low) + 9;
+          ctx.fillStyle = 'rgba(148,163,184,0.95)';
+          ctx.beginPath();
+          ctx.moveTo(x, y - 5); ctx.lineTo(x - 3.2, y + 1); ctx.lineTo(x + 3.2, y + 1);
+          ctx.closePath(); ctx.fill();
+          ctx.fillStyle = 'rgba(232,234,240,0.9)';
+          var tw2 = ctx.measureText(pt.name).width + 4;
+          ctx.fillText(pt.name, x - tw2 / 2, y + 11);
+        });
+      })();
 
       /* Phase tint */
       var phase = (cachedChartJson && cachedChartJson.phase || '').toLowerCase();
@@ -164,15 +232,15 @@
       /* MA lines */
       if (ohlc && ohlc.length > 20) {
         var closes = ohlc.map(function(k){ return k.close; });
-        var maCfg = {5:T.bull, 10:T.blue, 20:T.amber};
-        [5,10,20].forEach(function(per) {
+        var maCfg = {5:T.bull, 10:T.blue, 20:T.amber, 60:'#94a3b8'};
+        [5,10,20,60].forEach(function(per) {
           var maVals = closes.map(function(_, i) {
             if (i < per - 1) return null;
             var s = 0; for (var j2=i-per+1; j2<=i; j2++) s += closes[j2];
             return s / per;
           });
           ctx.strokeStyle = maCfg[per];
-          ctx.lineWidth  = per === 5 ? 1 : per === 10 ? 1.2 : 1.5;
+          ctx.lineWidth  = per === 5 ? 1 : per === 10 ? 1.2 : per === 20 ? 1.5 : 1.6;
           ctx.beginPath();
           var started = false;
           maVals.forEach(function(v, i) {
@@ -185,7 +253,7 @@
           var last = maVals[maVals.length-1];
           if (last != null) {
             // Stagger MA labels vertically to avoid overlap (MA5 at line, MA10 offset up, MA20 offset down)
-            var yOff = per === 5 ? 0 : per === 10 ? -10 : 10;
+            var yOff = per === 5 ? 0 : per === 10 ? -10 : (per === 20 ? 10 : 20);
             var lx = padL + (maVals.length-1) * slotW + slotW/2;
             var ly = yOf(last) + yOff;
             var lbl = 'MA' + per + ' ' + last.toFixed(decimals);
