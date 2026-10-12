@@ -51,6 +51,23 @@ def t_minus_1() -> date:
     else:
         return today - timedelta(days=1)
 
+def _canvas_js_version() -> str:
+    """Cache-buster for /static/canvas-chart.js.
+
+    This was hardcoded to "2026-09-18b", so every JS change since then shipped
+    invisibly: the file on the server was new, the URL never changed, and
+    browsers kept the September copy. A chart fix that was verified server-side
+    (grep proved the new code was deployed) never reached a single visitor.
+    Hash the actual file so the URL changes exactly when the code does.
+    """
+    import hashlib
+    p = Path(__file__).resolve().parents[1] / "public" / "static" / "canvas-chart.js"
+    try:
+        return hashlib.sha1(p.read_bytes()).hexdigest()[:8]
+    except Exception:
+        return "0"
+
+
 def wilson_lower(wins: float, n: float, z: float = 1.96) -> float:
     """Lower bound of the Wilson score interval, in percent.
 
@@ -1001,6 +1018,7 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
     # 2026-10-06: the live v2 verdict for THIS ticker, so a detail page is not
     # silently a v1 page. HK gets an explicit "not covered by v2" notice.
     v2_status = render_v2_status_for_ticker(market, safe)
+    _jsv = _canvas_js_version()
 
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant-HK">
@@ -1256,7 +1274,7 @@ function toggleTheme(){{
     </div>
   </div>
 </footer>
-<script src="/static/canvas-chart.js?v=2026-09-18b" defer></script>
+<script src="/static/canvas-chart.js?v={_jsv}" defer></script>
 </body>
 </html>"""
 
