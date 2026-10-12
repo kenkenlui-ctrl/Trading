@@ -1120,7 +1120,7 @@ function toggleTheme(){{
         <div class="skeleton" id="chartSkel_{safe}"></div>
         <div id="chart-host"
              data-ticker="{safe}"
-             data-chart-json="/{market.lower()}200/charts/{safe}.json"
+             data-chart-json="/{market.lower()}200/charts/{safe}.json?v={chart_v}"
              data-png="{chart_url}?v={chart_v}"
              style="position:relative;min-height:540px;">
           <noscript>
@@ -1364,8 +1364,20 @@ def build_for_market(market: str):
             # Hash the SOURCE png, not public/ — the copy into public/ happens
             # after this row is built, so hashing the destination reads the
             # previous build's bytes and the cache-buster lags one deploy.
+            # Hash the JSON pair, not the PNG. The visible chart is drawn by
+            # canvas-chart.js from /charts/<t>.json + /ohlc/<t>_ohlc.json; the PNG
+            # is only a <noscript> fallback. Busting on the PNG alone left both
+            # JSON URLs uncached, so a redraw was invisible to every visitor.
             _png = Path(src_dir) / f"{safe}.png"
-            _h = _hl.sha1(_png.read_bytes()).hexdigest()[:8] if _png.exists() else "0"
+            _cj = Path(src_dir) / f"{safe}.json"
+            _oh = Path(src_dir) / f"{safe}_ohlc.json"
+            _d = _hl.sha1()
+            for _p in (_cj, _oh, _png):
+                try:
+                    _d.update(_p.read_bytes())
+                except Exception:
+                    _d.update(b"?")
+            _h = _d.hexdigest()[:8]
         except Exception:
             _h = "0"
         # Date prefix comes from data_asof(market) (per-market, derived from the
