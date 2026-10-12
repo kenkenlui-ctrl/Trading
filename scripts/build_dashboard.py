@@ -818,6 +818,7 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
     verdict = ap.get("verdict", "WAIT")
     edge = t.get("edge")
     chart_url = t["chart_url"]
+    chart_v = t.get("chart_v") or t_minus_1().isoformat()
     market = t["market"]
     detail_url = t["detail_url"]
     back_url = "/hk200/" if market == "HK" else "/us200/"
@@ -1120,10 +1121,10 @@ function toggleTheme(){{
         <div id="chart-host"
              data-ticker="{safe}"
              data-chart-json="/{market.lower()}200/charts/{safe}.json"
-             data-png="{chart_url}"
+             data-png="{chart_url}?v={chart_v}"
              style="position:relative;min-height:540px;">
           <noscript>
-            <img src="{chart_url}?v={t_minus_1().isoformat()}" alt="{ticker} daily K" loading="eager">
+            <img src="{chart_url}?v={chart_v}" alt="{ticker} daily K" loading="eager">
           </noscript>
         </div>
         <div id="chart-window-controls" style="display:flex;gap:var(--sp-2);justify-content:flex-end;padding:var(--sp-3) var(--sp-4);font-family:var(--font-mono);font-size:var(--text-xs);">
@@ -1352,6 +1353,30 @@ def build_for_market(market: str):
 
         safe = ticker.replace(".", "_")
         chart_url = f"/{market.lower()}200/charts/{safe}.png"
+        # Cache-buster: data date ALONE is not enough. Two builds on the same
+        # session (a redraw, a layout fix) produce different bytes under an
+        # identical ?v=, so browsers and the CDN keep serving the older PNG —
+        # 2026-10-12 this shipped a label fix that no visitor could see. Append
+        # a short hash of the PNG itself so the URL changes exactly when the
+        # image does.
+        try:
+            import hashlib as _hl
+            # Hash the SOURCE png, not public/ — the copy into public/ happens
+            # after this row is built, so hashing the destination reads the
+            # previous build's bytes and the cache-buster lags one deploy.
+            _png = Path(src_dir) / f"{safe}.png"
+            _h = _hl.sha1(_png.read_bytes()).hexdigest()[:8] if _png.exists() else "0"
+        except Exception:
+            _h = "0"
+        # Date prefix comes from data_asof(market) (per-market, derived from the
+        # snapshot JSONs, cannot drift) rather than t_minus_1() (calendar-derived
+        # and only globally overridable via LEAKS_ASOF). Same market, redrawn
+        # chart -> same date but different hash -> URL still changes.
+        try:
+            _asof = data_asof(market_name)
+        except Exception:
+            _asof = t_minus_1().isoformat()
+        chart_v = f"{_asof}-{_h}"
 
         row = {
             "ticker": ticker,
@@ -1365,6 +1390,7 @@ def build_for_market(market: str):
             # (.html and trailing-slash forms both 308 here — SEO audit 2026-08-25)
             "detail_url": f"/{market.lower()}200/ticker/{safe}",
             "chart_url": chart_url,
+            "chart_v": chart_v,
             "market": market_name,
         }
         rows.append(row)
