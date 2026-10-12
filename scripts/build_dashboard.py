@@ -1121,10 +1121,12 @@ function toggleTheme(){{
         <div id="chart-host"
              data-ticker="{safe}"
              data-chart-json="/{market.lower()}200/charts/{safe}.json?v={chart_v}"
-             data-png="{chart_url}?v={chart_v}"
              style="position:relative;min-height:540px;">
           <noscript>
-            <img src="{chart_url}?v={chart_v}" alt="{ticker} daily K" loading="eager">
+            <p style="color:var(--text-dim);font-size:13px;padding:24px">
+              This chart needs JavaScript. The underlying data is available at
+              <code>{chart_url}.json</code>.
+            </p>
           </noscript>
         </div>
         <div id="chart-window-controls" style="display:flex;gap:var(--sp-2);justify-content:flex-end;padding:var(--sp-3) var(--sp-4);font-family:var(--font-mono);font-size:var(--text-xs);">
@@ -1421,10 +1423,10 @@ def build_for_market(market: str):
                 except (TimeoutError, OSError) as _e:
                     if _i == 2: raise
                     _t.sleep(0.5)
-        src_png = src_dir / f"{safe}.png"
-        if src_png.exists():
-            _safe_copy(src_png, chart_dir / f"{safe}.png")
-            chart_copied += 1
+        # PNG is no longer shipped (2026-10-12): the visible chart is drawn by
+        # canvas-chart.js from /charts/<t>.json + /ohlc/<t>_ohlc.json. Shipping
+        # 723 unused images cost ~255 MB per deploy and created a stale fallback
+        # that masked fetch failures instead of surfacing them.
         src_json = src_dir / f"{safe}.json"
         if src_json.exists():
             _safe_copy(src_json, chart_dir / f"{safe}.json")

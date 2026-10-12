@@ -15,13 +15,9 @@
 
     var ticker    = container.dataset.ticker;
     var chartJson = container.dataset.chartJson;
-    var pngUrl    = container.dataset.png;
 
     /* ── Canvas setup (DOM API, not innerHTML — avoids aborting adjacent defer script) ── */
     var skeleton = document.getElementById('chartSkel_' + ticker.replace('.HK', '_HK').replace(/\./g, '_'));
-    var oldImg   = container.querySelector('img');
-    /* Clear onerror BEFORE removing — prevents stale onerror from wiping our canvas later */
-    if (oldImg) { oldImg.onerror = null; oldImg.onload = null; oldImg.remove(); }
     if (skeleton) skeleton.remove();
     var cv       = document.createElement('canvas');
     cv.id        = 'cv';
@@ -465,7 +461,7 @@
           drawChart(currentWindow);
         }
       }).catch(function(err) {
-        container.innerHTML = '<img src="'+pngUrl+'" alt="'+ticker+' daily chart" loading="eager" style="width:100%;height:auto;border-radius:8px"><div style="color:#f43f5e;padding:8px;font-size:12px">Chart load failed: '+err+'</div>';
+        container.innerHTML = '<div style="color:#f43f5e;padding:24px;font-size:13px">Chart data failed to load: '+err+'</div>';
       });
     }
 
