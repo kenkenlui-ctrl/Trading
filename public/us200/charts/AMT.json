@@ -1,8 +1,8 @@
 {
   "ticker": "US.AMT",
   "ticker_user": "AMT",
-  "name": "American Tower Corporation (REI",
-  "data_source": "yfinance",
+  "name": "美國電塔",
+  "data_source": "futu",
   "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-09",
@@ -14,65 +14,65 @@
     "chg_pct": 9.3
   },
   "phase": "downtrend_active",
-  "adx": 20.01,
-  "plus_di": 37.34,
-  "minus_di": 17.64,
-  "regime": "dead",
+  "adx": 18.44,
+  "plus_di": 37.46,
+  "minus_di": 15.96,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 196.08 (2026-06-05), trough 160.06 (2026-07-06), box top 182.52 (2026-10-09)",
+  "phase_evidence": "Peak 192.15 (2026-06-05), trough 158.35 (2026-07-06), box top 182.52 (2026-10-09)",
   "peak": {
     "date": "2026-06-05",
-    "price": 196.08
+    "price": 192.15
   },
   "trough": {
     "date": "2026-07-06",
-    "price": 160.06
+    "price": 158.35
   },
   "box": {
     "top": 182.52,
     "top_date": "2026-10-09",
-    "bottom": 160.06,
+    "bottom": 158.35,
     "period": "2026-07-06 to 2026-10-09"
   },
-  "drop_from_peak_pct": 7.1,
-  "recovery_from_crash_pct": 13.9,
+  "drop_from_peak_pct": 5.2,
+  "recovery_from_crash_pct": 15.1,
   "supports": [
     {
-      "level": 176.0,
-      "label": "S1 KEY",
-      "touches": 29,
-      "evidence": "tested 29x in base period; 3.4% below current"
-    },
-    {
       "level": 172.0,
-      "label": "S2",
-      "touches": 25,
-      "evidence": "mid-base support, tested 25x"
+      "label": "S1 KEY",
+      "touches": 37,
+      "evidence": "tested 37x in base period; 5.6% below current"
     },
     {
       "level": 168.0,
+      "label": "S2",
+      "touches": 18,
+      "evidence": "mid-base support, tested 18x"
+    },
+    {
+      "level": 164.0,
       "label": "S3 bottom",
-      "touches": 22,
-      "evidence": "structural bottom, near crash low 160.06"
+      "touches": 26,
+      "evidence": "structural bottom, near crash low 158.35"
     }
   ],
   "resistances": [
     {
       "level": 182.52,
       "label": "R1 today high",
-      "evidence": "today's high 182.52000427246094"
+      "evidence": "today's high 182.52"
     }
   ],
   "position": {
     "current": 182.24,
-    "in_box_pct": 98.1,
-    "nearest_support": "S1 KEY (176.0)",
+    "in_box_pct": 98.5,
+    "nearest_support": "S1 KEY (172.0)",
     "nearest_resistance": "R1 today high (182.52)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_reclaim",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
     "O": 176.91,
     "H": 182.52,
@@ -84,8 +84,8 @@
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -98,15 +98,15 @@
   },
   "scenarios": [
     {
-      "if": "hold 176.0 (KEY support)",
+      "if": "hold 172.0 (KEY support)",
       "then": "still range; watch 182.52 for next test"
     },
     {
-      "if": "break 176.0 on close",
-      "then": "target 172.0 → 168.0 (short-term bearish)"
+      "if": "break 172.0 on close",
+      "then": "target 168.0 → 164.0 (short-term bearish)"
     },
     {
-      "if": "break 168.0 (crash low)",
+      "if": "break 164.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
@@ -137,19 +137,19 @@
     "strategy": "SELL_R1",
     "trigger_price": 182.52,
     "target_price": 171.41,
-    "stop_price": 189.43,
-    "risk_pct": 3.79,
+    "stop_price": 189.4,
+    "risk_pct": 3.77,
     "reward_pct": 6.09,
     "rr_ratio": 1.61,
     "phase_match": true,
     "r1": 182.52,
     "s1": 160.3,
-    "s2": 162.5,
-    "r2": 180.98,
-    "r3": 196.08,
-    "s3": 160.06,
-    "s4": 165.08,
+    "s2": 160.76,
+    "r2": 179.04,
+    "r3": 192.15,
+    "s3": 158.35,
+    "s4": 160.17,
     "current_position_pct": 98.7,
-    "notes": "SELL_R1: in box (160-183), entry at R1 183, target mid 171, stop 189 ｜ 52.2 條規則（SELL plan，resistance 182.52）：① 跌到 182.52、收市守住喺 182.52 上面 → 照 BUY 條 plan 做（入場 182.52，止蝕 189.43，目標 171.41）。② 收市跌穿 182.52 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 182.52 上面』。"
+    "notes": "SELL_R1: in box (160-183), entry at R1 183, target mid 171, stop 189 ｜ 52.2 條規則（SELL plan，resistance 182.52）：① 跌到 182.52、收市守住喺 182.52 上面 → 照 BUY 條 plan 做（入場 182.52，止蝕 189.40，目標 171.41）。② 收市跌穿 182.52 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 182.52 上面』。"
   }
 }

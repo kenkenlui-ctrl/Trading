@@ -64,11 +64,19 @@ def one(ticker: str, out_dir: Path, asof_args: list[str]) -> tuple[str, bool, st
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--markets", default="HK,US,JP")
+    ap.add_argument("--asof-hk", default="2026-10-12")
+    ap.add_argument("--asof-us", default="2026-10-09")
+    ap.add_argument("--asof-jp", default="2026-10-12")
     a = ap.parse_args()
+    # Markets do not share a trading calendar: on 2026-10-12 (Mon) HK and JP have
+    # closed, the US has not opened yet (21:30 HKT). Passing one date to all three
+    # would ask the US vendor for a session that has not happened.
+    overrides = {"HK": a.asof_hk, "US": a.asof_us, "JP": a.asof_jp}
 
     t0 = time.time()
     for m in a.markets.split(","):
         cfg = MARKETS[m]
+        if overrides.get(m): cfg["asof"] = ["--asof", overrides[m]]
         tickers = json.loads(cfg["universe"].read_text())
         cfg["out"].mkdir(parents=True, exist_ok=True)
         print(f"\n=== {m}: {len(tickers)} 隻 -> {cfg['out']}")

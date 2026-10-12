@@ -1,85 +1,91 @@
 {
   "ticker": "HK.01088",
   "ticker_user": "01088.HK",
-  "name": "CHINA SHENHUA",
-  "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
+  "name": "中國神華",
+  "data_source": "futu",
+  "data_range": "2025-12-17 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 43.66,
-    "H": 44.3,
-    "L": 43.48,
-    "C": 44.22,
-    "prev_close": 43.42,
-    "chg_pct": 1.84
+    "date": "2026-10-12",
+    "O": 44.4,
+    "H": 44.74,
+    "L": 43.64,
+    "C": 44.0,
+    "prev_close": 44.22,
+    "chg_pct": -0.5
   },
   "phase": "base_building",
-  "adx": 17.63,
-  "plus_di": 13.96,
-  "minus_di": 25.09,
+  "adx": 14.56,
+  "plus_di": 24.11,
+  "minus_di": 16.91,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 49.62 (2026-03-13), trough 39.16 (2026-07-02), box top 47.08 (2026-09-10)",
+  "phase_evidence": "Peak 47.3 (2026-03-13), trough 37.42 (2026-06-30), box top 45.94 (2026-09-10)",
   "peak": {
     "date": "2026-03-13",
-    "price": 49.62
+    "price": 47.3
   },
   "trough": {
-    "date": "2026-07-02",
-    "price": 39.16
+    "date": "2026-06-30",
+    "price": 37.42
   },
   "box": {
-    "top": 47.08,
+    "top": 45.94,
     "top_date": "2026-09-10",
-    "bottom": 39.16,
-    "period": "2026-07-02 to 2026-10-09"
+    "bottom": 37.42,
+    "period": "2026-06-30 to 2026-10-12"
   },
-  "drop_from_peak_pct": 10.9,
-  "recovery_from_crash_pct": 12.9,
+  "drop_from_peak_pct": 7.0,
+  "recovery_from_crash_pct": 17.6,
   "supports": [
     {
       "level": 44.0,
       "label": "S1 KEY",
-      "touches": 26,
-      "evidence": "tested 26x in base period; 0.5% below current"
+      "touches": 27,
+      "evidence": "tested 27x in base period; 0.0% below current"
     },
     {
       "level": 40.0,
-      "label": "S2 bottom",
-      "touches": 15,
-      "evidence": "structural bottom, near crash low 39.16"
+      "label": "S2",
+      "touches": 35,
+      "evidence": "mid-base support, tested 35x"
+    },
+    {
+      "level": 37.42,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-06-30, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 44.3,
+      "level": 44.74,
       "label": "R1 today high",
-      "evidence": "today's high 44.29999923706055"
+      "evidence": "today's high 44.74"
     },
     {
-      "level": 47.08,
+      "level": 45.94,
       "label": "R3 Sep high",
-      "evidence": "box top 47.08, base period high"
+      "evidence": "box top 45.94, base period high"
     }
   ],
   "position": {
-    "current": 44.22,
-    "in_box_pct": 59.6,
+    "current": 44.0,
+    "in_box_pct": 77.2,
     "nearest_support": "S1 KEY (44.0)",
-    "nearest_resistance": "R1 today high (44.3)"
+    "nearest_resistance": "R1 today high (44.74)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": true,
-    "close_position": "upper_half",
-    "O": 43.66,
-    "H": 44.3,
-    "L": 43.48,
-    "C": 44.22,
-    "body_pct": 68.3,
-    "upper_wick_pct": 9.8,
-    "lower_wick_pct": 22.0
+    "close_position": "lower_half",
+    "O": 44.4,
+    "H": 44.74,
+    "L": 43.64,
+    "C": 44.0,
+    "body_pct": 36.4,
+    "upper_wick_pct": 30.9,
+    "lower_wick_pct": 32.7
   },
   "bias": {
     "short": {
@@ -98,22 +104,22 @@
   "scenarios": [
     {
       "if": "hold 44.0 (KEY support)",
-      "then": "still range; watch 44.3 for next test"
+      "then": "still range; watch 44.74 for next test"
     },
     {
       "if": "break 44.0 on close",
-      "then": "target 40.0 → lower (short-term bearish)"
+      "then": "target 40.0 → 37.42 (short-term bearish)"
     },
     {
-      "if": "break 40.0 (crash low)",
+      "if": "break 37.42 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 44.3 on close",
-      "then": "short-term bullish; next test 47.08"
+      "if": "reclaim 44.74 on close",
+      "then": "short-term bullish; next test 45.94"
     },
     {
-      "if": "break 47.08 (box top)",
+      "if": "break 45.94 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -145,14 +151,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": true,
-    "r1": 46.62,
-    "s1": 42.08,
-    "s2": 41.54,
-    "r2": 47.08,
-    "r3": 49.34,
-    "s3": 39.16,
-    "s4": 38.2,
-    "current_position_pct": 47.1,
-    "notes": "WAIT_RANGE: in box (42-47), pos 47%, no clear setup"
+    "r1": 45.48,
+    "s1": 41.86,
+    "s2": 40.46,
+    "r2": 45.94,
+    "r3": 47.02,
+    "s3": 37.42,
+    "s4": 35.94,
+    "current_position_pct": 59.1,
+    "notes": "WAIT_RANGE: in box (42-45), pos 59%, no clear setup"
   }
 }

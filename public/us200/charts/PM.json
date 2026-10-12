@@ -1,66 +1,60 @@
 {
   "ticker": "US.PM",
   "ticker_user": "PM",
-  "name": "Philip Morris International Inc",
-  "data_source": "yfinance",
+  "name": "菲利普莫里斯",
+  "data_source": "futu",
   "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-09",
     "O": 199.31,
-    "H": 201.29,
+    "H": 201.28,
     "L": 198.85,
     "C": 201.19,
     "prev_close": 200.5,
     "chg_pct": 0.34
   },
   "phase": "downtrend_active",
-  "adx": 12.13,
-  "plus_di": 32.21,
-  "minus_di": 17.95,
+  "adx": 12.3,
+  "plus_di": 32.28,
+  "minus_di": 16.81,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 207.76 (2026-07-28), trough 181.01 (2026-09-08), box top 202.7 (2026-10-08)",
+  "phase_evidence": "Peak 205.99 (2026-07-28), trough 179.47 (2026-09-08), box top 202.7 (2026-10-08)",
   "peak": {
     "date": "2026-07-28",
-    "price": 207.76
+    "price": 205.99
   },
   "trough": {
     "date": "2026-09-08",
-    "price": 181.01
+    "price": 179.47
   },
   "box": {
     "top": 202.7,
     "top_date": "2026-10-08",
-    "bottom": 181.01,
+    "bottom": 179.47,
     "period": "2026-09-08 to 2026-10-09"
   },
-  "drop_from_peak_pct": 3.2,
-  "recovery_from_crash_pct": 11.1,
+  "drop_from_peak_pct": 2.3,
+  "recovery_from_crash_pct": 12.1,
   "supports": [
     {
-      "level": 192.0,
-      "label": "S1 KEY",
-      "touches": 19,
-      "evidence": "tested 19x in base period; 4.6% below current"
-    },
-    {
       "level": 188.0,
-      "label": "S2",
-      "touches": 21,
-      "evidence": "mid-base support, tested 21x"
+      "label": "S1 KEY",
+      "touches": 23,
+      "evidence": "tested 23x in base period; 6.6% below current"
     },
     {
       "level": 184.0,
-      "label": "S3 bottom",
-      "touches": 8,
-      "evidence": "structural bottom, near crash low 181.01"
+      "label": "S2 bottom",
+      "touches": 18,
+      "evidence": "structural bottom, near crash low 179.47"
     }
   ],
   "resistances": [
     {
-      "level": 201.29,
+      "level": 201.28,
       "label": "R1 today high",
-      "evidence": "today's high 201.2899932861328"
+      "evidence": "today's high 201.285"
     },
     {
       "level": 202.7,
@@ -71,8 +65,8 @@
   "position": {
     "current": 201.19,
     "in_box_pct": 91.9,
-    "nearest_support": "S1 KEY (192.0)",
-    "nearest_resistance": "R1 today high (201.29)"
+    "nearest_support": "S1 KEY (188.0)",
+    "nearest_resistance": "R1 today high (201.28)"
   },
   "kline_today": {
     "type": "bullish_reclaim",
@@ -80,11 +74,11 @@
     "touched_S1": false,
     "close_position": "upper_half",
     "O": 199.31,
-    "H": 201.29,
+    "H": 201.28,
     "L": 198.85,
     "C": 201.19,
-    "body_pct": 77.0,
-    "upper_wick_pct": 4.1,
+    "body_pct": 77.2,
+    "upper_wick_pct": 3.9,
     "lower_wick_pct": 18.9
   },
   "bias": {
@@ -103,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 192.0 (KEY support)",
-      "then": "still range; watch 201.29 for next test"
+      "if": "hold 188.0 (KEY support)",
+      "then": "still range; watch 201.28 for next test"
     },
     {
-      "if": "break 192.0 on close",
-      "then": "target 188.0 → 184.0 (short-term bearish)"
+      "if": "break 188.0 on close",
+      "then": "target 184.0 → lower (short-term bearish)"
     },
     {
       "if": "break 184.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 201.29 on close",
+      "if": "reclaim 201.28 on close",
       "then": "short-term bullish; next test 202.7"
     },
     {
@@ -146,19 +140,19 @@
     "strategy": "SELL_R1",
     "trigger_price": 202.7,
     "target_price": 193.4,
-    "stop_price": 209.52,
-    "risk_pct": 3.36,
+    "stop_price": 209.49,
+    "risk_pct": 3.35,
     "reward_pct": 4.59,
-    "rr_ratio": 1.36,
+    "rr_ratio": 1.37,
     "phase_match": true,
     "r1": 202.7,
     "s1": 184.11,
-    "s2": 181.01,
-    "r2": 207.76,
-    "r3": 193.05,
-    "s3": 153.18,
-    "s4": 151.63,
+    "s2": 179.47,
+    "r2": 205.99,
+    "r3": 189.83,
+    "s3": 150.63,
+    "s4": 149.1,
     "current_position_pct": 91.9,
-    "notes": "SELL_R1: in box (184-203), entry at R1 203, target mid 193, stop 210 ｜ 52.2 條規則（SELL plan，resistance 202.70）：① 跌到 202.70、收市守住喺 202.70 上面 → 照 BUY 條 plan 做（入場 202.70，止蝕 209.52，目標 193.40）。② 收市跌穿 202.70 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 202.70 上面』。"
+    "notes": "SELL_R1: in box (184-203), entry at R1 203, target mid 193, stop 209 ｜ 52.2 條規則（SELL plan，resistance 202.70）：① 跌到 202.70、收市守住喺 202.70 上面 → 照 BUY 條 plan 做（入場 202.70，止蝕 209.49，目標 193.40）。② 收市跌穿 202.70 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 202.70 上面』。"
   }
 }

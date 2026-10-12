@@ -1,72 +1,84 @@
 {
   "ticker": "US.COF",
   "ticker_user": "COF",
-  "name": "Capital One Financial Corporati",
-  "data_source": "yfinance",
+  "name": "第一資本信貸",
+  "data_source": "futu",
   "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-09",
     "O": 198.61,
-    "H": 200.51,
+    "H": 200.5,
     "L": 197.57,
     "C": 199.26,
     "prev_close": 199.4,
     "chg_pct": -0.07
   },
   "phase": "base_building",
-  "adx": 26.96,
+  "adx": 26.87,
   "plus_di": 20.08,
-  "minus_di": 26.61,
+  "minus_di": 26.55,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 259.64 (2026-01-06), trough 174.24 (2026-06-11), box top 228.14 (2026-08-14)",
+  "phase_evidence": "Peak 256.63 (2026-01-06), trough 173.62 (2026-03-27), box top 227.34 (2026-08-14)",
   "peak": {
     "date": "2026-01-06",
-    "price": 259.64
+    "price": 256.63
   },
   "trough": {
-    "date": "2026-06-11",
-    "price": 174.24
+    "date": "2026-03-27",
+    "price": 173.62
   },
   "box": {
-    "top": 228.14,
+    "top": 227.34,
     "top_date": "2026-08-14",
-    "bottom": 174.24,
-    "period": "2026-06-11 to 2026-10-09"
+    "bottom": 173.62,
+    "period": "2026-03-27 to 2026-10-09"
   },
-  "drop_from_peak_pct": 23.3,
-  "recovery_from_crash_pct": 14.4,
+  "drop_from_peak_pct": 22.4,
+  "recovery_from_crash_pct": 14.8,
   "supports": [
     {
       "level": 192.0,
       "label": "S1 KEY",
-      "touches": 12,
-      "evidence": "tested 12x in base period; 3.6% below current"
+      "touches": 17,
+      "evidence": "tested 17x in base period; 3.6% below current"
     },
     {
-      "level": 174.24,
+      "level": 188.0,
+      "label": "S2",
+      "touches": 15,
+      "evidence": "mid-base support, tested 15x"
+    },
+    {
+      "level": 184.0,
+      "label": "S3",
+      "touches": 8,
+      "evidence": "mid-base support, tested 8x"
+    },
+    {
+      "level": 173.62,
       "label": "S4 crash low",
       "touches": 1,
-      "evidence": "crash low 2026-06-11, structural bottom"
+      "evidence": "crash low 2026-03-27, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 200.51,
+      "level": 200.5,
       "label": "R1 today high",
-      "evidence": "today's high 200.50999450683594"
+      "evidence": "today's high 200.505"
     },
     {
-      "level": 228.14,
+      "level": 227.34,
       "label": "R3 Aug high",
-      "evidence": "box top 228.14, base period high"
+      "evidence": "box top 227.34, base period high"
     }
   ],
   "position": {
     "current": 199.26,
-    "in_box_pct": 46.4,
+    "in_box_pct": 47.7,
     "nearest_support": "S1 KEY (192.0)",
-    "nearest_resistance": "R1 today high (200.51)"
+    "nearest_resistance": "R1 today high (200.5)"
   },
   "kline_today": {
     "type": "bullish_hold",
@@ -74,11 +86,11 @@
     "touched_S1": false,
     "close_position": "upper_half",
     "O": 198.61,
-    "H": 200.51,
+    "H": 200.5,
     "L": 197.57,
     "C": 199.26,
     "body_pct": 22.1,
-    "upper_wick_pct": 42.5,
+    "upper_wick_pct": 42.4,
     "lower_wick_pct": 35.4
   },
   "bias": {
@@ -98,22 +110,22 @@
   "scenarios": [
     {
       "if": "hold 192.0 (KEY support)",
-      "then": "still range; watch 200.51 for next test"
+      "then": "still range; watch 200.5 for next test"
     },
     {
       "if": "break 192.0 on close",
-      "then": "target 174.24 → lower (short-term bearish)"
+      "then": "target 188.0 → 184.0 (short-term bearish)"
     },
     {
-      "if": "break 174.24 (crash low)",
+      "if": "break 173.62 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 200.51 on close",
-      "then": "short-term bullish; next test 228.14"
+      "if": "reclaim 200.5 on close",
+      "then": "short-term bullish; next test 227.34"
     },
     {
-      "if": "break 228.14 (box top)",
+      "if": "break 227.34 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -147,11 +159,11 @@
     "phase_match": true,
     "r1": 208.86,
     "s1": 189.78,
-    "s2": 195.89,
-    "r2": 228.14,
-    "r3": 213.32,
-    "s3": 174.24,
-    "s4": 174.98,
+    "s2": 195.2,
+    "r2": 227.34,
+    "r3": 212.57,
+    "s3": 173.63,
+    "s4": 173.62,
     "current_position_pct": 49.7,
     "notes": "WAIT_RANGE: in box (190-209), pos 50%, no clear setup"
   }

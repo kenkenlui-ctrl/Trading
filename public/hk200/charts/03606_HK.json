@@ -1,56 +1,50 @@
 {
   "ticker": "HK.03606",
   "ticker_user": "03606.HK",
-  "name": "FUYAO GLASS",
-  "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
+  "name": "福耀玻璃",
+  "data_source": "futu",
+  "data_range": "2025-12-17 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 53.1,
-    "H": 55.55,
-    "L": 52.9,
-    "C": 55.55,
-    "prev_close": 53.05,
-    "chg_pct": 4.71
+    "date": "2026-10-12",
+    "O": 56.25,
+    "H": 56.8,
+    "L": 55.2,
+    "C": 55.6,
+    "prev_close": 55.55,
+    "chg_pct": 0.09
   },
   "phase": "base_building",
-  "adx": 8.9,
-  "plus_di": 20.59,
-  "minus_di": 15.52,
-  "regime": "range",
+  "adx": 24.46,
+  "plus_di": 26.08,
+  "minus_di": 10.09,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 68.95 (2026-02-04), trough 47.7 (2026-06-26), box top 60.45 (2026-07-31)",
+  "phase_evidence": "Peak 66.42 (2026-02-04), trough 46.54 (2026-06-26), box top 59.29 (2026-07-31)",
   "peak": {
     "date": "2026-02-04",
-    "price": 68.95
+    "price": 66.42
   },
   "trough": {
     "date": "2026-06-26",
-    "price": 47.7
+    "price": 46.54
   },
   "box": {
-    "top": 60.45,
+    "top": 59.29,
     "top_date": "2026-07-31",
-    "bottom": 47.7,
-    "period": "2026-06-26 to 2026-10-09"
+    "bottom": 46.54,
+    "period": "2026-06-26 to 2026-10-12"
   },
-  "drop_from_peak_pct": 19.4,
-  "recovery_from_crash_pct": 16.5,
+  "drop_from_peak_pct": 16.3,
+  "recovery_from_crash_pct": 19.5,
   "supports": [
     {
-      "level": 56.0,
-      "label": "S1 KEY",
-      "touches": 18,
-      "evidence": "tested 18x in base period; -0.8% below current"
-    },
-    {
       "level": 52.0,
-      "label": "S2",
-      "touches": 35,
-      "evidence": "mid-base support, tested 35x"
+      "label": "S1 KEY",
+      "touches": 64,
+      "evidence": "tested 64x in base period; 6.5% below current"
     },
     {
-      "level": 47.7,
+      "level": 46.54,
       "label": "S4 crash low",
       "touches": 1,
       "evidence": "crash low 2026-06-26, structural bottom"
@@ -58,34 +52,34 @@
   ],
   "resistances": [
     {
-      "level": 55.55,
+      "level": 56.8,
       "label": "R1 today high",
-      "evidence": "today's high 55.54999923706055"
+      "evidence": "today's high 56.8"
     },
     {
-      "level": 60.45,
+      "level": 59.29,
       "label": "R3 Jul high",
-      "evidence": "box top 60.45, base period high"
+      "evidence": "box top 59.29, base period high"
     }
   ],
   "position": {
-    "current": 55.55,
-    "in_box_pct": 61.6,
-    "nearest_support": "S1 KEY (56.0)",
-    "nearest_resistance": "R1 today high (55.55)"
+    "current": 55.6,
+    "in_box_pct": 71.1,
+    "nearest_support": "S1 KEY (52.0)",
+    "nearest_resistance": "R1 today high (56.8)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
-    "touched_S1": true,
-    "close_position": "upper_half",
-    "O": 53.1,
-    "H": 55.55,
-    "L": 52.9,
-    "C": 55.55,
-    "body_pct": 92.5,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 7.5
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 56.25,
+    "H": 56.8,
+    "L": 55.2,
+    "C": 55.6,
+    "body_pct": 40.6,
+    "upper_wick_pct": 34.4,
+    "lower_wick_pct": 25.0
   },
   "bias": {
     "short": {
@@ -103,23 +97,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 56.0 (KEY support)",
-      "then": "still range; watch 55.55 for next test"
+      "if": "hold 52.0 (KEY support)",
+      "then": "still range; watch 56.8 for next test"
     },
     {
-      "if": "break 56.0 on close",
-      "then": "target 52.0 → 47.7 (short-term bearish)"
+      "if": "break 52.0 on close",
+      "then": "target 46.54 → lower (short-term bearish)"
     },
     {
-      "if": "break 47.7 (crash low)",
+      "if": "break 46.54 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 55.55 on close",
-      "then": "short-term bullish; next test 60.45"
+      "if": "reclaim 56.8 on close",
+      "then": "short-term bullish; next test 59.29"
     },
     {
-      "if": "break 60.45 (box top)",
+      "if": "break 59.29 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -151,14 +145,14 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 56.55,
+    "r1": 56.8,
     "s1": 52.9,
-    "s2": 53.6,
-    "r2": 60.45,
-    "r3": 65.15,
-    "s3": 47.7,
-    "s4": 56.05,
-    "current_position_pct": 72.6,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 56.55）：① 跌到 56.55、收市守住喺 56.55 上面 → 照 BUY 條 plan 做（入場 56.55，止蝕 58.80，目標 54.73）。② 收市跌穿 56.55 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 56.55 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "s2": 52.44,
+    "r2": 59.29,
+    "r3": 62.62,
+    "s3": 46.54,
+    "s4": 53.52,
+    "current_position_pct": 69.2,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 56.80）：① 跌到 56.80、收市守住喺 56.80 上面 → 照 BUY 條 plan 做（入場 56.80，止蝕 59.24，目標 54.85）。② 收市跌穿 56.80 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 56.80 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   }
 }
