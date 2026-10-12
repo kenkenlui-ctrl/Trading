@@ -60,6 +60,119 @@ def record(name: str, ok: bool, detail: str = "", pass_detail: str = "") -> None
 
 
 # --------------------------------------------------------------------------
+# 13. every ASSET url the page fetches must be stamped with its content hash
+# --------------------------------------------------------------------------
+def t_every_fetched_asset_is_content_stamped() -> None:
+    """Every <script>/<img>/data-* asset URL carries ?v=<sha1 of that file>.
+
+    2026-10-12 this same defect fired three times in one session, each one
+    invisible: the file on the server was correct, the URL never changed, and
+    the browser kept serving the old copy.
+
+      1. /charts/<t>.json      — no ?v= at all
+      2. /ohlc/<t>_ohlc.json   — derived from (1), so also uncached
+      3. /static/canvas-chart.js?v=2026-09-18b — a hardcoded literal
+
+    Every deployment was "verified" by grepping the deployed file and finding
+    the new code. Not one of those checks asked which URL the browser would
+    actually request. t_css_cachebuster already covers /leeks.css; this covers
+    the two asset families CSS does not.
+    """
+    import hashlib
+
+    # Accept both "?v=<hash>" and "?v=<YYYY-MM-DD>-<hash>"; the hash is the
+    # trailing 8 hex chars in either form.
+    stamped = re.compile(
+        r"^(?P<path>/[A-Za-z0-9_./\-]+)\?v=(?:[0-9]{4}-[0-9]{2}-[0-9]{2}-)?(?P<v>[0-9a-f]{8})$")
+
+    # Which files must be stamped, and which pages legitimately omit them.
+    families = ["static/canvas-chart.js"]
+    unstamped_never = {"favicon", "apple-touch-icon", "manifest", "og-image"}
+
+    checked = bad = 0
+    problems: list[str] = []
+    pat_script = re.compile(r'<script[^>]+src="(?P<u>[^"]+)"')
+    pat_img = re.compile(r'<img[^>]+src="(?P<u>[^"]+)"')
+    pat_data = re.compile(r'data-(?:chart-json|png)="(?P<u>[^"]+)"')
+
+    for page in sorted(PUBLIC.rglob("*.html")):
+        try:
+            body = page.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        urls = []
+        for _pat in (pat_script, pat_img, pat_data):
+            for _mt2 in _pat.finditer(body):
+                urls.append(_mt2.group("u"))
+        for u in urls:
+            if any(bad_name in u for bad_name in unstamped_never):
+                continue
+            local = PUBLIC / u.split("?")[0].lstrip("/")
+            if not local.exists() or not local.is_file():
+                continue                       # external or data: URL
+            if u.endswith(".html") or "/ticker/" in u:
+                continue                       # page links, not a cached asset
+            checked += 1
+            _mt = stamped.match(u)
+            if not _mt:
+                bad += 1
+                problems.append(f"{page.relative_to(PUBLIC)}: {u} (no content stamp)")
+                continue
+            # Same rule as build_dashboard, and the rule depends on the asset:
+            #   .json -> sha1(chart JSON + OHLC JSON)[:8]   (two files fetched)
+            #   .js/.css -> sha1(file)[:8]                  (one file fetched)
+            # lstrip("/") matters: PUBLIC / "/hk200/..." is an ABSOLUTE path and
+            # pathlib discards PUBLIC entirely, so the OHLC file was never found
+            # and the hash silently fell back to sha1(json + b"?").
+            if local.suffix == ".json":
+                _oh = PUBLIC / (_mt.group("path").split("?")[0]
+                                .lstrip("/")
+                                .replace("/charts/", "/ohlc/")
+                                .replace(".json", "_ohlc.json"))
+                _dd = hashlib.sha1()
+                for _f in (local, _oh):
+                    try:
+                        _dd.update(Path(_f).read_bytes())
+                    except Exception:
+                        _dd.update(b"?")
+                want = _dd.hexdigest()[:8]
+            else:
+                want = hashlib.sha1(local.read_bytes()).hexdigest()[:8]
+            if _mt.group("v") != want:
+                bad += 1
+                problems.append(f"{page.relative_to(PUBLIC)}: {u} stamp={_mt.group('v')} want={want}")
+
+    record("assets/every fetched asset is content-stamped",
+           checked > 0 and bad == 0,
+           f"{bad}/{checked} asset URLs are not stamped with their current content hash"
+           + (f" e.g. {problems[:4]}" if problems else ""))
+
+    # MUST-FAIL: an unstamped url and a stale stamp must both be rejected.
+    _js = PUBLIC / "static/canvas-chart.js"
+    real = hashlib.sha1(_js.read_bytes()).hexdigest()[:8]   # single-file asset
+    good = "/static/canvas-chart.js?v=" + real
+    dated = "/static/canvas-chart.js?v=2026-10-12-" + real
+    record("assets/must-fail: unstamped url is rejected",
+           not stamped.match("/static/canvas-chart.js"),
+           "the assertion accepted a URL with no ?v=")
+    record("assets/must-fail: stale stamp is rejected",
+           (lambda m: m is None or m.group("v") != real)(
+               stamped.match("/static/canvas-chart.js?v=deadbeef")),
+           "the assertion accepted a wrong content hash")
+    record("assets/dated form is also accepted",
+           bool(stamped.match(dated)) and stamped.match(dated).group("v") == real,
+           "the regex rejected the ?v=<date>-<hash> form the build actually emits")
+    record("assets/must-fail: the current stamp is accepted",
+           bool(stamped.match(good)) and stamped.match(good).group("v") == real,
+           "the assertion rejected the correct stamp, so it proves nothing")
+
+    # MUST-FAIL: the pass is actually wired into main().
+    src = (Path(__file__).resolve().parent / "build_dashboard.py").read_text(encoding="utf-8")
+    record("assets/_canvas_js_version is called by build_dashboard",
+           "_canvas_js_version()" in src.split("def render_detail_page")[-1],
+           "_canvas_js_version() defined but render_detail_page never calls it")
+
+# --------------------------------------------------------------------------
 # 1. snapshot_quote must not fabricate a price
 # --------------------------------------------------------------------------
 def t_quote_never_zero() -> None:
@@ -1513,7 +1626,8 @@ def main() -> int:
                t_structured_data_is_present_and_true,
                t_llms_txt_says_which_engine_covers_which_market,
                t_jp_ohlc_has_one_naming_scheme, t_en_tree_is_retired,
-               t_signals_only_come_from_tracked_tickers):
+               t_signals_only_come_from_tracked_tickers,
+               t_every_fetched_asset_is_content_stamped):
         print(f"\n{fn.__doc__.splitlines()[0] if fn.__doc__ else fn.__name__}")
         try:
             fn()

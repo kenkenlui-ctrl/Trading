@@ -185,6 +185,20 @@ python3 scripts/build_backtest_page.py 2>&1 | tail -1
 # sit before finalize.py below, like every other writer.
 python3 scripts/build_track_record.py 2>&1 | tail -3
 
+# --- Step 5d: self-test gate -------------------------------------------------
+# 2026-10-12. self_test.py existed but nothing ran it, so it could not stop
+# anything: the same way refresh.sh silently skipped stale charts, the guard
+# itself was never wired in. It also caught two real defects on its first run
+# (3 orphan ticker pages whose assets were never content-stamped).
+echo
+echo "[5d] self-test gate (must be green before deploy)..."
+python3 scripts/self_test.py 2>&1 | tail -6
+if ! python3 scripts/self_test.py >/dev/null 2>&1; then
+  echo "  ✗ self-test FAILED — refusing to deploy"
+  exit 1
+fi
+echo "  ✓ self-test green"
+
 # --- Step 7c: final normalisation pass. MUST be the last thing that touches
 # public/ before the commit. build_backtest_page / build_insights_index /
 # build_insights_radar / build_v2_signals all run after build_static.py, and

@@ -1388,11 +1388,15 @@ def build_for_market(market: str):
             # canvas-chart.js from /charts/<t>.json + /ohlc/<t>_ohlc.json; the PNG
             # is only a <noscript> fallback. Busting on the PNG alone left both
             # JSON URLs uncached, so a redraw was invisible to every visitor.
-            _png = Path(src_dir) / f"{safe}.png"
+            # Hash exactly the bytes the browser will fetch: the chart JSON and
+            # the OHLC JSON. The PNG used to be a <noscript> fallback and is no
+            # longer shipped — hashing it changed the URL for a file nobody
+            # downloads. build_dashboard and scripts/self_test.py MUST use the
+            # same rule or the stamp check disagrees with reality.
             _cj = Path(src_dir) / f"{safe}.json"
             _oh = Path(src_dir) / f"{safe}_ohlc.json"
             _d = _hl.sha1()
-            for _p in (_cj, _oh, _png):
+            for _p in (_cj, _oh):
                 try:
                     _d.update(_p.read_bytes())
                 except Exception:
