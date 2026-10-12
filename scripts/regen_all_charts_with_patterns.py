@@ -45,7 +45,8 @@ WORKERS = 2
 SLEEP_BETWEEN = 0.62
 
 
-def one(ticker: str, out_dir: Path, asof_args: list[str]) -> tuple[str, bool, str]:
+def one(ticker: str, out_dir: Path, asof_args: list[str],
+        mirror: Path | None = None) -> tuple[str, bool, str]:
     safe = ticker.replace(".", "_")
     png, js = out_dir / f"{safe}.png", out_dir / f"{safe}.json"
     cmd = [sys.executable, str(SKILL), "-t", ticker, "-o", str(png),
@@ -53,6 +54,15 @@ def one(ticker: str, out_dir: Path, asof_args: list[str]) -> tuple[str, bool, st
     try:
         r = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
         if r.returncode == 0 and png.exists() and js.exists():
+            # JP's builder reads data/jp200/, not charts/jp200/ — writing only to
+            # charts/jp200 left public/jp200/charts/ a week stale and shipped it.
+            if mirror is not None:
+                import shutil
+                for _f in (png, js):
+                    try:
+                        shutil.copy2(_f, mirror / _f.name)
+                    except Exception:
+                        pass
             return ticker, True, "ok"
         return ticker, False, (r.stderr or r.stdout)[-90:].replace("\n", " ")
     except Exception as e:
@@ -82,7 +92,11 @@ def main():
         print(f"\n=== {m}: {len(tickers)} 隻 -> {cfg['out']}")
         ok = fail = 0
         with ThreadPoolExecutor(max_workers=WORKERS) as ex:
-            futs = [ex.submit(one, t, cfg["out"], cfg["asof"]) for t in tickers]
+            mirror = (REPO / "data/jp200") if m == "JP" else None
+            if mirror:
+                mirror.mkdir(parents=True, exist_ok=True)
+                print(f"   （JP 同時寫入 {mirror}，build_dashboard 從呢度讀）")
+            futs = [ex.submit(one, t, cfg["out"], cfg["asof"], mirror) for t in tickers]
             for i, f in enumerate(futs, 1):
                 _, good, msg = f.result()
                 ok += good
