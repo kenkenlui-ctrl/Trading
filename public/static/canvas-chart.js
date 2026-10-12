@@ -126,6 +126,10 @@
          never touch action_plan. */
       (function () {
         if (!ohlc || !ohlc.length) return;
+        // drawChart computes slotW further down; this block runs before that,
+        // so derive it locally. Using the (not-yet-assigned) outer slotW made
+        // every x NaN and the volume panel drew nothing.
+        var _slotW = (W - padL - padR) / Math.max(1, ohlc.length);
         var vmax = 0;
         ohlc.forEach(function (k) { if (k.volume > vmax) vmax = k.volume; });
         if (!vmax) return;
@@ -133,11 +137,11 @@
 
         ohlc.forEach(function (k, i) {
           if (!k.volume) return;
-          var x = padL + i * slotW + slotW / 2;
+          var x = padL + i * _slotW + _slotW / 2;
           var up = k.close >= k.open;
           ctx.fillStyle = up ? 'rgba(16,185,129,0.55)' : 'rgba(244,63,94,0.55)';
           var y = vY(k.volume);
-          ctx.fillRect(x - Math.max(1, slotW * 0.32), y, Math.max(1.4, slotW * 0.64), volTop + volH - y);
+          ctx.fillRect(x - Math.max(1, _slotW * 0.32), y, Math.max(1.4, _slotW * 0.64), volTop + volH - y);
         });
 
         /* 20-session average volume — "is this move backed by volume" */
@@ -150,7 +154,7 @@
             var s2 = 0;
             for (var j3 = i2 - 19; j3 <= i2; j3++) s2 += (ohlc[j3].volume || 0);
             var vv = s2 / 20;
-            var x2 = padL + i2 * slotW + slotW / 2;
+            var x2 = padL + i2 * _slotW + _slotW / 2;
             var y2 = vY(vv);
             if (!st2) { ctx.moveTo(x2, y2); st2 = true; } else ctx.lineTo(x2, y2);
           }
@@ -165,12 +169,17 @@
            chart is windowed to 30/90 the slice offset shifts them. */
         var pats = (cachedChartJson && cachedChartJson.patterns) || [];
         if (!pats.length) return;
-        var sliceOff = Math.max(0, (cachedOhlcAll ? cachedOhlcAll.length : ohlc.length) - ohlc.length);
+        // Match by DATE, not by index. patterns[].i indexes daily_sr.py's own
+        // 200-bar frame, while this chart holds 400 bars windowed to 30/90 — the
+        // two index spaces do not line up, so an index offset dropped every
+        // marker. A date is stable across both.
+        var byDate = {};
+        ohlc.forEach(function (k, li2) { if (k.date) byDate[k.date] = li2; });
         ctx.font = '8px JetBrains Mono,monospace';
         pats.forEach(function (pt) {
-          var li = pt.i - sliceOff;
-          if (li < 0 || li >= ohlc.length) return;
-          var x = padL + li * slotW + slotW / 2;
+          var li = byDate[pt.date];
+          if (li === undefined) return;
+          var x = padL + li * _slotW + _slotW / 2;
           var low = ohlc[li].low;
           var y = yOf(low) + 9;
           ctx.fillStyle = 'rgba(148,163,184,0.95)';
