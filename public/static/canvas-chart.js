@@ -281,17 +281,19 @@
       }
 
       /* MA lines */
-      if (ohlc && ohlc.length > 20) {
+      if (ohlc && ohlc.length > 60) {
         var closes = ohlc.map(function(k){ return k.close; });
-        var maCfg = {5:T.bull, 10:T.blue, 20:T.amber, 60:'#94a3b8'};
-        [5,10,20,60].forEach(function(per) {
+        // 2026-10-12: MA5/MA10 removed on request — four lines on a 30D window was
+        // noise, and MA20 + MA60 already answer "stretched?" and "which regime?".
+        var maCfg = {20:T.amber, 60:'#94a3b8'};
+        [20,60].forEach(function(per) {
           var maVals = closes.map(function(_, i) {
             if (i < per - 1) return null;
             var s = 0; for (var j2=i-per+1; j2<=i; j2++) s += closes[j2];
             return s / per;
           });
           ctx.strokeStyle = maCfg[per];
-          ctx.lineWidth  = per === 5 ? 1 : per === 10 ? 1.2 : per === 20 ? 1.5 : 1.6;
+          ctx.lineWidth  = per === 20 ? 1.5 : 1.6;
           ctx.beginPath();
           var started = false;
           maVals.forEach(function(v, i) {
@@ -304,7 +306,7 @@
           var last = maVals[maVals.length-1];
           if (last != null) {
             // Stagger MA labels vertically to avoid overlap (MA5 at line, MA10 offset up, MA20 offset down)
-            var yOff = per === 5 ? 0 : per === 10 ? -10 : (per === 20 ? 10 : 20);
+            var yOff = per === 20 ? 10 : 20;
             var lx = padL + (maVals.length-1) * slotW + slotW/2;
             var ly = yOf(last) + yOff;
             var lbl = 'MA' + per + ' ' + last.toFixed(decimals);
