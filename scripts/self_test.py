@@ -172,6 +172,49 @@ def t_every_fetched_asset_is_content_stamped() -> None:
            "_canvas_js_version()" in src.split("def render_detail_page")[-1],
            "_canvas_js_version() defined but render_detail_page never calls it")
 
+    # ---------------------------------------------------------------- noscript
+    # The <noscript> block prints the chart JSON location as a real path, for
+    # the visitor who has JavaScript switched off. That link used to be built as
+    # chart_url = ".../<t>.png" and rendered as "{chart_url}.json", i.e.
+    # "/jp200/charts/3099_T.png.json" — a filename that never existed. Nothing
+    # else in the repo fetches that string, so no other check can see it: only
+    # a visitor with JS off, on a page nobody crawls. Assert it resolves.
+    _noscript_re = re.compile(r"<noscript>.*?</noscript>", re.S)
+    _code_re = re.compile(r"<code>(/[^<\s]+?)</code>")
+
+    def _dead_noscript_links(html: str) -> list[str]:
+        return [link
+                for block in _noscript_re.findall(html)
+                for link in _code_re.findall(block)
+                if not (PUBLIC / link.lstrip("/")).is_file()]
+
+    seen = 0
+    dead: list[str] = []
+    for page in sorted(PUBLIC.rglob("*.html")):
+        try:
+            body = page.read_text(encoding="utf-8", errors="ignore")
+        except Exception:
+            continue
+        links = _dead_noscript_links(body)
+        seen += 1 if "<noscript>" in body else 0
+        if links:
+            dead += [f"{page.relative_to(PUBLIC)} -> {l}" for l in links]
+    record("assets/every noscript data link resolves to a real file",
+           seen > 0 and not dead,
+           f"{len(dead)} dead <noscript> links across {seen} pages "
+           f"(a visitor without JS cannot open them)"
+           + (f" e.g. {dead[:4]}" if dead else ""))
+
+    # MUST-FAIL: prove the scanner can actually fail, and that it is not simply
+    # accepting everything because PUBLIC paths always "exist".
+    record("assets/must-fail: a bogus noscript link is caught",
+           _dead_noscript_links("<noscript><code>/charts/definitely-not-here.json</code></noscript>")
+           == ["/charts/definitely-not-here.json"],
+           "the noscript scanner returned no error for a path that does not exist")
+    record("assets/must-fail: a real noscript link passes",
+           _dead_noscript_links("<noscript><code>/static/canvas-chart.js</code></noscript>") == [],
+           "the noscript scanner rejected a file that does exist, so it proves nothing")
+
 # --------------------------------------------------------------------------
 # 1. snapshot_quote must not fabricate a price
 # --------------------------------------------------------------------------

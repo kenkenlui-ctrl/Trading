@@ -1372,27 +1372,28 @@ def build_for_market(market: str):
                     }
 
         safe = ticker.replace(".", "_")
-        chart_url = f"/{market.lower()}200/charts/{safe}.png"
+        # Extensionless on purpose. The <noscript> block renders this as
+        # `{chart_url}.json`, so a trailing ".png" here produced the dead link
+        # /<mkt>200/charts/<t>.png.json — a filename that never existed. The
+        # PNGs were dropped from the deploy (canvas-chart.js draws the visible
+        # chart from JSON), so this value now has exactly one consumer: that
+        # noscript text. Keep it in sync with the stamp invariant below.
+        chart_url = f"/{market.lower()}200/charts/{safe}"
         # Cache-buster: data date ALONE is not enough. Two builds on the same
         # session (a redraw, a layout fix) produce different bytes under an
-        # identical ?v=, so browsers and the CDN keep serving the older PNG —
+        # identical ?v=, so browsers and the CDN keep serving the older bytes —
         # 2026-10-12 this shipped a label fix that no visitor could see. Append
-        # a short hash of the PNG itself so the URL changes exactly when the
-        # image does.
+        # a short hash of the payload itself so the URL changes exactly when
+        # the data does.
         try:
             import hashlib as _hl
-            # Hash the SOURCE png, not public/ — the copy into public/ happens
-            # after this row is built, so hashing the destination reads the
-            # previous build's bytes and the cache-buster lags one deploy.
             # Hash the JSON pair, not the PNG. The visible chart is drawn by
-            # canvas-chart.js from /charts/<t>.json + /ohlc/<t>_ohlc.json; the PNG
-            # is only a <noscript> fallback. Busting on the PNG alone left both
-            # JSON URLs uncached, so a redraw was invisible to every visitor.
-            # Hash exactly the bytes the browser will fetch: the chart JSON and
-            # the OHLC JSON. The PNG used to be a <noscript> fallback and is no
-            # longer shipped — hashing it changed the URL for a file nobody
-            # downloads. build_dashboard and scripts/self_test.py MUST use the
-            # same rule or the stamp check disagrees with reality.
+            # canvas-chart.js from /charts/<t>.json + /ohlc/<t>_ohlc.json.
+            # Busting on the PNG alone left both JSON URLs uncached, so a
+            # redraw was invisible to every visitor. Hash exactly the bytes the
+            # browser will fetch: the chart JSON and the OHLC JSON. build_dashboard
+            # and scripts/self_test.py MUST use the same rule or the stamp check
+            # disagrees with reality.
             _cj = Path(src_dir) / f"{safe}.json"
             _oh = Path(src_dir) / f"{safe}_ohlc.json"
             _d = _hl.sha1()
