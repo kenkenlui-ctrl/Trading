@@ -119,6 +119,50 @@
       var pRange = max - min;
       var yOf = function(p){ return padT + ((max - p) / pRange) * priceH; };
 
+      /* ---- Shared label de-collision (2026-10-12) ----------------------------
+         MA, S/R, current-price and pattern labels were each drawn inline and
+         each had no idea the others existed, so they overprinted. Everything
+         now goes through one registry and one vertical pass at the end of the
+         draw. MIN_GAP is in device-independent px. */
+      var _lbls = [];
+      function _pushLbl(x, y, text, color, font, align) {
+        _lbls.push({ x: x, y: y, text: text, color: color,
+                     font: font || '8px JetBrains Mono,monospace',
+                     align: align || 'left' });
+      }
+      function _drawLbls() {
+        if (!_lbls.length) return;
+        var MIN_GAP = 13;
+        var byCol = {};
+        _lbls.forEach(function (L) {
+          var key = Math.round(L.x / 40);            // group nearby labels
+          (byCol[key] = byCol[key] || []).push(L);
+        });
+        Object.keys(byCol).forEach(function (key) {
+          var arr = byCol[key].slice().sort(function (a, b) { return a.y - b.y; });
+          // right-column labels grow leftwards from the edge; keep their order
+          for (var i = 1; i < arr.length; i++) {
+            var gap = arr[i].y - arr[i - 1].y;
+            if (gap < MIN_GAP) arr[i].y = arr[i - 1].y + MIN_GAP;
+          }
+          // keep everything inside the price panel
+          var over = arr[arr.length - 1].y - (padT + priceH);
+          if (over > 0) arr.forEach(function (L) { L.y -= over; });
+          arr.forEach(function (L) {
+            ctx.font = L.font;
+            ctx.fillStyle = 'rgba(13,18,32,0.94)';
+            var w = ctx.measureText(L.text).width + 6;
+            var h = 12;
+            var x0 = L.align === 'right' ? L.x - w : L.x;
+            ctx.fillRect(x0, L.y - h / 2, w, h);
+            ctx.fillStyle = L.color;
+            ctx.textAlign = L.align || 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(L.text, L.align === 'right' ? L.x + 3 : L.x + 3, L.y);
+          });
+        });
+      }
+
       /* ---- Volume sub-panel + candlestick pattern markers (2026-10-12) ----
          Both read the SAME json/ohlc the price panel already has, so no extra
          requests and no second source of truth. Patterns are precomputed in
@@ -186,9 +230,7 @@
           ctx.beginPath();
           ctx.moveTo(x, y - 5); ctx.lineTo(x - 3.2, y + 1); ctx.lineTo(x + 3.2, y + 1);
           ctx.closePath(); ctx.fill();
-          ctx.fillStyle = 'rgba(232,234,240,0.9)';
-          var tw2 = ctx.measureText(pt.name).width + 4;
-          ctx.fillText(pt.name, x - tw2 / 2, y + 11);
+          _pushLbl(x - 2, y + 9, pt.name, 'rgba(232,234,240,0.95)', '8px JetBrains Mono,monospace', 'center');
         });
       })();
 
@@ -386,7 +428,7 @@
       ctx.fillStyle = '#0a0e1a';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText(lblTxt, lblX+8, lblY + 10);
+      _pushLbl(lblX + 8, lblY + 10, lblTxt, lblColor, 'bold 12px JetBrains Mono,monospace');
 
       /* Plan annotation box */
       if (ap.verdict && ap.verdict !== 'WAIT') {
@@ -421,8 +463,9 @@
         ctx.font = 'bold 9px JetBrains Mono,monospace';
         var phW = ctx.measureText(phTxt).width + 12;
         var phH = 16;
+        // Top-left: bottom-left collided with the S2 / lowest-support label.
         var phX = padL + 12;
-        var phY = padT + priceH - phH - 12;
+        var phY = padT + 6;
         ctx.fillStyle = 'rgba(13,18,32,0.92)';
         ctx.strokeStyle = T.amber;
         ctx.lineWidth = 1;
@@ -433,6 +476,9 @@
         ctx.textBaseline = 'middle';
         ctx.fillText(phTxt, phX + 6, phY + phH/2);
       }
+
+      /* Every label registered during this pass is placed together here */
+      _drawLbls();
 
       /* Save snapshot — called after every full draw, uses init scope snap */
       saveSnap();
