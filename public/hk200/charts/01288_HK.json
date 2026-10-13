@@ -1,80 +1,85 @@
 {
   "ticker": "HK.01288",
   "ticker_user": "01288.HK",
-  "name": "農業銀行",
-  "data_source": "futu",
-  "data_range": "2025-12-17 → 2026-10-12 (200 daily bars)",
+  "name": "ABC",
+  "data_source": "yfinance",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-12",
-    "O": 6.53,
-    "H": 6.67,
-    "L": 6.49,
-    "C": 6.67,
-    "prev_close": 6.49,
-    "chg_pct": 2.78
+    "date": "2026-10-09",
+    "O": 6.58,
+    "H": 6.59,
+    "L": 6.4,
+    "C": 6.49,
+    "prev_close": 6.59,
+    "chg_pct": -1.59
   },
-  "phase": "uptrend",
-  "adx": 21.12,
-  "plus_di": 26.88,
-  "minus_di": 11.08,
-  "regime": "dead",
+  "phase": "downtrend_active",
+  "adx": 18.29,
+  "plus_di": 23.33,
+  "minus_di": 16.4,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 6.67 (2026-10-12), trough 6.27 (2026-10-05), box top 6.67 (2026-10-12)",
+  "phase_evidence": "Peak 6.72 (2026-09-28), trough 6.16 (2026-08-28), box top 6.72 (2026-09-28)",
   "peak": {
-    "date": "2026-10-12",
-    "price": 6.67
+    "date": "2026-09-28",
+    "price": 6.72
   },
   "trough": {
-    "date": "2026-10-05",
-    "price": 6.27
+    "date": "2026-08-28",
+    "price": 6.16
   },
   "box": {
-    "top": 6.67,
-    "top_date": "2026-10-12",
-    "bottom": 6.27,
-    "period": "2026-10-05 to 2026-10-12"
+    "top": 6.72,
+    "top_date": "2026-09-28",
+    "bottom": 6.16,
+    "period": "2026-08-28 to 2026-10-09"
   },
-  "drop_from_peak_pct": 0.1,
-  "recovery_from_crash_pct": 6.4,
+  "drop_from_peak_pct": 3.4,
+  "recovery_from_crash_pct": 5.4,
   "supports": [
     {
       "level": 8.0,
       "label": "S1 KEY",
-      "touches": 69,
-      "evidence": "tested 69x in base period; -20.0% below current"
+      "touches": 30,
+      "evidence": "tested 30x in base period; -23.4% below current"
     },
     {
-      "level": 4.0,
-      "label": "S2 bottom",
-      "touches": 21,
-      "evidence": "structural bottom, near crash low 6.27"
+      "level": 6.16,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-08-28, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 6.67,
+      "level": 6.59,
       "label": "R1 today high",
-      "evidence": "today's high 6.67"
+      "evidence": "today's high 6.585000038146973"
+    },
+    {
+      "level": 6.72,
+      "label": "R3 Sep high",
+      "evidence": "box top 6.72, base period high"
     }
   ],
   "position": {
-    "current": 6.67,
-    "in_box_pct": 99.8,
+    "current": 6.49,
+    "in_box_pct": 58.0,
     "nearest_support": "S1 KEY (8.0)",
-    "nearest_resistance": "R1 today high (6.67)"
+    "nearest_resistance": "R1 today high (6.59)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": true,
-    "close_position": "upper_half",
-    "O": 6.53,
-    "H": 6.67,
-    "L": 6.49,
-    "C": 6.67,
-    "body_pct": 73.0,
+    "close_position": "lower_half",
+    "O": 6.58,
+    "H": 6.59,
+    "L": 6.4,
+    "C": 6.49,
+    "body_pct": 51.4,
     "upper_wick_pct": 2.7,
-    "lower_wick_pct": 24.3
+    "lower_wick_pct": 45.9
   },
   "bias": {
     "short": {
@@ -82,30 +87,34 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bullish_continuation",
-      "reason": "higher highs / higher lows"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 8.0 (KEY support)",
-      "then": "still range; watch 6.67 for next test"
+      "then": "still range; watch 6.59 for next test"
     },
     {
       "if": "break 8.0 on close",
-      "then": "target 4.0 → lower (short-term bearish)"
+      "then": "target 6.16 → lower (short-term bearish)"
     },
     {
-      "if": "break 4.0 (crash low)",
+      "if": "break 6.16 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 6.67 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 6.59 on close",
+      "then": "short-term bullish; next test 6.72"
+    },
+    {
+      "if": "break 6.72 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -136,56 +145,56 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 6.67,
-    "s1": 6.07,
-    "s2": 5.55,
-    "r2": 6.5,
-    "r3": 6.06,
-    "s3": 4.95,
-    "s4": 4.78,
-    "current_position_pct": 99.2,
-    "notes": "WAIT_RANGE: in box (6-7), pos 99%, no clear setup"
+    "r1": 6.72,
+    "s1": 6.22,
+    "s2": 5.62,
+    "r2": 6.64,
+    "r3": 6.3,
+    "s3": 5.1,
+    "s4": 5.08,
+    "current_position_pct": 53.5,
+    "notes": "WAIT_RANGE: in box (6-7), pos 54%, no clear setup"
   },
   "patterns": [
     {
       "name": "射擊之星",
       "bias": "bearish",
       "date": "2026-09-15",
-      "low": 6.15005,
-      "high": 6.27005,
-      "i": 181
+      "low": 6.300000190734863,
+      "high": 6.420000076293945,
+      "i": 182
     },
     {
       "name": "利淡吞噬",
       "bias": "bearish",
       "date": "2026-09-07",
-      "low": 6.19005,
-      "high": 6.47005,
-      "i": 175
+      "low": 6.340000152587891,
+      "high": 6.619999885559082,
+      "i": 176
     },
     {
       "name": "平頭頂",
       "bias": "bearish",
       "date": "2026-08-27",
-      "low": 5.94005,
-      "high": 6.16005,
-      "i": 168
+      "low": 6.090000152587891,
+      "high": 6.309999942779541,
+      "i": 169
     },
     {
       "name": "平頭底",
       "bias": "bullish",
       "date": "2026-08-19",
-      "low": 5.90505,
-      "high": 6.11005,
-      "i": 162
+      "low": 6.054999828338623,
+      "high": 6.260000228881836,
+      "i": 163
     },
     {
       "name": "上升三法",
       "bias": "bullish",
       "date": "2026-08-06",
-      "low": 5.68005,
-      "high": 5.83505,
-      "i": 153
+      "low": 5.829999923706055,
+      "high": 5.985000133514404,
+      "i": 154
     }
   ]
 }

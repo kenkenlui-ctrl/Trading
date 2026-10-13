@@ -1,25 +1,25 @@
 {
   "ticker": "HK.00300",
   "ticker_user": "00300.HK",
-  "name": "美的集團",
-  "data_source": "futu",
-  "data_range": "2025-12-17 → 2026-10-12 (200 daily bars)",
+  "name": "MIDEA GROUP",
+  "data_source": "yfinance",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-12",
-    "O": 94.85,
-    "H": 95.5,
-    "L": 93.25,
-    "C": 93.5,
-    "prev_close": 93.65,
-    "chg_pct": -0.16
+    "date": "2026-10-09",
+    "O": 93.8,
+    "H": 94.35,
+    "L": 93.2,
+    "C": 93.65,
+    "prev_close": 92.8,
+    "chg_pct": 0.92
   },
   "phase": "downtrend_active",
-  "adx": 25.07,
-  "plus_di": 24.07,
-  "minus_di": 22.72,
+  "adx": 26.17,
+  "plus_di": 21.43,
+  "minus_di": 24.98,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 101.7 (2026-08-31), trough 90.0 (2026-10-06), box top 95.5 (2026-10-12)",
+  "phase_evidence": "Peak 101.7 (2026-08-31), trough 90.0 (2026-10-06), box top 101.7 (2026-08-31)",
   "peak": {
     "date": "2026-08-31",
     "price": 101.7
@@ -29,51 +29,56 @@
     "price": 90.0
   },
   "box": {
-    "top": 95.5,
-    "top_date": "2026-10-12",
+    "top": 101.7,
+    "top_date": "2026-08-31",
     "bottom": 90.0,
-    "period": "2026-10-06 to 2026-10-12"
+    "period": "2026-10-06 to 2026-10-09"
   },
-  "drop_from_peak_pct": 8.1,
-  "recovery_from_crash_pct": 3.9,
+  "drop_from_peak_pct": 7.9,
+  "recovery_from_crash_pct": 4.1,
   "supports": [
     {
       "level": 92.0,
       "label": "S1 bottom",
-      "touches": 10,
+      "touches": 11,
       "evidence": "structural bottom, near crash low 90.0"
     }
   ],
   "resistances": [
     {
-      "level": 95.5,
+      "level": 94.35,
       "label": "R1 today high",
-      "evidence": "today's high 95.5"
+      "evidence": "today's high 94.3499984741211"
+    },
+    {
+      "level": 101.7,
+      "label": "R3 Aug high",
+      "evidence": "box top 101.7, base period high"
     }
   ],
   "position": {
-    "current": 93.5,
-    "in_box_pct": 42.9,
+    "current": 93.65,
+    "in_box_pct": 17.0,
     "nearest_support": "S1 bottom (92.0)",
-    "nearest_resistance": "R1 today high (95.5)"
+    "nearest_resistance": "R1 today high (94.35)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 94.85,
-    "H": 95.5,
-    "L": 93.25,
-    "C": 93.5,
-    "body_pct": 60.0,
-    "upper_wick_pct": 28.9,
-    "lower_wick_pct": 11.1
+    "O": 93.8,
+    "H": 94.35,
+    "L": 93.2,
+    "C": 93.65,
+    "body_pct": 13.0,
+    "upper_wick_pct": 47.8,
+    "lower_wick_pct": 39.1
   },
   "bias": {
     "short": {
       "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (43% of box)"
+      "reason": "rejection at R1 + near support (17% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -87,7 +92,7 @@
   "scenarios": [
     {
       "if": "hold 92.0 (KEY support)",
-      "then": "still range; watch 95.5 for next test"
+      "then": "still range; watch 94.35 for next test"
     },
     {
       "if": "break 92.0 on close",
@@ -98,8 +103,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 95.5 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 94.35 on close",
+      "then": "short-term bullish; next test 101.7"
+    },
+    {
+      "if": "break 101.7 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -132,54 +141,54 @@
     "phase_match": false,
     "r1": 101.3,
     "s1": 90.0,
-    "s2": 92.3,
+    "s2": 91.35,
     "r2": 101.7,
-    "r3": 93.2,
+    "r3": 93.65,
     "s3": 78.1,
-    "s4": 73.28,
-    "current_position_pct": 31.0,
-    "notes": "WAIT_RANGE: in box (90-101), pos 31%, no clear setup"
+    "s4": 77.65,
+    "current_position_pct": 32.3,
+    "notes": "WAIT_RANGE: in box (90-101), pos 32%, no clear setup"
   },
   "patterns": [
     {
       "name": "利好吞噬",
       "bias": "bullish",
       "date": "2026-10-08",
-      "low": 90.15,
-      "high": 93.35,
-      "i": 197
+      "low": 90.1500015258789,
+      "high": 93.3499984741211,
+      "i": 198
     },
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-09-28",
-      "low": 94.55,
-      "high": 96.3,
-      "i": 190
+      "low": 94.55000305175781,
+      "high": 96.30000305175781,
+      "i": 191
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-09-07",
-      "low": 99.2,
-      "high": 101.1,
-      "i": 175
+      "low": 99.19999694824219,
+      "high": 101.0999984741211,
+      "i": 176
     },
     {
       "name": "利淡反擊線",
       "bias": "bearish",
       "date": "2026-08-27",
-      "low": 97.7,
-      "high": 99.7,
-      "i": 168
+      "low": 97.69999694824219,
+      "high": 99.69999694824219,
+      "i": 169
     },
     {
       "name": "利淡吞噬",
       "bias": "bearish",
       "date": "2026-08-14",
-      "low": 95.6,
-      "high": 96.6,
-      "i": 159
+      "low": 95.5999984741211,
+      "high": 96.5999984741211,
+      "i": 160
     }
   ]
 }

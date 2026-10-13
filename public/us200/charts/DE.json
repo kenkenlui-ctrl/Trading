@@ -1,84 +1,96 @@
 {
   "ticker": "US.DE",
   "ticker_user": "DE",
-  "name": "迪爾股份",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "name": "Deere & Company",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 651.87,
-    "H": 658.0,
-    "L": 619.95,
-    "C": 620.93,
-    "prev_close": 652.58,
-    "chg_pct": -4.85
+    "date": "2026-10-12",
+    "O": 620.2,
+    "H": 634.88,
+    "L": 618.0,
+    "C": 632.61,
+    "prev_close": 620.93,
+    "chg_pct": 1.88
   },
   "phase": "downtrend_active",
-  "adx": 18.42,
-  "plus_di": 18.84,
-  "minus_di": 36.9,
+  "adx": 19.41,
+  "plus_di": 17.7,
+  "minus_di": 35.66,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 719.5 (2026-09-23), trough 615.74 (2026-08-28), box top 719.5 (2026-09-23)",
+  "phase_evidence": "Peak 721.22 (2026-09-23), trough 618.0 (2026-10-12), box top 721.22 (2026-09-23)",
   "peak": {
     "date": "2026-09-23",
-    "price": 719.5
+    "price": 721.22
   },
   "trough": {
-    "date": "2026-08-28",
-    "price": 615.74
+    "date": "2026-10-12",
+    "price": 618.0
   },
   "box": {
-    "top": 719.5,
+    "top": 721.22,
     "top_date": "2026-09-23",
-    "bottom": 615.74,
-    "period": "2026-08-28 to 2026-10-09"
+    "bottom": 618.0,
+    "period": "2026-10-12 to 2026-10-12"
   },
-  "drop_from_peak_pct": 13.7,
-  "recovery_from_crash_pct": 0.8,
+  "drop_from_peak_pct": 12.3,
+  "recovery_from_crash_pct": 2.4,
   "supports": [
     {
-      "level": 604.0,
-      "label": "S1 bottom",
-      "touches": 0,
-      "evidence": "structural bottom, near crash low 615.74"
+      "level": 616.0,
+      "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; 2.6% below current"
+    },
+    {
+      "level": 612.0,
+      "label": "S2",
+      "touches": 7,
+      "evidence": "mid-base support, tested 7x"
+    },
+    {
+      "level": 608.0,
+      "label": "S3 bottom",
+      "touches": 5,
+      "evidence": "structural bottom, near crash low 618.0"
     }
   ],
   "resistances": [
     {
-      "level": 658.0,
+      "level": 634.88,
       "label": "R1 today high",
-      "evidence": "today's high 658.0"
+      "evidence": "today's high 634.8800048828125"
     },
     {
-      "level": 719.5,
+      "level": 721.22,
       "label": "R3 Sep high",
-      "evidence": "box top 719.5, base period high"
+      "evidence": "box top 721.22, base period high"
     }
   ],
   "position": {
-    "current": 620.93,
-    "in_box_pct": 14.7,
-    "nearest_support": "S1 bottom (604.0)",
-    "nearest_resistance": "R1 today high (658.0)"
+    "current": 632.61,
+    "in_box_pct": 21.7,
+    "nearest_support": "S1 KEY (616.0)",
+    "nearest_resistance": "R1 today high (634.88)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 651.87,
-    "H": 658.0,
-    "L": 619.95,
-    "C": 620.93,
-    "body_pct": 81.3,
-    "upper_wick_pct": 16.1,
-    "lower_wick_pct": 2.6
+    "close_position": "upper_half",
+    "O": 620.2,
+    "H": 634.88,
+    "L": 618.0,
+    "C": 632.61,
+    "body_pct": 73.5,
+    "upper_wick_pct": 13.4,
+    "lower_wick_pct": 13.0
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (15% of box)"
+      "bias": "defensive",
+      "reason": "near box bottom (22% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -91,23 +103,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 604.0 (KEY support)",
-      "then": "still range; watch 658.0 for next test"
+      "if": "hold 616.0 (KEY support)",
+      "then": "still range; watch 634.88 for next test"
     },
     {
-      "if": "break 604.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 616.0 on close",
+      "then": "target 612.0 → 608.0 (short-term bearish)"
     },
     {
-      "if": "break 604.0 (crash low)",
+      "if": "break 608.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 658.0 on close",
-      "then": "short-term bullish; next test 719.5"
+      "if": "reclaim 634.88 on close",
+      "then": "short-term bullish; next test 721.22"
     },
     {
-      "if": "break 719.5 (box top)",
+      "if": "break 721.22 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -139,56 +151,56 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 719.5,
-    "s1": 619.95,
-    "s2": 577.93,
-    "r2": 704.2,
-    "r3": 637.47,
-    "s3": 512.6,
-    "s4": 455.31,
-    "current_position_pct": 1.0,
-    "notes": "WAIT_RANGE: in box (620-720), pos 1%, no clear setup"
+    "r1": 721.22,
+    "s1": 618.0,
+    "s2": 579.31,
+    "r2": 705.88,
+    "r3": 638.99,
+    "s3": 515.15,
+    "s4": 458.92,
+    "current_position_pct": 14.2,
+    "notes": "WAIT_RANGE: in box (618-721), pos 14%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-10-12",
+      "low": 618.0,
+      "high": 634.8800048828125,
+      "i": 199
+    },
     {
       "name": "黃昏之星",
       "bias": "bearish",
       "date": "2026-09-25",
-      "low": 679.43866652,
-      "high": 696.624356587,
-      "i": 189
+      "low": 681.0599975585938,
+      "high": 698.2899780273438,
+      "i": 188
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-09-18",
-      "low": 678.012070783,
-      "high": 686.362145136,
-      "i": 184
+      "low": 679.6300048828125,
+      "high": 688.0,
+      "i": 183
     },
     {
       "name": "利淡吞噬",
       "bias": "bearish",
       "date": "2026-08-27",
-      "low": 616.33923966,
-      "high": 627.851767501,
-      "i": 169
+      "low": 617.8099975585938,
+      "high": 629.3499755859375,
+      "i": 168
     },
     {
       "name": "早晨之星",
       "bias": "bullish",
       "date": "2026-07-23",
-      "low": 605.295592935,
-      "high": 614.483667582,
-      "i": 144
-    },
-    {
-      "name": "上升三法",
-      "bias": "bullish",
-      "date": "2026-07-13",
-      "low": 580.624465247,
-      "high": 586.430610138,
-      "i": 136
+      "low": 606.739990234375,
+      "high": 615.9500122070312,
+      "i": 143
     }
   ]
 }

@@ -1,54 +1,60 @@
 {
   "ticker": "US.RTX",
   "ticker_user": "RTX",
-  "name": "雷神技術",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "name": "RTX Corporation",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 185.2,
-    "H": 186.46,
-    "L": 183.03,
-    "C": 185.97,
-    "prev_close": 184.32,
-    "chg_pct": 0.9
+    "date": "2026-10-12",
+    "O": 186.71,
+    "H": 187.41,
+    "L": 185.95,
+    "C": 186.66,
+    "prev_close": 185.97,
+    "chg_pct": 0.37
   },
   "phase": "downtrend_active",
-  "adx": 49.88,
-  "plus_di": 10.8,
-  "minus_di": 29.21,
+  "adx": 49.08,
+  "plus_di": 12.44,
+  "minus_di": 28.33,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 226.41 (2026-08-19), trough 179.02 (2026-10-08), box top 213.5 (2026-08-28)",
+  "phase_evidence": "Peak 226.88 (2026-08-10), trough 179.02 (2026-10-08), box top 211.31 (2026-09-01)",
   "peak": {
-    "date": "2026-08-19",
-    "price": 226.41
+    "date": "2026-08-10",
+    "price": 226.88
   },
   "trough": {
     "date": "2026-10-08",
     "price": 179.02
   },
   "box": {
-    "top": 213.5,
-    "top_date": "2026-08-28",
+    "top": 211.31,
+    "top_date": "2026-09-01",
     "bottom": 179.02,
-    "period": "2026-10-08 to 2026-10-09"
+    "period": "2026-10-08 to 2026-10-12"
   },
-  "drop_from_peak_pct": 17.9,
-  "recovery_from_crash_pct": 3.9,
+  "drop_from_peak_pct": 17.7,
+  "recovery_from_crash_pct": 4.3,
   "supports": [
     {
+      "level": 184.0,
+      "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; 1.4% below current"
+    },
+    {
       "level": 180.0,
-      "label": "S1 bottom",
+      "label": "S2 bottom",
       "touches": 4,
       "evidence": "structural bottom, near crash low 179.02"
     }
   ],
   "resistances": [
     {
-      "level": 186.46,
+      "level": 187.41,
       "label": "R1 today high",
-      "evidence": "today's high 186.46"
+      "evidence": "today's high 187.41000366210938"
     },
     {
       "level": 200.0,
@@ -56,34 +62,34 @@
       "evidence": "mid-box supply, round number 200"
     },
     {
-      "level": 213.5,
-      "label": "R3 Aug high",
-      "evidence": "box top 213.5, base period high"
+      "level": 211.31,
+      "label": "R3 Sep high",
+      "evidence": "box top 211.31, base period high"
     }
   ],
   "position": {
-    "current": 185.97,
-    "in_box_pct": 17.8,
-    "nearest_support": "S1 bottom (180.0)",
-    "nearest_resistance": "R1 today high (186.46)"
+    "current": 186.66,
+    "in_box_pct": 21.3,
+    "nearest_support": "S1 KEY (184.0)",
+    "nearest_resistance": "R1 today high (187.41)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 185.2,
-    "H": 186.46,
-    "L": 183.03,
-    "C": 185.97,
-    "body_pct": 22.4,
-    "upper_wick_pct": 14.3,
-    "lower_wick_pct": 63.3
+    "close_position": "lower_half",
+    "O": 186.71,
+    "H": 187.41,
+    "L": 185.95,
+    "C": 186.66,
+    "body_pct": 3.4,
+    "upper_wick_pct": 47.9,
+    "lower_wick_pct": 48.6
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (18% of box)"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (21% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -96,23 +102,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 180.0 (KEY support)",
-      "then": "still range; watch 186.46 for next test"
+      "if": "hold 184.0 (KEY support)",
+      "then": "still range; watch 187.41 for next test"
     },
     {
-      "if": "break 180.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 184.0 on close",
+      "then": "target 180.0 → lower (short-term bearish)"
     },
     {
       "if": "break 180.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 186.46 on close",
+      "if": "reclaim 187.41 on close",
       "then": "short-term bullish; next test 200.0"
     },
     {
-      "if": "break 213.5 (box top)",
+      "if": "break 211.31 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -146,54 +152,54 @@
     "phase_match": false,
     "r1": 197.67,
     "s1": 179.02,
-    "s2": 189.39,
-    "r2": 226.41,
-    "r3": 203.26,
-    "s3": 169.51,
-    "s4": 180.22,
-    "current_position_pct": 37.3,
-    "notes": "WAIT_RANGE: in box (179-198), pos 37%, no clear setup"
+    "s2": 190.02,
+    "r2": 226.88,
+    "r3": 203.94,
+    "s3": 170.78,
+    "s4": 182.17,
+    "current_position_pct": 41.0,
+    "notes": "WAIT_RANGE: in box (179-198), pos 41%, no clear setup"
   },
   "patterns": [
     {
       "name": "三個白武士",
       "bias": "bullish",
       "date": "2026-10-06",
-      "low": 182.411,
-      "high": 184.6,
-      "i": 196
+      "low": 182.41000366210938,
+      "high": 184.60000610351562,
+      "i": 195
     },
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-09-25",
-      "low": 187.56,
-      "high": 189.58,
-      "i": 189
+      "low": 187.55999755859375,
+      "high": 189.5800018310547,
+      "i": 188
     },
     {
       "name": "上升三法",
       "bias": "bullish",
       "date": "2026-08-25",
-      "low": 207.44,
-      "high": 210.65,
-      "i": 167
+      "low": 207.44000244140625,
+      "high": 210.64999389648438,
+      "i": 166
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-08-19",
-      "low": 220.22,
-      "high": 226.41,
-      "i": 163
+      "low": 220.22000122070312,
+      "high": 226.41000366210938,
+      "i": 162
     },
     {
       "name": "黃昏之星",
       "bias": "bearish",
       "date": "2026-07-30",
-      "low": 208.696718504,
-      "high": 213.929335974,
-      "i": 149
+      "low": 209.38999938964844,
+      "high": 214.63999938964844,
+      "i": 148
     }
   ]
 }

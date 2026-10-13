@@ -1,28 +1,28 @@
 {
   "ticker": "US.KLAC",
   "ticker_user": "KLAC",
-  "name": "科磊",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "name": "KLA Corporation",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 200.23,
-    "H": 201.71,
-    "L": 195.08,
-    "C": 195.57,
-    "prev_close": 196.72,
-    "chg_pct": -0.58
+    "date": "2026-10-12",
+    "O": 193.68,
+    "H": 193.99,
+    "L": 189.44,
+    "C": 190.12,
+    "prev_close": 195.57,
+    "chg_pct": -2.79
   },
   "phase": "downtrend_active",
-  "adx": 13.93,
-  "plus_di": 26.37,
-  "minus_di": 21.37,
+  "adx": 13.02,
+  "plus_di": 24.87,
+  "minus_di": 25.37,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 307.03 (2026-06-30), trough 165.89 (2026-09-16), box top 208.68 (2026-10-02)",
+  "phase_evidence": "Peak 307.37 (2026-06-30), trough 165.89 (2026-09-16), box top 208.68 (2026-10-02)",
   "peak": {
     "date": "2026-06-30",
-    "price": 307.03
+    "price": 307.37
   },
   "trough": {
     "date": "2026-09-16",
@@ -32,28 +32,28 @@
     "top": 208.68,
     "top_date": "2026-10-02",
     "bottom": 165.89,
-    "period": "2026-09-16 to 2026-10-09"
+    "period": "2026-09-16 to 2026-10-12"
   },
-  "drop_from_peak_pct": 36.3,
-  "recovery_from_crash_pct": 17.9,
+  "drop_from_peak_pct": 38.1,
+  "recovery_from_crash_pct": 14.6,
   "supports": [
     {
-      "level": 192.0,
-      "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 1.8% below current"
-    },
-    {
       "level": 184.0,
-      "label": "S2",
+      "label": "S1 KEY",
       "touches": 5,
-      "evidence": "mid-base support, tested 5x"
+      "evidence": "tested 5x in base period; 3.2% below current"
     },
     {
       "level": 180.0,
-      "label": "S3",
+      "label": "S2",
       "touches": 7,
       "evidence": "mid-base support, tested 7x"
+    },
+    {
+      "level": 176.0,
+      "label": "S3",
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
     },
     {
       "level": 165.89,
@@ -64,9 +64,14 @@
   ],
   "resistances": [
     {
-      "level": 201.71,
+      "level": 193.99,
       "label": "R1 today high",
-      "evidence": "today's high 201.71"
+      "evidence": "today's high 193.99000549316406"
+    },
+    {
+      "level": 200.0,
+      "label": "R2",
+      "evidence": "mid-box supply, round number 200"
     },
     {
       "level": 208.68,
@@ -75,23 +80,23 @@
     }
   ],
   "position": {
-    "current": 195.57,
-    "in_box_pct": 69.4,
-    "nearest_support": "S1 KEY (192.0)",
-    "nearest_resistance": "R1 today high (201.71)"
+    "current": 190.12,
+    "in_box_pct": 56.6,
+    "nearest_support": "S1 KEY (184.0)",
+    "nearest_resistance": "R1 today high (193.99)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 200.23,
-    "H": 201.71,
-    "L": 195.08,
-    "C": 195.57,
-    "body_pct": 70.3,
-    "upper_wick_pct": 22.3,
-    "lower_wick_pct": 7.4
+    "O": 193.68,
+    "H": 193.99,
+    "L": 189.44,
+    "C": 190.12,
+    "body_pct": 78.2,
+    "upper_wick_pct": 6.8,
+    "lower_wick_pct": 14.9
   },
   "bias": {
     "short": {
@@ -109,20 +114,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 192.0 (KEY support)",
-      "then": "still range; watch 201.71 for next test"
+      "if": "hold 184.0 (KEY support)",
+      "then": "still range; watch 193.99 for next test"
     },
     {
-      "if": "break 192.0 on close",
-      "then": "target 184.0 → 180.0 (short-term bearish)"
+      "if": "break 184.0 on close",
+      "then": "target 180.0 → 176.0 (short-term bearish)"
     },
     {
       "if": "break 165.89 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 201.71 on close",
-      "then": "short-term bullish; next test 208.68"
+      "if": "reclaim 193.99 on close",
+      "then": "short-term bullish; next test 200.0"
     },
     {
       "if": "break 208.68 (box top)",
@@ -148,65 +153,65 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 208.68,
-    "target_price": 187.29,
-    "stop_price": 220.35,
-    "risk_pct": 5.59,
-    "reward_pct": 10.25,
-    "rr_ratio": 1.83,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 208.68,
     "s1": 165.89,
     "s2": 167.05,
-    "r2": 220.75,
-    "r3": 307.03,
-    "s3": 164.2,
-    "s4": 120.96,
-    "current_position_pct": 69.4,
-    "notes": "SELL_R1: in box (166-209), entry at R1 209, target mid 187, stop 220 ｜ 52.2 條規則（SELL plan，resistance 208.68）：① 跌到 208.68、收市守住喺 208.68 上面 → 照 BUY 條 plan 做（入場 208.68，止蝕 220.35，目標 187.29）。② 收市跌穿 208.68 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 208.68 上面』。"
+    "r2": 221.0,
+    "r3": 307.37,
+    "s3": 164.6,
+    "s4": 121.41,
+    "current_position_pct": 56.6,
+    "notes": "WAIT_RANGE: in box (166-209), pos 57%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "黃昏之星",
+      "bias": "bearish",
+      "date": "2026-10-12",
+      "low": 189.44000244140625,
+      "high": 193.99000549316406,
+      "i": 199
+    },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-10-02",
-      "low": 204.06,
-      "high": 208.68,
-      "i": 194
+      "low": 204.05999755859375,
+      "high": 208.67999267578125,
+      "i": 193
     },
     {
       "name": "利好身懷六甲",
       "bias": "bullish",
       "date": "2026-08-24",
-      "low": 176.45,
-      "high": 182.84,
-      "i": 166
+      "low": 176.4499969482422,
+      "high": 182.83999633789062,
+      "i": 165
     },
     {
       "name": "利好反擊線",
       "bias": "bullish",
       "date": "2026-08-07",
-      "low": 194.829788354,
-      "high": 201.602133728,
-      "i": 155
+      "low": 195.0500030517578,
+      "high": 201.8300018310547,
+      "i": 154
     },
     {
       "name": "上升三法",
       "bias": "bullish",
       "date": "2026-07-08",
-      "low": 214.058055085,
-      "high": 223.147781176,
-      "i": 133
-    },
-    {
-      "name": "黃昏之星",
-      "bias": "bearish",
-      "date": "2026-06-17",
-      "low": 237.391681622,
-      "high": 250.876440108,
-      "i": 120
+      "low": 214.3000030517578,
+      "high": 223.39999389648438,
+      "i": 132
     }
   ]
 }

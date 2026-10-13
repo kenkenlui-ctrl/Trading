@@ -1,74 +1,80 @@
 {
   "ticker": "US.NKE",
   "ticker_user": "NKE",
-  "name": "耐克",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "name": "Nike, Inc.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 34.58,
-    "H": 35.09,
-    "L": 34.1,
-    "C": 34.71,
-    "prev_close": 34.74,
-    "chg_pct": -0.09
+    "date": "2026-10-12",
+    "O": 34.7,
+    "H": 35.35,
+    "L": 34.38,
+    "C": 35.35,
+    "prev_close": 34.71,
+    "chg_pct": 1.84
   },
   "phase": "downtrend_active",
-  "adx": 29.51,
-  "plus_di": 15.13,
-  "minus_di": 26.06,
+  "adx": 30.06,
+  "plus_di": 15.84,
+  "minus_di": 24.65,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 66.73 (2026-02-20), trough 31.97 (2026-10-02), box top 35.09 (2026-10-09)",
+  "phase_evidence": "Peak 68.49 (2026-02-20), trough 31.97 (2026-10-02), box top 35.35 (2026-10-12)",
   "peak": {
     "date": "2026-02-20",
-    "price": 66.73
+    "price": 68.49
   },
   "trough": {
     "date": "2026-10-02",
     "price": 31.97
   },
   "box": {
-    "top": 35.09,
-    "top_date": "2026-10-09",
+    "top": 35.35,
+    "top_date": "2026-10-12",
     "bottom": 31.97,
-    "period": "2026-10-02 to 2026-10-09"
+    "period": "2026-10-02 to 2026-10-12"
   },
-  "drop_from_peak_pct": 48.0,
-  "recovery_from_crash_pct": 8.6,
+  "drop_from_peak_pct": 48.4,
+  "recovery_from_crash_pct": 10.6,
   "supports": [
     {
+      "level": 36.0,
+      "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; -1.8% below current"
+    },
+    {
       "level": 32.0,
-      "label": "S1 bottom",
+      "label": "S2 bottom",
       "touches": 10,
       "evidence": "structural bottom, near crash low 31.97"
     }
   ],
   "resistances": [
     {
-      "level": 35.09,
+      "level": 35.35,
       "label": "R1 today high",
-      "evidence": "today's high 35.09"
+      "evidence": "today's high 35.349998474121094"
     }
   ],
   "position": {
-    "current": 34.71,
-    "in_box_pct": 87.7,
-    "nearest_support": "S1 bottom (32.0)",
-    "nearest_resistance": "R1 today high (35.09)"
+    "current": 35.35,
+    "in_box_pct": 100.0,
+    "nearest_support": "S1 KEY (36.0)",
+    "nearest_resistance": "R1 today high (35.35)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 34.58,
-    "H": 35.09,
-    "L": 34.1,
-    "C": 34.71,
-    "body_pct": 13.1,
-    "upper_wick_pct": 38.4,
-    "lower_wick_pct": 48.5
+    "O": 34.7,
+    "H": 35.35,
+    "L": 34.38,
+    "C": 35.35,
+    "body_pct": 67.0,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 33.0
   },
   "bias": {
     "short": {
@@ -80,25 +86,25 @@
       "reason": "making new lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 32.0 (KEY support)",
-      "then": "still range; watch 35.09 for next test"
+      "if": "hold 36.0 (KEY support)",
+      "then": "still range; watch 35.35 for next test"
     },
     {
-      "if": "break 32.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 36.0 on close",
+      "then": "target 32.0 → lower (short-term bearish)"
     },
     {
       "if": "break 32.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 35.09 on close",
+      "if": "reclaim 35.35 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -122,7 +128,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -130,56 +136,56 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 37.41,
+    "r1": 37.04,
     "s1": 31.97,
     "s2": 36.55,
-    "r2": 44.51,
-    "r3": 46.73,
-    "s3": 39.58,
-    "s4": 41.28,
-    "current_position_pct": 50.4,
-    "notes": "WAIT_RANGE: in box (32-37), pos 50%, no clear setup"
+    "r2": 43.84,
+    "r3": 47.65,
+    "s3": 40.0,
+    "s4": 42.09,
+    "current_position_pct": 66.7,
+    "notes": "WAIT_RANGE: in box (32-37), pos 67%, no clear setup"
   },
   "patterns": [
     {
       "name": "利好吞噬",
       "bias": "bullish",
       "date": "2026-10-08",
-      "low": 33.83,
-      "high": 34.87,
-      "i": 198
+      "low": 33.83000183105469,
+      "high": 34.869998931884766,
+      "i": 197
     },
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-08-21",
-      "low": 39.817613918,
-      "high": 40.693324364,
-      "i": 165
+      "low": 40.2400016784668,
+      "high": 41.130001068115234,
+      "i": 164
     },
     {
       "name": "錘頭",
       "bias": "bullish",
       "date": "2026-08-03",
-      "low": 41.618509975,
-      "high": 42.751491286,
-      "i": 151
+      "low": 42.060001373291016,
+      "high": 43.209999084472656,
+      "i": 150
     },
     {
       "name": "上升三法",
       "bias": "bullish",
       "date": "2026-07-23",
-      "low": 40.262890416,
-      "high": 41.638300042,
-      "i": 144
+      "low": 40.689998626708984,
+      "high": 42.08000183105469,
+      "i": 143
     },
     {
-      "name": "上升三法",
-      "bias": "bullish",
-      "date": "2026-06-18",
-      "low": 43.77562723,
-      "high": 45.225249606,
-      "i": 121
+      "name": "平頭頂",
+      "bias": "bearish",
+      "date": "2026-06-17",
+      "low": 44.15999984741211,
+      "high": 45.849998474121094,
+      "i": 119
     }
   ]
 }

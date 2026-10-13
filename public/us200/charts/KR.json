@@ -1,104 +1,99 @@
 {
   "ticker": "US.KR",
   "ticker_user": "KR",
-  "name": "克羅格",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "name": "Kroger Company (The)",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 61.03,
-    "H": 61.65,
-    "L": 60.8,
-    "C": 61.64,
-    "prev_close": 61.41,
-    "chg_pct": 0.37
+    "date": "2026-10-12",
+    "O": 62.05,
+    "H": 62.58,
+    "L": 61.72,
+    "C": 62.56,
+    "prev_close": 61.64,
+    "chg_pct": 1.49
   },
   "phase": "base_building",
-  "adx": 11.03,
-  "plus_di": 27.74,
-  "minus_di": 20.43,
+  "adx": 11.88,
+  "plus_di": 30.94,
+  "minus_di": 19.49,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 75.66 (2026-03-12), trough 53.78 (2026-07-01), box top 62.55 (2026-09-15)",
+  "phase_evidence": "Peak 76.58 (2026-03-12), trough 54.15 (2026-07-01), box top 62.58 (2026-10-12)",
   "peak": {
     "date": "2026-03-12",
-    "price": 75.66
+    "price": 76.58
   },
   "trough": {
     "date": "2026-07-01",
-    "price": 53.78
+    "price": 54.15
   },
   "box": {
-    "top": 62.55,
-    "top_date": "2026-09-15",
-    "bottom": 53.78,
-    "period": "2026-07-01 to 2026-10-09"
+    "top": 62.58,
+    "top_date": "2026-10-12",
+    "bottom": 54.15,
+    "period": "2026-07-01 to 2026-10-12"
   },
-  "drop_from_peak_pct": 18.5,
-  "recovery_from_crash_pct": 14.6,
+  "drop_from_peak_pct": 18.3,
+  "recovery_from_crash_pct": 15.5,
   "supports": [
     {
       "level": 60.0,
       "label": "S1 KEY",
-      "touches": 37,
-      "evidence": "tested 37x in base period; 2.7% below current"
+      "touches": 45,
+      "evidence": "tested 45x in base period; 4.1% below current"
     },
     {
       "level": 56.0,
       "label": "S2 bottom",
-      "touches": 57,
-      "evidence": "structural bottom, near crash low 53.78"
+      "touches": 55,
+      "evidence": "structural bottom, near crash low 54.15"
     }
   ],
   "resistances": [
     {
-      "level": 61.65,
+      "level": 62.58,
       "label": "R1 today high",
-      "evidence": "today's high 61.65"
-    },
-    {
-      "level": 62.55,
-      "label": "R3 Sep high",
-      "evidence": "box top 62.55, base period high"
+      "evidence": "today's high 62.58000183105469"
     }
   ],
   "position": {
-    "current": 61.64,
-    "in_box_pct": 86.1,
+    "current": 62.56,
+    "in_box_pct": 99.7,
     "nearest_support": "S1 KEY (60.0)",
-    "nearest_resistance": "R1 today high (61.65)"
+    "nearest_resistance": "R1 today high (62.58)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 61.03,
-    "H": 61.65,
-    "L": 60.8,
-    "C": 61.64,
-    "body_pct": 71.8,
-    "upper_wick_pct": 1.2,
-    "lower_wick_pct": 27.1
+    "O": 62.05,
+    "H": 62.58,
+    "L": 61.72,
+    "C": 62.56,
+    "body_pct": 59.3,
+    "upper_wick_pct": 2.3,
+    "lower_wick_pct": 38.4
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 60.0 (KEY support)",
-      "then": "still range; watch 61.65 for next test"
+      "then": "still range; watch 62.58 for next test"
     },
     {
       "if": "break 60.0 on close",
@@ -109,12 +104,8 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 61.65 on close",
-      "then": "short-term bullish; next test 62.55"
-    },
-    {
-      "if": "break 62.55 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 62.58 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -145,48 +136,48 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 62.55,
+    "r1": 62.58,
     "s1": 57.56,
-    "s2": 54.46,
-    "r2": 60.31,
-    "r3": 71.22,
-    "s3": 53.78,
-    "s4": 57.61,
-    "current_position_pct": 81.8,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 62.55）：① 跌到 62.55、收市守住喺 62.55 上面 → 照 BUY 條 plan 做（入場 62.55，止蝕 64.91，目標 60.05）。② 收市跌穿 62.55 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 62.55 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "s2": 54.83,
+    "r2": 61.1,
+    "r3": 71.71,
+    "s3": 54.15,
+    "s4": 58.6,
+    "current_position_pct": 99.6,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 62.58）：① 跌到 62.58、收市守住喺 62.58 上面 → 照 BUY 條 plan 做（入場 62.58，止蝕 64.83，目標 60.07）。② 收市跌穿 62.58 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 62.58 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
     {
       "name": "上升三法",
       "bias": "bullish",
       "date": "2026-09-22",
-      "low": 58.53,
-      "high": 60.1885,
-      "i": 186
+      "low": 58.529998779296875,
+      "high": 60.189998626708984,
+      "i": 185
     },
     {
       "name": "利好反擊線",
       "bias": "bullish",
       "date": "2026-08-20",
-      "low": 55.05,
-      "high": 56.665,
-      "i": 164
+      "low": 55.04999923706055,
+      "high": 56.66999816894531,
+      "i": 163
     },
     {
       "name": "早晨之星",
       "bias": "bullish",
       "date": "2026-08-13",
-      "low": 56.040485743,
-      "high": 57.157819309,
-      "i": 159
+      "low": 56.43000030517578,
+      "high": 57.54999923706055,
+      "i": 158
     },
     {
       "name": "早晨之星",
       "bias": "bullish",
       "date": "2026-07-02",
-      "low": 56.181617387,
-      "high": 57.853049084,
-      "i": 130
+      "low": 56.56999969482422,
+      "high": 58.25,
+      "i": 129
     }
   ]
 }

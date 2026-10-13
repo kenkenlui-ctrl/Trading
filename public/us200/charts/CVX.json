@@ -1,25 +1,25 @@
 {
   "ticker": "US.CVX",
   "ticker_user": "CVX",
-  "name": "雪佛龍",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "name": "Chevron Corporation",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 211.05,
-    "H": 213.72,
-    "L": 210.71,
-    "C": 211.98,
-    "prev_close": 211.55,
-    "chg_pct": 0.2
+    "date": "2026-10-12",
+    "O": 214.54,
+    "H": 216.67,
+    "L": 213.75,
+    "C": 215.0,
+    "prev_close": 211.98,
+    "chg_pct": 1.42
   },
   "phase": "downtrend_active",
-  "adx": 14.69,
-  "plus_di": 23.73,
-  "minus_di": 18.01,
+  "adx": 14.86,
+  "plus_di": 26.56,
+  "minus_di": 16.63,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 217.78 (2026-09-15), trough 200.78 (2026-09-22), box top 213.72 (2026-10-09)",
+  "phase_evidence": "Peak 217.78 (2026-09-15), trough 200.78 (2026-09-22), box top 216.67 (2026-10-12)",
   "peak": {
     "date": "2026-09-15",
     "price": 217.78
@@ -29,46 +29,52 @@
     "price": 200.78
   },
   "box": {
-    "top": 213.72,
-    "top_date": "2026-10-09",
+    "top": 216.67,
+    "top_date": "2026-10-12",
     "bottom": 200.78,
-    "period": "2026-09-22 to 2026-10-09"
+    "period": "2026-09-22 to 2026-10-12"
   },
-  "drop_from_peak_pct": 2.7,
-  "recovery_from_crash_pct": 5.6,
+  "drop_from_peak_pct": 1.3,
+  "recovery_from_crash_pct": 7.1,
   "supports": [
     {
+      "level": 208.0,
+      "label": "S1 KEY",
+      "touches": 8,
+      "evidence": "tested 8x in base period; 3.3% below current"
+    },
+    {
       "level": 204.0,
-      "label": "S1 bottom",
+      "label": "S2 bottom",
       "touches": 22,
       "evidence": "structural bottom, near crash low 200.78"
     }
   ],
   "resistances": [
     {
-      "level": 213.72,
+      "level": 216.67,
       "label": "R1 today high",
-      "evidence": "today's high 213.72"
+      "evidence": "today's high 216.6699981689453"
     }
   ],
   "position": {
-    "current": 211.98,
-    "in_box_pct": 82.1,
-    "nearest_support": "S1 bottom (204.0)",
-    "nearest_resistance": "R1 today high (213.72)"
+    "current": 215.0,
+    "in_box_pct": 86.8,
+    "nearest_support": "S1 KEY (208.0)",
+    "nearest_resistance": "R1 today high (216.67)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 211.05,
-    "H": 213.72,
-    "L": 210.71,
-    "C": 211.98,
-    "body_pct": 30.9,
-    "upper_wick_pct": 57.8,
-    "lower_wick_pct": 11.3
+    "O": 214.54,
+    "H": 216.67,
+    "L": 213.75,
+    "C": 215.0,
+    "body_pct": 15.8,
+    "upper_wick_pct": 57.2,
+    "lower_wick_pct": 27.1
   },
   "bias": {
     "short": {
@@ -86,19 +92,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 204.0 (KEY support)",
-      "then": "still range; watch 213.72 for next test"
+      "if": "hold 208.0 (KEY support)",
+      "then": "still range; watch 216.67 for next test"
     },
     {
-      "if": "break 204.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 208.0 on close",
+      "then": "target 204.0 → lower (short-term bearish)"
     },
     {
       "if": "break 204.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 213.72 on close",
+      "if": "reclaim 216.67 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -125,53 +131,61 @@
     "strategy": "SELL_R1",
     "trigger_price": 217.78,
     "target_price": 209.28,
-    "stop_price": 224.03,
-    "risk_pct": 2.87,
+    "stop_price": 224.05,
+    "risk_pct": 2.88,
     "reward_pct": 3.9,
     "rr_ratio": 1.36,
     "phase_match": true,
     "r1": 217.78,
     "s1": 200.78,
-    "s2": 183.9,
-    "r2": 217.4,
-    "r3": 197.15,
-    "s3": 163.35,
-    "s4": 145.58,
-    "current_position_pct": 65.9,
-    "notes": "SELL_R1: in box (201-218), entry at R1 218, target mid 209, stop 224 ｜ 52.2 條規則（SELL plan，resistance 217.78）：① 跌到 217.78、收市守住喺 217.78 上面 → 照 BUY 條 plan 做（入場 217.78，止蝕 224.03，目標 209.28）。② 收市跌穿 217.78 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 217.78 上面』。"
+    "s2": 185.87,
+    "r2": 217.65,
+    "r3": 198.87,
+    "s3": 164.78,
+    "s4": 149.65,
+    "current_position_pct": 83.6,
+    "notes": "SELL_R1: in box (201-218), entry at R1 218, target mid 209, stop 224 ｜ 52.2 條規則（SELL plan，resistance 217.78）：① 跌到 217.78、收市守住喺 217.78 上面 → 照 BUY 條 plan 做（入場 217.78，止蝕 224.05，目標 209.28）。② 收市跌穿 217.78 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 217.78 上面』。"
   },
   "patterns": [
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-09-16",
-      "low": 210.365,
-      "high": 215.275,
-      "i": 182
+      "low": 210.3699951171875,
+      "high": 215.27999877929688,
+      "i": 181
     },
     {
       "name": "利淡反擊線",
       "bias": "bearish",
       "date": "2026-09-04",
-      "low": 207.12,
-      "high": 209.8612,
-      "i": 175
+      "low": 207.1199951171875,
+      "high": 209.86000061035156,
+      "i": 174
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-07-17",
-      "low": 183.895110206,
-      "high": 186.522183209,
-      "i": 140
+      "low": 185.5,
+      "high": 188.14999389648438,
+      "i": 139
     },
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-07-07",
-      "low": 168.52921151,
-      "high": 173.099327186,
-      "i": 132
+      "low": 170.0,
+      "high": 174.61000061035156,
+      "i": 131
+    },
+    {
+      "name": "三個白武士",
+      "bias": "bullish",
+      "date": "2026-06-17",
+      "low": 177.10000610351562,
+      "high": 180.0800018310547,
+      "i": 119
     }
   ]
 }

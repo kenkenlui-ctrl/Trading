@@ -1,28 +1,28 @@
 {
   "ticker": "US.BLK",
   "ticker_user": "BLK",
-  "name": "貝萊德",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "name": "BlackRock, Inc.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 1068.35,
-    "H": 1086.69,
-    "L": 1065.31,
-    "C": 1082.39,
-    "prev_close": 1065.35,
-    "chg_pct": 1.6
+    "date": "2026-10-12",
+    "O": 1087.29,
+    "H": 1092.92,
+    "L": 1080.4,
+    "C": 1083.92,
+    "prev_close": 1082.39,
+    "chg_pct": 0.14
   },
   "phase": "downtrend_active",
-  "adx": 18.4,
-  "plus_di": 22.18,
-  "minus_di": 24.3,
+  "adx": 17.97,
+  "plus_di": 23.21,
+  "minus_di": 23.56,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 1181.11 (2026-08-27), trough 1017.46 (2026-09-16), box top 1098.11 (2026-09-22)",
+  "phase_evidence": "Peak 1187.17 (2026-08-27), trough 1017.46 (2026-09-16), box top 1098.11 (2026-09-22)",
   "peak": {
     "date": "2026-08-27",
-    "price": 1181.11
+    "price": 1187.17
   },
   "trough": {
     "date": "2026-09-16",
@@ -32,65 +32,60 @@
     "top": 1098.11,
     "top_date": "2026-09-22",
     "bottom": 1017.46,
-    "period": "2026-09-16 to 2026-10-09"
+    "period": "2026-09-16 to 2026-10-12"
   },
-  "drop_from_peak_pct": 8.4,
-  "recovery_from_crash_pct": 6.4,
+  "drop_from_peak_pct": 8.7,
+  "recovery_from_crash_pct": 6.5,
   "supports": [
     {
-      "level": 1056.0,
+      "level": 1060.0,
       "label": "S1 KEY",
+      "touches": 5,
+      "evidence": "tested 5x in base period; 2.2% below current"
+    },
+    {
+      "level": 1056.0,
+      "label": "S2",
       "touches": 7,
-      "evidence": "tested 7x in base period; 2.4% below current"
+      "evidence": "mid-base support, tested 7x"
     },
     {
       "level": 1052.0,
-      "label": "S2",
-      "touches": 6,
-      "evidence": "mid-base support, tested 6x"
-    },
-    {
-      "level": 1048.0,
       "label": "S3 bottom",
-      "touches": 3,
+      "touches": 6,
       "evidence": "structural bottom, near crash low 1017.46"
     }
   ],
   "resistances": [
     {
-      "level": 1086.69,
+      "level": 1092.92,
       "label": "R1 today high",
-      "evidence": "today's high 1086.6867"
-    },
-    {
-      "level": 1098.11,
-      "label": "R3 Sep high",
-      "evidence": "box top 1098.11, base period high"
+      "evidence": "today's high 1092.9200439453125"
     }
   ],
   "position": {
-    "current": 1082.39,
-    "in_box_pct": 68.6,
-    "nearest_support": "S1 KEY (1056.0)",
-    "nearest_resistance": "R1 today high (1086.69)"
+    "current": 1083.92,
+    "in_box_pct": 78.0,
+    "nearest_support": "S1 KEY (1060.0)",
+    "nearest_resistance": "R1 today high (1092.92)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 1068.35,
-    "H": 1086.69,
-    "L": 1065.31,
-    "C": 1082.39,
-    "body_pct": 65.7,
-    "upper_wick_pct": 20.1,
-    "lower_wick_pct": 14.2
+    "close_position": "lower_half",
+    "O": 1087.29,
+    "H": 1092.92,
+    "L": 1080.4,
+    "C": 1083.92,
+    "body_pct": 26.9,
+    "upper_wick_pct": 45.0,
+    "lower_wick_pct": 28.1
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -103,24 +98,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 1056.0 (KEY support)",
-      "then": "still range; watch 1086.69 for next test"
+      "if": "hold 1060.0 (KEY support)",
+      "then": "still range; watch 1092.92 for next test"
     },
     {
-      "if": "break 1056.0 on close",
-      "then": "target 1052.0 → 1048.0 (short-term bearish)"
+      "if": "break 1060.0 on close",
+      "then": "target 1056.0 → 1052.0 (short-term bearish)"
     },
     {
-      "if": "break 1048.0 (crash low)",
+      "if": "break 1052.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1086.69 on close",
-      "then": "short-term bullish; next test 1098.11"
-    },
-    {
-      "if": "break 1098.11 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 1092.92 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -142,65 +133,65 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 1098.11,
+    "target_price": 1057.79,
+    "stop_price": 1129.5,
+    "risk_pct": 2.86,
+    "reward_pct": 3.67,
+    "rr_ratio": 1.28,
+    "phase_match": true,
     "r1": 1098.11,
     "s1": 1017.46,
-    "s2": 1025.67,
-    "r2": 1181.11,
-    "r3": 1119.26,
-    "s3": 942.37,
-    "s4": 907.59,
-    "current_position_pct": 80.5,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 1098.11）：① 跌到 1098.11、收市守住喺 1098.11 上面 → 照 BUY 條 plan 做（入場 1098.11，止蝕 1131.79，目標 1057.78）。② 收市跌穿 1098.11 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1098.11 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "s2": 1030.93,
+    "r2": 1187.17,
+    "r3": 1125.0,
+    "s3": 947.21,
+    "s4": 917.39,
+    "current_position_pct": 82.4,
+    "notes": "SELL_R1: in box (1017-1098), entry at R1 1098, target mid 1058, stop 1130 ｜ 52.2 條規則（SELL plan，resistance 1098.11）：① 跌到 1098.11、收市守住喺 1098.11 上面 → 照 BUY 條 plan 做（入場 1098.11，止蝕 1129.50，目標 1057.79）。② 收市跌穿 1098.11 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1098.11 上面』。"
   },
   "patterns": [
     {
       "name": "利好身懷六甲",
       "bias": "bullish",
       "date": "2026-10-05",
-      "low": 1040.42,
-      "high": 1074.45,
-      "i": 195
+      "low": 1040.4200439453125,
+      "high": 1074.449951171875,
+      "i": 194
     },
     {
       "name": "倒錘頭",
       "bias": "bullish",
       "date": "2026-09-25",
-      "low": 1066.525,
-      "high": 1087.83,
-      "i": 189
+      "low": 1066.530029296875,
+      "high": 1087.8299560546875,
+      "i": 188
     },
     {
       "name": "利淡反擊線",
       "bias": "bearish",
       "date": "2026-08-27",
-      "low": 1155.967765017,
-      "high": 1181.109541586,
-      "i": 169
+      "low": 1161.9000244140625,
+      "high": 1187.1700439453125,
+      "i": 168
     },
     {
       "name": "利淡吞噬",
       "bias": "bearish",
       "date": "2026-08-19",
-      "low": 1149.202483321,
-      "high": 1175.646775596,
-      "i": 163
+      "low": 1155.0999755859375,
+      "high": 1181.6800537109375,
+      "i": 162
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-08-04",
-      "low": 1125.076294921,
-      "high": 1144.42330925,
-      "i": 152
+      "low": 1130.8499755859375,
+      "high": 1150.300048828125,
+      "i": 151
     }
   ]
 }

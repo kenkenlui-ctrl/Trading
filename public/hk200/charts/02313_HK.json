@@ -1,47 +1,47 @@
 {
   "ticker": "HK.02313",
   "ticker_user": "02313.HK",
-  "name": "申洲國際",
-  "data_source": "futu",
-  "data_range": "2025-12-17 → 2026-10-12 (200 daily bars)",
+  "name": "SHENZHOU INTL",
+  "data_source": "yfinance",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-12",
+    "date": "2026-10-09",
     "O": 35.0,
-    "H": 35.4,
-    "L": 34.82,
-    "C": 35.02,
-    "prev_close": 34.78,
-    "chg_pct": 0.69
+    "H": 35.02,
+    "L": 34.5,
+    "C": 34.78,
+    "prev_close": 34.42,
+    "chg_pct": 1.05
   },
   "phase": "downtrend_active",
-  "adx": 22.81,
-  "plus_di": 26.37,
-  "minus_di": 21.07,
-  "regime": "dead",
+  "adx": 26.04,
+  "plus_di": 24.24,
+  "minus_di": 22.52,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 64.22 (2026-02-23), trough 33.14 (2026-10-02), box top 35.4 (2026-10-12)",
+  "phase_evidence": "Peak 66.3 (2026-02-23), trough 33.14 (2026-10-02), box top 35.2 (2026-10-08)",
   "peak": {
     "date": "2026-02-23",
-    "price": 64.22
+    "price": 66.3
   },
   "trough": {
     "date": "2026-10-02",
     "price": 33.14
   },
   "box": {
-    "top": 35.4,
-    "top_date": "2026-10-12",
+    "top": 35.2,
+    "top_date": "2026-10-08",
     "bottom": 33.14,
-    "period": "2026-10-02 to 2026-10-12"
+    "period": "2026-10-02 to 2026-10-09"
   },
-  "drop_from_peak_pct": 45.5,
-  "recovery_from_crash_pct": 5.7,
+  "drop_from_peak_pct": 47.5,
+  "recovery_from_crash_pct": 4.9,
   "supports": [
     {
       "level": 36.0,
       "label": "S1 KEY",
-      "touches": 18,
-      "evidence": "tested 18x in base period; -2.8% below current"
+      "touches": 4,
+      "evidence": "tested 4x in base period; -3.5% below current"
     },
     {
       "level": 32.0,
@@ -52,29 +52,34 @@
   ],
   "resistances": [
     {
-      "level": 35.4,
+      "level": 35.02,
       "label": "R1 today high",
-      "evidence": "today's high 35.4"
+      "evidence": "today's high 35.02000045776367"
+    },
+    {
+      "level": 35.2,
+      "label": "R3 Oct high",
+      "evidence": "box top 35.2, base period high"
     }
   ],
   "position": {
-    "current": 35.02,
-    "in_box_pct": 88.8,
+    "current": 34.78,
+    "in_box_pct": 86.9,
     "nearest_support": "S1 KEY (36.0)",
-    "nearest_resistance": "R1 today high (35.4)"
+    "nearest_resistance": "R1 today high (35.02)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": true,
-    "close_position": "lower_half",
+    "close_position": "upper_half",
     "O": 35.0,
-    "H": 35.4,
-    "L": 34.82,
-    "C": 35.02,
-    "body_pct": 3.4,
-    "upper_wick_pct": 65.5,
-    "lower_wick_pct": 31.0
+    "H": 35.02,
+    "L": 34.5,
+    "C": 34.78,
+    "body_pct": 42.3,
+    "upper_wick_pct": 3.8,
+    "lower_wick_pct": 53.8
   },
   "bias": {
     "short": {
@@ -93,7 +98,7 @@
   "scenarios": [
     {
       "if": "hold 36.0 (KEY support)",
-      "then": "still range; watch 35.4 for next test"
+      "then": "still range; watch 35.02 for next test"
     },
     {
       "if": "break 36.0 on close",
@@ -104,8 +109,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 35.4 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 35.02 on close",
+      "then": "short-term bullish; next test 35.2"
+    },
+    {
+      "if": "break 35.2 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -128,7 +137,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -136,15 +145,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 35.76,
+    "r1": 36.06,
     "s1": 33.14,
-    "s2": 34.06,
-    "r2": 44.66,
-    "r3": 48.52,
-    "s3": 37.78,
-    "s4": 44.14,
-    "current_position_pct": 71.8,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 35.76）：① 跌到 35.76、收市守住喺 35.76 上面 → 照 BUY 條 plan 做（入場 35.76，止蝕 37.06，目標 34.45）。② 收市跌穿 35.76 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 35.76 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "s2": 34.94,
+    "r2": 46.24,
+    "r3": 50.6,
+    "s3": 38.66,
+    "s4": 46.22,
+    "current_position_pct": 56.2,
+    "notes": "WAIT_RANGE: in box (33-36), pos 56%, no clear setup"
   },
   "patterns": [
     {
@@ -152,40 +161,40 @@
       "bias": "bullish",
       "date": "2026-10-09",
       "low": 34.5,
-      "high": 35.02,
-      "i": 198
+      "high": 35.02000045776367,
+      "i": 199
     },
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-09-28",
-      "low": 34.2,
-      "high": 35.14,
-      "i": 190
+      "low": 34.20000076293945,
+      "high": 35.13999938964844,
+      "i": 191
     },
     {
       "name": "利好身懷六甲",
       "bias": "bullish",
       "date": "2026-09-08",
-      "low": 35.88,
-      "high": 36.72,
-      "i": 176
+      "low": 35.880001068115234,
+      "high": 36.720001220703125,
+      "i": 177
     },
     {
       "name": "平頭底",
       "bias": "bullish",
       "date": "2026-08-20",
-      "low": 40.02,
-      "high": 41.66,
-      "i": 163
+      "low": 40.900001525878906,
+      "high": 42.540000915527344,
+      "i": 164
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-08-03",
-      "low": 42.04,
-      "high": 44.08,
-      "i": 150
+      "low": 42.91999816894531,
+      "high": 44.959999084472656,
+      "i": 151
     }
   ]
 }

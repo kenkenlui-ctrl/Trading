@@ -1,25 +1,25 @@
 {
   "ticker": "US.JNJ",
   "ticker_user": "JNJ",
-  "name": "強生",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "name": "Johnson & Johnson",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 255.09,
-    "H": 261.61,
-    "L": 254.99,
-    "C": 261.44,
-    "prev_close": 256.48,
-    "chg_pct": 1.93
+    "date": "2026-10-12",
+    "O": 261.6,
+    "H": 264.39,
+    "L": 260.37,
+    "C": 263.73,
+    "prev_close": 261.44,
+    "chg_pct": 0.88
   },
   "phase": "downtrend_active",
-  "adx": 16.71,
-  "plus_di": 24.67,
-  "minus_di": 29.38,
+  "adx": 15.36,
+  "plus_di": 27.01,
+  "minus_di": 27.74,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 281.07 (2026-09-02), trough 251.17 (2026-10-06), box top 281.07 (2026-09-02)",
+  "phase_evidence": "Peak 281.07 (2026-09-02), trough 251.17 (2026-10-06), box top 264.39 (2026-10-12)",
   "peak": {
     "date": "2026-09-02",
     "price": 281.07
@@ -29,63 +29,58 @@
     "price": 251.17
   },
   "box": {
-    "top": 281.07,
-    "top_date": "2026-09-02",
+    "top": 264.39,
+    "top_date": "2026-10-12",
     "bottom": 251.17,
-    "period": "2026-10-06 to 2026-10-09"
+    "period": "2026-10-06 to 2026-10-12"
   },
-  "drop_from_peak_pct": 7.0,
-  "recovery_from_crash_pct": 4.1,
+  "drop_from_peak_pct": 6.2,
+  "recovery_from_crash_pct": 5.0,
   "supports": [
     {
-      "level": 256.0,
+      "level": 260.0,
       "label": "S1 KEY",
-      "touches": 8,
-      "evidence": "tested 8x in base period; 2.1% below current"
+      "touches": 4,
+      "evidence": "tested 4x in base period; 1.4% below current"
     },
     {
-      "level": 252.0,
+      "level": 256.0,
       "label": "S2",
       "touches": 12,
       "evidence": "mid-base support, tested 12x"
     },
     {
-      "level": 248.0,
+      "level": 252.0,
       "label": "S3 bottom",
-      "touches": 4,
+      "touches": 10,
       "evidence": "structural bottom, near crash low 251.17"
     }
   ],
   "resistances": [
     {
-      "level": 261.61,
+      "level": 264.39,
       "label": "R1 today high",
-      "evidence": "today's high 261.61"
-    },
-    {
-      "level": 281.07,
-      "label": "R3 Sep high",
-      "evidence": "box top 281.07, base period high"
+      "evidence": "today's high 264.3900146484375"
     }
   ],
   "position": {
-    "current": 261.44,
-    "in_box_pct": 40.6,
-    "nearest_support": "S1 KEY (256.0)",
-    "nearest_resistance": "R1 today high (261.61)"
+    "current": 263.73,
+    "in_box_pct": 94.7,
+    "nearest_support": "S1 KEY (260.0)",
+    "nearest_resistance": "R1 today high (264.39)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": true,
     "close_position": "upper_half",
-    "O": 255.09,
-    "H": 261.61,
-    "L": 254.99,
-    "C": 261.44,
-    "body_pct": 95.8,
-    "upper_wick_pct": 2.6,
-    "lower_wick_pct": 1.6
+    "O": 261.6,
+    "H": 264.39,
+    "L": 260.37,
+    "C": 263.73,
+    "body_pct": 53.0,
+    "upper_wick_pct": 16.4,
+    "lower_wick_pct": 30.6
   },
   "bias": {
     "short": {
@@ -97,30 +92,26 @@
       "reason": "making new lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 256.0 (KEY support)",
-      "then": "still range; watch 261.61 for next test"
+      "if": "hold 260.0 (KEY support)",
+      "then": "still range; watch 264.39 for next test"
     },
     {
-      "if": "break 256.0 on close",
-      "then": "target 252.0 → 248.0 (short-term bearish)"
+      "if": "break 260.0 on close",
+      "then": "target 256.0 → 252.0 (short-term bearish)"
     },
     {
-      "if": "break 248.0 (crash low)",
+      "if": "break 252.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 261.61 on close",
-      "then": "short-term bullish; next test 281.07"
-    },
-    {
-      "if": "break 281.07 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 264.39 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -153,54 +144,54 @@
     "phase_match": false,
     "r1": 275.23,
     "s1": 251.17,
-    "s2": 244.29,
+    "s2": 245.49,
     "r2": 281.07,
-    "r3": 268.11,
-    "s3": 218.03,
-    "s4": 197.73,
-    "current_position_pct": 42.7,
-    "notes": "WAIT_RANGE: in box (251-275), pos 43%, no clear setup"
+    "r3": 269.43,
+    "s3": 220.37,
+    "s4": 200.91,
+    "current_position_pct": 52.2,
+    "notes": "WAIT_RANGE: in box (251-275), pos 52%, no clear setup"
   },
   "patterns": [
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-09-25",
-      "low": 269.2573,
-      "high": 272.2459,
-      "i": 189
+      "low": 269.260009765625,
+      "high": 272.25,
+      "i": 188
     },
     {
       "name": "錘頭",
       "bias": "bullish",
       "date": "2026-09-17",
-      "low": 267.11,
-      "high": 270.87,
-      "i": 183
+      "low": 267.1099853515625,
+      "high": 270.8699951171875,
+      "i": 182
     },
     {
       "name": "利淡吞噬",
       "bias": "bearish",
       "date": "2026-08-31",
-      "low": 265.17,
-      "high": 267.77,
-      "i": 171
+      "low": 265.1700134277344,
+      "high": 267.7699890136719,
+      "i": 170
     },
     {
       "name": "利淡反擊線",
       "bias": "bearish",
       "date": "2026-07-29",
-      "low": 263.490488528,
-      "high": 268.018158465,
-      "i": 148
+      "low": 264.7900085449219,
+      "high": 269.3399963378906,
+      "i": 147
     },
     {
       "name": "吊頸",
       "bias": "bearish",
       "date": "2026-06-18",
-      "low": 226.483006114,
-      "high": 231.607731428,
-      "i": 121
+      "low": 227.60000610351562,
+      "high": 232.75,
+      "i": 120
     }
   ]
 }

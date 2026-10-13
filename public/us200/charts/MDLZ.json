@@ -1,85 +1,79 @@
 {
   "ticker": "US.MDLZ",
   "ticker_user": "MDLZ",
-  "name": "億滋",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "name": "Mondelez International, Inc.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 60.3,
-    "H": 60.74,
-    "L": 60.06,
-    "C": 60.41,
-    "prev_close": 60.67,
-    "chg_pct": -0.43
+    "date": "2026-10-12",
+    "O": 60.57,
+    "H": 61.83,
+    "L": 60.52,
+    "C": 61.79,
+    "prev_close": 60.41,
+    "chg_pct": 2.28
   },
   "phase": "downtrend_active",
-  "adx": 11.75,
-  "plus_di": 24.24,
-  "minus_di": 18.84,
+  "adx": 12.56,
+  "plus_di": 28.63,
+  "minus_di": 18.87,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 66.07 (2026-07-29), trough 57.32 (2026-10-05), box top 60.8 (2026-10-08)",
+  "phase_evidence": "Peak 66.65 (2026-07-29), trough 57.32 (2026-10-05), box top 61.83 (2026-10-12)",
   "peak": {
     "date": "2026-07-29",
-    "price": 66.07
+    "price": 66.65
   },
   "trough": {
     "date": "2026-10-05",
     "price": 57.32
   },
   "box": {
-    "top": 60.8,
-    "top_date": "2026-10-08",
+    "top": 61.83,
+    "top_date": "2026-10-12",
     "bottom": 57.32,
-    "period": "2026-10-05 to 2026-10-09"
+    "period": "2026-10-05 to 2026-10-12"
   },
-  "drop_from_peak_pct": 8.6,
-  "recovery_from_crash_pct": 5.4,
+  "drop_from_peak_pct": 7.3,
+  "recovery_from_crash_pct": 7.8,
   "supports": [
     {
       "level": 60.0,
-      "label": "S1 KEY",
-      "touches": 7,
-      "evidence": "tested 7x in base period; 0.7% below current"
-    },
-    {
-      "level": 56.0,
-      "label": "S2 bottom",
-      "touches": 8,
+      "label": "S1 bottom",
+      "touches": 30,
       "evidence": "structural bottom, near crash low 57.32"
     }
   ],
   "resistances": [
     {
-      "level": 60.74,
+      "level": 61.83,
       "label": "R1 today high",
-      "evidence": "today's high 60.74"
+      "evidence": "today's high 61.83000183105469"
     }
   ],
   "position": {
-    "current": 60.41,
-    "in_box_pct": 93.0,
-    "nearest_support": "S1 KEY (60.0)",
-    "nearest_resistance": "R1 today high (60.74)"
+    "current": 61.79,
+    "in_box_pct": 97.8,
+    "nearest_support": "S1 bottom (60.0)",
+    "nearest_resistance": "R1 today high (61.83)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bullish_reclaim",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 60.3,
-    "H": 60.74,
-    "L": 60.06,
-    "C": 60.41,
-    "body_pct": 16.2,
-    "upper_wick_pct": 48.5,
-    "lower_wick_pct": 35.3
+    "O": 60.57,
+    "H": 61.83,
+    "L": 60.52,
+    "C": 61.79,
+    "body_pct": 93.1,
+    "upper_wick_pct": 3.1,
+    "lower_wick_pct": 3.8
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -93,18 +87,18 @@
   "scenarios": [
     {
       "if": "hold 60.0 (KEY support)",
-      "then": "still range; watch 60.74 for next test"
+      "then": "still range; watch 61.83 for next test"
     },
     {
       "if": "break 60.0 on close",
-      "then": "target 56.0 → lower (short-term bearish)"
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 56.0 (crash low)",
+      "if": "break 60.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 60.74 on close",
+      "if": "reclaim 61.83 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -127,65 +121,65 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 63.27,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 63.02,
+    "target_price": 60.17,
+    "stop_price": 64.75,
+    "risk_pct": 2.74,
+    "reward_pct": 4.52,
+    "rr_ratio": 1.65,
+    "phase_match": true,
+    "r1": 63.02,
     "s1": 57.32,
-    "s2": 58.58,
-    "r2": 66.07,
-    "r3": 63.26,
-    "s3": 54.84,
-    "s4": 49.9,
-    "current_position_pct": 51.9,
-    "notes": "WAIT_RANGE: in box (57-63), pos 52%, no clear setup"
+    "s2": 59.1,
+    "r2": 66.65,
+    "r3": 64.35,
+    "s3": 55.79,
+    "s4": 51.2,
+    "current_position_pct": 78.4,
+    "notes": "SELL_R1: in box (57-63), entry at R1 63, target mid 60, stop 65 ｜ 52.2 條規則（SELL plan，resistance 63.02）：① 跌到 63.02、收市守住喺 63.02 上面 → 照 BUY 條 plan 做（入場 63.02，止蝕 64.75，目標 60.17）。② 收市跌穿 63.02 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 63.02 上面』。"
   },
   "patterns": [
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-10-08",
-      "low": 59.62,
-      "high": 60.7999,
-      "i": 198
+      "low": 59.619998931884766,
+      "high": 60.79999923706055,
+      "i": 197
     },
     {
       "name": "利好反擊線",
       "bias": "bullish",
       "date": "2026-09-29",
-      "low": 58.269689808,
-      "high": 59.137019545,
-      "i": 191
+      "low": 58.790000915527344,
+      "high": 59.65999984741211,
+      "i": 190
     },
     {
       "name": "黃昏之星",
       "bias": "bearish",
       "date": "2026-08-18",
-      "low": 62.051247461,
-      "high": 62.76493593,
-      "i": 162
+      "low": 62.599998474121094,
+      "high": 63.31999969482422,
+      "i": 161
     },
     {
       "name": "利好反擊線",
       "bias": "bullish",
       "date": "2026-07-16",
-      "low": 58.710788931,
-      "high": 60.941065397,
-      "i": 139
+      "low": 59.22999954223633,
+      "high": 61.47999954223633,
+      "i": 138
     },
     {
       "name": "平頭頂",
       "bias": "bearish",
       "date": "2026-06-18",
-      "low": 58.753569311,
-      "high": 59.982312186,
-      "i": 121
+      "low": 59.77000045776367,
+      "high": 61.02000045776367,
+      "i": 120
     }
   ]
 }

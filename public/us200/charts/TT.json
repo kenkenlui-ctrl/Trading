@@ -1,28 +1,28 @@
 {
   "ticker": "US.TT",
   "ticker_user": "TT",
-  "name": "Trane技術",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "name": "Trane Technologies plc",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 473.75,
-    "H": 484.13,
-    "L": 472.39,
-    "C": 476.98,
-    "prev_close": 469.94,
-    "chg_pct": 1.5
+    "date": "2026-10-12",
+    "O": 475.01,
+    "H": 480.42,
+    "L": 472.22,
+    "C": 477.55,
+    "prev_close": 476.98,
+    "chg_pct": 0.12
   },
   "phase": "downtrend_active",
-  "adx": 18.04,
-  "plus_di": 28.19,
-  "minus_di": 18.5,
+  "adx": 18.4,
+  "plus_di": 26.59,
+  "minus_di": 17.64,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 504.68 (2026-06-25), trough 413.97 (2026-09-15), box top 484.13 (2026-10-09)",
+  "phase_evidence": "Peak 505.87 (2026-06-25), trough 413.97 (2026-09-15), box top 484.13 (2026-10-09)",
   "peak": {
     "date": "2026-06-25",
-    "price": 504.68
+    "price": 505.87
   },
   "trough": {
     "date": "2026-09-15",
@@ -32,16 +32,16 @@
     "top": 484.13,
     "top_date": "2026-10-09",
     "bottom": 413.97,
-    "period": "2026-09-15 to 2026-10-09"
+    "period": "2026-09-15 to 2026-10-12"
   },
-  "drop_from_peak_pct": 5.5,
-  "recovery_from_crash_pct": 15.2,
+  "drop_from_peak_pct": 5.6,
+  "recovery_from_crash_pct": 15.4,
   "supports": [
     {
       "level": 464.0,
       "label": "S1 KEY",
       "touches": 4,
-      "evidence": "tested 4x in base period; 2.7% below current"
+      "evidence": "tested 4x in base period; 2.8% below current"
     },
     {
       "level": 448.0,
@@ -52,8 +52,8 @@
     {
       "level": 444.0,
       "label": "S3",
-      "touches": 7,
-      "evidence": "mid-base support, tested 7x"
+      "touches": 6,
+      "evidence": "mid-base support, tested 6x"
     },
     {
       "level": 413.97,
@@ -64,29 +64,34 @@
   ],
   "resistances": [
     {
-      "level": 484.13,
+      "level": 480.42,
       "label": "R1 today high",
-      "evidence": "today's high 484.1275"
+      "evidence": "today's high 480.4200134277344"
+    },
+    {
+      "level": 484.13,
+      "label": "R3 Oct high",
+      "evidence": "box top 484.13, base period high"
     }
   ],
   "position": {
-    "current": 476.98,
-    "in_box_pct": 89.8,
+    "current": 477.55,
+    "in_box_pct": 90.6,
     "nearest_support": "S1 KEY (464.0)",
-    "nearest_resistance": "R1 today high (484.13)"
+    "nearest_resistance": "R1 today high (480.42)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 473.75,
-    "H": 484.13,
-    "L": 472.39,
-    "C": 476.98,
-    "body_pct": 27.5,
-    "upper_wick_pct": 60.9,
-    "lower_wick_pct": 11.6
+    "close_position": "upper_half",
+    "O": 475.01,
+    "H": 480.42,
+    "L": 472.22,
+    "C": 477.55,
+    "body_pct": 31.0,
+    "upper_wick_pct": 35.0,
+    "lower_wick_pct": 34.0
   },
   "bias": {
     "short": {
@@ -98,14 +103,14 @@
       "reason": "making new lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 464.0 (KEY support)",
-      "then": "still range; watch 484.13 for next test"
+      "then": "still range; watch 480.42 for next test"
     },
     {
       "if": "break 464.0 on close",
@@ -116,8 +121,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 484.13 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 480.42 on close",
+      "then": "short-term bullish; next test 484.13"
+    },
+    {
+      "if": "break 484.13 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -143,53 +152,53 @@
     "strategy": "SELL_R1",
     "trigger_price": 484.13,
     "target_price": 449.05,
-    "stop_price": 501.26,
-    "risk_pct": 3.54,
+    "stop_price": 501.35,
+    "risk_pct": 3.56,
     "reward_pct": 7.25,
-    "rr_ratio": 2.05,
+    "rr_ratio": 2.04,
     "phase_match": true,
     "r1": 484.13,
     "s1": 413.97,
-    "s2": 432.97,
-    "r2": 492.55,
-    "r3": 504.68,
-    "s3": 438.38,
-    "s4": 345.62,
-    "current_position_pct": 89.8,
-    "notes": "SELL_R1: in box (414-484), entry at R1 484, target mid 449, stop 501 ｜ 52.2 條規則（SELL plan，resistance 484.13）：① 跌到 484.13、收市守住喺 484.13 上面 → 照 BUY 條 plan 做（入場 484.13，止蝕 501.26，目標 449.05）。② 收市跌穿 484.13 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 484.13 上面』。"
+    "s2": 420.44,
+    "r2": 493.71,
+    "r3": 505.87,
+    "s3": 439.42,
+    "s4": 348.06,
+    "current_position_pct": 90.6,
+    "notes": "SELL_R1: in box (414-484), entry at R1 484, target mid 449, stop 501 ｜ 52.2 條規則（SELL plan，resistance 484.13）：① 跌到 484.13、收市守住喺 484.13 上面 → 照 BUY 條 plan 做（入場 484.13，止蝕 501.35，目標 449.05）。② 收市跌穿 484.13 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 484.13 上面』。"
   },
   "patterns": [
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-10-02",
-      "low": 456.73,
-      "high": 466.31,
-      "i": 194
+      "low": 456.7300109863281,
+      "high": 466.30999755859375,
+      "i": 193
     },
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-09-09",
       "low": 440.0,
-      "high": 447.21,
-      "i": 177
+      "high": 447.2099914550781,
+      "i": 176
     },
     {
       "name": "利淡吞噬",
       "bias": "bearish",
       "date": "2026-08-12",
-      "low": 477.0322386,
-      "high": 492.545563241,
-      "i": 158
+      "low": 478.1600036621094,
+      "high": 493.7099914550781,
+      "i": 157
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-07-07",
-      "low": 465.908536366,
-      "high": 482.928299605,
-      "i": 132
+      "low": 467.010009765625,
+      "high": 484.07000732421875,
+      "i": 131
     }
   ]
 }

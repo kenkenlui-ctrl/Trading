@@ -1,22 +1,22 @@
 {
   "ticker": "HK.07709",
   "ticker_user": "07709.HK",
-  "name": "南方東英SK海力士每日槓桿最多(2x)產品",
-  "data_source": "futu",
-  "data_range": "2025-12-17 → 2026-10-12 (200 daily bars)",
+  "name": "XL2CSOPHYNIX",
+  "data_source": "yfinance",
+  "data_range": "2025-12-15 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-12",
-    "O": 33.1,
-    "H": 33.22,
-    "L": 31.62,
-    "C": 31.82,
-    "prev_close": 35.4,
-    "chg_pct": -10.11
+    "date": "2026-10-09",
+    "O": 33.5,
+    "H": 35.4,
+    "L": 33.3,
+    "C": 35.4,
+    "prev_close": 35.28,
+    "chg_pct": 0.34
   },
   "phase": "downtrend_recovery",
-  "adx": 10.06,
-  "plus_di": 23.12,
-  "minus_di": 38.07,
+  "adx": 8.96,
+  "plus_di": 25.1,
+  "minus_di": 37.52,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 193.65 (2026-06-25), trough 25.1 (2026-07-30), box top 103.0 (2026-07-31)",
@@ -32,16 +32,28 @@
     "top": 103.0,
     "top_date": "2026-07-31",
     "bottom": 25.1,
-    "period": "2026-07-30 to 2026-10-12"
+    "period": "2026-07-30 to 2026-10-09"
   },
-  "drop_from_peak_pct": 83.6,
-  "recovery_from_crash_pct": 26.8,
+  "drop_from_peak_pct": 81.7,
+  "recovery_from_crash_pct": 41.0,
   "supports": [
     {
-      "level": 28.0,
+      "level": 36.0,
       "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; -1.7% below current"
+    },
+    {
+      "level": 32.0,
+      "label": "S2",
+      "touches": 10,
+      "evidence": "mid-base support, tested 10x"
+    },
+    {
+      "level": 28.0,
+      "label": "S3",
       "touches": 6,
-      "evidence": "tested 6x in base period; 12.0% below current"
+      "evidence": "mid-base support, tested 6x"
     },
     {
       "level": 25.1,
@@ -52,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 33.22,
+      "level": 35.4,
       "label": "R1 today high",
-      "evidence": "today's high 33.22"
+      "evidence": "today's high 35.400001525878906"
     },
     {
       "level": 65.0,
@@ -73,28 +85,28 @@
     }
   ],
   "position": {
-    "current": 31.82,
-    "in_box_pct": 8.6,
-    "nearest_support": "S1 KEY (28.0)",
-    "nearest_resistance": "R1 today high (33.22)"
+    "current": 35.4,
+    "in_box_pct": 13.2,
+    "nearest_support": "S1 KEY (36.0)",
+    "nearest_resistance": "R5 (65.0)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 33.1,
-    "H": 33.22,
-    "L": 31.62,
-    "C": 31.82,
-    "body_pct": 80.0,
-    "upper_wick_pct": 7.5,
-    "lower_wick_pct": 12.5
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 33.5,
+    "H": 35.4,
+    "L": 33.3,
+    "C": 35.4,
+    "body_pct": 90.5,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 9.5
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (9% of box)"
+      "bias": "defensive",
+      "reason": "near box bottom (13% of box)"
     },
     "mid": {
       "bias": "neutral",
@@ -107,19 +119,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 28.0 (KEY support)",
-      "then": "still range; watch 33.22 for next test"
+      "if": "hold 36.0 (KEY support)",
+      "then": "still range; watch 35.4 for next test"
     },
     {
-      "if": "break 28.0 on close",
-      "then": "target 25.1 → lower (short-term bearish)"
+      "if": "break 36.0 on close",
+      "then": "target 32.0 → 28.0 (short-term bearish)"
     },
     {
       "if": "break 25.1 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 33.22 on close",
+      "if": "reclaim 35.4 on close",
       "then": "short-term bullish; next test 65.0"
     },
     {
@@ -156,39 +168,39 @@
     "rr_ratio": 0.0,
     "phase_match": false,
     "r1": 47.0,
-    "s1": 31.62,
+    "s1": 33.3,
     "s2": 25.1,
     "r2": 103.0,
     "r3": 193.65,
-    "s3": 39.84,
-    "s4": 10.95,
-    "current_position_pct": 1.3,
-    "notes": "WAIT_VOLATILE: ATR14 8.3% / box width 48% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
+    "s3": 38.66,
+    "s4": 10.8,
+    "current_position_pct": 15.3,
+    "notes": "WAIT_VOLATILE: ATR14 7.0% / box width 39% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
   },
   "patterns": [
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-08-31",
-      "low": 33.6,
-      "high": 37.22,
-      "i": 170
+      "low": 33.599998474121094,
+      "high": 37.220001220703125,
+      "i": 171
     },
     {
       "name": "利好吞噬",
       "bias": "bullish",
       "date": "2026-08-04",
-      "low": 32.28,
-      "high": 37.16,
-      "i": 151
+      "low": 32.279998779296875,
+      "high": 37.15999984741211,
+      "i": 152
     },
     {
       "name": "早晨之星",
       "bias": "bullish",
       "date": "2026-06-17",
       "low": 129.5,
-      "high": 145.4,
-      "i": 119
+      "high": 145.39999389648438,
+      "i": 120
     }
   ]
 }

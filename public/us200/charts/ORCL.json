@@ -1,56 +1,50 @@
 {
   "ticker": "US.ORCL",
   "ticker_user": "ORCL",
-  "name": "甲骨文",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "name": "Oracle Corporation",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 136.7,
-    "H": 142.9,
-    "L": 136.49,
-    "C": 141.4,
-    "prev_close": 135.19,
-    "chg_pct": 4.59
+    "date": "2026-10-12",
+    "O": 141.56,
+    "H": 141.56,
+    "L": 136.52,
+    "C": 137.39,
+    "prev_close": 141.4,
+    "chg_pct": -2.84
   },
   "phase": "base_building",
-  "adx": 10.53,
-  "plus_di": 24.95,
-  "minus_di": 28.1,
+  "adx": 10.36,
+  "plus_di": 23.14,
+  "minus_di": 26.68,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 248.46 (2026-06-01), trough 114.08 (2026-07-28), box top 170.07 (2026-09-08)",
+  "phase_evidence": "Peak 250.25 (2026-06-01), trough 114.5 (2026-07-28), box top 170.7 (2026-09-08)",
   "peak": {
     "date": "2026-06-01",
-    "price": 248.46
+    "price": 250.25
   },
   "trough": {
     "date": "2026-07-28",
-    "price": 114.08
+    "price": 114.5
   },
   "box": {
-    "top": 170.07,
+    "top": 170.7,
     "top_date": "2026-09-08",
-    "bottom": 114.08,
-    "period": "2026-07-28 to 2026-10-09"
+    "bottom": 114.5,
+    "period": "2026-07-28 to 2026-10-12"
   },
-  "drop_from_peak_pct": 43.1,
-  "recovery_from_crash_pct": 24.0,
+  "drop_from_peak_pct": 45.1,
+  "recovery_from_crash_pct": 20.0,
   "supports": [
     {
-      "level": 136.0,
-      "label": "S1 KEY",
-      "touches": 11,
-      "evidence": "tested 11x in base period; 3.8% below current"
-    },
-    {
       "level": 132.0,
-      "label": "S2",
-      "touches": 6,
-      "evidence": "mid-base support, tested 6x"
+      "label": "S1 KEY",
+      "touches": 7,
+      "evidence": "tested 7x in base period; 3.9% below current"
     },
     {
-      "level": 114.08,
+      "level": 114.5,
       "label": "S4 crash low",
       "touches": 1,
       "evidence": "crash low 2026-07-28, structural bottom"
@@ -58,9 +52,9 @@
   ],
   "resistances": [
     {
-      "level": 142.9,
+      "level": 141.56,
       "label": "R1 today high",
-      "evidence": "today's high 142.9"
+      "evidence": "today's high 141.55999755859375"
     },
     {
       "level": 160.0,
@@ -68,39 +62,39 @@
       "evidence": "mid-box supply, round number 160"
     },
     {
-      "level": 170.0,
+      "level": 165.0,
       "label": "R4",
-      "evidence": "psychological round number, pre-crash zone 170"
+      "evidence": "psychological round number, pre-crash zone 165"
     },
     {
-      "level": 170.07,
+      "level": 170.7,
       "label": "R3 Sep high",
-      "evidence": "box top 170.07, base period high"
+      "evidence": "box top 170.7, base period high"
     }
   ],
   "position": {
-    "current": 141.4,
-    "in_box_pct": 48.8,
-    "nearest_support": "S1 KEY (136.0)",
-    "nearest_resistance": "R1 today high (142.9)"
+    "current": 137.39,
+    "in_box_pct": 40.7,
+    "nearest_support": "S1 KEY (132.0)",
+    "nearest_resistance": "R1 today high (141.56)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 136.7,
-    "H": 142.9,
-    "L": 136.49,
-    "C": 141.4,
-    "body_pct": 73.3,
-    "upper_wick_pct": 23.4,
-    "lower_wick_pct": 3.3
+    "close_position": "lower_half",
+    "O": 141.56,
+    "H": 141.56,
+    "L": 136.52,
+    "C": 137.39,
+    "body_pct": 82.7,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 17.3
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (41% of box)"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -113,23 +107,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 136.0 (KEY support)",
-      "then": "still range; watch 142.9 for next test"
+      "if": "hold 132.0 (KEY support)",
+      "then": "still range; watch 141.56 for next test"
     },
     {
-      "if": "break 136.0 on close",
-      "then": "target 132.0 → 114.08 (short-term bearish)"
+      "if": "break 132.0 on close",
+      "then": "target 114.5 → lower (short-term bearish)"
     },
     {
-      "if": "break 114.08 (crash low)",
+      "if": "break 114.5 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 142.9 on close",
+      "if": "reclaim 141.56 on close",
       "then": "short-term bullish; next test 160.0"
     },
     {
-      "if": "break 170.07 (box top)",
+      "if": "break 170.7 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -152,57 +146,57 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
+    "verdict": "BUY",
+    "strategy": "BUY_S1",
+    "trigger_price": 131.58,
+    "target_price": 142.59,
+    "stop_price": 122.81,
+    "risk_pct": 6.67,
+    "reward_pct": 8.37,
+    "rr_ratio": 1.25,
     "phase_match": true,
-    "r1": 153.03,
-    "s1": 131.1,
-    "s2": 114.08,
-    "r2": 170.07,
-    "r3": 248.46,
-    "s3": 123.2,
-    "s4": 133.61,
-    "current_position_pct": 47.0,
-    "notes": "WAIT_RANGE: in box (131-153), pos 47%, no clear setup"
+    "r1": 153.6,
+    "s1": 131.58,
+    "s2": 114.5,
+    "r2": 170.7,
+    "r3": 250.25,
+    "s3": 121.5,
+    "s4": 134.57,
+    "current_position_pct": 26.4,
+    "notes": "BUY_S1: in box (132-154), entry at S1 132, target mid 143, stop 123 ｜ 52.2 條規則（BUY plan，support 131.58）：① 跌到 131.58、收市守住喺 131.58 上面 → 照 BUY 條 plan 做（入場 131.58，止蝕 122.81，目標 142.59）。② 收市跌穿 131.58 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 131.58 上面』。"
   },
   "patterns": [
     {
       "name": "上升三法",
       "bias": "bullish",
       "date": "2026-09-11",
-      "low": 149.287859079,
-      "high": 165.38831158,
-      "i": 179
+      "low": 149.83999633789062,
+      "high": 166.0,
+      "i": 178
     },
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-07-30",
-      "low": 121.131993505,
-      "high": 127.867083784,
-      "i": 149
+      "low": 121.58000183105469,
+      "high": 128.33999633789062,
+      "i": 148
     },
     {
       "name": "平頭底",
       "bias": "bullish",
       "date": "2026-07-09",
-      "low": 139.93382638,
-      "high": 148.005786139,
-      "i": 134
+      "low": 140.94000244140625,
+      "high": 149.07000732421875,
+      "i": 133
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-06-05",
-      "low": 207.954781694,
-      "high": 229.787744979,
-      "i": 112
+      "low": 209.4499969482422,
+      "high": 231.44000244140625,
+      "i": 111
     }
   ]
 }

@@ -8,7 +8,14 @@
 # 787e6f5. It now lives in .env (gitignored, mode 600). This file only ever
 # reads it, so rotating a token never means touching version control again.
 # =========================================================
-set -e
+# 2026-10-13: pipefail, not just -e. Almost every step below is written
+# `python3 foo.py | tail -3`, and a pipeline's exit status is its LAST command's
+# — so `set -e` saw tail's success while the python died. update_ohlc.py raised a
+# TypeError once per ticker (`tuple | set`), all 600 OHLC files went unrefreshed,
+# and the run carried on for another 20 minutes before self_test caught it. Steps
+# that are allowed to fail already say so with `|| echo ...`, and that still
+# works: pipefail makes the pipeline return non-zero, `||` catches it.
+set -eo pipefail
 cd "$(dirname "$0")/.."
 
 # Load credentials from .env if present. A real environment variable wins, so
@@ -21,15 +28,64 @@ fi
 
 DATA_DATE="${DATA_DATE:-2026-08-22}"  # T-1 default
 
+# Per-market session dates. Defined BEFORE step 1 because the HK batch now needs
+# one (see below); previously only step 1b consumed them, which was one step too
+# late to stop the HK analysis snapshots being stamped from a CLI default.
+#
+# 2026-10-08: one DATA_DATE cannot describe three markets. They do not share a
+# trading calendar — on 2026-10-08 HK and JP had closed the 10-08 session while
+# the US had only closed 10-07, and passing 10-08 for the US would have asked
+# Yahoo for a session that has not happened yet.
+#
+# Ownership (Kenneth, 2026-10-08): Kenneth states the date per market when he
+# asks for a refresh, and I pass it straight through. Nothing here infers or
+# auto-derives a session — an inferred "T-1" is a guess, and a guess that is
+# one session ahead silently asks the vendor for data that does not exist yet.
+# Set ASOF_HK / ASOF_US / ASOF_JP explicitly when the markets differ; any market
+# left unset falls back to DATA_DATE.
+ASOF_HK="${ASOF_HK:-$DATA_DATE}"
+ASOF_US="${ASOF_US:-$DATA_DATE}"
+ASOF_JP="${ASOF_JP:-$DATA_DATE}"
+# Exported so self_test.py's freshness guard compares the built bars against the
+# SAME session this run was told to fetch, instead of a date frozen in its own
+# source. A guard that derives its own idea of "today" cannot notice that a
+# market stopped moving.
+export ASOF_HK ASOF_US ASOF_JP
+
 echo "=== LEEKS TERMINAL refresh ==="
 echo "T-1 = $DATA_DATE"
 echo "Started: $(date '+%Y-%m-%d %H:%M:%S')"
 echo
 
 # --- Step 1: Get HK + US top 200 by turnover ---
+# --asof is passed explicitly because daily_sr.py's default is "T-1 / yesterday",
+# which is a guess. On 2026-10-13 Yahoo was missing HK's 10-12 bar entirely (futu
+# had it), so the implicit 10-12 cap resolved to 10-09 and stamped every HK
+# snapshot two sessions stale. The date this script is given is the date it uses.
 echo "[1/6] Fetching top 200 HK + US universes..."
-python3 /Users/kenken/dev/dsa-hk/charts/hk200/batch_hk200_fresh.py --date "$DATA_DATE" 2>&1 | tail -3
+python3 /Users/kenken/dev/dsa-hk/charts/hk200/batch_hk200_fresh.py --asof "$ASOF_HK" 2>&1 | tail -3
 python3 /Users/kenken/dev/dsa-hk/charts/us200/batch_us200.py --date "$DATA_DATE" 2>&1 | tail -3 || echo "  US200 batch (continue anyway)"
+
+# --- Step 1a: JP charts + snapshots ------------------------------------------
+# 2026-10-13. JP was never in this pipeline. Step 1 refreshes the HK and US
+# universes, Step 1b refreshes <market>/ohlc/*.json for all three, but the file
+# every JP reader actually consumes — data/jp200/<TICKER>.json, the snapshot
+# build_dashboard.load_ticker_json() and data_asof() read — was only ever
+# written by fetch_jp_charts.py, which nothing called. So JP drifted silently:
+# on 2026-10-13 HK was one session stale, US two, and JP four (2026-10-09),
+# with no error anywhere and every page still rendering.
+#
+# It stayed invisible because a real SyntaxError (wrong indentation in
+# process_one, shipped 2026-10-10) meant the script could not even parse — so
+# even the one manual escape hatch was dead. Fixed in that file; wiring it here
+# is the other half, because a step nobody calls cannot be a step.
+#
+# Runs BEFORE Step 1b on purpose: update_ohlc.py carries the --asof-jp cap and
+# the fail-closed "never overwrite a longer series" rule, so it must be the
+# LAST writer of the JP OHLC files, not the first.
+echo
+echo "[1a] JP charts + snapshots (yfinance, was never in this pipeline)..."
+python3 scripts/fetch_jp_charts.py 2>&1 | tail -3 || echo "  JP fetch (continue anyway)"
 
 # --- Step 1b: Refresh the raw OHLC series that the interactive charts AND v2 read ---
 # 2026-10-07. This step was MISSING, and its absence had two consequences that
@@ -45,20 +101,6 @@ python3 /Users/kenken/dev/dsa-hk/charts/us200/batch_us200.py --date "$DATA_DATE"
 # A repair that is not in the pipeline is not a repair.
 echo
 echo "[1b/7] Refreshing <market>/ohlc/*_ohlc.json (chart + v2 signal source)..."
-# 2026-10-08: one DATA_DATE cannot describe three markets. They do not share a
-# trading calendar — on 2026-10-08 HK and JP had closed the 10-08 session while
-# the US had only closed 10-07, and passing 10-08 for the US would have asked
-# Yahoo for a session that has not happened yet.
-#
-# Ownership (Kenneth, 2026-10-08): Kenneth states the date per market when he
-# asks for a refresh, and I pass it straight through. Nothing here infers or
-# auto-derives a session — an inferred "T-1" is a guess, and a guess that is
-# one session ahead silently asks the vendor for data that does not exist yet.
-# Set ASOF_HK / ASOF_US / ASOF_JP explicitly when the markets differ; any market
-# left unset falls back to DATA_DATE.
-ASOF_HK="${ASOF_HK:-$DATA_DATE}"
-ASOF_US="${ASOF_US:-$DATA_DATE}"
-ASOF_JP="${ASOF_JP:-$DATA_DATE}"
 python3 scripts/update_ohlc.py \
   --asof "$DATA_DATE" --asof-hk "$ASOF_HK" --asof-us "$ASOF_US" --asof-jp "$ASOF_JP" \
   --markets hk,us,jp --workers 8 2>&1 | tail -3
@@ -105,7 +147,7 @@ try:
                 _have = (json.load(open(js)).get('last_bar') or {}).get('date')
             except Exception:
                 _have = None
-            if _have == '$DATA_DATE' and png.exists():
+            if _have == '$ASOF_HK' and png.exists():
                 continue
         try:
             df, src, name = fetch_ohlc(tk, days=200, source='auto', asof='$DATA_DATE')
@@ -113,7 +155,7 @@ try:
             import subprocess
             subprocess.run(['python3', '/Users/kenken/.minimax/skills/daily-sr-chart/scripts/daily_sr.py',
                             '-t', tk, '-o', str(png),
-                            '--source', 'auto', '--asof', '$DATA_DATE'], check=True)
+                            '--source', 'auto', '--asof', '$ASOF_HK'], check=True)
             print(f'  {i+1}/{len(universe)} {tk} ✓')
         except Exception as e:
             print(f'  {i+1}/{len(universe)} {tk} ✗ {e}')

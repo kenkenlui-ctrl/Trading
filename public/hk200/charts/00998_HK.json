@@ -1,54 +1,59 @@
 {
   "ticker": "HK.00998",
   "ticker_user": "00998.HK",
-  "name": "中信銀行",
-  "data_source": "futu",
-  "data_range": "2025-12-17 → 2026-10-12 (200 daily bars)",
+  "name": "CITIC BANK",
+  "data_source": "yfinance",
+  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-12",
-    "O": 8.46,
-    "H": 8.67,
-    "L": 8.4,
-    "C": 8.61,
-    "prev_close": 8.44,
-    "chg_pct": 2.07
+    "date": "2026-10-09",
+    "O": 8.36,
+    "H": 8.44,
+    "L": 8.35,
+    "C": 8.44,
+    "prev_close": 8.31,
+    "chg_pct": 1.5
   },
   "phase": "downtrend_active",
-  "adx": 24.48,
-  "plus_di": 26.41,
-  "minus_di": 13.04,
+  "adx": 23.71,
+  "plus_di": 19.71,
+  "minus_di": 14.53,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 8.7 (2026-09-29), trough 8.17 (2026-10-05), box top 8.67 (2026-10-12)",
+  "phase_evidence": "Peak 8.69 (2026-09-29), trough 8.17 (2026-10-05), box top 8.49 (2026-10-08)",
   "peak": {
     "date": "2026-09-29",
-    "price": 8.7
+    "price": 8.69
   },
   "trough": {
     "date": "2026-10-05",
     "price": 8.17
   },
   "box": {
-    "top": 8.67,
-    "top_date": "2026-10-12",
+    "top": 8.49,
+    "top_date": "2026-10-08",
     "bottom": 8.17,
-    "period": "2026-10-05 to 2026-10-12"
+    "period": "2026-10-05 to 2026-10-09"
   },
-  "drop_from_peak_pct": 1.0,
-  "recovery_from_crash_pct": 5.4,
+  "drop_from_peak_pct": 3.0,
+  "recovery_from_crash_pct": 3.2,
   "supports": [
     {
       "level": 8.0,
       "label": "S1 bottom",
-      "touches": 84,
+      "touches": 48,
       "evidence": "structural bottom, near crash low 8.17"
     }
   ],
   "resistances": [
     {
-      "level": 8.67,
+      "level": 8.44,
       "label": "R1 today high",
-      "evidence": "today's high 8.67"
+      "evidence": "today's high 8.4399995803833"
+    },
+    {
+      "level": 8.49,
+      "label": "R3 Oct high",
+      "evidence": "box top 8.49, base period high"
     },
     {
       "level": 10.0,
@@ -57,28 +62,28 @@
     }
   ],
   "position": {
-    "current": 8.61,
-    "in_box_pct": 30.5,
+    "current": 8.44,
+    "in_box_pct": 88.8,
     "nearest_support": "S1 bottom (8.0)",
-    "nearest_resistance": "R1 today high (8.67)"
+    "nearest_resistance": "R1 today high (8.44)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 8.46,
-    "H": 8.67,
-    "L": 8.4,
-    "C": 8.61,
-    "body_pct": 57.4,
-    "upper_wick_pct": 22.2,
-    "lower_wick_pct": 20.4
+    "O": 8.36,
+    "H": 8.44,
+    "L": 8.35,
+    "C": 8.44,
+    "body_pct": 78.9,
+    "upper_wick_pct": 5.3,
+    "lower_wick_pct": 15.8
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -92,7 +97,7 @@
   "scenarios": [
     {
       "if": "hold 8.0 (KEY support)",
-      "then": "still range; watch 8.67 for next test"
+      "then": "still range; watch 8.44 for next test"
     },
     {
       "if": "break 8.0 on close",
@@ -103,8 +108,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 8.67 on close",
-      "then": "short-term bullish; next test 10.0"
+      "if": "reclaim 8.44 on close",
+      "then": "short-term bullish; next test 8.49"
+    },
+    {
+      "if": "break 8.49 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -127,7 +136,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -135,40 +144,40 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 8.7,
+    "r1": 8.69,
     "s1": 8.17,
-    "s2": 7.0,
+    "s2": 6.91,
     "r2": 8.57,
-    "r3": 8.38,
+    "r3": 8.6,
     "s3": 6.5,
-    "s4": 6.52,
-    "current_position_pct": 83.8,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 8.70）：① 跌到 8.70、收市守住喺 8.70 上面 → 照 BUY 條 plan 做（入場 8.70，止蝕 8.98，目標 8.43）。② 收市跌穿 8.70 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 8.70 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "s4": 6.74,
+    "current_position_pct": 50.5,
+    "notes": "WAIT_RANGE: in box (8-9), pos 50%, no clear setup"
   },
   "patterns": [
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-10-02",
-      "low": 8.28,
-      "high": 8.47,
-      "i": 193
+      "low": 8.279999732971191,
+      "high": 8.470000267028809,
+      "i": 194
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-07-28",
-      "low": 7.57,
-      "high": 7.72,
-      "i": 146
+      "low": 7.570000171661377,
+      "high": 7.71999979019165,
+      "i": 147
     },
     {
       "name": "平頭底",
       "bias": "bullish",
       "date": "2026-07-14",
-      "low": 6.84,
-      "high": 7.01,
-      "i": 136
+      "low": 6.840000152587891,
+      "high": 7.010000228881836,
+      "i": 137
     }
   ]
 }

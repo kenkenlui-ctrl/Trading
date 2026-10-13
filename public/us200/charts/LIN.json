@@ -1,28 +1,28 @@
 {
   "ticker": "US.LIN",
   "ticker_user": "LIN",
-  "name": "林德氣體",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "name": "Linde plc",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 479.05,
-    "H": 485.83,
-    "L": 479.0,
-    "C": 483.73,
-    "prev_close": 481.7,
-    "chg_pct": 0.42
+    "date": "2026-10-12",
+    "O": 483.09,
+    "H": 490.99,
+    "L": 482.51,
+    "C": 487.35,
+    "prev_close": 483.73,
+    "chg_pct": 0.75
   },
   "phase": "downtrend_active",
-  "adx": 19.18,
-  "plus_di": 25.51,
-  "minus_di": 20.43,
+  "adx": 19.32,
+  "plus_di": 28.14,
+  "minus_di": 19.12,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 546.4 (2026-07-07), trough 454.19 (2026-09-18), box top 492.1 (2026-10-06)",
+  "phase_evidence": "Peak 548.2 (2026-07-07), trough 454.19 (2026-09-18), box top 492.1 (2026-10-06)",
   "peak": {
     "date": "2026-07-07",
-    "price": 546.4
+    "price": 548.2
   },
   "trough": {
     "date": "2026-09-18",
@@ -32,65 +32,60 @@
     "top": 492.1,
     "top_date": "2026-10-06",
     "bottom": 454.19,
-    "period": "2026-09-18 to 2026-10-09"
+    "period": "2026-09-18 to 2026-10-12"
   },
-  "drop_from_peak_pct": 11.5,
-  "recovery_from_crash_pct": 6.5,
+  "drop_from_peak_pct": 11.1,
+  "recovery_from_crash_pct": 7.3,
   "supports": [
     {
-      "level": 472.0,
+      "level": 476.0,
       "label": "S1 KEY",
+      "touches": 5,
+      "evidence": "tested 5x in base period; 2.3% below current"
+    },
+    {
+      "level": 472.0,
+      "label": "S2",
       "touches": 4,
-      "evidence": "tested 4x in base period; 2.4% below current"
+      "evidence": "mid-base support, tested 4x"
     },
     {
       "level": 464.0,
-      "label": "S2",
-      "touches": 10,
-      "evidence": "mid-base support, tested 10x"
-    },
-    {
-      "level": 460.0,
       "label": "S3 bottom",
-      "touches": 5,
+      "touches": 10,
       "evidence": "structural bottom, near crash low 454.19"
     }
   ],
   "resistances": [
     {
-      "level": 485.83,
+      "level": 490.99,
       "label": "R1 today high",
-      "evidence": "today's high 485.83"
-    },
-    {
-      "level": 492.1,
-      "label": "R3 Oct high",
-      "evidence": "box top 492.1, base period high"
+      "evidence": "today's high 490.989990234375"
     }
   ],
   "position": {
-    "current": 483.73,
-    "in_box_pct": 73.9,
-    "nearest_support": "S1 KEY (472.0)",
-    "nearest_resistance": "R1 today high (485.83)"
+    "current": 487.35,
+    "in_box_pct": 86.5,
+    "nearest_support": "S1 KEY (476.0)",
+    "nearest_resistance": "R1 today high (490.99)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 479.05,
-    "H": 485.83,
-    "L": 479.0,
-    "C": 483.73,
-    "body_pct": 68.5,
-    "upper_wick_pct": 30.7,
-    "lower_wick_pct": 0.7
+    "O": 483.09,
+    "H": 490.99,
+    "L": 482.51,
+    "C": 487.35,
+    "body_pct": 50.2,
+    "upper_wick_pct": 42.9,
+    "lower_wick_pct": 6.8
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -103,24 +98,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 472.0 (KEY support)",
-      "then": "still range; watch 485.83 for next test"
+      "if": "hold 476.0 (KEY support)",
+      "then": "still range; watch 490.99 for next test"
     },
     {
-      "if": "break 472.0 on close",
-      "then": "target 464.0 → 460.0 (short-term bearish)"
+      "if": "break 476.0 on close",
+      "then": "target 472.0 → 464.0 (short-term bearish)"
     },
     {
-      "if": "break 460.0 (crash low)",
+      "if": "break 464.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 485.83 on close",
-      "then": "short-term bullish; next test 492.1"
-    },
-    {
-      "if": "break 492.1 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 490.99 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -145,62 +136,62 @@
     "verdict": "SELL",
     "strategy": "SELL_R1",
     "trigger_price": 492.1,
-    "target_price": 473.14,
-    "stop_price": 505.03,
-    "risk_pct": 2.63,
+    "target_price": 473.15,
+    "stop_price": 504.7,
+    "risk_pct": 2.56,
     "reward_pct": 3.85,
-    "rr_ratio": 1.47,
+    "rr_ratio": 1.5,
     "phase_match": true,
     "r1": 492.1,
     "s1": 454.19,
     "s2": 460.2,
-    "r2": 525.72,
-    "r3": 546.4,
-    "s3": 485.74,
-    "s4": 417.96,
-    "current_position_pct": 77.9,
-    "notes": "SELL_R1: in box (454-492), entry at R1 492, target mid 473, stop 505 ｜ 52.2 條規則（SELL plan，resistance 492.10）：① 跌到 492.10、收市守住喺 492.10 上面 → 照 BUY 條 plan 做（入場 492.10，止蝕 505.03，目標 473.14）。② 收市跌穿 492.10 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 492.10 上面』。"
+    "r2": 522.0,
+    "r3": 548.2,
+    "s3": 488.88,
+    "s4": 422.08,
+    "current_position_pct": 87.5,
+    "notes": "SELL_R1: in box (454-492), entry at R1 492, target mid 473, stop 505 ｜ 52.2 條規則（SELL plan，resistance 492.10）：① 跌到 492.10、收市守住喺 492.10 上面 → 照 BUY 條 plan 做（入場 492.10，止蝕 504.70，目標 473.15）。② 收市跌穿 492.10 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 492.10 上面』。"
   },
   "patterns": [
     {
       "name": "利淡反擊線",
       "bias": "bearish",
       "date": "2026-10-01",
-      "low": 462.3725,
+      "low": 462.3699951171875,
       "high": 472.0,
-      "i": 193
+      "i": 192
     },
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-09-25",
       "low": 465.75,
-      "high": 470.44,
-      "i": 189
+      "high": 470.44000244140625,
+      "i": 188
     },
     {
       "name": "利好反擊線",
       "bias": "bullish",
       "date": "2026-08-10",
-      "low": 485.421511068,
-      "high": 490.963161318,
-      "i": 156
+      "low": 487.0199890136719,
+      "high": 492.5799865722656,
+      "i": 155
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-07-13",
-      "low": 519.768300305,
-      "high": 530.702292509,
-      "i": 136
+      "low": 521.47998046875,
+      "high": 532.4500122070312,
+      "i": 135
     },
     {
       "name": "平頭頂",
       "bias": "bearish",
       "date": "2026-06-16",
-      "low": 511.886755788,
-      "high": 521.921210347,
-      "i": 119
+      "low": 513.5700073242188,
+      "high": 523.6400146484375,
+      "i": 118
     }
   ]
 }

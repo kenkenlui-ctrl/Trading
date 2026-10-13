@@ -3,23 +3,23 @@
   "ticker_user": "DUK",
   "name": "Duke Energy Corporation (Holdin",
   "data_source": "yfinance",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 116.26,
-    "H": 116.82,
-    "L": 116.02,
-    "C": 116.65,
-    "prev_close": 116.84,
-    "chg_pct": -0.16
+    "date": "2026-10-12",
+    "O": 116.76,
+    "H": 117.74,
+    "L": 116.29,
+    "C": 117.69,
+    "prev_close": 116.65,
+    "chg_pct": 0.89
   },
   "phase": "downtrend_active",
-  "adx": 30.03,
-  "plus_di": 21.65,
-  "minus_di": 22.73,
+  "adx": 28.41,
+  "plus_di": 24.51,
+  "minus_di": 21.18,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 134.49 (2026-03-17), trough 112.4 (2026-09-29), box top 116.92 (2026-10-08)",
+  "phase_evidence": "Peak 134.49 (2026-03-17), trough 112.4 (2026-09-29), box top 117.74 (2026-10-12)",
   "peak": {
     "date": "2026-03-17",
     "price": 134.49
@@ -29,51 +29,57 @@
     "price": 112.4
   },
   "box": {
-    "top": 116.92,
-    "top_date": "2026-10-08",
+    "top": 117.74,
+    "top_date": "2026-10-12",
     "bottom": 112.4,
-    "period": "2026-09-29 to 2026-10-09"
+    "period": "2026-09-29 to 2026-10-12"
   },
-  "drop_from_peak_pct": 13.3,
-  "recovery_from_crash_pct": 3.8,
+  "drop_from_peak_pct": 12.5,
+  "recovery_from_crash_pct": 4.7,
   "supports": [
     {
+      "level": 116.0,
+      "label": "S1 KEY",
+      "touches": 7,
+      "evidence": "tested 7x in base period; 1.4% below current"
+    },
+    {
       "level": 112.0,
-      "label": "S1 bottom",
-      "touches": 16,
+      "label": "S2 bottom",
+      "touches": 13,
       "evidence": "structural bottom, near crash low 112.4"
     }
   ],
   "resistances": [
     {
-      "level": 116.82,
+      "level": 117.74,
       "label": "R1 today high",
-      "evidence": "today's high 116.81999969482422"
+      "evidence": "today's high 117.73999786376953"
     }
   ],
   "position": {
-    "current": 116.65,
-    "in_box_pct": 96.5,
-    "nearest_support": "S1 bottom (112.0)",
-    "nearest_resistance": "R1 today high (116.82)"
+    "current": 117.69,
+    "in_box_pct": 99.1,
+    "nearest_support": "S1 KEY (116.0)",
+    "nearest_resistance": "R1 today high (117.74)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 116.26,
-    "H": 116.82,
-    "L": 116.02,
-    "C": 116.65,
-    "body_pct": 48.7,
-    "upper_wick_pct": 21.2,
-    "lower_wick_pct": 30.0
+    "O": 116.76,
+    "H": 117.74,
+    "L": 116.29,
+    "C": 117.69,
+    "body_pct": 64.1,
+    "upper_wick_pct": 3.4,
+    "lower_wick_pct": 32.4
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -86,19 +92,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 112.0 (KEY support)",
-      "then": "still range; watch 116.82 for next test"
+      "if": "hold 116.0 (KEY support)",
+      "then": "still range; watch 117.74 for next test"
     },
     {
-      "if": "break 112.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 116.0 on close",
+      "then": "target 112.0 → lower (short-term bearish)"
     },
     {
       "if": "break 112.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 116.82 on close",
+      "if": "reclaim 117.74 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -122,7 +128,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -130,14 +136,56 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 120.47,
+    "r1": 119.27,
     "s1": 112.4,
-    "s2": 118.99,
+    "s2": 118.68,
     "r2": 132.65,
     "r3": 130.7,
     "s3": 119.76,
     "s4": 115.1,
-    "current_position_pct": 52.7,
-    "notes": "WAIT_RANGE: in box (112-120), pos 53%, no clear setup"
-  }
+    "current_position_pct": 77.0,
+    "notes": "WAIT_RANGE: in box (112-119), pos 77%, no clear setup"
+  },
+  "patterns": [
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-09-08",
+      "low": 120.0,
+      "high": 121.62000274658203,
+      "i": 175
+    },
+    {
+      "name": "利好身懷六甲",
+      "bias": "bullish",
+      "date": "2026-08-31",
+      "low": 119.04000091552734,
+      "high": 120.5199966430664,
+      "i": 170
+    },
+    {
+      "name": "三個白武士",
+      "bias": "bullish",
+      "date": "2026-08-18",
+      "low": 123.91000366210938,
+      "high": 125.66000366210938,
+      "i": 161
+    },
+    {
+      "name": "上升三法",
+      "bias": "bullish",
+      "date": "2026-07-31",
+      "low": 124.62999725341797,
+      "high": 126.37999725341797,
+      "i": 149
+    },
+    {
+      "name": "早晨之星",
+      "bias": "bullish",
+      "date": "2026-07-22",
+      "low": 126.44999694824219,
+      "high": 127.9800033569336,
+      "i": 142
+    }
+  ]
 }

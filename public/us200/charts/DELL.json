@@ -1,22 +1,22 @@
 {
   "ticker": "US.DELL",
   "ticker_user": "DELL",
-  "name": "戴爾科技",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "name": "Dell Technologies Inc.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 581.65,
-    "H": 595.06,
-    "L": 566.2,
-    "C": 586.06,
-    "prev_close": 574.55,
-    "chg_pct": 2.0
+    "date": "2026-10-12",
+    "O": 581.73,
+    "H": 585.32,
+    "L": 565.0,
+    "C": 576.76,
+    "prev_close": 586.06,
+    "chg_pct": -1.59
   },
-  "phase": "uptrend",
-  "adx": 23.56,
-  "plus_di": 27.23,
-  "minus_di": 13.4,
+  "phase": "downtrend_active",
+  "adx": 24.22,
+  "plus_di": 25.73,
+  "minus_di": 12.98,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 595.51 (2026-09-18), trough 520.18 (2026-10-01), box top 595.06 (2026-10-09)",
@@ -32,25 +32,25 @@
     "top": 595.06,
     "top_date": "2026-10-09",
     "bottom": 520.18,
-    "period": "2026-10-01 to 2026-10-09"
+    "period": "2026-10-01 to 2026-10-12"
   },
-  "drop_from_peak_pct": 1.6,
-  "recovery_from_crash_pct": 12.7,
+  "drop_from_peak_pct": 3.1,
+  "recovery_from_crash_pct": 10.9,
   "supports": [
     {
-      "level": 568.0,
+      "level": 564.0,
       "label": "S1 KEY",
-      "touches": 6,
-      "evidence": "tested 6x in base period; 3.1% below current"
+      "touches": 4,
+      "evidence": "tested 4x in base period; 2.2% below current"
     },
     {
-      "level": 564.0,
+      "level": 560.0,
       "label": "S2",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
     },
     {
-      "level": 560.0,
+      "level": 548.0,
       "label": "S3",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
@@ -64,29 +64,34 @@
   ],
   "resistances": [
     {
-      "level": 595.06,
+      "level": 585.32,
       "label": "R1 today high",
-      "evidence": "today's high 595.06"
+      "evidence": "today's high 585.3200073242188"
+    },
+    {
+      "level": 595.06,
+      "label": "R3 Oct high",
+      "evidence": "box top 595.06, base period high"
     }
   ],
   "position": {
-    "current": 586.06,
-    "in_box_pct": 88.0,
-    "nearest_support": "S1 KEY (568.0)",
-    "nearest_resistance": "R1 today high (595.06)"
+    "current": 576.76,
+    "in_box_pct": 75.6,
+    "nearest_support": "S1 KEY (564.0)",
+    "nearest_resistance": "R1 today high (585.32)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": true,
     "close_position": "upper_half",
-    "O": 581.65,
-    "H": 595.06,
-    "L": 566.2,
-    "C": 586.06,
-    "body_pct": 15.3,
-    "upper_wick_pct": 31.2,
-    "lower_wick_pct": 53.5
+    "O": 581.73,
+    "H": 585.32,
+    "L": 565.0,
+    "C": 576.76,
+    "body_pct": 24.5,
+    "upper_wick_pct": 17.7,
+    "lower_wick_pct": 57.9
   },
   "bias": {
     "short": {
@@ -94,8 +99,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bullish_continuation",
-      "reason": "higher highs / higher lows"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -104,20 +109,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 568.0 (KEY support)",
-      "then": "still range; watch 595.06 for next test"
+      "if": "hold 564.0 (KEY support)",
+      "then": "still range; watch 585.32 for next test"
     },
     {
-      "if": "break 568.0 on close",
-      "then": "target 564.0 → 560.0 (short-term bearish)"
+      "if": "break 564.0 on close",
+      "then": "target 560.0 → 548.0 (short-term bearish)"
     },
     {
       "if": "break 520.18 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 595.06 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 585.32 on close",
+      "then": "short-term bullish; next test 595.06"
+    },
+    {
+      "if": "break 595.06 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -140,7 +149,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -152,52 +161,52 @@
     "s1": 520.18,
     "s2": 358.88,
     "r2": 567.75,
-    "r3": 468.7,
-    "s3": 200.51,
-    "s4": 109.7,
-    "current_position_pct": 87.5,
-    "notes": "WAIT_RANGE: in box (520-596), pos 87%, no clear setup"
+    "r3": 469.47,
+    "s3": 200.84,
+    "s4": 110.22,
+    "current_position_pct": 75.1,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 595.51）：① 跌到 595.51、收市守住喺 595.51 上面 → 照 BUY 條 plan 做（入場 595.51，止蝕 633.92，目標 557.85）。② 收市跌穿 595.51 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 595.51 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
     {
       "name": "上升三法",
       "bias": "bullish",
       "date": "2026-09-24",
-      "low": 530.45,
-      "high": 549.85,
-      "i": 188
+      "low": 530.4500122070312,
+      "high": 549.8499755859375,
+      "i": 187
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-09-14",
-      "low": 525.85,
-      "high": 546.29,
-      "i": 180
+      "low": 525.8499755859375,
+      "high": 546.2899780273438,
+      "i": 179
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-08-13",
-      "low": 487.1201,
+      "low": 487.1199951171875,
       "high": 514.0,
-      "i": 159
+      "i": 158
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-06-18",
-      "low": 407.207106903,
-      "high": 435.280716412,
-      "i": 121
+      "low": 407.8800048828125,
+      "high": 436.0,
+      "i": 120
     },
     {
       "name": "利淡吞噬",
       "bias": "bearish",
       "date": "2026-06-09",
-      "low": 356.480929837,
-      "high": 407.067238031,
-      "i": 114
+      "low": 357.07000732421875,
+      "high": 407.739990234375,
+      "i": 113
     }
   ]
 }

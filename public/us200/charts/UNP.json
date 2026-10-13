@@ -1,85 +1,91 @@
 {
   "ticker": "US.UNP",
   "ticker_user": "UNP",
-  "name": "聯合太平洋",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "name": "Union Pacific Corporation",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 278.11,
-    "H": 279.06,
-    "L": 276.51,
-    "C": 278.34,
-    "prev_close": 278.2,
-    "chg_pct": 0.05
+    "date": "2026-10-12",
+    "O": 277.78,
+    "H": 281.71,
+    "L": 277.43,
+    "C": 281.57,
+    "prev_close": 278.34,
+    "chg_pct": 1.16
   },
   "phase": "downtrend_active",
-  "adx": 25.5,
-  "plus_di": 16.7,
-  "minus_di": 19.64,
-  "regime": "trend",
+  "adx": 24.75,
+  "plus_di": 19.25,
+  "minus_di": 18.55,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 314.53 (2026-07-23), trough 268.26 (2026-09-21), box top 279.2 (2026-09-21)",
+  "phase_evidence": "Peak 315.99 (2026-07-23), trough 268.26 (2026-09-21), box top 281.71 (2026-10-12)",
   "peak": {
     "date": "2026-07-23",
-    "price": 314.53
+    "price": 315.99
   },
   "trough": {
     "date": "2026-09-21",
     "price": 268.26
   },
   "box": {
-    "top": 279.2,
-    "top_date": "2026-09-21",
+    "top": 281.71,
+    "top_date": "2026-10-12",
     "bottom": 268.26,
-    "period": "2026-09-21 to 2026-10-09"
+    "period": "2026-09-21 to 2026-10-12"
   },
-  "drop_from_peak_pct": 11.5,
-  "recovery_from_crash_pct": 3.8,
+  "drop_from_peak_pct": 10.9,
+  "recovery_from_crash_pct": 5.0,
   "supports": [
     {
-      "level": 272.0,
+      "level": 276.0,
       "label": "S1 KEY",
-      "touches": 10,
-      "evidence": "tested 10x in base period; 2.3% below current"
+      "touches": 8,
+      "evidence": "tested 8x in base period; 2.0% below current"
+    },
+    {
+      "level": 272.0,
+      "label": "S2",
+      "touches": 14,
+      "evidence": "mid-base support, tested 14x"
     },
     {
       "level": 268.0,
-      "label": "S2 bottom",
+      "label": "S3 bottom",
       "touches": 6,
       "evidence": "structural bottom, near crash low 268.26"
     }
   ],
   "resistances": [
     {
-      "level": 279.06,
+      "level": 281.71,
       "label": "R1 today high",
-      "evidence": "today's high 279.06"
+      "evidence": "today's high 281.7099914550781"
     }
   ],
   "position": {
-    "current": 278.34,
-    "in_box_pct": 93.5,
-    "nearest_support": "S1 KEY (272.0)",
-    "nearest_resistance": "R1 today high (279.06)"
+    "current": 281.57,
+    "in_box_pct": 99.0,
+    "nearest_support": "S1 KEY (276.0)",
+    "nearest_resistance": "R1 today high (281.71)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 278.11,
-    "H": 279.06,
-    "L": 276.51,
-    "C": 278.34,
-    "body_pct": 9.0,
-    "upper_wick_pct": 28.2,
-    "lower_wick_pct": 62.7
+    "O": 277.78,
+    "H": 281.71,
+    "L": 277.43,
+    "C": 281.57,
+    "body_pct": 88.6,
+    "upper_wick_pct": 3.3,
+    "lower_wick_pct": 8.2
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -92,19 +98,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 272.0 (KEY support)",
-      "then": "still range; watch 279.06 for next test"
+      "if": "hold 276.0 (KEY support)",
+      "then": "still range; watch 281.71 for next test"
     },
     {
-      "if": "break 272.0 on close",
-      "then": "target 268.0 → lower (short-term bearish)"
+      "if": "break 276.0 on close",
+      "then": "target 272.0 → 268.0 (short-term bearish)"
     },
     {
       "if": "break 268.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 279.06 on close",
+      "if": "reclaim 281.71 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -127,65 +133,65 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 288.47,
+    "target_price": 278.37,
+    "stop_price": 294.36,
+    "risk_pct": 2.04,
+    "reward_pct": 3.5,
+    "rr_ratio": 1.72,
+    "phase_match": true,
     "r1": 288.47,
     "s1": 268.26,
-    "s2": 282.98,
-    "r2": 314.53,
-    "r3": 298.67,
-    "s3": 246.07,
-    "s4": 216.7,
-    "current_position_pct": 49.9,
-    "notes": "WAIT_RANGE: in box (268-288), pos 50%, no clear setup"
+    "s2": 282.85,
+    "r2": 315.99,
+    "r3": 303.15,
+    "s3": 248.91,
+    "s4": 219.98,
+    "current_position_pct": 65.9,
+    "notes": "SELL_R1: in box (268-288), entry at R1 288, target mid 278, stop 294 ｜ 52.2 條規則（SELL plan，resistance 288.47）：① 跌到 288.47、收市守住喺 288.47 上面 → 照 BUY 條 plan 做（入場 288.47，止蝕 294.36，目標 278.37）。② 收市跌穿 288.47 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 288.47 上面』。"
   },
   "patterns": [
     {
       "name": "利好反擊線",
       "bias": "bullish",
       "date": "2026-10-02",
-      "low": 273.08,
-      "high": 278.6,
-      "i": 194
+      "low": 273.0799865722656,
+      "high": 278.6000061035156,
+      "i": 193
     },
     {
       "name": "利好吞噬",
       "bias": "bullish",
       "date": "2026-09-25",
-      "low": 272.33,
+      "low": 272.3299865722656,
       "high": 275.0,
-      "i": 189
+      "i": 188
     },
     {
       "name": "利好身懷六甲",
       "bias": "bullish",
       "date": "2026-09-14",
-      "low": 282.85,
-      "high": 285.64,
-      "i": 180
+      "low": 282.8500061035156,
+      "high": 285.6400146484375,
+      "i": 179
     },
     {
       "name": "利淡反擊線",
       "bias": "bearish",
       "date": "2026-08-31",
-      "low": 300.01,
-      "high": 306.36,
-      "i": 171
+      "low": 300.010009765625,
+      "high": 306.3599853515625,
+      "i": 170
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-08-18",
-      "low": 297.260510465,
-      "high": 302.267275692,
-      "i": 162
+      "low": 298.6400146484375,
+      "high": 303.6700134277344,
+      "i": 161
     }
   ]
 }

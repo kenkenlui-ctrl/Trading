@@ -1,22 +1,22 @@
 {
   "ticker": "US.DASH",
   "ticker_user": "DASH",
-  "name": "DoorDash",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "name": "DoorDash, Inc.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 190.75,
-    "H": 197.91,
-    "L": 189.63,
-    "C": 196.5,
-    "prev_close": 191.71,
-    "chg_pct": 2.5
+    "date": "2026-10-12",
+    "O": 195.0,
+    "H": 195.78,
+    "L": 189.3,
+    "C": 194.24,
+    "prev_close": 196.5,
+    "chg_pct": -1.15
   },
   "phase": "downtrend_active",
-  "adx": 23.15,
-  "plus_di": 22.41,
-  "minus_di": 24.44,
+  "adx": 21.86,
+  "plus_di": 20.81,
+  "minus_di": 23.02,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 238.83 (2026-08-28), trough 178.04 (2026-09-28), box top 197.91 (2026-10-09)",
@@ -32,55 +32,60 @@
     "top": 197.91,
     "top_date": "2026-10-09",
     "bottom": 178.04,
-    "period": "2026-09-28 to 2026-10-09"
+    "period": "2026-09-28 to 2026-10-12"
   },
-  "drop_from_peak_pct": 17.7,
-  "recovery_from_crash_pct": 10.4,
+  "drop_from_peak_pct": 18.7,
+  "recovery_from_crash_pct": 9.1,
   "supports": [
     {
-      "level": 192.0,
-      "label": "S1 KEY",
-      "touches": 5,
-      "evidence": "tested 5x in base period; 2.3% below current"
-    },
-    {
       "level": 188.0,
-      "label": "S2",
-      "touches": 10,
-      "evidence": "mid-base support, tested 10x"
+      "label": "S1 KEY",
+      "touches": 12,
+      "evidence": "tested 12x in base period; 3.2% below current"
     },
     {
       "level": 184.0,
-      "label": "S3 bottom",
+      "label": "S2",
       "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 180.0,
+      "label": "S3 bottom",
+      "touches": 8,
       "evidence": "structural bottom, near crash low 178.04"
     }
   ],
   "resistances": [
     {
-      "level": 197.91,
+      "level": 195.78,
       "label": "R1 today high",
-      "evidence": "today's high 197.915"
+      "evidence": "today's high 195.77999877929688"
+    },
+    {
+      "level": 197.91,
+      "label": "R3 Oct high",
+      "evidence": "box top 197.91, base period high"
     }
   ],
   "position": {
-    "current": 196.5,
-    "in_box_pct": 89.9,
-    "nearest_support": "S1 KEY (192.0)",
-    "nearest_resistance": "R1 today high (197.91)"
+    "current": 194.24,
+    "in_box_pct": 79.5,
+    "nearest_support": "S1 KEY (188.0)",
+    "nearest_resistance": "R1 today high (195.78)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 190.75,
-    "H": 197.91,
-    "L": 189.63,
-    "C": 196.5,
-    "body_pct": 69.4,
-    "upper_wick_pct": 17.1,
-    "lower_wick_pct": 13.5
+    "O": 195.0,
+    "H": 195.78,
+    "L": 189.3,
+    "C": 194.24,
+    "body_pct": 11.7,
+    "upper_wick_pct": 12.0,
+    "lower_wick_pct": 76.2
   },
   "bias": {
     "short": {
@@ -98,20 +103,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 192.0 (KEY support)",
-      "then": "still range; watch 197.91 for next test"
+      "if": "hold 188.0 (KEY support)",
+      "then": "still range; watch 195.78 for next test"
     },
     {
-      "if": "break 192.0 on close",
-      "then": "target 188.0 → 184.0 (short-term bearish)"
+      "if": "break 188.0 on close",
+      "then": "target 184.0 → 180.0 (short-term bearish)"
     },
     {
-      "if": "break 184.0 (crash low)",
+      "if": "break 180.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 197.91 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 195.78 on close",
+      "then": "short-term bullish; next test 197.91"
+    },
+    {
+      "if": "break 197.91 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -142,56 +151,56 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 204.09,
+    "r1": 203.82,
     "s1": 178.04,
     "s2": 166.58,
     "r2": 238.83,
     "r3": 199.05,
     "s3": 146.11,
     "s4": 143.3,
-    "current_position_pct": 70.9,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 204.09）：① 跌到 204.09、收市守住喺 204.09 上面 → 照 BUY 條 plan 做（入場 204.09，止蝕 215.94，目標 191.06）。② 收市跌穿 204.09 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 204.09 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 62.8,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 203.82）：① 跌到 203.82、收市守住喺 203.82 上面 → 照 BUY 條 plan 做（入場 203.82，止蝕 215.64，目標 190.93）。② 收市跌穿 203.82 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 203.82 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
     {
       "name": "利好反擊線",
       "bias": "bullish",
       "date": "2026-10-09",
-      "low": 189.635,
-      "high": 197.915,
-      "i": 199
+      "low": 189.63499450683594,
+      "high": 197.9149932861328,
+      "i": 198
     },
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-09-29",
-      "low": 179.12,
-      "high": 188.1395,
-      "i": 191
+      "low": 179.1199951171875,
+      "high": 188.13999938964844,
+      "i": 190
     },
     {
       "name": "利淡吞噬",
       "bias": "bearish",
       "date": "2026-09-03",
-      "low": 221.61,
+      "low": 221.61000061035156,
       "high": 232.0,
-      "i": 174
+      "i": 173
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-08-12",
-      "low": 210.11,
-      "high": 215.22,
-      "i": 158
+      "low": 210.11000061035156,
+      "high": 215.22000122070312,
+      "i": 157
     },
     {
       "name": "利淡反擊線",
       "bias": "bearish",
       "date": "2026-07-13",
-      "low": 188.58,
-      "high": 195.65,
-      "i": 136
+      "low": 188.5800018310547,
+      "high": 195.64999389648438,
+      "i": 135
     }
   ]
 }

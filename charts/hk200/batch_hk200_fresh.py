@@ -107,13 +107,14 @@ def step1_fetch_all_hk() -> list[dict]:
     return all_stocks
 
 
-def step2_run_analysis(tickers: list[dict], source: str = "yfinance") -> list[dict]:
+def step2_run_analysis(tickers: list[dict], source: str = "yfinance",
+                        asof: str | None = None) -> list[dict]:
     log.info(f"STEP 2: run daily-sr-chart on {len(tickers)} tickers (source={source})")
     summary_rows = []
     total = len(tickers)
     for i, stock in enumerate(tickers, 1):
         ticker = stock["code"]
-        snap = run_one(ticker, source)
+        snap = run_one(ticker, source, asof)
         if snap:
             summary_rows.append({
                 "rank": i,
@@ -149,20 +150,30 @@ def step2_run_analysis(tickers: list[dict], source: str = "yfinance") -> list[di
     return summary_rows
 
 
-def run_one(ticker: str, source: str) -> dict | None:
+def run_one(ticker: str, source: str, asof: str | None = None) -> dict | None:
     safe = ticker.replace(".", "_")
     png = OUT_DIR / f"{safe}.png"
     jsn = OUT_DIR / f"{safe}.json"
+    # 2026-10-13: --asof must be explicit. daily_sr.py's default is "T-1 /
+    # yesterday's close", which is a silent guess — and on 2026-10-13 Yahoo was
+    # missing HK's 2026-10-12 session entirely (futu has it; yfinance did not),
+    # so the implicit T-1 cap of 10-12 landed every snapshot on 10-09 instead:
+    # two sessions stale, stamped by a code path that looked correct. refresh.sh
+    # already owns the session date per market (ASOF_HK); pass it through rather
+    # than letting a CLI default re-derive it.
+    cmd = [
+        "python3",
+        "/Users/kenken/.minimax/skills/daily-sr-chart/scripts/daily_sr.py",
+        "-t", ticker,
+        "-o", str(png),
+        "--json", str(jsn),
+        "--source", source,
+    ]
+    if asof:
+        cmd += ["--asof", asof]
     try:
         result = subprocess.run(
-            [
-                "python3",
-                "/Users/kenken/.minimax/skills/daily-sr-chart/scripts/daily_sr.py",
-                "-t", ticker,
-                "-o", str(png),
-                "--json", str(jsn),
-                "--source", source,
-            ],
+            cmd,
             capture_output=True, text=True, timeout=60,
         )
         if result.returncode == 0 and jsn.exists():
@@ -173,6 +184,14 @@ def run_one(ticker: str, source: str) -> dict | None:
 
 
 def main():
+    import argparse
+    # 2026-10-13: refresh.sh already decides the HK session (ASOF_HK). Accept it
+    # here instead of letting daily_sr's implicit T-1 default re-derive a date
+    # that a vendor data hole can push two sessions backwards.
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--asof", help="HK close date YYYY-MM-DD (default: daily_sr's T-1)")
+    _args = ap.parse_args()
+
     log.info("=" * 60)
     log.info(f"HK 200 FRESH batch start @ {datetime.now().isoformat()}")
     log.info("=" * 60)
@@ -193,7 +212,7 @@ def main():
     log.info(f"  new universe saved → {NEW_UNIVERSE_FILE} ({len(universe_codes)} tickers)")
 
     # Run analysis (yfinance source — futu OpenD unstable today)
-    summary = step2_run_analysis(top200, source="yfinance")
+    summary = step2_run_analysis(top200, source="yfinance", asof=_args.asof)
 
     # Highlights
     log.info("=" * 60)

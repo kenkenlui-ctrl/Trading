@@ -130,20 +130,32 @@ def process_one(code: str) -> tuple[str, bool]:
                 json.dumps(bars, ensure_ascii=False), encoding="utf-8"
             )
         # 2026-10-10: the name cache is keyed by ticker, so any universe regen that
-    # swaps names in leaves the newcomers with no entry, and _jp_name() returns
-    # "" — /jp200/ then rendered a ticker with a blank company name and
-    # self_test's fabricated-price guard caught it. A lookup that cannot find a
-    # value must not blank one we already published, so fall back to the
-    # previous snapshot before giving up.
-    _prev_name = ""
-    _pj = JP_JSON_DIR / f"{safe}.json"
-    if _pj.exists():
-        try:
-            _prev_name = (json.loads(_pj.read_text(encoding="utf-8")) or {}).get("name") or ""
-        except Exception:
-            _prev_name = ""
+        # swaps names in leaves the newcomers with no entry, and _jp_name() returns
+        # "" — /jp200/ then rendered a ticker with a blank company name and
+        # self_test's fabricated-price guard caught it. A lookup that cannot find a
+        # value must not blank one we already published, so fall back to the
+        # previous snapshot before giving up.
+        #
+        # 2026-10-13: BOTH this block and the `snap_out = {` literal below it
+        # shipped at the wrong indent (4 spaces where the surrounding try body
+        # sits at 8, with dict keys at 12). Either one closes process_one's
+        # `try` mid-body and Python refuses to parse the file at all
+        # (`SyntaxError: expected 'except' or 'finally' block`) — so
+        # fetch_jp_charts.py could not run a single ticker.
+        #
+        # Nothing caught it because refresh.sh never calls this script (JP charts
+        # are not in the daily pipeline), so JP sat on 2026-10-09 while HK and US
+        # moved daily and the file looked perfectly healthy in git. Indentation is
+        # the fix; the missing pipeline step is fixed in refresh.sh.
+        _prev_name = ""
+        _pj = JP_JSON_DIR / f"{safe}.json"
+        if _pj.exists():
+            try:
+                _prev_name = (json.loads(_pj.read_text(encoding="utf-8")) or {}).get("name") or ""
+            except Exception:
+                _prev_name = ""
 
-    snap_out = {
+        snap_out = {
             "ticker": code,
             "asof": data_asof or snapshot.get("asof", ""),
             "close": close,

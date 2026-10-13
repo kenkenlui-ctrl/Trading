@@ -1,91 +1,79 @@
 {
   "ticker": "US.KO",
   "ticker_user": "KO",
-  "name": "可口可樂",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "name": "Coca-Cola Company (The)",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 87.6,
-    "H": 88.47,
-    "L": 87.39,
-    "C": 88.05,
-    "prev_close": 87.77,
-    "chg_pct": 0.32
+    "date": "2026-10-12",
+    "O": 88.42,
+    "H": 89.8,
+    "L": 88.42,
+    "C": 89.79,
+    "prev_close": 88.05,
+    "chg_pct": 1.98
   },
   "phase": "downtrend_active",
-  "adx": 13.99,
-  "plus_di": 21.2,
-  "minus_di": 18.23,
+  "adx": 13.93,
+  "plus_di": 26.17,
+  "minus_di": 17.08,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 91.94 (2026-08-24), trough 85.13 (2026-10-05), box top 88.47 (2026-10-09)",
+  "phase_evidence": "Peak 92.49 (2026-08-24), trough 85.13 (2026-10-05), box top 89.8 (2026-10-12)",
   "peak": {
     "date": "2026-08-24",
-    "price": 91.94
+    "price": 92.49
   },
   "trough": {
     "date": "2026-10-05",
     "price": 85.13
   },
   "box": {
-    "top": 88.47,
-    "top_date": "2026-10-09",
+    "top": 89.8,
+    "top_date": "2026-10-12",
     "bottom": 85.13,
-    "period": "2026-10-05 to 2026-10-09"
+    "period": "2026-10-05 to 2026-10-12"
   },
-  "drop_from_peak_pct": 4.2,
-  "recovery_from_crash_pct": 3.4,
+  "drop_from_peak_pct": 2.9,
+  "recovery_from_crash_pct": 5.5,
   "supports": [
     {
       "level": 88.0,
-      "label": "S1 KEY",
-      "touches": 7,
-      "evidence": "tested 7x in base period; 0.1% below current"
-    },
-    {
-      "level": 84.0,
-      "label": "S2",
-      "touches": 17,
-      "evidence": "mid-base support, tested 17x"
-    },
-    {
-      "level": 80.0,
-      "label": "S3 bottom",
-      "touches": 6,
+      "label": "S1 bottom",
+      "touches": 55,
       "evidence": "structural bottom, near crash low 85.13"
     }
   ],
   "resistances": [
     {
-      "level": 88.47,
+      "level": 89.8,
       "label": "R1 today high",
-      "evidence": "today's high 88.475"
+      "evidence": "today's high 89.80000305175781"
     }
   ],
   "position": {
-    "current": 88.05,
-    "in_box_pct": 95.0,
-    "nearest_support": "S1 KEY (88.0)",
-    "nearest_resistance": "R1 today high (88.47)"
+    "current": 89.79,
+    "in_box_pct": 99.4,
+    "nearest_support": "S1 bottom (88.0)",
+    "nearest_resistance": "R1 today high (89.8)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_reclaim",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 87.6,
-    "H": 88.47,
-    "L": 87.39,
-    "C": 88.05,
-    "body_pct": 41.5,
-    "upper_wick_pct": 39.2,
-    "lower_wick_pct": 19.2
+    "O": 88.42,
+    "H": 89.8,
+    "L": 88.42,
+    "C": 89.79,
+    "body_pct": 99.3,
+    "upper_wick_pct": 0.7,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -99,18 +87,18 @@
   "scenarios": [
     {
       "if": "hold 88.0 (KEY support)",
-      "then": "still range; watch 88.47 for next test"
+      "then": "still range; watch 89.8 for next test"
     },
     {
       "if": "break 88.0 on close",
-      "then": "target 84.0 → 80.0 (short-term bearish)"
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 80.0 (crash low)",
+      "if": "break 88.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 88.47 on close",
+      "if": "reclaim 89.8 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -135,63 +123,55 @@
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
-    "trigger_price": 89.82,
-    "target_price": 87.48,
-    "stop_price": 91.76,
-    "risk_pct": 2.16,
-    "reward_pct": 2.61,
-    "rr_ratio": 1.21,
+    "trigger_price": 89.8,
+    "target_price": 87.47,
+    "stop_price": 91.69,
+    "risk_pct": 2.11,
+    "reward_pct": 2.6,
+    "rr_ratio": 1.23,
     "phase_match": true,
-    "r1": 89.82,
+    "r1": 89.8,
     "s1": 85.13,
-    "s2": 80.35,
-    "r2": 91.94,
-    "r3": 85.17,
-    "s3": 73.63,
-    "s4": 65.99,
-    "current_position_pct": 62.2,
-    "notes": "SELL_R1: in box (85-90), entry at R1 90, target mid 87, stop 92 ｜ 52.2 條規則（SELL plan，resistance 89.82）：① 跌到 89.82、收市守住喺 89.82 上面 → 照 BUY 條 plan 做（入場 89.82，止蝕 91.76，目標 87.48）。② 收市跌穿 89.82 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 89.82 上面』。"
+    "s2": 80.88,
+    "r2": 92.49,
+    "r3": 85.68,
+    "s3": 74.55,
+    "s4": 67.27,
+    "current_position_pct": 99.8,
+    "notes": "SELL_R1: in box (85-90), entry at R1 90, target mid 87, stop 92 ｜ 52.2 條規則（SELL plan，resistance 89.80）：① 跌到 89.80、收市守住喺 89.80 上面 → 照 BUY 條 plan 做（入場 89.80，止蝕 91.69，目標 87.47）。② 收市跌穿 89.80 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 89.80 上面』。"
   },
   "patterns": [
-    {
-      "name": "上升三法",
-      "bias": "bullish",
-      "date": "2026-09-29",
-      "low": 86.56,
-      "high": 87.28,
-      "i": 191
-    },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-08-31",
-      "low": 88.074448722,
-      "high": 88.998932213,
-      "i": 171
+      "low": 88.5999984741211,
+      "high": 89.52999877929688,
+      "i": 170
     },
     {
       "name": "利淡反擊線",
       "bias": "bearish",
       "date": "2026-08-11",
-      "low": 85.594248388,
-      "high": 86.533642903,
-      "i": 157
+      "low": 86.11000061035156,
+      "high": 87.05000305175781,
+      "i": 156
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-07-06",
-      "low": 81.826729645,
-      "high": 84.058412911,
-      "i": 131
+      "low": 82.31999969482422,
+      "high": 84.55999755859375,
+      "i": 130
     },
     {
       "name": "利好身懷六甲",
       "bias": "bullish",
       "date": "2026-06-05",
-      "low": 76.526330369,
-      "high": 79.745512978,
-      "i": 112
+      "low": 77.4800033569336,
+      "high": 80.73999786376953,
+      "i": 111
     }
   ]
 }

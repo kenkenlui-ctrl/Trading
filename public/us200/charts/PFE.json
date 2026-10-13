@@ -1,25 +1,25 @@
 {
   "ticker": "US.PFE",
   "ticker_user": "PFE",
-  "name": "輝瑞",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "name": "Pfizer, Inc.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 27.61,
-    "H": 28.29,
-    "L": 27.59,
-    "C": 28.28,
-    "prev_close": 27.82,
-    "chg_pct": 1.65
+    "date": "2026-10-12",
+    "O": 28.42,
+    "H": 28.5,
+    "L": 28.28,
+    "C": 28.4,
+    "prev_close": 28.28,
+    "chg_pct": 0.42
   },
   "phase": "downtrend_active",
-  "adx": 22.49,
-  "plus_di": 25.88,
-  "minus_di": 21.34,
+  "adx": 21.25,
+  "plus_di": 28.02,
+  "minus_di": 20.7,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 29.21 (2026-09-03), trough 27.12 (2026-10-05), box top 28.29 (2026-10-09)",
+  "phase_evidence": "Peak 29.21 (2026-09-03), trough 27.12 (2026-10-05), box top 28.5 (2026-10-12)",
   "peak": {
     "date": "2026-09-03",
     "price": 29.21
@@ -29,52 +29,46 @@
     "price": 27.12
   },
   "box": {
-    "top": 28.29,
-    "top_date": "2026-10-09",
+    "top": 28.5,
+    "top_date": "2026-10-12",
     "bottom": 27.12,
-    "period": "2026-10-05 to 2026-10-09"
+    "period": "2026-10-05 to 2026-10-12"
   },
-  "drop_from_peak_pct": 3.2,
-  "recovery_from_crash_pct": 4.3,
+  "drop_from_peak_pct": 2.8,
+  "recovery_from_crash_pct": 4.7,
   "supports": [
     {
       "level": 28.0,
-      "label": "S1 KEY",
-      "touches": 45,
-      "evidence": "tested 45x in base period; 1.0% below current"
-    },
-    {
-      "level": 24.0,
-      "label": "S2 bottom",
-      "touches": 15,
+      "label": "S1 bottom",
+      "touches": 50,
       "evidence": "structural bottom, near crash low 27.12"
     }
   ],
   "resistances": [
     {
-      "level": 28.29,
+      "level": 28.5,
       "label": "R1 today high",
-      "evidence": "today's high 28.285"
+      "evidence": "today's high 28.5"
     }
   ],
   "position": {
-    "current": 28.28,
-    "in_box_pct": 99.8,
-    "nearest_support": "S1 KEY (28.0)",
-    "nearest_resistance": "R1 today high (28.29)"
+    "current": 28.4,
+    "in_box_pct": 80.0,
+    "nearest_support": "S1 bottom (28.0)",
+    "nearest_resistance": "R1 today high (28.5)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_rejection",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 27.61,
-    "H": 28.29,
-    "L": 27.59,
-    "C": 28.28,
-    "body_pct": 96.4,
-    "upper_wick_pct": 0.7,
-    "lower_wick_pct": 2.9
+    "O": 28.42,
+    "H": 28.5,
+    "L": 28.28,
+    "C": 28.4,
+    "body_pct": 9.1,
+    "upper_wick_pct": 36.4,
+    "lower_wick_pct": 54.5
   },
   "bias": {
     "short": {
@@ -86,25 +80,25 @@
       "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 28.0 (KEY support)",
-      "then": "still range; watch 28.29 for next test"
+      "then": "still range; watch 28.5 for next test"
     },
     {
       "if": "break 28.0 on close",
-      "then": "target 24.0 → lower (short-term bearish)"
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 24.0 (crash low)",
+      "if": "break 28.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 28.29 on close",
+      "if": "reclaim 28.5 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -138,54 +132,46 @@
     "phase_match": false,
     "r1": 28.95,
     "s1": 27.12,
-    "s2": 24.22,
+    "s2": 24.44,
     "r2": 29.21,
-    "r3": 26.7,
-    "s3": 23.21,
-    "s4": 23.61,
-    "current_position_pct": 63.6,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 28.95）：① 跌到 28.95、收市守住喺 28.95 上面 → 照 BUY 條 plan 做（入場 28.95，止蝕 29.80，目標 28.03）。② 收市跌穿 28.95 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 28.95 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "r3": 27.58,
+    "s3": 23.62,
+    "s4": 24.83,
+    "current_position_pct": 69.9,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 28.95）：① 跌到 28.95、收市守住喺 28.95 上面 → 照 BUY 條 plan 做（入場 28.95，止蝕 29.77，目標 28.04）。② 收市跌穿 28.95 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 28.95 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
     {
       "name": "平頭頂",
       "bias": "bearish",
       "date": "2026-09-03",
-      "low": 28.44,
-      "high": 29.21,
-      "i": 174
+      "low": 28.440000534057617,
+      "high": 29.209999084472656,
+      "i": 173
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-08-26",
-      "low": 28.145,
+      "low": 28.149999618530273,
       "high": 28.5,
-      "i": 168
+      "i": 167
     },
     {
       "name": "利淡吞噬",
       "bias": "bearish",
       "date": "2026-07-24",
-      "low": 24.51,
+      "low": 24.510000228881836,
       "high": 24.75,
-      "i": 145
+      "i": 144
     },
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-07-15",
-      "low": 23.892035179,
-      "high": 24.393266687,
-      "i": 138
-    },
-    {
-      "name": "利淡反擊線",
-      "bias": "bearish",
-      "date": "2026-06-15",
-      "low": 25.52840863,
-      "high": 25.96575769,
-      "i": 118
+      "low": 24.309999465942383,
+      "high": 24.81999969482422,
+      "i": 137
     }
   ]
 }

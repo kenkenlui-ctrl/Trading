@@ -1,56 +1,62 @@
 {
   "ticker": "US.MDT",
   "ticker_user": "MDT",
-  "name": "美敦力",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "name": "Medtronic plc.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 88.49,
-    "H": 89.81,
-    "L": 87.4,
-    "C": 88.48,
-    "prev_close": 87.75,
-    "chg_pct": 0.83
+    "date": "2026-10-12",
+    "O": 90.76,
+    "H": 92.87,
+    "L": 90.71,
+    "C": 91.93,
+    "prev_close": 88.48,
+    "chg_pct": 3.9
   },
   "phase": "base_building",
-  "adx": 19.34,
-  "plus_di": 16.61,
-  "minus_di": 16.79,
-  "regime": "range",
+  "adx": 21.31,
+  "plus_di": 23.63,
+  "minus_di": 15.54,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 102.87 (2026-02-04), trough 72.06 (2026-06-02), box top 94.63 (2026-09-01)",
+  "phase_evidence": "Peak 105.5 (2026-02-04), trough 73.31 (2026-06-02), box top 95.41 (2026-09-01)",
   "peak": {
     "date": "2026-02-04",
-    "price": 102.87
+    "price": 105.5
   },
   "trough": {
     "date": "2026-06-02",
-    "price": 72.06
+    "price": 73.31
   },
   "box": {
-    "top": 94.63,
+    "top": 95.41,
     "top_date": "2026-09-01",
-    "bottom": 72.06,
-    "period": "2026-06-02 to 2026-10-09"
+    "bottom": 73.31,
+    "period": "2026-06-02 to 2026-10-12"
   },
-  "drop_from_peak_pct": 14.0,
-  "recovery_from_crash_pct": 22.8,
+  "drop_from_peak_pct": 12.9,
+  "recovery_from_crash_pct": 25.4,
   "supports": [
     {
-      "level": 84.0,
+      "level": 88.0,
       "label": "S1 KEY",
+      "touches": 23,
+      "evidence": "tested 23x in base period; 4.3% below current"
+    },
+    {
+      "level": 84.0,
+      "label": "S2",
       "touches": 24,
-      "evidence": "tested 24x in base period; 5.1% below current"
+      "evidence": "mid-base support, tested 24x"
     },
     {
       "level": 80.0,
-      "label": "S2",
-      "touches": 25,
-      "evidence": "mid-base support, tested 25x"
+      "label": "S3",
+      "touches": 28,
+      "evidence": "mid-base support, tested 28x"
     },
     {
-      "level": 72.06,
+      "level": 73.31,
       "label": "S4 crash low",
       "touches": 1,
       "evidence": "crash low 2026-06-02, structural bottom"
@@ -58,34 +64,34 @@
   ],
   "resistances": [
     {
-      "level": 89.81,
+      "level": 92.87,
       "label": "R1 today high",
-      "evidence": "rejection at 89.805 (long upper wick, close weak)"
+      "evidence": "today's high 92.87000274658203"
     },
     {
-      "level": 94.63,
+      "level": 95.41,
       "label": "R3 Sep high",
-      "evidence": "box top 94.63, base period high"
+      "evidence": "box top 95.41, base period high"
     }
   ],
   "position": {
-    "current": 88.48,
-    "in_box_pct": 72.8,
-    "nearest_support": "S1 KEY (84.0)",
-    "nearest_resistance": "R1 today high (89.81)"
+    "current": 91.93,
+    "in_box_pct": 84.3,
+    "nearest_support": "S1 KEY (88.0)",
+    "nearest_resistance": "R1 today high (92.87)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 88.49,
-    "H": 89.81,
-    "L": 87.4,
-    "C": 88.48,
-    "body_pct": 0.4,
-    "upper_wick_pct": 54.7,
-    "lower_wick_pct": 44.9
+    "close_position": "upper_half",
+    "O": 90.76,
+    "H": 92.87,
+    "L": 90.71,
+    "C": 91.93,
+    "body_pct": 54.2,
+    "upper_wick_pct": 43.5,
+    "lower_wick_pct": 2.3
   },
   "bias": {
     "short": {
@@ -103,23 +109,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 84.0 (KEY support)",
-      "then": "still range; watch 89.81 for next test"
+      "if": "hold 88.0 (KEY support)",
+      "then": "still range; watch 92.87 for next test"
     },
     {
-      "if": "break 84.0 on close",
-      "then": "target 80.0 → 72.06 (short-term bearish)"
+      "if": "break 88.0 on close",
+      "then": "target 84.0 → 80.0 (short-term bearish)"
     },
     {
-      "if": "break 72.06 (crash low)",
+      "if": "break 73.31 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 89.81 on close",
-      "then": "short-term bullish; next test 94.63"
+      "if": "reclaim 92.87 on close",
+      "then": "short-term bullish; next test 95.41"
     },
     {
-      "if": "break 94.63 (box top)",
+      "if": "break 95.41 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -142,65 +148,65 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 94.7,
+    "target_price": 89.96,
+    "stop_price": 98.42,
+    "risk_pct": 3.93,
+    "reward_pct": 5.01,
+    "rr_ratio": 1.27,
     "phase_match": true,
-    "r1": 93.93,
+    "r1": 94.7,
     "s1": 85.22,
-    "s2": 80.83,
-    "r2": 94.63,
-    "r3": 85.29,
-    "s3": 72.06,
-    "s4": 83.48,
-    "current_position_pct": 37.4,
-    "notes": "WAIT_RANGE: in box (85-94), pos 37%, no clear setup"
+    "s2": 81.49,
+    "r2": 95.41,
+    "r3": 85.99,
+    "s3": 73.31,
+    "s4": 81.96,
+    "current_position_pct": 70.8,
+    "notes": "SELL_R1: in box (85-95), entry at R1 95, target mid 90, stop 98 ｜ 52.2 條規則（SELL plan，resistance 94.70）：① 跌到 94.70、收市守住喺 94.70 上面 → 照 BUY 條 plan 做（入場 94.70，止蝕 98.42，目標 89.96）。② 收市跌穿 94.70 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 94.70 上面』。"
   },
   "patterns": [
+    {
+      "name": "利好反擊線",
+      "bias": "bullish",
+      "date": "2026-09-28",
+      "low": 87.5199966430664,
+      "high": 89.52999877929688,
+      "i": 189
+    },
     {
       "name": "利淡吞噬",
       "bias": "bearish",
       "date": "2026-09-18",
-      "low": 91.291284513,
-      "high": 92.273231184,
-      "i": 184
+      "low": 92.04000091552734,
+      "high": 93.02999877929688,
+      "i": 183
     },
     {
       "name": "三隻烏鴉",
       "bias": "bearish",
       "date": "2026-09-03",
-      "low": 90.225029288,
-      "high": 92.957618259,
-      "i": 174
+      "low": 90.97000122070312,
+      "high": 93.72000122070312,
+      "i": 173
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-08-27",
-      "low": 89.228204637,
-      "high": 90.864782423,
-      "i": 169
+      "low": 89.95999908447266,
+      "high": 91.61000061035156,
+      "i": 168
     },
     {
       "name": "利淡反擊線",
       "bias": "bearish",
       "date": "2026-08-06",
-      "low": 84.978061719,
-      "high": 86.589842872,
-      "i": 154
-    },
-    {
-      "name": "利淡反擊線",
-      "bias": "bearish",
-      "date": "2026-07-07",
-      "low": 83.048883662,
-      "high": 85.290499296,
-      "i": 132
+      "low": 85.68000030517578,
+      "high": 87.30000305175781,
+      "i": 153
     }
   ]
 }

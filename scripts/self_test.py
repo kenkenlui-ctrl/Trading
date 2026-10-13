@@ -35,6 +35,7 @@ from __future__ import annotations
 import argparse
 import ast
 import json
+import os
 import re
 import sys
 import tempfile
@@ -448,22 +449,68 @@ def t_sitemap_guard() -> None:
 # --------------------------------------------------------------------------
 def t_v2_bars_fresh() -> None:
     sys.path.insert(0, str(REPO / "scripts"))
-    from build_v2_signals import bars_freshness, bars_from_public, MARKETS
+    from build_v2_signals import bars_freshness, bars_from_public
+    from datetime import date
 
-    for mkt in ("jp200", "us200"):
+    # 2026-10-13. This guard was vacuous. Two defects, either one fatal on its own:
+    #
+    #   1. The reference was `MARKETS[mkt].get("_ref", "2026-10-05")`, but no
+    #      market in build_v2_signals.MARKETS has ever had a `_ref` key, so the
+    #      .get() ALWAYS returned the fallback. The "T-1" being compared against
+    #      was a literal frozen at 2026-10-05. From that day on, lag = ref - bars
+    #      went NEGATIVE as the data advanced — JP bars at 2026-10-09 gave
+    #      lag = -4, and -4 <= 4 passed. The later the data got, the more
+    #      reliably it passed. It could only ever fire on bars from before
+    #      2026-10-01.
+    #   2. The loop covered ("jp200", "us200") and never hk200, so the largest
+    #      market on the site had no freshness check at all.
+    #
+    # JP then sat on 2026-10-09 while HK and US moved daily, and this function
+    # reported PASS on every run — the check that exists precisely to catch that.
+    #
+    # The reference now comes from the same ASOF_* the pipeline was GIVEN (the
+    # dates refresh.sh already owns, per-market, because the three markets do not
+    # share a calendar). Nothing is inferred. Standalone runs with no env fall
+    # back to cross-market consistency: one market stuck while the others moved
+    # is the failure mode, and it is detectable without knowing any date.
+    expected = {"hk200": os.environ.get("ASOF_HK"),
+                "us200": os.environ.get("ASOF_US"),
+                "jp200": os.environ.get("ASOF_JP")}
+
+    seen = {}
+    for mkt in ("hk200", "us200", "jp200"):
         bars = bars_from_public(mkt)
         if not bars:
             record(f"v2/{mkt} bars present", False, "no bars")
             continue
         d, at, tot = bars_freshness(bars)
-        # MUST-FAIL: the guard's own threshold. A 2026-10-05 build reading
-        # 09-30 bars must be REJECTED, not quietly published.
-        from datetime import date
-        ref = date.fromisoformat(MARKETS[mkt].get("_ref", "2026-10-05") or "2026-10-05")
-        lag = (ref - date.fromisoformat(d)).days if d else 999
-        ok = lag <= 4
-        record(f"v2/{mkt} bars within 4 sessions of T-1 ({d}, {at}/{tot})", ok,
-               f"{lag}d behind — this is the condition that shipped 86 US signals on 6-day-old bars")
+        seen[mkt] = d
+        if not d:
+            record(f"v2/{mkt} bars carry a date", False, f"no last-bar date ({at}/{tot})")
+            continue
+        exp = expected.get(mkt)
+        if exp:
+            lag = (date.fromisoformat(exp) - date.fromisoformat(d)).days
+            # 2 calendar days, and the label says calendar days because that is
+            # what .days measures. A weekend plus one missed session is 3, which
+            # is exactly the drift this has to catch.
+            record(f"v2/{mkt} bars within 2 days of {exp} ({d}, {at}/{tot})", lag <= 2,
+                   f"{lag}d behind the session refresh.sh was given")
+        else:
+            record(f"v2/{mkt} bars dated ({d}, {at}/{tot})", True,
+                   "no ASOF_* in env — cross-market check below carries this market")
+
+    # Cross-market floor: runs with no ASOF_* env (standalone, CI) still catch a
+    # market that fell behind the rest of the same build.
+    dated = [v for v in seen.values() if v]
+    if dated:
+        newest = max(dated)
+        for mkt, d in seen.items():
+            if not d or expected.get(mkt):
+                continue
+            lag = (date.fromisoformat(newest) - date.fromisoformat(d)).days
+            record(f"v2/{mkt} not stranded behind {newest} ({d})", lag <= 3,
+                   f"{lag}d behind the freshest market in this build")
 
     p = PUBLIC / "v2-signals.json"
     if p.exists():

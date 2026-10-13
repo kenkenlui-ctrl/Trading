@@ -1,97 +1,91 @@
 {
   "ticker": "US.COF",
   "ticker_user": "COF",
-  "name": "第一資本信貸",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-09 (200 daily bars)",
+  "name": "Capital One Financial Corporati",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 198.61,
-    "H": 200.5,
-    "L": 197.57,
-    "C": 199.26,
-    "prev_close": 199.4,
-    "chg_pct": -0.07
+    "date": "2026-10-12",
+    "O": 199.23,
+    "H": 202.39,
+    "L": 199.23,
+    "C": 201.14,
+    "prev_close": 199.26,
+    "chg_pct": 0.94
   },
   "phase": "base_building",
-  "adx": 26.87,
-  "plus_di": 20.08,
-  "minus_di": 26.55,
+  "adx": 25.49,
+  "plus_di": 22.16,
+  "minus_di": 25.2,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 256.63 (2026-01-06), trough 173.62 (2026-03-27), box top 227.34 (2026-08-14)",
+  "phase_evidence": "Peak 259.64 (2026-01-06), trough 174.24 (2026-06-11), box top 228.14 (2026-08-14)",
   "peak": {
     "date": "2026-01-06",
-    "price": 256.63
+    "price": 259.64
   },
   "trough": {
-    "date": "2026-03-27",
-    "price": 173.62
+    "date": "2026-06-11",
+    "price": 174.24
   },
   "box": {
-    "top": 227.34,
+    "top": 228.14,
     "top_date": "2026-08-14",
-    "bottom": 173.62,
-    "period": "2026-03-27 to 2026-10-09"
+    "bottom": 174.24,
+    "period": "2026-06-11 to 2026-10-12"
   },
-  "drop_from_peak_pct": 22.4,
-  "recovery_from_crash_pct": 14.8,
+  "drop_from_peak_pct": 22.5,
+  "recovery_from_crash_pct": 15.4,
   "supports": [
     {
-      "level": 192.0,
+      "level": 196.0,
       "label": "S1 KEY",
-      "touches": 17,
-      "evidence": "tested 17x in base period; 3.6% below current"
+      "touches": 16,
+      "evidence": "tested 16x in base period; 2.6% below current"
     },
     {
-      "level": 188.0,
+      "level": 192.0,
       "label": "S2",
-      "touches": 15,
-      "evidence": "mid-base support, tested 15x"
+      "touches": 12,
+      "evidence": "mid-base support, tested 12x"
     },
     {
-      "level": 184.0,
-      "label": "S3",
-      "touches": 8,
-      "evidence": "mid-base support, tested 8x"
-    },
-    {
-      "level": 173.62,
+      "level": 174.24,
       "label": "S4 crash low",
       "touches": 1,
-      "evidence": "crash low 2026-03-27, structural bottom"
+      "evidence": "crash low 2026-06-11, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 200.5,
+      "level": 202.39,
       "label": "R1 today high",
-      "evidence": "today's high 200.505"
+      "evidence": "today's high 202.38999938964844"
     },
     {
-      "level": 227.34,
+      "level": 228.14,
       "label": "R3 Aug high",
-      "evidence": "box top 227.34, base period high"
+      "evidence": "box top 228.14, base period high"
     }
   ],
   "position": {
-    "current": 199.26,
-    "in_box_pct": 47.7,
-    "nearest_support": "S1 KEY (192.0)",
-    "nearest_resistance": "R1 today high (200.5)"
+    "current": 201.14,
+    "in_box_pct": 49.9,
+    "nearest_support": "S1 KEY (196.0)",
+    "nearest_resistance": "R1 today high (202.39)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 198.61,
-    "H": 200.5,
-    "L": 197.57,
-    "C": 199.26,
-    "body_pct": 22.1,
-    "upper_wick_pct": 42.4,
-    "lower_wick_pct": 35.4
+    "O": 199.23,
+    "H": 202.39,
+    "L": 199.23,
+    "C": 201.14,
+    "body_pct": 60.4,
+    "upper_wick_pct": 39.6,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
@@ -109,23 +103,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 192.0 (KEY support)",
-      "then": "still range; watch 200.5 for next test"
+      "if": "hold 196.0 (KEY support)",
+      "then": "still range; watch 202.39 for next test"
     },
     {
-      "if": "break 192.0 on close",
-      "then": "target 188.0 → 184.0 (short-term bearish)"
+      "if": "break 196.0 on close",
+      "then": "target 192.0 → 174.24 (short-term bearish)"
     },
     {
-      "if": "break 173.62 (crash low)",
+      "if": "break 174.24 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 200.5 on close",
-      "then": "short-term bullish; next test 227.34"
+      "if": "reclaim 202.39 on close",
+      "then": "short-term bullish; next test 228.14"
     },
     {
-      "if": "break 227.34 (box top)",
+      "if": "break 228.14 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -157,56 +151,56 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": true,
-    "r1": 208.86,
+    "r1": 208.82,
     "s1": 189.78,
-    "s2": 195.2,
-    "r2": 227.34,
-    "r3": 212.57,
-    "s3": 173.63,
-    "s4": 173.62,
-    "current_position_pct": 49.7,
-    "notes": "WAIT_RANGE: in box (190-209), pos 50%, no clear setup"
+    "s2": 195.89,
+    "r2": 228.14,
+    "r3": 213.32,
+    "s3": 174.24,
+    "s4": 174.98,
+    "current_position_pct": 59.7,
+    "notes": "WAIT_RANGE: in box (190-209), pos 60%, no clear setup"
   },
   "patterns": [
     {
       "name": "利好反擊線",
       "bias": "bullish",
       "date": "2026-10-08",
-      "low": 193.03,
-      "high": 199.57,
-      "i": 198
+      "low": 193.02999877929688,
+      "high": 199.57000732421875,
+      "i": 197
     },
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-09-02",
-      "low": 211.73,
-      "high": 220.56,
-      "i": 173
+      "low": 211.72999572753906,
+      "high": 220.55999755859375,
+      "i": 172
+    },
+    {
+      "name": "平頭底",
+      "bias": "bullish",
+      "date": "2026-08-27",
+      "low": 214.55999755859375,
+      "high": 218.69000244140625,
+      "i": 168
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-08-17",
-      "low": 221.34,
-      "high": 226.8,
-      "i": 161
+      "low": 221.33999633789062,
+      "high": 226.8000030517578,
+      "i": 160
     },
     {
       "name": "利淡反擊線",
       "bias": "bearish",
       "date": "2026-07-06",
-      "low": 203.342020874,
-      "high": 207.357739821,
-      "i": 131
-    },
-    {
-      "name": "上升三法",
-      "bias": "bullish",
-      "date": "2026-06-24",
-      "low": 196.516026095,
-      "high": 202.604525256,
-      "i": 124
+      "low": 204.05999755859375,
+      "high": 208.08999633789062,
+      "i": 130
     }
   ]
 }

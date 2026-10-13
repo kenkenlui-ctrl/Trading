@@ -38,6 +38,10 @@ COLS = ("date", "open", "high", "low", "close", "volume")
 # NOT in this set: a genuine zero-volume session is a real session, and
 # dropping those bars would silently punch holes in the chart's x-axis.
 PRICE_COLS = ("open", "high", "low", "close")
+# A market whose series mostly failed to refresh is publishing stale bars, and no
+# per-ticker message makes that legible in a build log. Below this, the step is
+# treated as broken and stops the pipeline.
+MIN_OK_RATE = 0.90
 
 
 def universe(upath, out_dir: Path):
@@ -142,10 +146,17 @@ def one(tk: str, safe: str, out_dir: Path, asof: str, days: int, source: str):
     # extra chars per field. At 400 bars x 671 files that was ~22 MB of the
     # deploy for digits that carry no information: HK/US/JP all quote to 2-3
     # dp, so 4 dp is lossless at any displayed precision.
+    #
+    # This shipped as `PRICE_COLS | {"volume"}` and PRICE_COLS is a TUPLE, so
+    # `tuple | set` is a TypeError — raised once per ticker, on every market,
+    # on every run. Step 1b of refresh.sh piped the output into `tail -3`,
+    # whose exit status is what `set -e` sees, so the crash was invisible and
+    # 600 OHLC files went unrefreshed for a whole run. Tuple concatenation is
+    # the fix; see refresh.sh's pipefail note for the other half.
     rows = [{**r,
              **{c: (round(float(r[c]), 4) if c in PRICE_COLS
                    else int(float(r[c])))
-                for c in PRICE_COLS | {"volume"} if c in r}}
+                for c in PRICE_COLS + ("volume",) if c in r}}
             for r in rows]
     path.write_text(json.dumps(rows, separators=(",", ":")), encoding="utf-8")
     if last != asof:
@@ -178,6 +189,7 @@ def main() -> None:
     a = ap.parse_args()
 
     g_ok = g_fail = 0
+    broken = []
     for mkt in [m.strip() for m in a.markets.split(",") if m.strip()]:
         if mkt not in MARKETS:
             continue
@@ -203,11 +215,33 @@ def main() -> None:
             print("   ⚠", m)
         if fail > 6:
             print(f"   ... and {fail-6} more")
+        # A per-ticker failure is NOT a broken step. one() returns before it
+        # writes when the fetch fails or the vendor hands back a shorter series,
+        # so the previous good file survives untouched — a throttled vendor
+        # costs freshness on those names, it does not corrupt the tree. Exiting
+        # non-zero on ANY failure meant three Yahoo 401s killed a whole refresh
+        # (2026-10-13), and before pipefail the same three were invisible.
+        # What must stop the build is a MARKET going dark: nothing fetched, or
+        # so little that the page is materially wrong. self_test still compares
+        # every chart payload against its series, so individual stale names are
+        # caught there by name rather than by aggregate.
+        rate = ok / (ok + fail) if (ok + fail) else 0.0
+        if ok == 0 or rate < MIN_OK_RATE:
+            broken.append((mkt, ok, fail, rate))
         g_ok += ok
         g_fail += fail
 
     print(f"\nTOTAL ok={g_ok} fail={g_fail}")
-    sys.exit(0 if g_fail == 0 else 1)
+    if broken:
+        for mkt, ok, fail, rate in broken:
+            print(f"  ✗ {mkt}: only {ok}/{ok+fail} series refreshed ({rate:.0%}) "
+                  f"— below the {MIN_OK_RATE:.0%} floor; that market would publish "
+                  f"mostly-stale bars")
+        sys.exit(1)
+    if g_fail:
+        print(f"  ({g_fail} ticker(s) kept their previous series — fetch failed or the "
+              f"vendor returned a shorter one; self_test names any that are stale)")
+    sys.exit(0)
 
 
 if __name__ == "__main__":
