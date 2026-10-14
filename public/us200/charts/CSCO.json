@@ -3,21 +3,21 @@
   "ticker_user": "CSCO",
   "name": "Cisco Systems, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
+  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-12",
-    "O": 118.21,
-    "H": 118.27,
-    "L": 114.13,
-    "C": 115.34,
-    "prev_close": 118.39,
-    "chg_pct": -2.58
+    "date": "2026-10-13",
+    "O": 114.28,
+    "H": 115.37,
+    "L": 112.76,
+    "C": 115.07,
+    "prev_close": 115.34,
+    "chg_pct": -0.23
   },
   "phase": "downtrend_active",
-  "adx": 25.11,
-  "plus_di": 28.39,
-  "minus_di": 19.97,
-  "regime": "trend",
+  "adx": 23.97,
+  "plus_di": 26.54,
+  "minus_di": 22.09,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 130.37 (2026-06-04), trough 104.51 (2026-09-22), box top 118.65 (2026-10-09)",
   "peak": {
@@ -32,16 +32,16 @@
     "top": 118.65,
     "top_date": "2026-10-09",
     "bottom": 104.51,
-    "period": "2026-09-22 to 2026-10-12"
+    "period": "2026-09-22 to 2026-10-13"
   },
-  "drop_from_peak_pct": 11.5,
-  "recovery_from_crash_pct": 10.4,
+  "drop_from_peak_pct": 11.7,
+  "recovery_from_crash_pct": 10.1,
   "supports": [
     {
       "level": 108.0,
       "label": "S1 KEY",
-      "touches": 25,
-      "evidence": "tested 25x in base period; 6.4% below current"
+      "touches": 24,
+      "evidence": "tested 24x in base period; 6.1% below current"
     },
     {
       "level": 104.0,
@@ -52,29 +52,34 @@
   ],
   "resistances": [
     {
-      "level": 118.27,
+      "level": 115.37,
       "label": "R1 today high",
-      "evidence": "today's high 118.2699966430664"
+      "evidence": "today's high 115.37000274658203"
+    },
+    {
+      "level": 118.65,
+      "label": "R3 Oct high",
+      "evidence": "box top 118.65, base period high"
     }
   ],
   "position": {
-    "current": 115.34,
-    "in_box_pct": 79.5,
+    "current": 115.07,
+    "in_box_pct": 75.6,
     "nearest_support": "S1 KEY (108.0)",
-    "nearest_resistance": "R1 today high (118.27)"
+    "nearest_resistance": "R1 today high (115.37)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 118.21,
-    "H": 118.27,
-    "L": 114.13,
-    "C": 115.34,
-    "body_pct": 69.3,
-    "upper_wick_pct": 1.4,
-    "lower_wick_pct": 29.2
+    "close_position": "upper_half",
+    "O": 114.28,
+    "H": 115.37,
+    "L": 112.76,
+    "C": 115.07,
+    "body_pct": 30.3,
+    "upper_wick_pct": 11.5,
+    "lower_wick_pct": 58.2
   },
   "bias": {
     "short": {
@@ -93,7 +98,7 @@
   "scenarios": [
     {
       "if": "hold 108.0 (KEY support)",
-      "then": "still range; watch 118.27 for next test"
+      "then": "still range; watch 115.37 for next test"
     },
     {
       "if": "break 108.0 on close",
@@ -104,8 +109,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 118.27 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 115.37 on close",
+      "then": "short-term bullish; next test 118.65"
+    },
+    {
+      "if": "break 118.65 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -127,15 +136,15 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 118.65,
+    "target_price": 111.58,
+    "stop_price": 122.72,
+    "risk_pct": 3.43,
+    "reward_pct": 5.96,
+    "rr_ratio": 1.74,
+    "phase_match": true,
     "r1": 118.65,
     "s1": 104.51,
     "s2": 107.36,
@@ -143,8 +152,8 @@
     "r3": 130.37,
     "s3": 85.78,
     "s4": 72.8,
-    "current_position_pct": 76.6,
-    "notes": "WAIT_RANGE: in box (105-119), pos 77%, no clear setup"
+    "current_position_pct": 74.7,
+    "notes": "SELL_R1: in box (105-119), entry at R1 119, target mid 112, stop 123 ｜ 52.2 條規則（SELL plan，resistance 118.65）：① 跌到 118.65、收市守住喺 118.65 上面 → 照 BUY 條 plan 做（入場 118.65，止蝕 122.72，目標 111.58）。② 收市跌穿 118.65 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 118.65 上面』。"
   },
   "patterns": [
     {
@@ -153,7 +162,7 @@
       "date": "2026-10-12",
       "low": 114.12999725341797,
       "high": 118.2699966430664,
-      "i": 199
+      "i": 198
     },
     {
       "name": "刺穿線",
@@ -161,7 +170,7 @@
       "date": "2026-09-28",
       "low": 105.9800033569336,
       "high": 107.68000030517578,
-      "i": 189
+      "i": 188
     },
     {
       "name": "烏雲蓋頂",
@@ -169,7 +178,7 @@
       "date": "2026-08-13",
       "low": 111.4800033569336,
       "high": 115.94999694824219,
-      "i": 158
+      "i": 157
     },
     {
       "name": "利淡反擊線",
@@ -177,7 +186,7 @@
       "date": "2026-08-06",
       "low": 119.9000015258789,
       "high": 122.19000244140625,
-      "i": 153
+      "i": 152
     },
     {
       "name": "利好反擊線",
@@ -185,7 +194,7 @@
       "date": "2026-07-23",
       "low": 111.83000183105469,
       "high": 113.9000015258789,
-      "i": 143
+      "i": 142
     }
   ]
 }

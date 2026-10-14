@@ -3,20 +3,20 @@
   "ticker_user": "DVN",
   "name": "Devon Energy Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
+  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-12",
-    "O": 48.85,
-    "H": 49.36,
-    "L": 48.73,
-    "C": 48.96,
-    "prev_close": 48.26,
-    "chg_pct": 1.45
+    "date": "2026-10-13",
+    "O": 49.23,
+    "H": 50.3,
+    "L": 49.1,
+    "C": 50.21,
+    "prev_close": 48.96,
+    "chg_pct": 2.55
   },
   "phase": "base_building",
-  "adx": 12.55,
-  "plus_di": 23.29,
-  "minus_di": 16.35,
+  "adx": 13.59,
+  "plus_di": 26.5,
+  "minus_di": 15.23,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 52.71 (2026-03-30), trough 40.0 (2026-07-02), box top 51.7 (2026-09-14)",
@@ -32,16 +32,16 @@
     "top": 51.7,
     "top_date": "2026-09-14",
     "bottom": 40.0,
-    "period": "2026-07-02 to 2026-10-12"
+    "period": "2026-07-02 to 2026-10-13"
   },
-  "drop_from_peak_pct": 7.1,
-  "recovery_from_crash_pct": 22.4,
+  "drop_from_peak_pct": 4.7,
+  "recovery_from_crash_pct": 25.5,
   "supports": [
     {
       "level": 48.0,
       "label": "S1 KEY",
-      "touches": 30,
-      "evidence": "tested 30x in base period; 2.0% below current"
+      "touches": 57,
+      "evidence": "tested 57x in base period; 4.4% below current"
     },
     {
       "level": 44.0,
@@ -58,9 +58,9 @@
   ],
   "resistances": [
     {
-      "level": 49.36,
+      "level": 50.3,
       "label": "R1 today high",
-      "evidence": "today's high 49.36000061035156"
+      "evidence": "today's high 50.29999923706055"
     },
     {
       "level": 51.7,
@@ -69,28 +69,28 @@
     }
   ],
   "position": {
-    "current": 48.96,
-    "in_box_pct": 76.6,
+    "current": 50.21,
+    "in_box_pct": 87.3,
     "nearest_support": "S1 KEY (48.0)",
-    "nearest_resistance": "R1 today high (49.36)"
+    "nearest_resistance": "R1 today high (50.3)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 48.85,
-    "H": 49.36,
-    "L": 48.73,
-    "C": 48.96,
-    "body_pct": 17.5,
-    "upper_wick_pct": 63.5,
-    "lower_wick_pct": 19.0
+    "close_position": "upper_half",
+    "O": 49.23,
+    "H": 50.3,
+    "L": 49.1,
+    "C": 50.21,
+    "body_pct": 81.7,
+    "upper_wick_pct": 7.5,
+    "lower_wick_pct": 10.8
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -104,7 +104,7 @@
   "scenarios": [
     {
       "if": "hold 48.0 (KEY support)",
-      "then": "still range; watch 49.36 for next test"
+      "then": "still range; watch 50.3 for next test"
     },
     {
       "if": "break 48.0 on close",
@@ -115,7 +115,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 49.36 on close",
+      "if": "reclaim 50.3 on close",
       "then": "short-term bullish; next test 51.7"
     },
     {
@@ -143,23 +143,23 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
-    "r1": 51.56,
+    "phase_match": false,
+    "r1": 50.47,
     "s1": 45.56,
     "s2": 42.04,
     "r2": 51.7,
     "r3": 51.95,
     "s3": 40.0,
     "s4": 34.23,
-    "current_position_pct": 56.7,
-    "notes": "WAIT_RANGE: in box (46-52), pos 57%, no clear setup"
+    "current_position_pct": 94.7,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 50.47）：① 跌到 50.47、收市守住喺 50.47 上面 → 照 BUY 條 plan 做（入場 50.47，止蝕 52.61，目標 48.02）。② 收市跌穿 50.47 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 50.47 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
     {
@@ -168,7 +168,7 @@
       "date": "2026-10-08",
       "low": 48.22999954223633,
       "high": 49.439998626708984,
-      "i": 197
+      "i": 196
     },
     {
       "name": "刺穿線",
@@ -176,7 +176,7 @@
       "date": "2026-10-01",
       "low": 45.779998779296875,
       "high": 47.189998626708984,
-      "i": 192
+      "i": 191
     },
     {
       "name": "烏雲蓋頂",
@@ -184,7 +184,7 @@
       "date": "2026-09-16",
       "low": 48.2599983215332,
       "high": 50.470001220703125,
-      "i": 181
+      "i": 180
     },
     {
       "name": "三隻烏鴉",
@@ -192,7 +192,7 @@
       "date": "2026-09-10",
       "low": 48.5,
       "high": 50.04999923706055,
-      "i": 177
+      "i": 176
     },
     {
       "name": "平頭頂",
@@ -200,7 +200,7 @@
       "date": "2026-09-03",
       "low": 48.689998626708984,
       "high": 49.459999084472656,
-      "i": 173
+      "i": 172
     }
   ]
 }

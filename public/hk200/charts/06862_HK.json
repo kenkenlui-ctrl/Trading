@@ -3,91 +3,96 @@
   "ticker_user": "06862.HK",
   "name": "HAIDILAO",
   "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
+  "data_range": "2025-12-19 → 2026-10-14 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 9.28,
-    "H": 9.57,
-    "L": 9.23,
-    "C": 9.57,
-    "prev_close": 9.23,
-    "chg_pct": 3.63
+    "date": "2026-10-14",
+    "O": 9.27,
+    "H": 9.55,
+    "L": 9.16,
+    "C": 9.48,
+    "prev_close": 9.3,
+    "chg_pct": 1.88
   },
   "phase": "downtrend_active",
-  "adx": 38.46,
-  "plus_di": 15.6,
-  "minus_di": 23.4,
+  "adx": 35.75,
+  "plus_di": 18.29,
+  "minus_di": 30.87,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 17.86 (2026-02-26), trough 8.94 (2026-09-25), box top 9.57 (2026-10-09)",
+  "phase_evidence": "Peak 17.86 (2026-02-26), trough 8.93 (2026-10-13), box top 11.75 (2026-09-04)",
   "peak": {
     "date": "2026-02-26",
     "price": 17.86
   },
   "trough": {
-    "date": "2026-09-25",
-    "price": 8.94
+    "date": "2026-10-13",
+    "price": 8.93
   },
   "box": {
-    "top": 9.57,
-    "top_date": "2026-10-09",
-    "bottom": 8.94,
-    "period": "2026-09-25 to 2026-10-09"
+    "top": 11.75,
+    "top_date": "2026-09-04",
+    "bottom": 8.93,
+    "period": "2026-10-13 to 2026-10-14"
   },
-  "drop_from_peak_pct": 46.4,
-  "recovery_from_crash_pct": 7.0,
+  "drop_from_peak_pct": 46.9,
+  "recovery_from_crash_pct": 6.2,
   "supports": [
     {
       "level": 8.0,
       "label": "S1 bottom",
-      "touches": 24,
-      "evidence": "structural bottom, near crash low 8.94"
+      "touches": 28,
+      "evidence": "structural bottom, near crash low 8.93"
     }
   ],
   "resistances": [
     {
-      "level": 9.57,
+      "level": 9.55,
       "label": "R1 today high",
-      "evidence": "today's high 9.574999809265137"
+      "evidence": "today's high 9.545000076293945"
+    },
+    {
+      "level": 11.75,
+      "label": "R3 Sep high",
+      "evidence": "box top 11.75, base period high"
     }
   ],
   "position": {
-    "current": 9.57,
-    "in_box_pct": 100.0,
+    "current": 9.48,
+    "in_box_pct": 39.3,
     "nearest_support": "S1 bottom (8.0)",
-    "nearest_resistance": "R1 today high (9.57)"
+    "nearest_resistance": "R1 today high (9.55)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 9.28,
-    "H": 9.57,
-    "L": 9.23,
-    "C": 9.57,
-    "body_pct": 84.1,
-    "upper_wick_pct": 1.4,
-    "lower_wick_pct": 14.5
+    "O": 9.27,
+    "H": 9.55,
+    "L": 9.16,
+    "C": 9.48,
+    "body_pct": 53.9,
+    "upper_wick_pct": 18.4,
+    "lower_wick_pct": 27.6
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
       "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 8.0 (KEY support)",
-      "then": "still range; watch 9.57 for next test"
+      "then": "still range; watch 9.55 for next test"
     },
     {
       "if": "break 8.0 on close",
@@ -98,8 +103,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 9.57 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 9.55 on close",
+      "then": "short-term bullish; next test 11.75"
+    },
+    {
+      "if": "break 11.75 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -122,7 +131,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -130,15 +139,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 10.12,
-    "s1": 8.94,
-    "s2": 9.85,
+    "r1": 9.74,
+    "s1": 8.93,
+    "s2": 9.6,
     "r2": 12.53,
     "r3": 15.54,
     "s3": 10.58,
     "s4": 13.78,
-    "current_position_pct": 53.2,
-    "notes": "WAIT_RANGE: in box (9-10), pos 53%, no clear setup"
+    "current_position_pct": 67.5,
+    "notes": "WAIT_RANGE: in box (9-10), pos 67%, no clear setup"
   },
   "patterns": [
     {
@@ -147,7 +156,7 @@
       "date": "2026-10-09",
       "low": 9.229999542236328,
       "high": 9.574999809265137,
-      "i": 199
+      "i": 196
     },
     {
       "name": "刺穿線",
@@ -155,7 +164,7 @@
       "date": "2026-09-30",
       "low": 9.015000343322754,
       "high": 9.324999809265137,
-      "i": 193
+      "i": 190
     },
     {
       "name": "黃昏之星",
@@ -163,7 +172,7 @@
       "date": "2026-08-31",
       "low": 11.680000305175781,
       "high": 12.279999732971191,
-      "i": 171
+      "i": 168
     },
     {
       "name": "上升三法",
@@ -171,7 +180,7 @@
       "date": "2026-08-05",
       "low": 11.369999885559082,
       "high": 11.569999694824219,
-      "i": 153
+      "i": 150
     },
     {
       "name": "利好吞噬",
@@ -179,7 +188,7 @@
       "date": "2026-07-10",
       "low": 10.6899995803833,
       "high": 11.09000015258789,
-      "i": 135
+      "i": 132
     }
   ]
 }

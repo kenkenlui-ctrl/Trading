@@ -1,59 +1,54 @@
 {
   "ticker": "HK.03416",
   "ticker_user": "03416.HK",
-  "name": "GlobalX 國指備兌",
-  "data_source": "futu",
-  "data_range": "2025-12-17 → 2026-10-12 (200 daily bars)",
+  "name": "A GX HSCEICC",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-14 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-12",
+    "date": "2026-10-14",
     "O": 8.09,
-    "H": 8.11,
-    "L": 8.05,
-    "C": 8.07,
-    "prev_close": 8.05,
-    "chg_pct": 0.31
+    "H": 8.14,
+    "L": 8.03,
+    "C": 8.11,
+    "prev_close": 8.07,
+    "chg_pct": 0.43
   },
-  "phase": "base_building",
-  "adx": 24.23,
-  "plus_di": 19.77,
-  "minus_di": 27.67,
-  "regime": "dead",
+  "phase": "downtrend_active",
+  "adx": 33.58,
+  "plus_di": 18.96,
+  "minus_di": 31.42,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 9.43 (2026-01-30), trough 7.63 (2026-06-26), box top 8.3 (2026-08-26)",
+  "phase_evidence": "Peak 10.72 (2026-01-29), trough 7.91 (2026-10-02), box top 8.14 (2026-10-14)",
   "peak": {
-    "date": "2026-01-30",
-    "price": 9.43
+    "date": "2026-01-29",
+    "price": 10.72
   },
   "trough": {
-    "date": "2026-06-26",
-    "price": 7.63
+    "date": "2026-10-02",
+    "price": 7.91
   },
   "box": {
-    "top": 8.3,
-    "top_date": "2026-08-26",
-    "bottom": 7.63,
-    "period": "2026-06-26 to 2026-10-12"
+    "top": 8.14,
+    "top_date": "2026-10-14",
+    "bottom": 7.91,
+    "period": "2026-10-02 to 2026-10-14"
   },
-  "drop_from_peak_pct": 14.4,
-  "recovery_from_crash_pct": 5.8,
+  "drop_from_peak_pct": 24.3,
+  "recovery_from_crash_pct": 2.6,
   "supports": [
     {
       "level": 8.0,
       "label": "S1 bottom",
       "touches": 8,
-      "evidence": "structural bottom, near crash low 7.63"
+      "evidence": "structural bottom, near crash low 7.91"
     }
   ],
   "resistances": [
     {
-      "level": 8.11,
+      "level": 8.14,
       "label": "R1 today high",
-      "evidence": "today's high 8.11"
-    },
-    {
-      "level": 8.3,
-      "label": "R3 Aug high",
-      "evidence": "box top 8.3, base period high"
+      "evidence": "today's high 8.135000228881836"
     },
     {
       "level": 10.0,
@@ -62,32 +57,32 @@
     }
   ],
   "position": {
-    "current": 8.07,
-    "in_box_pct": 25.0,
+    "current": 8.11,
+    "in_box_pct": 5.5,
     "nearest_support": "S1 bottom (8.0)",
-    "nearest_resistance": "R1 today high (8.11)"
+    "nearest_resistance": "R1 today high (8.14)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
+    "close_position": "upper_half",
     "O": 8.09,
-    "H": 8.11,
-    "L": 8.05,
-    "C": 8.07,
-    "body_pct": 27.3,
-    "upper_wick_pct": 36.4,
-    "lower_wick_pct": 36.4
+    "H": 8.14,
+    "L": 8.03,
+    "C": 8.11,
+    "body_pct": 25.0,
+    "upper_wick_pct": 25.0,
+    "lower_wick_pct": 50.0
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (25% of box)"
+      "bias": "defensive",
+      "reason": "near box bottom (6% of box)"
     },
     "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -97,7 +92,7 @@
   "scenarios": [
     {
       "if": "hold 8.0 (KEY support)",
-      "then": "still range; watch 8.11 for next test"
+      "then": "still range; watch 8.14 for next test"
     },
     {
       "if": "break 8.0 on close",
@@ -108,12 +103,8 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 8.11 on close",
-      "then": "short-term bullish; next test 8.3"
-    },
-    {
-      "if": "break 8.3 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 8.14 on close",
+      "then": "short-term bullish; next test 10.0"
     }
   ],
   "common_misjudgments": [
@@ -143,57 +134,57 @@
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
-    "r1": 8.23,
+    "phase_match": false,
+    "r1": 8.38,
     "s1": 7.91,
-    "s2": 8.0,
-    "r2": 8.3,
-    "r3": 8.93,
-    "s3": 7.63,
-    "s4": 8.34,
-    "current_position_pct": 52.3,
-    "notes": "WAIT_RANGE: in box (8-8), pos 52%, no clear setup"
+    "s2": 8.15,
+    "r2": 8.69,
+    "r3": 9.7,
+    "s3": 8.23,
+    "s4": 9.33,
+    "current_position_pct": 43.2,
+    "notes": "WAIT_RANGE: in box (8-8), pos 43%, no clear setup"
   },
   "patterns": [
     {
       "name": "利好反擊線",
       "bias": "bullish",
       "date": "2026-10-06",
-      "low": 7.99,
-      "high": 8.02,
-      "i": 195
+      "low": 7.989999771118164,
+      "high": 8.020000457763672,
+      "i": 194
     },
     {
       "name": "利好吞噬",
       "bias": "bullish",
       "date": "2026-09-30",
-      "low": 8.01,
-      "high": 8.1,
-      "i": 192
+      "low": 8.010000228881836,
+      "high": 8.100000381469727,
+      "i": 191
     },
     {
-      "name": "吊頸",
-      "bias": "bearish",
-      "date": "2026-09-02",
-      "low": 8.139999999,
-      "high": 8.23,
-      "i": 172
-    },
-    {
-      "name": "平頭頂",
-      "bias": "bearish",
-      "date": "2026-08-25",
-      "low": 8.149999999,
-      "high": 8.215,
-      "i": 166
+      "name": "錘頭",
+      "bias": "bullish",
+      "date": "2026-09-04",
+      "low": 8.345000267028809,
+      "high": 8.454999923706055,
+      "i": 173
     },
     {
       "name": "平頭底",
       "bias": "bullish",
       "date": "2026-08-19",
-      "low": 8.125,
-      "high": 8.205,
-      "i": 162
+      "low": 8.425000190734863,
+      "high": 8.505000114440918,
+      "i": 161
+    },
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-08-07",
+      "low": 8.430000305175781,
+      "high": 8.5,
+      "i": 153
     }
   ]
 }

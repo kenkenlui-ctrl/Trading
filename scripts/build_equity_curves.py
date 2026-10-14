@@ -184,6 +184,28 @@ def sim(trades, hold_days, risk=RISK, cap=CAP):
     }
 
 
+def _src_label() -> str:
+    """Provenance for the page footer, DERIVED from the file that was read.
+
+    2026-10-13 (P0-1 residue). The footer used to be a hardcoded literal:
+    "Last updated: 2026-09-11 · Source: data/monthly_backtest/backtest_2026-09-10.json".
+    The page had been migrated to the v2 engine on 2026-10-07, but this string
+    was never changed with it — so every one of these pages rendered v2 numbers
+    while claiming, in the one place a reader looks to check, that they came
+    from the retired v1 swing backtest. That is precisely the defect P0-1 was
+    raised for, surviving as a footnote because the migration touched the data
+    path and not the label.
+
+    A hardcoded provenance line cannot be right by accident or by construction:
+    it is a constant that describes a file whose name, content and date all
+    change. Derive it, so a stale claim is impossible by construction.
+    """
+    p = _resolve_source()
+    stamp = datetime.fromtimestamp(p.stat().st_mtime).strftime("%Y-%m-%d")
+    return (f"Source: {p.relative_to(REPO)} · v2 rule set (portfolio_test.walk) · "
+            f"exported {stamp}")
+
+
 def render_html(horizon: str, hold_days: int, label: str, r: dict) -> str:
     daily = r["daily"]
     if not daily:
@@ -324,7 +346,7 @@ def render_html(horizon: str, hold_days: int, label: str, r: dict) -> str:
 <li>Best config from 9-config tune: 1% risk × 5 cap (locked 2026-09-11). Other configs range from -0.8% to +1.1%.</li>
 </ul>
 
-<p style="margin-top: var(--sp-5); font-size: var(--text-xs); color: var(--dim);">Last updated: 2026-09-11 · Source: data/monthly_backtest/backtest_2026-09-10.json · {r['n_signals']} {horizon} signals</p>
+<p style="margin-top: var(--sp-5); font-size: var(--text-xs); color: var(--dim);">{_src_label()} · {r['n_signals']} {horizon} signals · 本頁係 v2 引擎，同 <code>/methodology.html</code> 同 <code>/backtest.html</code> 用同一套規則；唔係舊版 v1 swing/day-trade 系統</p>
 </main>
 </body>
 </html>"""

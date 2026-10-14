@@ -3,21 +3,21 @@
   "ticker_user": "01729.HK",
   "name": "TIME INTERCON",
   "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
+  "data_range": "2025-12-19 → 2026-10-14 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 15.52,
-    "H": 15.52,
-    "L": 14.5,
-    "C": 15.29,
-    "prev_close": 15.52,
-    "chg_pct": -1.48
+    "date": "2026-10-14",
+    "O": 14.0,
+    "H": 14.23,
+    "L": 13.69,
+    "C": 13.82,
+    "prev_close": 13.96,
+    "chg_pct": -1.0
   },
-  "phase": "base_building",
-  "adx": 16.66,
-  "plus_di": 15.65,
-  "minus_di": 30.4,
-  "regime": "range",
+  "phase": "downtrend_recovery",
+  "adx": 21.33,
+  "plus_di": 12.88,
+  "minus_di": 31.29,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 24.7 (2026-05-11), trough 11.95 (2026-07-30), box top 19.94 (2026-09-10)",
   "peak": {
@@ -32,29 +32,23 @@
     "top": 19.94,
     "top_date": "2026-09-10",
     "bottom": 11.95,
-    "period": "2026-07-30 to 2026-10-09"
+    "period": "2026-07-30 to 2026-10-14"
   },
-  "drop_from_peak_pct": 38.1,
-  "recovery_from_crash_pct": 27.9,
+  "drop_from_peak_pct": 44.0,
+  "recovery_from_crash_pct": 15.6,
   "supports": [
     {
-      "level": 16.0,
-      "label": "S1 KEY",
-      "touches": 10,
-      "evidence": "tested 10x in base period; -4.6% below current"
-    },
-    {
       "level": 12.0,
-      "label": "S2 bottom",
-      "touches": 5,
+      "label": "S1 bottom",
+      "touches": 4,
       "evidence": "structural bottom, near crash low 11.95"
     }
   ],
   "resistances": [
     {
-      "level": 15.52,
+      "level": 14.23,
       "label": "R1 today high",
-      "evidence": "today's high 15.520000457763672"
+      "evidence": "today's high 14.229999542236328"
     },
     {
       "level": 19.94,
@@ -63,32 +57,32 @@
     }
   ],
   "position": {
-    "current": 15.29,
-    "in_box_pct": 41.4,
-    "nearest_support": "S1 KEY (16.0)",
-    "nearest_resistance": "R1 today high (15.52)"
+    "current": 13.82,
+    "in_box_pct": 22.9,
+    "nearest_support": "S1 bottom (12.0)",
+    "nearest_resistance": "R1 today high (14.23)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
-    "touched_S1": true,
-    "close_position": "upper_half",
-    "O": 15.52,
-    "H": 15.52,
-    "L": 14.5,
-    "C": 15.29,
-    "body_pct": 22.5,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 77.5
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 14.0,
+    "H": 14.23,
+    "L": 13.69,
+    "C": 13.82,
+    "body_pct": 33.3,
+    "upper_wick_pct": 42.6,
+    "lower_wick_pct": 24.1
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (23% of box)"
     },
     "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
+      "bias": "neutral",
+      "reason": ""
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -97,19 +91,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 16.0 (KEY support)",
-      "then": "still range; watch 15.52 for next test"
+      "if": "hold 12.0 (KEY support)",
+      "then": "still range; watch 14.23 for next test"
     },
     {
-      "if": "break 16.0 on close",
-      "then": "target 12.0 → lower (short-term bearish)"
+      "if": "break 12.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
       "if": "break 12.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 15.52 on close",
+      "if": "reclaim 14.23 on close",
       "then": "short-term bullish; next test 19.94"
     },
     {
@@ -136,24 +130,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 14.5,
-    "target_price": 17.01,
-    "stop_price": 13.22,
-    "risk_pct": 8.82,
-    "reward_pct": 17.31,
-    "rr_ratio": 1.96,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_VOLATILE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 19.52,
-    "s1": 14.5,
+    "s1": 13.56,
     "s2": 11.95,
     "r2": 19.94,
     "r3": 24.7,
-    "s3": 13.88,
+    "s3": 13.64,
     "s4": 14.05,
-    "current_position_pct": 15.7,
-    "notes": "BUY_S1: in box (14-20), entry at S1 14, target mid 17, stop 13 ｜ 52.2 條規則（BUY plan，support 14.50）：① 跌到 14.50、收市守住喺 14.50 上面 → 照 BUY 條 plan 做（入場 14.50，止蝕 13.22，目標 17.01）。② 收市跌穿 14.50 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 14.50 上面』。"
+    "current_position_pct": 4.4,
+    "notes": "WAIT_VOLATILE: ATR14 6.5% / box width 43% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
   },
   "patterns": [
     {
@@ -162,7 +156,7 @@
       "date": "2026-09-21",
       "low": 18.270000457763672,
       "high": 18.940000534057617,
-      "i": 186
+      "i": 183
     },
     {
       "name": "烏雲蓋頂",
@@ -170,7 +164,7 @@
       "date": "2026-09-10",
       "low": 18.940000534057617,
       "high": 19.940000534057617,
-      "i": 179
+      "i": 176
     },
     {
       "name": "平頭頂",
@@ -178,7 +172,7 @@
       "date": "2026-08-19",
       "low": 14.850000381469727,
       "high": 16.299999237060547,
-      "i": 163
+      "i": 160
     },
     {
       "name": "利好反擊線",
@@ -186,7 +180,7 @@
       "date": "2026-07-14",
       "low": 15.130000114440918,
       "high": 16.25,
-      "i": 137
+      "i": 134
     },
     {
       "name": "刺穿線",
@@ -194,7 +188,7 @@
       "date": "2026-07-03",
       "low": 14.529999732971191,
       "high": 15.720000267028809,
-      "i": 130
+      "i": 127
     }
   ]
 }

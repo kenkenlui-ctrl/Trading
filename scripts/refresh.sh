@@ -18,6 +18,16 @@
 set -eo pipefail
 cd "$(dirname "$0")/.."
 
+# --- Single-instance guard ---------------------------------------------------
+# 2026-10-14. Two refresh.sh runs overlapped on this machine and both reached
+# the commit and the deploy. Re-exec through a flock so the lock is held by
+# this very process tree and released by the kernel when it exits. Only on the
+# FIRST entry: the re-exec comes back through here, and must not re-lock.
+if [ -z "${W9_REFRESH_LOCK:-}" ]; then
+  exec python3 scripts/refresh_lock.py "$(pwd)/scripts/refresh.sh"
+fi
+echo "refresh lock: fd $W9_REFRESH_LOCK (held via /tmp/w9refresh.lock)"
+
 # Load credentials from .env if present. A real environment variable wins, so
 # CI or a one-off `CLOUDFLARE_API_TOKEN=... ./scripts/refresh.sh` still works.
 if [ -f .env ]; then
@@ -64,7 +74,13 @@ echo
 # snapshot two sessions stale. The date this script is given is the date it uses.
 echo "[1/6] Fetching top 200 HK + US universes..."
 python3 /Users/kenken/dev/dsa-hk/charts/hk200/batch_hk200_fresh.py --asof "$ASOF_HK" 2>&1 | tail -3
-python3 /Users/kenken/dev/dsa-hk/charts/us200/batch_us200.py --date "$DATA_DATE" 2>&1 | tail -3 || echo "  US200 batch (continue anyway)"
+# 2026-10-14: this was --date "$DATA_DATE". DATA_DATE is the single-market
+# fallback and defaults to 2026-08-22, so on any run where the US needs its own
+# date (every run, now that three markets have three calendars) this step was
+# reading the wrong variable — it honoured ASOF_US everywhere else and ignored
+# it in exactly the one place that refetched the US universe. Same class of
+# defect as the single --asof that stamped one date onto three markets.
+python3 /Users/kenken/dev/dsa-hk/charts/us200/batch_us200.py --date "$ASOF_US" 2>&1 | tail -3 || echo "  US200 batch (continue anyway)"
 
 # --- Step 1a: JP charts + snapshots ------------------------------------------
 # 2026-10-13. JP was never in this pipeline. Step 1 refreshes the HK and US
@@ -101,9 +117,16 @@ python3 scripts/fetch_jp_charts.py 2>&1 | tail -3 || echo "  JP fetch (continue 
 # A repair that is not in the pipeline is not a repair.
 echo
 echo "[1b/7] Refreshing <market>/ohlc/*_ohlc.json (chart + v2 signal source)..."
+# workers 4, not 8. Step 1a has just pulled 201 JP series, so step 1b arrives at
+# Yahoo already warm; at 8 concurrent it got HTTP 401 "Invalid Crumb" bursts that
+# exhausted yfinance's internal retries and took JP down to 161/210 (77%), which
+# the MIN_OK_RATE floor then correctly refused to publish. The same command at 4
+# returned 210/210 — 82 throttled responses still appeared in the log, they just
+# rode out on retry instead of dropping the ticker. The rate limit is cumulative
+# request volume, not just concurrency, so leave room between full runs too.
 python3 scripts/update_ohlc.py \
   --asof "$DATA_DATE" --asof-hk "$ASOF_HK" --asof-us "$ASOF_US" --asof-jp "$ASOF_JP" \
-  --markets hk,us,jp --workers 8 2>&1 | tail -3
+  --markets hk,us,jp --workers 4 2>&1 | tail -12
 
 # --- Universe lists are NOT regenerated here ------------------------------
 # Owner decision (Kenneth, 2026-10-08): universe regen runs weekly on cloud
@@ -136,12 +159,21 @@ try:
         safe = tk.replace('.', '_')
         png = out / f'{safe}.png'
         js = out / f'{safe}.json'
-        # 2026-10-05: this guard used to be `png.st_mtime > 1747700000` — a
+        # 2026-10-05: this guard used to compare png.st_mtime against a
         # hard-coded epoch equal to 2025-05-20. Every chart drawn after that
-        # date counted as "recent", so a 200/200 skip fired on every run and
+        # date counted as recent, so a 200/200 skip fired on every run and
         # refresh.sh silently became a no-op: no chart, no action_plan JSON, no
         # data change. Skip only when this ticker is ALREADY at the target
         # session, which is the only question the guard was meant to ask.
+        #
+        # 2026-10-14: that sentence was WRITTEN WITH BACKTICKS AND DOUBLE
+        # QUOTES inside this double-quoted shell string. Bash performs command
+        # substitution on backticks even inside double quotes, so it tried to
+        # run png.st_mtime as a command with stdout redirected into a file
+        # literally named 1747700000 — printing command-not-found on every run
+        # and truncating the python program at the next double quote. The stray
+        # redirect also left a 0-byte file of that name in the repo root, which
+        # got committed. Keep this heredoc free of backticks and double quotes.
         if js.exists():
             try:
                 _have = (json.load(open(js)).get('last_bar') or {}).get('date')
@@ -150,11 +182,18 @@ try:
             if _have == '$ASOF_HK' and png.exists():
                 continue
         try:
-            df, src, name = fetch_ohlc(tk, days=200, source='auto', asof='$DATA_DATE')
-            # call render via subprocess to avoid matplotlib in this process
+            # Dead call — df/src/name are never read below. It used to pass
+            # \$DATA_DATE, so on a per-market run it could raise for a ticker
+            # that was fine and be reported as a chart failure.
             import subprocess
+            # 2026-10-14: --json was missing here. Step 1 writes the snapshot
+            # via batch_hk200_fresh.py, so this loop is a no-op for a ticker
+            # Step 1 got right; for a ticker Step 1 MISSED it redrew the PNG and
+            # left the snapshot at the old session — a fresh chart beside a
+            # stale date label, which is the exact mismatch this step is
+            # supposed to close. Any redraw must move the snapshot with it.
             subprocess.run(['python3', '/Users/kenken/.minimax/skills/daily-sr-chart/scripts/daily_sr.py',
-                            '-t', tk, '-o', str(png),
+                            '-t', tk, '-o', str(png), '--json', str(js),
                             '--source', 'auto', '--asof', '$ASOF_HK'], check=True)
             print(f'  {i+1}/{len(universe)} {tk} ✓')
         except Exception as e:
@@ -227,19 +266,17 @@ python3 scripts/build_backtest_page.py 2>&1 | tail -1
 # sit before finalize.py below, like every other writer.
 python3 scripts/build_track_record.py 2>&1 | tail -3
 
-# --- Step 5d: self-test gate -------------------------------------------------
-# 2026-10-12. self_test.py existed but nothing ran it, so it could not stop
-# anything: the same way refresh.sh silently skipped stale charts, the guard
-# itself was never wired in. It also caught two real defects on its first run
-# (3 orphan ticker pages whose assets were never content-stamped).
+# --- Step 7d: equity curves -------------------------------------------------
+# 2026-10-13. build_equity_curves.py was never called from here, so the four
+# equity-curve pages were whatever the last MANUAL run left behind — they were
+# still dated Oct 10 while everything else moved daily. A page nothing rebuilds
+# is a page that quietly stops being true. The v2 export itself
+# (v2_equity_export.py) is a ~9-year portfolio simulation and stays manual; only
+# the render is cheap enough to run every build, which is all that is needed for
+# the footer to keep its provenance honest.
 echo
-echo "[5d] self-test gate (must be green before deploy)..."
-python3 scripts/self_test.py 2>&1 | tail -6
-if ! python3 scripts/self_test.py >/dev/null 2>&1; then
-  echo "  ✗ self-test FAILED — refusing to deploy"
-  exit 1
-fi
-echo "  ✓ self-test green"
+echo "[7d] Equity curves (v2 render from data/v2_equity_trades.json)..."
+python3 scripts/build_equity_curves.py 2>&1 | tail -6 || echo "  equity curves (continue anyway)"
 
 # --- Step 7c: final normalisation pass. MUST be the last thing that touches
 # public/ before the commit. build_backtest_page / build_insights_index /
@@ -249,9 +286,37 @@ echo "  ✓ self-test green"
 # while every market page carried its own market's date. Re-ordering the chain
 # would only hold until the next builder is added after it; this makes "run the
 # passes once more, last" the single obvious final step. Idempotent.
+#
+# 2026-10-14: this used to run AFTER the self-test gate. That order made the
+# gate judge a tree finalize was about to rewrite, so it structurally could not
+# catch anything finalize repairs — and on 2026-10-14 it failed for precisely
+# that reason. backtest.html and track-record/index.html still carried a single
+# "2026-10-14" badge because site_label() collapses to one date only while all
+# three markets share a session. The moment HK/JP ran on the 14th and the US on
+# the 13th, the correct label became the composite "2026-10-14 · US 2026-10-13"
+# — and the gate was inspecting the tree before the writer that produces it had
+# run. A gate must judge what actually ships, so finalize runs first.
 echo
 echo "[7c] Final normalisation (badge / css hash / nav dedupe / faq links)..."
 python3 scripts/finalize.py 2>&1 | tail -4
+
+# --- Step 5d: self-test gate -------------------------------------------------
+# 2026-10-12. self_test.py existed but nothing ran it, so it could not stop
+# anything: the same way refresh.sh silently skipped stale charts, the guard
+# itself was never wired in. It also caught two real defects on its first run
+# (3 orphan ticker pages whose assets were never content-stamped).
+#
+# Runs AFTER finalize.py because it is a read-only gate on the shipped tree. It
+# writes nothing to public/, so following finalize does not break the
+# "finalize is the last writer" invariant — it IS that invariant.
+echo
+echo "[5d] self-test gate (must be green before deploy)..."
+python3 scripts/self_test.py 2>&1 | tail -6
+if ! python3 scripts/self_test.py >/dev/null 2>&1; then
+  echo "  ✗ self-test FAILED — refusing to deploy"
+  exit 1
+fi
+echo "  ✓ self-test green"
 
 # --- Step 6: Git commit + wrangler deploy ---
 # Finder drops .DS_Store into .git/refs/heads/, which git reads as a ref and

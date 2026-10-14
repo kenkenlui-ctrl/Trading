@@ -3,20 +3,20 @@
   "ticker_user": "09992.HK",
   "name": "POP MART",
   "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
+  "data_range": "2025-12-19 → 2026-10-14 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 152.5,
-    "H": 153.1,
-    "L": 150.5,
-    "C": 152.3,
-    "prev_close": 152.5,
-    "chg_pct": -0.13
+    "date": "2026-10-14",
+    "O": 150.2,
+    "H": 150.6,
+    "L": 148.2,
+    "C": 149.0,
+    "prev_close": 150.2,
+    "chg_pct": -0.8
   },
   "phase": "downtrend_recovery",
-  "adx": 10.68,
-  "plus_di": 15.15,
-  "minus_di": 19.41,
+  "adx": 13.8,
+  "plus_di": 12.34,
+  "minus_di": 21.16,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 274.2 (2026-02-11), trough 140.1 (2026-03-30), box top 187.1 (2026-06-12)",
@@ -32,29 +32,23 @@
     "top": 187.1,
     "top_date": "2026-06-12",
     "bottom": 140.1,
-    "period": "2026-03-30 to 2026-10-09"
+    "period": "2026-03-30 to 2026-10-14"
   },
-  "drop_from_peak_pct": 44.5,
-  "recovery_from_crash_pct": 8.7,
+  "drop_from_peak_pct": 45.7,
+  "recovery_from_crash_pct": 6.4,
   "supports": [
     {
-      "level": 148.0,
-      "label": "S1 KEY",
-      "touches": 16,
-      "evidence": "tested 16x in base period; 2.8% below current"
-    },
-    {
-      "level": 140.1,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-03-30, structural bottom"
+      "level": 140.0,
+      "label": "S1 bottom",
+      "touches": 4,
+      "evidence": "structural bottom, near crash low 140.1"
     }
   ],
   "resistances": [
     {
-      "level": 153.1,
+      "level": 150.6,
       "label": "R1 today high",
-      "evidence": "today's high 153.10000610351562"
+      "evidence": "today's high 150.60000610351562"
     },
     {
       "level": 180.0,
@@ -78,28 +72,28 @@
     }
   ],
   "position": {
-    "current": 152.3,
-    "in_box_pct": 26.0,
-    "nearest_support": "S1 KEY (148.0)",
-    "nearest_resistance": "R1 today high (153.1)"
+    "current": 149.0,
+    "in_box_pct": 19.1,
+    "nearest_support": "S1 bottom (140.0)",
+    "nearest_resistance": "R1 today high (150.6)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 152.5,
-    "H": 153.1,
-    "L": 150.5,
-    "C": 152.3,
-    "body_pct": 7.7,
-    "upper_wick_pct": 23.1,
-    "lower_wick_pct": 69.2
+    "close_position": "lower_half",
+    "O": 150.2,
+    "H": 150.6,
+    "L": 148.2,
+    "C": 149.0,
+    "body_pct": 50.0,
+    "upper_wick_pct": 16.7,
+    "lower_wick_pct": 33.3
   },
   "bias": {
     "short": {
       "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (26% of box)"
+      "reason": "rejection at R1 + near support (19% of box)"
     },
     "mid": {
       "bias": "neutral",
@@ -112,19 +106,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 148.0 (KEY support)",
-      "then": "still range; watch 153.1 for next test"
+      "if": "hold 140.0 (KEY support)",
+      "then": "still range; watch 150.6 for next test"
     },
     {
-      "if": "break 148.0 on close",
-      "then": "target 140.1 → lower (short-term bearish)"
+      "if": "break 140.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 140.1 (crash low)",
+      "if": "break 140.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 153.1 on close",
+      "if": "reclaim 150.6 on close",
       "then": "short-term bullish; next test 180.0"
     },
     {
@@ -152,7 +146,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -161,14 +155,14 @@
     "rr_ratio": 0.0,
     "phase_match": false,
     "r1": 156.7,
-    "s1": 147.5,
+    "s1": 147.1,
     "s2": 140.1,
     "r2": 172.4,
     "r3": 187.1,
     "s3": 144.0,
     "s4": 140.1,
-    "current_position_pct": 52.2,
-    "notes": "WAIT_RANGE: in box (148-157), pos 52%, no clear setup"
+    "current_position_pct": 19.8,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（BUY plan，support 147.10）：① 跌到 147.10、收市守住喺 147.10 上面 → 照 BUY 條 plan 做（入場 147.10，止蝕 142.11，目標 151.90）。② 收市跌穿 147.10 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 147.10 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
     {
@@ -177,7 +171,7 @@
       "date": "2026-09-04",
       "low": 154.0,
       "high": 157.1999969482422,
-      "i": 175
+      "i": 172
     },
     {
       "name": "烏雲蓋頂",
@@ -185,7 +179,7 @@
       "date": "2026-07-30",
       "low": 162.10000610351562,
       "high": 172.39999389648438,
-      "i": 149
+      "i": 146
     },
     {
       "name": "利淡吞噬",
@@ -193,7 +187,7 @@
       "date": "2026-07-21",
       "low": 158.8000030517578,
       "high": 166.0,
-      "i": 142
+      "i": 139
     },
     {
       "name": "利好反擊線",
@@ -201,7 +195,7 @@
       "date": "2026-07-13",
       "low": 152.3000030517578,
       "high": 157.5,
-      "i": 136
+      "i": 133
     }
   ]
 }

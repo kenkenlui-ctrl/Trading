@@ -3,20 +3,20 @@
   "ticker_user": "QCOM",
   "name": "QUALCOMM Incorporated",
   "data_source": "yfinance",
-  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
+  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-12",
-    "O": 175.19,
-    "H": 175.23,
-    "L": 172.16,
-    "C": 174.43,
-    "prev_close": 175.5,
-    "chg_pct": -0.61
+    "date": "2026-10-13",
+    "O": 172.55,
+    "H": 180.78,
+    "L": 172.29,
+    "C": 176.86,
+    "prev_close": 174.43,
+    "chg_pct": 1.39
   },
   "phase": "base_building",
-  "adx": 15.17,
-  "plus_di": 17.26,
-  "minus_di": 24.99,
+  "adx": 14.34,
+  "plus_di": 21.33,
+  "minus_di": 22.88,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 259.92 (2026-05-29), trough 142.89 (2026-08-03), box top 205.85 (2026-09-25)",
@@ -32,28 +32,28 @@
     "top": 205.85,
     "top_date": "2026-09-25",
     "bottom": 142.89,
-    "period": "2026-08-03 to 2026-10-12"
+    "period": "2026-08-03 to 2026-10-13"
   },
-  "drop_from_peak_pct": 32.9,
-  "recovery_from_crash_pct": 22.1,
+  "drop_from_peak_pct": 32.0,
+  "recovery_from_crash_pct": 23.8,
   "supports": [
     {
-      "level": 164.0,
+      "level": 172.0,
       "label": "S1 KEY",
-      "touches": 12,
-      "evidence": "tested 12x in base period; 6.0% below current"
+      "touches": 16,
+      "evidence": "tested 16x in base period; 2.7% below current"
+    },
+    {
+      "level": 164.0,
+      "label": "S2",
+      "touches": 11,
+      "evidence": "mid-base support, tested 11x"
     },
     {
       "level": 160.0,
-      "label": "S2",
+      "label": "S3",
       "touches": 10,
       "evidence": "mid-base support, tested 10x"
-    },
-    {
-      "level": 156.0,
-      "label": "S3",
-      "touches": 5,
-      "evidence": "mid-base support, tested 5x"
     },
     {
       "level": 142.89,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 175.23,
+      "level": 180.78,
       "label": "R1 today high",
-      "evidence": "today's high 175.22999572753906"
+      "evidence": "today's high 180.77999877929688"
     },
     {
       "level": 200.0,
@@ -80,23 +80,23 @@
     }
   ],
   "position": {
-    "current": 174.43,
-    "in_box_pct": 50.1,
-    "nearest_support": "S1 KEY (164.0)",
-    "nearest_resistance": "R1 today high (175.23)"
+    "current": 176.86,
+    "in_box_pct": 54.0,
+    "nearest_support": "S1 KEY (172.0)",
+    "nearest_resistance": "R1 today high (180.78)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 175.19,
-    "H": 175.23,
-    "L": 172.16,
-    "C": 174.43,
-    "body_pct": 24.8,
-    "upper_wick_pct": 1.3,
-    "lower_wick_pct": 73.9
+    "O": 172.55,
+    "H": 180.78,
+    "L": 172.29,
+    "C": 176.86,
+    "body_pct": 50.8,
+    "upper_wick_pct": 46.2,
+    "lower_wick_pct": 3.1
   },
   "bias": {
     "short": {
@@ -114,19 +114,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 164.0 (KEY support)",
-      "then": "still range; watch 175.23 for next test"
+      "if": "hold 172.0 (KEY support)",
+      "then": "still range; watch 180.78 for next test"
     },
     {
-      "if": "break 164.0 on close",
-      "then": "target 160.0 → 156.0 (short-term bearish)"
+      "if": "break 172.0 on close",
+      "then": "target 164.0 → 160.0 (short-term bearish)"
     },
     {
       "if": "break 142.89 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 175.23 on close",
+      "if": "reclaim 180.78 on close",
       "then": "short-term bullish; next test 200.0"
     },
     {
@@ -157,29 +157,37 @@
     "strategy": "BUY_S1",
     "trigger_price": 171.02,
     "target_price": 188.44,
-    "stop_price": 161.37,
-    "risk_pct": 5.64,
+    "stop_price": 161.29,
+    "risk_pct": 5.69,
     "reward_pct": 10.18,
-    "rr_ratio": 1.8,
+    "rr_ratio": 1.79,
     "phase_match": true,
     "r1": 205.85,
     "s1": 171.02,
     "s2": 142.89,
-    "r2": 185.46,
+    "r2": 190.06,
     "r3": 259.92,
     "s3": 132.05,
     "s4": 121.99,
-    "current_position_pct": 9.8,
-    "notes": "BUY_S1: in box (171-206), entry at S1 171, target mid 188, stop 161 ｜ 52.2 條規則（BUY plan，support 171.02）：① 跌到 171.02、收市守住喺 171.02 上面 → 照 BUY 條 plan 做（入場 171.02，止蝕 161.37，目標 188.44）。② 收市跌穿 171.02 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 171.02 上面』。"
+    "current_position_pct": 16.8,
+    "notes": "BUY_S1: in box (171-206), entry at S1 171, target mid 188, stop 161 ｜ 52.2 條規則（BUY plan，support 171.02）：① 跌到 171.02、收市守住喺 171.02 上面 → 照 BUY 條 plan 做（入場 171.02，止蝕 161.29，目標 188.44）。② 收市跌穿 171.02 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 171.02 上面』。"
   },
   "patterns": [
+    {
+      "name": "錘頭",
+      "bias": "bullish",
+      "date": "2026-10-13",
+      "low": 172.2899932861328,
+      "high": 180.77999877929688,
+      "i": 199
+    },
     {
       "name": "上升三法",
       "bias": "bullish",
       "date": "2026-10-02",
       "low": 183.36000061035156,
       "high": 188.9499969482422,
-      "i": 193
+      "i": 192
     },
     {
       "name": "利淡反擊線",
@@ -187,7 +195,7 @@
       "date": "2026-09-08",
       "low": 172.0399932861328,
       "high": 183.49000549316406,
-      "i": 175
+      "i": 174
     },
     {
       "name": "利好身懷六甲",
@@ -195,7 +203,7 @@
       "date": "2026-08-18",
       "low": 156.72999572753906,
       "high": 161.80999755859375,
-      "i": 161
+      "i": 160
     },
     {
       "name": "利好吞噬",
@@ -203,15 +211,7 @@
       "date": "2026-08-06",
       "low": 155.22000122070312,
       "high": 162.60000610351562,
-      "i": 153
-    },
-    {
-      "name": "黃昏之星",
-      "bias": "bearish",
-      "date": "2026-06-08",
-      "low": 214.6300048828125,
-      "high": 221.92999267578125,
-      "i": 112
+      "i": 152
     }
   ]
 }

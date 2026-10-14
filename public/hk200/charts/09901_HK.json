@@ -1,28 +1,28 @@
 {
   "ticker": "HK.09901",
   "ticker_user": "09901.HK",
-  "name": "新東方-S",
-  "data_source": "futu",
-  "data_range": "2025-12-17 → 2026-10-12 (200 daily bars)",
+  "name": "NEW ORIENTAL-S",
+  "data_source": "yfinance",
+  "data_range": "2025-12-19 → 2026-10-14 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-12",
-    "O": 46.3,
-    "H": 46.92,
-    "L": 45.88,
-    "C": 46.28,
-    "prev_close": 45.54,
-    "chg_pct": 1.62
+    "date": "2026-10-14",
+    "O": 45.6,
+    "H": 46.06,
+    "L": 45.14,
+    "C": 45.72,
+    "prev_close": 45.7,
+    "chg_pct": 0.04
   },
   "phase": "base_building",
-  "adx": 14.66,
-  "plus_di": 34.66,
-  "minus_di": 19.15,
+  "adx": 15.35,
+  "plus_di": 31.39,
+  "minus_di": 20.86,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 50.58 (2026-02-04), trough 34.26 (2026-06-22), box top 47.8 (2026-08-03)",
+  "phase_evidence": "Peak 51.05 (2026-02-04), trough 34.26 (2026-06-22), box top 47.8 (2026-08-03)",
   "peak": {
     "date": "2026-02-04",
-    "price": 50.58
+    "price": 51.05
   },
   "trough": {
     "date": "2026-06-22",
@@ -32,16 +32,22 @@
     "top": 47.8,
     "top_date": "2026-08-03",
     "bottom": 34.26,
-    "period": "2026-06-22 to 2026-10-12"
+    "period": "2026-06-22 to 2026-10-14"
   },
-  "drop_from_peak_pct": 8.5,
-  "recovery_from_crash_pct": 35.1,
+  "drop_from_peak_pct": 10.4,
+  "recovery_from_crash_pct": 33.5,
   "supports": [
     {
       "level": 44.0,
       "label": "S1 KEY",
-      "touches": 66,
-      "evidence": "tested 66x in base period; 4.9% below current"
+      "touches": 57,
+      "evidence": "tested 57x in base period; 3.8% below current"
+    },
+    {
+      "level": 40.0,
+      "label": "S2",
+      "touches": 18,
+      "evidence": "mid-base support, tested 18x"
     },
     {
       "level": 34.26,
@@ -52,9 +58,9 @@
   ],
   "resistances": [
     {
-      "level": 46.92,
+      "level": 46.06,
       "label": "R1 today high",
-      "evidence": "rejection at 46.92 (long upper wick, close weak)"
+      "evidence": "today's high 46.060001373291016"
     },
     {
       "level": 47.8,
@@ -63,23 +69,23 @@
     }
   ],
   "position": {
-    "current": 46.28,
-    "in_box_pct": 88.8,
+    "current": 45.72,
+    "in_box_pct": 84.6,
     "nearest_support": "S1 KEY (44.0)",
-    "nearest_resistance": "R1 today high (46.92)"
+    "nearest_resistance": "R1 today high (46.06)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 46.3,
-    "H": 46.92,
-    "L": 45.88,
-    "C": 46.28,
-    "body_pct": 1.9,
-    "upper_wick_pct": 59.6,
-    "lower_wick_pct": 38.5
+    "close_position": "upper_half",
+    "O": 45.6,
+    "H": 46.06,
+    "L": 45.14,
+    "C": 45.72,
+    "body_pct": 13.0,
+    "upper_wick_pct": 37.0,
+    "lower_wick_pct": 50.0
   },
   "bias": {
     "short": {
@@ -98,18 +104,18 @@
   "scenarios": [
     {
       "if": "hold 44.0 (KEY support)",
-      "then": "still range; watch 46.92 for next test"
+      "then": "still range; watch 46.06 for next test"
     },
     {
       "if": "break 44.0 on close",
-      "then": "target 34.26 → lower (short-term bearish)"
+      "then": "target 40.0 → 34.26 (short-term bearish)"
     },
     {
       "if": "break 34.26 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 46.92 on close",
+      "if": "reclaim 46.06 on close",
       "then": "short-term bullish; next test 47.8"
     },
     {
@@ -140,61 +146,61 @@
     "strategy": "SELL_R1",
     "trigger_price": 46.92,
     "target_price": 44.54,
-    "stop_price": 48.58,
-    "risk_pct": 3.55,
+    "stop_price": 48.55,
+    "risk_pct": 3.47,
     "reward_pct": 5.07,
-    "rr_ratio": 1.43,
+    "rr_ratio": 1.46,
     "phase_match": true,
     "r1": 46.92,
     "s1": 42.16,
     "s2": 37.76,
     "r2": 47.8,
-    "r3": 45.73,
+    "r3": 44.46,
     "s3": 34.26,
-    "s4": 39.97,
-    "current_position_pct": 86.6,
-    "notes": "SELL_R1: in box (42-47), entry at R1 47, target mid 45, stop 49 ｜ 52.2 條規則（SELL plan，resistance 46.92）：① 跌到 46.92、收市守住喺 46.92 上面 → 照 BUY 條 plan 做（入場 46.92，止蝕 48.58，目標 44.54）。② 收市跌穿 46.92 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 46.92 上面』。"
+    "s4": 40.44,
+    "current_position_pct": 74.8,
+    "notes": "SELL_R1: in box (42-47), entry at R1 47, target mid 45, stop 49 ｜ 52.2 條規則（SELL plan，resistance 46.92）：① 跌到 46.92、收市守住喺 46.92 上面 → 照 BUY 條 plan 做（入場 46.92，止蝕 48.55，目標 44.54）。② 收市跌穿 46.92 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 46.92 上面』。"
   },
   "patterns": [
     {
       "name": "吊頸",
       "bias": "bearish",
       "date": "2026-09-29",
-      "low": 42.96,
-      "high": 43.68,
-      "i": 191
+      "low": 42.959999084472656,
+      "high": 43.68000030517578,
+      "i": 189
     },
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-09-21",
-      "low": 42.84,
-      "high": 43.76,
-      "i": 185
+      "low": 42.84000015258789,
+      "high": 43.7599983215332,
+      "i": 183
     },
     {
       "name": "利好反擊線",
       "bias": "bullish",
       "date": "2026-09-14",
-      "low": 43.2,
-      "high": 44.4,
-      "i": 180
+      "low": 43.20000076293945,
+      "high": 44.400001525878906,
+      "i": 178
     },
     {
       "name": "利淡吞噬",
       "bias": "bearish",
       "date": "2026-09-07",
-      "low": 40.02,
-      "high": 46.12,
-      "i": 175
+      "low": 40.02000045776367,
+      "high": 46.119998931884766,
+      "i": 173
     },
     {
       "name": "上升三法",
       "bias": "bullish",
       "date": "2026-08-17",
-      "low": 40.98,
-      "high": 43.26,
-      "i": 160
+      "low": 40.97999954223633,
+      "high": 43.2599983215332,
+      "i": 158
     }
   ]
 }

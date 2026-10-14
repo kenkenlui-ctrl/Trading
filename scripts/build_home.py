@@ -46,8 +46,10 @@ _STRINGS = {
             "<br><br>"
             "<b style=\"color: var(--amber);\">港股未納入 v2。</b>"
             "實測之後港股喺 v2 之下係負數：按 <b>0.25%</b> 來回成本（本頁假設嘅成本，"
-            "亦即免佣 HK$100k 單嘅實際成本），2016–26 年化落後同一批股票等權持有 "
-            "<b>4.6 個百分點</b>；成本收到零都仲係落後 1.4 點。唔係成本問題，係規則本身喺港股冇效，"
+            "亦即免佣 HK$100k 單嘅實際成本），2016–26 年化 v2 <b>+11.0%</b>、"
+            "同一批股票等權持有 <b>+19.1%</b>，即係落後 <b>8.1 個百分點/年</b>；"
+            "成本收到零（v2 +13.2% vs 等權 +19.1%）都仲係落後 <b>5.9 點</b>。"
+            "唔係成本問題，係規則本身喺港股冇效，"
             "所以引擎目前只行美股同日股；<a href=\"/hk200/\">/hk200/</a> 顯示嘅仍然係舊版引擎。"
             "<br><br>"
             "<b style=\"color: var(--amber);\">呢個係一個規則，唔係一個保證。</b>"
@@ -670,7 +672,7 @@ function toggleTheme(){{
       {cards if cards else '<div class="card text-dim">今日未有 v2 訊號 — 全部個股都未企穩 S1</div>'}
     </div>
     {f'<p class="text-dim" style="margin-top: var(--sp-3); font-size: var(--text-sm);">以上 6 個係 {n_v2} 個訊號中最接近觸發入場位嘅，按距 S1 距離排序。完整名單 → <a href="/us200/">US</a> · <a href="/jp200/">JP</a></p>' if cards else ''}
-    {f'<p class="text-dim" style="margin-top: var(--sp-3); font-size: var(--text-sm);"><b style="color: var(--amber);">港股未包含喺呢版。</b>v2 引擎目前只行 US 同 JP（{mkt_bits}）—— 實測港股喺 0.25% 實際成本下落後等權持有 <b>4.6 個百分點/年</b>，零成本都仲係落後 1.4 點，所以 <code>INCLUDE_HK=False</code>。<a href="/hk200/">/hk200/</a> 仍然顯示舊版 (v1) 引擎嘅號，唔應該當成 v2 訊號用。</p>' if hk_in_v2 == 0 else ''}
+    {f'<p class="text-dim" style="margin-top: var(--sp-3); font-size: var(--text-sm);"><b style="color: var(--amber);">港股未包含喺呢版。</b>v2 引擎目前只行 US 同 JP（{mkt_bits}）—— 實測港股喺 0.25% 實際成本下 v2 年化 <b>+11.0%</b>、等權持有 <b>+19.1%</b>，落後 <b>8.1 個百分點/年</b>；零成本都仲係落後 5.9 點，所以 <code>INCLUDE_HK=False</code>。<a href="/hk200/">/hk200/</a> 仍然顯示舊版 (v1) 引擎嘅號，唔應該當成 v2 訊號用。</p>' if hk_in_v2 == 0 else ''}
   </div>
 </section>
 

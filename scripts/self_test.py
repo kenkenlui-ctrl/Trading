@@ -39,6 +39,7 @@ import os
 import re
 import sys
 import tempfile
+from datetime import date
 from pathlib import Path
 
 REPO = Path("/Users/kenken/dev/dsa-hk")
@@ -447,10 +448,55 @@ def t_sitemap_guard() -> None:
 # --------------------------------------------------------------------------
 # 7. v2 signals must not be published from stale bars
 # --------------------------------------------------------------------------
+def bars_at_session(actual: str, expected: str) -> tuple[bool, str]:
+    """True ONLY when a market's modal bar date is the session it was given.
+
+    2026-10-14. The tolerance was `lag <= 2` in CALENDAR days, and calendar
+    days are not sessions. On the night of 10-13 HK's series was two whole
+    sessions behind (modal 2026-10-12, missing both the 10-13 and 10-14
+    sessions) — that is exactly 2 calendar days, so the check reported PASS
+    while HK published stale bars. The US, four days behind, failed correctly,
+    which is what made it look like HK was simply not being checked: the
+    market with the most names on the site was the one whose drift fit inside
+    the slack. A weekend also inflates the same number for a SINGLE missed
+    session, so the threshold could not be tuned to catch both without
+    failing every Monday.
+
+    There is no date here to infer: ASOF_<MKT> is the close date Kenneth gave
+    this run, per market, because the three markets do not share a calendar.
+    If that date was not a trading day for the market, the fix is to pass the
+    date that was — not to widen the window.
+    """
+    a = date.fromisoformat(actual)
+    e = date.fromisoformat(expected)
+    if a == e:
+        return True, ""
+    if a > e:
+        return False, (f"bars at {actual} are AHEAD of {expected}; the --asof cap "
+                       f"is supposed to drop every later bar")
+    lag = (e - a).days
+    return False, (f"modal {actual} is {lag} calendar day(s) behind the session it "
+                   f"was given ({expected}) — those sessions were never fetched. "
+                   f"If {expected} was not a trading day for this market, pass the "
+                   f"real close date in ASOF_<MKT> instead of widening this")
+
+
 def t_v2_bars_fresh() -> None:
     sys.path.insert(0, str(REPO / "scripts"))
     from build_v2_signals import bars_freshness, bars_from_public
-    from datetime import date
+
+    # Control, run BEFORE the real data: a guard proven only by real input that
+    # currently passes is indistinguishable from a guard that cannot fail. The
+    # 1-day case is the one that slipped through on 2026-10-13 — it has to be
+    # rejected now, and an ahead-of-target series must be rejected too.
+    record("v2/session-match must-fail: one day behind is rejected",
+           not bars_at_session("2026-10-13", "2026-10-14")[0])
+    record("v2/session-match must-fail: two days behind is rejected",
+           not bars_at_session("2026-10-12", "2026-10-14")[0])
+    record("v2/session-match must-fail: bars ahead of the cap are rejected",
+           not bars_at_session("2026-10-15", "2026-10-14")[0])
+    record("v2/session-match must-pass: the session itself is accepted",
+           bars_at_session("2026-10-14", "2026-10-14")[0])
 
     # 2026-10-13. This guard was vacuous. Two defects, either one fatal on its own:
     #
@@ -467,12 +513,14 @@ def t_v2_bars_fresh() -> None:
     #
     # JP then sat on 2026-10-09 while HK and US moved daily, and this function
     # reported PASS on every run — the check that exists precisely to catch that.
+    # The loop was fixed that day; the tolerance was not, so HK kept slipping
+    # through it (see bars_at_session).
     #
-    # The reference now comes from the same ASOF_* the pipeline was GIVEN (the
-    # dates refresh.sh already owns, per-market, because the three markets do not
-    # share a calendar). Nothing is inferred. Standalone runs with no env fall
-    # back to cross-market consistency: one market stuck while the others moved
-    # is the failure mode, and it is detectable without knowing any date.
+    # The reference comes from the same ASOF_* the pipeline was GIVEN (the
+    # dates refresh.sh already owns, per-market, because the three markets do
+    # not share a calendar). Nothing is inferred. Standalone runs with no env
+    # fall back to cross-market consistency: one market stuck while the others
+    # moved is the failure mode, and it is detectable without knowing any date.
     expected = {"hk200": os.environ.get("ASOF_HK"),
                 "us200": os.environ.get("ASOF_US"),
                 "jp200": os.environ.get("ASOF_JP")}
@@ -490,12 +538,9 @@ def t_v2_bars_fresh() -> None:
             continue
         exp = expected.get(mkt)
         if exp:
-            lag = (date.fromisoformat(exp) - date.fromisoformat(d)).days
-            # 2 calendar days, and the label says calendar days because that is
-            # what .days measures. A weekend plus one missed session is 3, which
-            # is exactly the drift this has to catch.
-            record(f"v2/{mkt} bars within 2 days of {exp} ({d}, {at}/{tot})", lag <= 2,
-                   f"{lag}d behind the session refresh.sh was given")
+            ok, why = bars_at_session(d, exp)
+            record(f"v2/{mkt} bars at the session refresh.sh was given ({d}, {at}/{tot})",
+                   ok, why, f"modal {at}/{tot} names at {exp}")
         else:
             record(f"v2/{mkt} bars dated ({d}, {at}/{tot})", True,
                    "no ASOF_* in env — cross-market check below carries this market")
@@ -652,9 +697,18 @@ def t_css_cachebuster() -> None:
     fin = next((i for i, l in enumerate(lines) if "scripts/finalize.py" in l), -1)
     after = re.findall(r"scripts/([a-z0-9_]+\.py)", "\n".join(lines[fin + 1:])) \
         if fin != -1 else []
+    # 2026-10-14: self_test.py itself now runs after finalize, because a gate
+    # that judges the tree BEFORE the last writer touches it cannot see what
+    # ships — it failed on backtest.html's badge for exactly that reason. That
+    # is safe only because self_test is read-only, so it is excluded here. This
+    # exclusion is the whole safety argument: if self_test ever gained a
+    # write, this list must stop exempting it. Keep it an explicit allowlist of
+    # known-read-only scripts, never "everything after the gate is fine".
+    READ_ONLY_AFTER_FINALIZE = {"self_test.py"}
+    writers = [s for s in after if s not in READ_ONLY_AFTER_FINALIZE]
     record("finalize/refresh.sh runs finalize.py and nothing writes public/ after it",
-           fin != -1 and not after,
-           f"finalize on line {fin + 1}; scripts still run after it: {after}")
+           fin != -1 and not writers,
+           f"finalize on line {fin + 1}; scripts still run after it: {writers or after}")
 
 
 def t_no_retired_v1_claims() -> None:
@@ -1699,6 +1753,89 @@ def t_en_tree_is_retired() -> None:
                if not gaps else f"{len(gaps)} uncovered: {gaps[:5]}")
 
 
+def t_equity_curve_pages_are_v2() -> None:
+    """P0-1: equity-curve pages must cite the v2 engine, never the retired v1 JSON."""
+    pages = sorted(PUBLIC.glob("equity_curve_*.html"))
+    record("equity curve pages exist", bool(pages), f"{len(pages)} page(s)")
+    if not pages:
+        return
+
+    # 1. The engine check. build_equity_curves.py was migrated to
+    #    data/v2_equity_trades.json on 2026-10-07, but its footer was a
+    #    hardcoded literal still naming data/monthly_backtest/backtest_*.json —
+    #    so the pages rendered v2 numbers while claiming a v1 source, which is
+    #    the same defect P0-1 exists to stop, reduced to a footnote. The footer
+    #    is now derived from the file that was actually read.
+    #
+    #    Naming the v1 JSON is not itself the defect: these pages carry a
+    #    correction banner saying they USED to read it and that those numbers
+    #    are void. That transparency is the right thing to ship. What must never
+    #    appear is a page presenting v1 as its own current source — so the check
+    #    is on the provenance line, and any surviving mention must sit inside
+    #    withdrawal language. Grepping for the bare string would flag the banner
+    #    that documents the very fix.
+    bad_source, unexplained = [], []
+    for p in pages:
+        txt = p.read_text(encoding="utf-8")
+        footers = [m for m in re.findall(r"Source:[^<]*", txt)
+                   if "monthly_backtest" in m]
+        if footers:
+            bad_source.append(f"{p.name}:{footers[0][:60]}")
+        for m in re.finditer(r"monthly_backtest", txt):
+            ctx = txt[max(0, m.start() - 400):m.end() + 400]
+            if not re.search(r"作廢|舊版|retired|已更換|withdrawn|取代", ctx):
+                unexplained.append(f"{p.name}@{m.start()}")
+    record("equity curves never present v1 backtest as their source", not bad_source,
+           f"provenance still cites v1: {bad_source}" if bad_source else
+           f"{len(pages)} pages, 0 v1 provenance lines")
+    record("any v1 mention on equity curves sits in a withdrawal notice",
+           not unexplained, f"bare mention with no 作廢/retired context: {unexplained}"
+           if unexplained else "all mentions are inside the 2026-10-07 correction banner")
+
+    detail = [p for p in pages if p.stem != "equity_curve_t10"]
+    uncited = [p.name for p in detail
+               if "v2_equity_trades.json" not in p.read_text(encoding="utf-8")]
+    record("every equity curve states its v2 source file", not uncited,
+           f"no source citation: {uncited}" if uncited else
+           f"{len(detail)} detail pages cite v2_equity_trades.json")
+
+    # 2. equity_curve_t10.html and equity_curve_t_10.html are NOT duplicates and
+    #    deleting either breaks a live link. The first is the family hub (the
+    #    other four link back to it as "<- All horizons"); the second is the
+    #    T+10 detail. The names collide visually, so assert the relationship
+    #    rather than trusting it. Links are extensionless here — Cloudflare
+    #    Pages serves /equity_curve_t_1 for equity_curve_t_1.html — so match the
+    #    stem, not the filename.
+    hub = PUBLIC / "equity_curve_t10.html"
+    if hub.exists():
+        hub_txt = hub.read_text(encoding="utf-8")
+        missing = [f"t_{n}" for n in (1, 3, 5, 10)
+                   if f"/equity_curve_t_{n}" not in hub_txt]
+        record("equity_curve_t10.html is the hub and links all four horizons",
+               not missing, f"missing links: {missing}" if missing else
+               "t_1 / t_3 / t_5 / t_10 all linked from the hub")
+
+    # MUST-FAIL: a page that names v1 as its OWN source has to be rejected, and
+    # the same mention inside a withdrawal banner has to be allowed. Without
+    # both, this check could be passing because it greps nothing — or failing
+    # forever on the correction banner that documents the fix.
+    bad = "Source: data/monthly_backtest/backtest_2026-09-10.json · 6714 signals"
+    record("must-fail: v1 stated as the page source is rejected",
+           any("monthly_backtest" in m for m in re.findall(r"Source:[^<]*", bad)),
+           "the provenance regex matches the literal the old footer used")
+    ok = ("2026-10-07 — 數據源已更換。呢四頁原本讀 data/monthly_backtest/，"
+          "舊版 v1 swing/day-trade 引擎，歷史數字全部作廢。")
+    record("must-fail: v1 named inside a withdrawal notice is allowed",
+           not re.search(r"Source:[^<]*monthly_backtest", ok)
+           and bool(re.search(r"作廢|舊版|retired|已更換|withdrawn|取代", ok)),
+           "a documented withdrawal is not a stale provenance claim")
+    # MUST-FAIL: the hub must not pass just by existing.
+    record("must-fail: hub without the four links is rejected",
+           not all(f"equity_curve_t_{n}.html" in "equity_curve_t_1.html"
+                   for n in (1, 3, 5, 10)),
+           "a hub page missing its horizon links does not satisfy the test")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--json", action="store_true")
@@ -1717,7 +1854,8 @@ def main() -> int:
                t_llms_txt_says_which_engine_covers_which_market,
                t_jp_ohlc_has_one_naming_scheme, t_en_tree_is_retired,
                t_signals_only_come_from_tracked_tickers,
-               t_every_fetched_asset_is_content_stamped):
+               t_every_fetched_asset_is_content_stamped,
+               t_equity_curve_pages_are_v2):
         print(f"\n{fn.__doc__.splitlines()[0] if fn.__doc__ else fn.__name__}")
         try:
             fn()

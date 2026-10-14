@@ -3,23 +3,23 @@
   "ticker_user": "ELV",
   "name": "Elevance Health, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
+  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-12",
-    "O": 415.0,
-    "H": 423.98,
-    "L": 413.7,
-    "C": 422.09,
-    "prev_close": 412.7,
-    "chg_pct": 2.28
+    "date": "2026-10-13",
+    "O": 427.0,
+    "H": 433.89,
+    "L": 420.99,
+    "C": 425.27,
+    "prev_close": 422.09,
+    "chg_pct": 0.75
   },
-  "phase": "base_building",
-  "adx": 15.63,
-  "plus_di": 30.28,
-  "minus_di": 18.69,
+  "phase": "uptrend",
+  "adx": 16.91,
+  "plus_di": 34.32,
+  "minus_di": 17.07,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 436.24 (2026-07-14), trough 362.98 (2026-07-28), box top 427.17 (2026-09-14)",
+  "phase_evidence": "Peak 436.24 (2026-07-14), trough 362.98 (2026-07-28), box top 433.89 (2026-10-13)",
   "peak": {
     "date": "2026-07-14",
     "price": 436.24
@@ -29,19 +29,19 @@
     "price": 362.98
   },
   "box": {
-    "top": 427.17,
-    "top_date": "2026-09-14",
+    "top": 433.89,
+    "top_date": "2026-10-13",
     "bottom": 362.98,
-    "period": "2026-07-28 to 2026-10-12"
+    "period": "2026-07-28 to 2026-10-13"
   },
-  "drop_from_peak_pct": 3.2,
-  "recovery_from_crash_pct": 16.3,
+  "drop_from_peak_pct": 2.5,
+  "recovery_from_crash_pct": 17.2,
   "supports": [
     {
       "level": 412.0,
       "label": "S1 KEY",
-      "touches": 6,
-      "evidence": "tested 6x in base period; 2.4% below current"
+      "touches": 8,
+      "evidence": "tested 8x in base period; 3.1% below current"
     },
     {
       "level": 408.0,
@@ -64,53 +64,48 @@
   ],
   "resistances": [
     {
-      "level": 423.98,
+      "level": 433.89,
       "label": "R1 today high",
-      "evidence": "today's high 423.9800109863281"
-    },
-    {
-      "level": 427.17,
-      "label": "R3 Sep high",
-      "evidence": "box top 427.17, base period high"
+      "evidence": "rejection at 433.8900146484375 (long upper wick, close weak)"
     }
   ],
   "position": {
-    "current": 422.09,
-    "in_box_pct": 92.1,
+    "current": 425.27,
+    "in_box_pct": 87.8,
     "nearest_support": "S1 KEY (412.0)",
-    "nearest_resistance": "R1 today high (423.98)"
+    "nearest_resistance": "R1 today high (433.89)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 415.0,
-    "H": 423.98,
-    "L": 413.7,
-    "C": 422.09,
-    "body_pct": 69.0,
-    "upper_wick_pct": 18.4,
-    "lower_wick_pct": 12.6
+    "close_position": "lower_half",
+    "O": 427.0,
+    "H": 433.89,
+    "L": 420.99,
+    "C": 425.27,
+    "body_pct": 13.4,
+    "upper_wick_pct": 53.4,
+    "lower_wick_pct": 33.2
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 412.0 (KEY support)",
-      "then": "still range; watch 423.98 for next test"
+      "then": "still range; watch 433.89 for next test"
     },
     {
       "if": "break 412.0 on close",
@@ -121,12 +116,8 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 423.98 on close",
-      "then": "short-term bullish; next test 427.17"
-    },
-    {
-      "if": "break 427.17 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 433.89 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -148,24 +139,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 423.98,
-    "target_price": 399.86,
-    "stop_price": 439.12,
-    "risk_pct": 3.57,
-    "reward_pct": 5.69,
-    "rr_ratio": 1.59,
-    "phase_match": true,
-    "r1": 423.98,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 433.89,
     "s1": 375.74,
     "s2": 362.98,
     "r2": 427.17,
     "r3": 436.24,
-    "s3": 325.42,
+    "s3": 329.36,
     "s4": 274.84,
-    "current_position_pct": 96.1,
-    "notes": "SELL_R1: in box (376-424), entry at R1 424, target mid 400, stop 439 ｜ 52.2 條規則（SELL plan，resistance 423.98）：① 跌到 423.98、收市守住喺 423.98 上面 → 照 BUY 條 plan 做（入場 423.98，止蝕 439.12，目標 399.86）。② 收市跌穿 423.98 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 423.98 上面』。"
+    "current_position_pct": 85.2,
+    "notes": "WAIT_RANGE: in box (376-434), pos 85%, no clear setup"
   },
   "patterns": [
     {
@@ -174,7 +165,7 @@
       "date": "2026-09-15",
       "low": 415.80999755859375,
       "high": 423.55999755859375,
-      "i": 180
+      "i": 179
     },
     {
       "name": "射擊之星",
@@ -182,7 +173,7 @@
       "date": "2026-08-28",
       "low": 394.3999938964844,
       "high": 403.1600036621094,
-      "i": 169
+      "i": 168
     },
     {
       "name": "利淡吞噬",
@@ -190,7 +181,7 @@
       "date": "2026-08-17",
       "low": 388.1199951171875,
       "high": 400.1700134277344,
-      "i": 160
+      "i": 159
     },
     {
       "name": "利好吞噬",
@@ -198,7 +189,7 @@
       "date": "2026-08-05",
       "low": 370.4700012207031,
       "high": 392.42999267578125,
-      "i": 152
+      "i": 151
     },
     {
       "name": "刺穿線",
@@ -206,7 +197,7 @@
       "date": "2026-07-30",
       "low": 368.69000244140625,
       "high": 378.1700134277344,
-      "i": 148
+      "i": 147
     }
   ]
 }

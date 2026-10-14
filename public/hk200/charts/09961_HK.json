@@ -3,23 +3,23 @@
   "ticker_user": "09961.HK",
   "name": "TRIP.COM-S",
   "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
+  "data_range": "2025-12-19 → 2026-10-14 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 298.8,
-    "H": 305.6,
-    "L": 298.6,
-    "C": 304.4,
-    "prev_close": 296.0,
-    "chg_pct": 2.84
+    "date": "2026-10-14",
+    "O": 302.8,
+    "H": 308.2,
+    "L": 298.4,
+    "C": 307.0,
+    "prev_close": 306.6,
+    "chg_pct": 0.13
   },
   "phase": "downtrend_active",
-  "adx": 25.67,
-  "plus_di": 16.36,
-  "minus_di": 26.83,
+  "adx": 25.57,
+  "plus_di": 14.29,
+  "minus_di": 25.61,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 613.0 (2026-01-13), trough 294.6 (2026-10-08), box top 359.6 (2026-08-31)",
+  "phase_evidence": "Peak 613.0 (2026-01-13), trough 294.6 (2026-10-08), box top 308.2 (2026-10-14)",
   "peak": {
     "date": "2026-01-13",
     "price": 613.0
@@ -29,86 +29,83 @@
     "price": 294.6
   },
   "box": {
-    "top": 359.6,
-    "top_date": "2026-08-31",
+    "top": 308.2,
+    "top_date": "2026-10-14",
     "bottom": 294.6,
-    "period": "2026-10-08 to 2026-10-09"
+    "period": "2026-10-08 to 2026-10-14"
   },
-  "drop_from_peak_pct": 50.3,
-  "recovery_from_crash_pct": 3.3,
+  "drop_from_peak_pct": 49.9,
+  "recovery_from_crash_pct": 4.2,
   "supports": [
     {
+      "level": 300.0,
+      "label": "S1 KEY",
+      "touches": 10,
+      "evidence": "tested 10x in base period; 2.3% below current"
+    },
+    {
       "level": 296.0,
-      "label": "S1 bottom",
+      "label": "S2 bottom",
       "touches": 8,
       "evidence": "structural bottom, near crash low 294.6"
     }
   ],
   "resistances": [
     {
-      "level": 305.6,
+      "level": 308.2,
       "label": "R1 today high",
-      "evidence": "today's high 305.6000061035156"
-    },
-    {
-      "level": 359.6,
-      "label": "R3 Aug high",
-      "evidence": "box top 359.6, base period high"
+      "evidence": "today's high 308.20001220703125"
     }
   ],
   "position": {
-    "current": 304.4,
-    "in_box_pct": 13.2,
-    "nearest_support": "S1 bottom (296.0)",
-    "nearest_resistance": "R1 today high (305.6)"
+    "current": 307.0,
+    "in_box_pct": 90.2,
+    "nearest_support": "S1 KEY (300.0)",
+    "nearest_resistance": "R1 today high (308.2)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 298.8,
-    "H": 305.6,
-    "L": 298.6,
-    "C": 304.4,
-    "body_pct": 80.0,
-    "upper_wick_pct": 17.1,
-    "lower_wick_pct": 2.9
+    "O": 302.8,
+    "H": 308.2,
+    "L": 298.4,
+    "C": 307.0,
+    "body_pct": 42.9,
+    "upper_wick_pct": 12.2,
+    "lower_wick_pct": 44.9
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (13% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
       "reason": "making new lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 296.0 (KEY support)",
-      "then": "still range; watch 305.6 for next test"
+      "if": "hold 300.0 (KEY support)",
+      "then": "still range; watch 308.2 for next test"
     },
     {
-      "if": "break 296.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 300.0 on close",
+      "then": "target 296.0 → lower (short-term bearish)"
     },
     {
       "if": "break 296.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 305.6 on close",
-      "then": "short-term bullish; next test 359.6"
-    },
-    {
-      "if": "break 359.6 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 308.2 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -141,22 +138,30 @@
     "phase_match": false,
     "r1": 325.6,
     "s1": 294.6,
-    "s2": 304.2,
+    "s2": 300.4,
     "r2": 375.2,
-    "r3": 432.2,
+    "r3": 425.0,
     "s3": 299.2,
     "s4": 376.0,
-    "current_position_pct": 31.6,
-    "notes": "WAIT_RANGE: in box (295-326), pos 32%, no clear setup"
+    "current_position_pct": 40.0,
+    "notes": "WAIT_RANGE: in box (295-326), pos 40%, no clear setup"
   },
   "patterns": [
     {
       "name": "刺穿線",
       "bias": "bullish",
-      "date": "2026-10-09",
-      "low": 298.6000061035156,
-      "high": 305.6000061035156,
-      "i": 199
+      "date": "2026-10-13",
+      "low": 300.79998779296875,
+      "high": 307.0,
+      "i": 198
+    },
+    {
+      "name": "錘頭",
+      "bias": "bullish",
+      "date": "2026-10-07",
+      "low": 297.6000061035156,
+      "high": 303.0,
+      "i": 194
     },
     {
       "name": "利好吞噬",
@@ -164,7 +169,7 @@
       "date": "2026-09-18",
       "low": 314.79998779296875,
       "high": 321.6000061035156,
-      "i": 185
+      "i": 182
     },
     {
       "name": "利好反擊線",
@@ -172,7 +177,7 @@
       "date": "2026-09-07",
       "low": 322.0,
       "high": 327.0,
-      "i": 176
+      "i": 173
     },
     {
       "name": "烏雲蓋頂",
@@ -180,15 +185,7 @@
       "date": "2026-08-11",
       "low": 362.20001220703125,
       "high": 373.20001220703125,
-      "i": 157
-    },
-    {
-      "name": "利好吞噬",
-      "bias": "bullish",
-      "date": "2026-07-10",
-      "low": 325.6000061035156,
-      "high": 334.0,
-      "i": 135
+      "i": 154
     }
   ]
 }

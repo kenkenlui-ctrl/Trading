@@ -129,7 +129,13 @@ MARKETS = {
 #
 # Cost is not the reason: at ZERO cost it still loses, and the good half
 # (2021-26) is +0.1pp, i.e. dead even. The rule does not work in HK.
-INCLUDE_HK = False  # measured 2026-10-07: -4.6pp/yr at the 0.25% cost this site assumes
+# 2026-10-13: the 2026-10-07 measurement quoted -4.6pp/yr. The full Oct-12
+# retest (data/hk_retest_summary.json, scripts/hk_retest.py) puts it at
+# -8.1pp/yr: v2 +11.0%/yr vs equal-weight +19.1%/yr, 2016-2026, 0.25% round trip.
+# Even at zero cost v2 is -5.9pp/yr behind, so this is a rules problem and not a
+# cost problem — the verdict is unchanged, the magnitude was understated. Only
+# the comment moved; INCLUDE_HK was already False and stays False.
+INCLUDE_HK = False  # measured 2026-10-12: -8.1pp/yr at the 0.25% cost this site assumes (-5.9pp/yr at zero cost)
 
 
 def bars_from_public(market: str) -> dict[str, pd.DataFrame]:

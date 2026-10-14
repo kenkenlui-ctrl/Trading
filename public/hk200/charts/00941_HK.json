@@ -3,20 +3,20 @@
   "ticker_user": "00941.HK",
   "name": "CHINA MOBILE",
   "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
+  "data_range": "2025-12-19 → 2026-10-14 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 79.8,
-    "H": 80.2,
-    "L": 79.7,
-    "C": 80.1,
-    "prev_close": 79.4,
-    "chg_pct": 0.88
+    "date": "2026-10-14",
+    "O": 80.5,
+    "H": 81.0,
+    "L": 80.1,
+    "C": 80.9,
+    "prev_close": 80.45,
+    "chg_pct": 0.56
   },
   "phase": "base_building",
-  "adx": 17.37,
-  "plus_di": 24.27,
-  "minus_di": 17.17,
+  "adx": 19.51,
+  "plus_di": 26.6,
+  "minus_di": 13.51,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 88.05 (2026-05-19), trough 75.55 (2026-06-30), box top 84.95 (2026-07-30)",
@@ -32,29 +32,29 @@
     "top": 84.95,
     "top_date": "2026-07-30",
     "bottom": 75.55,
-    "period": "2026-06-30 to 2026-10-09"
+    "period": "2026-06-30 to 2026-10-14"
   },
-  "drop_from_peak_pct": 9.0,
-  "recovery_from_crash_pct": 6.0,
+  "drop_from_peak_pct": 8.1,
+  "recovery_from_crash_pct": 7.1,
   "supports": [
     {
       "level": 80.0,
       "label": "S1 KEY",
-      "touches": 9,
-      "evidence": "tested 9x in base period; 0.1% below current"
+      "touches": 60,
+      "evidence": "tested 60x in base period; 1.1% below current"
     },
     {
-      "level": 76.0,
-      "label": "S2 bottom",
-      "touches": 6,
-      "evidence": "structural bottom, near crash low 75.55"
+      "level": 75.55,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-06-30, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 80.2,
+      "level": 81.0,
       "label": "R1 today high",
-      "evidence": "today's high 80.19999694824219"
+      "evidence": "today's high 81.0"
     },
     {
       "level": 84.95,
@@ -63,23 +63,23 @@
     }
   ],
   "position": {
-    "current": 80.1,
-    "in_box_pct": 45.8,
+    "current": 80.9,
+    "in_box_pct": 56.9,
     "nearest_support": "S1 KEY (80.0)",
-    "nearest_resistance": "R1 today high (80.2)"
+    "nearest_resistance": "R1 today high (81.0)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": true,
     "close_position": "upper_half",
-    "O": 79.8,
-    "H": 80.2,
-    "L": 79.7,
-    "C": 80.1,
-    "body_pct": 60.0,
-    "upper_wick_pct": 20.0,
-    "lower_wick_pct": 20.0
+    "O": 80.5,
+    "H": 81.0,
+    "L": 80.1,
+    "C": 80.9,
+    "body_pct": 44.4,
+    "upper_wick_pct": 11.1,
+    "lower_wick_pct": 44.4
   },
   "bias": {
     "short": {
@@ -98,18 +98,18 @@
   "scenarios": [
     {
       "if": "hold 80.0 (KEY support)",
-      "then": "still range; watch 80.2 for next test"
+      "then": "still range; watch 81.0 for next test"
     },
     {
       "if": "break 80.0 on close",
-      "then": "target 76.0 → lower (short-term bearish)"
+      "then": "target 75.55 → lower (short-term bearish)"
     },
     {
-      "if": "break 76.0 (crash low)",
+      "if": "break 75.55 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 80.2 on close",
+      "if": "reclaim 81.0 on close",
       "then": "short-term bullish; next test 84.95"
     },
     {
@@ -145,15 +145,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 80.2,
+    "r1": 81.0,
     "s1": 78.15,
-    "s2": 78.55,
+    "s2": 78.35,
     "r2": 84.95,
     "r3": 88.05,
     "s3": 75.55,
     "s4": 75.85,
-    "current_position_pct": 95.1,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 80.20）：① 跌到 80.20、收市守住喺 80.20 上面 → 照 BUY 條 plan 做（入場 80.20，止蝕 81.80，目標 79.17）。② 收市跌穿 80.20 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 80.20 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 96.5,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 81.00）：① 跌到 81.00、收市守住喺 81.00 上面 → 照 BUY 條 plan 做（入場 81.00，止蝕 82.62，目標 79.58）。② 收市跌穿 81.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 81.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
     {
@@ -162,7 +162,7 @@
       "date": "2026-10-08",
       "low": 79.0,
       "high": 80.1500015258789,
-      "i": 198
+      "i": 195
     },
     {
       "name": "刺穿線",
@@ -170,7 +170,7 @@
       "date": "2026-09-28",
       "low": 78.5999984741211,
       "high": 79.75,
-      "i": 191
+      "i": 188
     },
     {
       "name": "利好吞噬",
@@ -178,7 +178,7 @@
       "date": "2026-09-21",
       "low": 78.44999694824219,
       "high": 79.19999694824219,
-      "i": 186
+      "i": 183
     },
     {
       "name": "平頭底",
@@ -186,7 +186,7 @@
       "date": "2026-09-01",
       "low": 79.0,
       "high": 79.75,
-      "i": 172
+      "i": 169
     },
     {
       "name": "刺穿線",
@@ -194,7 +194,7 @@
       "date": "2026-06-12",
       "low": 80.94999694824219,
       "high": 82.1500015258789,
-      "i": 117
+      "i": 114
     }
   ]
 }

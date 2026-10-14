@@ -3,21 +3,21 @@
   "ticker_user": "TDG",
   "name": "Transdigm Group Incorporated",
   "data_source": "yfinance",
-  "data_range": "2025-12-24 → 2026-10-12 (200 daily bars)",
+  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-12",
-    "O": 1107.25,
-    "H": 1129.21,
-    "L": 1105.15,
-    "C": 1119.94,
-    "prev_close": 1107.99,
-    "chg_pct": 1.08
+    "date": "2026-10-13",
+    "O": 1113.01,
+    "H": 1115.71,
+    "L": 1091.16,
+    "C": 1112.39,
+    "prev_close": 1119.94,
+    "chg_pct": -0.67
   },
   "phase": "downtrend_active",
-  "adx": 20.07,
-  "plus_di": 19.93,
-  "minus_di": 15.3,
-  "regime": "dead",
+  "adx": 18.69,
+  "plus_di": 18.29,
+  "minus_di": 18.05,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 1463.03 (2026-01-16), trough 1071.25 (2026-09-16), box top 1129.21 (2026-10-12)",
   "peak": {
@@ -32,55 +32,60 @@
     "top": 1129.21,
     "top_date": "2026-10-12",
     "bottom": 1071.25,
-    "period": "2026-09-16 to 2026-10-12"
+    "period": "2026-09-16 to 2026-10-13"
   },
-  "drop_from_peak_pct": 23.5,
-  "recovery_from_crash_pct": 4.5,
+  "drop_from_peak_pct": 24.0,
+  "recovery_from_crash_pct": 3.8,
   "supports": [
     {
-      "level": 1092.0,
-      "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 2.5% below current"
-    },
-    {
       "level": 1088.0,
-      "label": "S2",
+      "label": "S1 KEY",
       "touches": 6,
-      "evidence": "mid-base support, tested 6x"
+      "evidence": "tested 6x in base period; 2.2% below current"
     },
     {
       "level": 1084.0,
-      "label": "S3 bottom",
+      "label": "S2",
       "touches": 9,
+      "evidence": "mid-base support, tested 9x"
+    },
+    {
+      "level": 1080.0,
+      "label": "S3 bottom",
+      "touches": 4,
       "evidence": "structural bottom, near crash low 1071.25"
     }
   ],
   "resistances": [
     {
-      "level": 1129.21,
+      "level": 1115.71,
       "label": "R1 today high",
-      "evidence": "today's high 1129.2099609375"
+      "evidence": "today's high 1115.7099609375"
+    },
+    {
+      "level": 1129.21,
+      "label": "R3 Oct high",
+      "evidence": "box top 1129.21, base period high"
     }
   ],
   "position": {
-    "current": 1119.94,
-    "in_box_pct": 79.5,
-    "nearest_support": "S1 KEY (1092.0)",
-    "nearest_resistance": "R1 today high (1129.21)"
+    "current": 1112.39,
+    "in_box_pct": 65.8,
+    "nearest_support": "S1 KEY (1088.0)",
+    "nearest_resistance": "R1 today high (1115.71)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 1107.25,
-    "H": 1129.21,
-    "L": 1105.15,
-    "C": 1119.94,
-    "body_pct": 52.7,
-    "upper_wick_pct": 38.5,
-    "lower_wick_pct": 8.7
+    "O": 1113.01,
+    "H": 1115.71,
+    "L": 1091.16,
+    "C": 1112.39,
+    "body_pct": 2.5,
+    "upper_wick_pct": 11.0,
+    "lower_wick_pct": 86.5
   },
   "bias": {
     "short": {
@@ -98,20 +103,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 1092.0 (KEY support)",
-      "then": "still range; watch 1129.21 for next test"
+      "if": "hold 1088.0 (KEY support)",
+      "then": "still range; watch 1115.71 for next test"
     },
     {
-      "if": "break 1092.0 on close",
-      "then": "target 1088.0 → 1084.0 (short-term bearish)"
+      "if": "break 1088.0 on close",
+      "then": "target 1084.0 → 1080.0 (short-term bearish)"
     },
     {
-      "if": "break 1084.0 (crash low)",
+      "if": "break 1080.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1129.21 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 1115.71 on close",
+      "then": "short-term bullish; next test 1129.21"
+    },
+    {
+      "if": "break 1129.21 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -144,13 +153,13 @@
     "phase_match": false,
     "r1": 1129.21,
     "s1": 1071.25,
-    "s2": 1102.37,
+    "s2": 1082.4,
     "r2": 1359.27,
     "r3": 1361.77,
     "s3": 1128.21,
     "s4": 1123.61,
-    "current_position_pct": 84.0,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 1129.21）：① 跌到 1129.21、收市守住喺 1129.21 上面 → 照 BUY 條 plan 做（入場 1129.21，止蝕 1163.35，目標 1100.23）。② 收市跌穿 1129.21 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1129.21 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 71.0,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 1129.21）：① 跌到 1129.21、收市守住喺 1129.21 上面 → 照 BUY 條 plan 做（入場 1129.21，止蝕 1163.91，目標 1100.23）。② 收市跌穿 1129.21 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1129.21 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
     {
@@ -159,7 +168,7 @@
       "date": "2026-10-09",
       "low": 1085.0,
       "high": 1110.77001953125,
-      "i": 198
+      "i": 197
     },
     {
       "name": "利好反擊線",
@@ -167,7 +176,7 @@
       "date": "2026-09-25",
       "low": 1100.010009765625,
       "high": 1118.1500244140625,
-      "i": 188
+      "i": 187
     },
     {
       "name": "刺穿線",
@@ -175,7 +184,7 @@
       "date": "2026-08-13",
       "low": 1216.6700439453125,
       "high": 1249.3800048828125,
-      "i": 158
+      "i": 157
     },
     {
       "name": "利好身懷六甲",
@@ -183,7 +192,7 @@
       "date": "2026-07-23",
       "low": 1204.27001953125,
       "high": 1227.72998046875,
-      "i": 143
+      "i": 142
     },
     {
       "name": "早晨之星",
@@ -191,7 +200,7 @@
       "date": "2026-07-16",
       "low": 1216.77001953125,
       "high": 1240.3699951171875,
-      "i": 138
+      "i": 137
     }
   ]
 }

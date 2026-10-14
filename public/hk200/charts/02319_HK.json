@@ -3,23 +3,23 @@
   "ticker_user": "02319.HK",
   "name": "MENGNIU DAIRY",
   "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
+  "data_range": "2025-12-19 → 2026-10-14 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 17.55,
-    "H": 18.32,
-    "L": 17.55,
-    "C": 18.24,
-    "prev_close": 17.55,
-    "chg_pct": 3.93
+    "date": "2026-10-14",
+    "O": 18.17,
+    "H": 18.88,
+    "L": 18.06,
+    "C": 18.82,
+    "prev_close": 18.17,
+    "chg_pct": 3.58
   },
   "phase": "downtrend_active",
-  "adx": 20.6,
-  "plus_di": 19.91,
-  "minus_di": 18.55,
-  "regime": "dead",
+  "adx": 19.02,
+  "plus_di": 24.88,
+  "minus_di": 14.5,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 19.67 (2026-07-30), trough 16.85 (2026-10-05), box top 18.32 (2026-10-09)",
+  "phase_evidence": "Peak 19.67 (2026-07-30), trough 16.85 (2026-10-05), box top 18.88 (2026-10-14)",
   "peak": {
     "date": "2026-07-30",
     "price": 19.67
@@ -29,51 +29,57 @@
     "price": 16.85
   },
   "box": {
-    "top": 18.32,
-    "top_date": "2026-10-09",
+    "top": 18.88,
+    "top_date": "2026-10-14",
     "bottom": 16.85,
-    "period": "2026-10-05 to 2026-10-09"
+    "period": "2026-10-05 to 2026-10-14"
   },
-  "drop_from_peak_pct": 7.3,
-  "recovery_from_crash_pct": 8.2,
+  "drop_from_peak_pct": 4.3,
+  "recovery_from_crash_pct": 11.7,
   "supports": [
     {
+      "level": 20.0,
+      "label": "S1 KEY",
+      "touches": 22,
+      "evidence": "tested 22x in base period; -6.3% below current"
+    },
+    {
       "level": 16.0,
-      "label": "S1 bottom",
-      "touches": 48,
+      "label": "S2 bottom",
+      "touches": 60,
       "evidence": "structural bottom, near crash low 16.85"
     }
   ],
   "resistances": [
     {
-      "level": 18.32,
+      "level": 18.88,
       "label": "R1 today high",
-      "evidence": "today's high 18.31999969482422"
+      "evidence": "today's high 18.8799991607666"
     }
   ],
   "position": {
-    "current": 18.24,
-    "in_box_pct": 96.6,
-    "nearest_support": "S1 bottom (16.0)",
-    "nearest_resistance": "R1 today high (18.32)"
+    "current": 18.82,
+    "in_box_pct": 97.9,
+    "nearest_support": "S1 KEY (20.0)",
+    "nearest_resistance": "R1 today high (18.88)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 17.55,
-    "H": 18.32,
-    "L": 17.55,
-    "C": 18.24,
-    "body_pct": 89.6,
-    "upper_wick_pct": 10.4,
-    "lower_wick_pct": 0.0
+    "O": 18.17,
+    "H": 18.88,
+    "L": 18.06,
+    "C": 18.82,
+    "body_pct": 79.3,
+    "upper_wick_pct": 7.3,
+    "lower_wick_pct": 13.4
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -86,19 +92,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 16.0 (KEY support)",
-      "then": "still range; watch 18.32 for next test"
+      "if": "hold 20.0 (KEY support)",
+      "then": "still range; watch 18.88 for next test"
     },
     {
-      "if": "break 16.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 20.0 on close",
+      "then": "target 16.0 → lower (short-term bearish)"
     },
     {
       "if": "break 16.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 18.32 on close",
+      "if": "reclaim 18.88 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -121,24 +127,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 18.43,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 18.88,
+    "target_price": 17.86,
+    "stop_price": 19.62,
+    "risk_pct": 3.91,
+    "reward_pct": 5.38,
+    "rr_ratio": 1.37,
+    "phase_match": true,
+    "r1": 18.88,
     "s1": 16.85,
     "s2": 17.51,
     "r2": 19.67,
-    "r3": 18.08,
+    "r3": 18.82,
     "s3": 15.33,
     "s4": 14.73,
-    "current_position_pct": 88.0,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 18.43）：① 跌到 18.43、收市守住喺 18.43 上面 → 照 BUY 條 plan 做（入場 18.43，止蝕 19.13，目標 17.64）。② 收市跌穿 18.43 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 18.43 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 97.0,
+    "notes": "SELL_R1: in box (17-19), entry at R1 19, target mid 18, stop 20 ｜ 52.2 條規則（SELL plan，resistance 18.88）：① 跌到 18.88、收市守住喺 18.88 上面 → 照 BUY 條 plan 做（入場 18.88，止蝕 19.62，目標 17.86）。② 收市跌穿 18.88 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 18.88 上面』。"
   },
   "patterns": [
     {
@@ -147,7 +153,7 @@
       "date": "2026-10-09",
       "low": 17.549999237060547,
       "high": 18.31999969482422,
-      "i": 199
+      "i": 196
     },
     {
       "name": "利好反擊線",
@@ -155,7 +161,7 @@
       "date": "2026-10-02",
       "low": 17.079999923706055,
       "high": 17.6299991607666,
-      "i": 194
+      "i": 191
     },
     {
       "name": "刺穿線",
@@ -163,7 +169,7 @@
       "date": "2026-09-23",
       "low": 17.68000030517578,
       "high": 18.0,
-      "i": 188
+      "i": 185
     },
     {
       "name": "上升三法",
@@ -171,7 +177,7 @@
       "date": "2026-08-28",
       "low": 18.079999923706055,
       "high": 18.979999542236328,
-      "i": 170
+      "i": 167
     },
     {
       "name": "烏雲蓋頂",
@@ -179,7 +185,7 @@
       "date": "2026-08-11",
       "low": 18.479999542236328,
       "high": 19.100000381469727,
-      "i": 157
+      "i": 154
     }
   ]
 }

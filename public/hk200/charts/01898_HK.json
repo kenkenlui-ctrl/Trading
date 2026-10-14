@@ -3,20 +3,20 @@
   "ticker_user": "01898.HK",
   "name": "CHINA COAL",
   "data_source": "yfinance",
-  "data_range": "2025-12-16 → 2026-10-09 (200 daily bars)",
+  "data_range": "2025-12-19 → 2026-10-14 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-09",
-    "O": 10.49,
-    "H": 10.73,
-    "L": 10.4,
-    "C": 10.63,
-    "prev_close": 10.36,
-    "chg_pct": 2.61
+    "date": "2026-10-14",
+    "O": 10.65,
+    "H": 10.88,
+    "L": 10.65,
+    "C": 10.78,
+    "prev_close": 10.64,
+    "chg_pct": 1.32
   },
   "phase": "base_building",
-  "adx": 18.76,
-  "plus_di": 21.45,
-  "minus_di": 18.18,
+  "adx": 18.88,
+  "plus_di": 21.83,
+  "minus_di": 14.62,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 15.24 (2026-03-13), trough 9.7 (2026-07-02), box top 12.33 (2026-09-01)",
@@ -32,29 +32,29 @@
     "top": 12.33,
     "top_date": "2026-09-01",
     "bottom": 9.7,
-    "period": "2026-07-02 to 2026-10-09"
+    "period": "2026-07-02 to 2026-10-14"
   },
-  "drop_from_peak_pct": 30.2,
-  "recovery_from_crash_pct": 9.6,
+  "drop_from_peak_pct": 29.3,
+  "recovery_from_crash_pct": 11.1,
   "supports": [
     {
       "level": 12.0,
       "label": "S1 KEY",
-      "touches": 26,
-      "evidence": "tested 26x in base period; -12.9% below current"
+      "touches": 41,
+      "evidence": "tested 41x in base period; -11.3% below current"
     },
     {
-      "level": 8.0,
-      "label": "S2 bottom",
-      "touches": 10,
-      "evidence": "structural bottom, near crash low 9.7"
+      "level": 9.7,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-07-02, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 10.73,
+      "level": 10.88,
       "label": "R1 today high",
-      "evidence": "today's high 10.729999542236328"
+      "evidence": "today's high 10.880000114440918"
     },
     {
       "level": 12.33,
@@ -63,23 +63,23 @@
     }
   ],
   "position": {
-    "current": 10.63,
-    "in_box_pct": 60.7,
+    "current": 10.78,
+    "in_box_pct": 41.1,
     "nearest_support": "S1 KEY (12.0)",
-    "nearest_resistance": "R1 today high (10.73)"
+    "nearest_resistance": "R1 today high (10.88)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": true,
     "close_position": "upper_half",
-    "O": 10.49,
-    "H": 10.73,
-    "L": 10.4,
-    "C": 10.63,
-    "body_pct": 42.4,
-    "upper_wick_pct": 30.3,
-    "lower_wick_pct": 27.3
+    "O": 10.65,
+    "H": 10.88,
+    "L": 10.65,
+    "C": 10.78,
+    "body_pct": 56.5,
+    "upper_wick_pct": 43.5,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
@@ -98,18 +98,18 @@
   "scenarios": [
     {
       "if": "hold 12.0 (KEY support)",
-      "then": "still range; watch 10.73 for next test"
+      "then": "still range; watch 10.88 for next test"
     },
     {
       "if": "break 12.0 on close",
-      "then": "target 8.0 → lower (short-term bearish)"
+      "then": "target 9.7 → lower (short-term bearish)"
     },
     {
-      "if": "break 8.0 (crash low)",
+      "if": "break 9.7 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 10.73 on close",
+      "if": "reclaim 10.88 on close",
       "then": "short-term bullish; next test 12.33"
     },
     {
@@ -137,23 +137,23 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
-    "r1": 11.43,
+    "phase_match": false,
+    "r1": 11.05,
     "s1": 10.08,
-    "s2": 9.81,
+    "s2": 10.28,
     "r2": 12.33,
     "r3": 14.98,
     "s3": 9.7,
     "s4": 9.89,
-    "current_position_pct": 40.7,
-    "notes": "WAIT_RANGE: in box (10-11), pos 41%, no clear setup"
+    "current_position_pct": 72.2,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 11.05）：① 跌到 11.05、收市守住喺 11.05 上面 → 照 BUY 條 plan 做（入場 11.05，止蝕 11.54，目標 10.57）。② 收市跌穿 11.05 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 11.05 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
     {
@@ -162,7 +162,7 @@
       "date": "2026-09-28",
       "low": 10.4399995803833,
       "high": 10.779999732971191,
-      "i": 191
+      "i": 188
     },
     {
       "name": "利淡反擊線",
@@ -170,7 +170,7 @@
       "date": "2026-08-20",
       "low": 11.109999656677246,
       "high": 11.460000038146973,
-      "i": 164
+      "i": 161
     },
     {
       "name": "利好反擊線",
@@ -178,7 +178,7 @@
       "date": "2026-08-06",
       "low": 10.359999656677246,
       "high": 10.920000076293945,
-      "i": 154
+      "i": 151
     },
     {
       "name": "利好身懷六甲",
@@ -186,7 +186,7 @@
       "date": "2026-07-02",
       "low": 9.699999809265137,
       "high": 10.020000457763672,
-      "i": 129
+      "i": 126
     }
   ]
 }
