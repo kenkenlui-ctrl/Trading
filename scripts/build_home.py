@@ -55,9 +55,9 @@ _STRINGS = {
             "<b style=\"color: var(--amber);\">呢個係一個規則，唔係一個保證。</b>"
             "每單表現係實測，但<b>每單有優勢 ≠ 跑贏大市</b>：用同一批美股等權單純持有，"
             "2016–26 年化 +27.4%，我哋嘅規則 +27.2% —— 差額係零。"
-            "<b>日股全期 +6.9 個百分點/年，但拆開睇就唔成立</b>：2016–20 落後純持有 "
-            "<b>7.9 個百分點/年</b>，2021–26 先領先 16.7。差額幾乎全部來自單一大市 regime，"
-            "唔係一個跨市況都成立嘅優勢，所以唔當佢係 alpha。"
+            "<b>日股亦冇可持續優勢</b>：按 <b>0.10%</b> 來回成本（本頁假設嘅日股成本），"
+            "2016–26 年化 v2 <b>+18.03%</b>、同一批股票等權持有 <b>+18.00%</b>，"
+            "差 <b>0.04 個百分點</b> —— 基本上打和。"
             "<a href=\"/methodology\">完整方法論同修正記錄 →</a>"
         ),
         "en": (
@@ -73,9 +73,9 @@ _STRINGS = {
             "<b style=\"color: var(--amber);\">This is a rule, not a promise.</b> The per-trade result is measured, "
             "but <b>a per-trade edge is not the same as beating the market</b>: holding the same US names "
             "passively and equally weighted returned 27.4%/yr over 2016-26, against 27.2% for this rule — "
-            "a difference of zero. Japan's full-period +6.9pp/yr does not survive being split: "
-            "2016-20 trails passive by 7.9pp/yr, and only 2021-26 leads by 16.7. Almost the entire "
-            "difference comes from one market regime, so it is not treated as alpha. "
+            "a difference of zero. Japan has no durable edge either: at the 0.10% round-trip "
+            "cost this page assumes, v2 returned 18.03%/yr over 2016-26 against 18.00% for "
+            "equal-weight holding of the same names — a 0.04pp/yr gap, which is nothing. "
             "<a href=\"/methodology\">Full methodology and correction log →</a>"
         ),
     },

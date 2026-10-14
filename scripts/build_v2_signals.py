@@ -84,8 +84,14 @@ CLOSE_HOLD = True
 # 10-slot book, v2 compounded at 27.2%/yr in the US against 27.4%/yr for an
 # equal-weight monthly rebalance of the very same 201 names (portfolio_test.py).
 # The per-trade edge is real; the excess return over holding the universe is
-# approximately zero in the US. Japan showed +6.9pp/yr but with a deeper
-# drawdown, and that one has not been confirmed against a point-in-time universe.
+# approximately zero in the US. Japan is the same story: re-measured on
+# 2026-10-12 (data/hk_retest_summary.json, scripts/hk_retest.py) the JP leg came
+# out at 18.03%/yr for v2 against 18.00%/yr for equal-weight holding of the same
+# names, 2016-26 at the 0.10% round-trip cost — a 0.04pp/yr gap. The old
+# +6.9pp/yr headline was withdrawn in 2026-09: almost all of it came from one
+# Nikkei regime (2016-20 trailed by 7.9pp/yr, only 2021-26 led by 16.7pp/yr).
+# Note the sign flips with the cost assumption on JP — +1.55pp/yr at zero cost —
+# so any JP excess-return claim must state which cost it was measured at.
 #
 # Re-measured 2026-10-05 on data/bt10y2 (407 symbols re-fetched one at a time;
 # 8 cached files were corrupt) with bars whose [entry-210d, exit] window touches

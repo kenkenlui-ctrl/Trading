@@ -209,11 +209,13 @@ Read this before citing any figure above.
   2016-26; the v2 portfolio returned 27.2%/yr. The gap is -0.2pp/yr, which is zero.
   The apparent outperformance versus a market index is a universe-selection
   effect, not a timing edge.
-- **In Japan the same comparison gives +6.9pp/yr over the full 2016-26 window, but
-  it is not a stable edge.** Split by regime: 2016-20 TRAILS passive holding by
-  -7.9pp/yr; only 2021-26 leads, by +16.7pp/yr. Almost the whole difference comes
-  from a single Nikkei bull market. A point-in-time check that removes the 17
-  names which entered the index after 2016-09-01 moves the gap only +6.9 -> +6.0pp,
+- **Japan shows no durable edge either.** At the 0.10% round-trip cost, the same
+  comparison gives 18.03%/yr for the v2 portfolio against 18.00%/yr for equal-weight
+  holding of the same names over 2016-26 — a gap of +0.04pp/yr. An earlier +6.9pp/yr
+  figure was withdrawn in 2026-09 and must not be cited; almost all of it came from a
+  single Nikkei regime (2016-20 TRAILS passive by -7.9pp/yr, only 2021-26 leads, by
+  +16.7pp/yr). A point-in-time check that removes the 17
+  names which entered the index after 2016-09-01 moves that old gap only +6.9 -> +6.0pp,
   so late entrants are not the cause; but stocks that were large in 2016 and
   later shrank or delisted are absent from every arm and cannot be reconstructed
   from public membership data (our universe is TOPIX Core30+Large70, which overlaps
