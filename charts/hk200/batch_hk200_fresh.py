@@ -112,9 +112,12 @@ def step2_run_analysis(tickers: list[dict], source: str = "yfinance",
     log.info(f"STEP 2: run daily-sr-chart on {len(tickers)} tickers (source={source})")
     summary_rows = []
     total = len(tickers)
+    # 2026-10-14: counts what the skip guard reused, so a run that did no
+    # vendor work says so instead of looking identical to one that did.
+    stats: dict = {}
     for i, stock in enumerate(tickers, 1):
         ticker = stock["code"]
-        snap = run_one(ticker, source, asof)
+        snap = run_one(ticker, source, asof, stats)
         if snap:
             summary_rows.append({
                 "rank": i,
@@ -147,13 +150,44 @@ def step2_run_analysis(tickers: list[dict], source: str = "yfinance",
     df = pd.DataFrame(summary_rows)
     df.to_csv(OUT_DIR / "top200_summary.csv", index=False)
     log.info(f"  summary → {OUT_DIR / 'top200_summary.csv'}")
+    if stats.get("skipped"):
+        log.info(f"  reuse: {stats['skipped']}/{total} tickers were already at "
+                 f"{asof} — skipped the chart+analysis subprocess")
     return summary_rows
 
 
-def run_one(ticker: str, source: str, asof: str | None = None) -> dict | None:
+def run_one(ticker: str, source: str, asof: str | None = None,
+            stats: dict | None = None) -> dict | None:
     safe = ticker.replace(".", "_")
     png = OUT_DIR / f"{safe}.png"
     jsn = OUT_DIR / f"{safe}.json"
+    # 2026-10-14: skip the subprocess when this ticker is ALREADY at the target
+    # session. This loop shells out to daily_sr.py once per name — 245 of them,
+    # ~6-8 minutes and roughly 1,300 vendor requests, every single run — while
+    # refresh.sh's own Step 2 has guarded this same question since 2026-10-05.
+    # Two guards for one fact meant the expensive step never had one.
+    #
+    # Both artifacts must be present: daily_sr writes the PNG and the snapshot
+    # in the same run, so a snapshot at the target date implies its PNG is from
+    # that same run, and png.exists() covers the case where someone deleted the
+    # image out from under a current snapshot.
+    #
+    # Only ever skip when the target date was GIVEN. With no --asof, daily_sr
+    # re-derives an implicit T-1 per run and this code has no idea what date to
+    # compare against — guessing "yesterday" here would freeze whatever happened
+    # to be on disk, which is the exact silent-staleness class this pipeline
+    # keeps having to be repaired for. Returning the cached snapshot (rather
+    # than None) keeps summary_rows complete, so the summary CSV is identical
+    # whether or not the guard fires.
+    if asof and jsn.exists() and png.exists():
+        try:
+            cached = json.loads(jsn.read_text(encoding="utf-8"))
+        except Exception:
+            cached = None
+        if cached and (cached.get("last_bar") or {}).get("date") == asof:
+            if stats is not None:
+                stats["skipped"] = stats.get("skipped", 0) + 1
+            return cached
     # 2026-10-13: --asof must be explicit. daily_sr.py's default is "T-1 /
     # yesterday's close", which is a silent guess — and on 2026-10-13 Yahoo was
     # missing HK's 2026-10-12 session entirely (futu has it; yfinance did not),
