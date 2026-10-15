@@ -1,0 +1,1888 @@
+#!/usr/bin/env python3
+"""
+daily_sr.py — Daily OHLC + S/R chart for a single ticker.
+
+Applies the 10-step price-action framework:
+  1. Phase detection (uptrend / downtrend_active / base_building / breakdown)
+  2. Framework selection (S/R ladder trading vs trend-following)
+  3. Support ladder
+  4. Resistance ladder
+  5. Position + recent K-line behavior
+  6. Bias synthesis (short / mid / long)
+  7. Scenario tree (If-Then)
+  8. Common misjudgments rejected
+  9. Final synthesis
+  10. Methodology footer
+
+Outputs:
+  --out PNG     : the chart
+  stdout JSON   : the structured snapshot for downstream LLM narrative
+
+Usage:
+  python3 daily_sr.py --ticker 09992.HK --out ./09992.png
+  python3 daily_sr.py -t AAPL -o /tmp/aapl.png --days 250
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import sys
+import warnings
+from dataclasses import dataclass, field, asdict
+from datetime import date, datetime, timedelta
+from pathlib import Path
+from typing import Optional
+
+import numpy as np
+import pandas as pd
+
+# Suppress matplotlib font fallback noise
+warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib")
+
+# =============================================================================
+# CJK font resolution (2026-10-11) — company names rendered as tofu boxes
+# =============================================================================
+# The chart used to hardcode "DejaVu Sans", which has zero CJK coverage, so every
+# Chinese company name (騰訊控股 / 阿里巴巴 ...) drew as □□□□ in the title AND the
+# footer source line. matplotlib >= 3.6 supports a font *list* as true glyph
+# fallback: first family that has the glyph wins. So keep DejaVu Sans first (it
+# gives the existing clean Latin/numeric look) and append a CJK family behind it.
+# Chinese glyphs fall through to the CJK face; Latin never leaves DejaVu Sans.
+
+CJK_FONT_CANDIDATES = [
+    "PingFang HK",       # macOS default TC
+    "PingFang TC",
+    "Heiti TC",          # STHeiti, present on most macOS installs
+    "Hiragino Sans GB",
+    "Arial Unicode MS",  # ships with Office / macOS supplemental
+    "Songti SC",
+    "Noto Sans CJK TC",
+    "Microsoft JhengHei",
+]
+
+_LATIN_FONT = "DejaVu Sans"
+
+
+def resolve_font_family():
+    """Return a matplotlib font.family list: Latin first, CJK fallback behind.
+
+    Returns just [LATIN] when no CJK family is installed, which reproduces the
+    old tofu behaviour rather than raising — a missing font must never stop a
+    chart from being produced.
+    """
+    try:
+        from matplotlib import font_manager
+        available = {f.name for f in font_manager.fontManager.ttflist}
+    except Exception:
+        return [_LATIN_FONT]
+    cjk = [name for name in CJK_FONT_CANDIDATES if name in available]
+    return [_LATIN_FONT] + cjk
+
+# Quiet futu logger
+import logging
+logging.getLogger("futu").setLevel(logging.WARNING)
+
+# =============================================================================
+# Volatility guard (2026-08-25) — inside-box mean reversion needs calm regimes
+# =============================================================================
+# Real case 6869.HK (2026-08-25): SELL_R1 trigger 156.4 / stop +2% on a stock
+# with ATR14 ≈ 7.6% of price and a 46%-wide 20d box. Price rallied through the
+# stop the same day (+15.4%). A 2% stop inside 7.6% daily noise is a guaranteed
+# stop-out; a 46% "box" is not a range, it is chaos.
+#
+# Guard: when ATR14 ≥ VOL_GUARD_ATR_PCT (% of price) OR the 20-day box width
+# ≥ VOL_GUARD_BOX_PCT (% of price), demote inside-box strategies
+# (SELL_R1 / BUY_S1) to WAIT_VOLATILE. Breakout strategies stay allowed — they
+# trade WITH momentum and are not mean-reversion knife-catching.
+#
+# Calibration (2026-08-25, HK liquid names): 0700 2.7%/14%, 0005 1.4%/7%,
+# 3690 4.2%/25%, 9988 4.5%/18%, 9618 3.7%/19% — all pass; 6869 7.6%/46% blocked.
+VOL_GUARD_ATR_PCT = 6.0
+VOL_GUARD_BOX_PCT = 35.0
+# Stop distance for inside-box plans: never tighter than 1.5 × ATR14.
+STOP_ATR_MULT = 1.5
+# R:R floor after widening stops — below this the plan is not worth taking.
+RR_FLOOR = 1.2
+
+
+# =============================================================================
+# 0. Ticker normalization + data fetch
+# =============================================================================
+
+def normalize_ticker(ticker: str) -> tuple[str, str]:
+    """Convert user input to (futu_code, yfinance_code)."""
+    t = ticker.strip().upper()
+    if t.startswith(("HK.", "US.", "SH.", "SZ.")):
+        return t, t.split(".", 1)[1]
+    if t.endswith(".HK"):
+        digits = t[:-3]
+        if digits.isdigit():
+            return f"HK.{int(digits):05d}", f"{int(digits):04d}.HK"
+    if re.fullmatch(r"\d{1,5}", t):
+        return f"HK.{int(t):05d}", f"{int(t):04d}.HK"
+    # JP ticker (digits + .T / .JP) — yfinance uses .T suffix
+    if re.fullmatch(r"\d{1,5}\.(T|JP)", t):
+        digits = re.match(r"(\d+)", t).group(1)
+        return f"JP.{digits}", f"{digits}.T"
+    # US ticker (letters, possibly with dots like BRK.B)
+    if re.fullmatch(r"[A-Z][A-Z0-9.]{0,5}", t):
+        return f"US.{t}", t
+    # 2026-10-07: class shares written with a HYPHEN (BRK-B, BF-B, HEI-A).
+    # The published universe uses this form, and it is ALSO Yahoo's own form —
+    # BRK.B returns zero rows, BRK-B returns bars (checked 2026-10-07). The bug
+    # was never the mapping, only that normalize_ticker had no branch for a
+    # hyphen at all, so it raised "Cannot normalize ticker: BRK-B" and BRK-B
+    # silently stopped refreshing: its page fell back to a "數據未更新" banner
+    # dated 2026-09-03 while a separately-fetched chart series was still drawn
+    # out to 2026-10-02. Do NOT "fix" this by rewriting the hyphen to a dot.
+    if re.fullmatch(r"[A-Z][A-Z0-9]*-[A-Z0-9]", t):
+        return f"US.{t}", t
+    raise ValueError(f"Cannot normalize ticker: {ticker}")
+
+
+def fetch_ohlc(ticker: str, days: int = 200, source: str = "auto", asof: str | None = None) -> tuple[pd.DataFrame, str, str]:
+    """Returns (df, source, stock_name) where source is 'futu' or 'yfinance'.
+
+    asof: trim to T-1 (yesterday's close) by default. Pass YYYY-MM-DD to override.
+    """
+    # 2026-09-29: the fetch end date was date.today(). yfinance treats `end`
+    # as EXCLUSIVE, so today's bar was never returned at all — and
+    # trim_to_t_minus_1(None) then strips it anyway, losing the latest session
+    # twice over. Futu treats `end` as INCLUSIVE and rejects a future date, so
+    # the extra day must be added only on the yfinance path (see below).
+    end = date.today()
+    start = end - timedelta(days=int(days * 1.6))
+    futu_code, yf_code = normalize_ticker(ticker)
+
+    if source == "yfinance":
+        # yfinance `end` is exclusive -> ask for the day after so today is
+        # included. Futu is inclusive and 400s on a future date, so it does
+        # NOT get this treatment.
+        df, name = fetch_yfinance(yf_code, start.isoformat(),
+                                  (end + timedelta(days=1)).isoformat())
+        df = trim_to_t_minus_1(df, asof=asof)
+        return df.tail(days).reset_index(drop=True), "yfinance", name
+    elif source == "futu":
+        df, name = fetch_futu(futu_code, start.isoformat(), end.isoformat())
+        df = trim_to_t_minus_1(df, asof=asof)
+        return df.tail(days).reset_index(drop=True), "futu", name
+    try:
+        df, name = fetch_futu(futu_code, start.isoformat(), end.isoformat())
+        if len(df) < 20:
+            raise RuntimeError(f"futu returned only {len(df)} rows")
+        df = trim_to_t_minus_1(df, asof=asof)
+        return df.tail(days).reset_index(drop=True), "futu", name
+    except Exception as e:
+        print(f"  futu failed ({type(e).__name__}: {e}), trying yfinance", file=sys.stderr)
+        # 2026-10-14: the +1 day is missing here, and it is the exact bug the
+        # comment at the top of this function warns about. yfinance treats
+        # `end` as EXCLUSIVE, so passing bare `end` never returns the current
+        # session — and the explicit `source="yfinance"` branch above adds the
+        # day precisely for that reason. So the auto path, whenever futu was
+        # unreachable, silently lost the newest bar while the same ticker via
+        # the explicit path had it: HK and JP snapshots stamped one session
+        # behind the OHLC series built from the explicit path, i.e. two data
+        # dates on one page. Futu being down is exactly when the fallback runs,
+        # so the two paths could never agree during an outage.
+        df, name = fetch_yfinance(yf_code, start.isoformat(),
+                                  (end + timedelta(days=1)).isoformat())
+        df = trim_to_t_minus_1(df, asof=asof)
+        return df.tail(days).reset_index(drop=True), "yfinance", name
+
+
+def fetch_futu(futu_code: str, start: str, end: str) -> tuple[pd.DataFrame, str]:
+    """Fetch daily OHLC + stock name from Futu OpenD."""
+    from futu import OpenQuoteContext, KLType, RET_OK
+    ctx = OpenQuoteContext(host="127.0.0.1", port=11111)
+    try:
+        ret, data, _ = ctx.request_history_kline(
+            futu_code, start=start, end=end,
+            ktype=KLType.K_DAY, max_count=1000,
+        )
+        if ret != RET_OK:
+            raise RuntimeError(f"futu error: {data}")
+        df = data.rename(columns={"time_key": "date"}).copy()
+        df["date"] = pd.to_datetime(df["date"]).dt.tz_localize(None)
+        # Extract name from the first row
+        name = str(data["name"].iloc[0]) if "name" in data.columns else ""
+        return df[["date", "open", "high", "low", "close", "volume"]].reset_index(drop=True), name
+    finally:
+        ctx.close()
+
+
+def fetch_yfinance(yf_code: str, start: str, end: str) -> tuple[pd.DataFrame, str]:
+    """Fallback: yfinance."""
+    import yfinance as yf
+    try:
+        ticker_obj = yf.Ticker(yf_code)
+        name = ticker_obj.info.get("shortName") or ticker_obj.info.get("longName") or ""
+    except Exception:
+        name = ""
+    data = yf.download(yf_code, start=start, end=end, progress=False, auto_adjust=False)
+    if data.empty:
+        raise RuntimeError(f"yfinance returned no data for {yf_code}")
+    data = data.reset_index()
+    if isinstance(data.columns, pd.MultiIndex):
+        data.columns = [c[0].lower() if isinstance(c, tuple) else c.lower() for c in data.columns]
+    else:
+        data.columns = [c.lower() for c in data.columns]
+    keep = ["date", "open", "high", "low", "close", "volume"]
+    for k in keep:
+        if k not in data.columns:
+            raise RuntimeError(f"yfinance missing column: {k}")
+    return data[keep].reset_index(drop=True), name
+
+
+def trim_to_t_minus_1(df: pd.DataFrame, asof: str | None = None) -> pd.DataFrame:
+    """Drop the last bar if its date is today (intraday). Use T-1 close by default.
+
+    asof: explicit date string YYYY-MM-DD — trim to data up to that date (inclusive).
+    """
+    if df.empty:
+        return df
+    if asof:
+        target = pd.to_datetime(asof)
+        df = df[df["date"] <= target].reset_index(drop=True)
+    else:
+        # Default: drop last bar if it's today (in HK timezone)
+        from datetime import datetime, timezone
+        now_hk = datetime.now(timezone.utc).astimezone()  # system local
+        # Try HK timezone
+        try:
+            from zoneinfo import ZoneInfo
+            now_hk = datetime.now(ZoneInfo("Asia/Hong_Kong"))
+        except Exception:
+            pass
+        today = now_hk.date()
+        last_date = pd.to_datetime(df["date"].iloc[-1]).date() if hasattr(df["date"].iloc[-1], 'date') else df["date"].iloc[-1]
+        if last_date == today:
+            df = df.iloc[:-1].reset_index(drop=True)
+    return df
+
+
+# =============================================================================
+# 1-2. Phase + framework
+# =============================================================================
+
+def detect_phase(df: pd.DataFrame) -> dict:
+    """Detect market phase from the OHLC structure.
+
+    Strategy: find the CURRENT cycle's peak (most recent local high followed
+    by a significant drawdown), not the absolute all-time high. This matches
+    how a human analyst reads a chart.
+    """
+    high = df["high"]
+    low = df["low"]
+    close = df["close"]
+    current = float(close.iloc[-1])
+    n = len(df)
+
+    def _d(d):
+        return d.date() if hasattr(d, "date") else d
+
+    # 1) Find the current cycle's peak:
+    #    Find the LOCAL HIGH that has the LARGEST forward drawdown (within
+    #    90 days). That's typically the cycle's main peak.
+    peak_idx = None
+    peak_price = None
+    best_drop = 0.30  # minimum 30% to qualify
+    for i in range(10, n - 10):
+        local_window = high.iloc[max(0, i - 5):min(n, i + 6)]
+        if high.iloc[i] != local_window.max():
+            continue
+        forward = low.iloc[i + 1:min(n, i + 91)]
+        if len(forward) < 5:
+            continue
+        min_after = float(forward.min())
+        drop = (float(high.iloc[i]) - min_after) / float(high.iloc[i])
+        if drop >= best_drop:
+            # Prefer higher peaks with sufficient drop (cycle's main peak)
+            # Tie-break: more recent
+            if peak_idx is None or float(high.iloc[i]) > peak_price:
+                peak_idx = i
+                peak_price = float(high.iloc[i])
+                peak_date = df.iloc[i]["date"]
+
+    if peak_idx is None:
+        # Fallback: just use the overall high
+        peak_idx = int(high.idxmax())
+        peak_price = float(high.iloc[peak_idx])
+        peak_date = df.iloc[peak_idx]["date"]
+
+    # 2) Crash low = lowest low AFTER the peak
+    post_peak = df.iloc[peak_idx:].reset_index(drop=True)
+    if len(post_peak) >= 3:
+        crash_pos = int(post_peak["low"].idxmin())
+        crash_low = float(post_peak["low"].iloc[crash_pos])
+        crash_date = post_peak.iloc[crash_pos]["date"]
+    else:
+        # Peak is very recent — use the most recent SWING low as the trough
+        # (the "low of the current cycle" before the latest push)
+        recent_window = df.tail(60).reset_index(drop=True)
+        # Find the lowest swing low in the recent window
+        swing_lows = find_swing_levels(recent_window["low"], order=5, direction="low")
+        if swing_lows:
+            # Take the most recent swing low
+            crash_pos, crash_low = swing_lows[-1]
+            crash_date = recent_window.iloc[crash_pos]["date"]
+        else:
+            crash_pos = int(recent_window["low"].idxmin())
+            crash_low = float(recent_window["low"].iloc[crash_pos])
+            crash_date = recent_window.iloc[crash_pos]["date"]
+
+    # 3) Base period = from crash_date to now
+    base = df[df["date"] >= crash_date].reset_index(drop=True)
+    if len(base) < 5:
+        # Peak is too recent to have a meaningful base — extend backwards
+        base = df.tail(30).reset_index(drop=True)
+        # Don't overwrite crash_low; just use a wider base for box calc
+        if crash_low > float(base["low"].min()):
+            # Update crash_low to the actual lowest in the extended base
+            min_pos = int(base["low"].idxmin())
+            crash_low = float(base["low"].iloc[min_pos])
+            crash_date = base.iloc[min_pos]["date"]
+
+    base_high = float(base["high"].max())
+    base_high_pos = int(base["high"].idxmax())
+    base_high_date = base.iloc[base_high_pos]["date"]
+    base_low = float(base["low"].min())
+    base_low_pos = int(base["low"].idxmin())
+    base_low_date = base.iloc[base_low_pos]["date"]
+
+    # 4) Phase heuristics — use POSITION IN RANGE (not just recent vs peak)
+    #    Position = where current sits in (trough, peak): 0 = at trough, 1 = at peak
+    drop_from_peak = (peak_price - current) / peak_price
+    recovery_from_crash = (current - crash_low) / crash_low if crash_low > 0 else 0
+    base_range_pct = (base_high - base_low) / base_low if base_low > 0 else 0
+    overall_range_pct = (peak_price - crash_low) / crash_low if crash_low > 0 else 0
+
+    if peak_price > crash_low > 0:
+        position_in_range = (current - crash_low) / (peak_price - crash_low)
+    else:
+        position_in_range = 0.5
+    position_in_range = max(0.0, min(1.0, position_in_range))
+
+    # Days since trough
+    days_since_trough = (df["date"].iloc[-1] - pd.to_datetime(crash_date)).days if hasattr(crash_date, 'date') else 0
+    days_since_trough = max(0, days_since_trough)
+
+    # Recent 30-day behavior
+    recent30 = df.tail(30)
+    recent_high_30 = float(recent30["high"].max())
+    recent_low_30 = float(recent30["low"].min())
+    # New low in last 30 days?
+    made_new_low_30 = recent_low_30 <= crash_low * 1.02
+
+    if position_in_range > 0.85 and recovery_from_crash > 0.05:
+        phase = "uptrend"
+    elif position_in_range < 0.15 and (made_new_low_30 or days_since_trough < 30):
+        phase = "downtrend_active"
+    elif 0.15 <= position_in_range <= 0.85 and days_since_trough > 30 and not made_new_low_30:
+        phase = "base_building"
+    elif made_new_low_30:
+        phase = "downtrend_active"
+    elif position_in_range < 0.20:
+        phase = "downtrend_recovery"  # new low was long ago, but still near bottom
+    else:
+        phase = "range"
+
+    return {
+        "phase": phase,
+        "peak": {"date": str(_d(peak_date)), "price": round(peak_price, 2)},
+        "trough": {"date": str(_d(crash_date)), "price": round(crash_low, 2)},
+        "box_top": {"date": str(_d(base_high_date)), "price": round(base_high, 2)},
+        "base_period_low": {"date": str(_d(base_low_date)), "price": round(base_low, 2)},
+        "drop_from_peak_pct": round(drop_from_peak * 100, 1),
+        "recovery_from_crash_pct": round(recovery_from_crash * 100, 1),
+        "base_range_pct": round(base_range_pct * 100, 1),
+        "overall_range_pct": round(overall_range_pct * 100, 1),
+        # 2026-09-22: regime detection via 14-period ADX (Wilder smoothing).
+        # ADX < 20 → range/ranging → favor mean reversion (SELL_R1 / BUY_S1).
+        # 20 ≤ ADX ≤ 25 → dead zone → no override (let phase decide).
+        # ADX > 25 → trending → prefer breakouts (BREAK_LONG / BREAK_SHORT).
+        # Empirical: StratProof/RSI+ADX backtests hit 88.9% win rate with this gate.
+        **_regime_fields(df),
+    }
+
+
+def _regime_fields(df: pd.DataFrame) -> dict:
+    """Compute ADX(14) + regime classification for the regime filter.
+
+    Returns:
+        dict with: adx (round 2), plus_di, minus_di, regime ("range"|"dead"|"trend"),
+        adx_threshold_note.
+
+    Why this exists:
+        Empirical evidence (StratProof Lab, RobotTraders) shows regime-based
+        strategy switching lifts win rate by 10-20 pp vs static single-strategy.
+        ADX > 25 = strong trend → mean reversion statistically unsafe.
+        ADX < 20 = strong range → breakout entries fail (R:R becomes negative).
+    """
+    if df is None or len(df) < 28:
+        return {
+            "adx": None, "plus_di": None, "minus_di": None,
+            "regime": "n/a",
+            "adx_threshold_note": "insufficient data (need >=28 bars for 14-ADX)",
+        }
+    high = df["high"].astype(float)
+    low = df["low"].astype(float)
+    close = df["close"].astype(float)
+    n = len(df)
+    # Wilder smoothing over 14 periods
+    period = 14
+    prev_close = close.shift(1)
+    tr = pd.concat([
+        (high - low),
+        (high - prev_close).abs(),
+        (low - prev_close).abs(),
+    ], axis=1).max(axis=1)
+    # Wilder smoothing: (prev_tr * 13 + tr) / 14, cumulative from first period
+    atr_wilder = pd.Series(np.nan, index=df.index)
+    if n > period:
+        atr_wilder.iloc[period] = tr.iloc[1:period + 1].mean()
+        for i in range(period + 1, n):
+            atr_wilder.iloc[i] = (atr_wilder.iloc[i - 1] * (period - 1) + tr.iloc[i]) / period
+    # +DM / -DM
+    up_move = high.diff()
+    down_move = -low.diff()
+    plus_dm = pd.Series(np.where((up_move > down_move) & (up_move > 0), up_move, 0.0), index=df.index)
+    minus_dm = pd.Series(np.where((down_move > up_move) & (down_move > 0), down_move, 0.0), index=df.index)
+    # Wilder smooth the DMs
+    plus_dm_w = pd.Series(np.nan, index=df.index)
+    minus_dm_w = pd.Series(np.nan, index=df.index)
+    if n > period:
+        plus_dm_w.iloc[period] = plus_dm.iloc[1:period + 1].mean()
+        minus_dm_w.iloc[period] = minus_dm.iloc[1:period + 1].mean()
+        for i in range(period + 1, n):
+            plus_dm_w.iloc[i] = (plus_dm_w.iloc[i - 1] * (period - 1) + plus_dm.iloc[i]) / period
+            minus_dm_w.iloc[i] = (minus_dm_w.iloc[i - 1] * (period - 1) + minus_dm.iloc[i]) / period
+    # +DI / -DI
+    plus_di = 100 * (plus_dm_w / atr_wilder)
+    minus_di = 100 * (minus_dm_w / atr_wilder)
+    # DX / ADX
+    di_sum = (plus_di + minus_di).replace(0, np.nan)
+    di_diff = (plus_di - minus_di).abs()
+    dx = 100 * (di_diff / di_sum)
+    adx_series = pd.Series(np.nan, index=df.index)
+    if n > 2 * period:
+        adx_series.iloc[2 * period] = dx.iloc[period + 1:2 * period + 1].mean()
+        for i in range(2 * period + 1, n):
+            adx_series.iloc[i] = (adx_series.iloc[i - 1] * (period - 1) + dx.iloc[i]) / period
+    adx_last = float(adx_series.iloc[-1]) if pd.notna(adx_series.iloc[-1]) else None
+    plus_di_last = float(plus_di.iloc[-1]) if pd.notna(plus_di.iloc[-1]) else None
+    minus_di_last = float(minus_di.iloc[-1]) if pd.notna(minus_di.iloc[-1]) else None
+    if adx_last is None:
+        regime = "n/a"
+    elif adx_last < 20:
+        regime = "range"
+    elif adx_last <= 25:
+        regime = "dead"
+    else:
+        regime = "trend"
+    return {
+        "adx": round(adx_last, 2) if adx_last is not None else None,
+        "plus_di": round(plus_di_last, 2) if plus_di_last is not None else None,
+        "minus_di": round(minus_di_last, 2) if minus_di_last is not None else None,
+        "regime": regime,
+        "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+    }
+
+
+# =============================================================================
+# 3. Support ladder
+# =============================================================================
+
+def find_swing_levels(series: pd.Series, order: int = 5, direction: str = "low") -> list[tuple[int, float]]:
+    """Find local extrema with given order (window)."""
+    arr = series.values
+    n = len(arr)
+    swings = []
+    for i in range(order, n - order):
+        window = arr[i - order: i + order + 1]
+        if direction == "low" and arr[i] == window.min():
+            swings.append((i, float(arr[i])))
+        if direction == "high" and arr[i] == window.max():
+            swings.append((i, float(arr[i])))
+    # Deduplicate close-by same-bar swings
+    deduped = []
+    for s in swings:
+        if not deduped or s[1] != deduped[-1][1]:
+            deduped.append(s)
+    return deduped
+
+
+def cluster_levels(levels: list[float], tolerance: float = 0.025) -> list[dict]:
+    """Cluster nearby levels. Returns list of {price, count, indices}."""
+    if not levels:
+        return []
+    sorted_lvls = sorted(levels)
+    clusters: list[list[float]] = [[sorted_lvls[0]]]
+    for lvl in sorted_lvls[1:]:
+        centroid = sum(clusters[-1]) / len(clusters[-1])
+        if abs(lvl - centroid) / centroid < tolerance:
+            clusters[-1].append(lvl)
+        else:
+            clusters.append([lvl])
+    return [
+        {"price": round(sum(c) / len(c), 2), "count": len(c)}
+        for c in clusters
+    ]
+
+
+def build_support_ladder(df: pd.DataFrame, current: float, peak_price: float, trough_price: float, trough_date_str: str, snap: float = 4.0) -> list[dict]:
+    """Build support ladder from base-period lows (histogram approach).
+
+    Strategy: 4-tier ladder, analyst-style:
+    - S1 KEY = highest tested support zone (most touches)
+    - S2, S3 = next tested zones
+    - S4 = crash low (structural bottom)
+
+    Levels are snapped to clean numbers (default snap=4, ~even integers).
+    """
+    def snap_to(v: float) -> float:
+        return round(v / snap) * snap
+
+    from collections import Counter
+
+    trough_date = pd.to_datetime(trough_date_str)
+    base = df[df["date"] >= trough_date].reset_index(drop=True)
+    if len(base) < 10:
+        base = df.tail(60).reset_index(drop=True)
+
+    # 1) Use ALL base-period lows (not just swing lows) to find tested zones
+    base_low_prices = base["low"].tolist()
+    # Also include swing lows from the FULL data within the last 30 days
+    # (captures very recent structural tests)
+    recent30 = df.tail(30)
+    base_low_prices.extend(recent30["low"].tolist())
+
+    snapped_lows = [snap_to(p) for p in base_low_prices if p < current * 0.98]
+    counter = Counter(snapped_lows)
+
+    # 2) Sort by count descending, then by price descending
+    tested_levels_raw = sorted(
+        counter.items(),
+        key=lambda x: (-x[1], -x[0]),
+    )
+
+    # 3) Greedy pick: take top N with min separation
+    min_sep = snap
+    min_touches = 3  # require at least 3 touches for a "real" support
+    tested_levels = []
+    for lvl, cnt in tested_levels_raw:
+        if cnt < min_touches:
+            continue
+        if all(abs(lvl - existing) >= min_sep for existing, _ in tested_levels):
+            tested_levels.append((lvl, cnt))
+        if len(tested_levels) >= 5:
+            break
+
+    # 4) Filter out "weak adjacent" levels: if a level is within 2*snap of a
+    # stronger neighbor, drop it. Keeps 160/152/148 (drops 156).
+    if len(tested_levels) > 1:
+        tested_levels.sort(key=lambda x: -x[0])
+        filtered = []
+        for i, (lvl, cnt) in enumerate(tested_levels):
+            max_neighbor = 0
+            for j, (other_lvl, other_cnt) in enumerate(tested_levels):
+                if i == j:
+                    continue
+                if abs(other_lvl - lvl) <= 2 * snap:
+                    max_neighbor = max(max_neighbor, other_cnt)
+            if max_neighbor == 0 or cnt >= max_neighbor * 0.3:
+                filtered.append((lvl, cnt))
+        tested_levels = filtered
+
+    # 4) S1 KEY: highest tested level below current
+    if tested_levels:
+        tested_levels.sort(key=lambda x: -x[0])  # by price desc
+        s1_price, s1_touches = tested_levels[0]
+    else:
+        s1_price = snap_to(current * 0.97)
+        s1_touches = 0
+
+    s1_evidence_parts = []
+    if s1_touches >= 2:
+        s1_evidence_parts.append(f"tested {s1_touches}x in base period")
+    else:
+        s1_evidence_parts.append("structural level near current")
+    s1_evidence_parts.append(f"{((current - s1_price) / current * 100):.1f}% below current")
+
+    supports: list[dict] = [{
+        "level": float(s1_price), "label": "S1 KEY", "touches": s1_touches,
+        "evidence": "; ".join(s1_evidence_parts),
+    }]
+
+    # 5) S2, S3: next tested levels below S1
+    for lvl, cnt in tested_levels[1:]:
+        if len(supports) >= 3:
+            break
+        label = f"S{len(supports) + 1}"
+        supports.append({
+            "level": float(lvl), "label": label, "touches": cnt,
+            "evidence": f"mid-base support, tested {cnt}x",
+        })
+
+    # 6) Add crash low as the bottom S (always include, but relabel as S bottom
+    #    if it's too close to the existing S3)
+    if trough_price < supports[-1]["level"] * 0.95:
+        # Crash low is meaningfully below S3 — keep both, label as S4
+        supports.append({
+            "level": float(trough_price), "label": "S4 crash low",
+            "touches": 1, "evidence": f"crash low {trough_date_str}, structural bottom",
+        })
+    else:
+        # Crash low is too close to the existing lowest S — combine
+        supports[-1]["label"] = f"S{len(supports)} bottom"
+        supports[-1]["evidence"] = f"structural bottom, near crash low {trough_price}"
+
+    supports.sort(key=lambda s: -s["level"])
+    return supports
+
+
+# =============================================================================
+# 4. Resistance ladder
+# =============================================================================
+
+def build_resistance_ladder(df: pd.DataFrame, current: float, peak_price: float, peak_date: str, trough_price: float, trough_date: str, box_top_price: float, box_top_date: str, snap: float = 1.0) -> list[dict]:
+    """Build resistance ladder.
+
+    Strategy: 5-tier ladder, analyst-style:
+    - R1 = today's high (immediate supply)
+    - R2 = mid-box round number
+    - R3 = box top (June high, etc.)
+    - R4 = pre-crash round number
+    - R5 = pre-crash supply zone (top of breakdown)
+    """
+    def snap_to(v: float) -> float:
+        return round(v / snap) * snap
+
+    resistances: list[dict] = []
+
+    # R1: today's high
+    today = df.iloc[-1]
+    r1_price = float(today["high"])
+    today_range = today["high"] - today["low"]
+    upper_wick = today["high"] - max(today["open"], today["close"])
+    if upper_wick > today_range * 0.5 and today["close"] < today["open"]:
+        r1_evidence = f"rejection at {r1_price} (long upper wick, close weak)"
+    else:
+        r1_evidence = f"today's high {r1_price}"
+    resistances.append({
+        "level": round(r1_price, 2), "label": "R1 today high", "evidence": r1_evidence,
+    })
+
+    # R3: box top (snapped if close to a round number)
+    if box_top_price > r1_price * 1.005 and box_top_price > current * 1.005:
+        box_top_dt = pd.to_datetime(box_top_date)
+        # Keep box top as actual value (don't snap — it's a specific date high)
+        resistances.append({
+            "level": round(box_top_price, 2),
+            "label": f"R3 {box_top_dt.strftime('%b')} high",
+            "evidence": f"box top {box_top_price}, base period high",
+        })
+
+    # R2: round number between R1 and R3 (prefer multiples of 10)
+    r3_price = box_top_price
+    if r3_price > r1_price * 1.02:
+        r2_candidate = None
+        # Prefer round multiples of 10
+        for cand in [200, 190, 180, 170, 160, 150, 140, 130, 120]:
+            if r1_price * 1.005 < cand < r3_price * 0.99:
+                r2_candidate = cand
+                break
+        if r2_candidate is None:
+            # Fall back to multiples of 5
+            for cand in [195, 185, 175, 165, 155, 145, 135]:
+                if r1_price * 1.005 < cand < r3_price * 0.99:
+                    r2_candidate = cand
+                    break
+        if r2_candidate is not None:
+            resistances.append({
+                "level": float(r2_candidate), "label": "R2",
+                "evidence": f"mid-box supply, round number {r2_candidate}",
+            })
+
+    # R4: round number in pre-crash zone, above current * 1.20
+    pre_crash_candidates: list[float] = []
+    for cand in [200, 195, 190, 185, 180, 175, 170, 165, 160, 155, 150]:
+        if current * 1.20 < cand < peak_price * 0.97 and cand > trough_price * 1.20:
+            pre_crash_candidates.append(cand)
+
+    # Exclude levels already used (R1, R2, R3)
+    existing = {r["level"] for r in resistances}
+    r4_candidates = [c for c in pre_crash_candidates if c not in existing]
+    if r4_candidates:
+        r4_candidate = min(r4_candidates)  # smallest above current*1.20
+        resistances.append({
+            "level": float(r4_candidate), "label": "R4",
+            "evidence": f"psychological round number, pre-crash zone {r4_candidate}",
+        })
+
+    # R5: pre-crash supply near the breakdown
+    # Find swing highs in the 20 days BEFORE the crash
+    trough_date_dt = pd.to_datetime(trough_date)
+    pre_window = df[(df["date"] >= trough_date_dt - pd.Timedelta(days=25))
+                    & (df["date"] <= trough_date_dt)]
+    if not pre_window.empty:
+        pre_highs = find_swing_levels(pre_window["high"], order=3, direction="high")
+        if pre_highs:
+            top_highs = sorted(pre_highs, key=lambda x: -x[1])[:3]
+            r5_candidate_raw = float(np.mean([h[1] for h in top_highs]))
+            # Snap to nearest 5 for R5
+            r5_candidate = round(r5_candidate_raw / 5) * 5
+            if (r5_candidate > current * 1.15
+                    and not any(abs(r["level"] - r5_candidate) < r5_candidate * 0.04 for r in resistances)):
+                resistances.append({
+                    "level": float(r5_candidate), "label": "R5",
+                    "evidence": f"pre-crash supply, top before breakdown",
+                })
+
+    # Sort ascending
+    resistances.sort(key=lambda r: r["level"])
+    return resistances
+
+
+# =============================================================================
+# 5. Position + K-line behavior
+# =============================================================================
+
+def analyze_position(df: pd.DataFrame, current: float, supports: list[dict], resistances: list[dict]) -> dict:
+    """Where is current price relative to the S/R ladder?"""
+    nearest_support = supports[0] if supports else None
+    nearest_resistance = next((r for r in resistances if r["level"] > current), None)
+
+    # Box position %: from crash low (deepest support) to box top (R3 or highest R)
+    box_bottom = supports[-1]["level"] if supports else current * 0.85
+    # Find the box top: prefer R3 (box top), then highest R
+    box_top_candidates = [r["level"] for r in resistances if r["label"].startswith("R3")]
+    if not box_top_candidates:
+        box_top_candidates = [r["level"] for r in resistances if r["label"].startswith("R")]
+    box_top = max(box_top_candidates) if box_top_candidates else current * 1.15
+
+    if box_top > box_bottom:
+        in_box_pct = (current - box_bottom) / (box_top - box_bottom) * 100
+    else:
+        in_box_pct = 50.0
+    in_box_pct = max(0.0, min(100.0, in_box_pct))
+
+    return {
+        "current": round(current, 2),
+        "in_box_pct": round(in_box_pct, 1),
+        "nearest_support": f"{nearest_support['label']} ({nearest_support['level']})" if nearest_support else None,
+        "nearest_resistance": f"{nearest_resistance['label']} ({nearest_resistance['level']})" if nearest_resistance else None,
+    }
+
+
+def analyze_kline_behavior(df: pd.DataFrame, supports: list[dict], resistances: list[dict]) -> dict:
+    """Today's K-line behavior vs the nearest S/R levels."""
+    today = df.iloc[-1]
+    O, H, L, C = float(today["open"]), float(today["high"]), float(today["low"]), float(today["close"])
+    rng = H - L
+    if rng == 0:
+        rng = 0.01
+
+    upper_wick = H - max(O, C)
+    lower_wick = min(O, C) - L
+    body = abs(C - O)
+
+    touched_R1 = H >= (resistances[0]["level"] * 0.998) if resistances else False
+    touched_S1 = L <= (supports[0]["level"] * 1.002) if supports else False
+
+    # Classification
+    if C > O and body > rng * 0.6 and not touched_S1:
+        ktype = "bullish_reclaim"
+    elif upper_wick > body * 1.5 and C < O:
+        ktype = "bearish_rejection"
+    elif lower_wick > body * 1.5 and C > O:
+        ktype = "bullish_hold"
+    elif C < O and not touched_S1:
+        ktype = "bearish_pullback"
+    else:
+        ktype = "neutral"
+
+    close_pos = "upper_half" if C > (H + L) / 2 else "lower_half"
+
+    return {
+        "type": ktype,
+        "touched_R1": touched_R1,
+        "touched_S1": touched_S1,
+        "close_position": close_pos,
+        "O": round(O, 2), "H": round(H, 2), "L": round(L, 2), "C": round(C, 2),
+        "body_pct": round(body / rng * 100, 1),
+        "upper_wick_pct": round(upper_wick / rng * 100, 1),
+        "lower_wick_pct": round(lower_wick / rng * 100, 1),
+    }
+
+
+# =============================================================================
+# 6-7. Bias + scenarios
+# =============================================================================
+
+def synthesize_bias(phase: str, kline: dict, position: dict) -> dict:
+    """Short / mid / long term bias + 1-line reason."""
+    ktype = kline["type"]
+    pos_pct = position["in_box_pct"]
+
+    # Short: based on kline + position
+    if ktype in ("bearish_rejection", "bearish_pullback") and pos_pct < 50:
+        short = "bearish_cautious"
+        short_reason = f"rejection at R1 + near support ({pos_pct:.0f}% of box)"
+    elif ktype == "bullish_reclaim" and pos_pct > 50:
+        short = "bullish_trying"
+        short_reason = "reclaim above mid-box"
+    elif pos_pct < 30:
+        short = "defensive"
+        short_reason = f"near box bottom ({pos_pct:.0f}% of box)"
+    else:
+        short = "neutral"
+        short_reason = "mid-box, no clear signal"
+
+    # Mid: based on phase
+    mid = {
+        "uptrend": "bullish_continuation",
+        "base_building": "neutral_consolidation",
+        "downtrend_active": "bearish_continuation",
+        "breakdown": "bearish_breakdown",
+        "range": "neutral",
+    }.get(phase, "neutral")
+    mid_reason = {
+        "uptrend": "higher highs / higher lows",
+        "base_building": "consolidating after big move",
+        "downtrend_active": "making new lows",
+        "breakdown": "key support broken",
+        "range": "no clear direction",
+    }.get(phase, "")
+
+    # Long: relative to peak
+    long = "below_peak_recovery" if pos_pct < 90 else "near_peak"
+    long_reason = "still well below all-time peak" if pos_pct < 90 else "near all-time peak"
+
+    return {
+        "short": {"bias": short, "reason": short_reason},
+        "mid": {"bias": mid, "reason": mid_reason},
+        "long": {"bias": long, "reason": long_reason},
+    }
+
+
+def build_scenarios(supports: list[dict], resistances: list[dict], current: float) -> list[dict]:
+    """Build the If-Then scenario tree."""
+    s1 = supports[0] if supports else None
+    s4 = supports[-1] if supports else None
+    r1 = resistances[0] if resistances else None
+    r3 = next((r for r in resistances if r["label"].startswith("R3")), None)
+
+    scenarios = []
+    if s1:
+        scenarios.append({"if": f"hold {s1['level']} (KEY support)", "then": f"still range; watch {r1['level'] if r1 else 'next R'} for next test"})
+        scenarios.append({"if": f"break {s1['level']} on close", "then": f"target {supports[1]['level'] if len(supports) > 1 else 'next S'} → {supports[2]['level'] if len(supports) > 2 else 'lower'} (short-term bearish)"})
+    if s4:
+        scenarios.append({"if": f"break {s4['level']} (crash low)", "then": f"base invalidation; mid-term bearish"})
+    if r1:
+        scenarios.append({"if": f"reclaim {r1['level']} on close", "then": f"short-term bullish; next test {resistances[1]['level'] if len(resistances) > 1 else 'next R'}"})
+    if r3:
+        scenarios.append({"if": f"break {r3['level']} (box top)", "then": "leave consolidation; mid-term recovery, watch next R"})
+    return scenarios
+
+
+# =============================================================================
+# 7b. Action plan (deterministic, no LLM)
+# =============================================================================
+
+# Phase → strategy compatibility (used for phase_match flag)
+_PHASE_MATCH = {
+    "SELL_R1": {"downtrend_active", "base_building", "range"},
+    "BUY_S1": {"downtrend_recovery", "uptrend", "base_building", "range"},
+    "BREAK_LONG": {"uptrend"},
+    "BREAK_SHORT": {"downtrend_active"},
+    "WAIT_RANGE": {"base_building", "range"},
+}
+
+
+def _action_plan_notes(strategy, s1, r1, mid, current, pos_pct, trigger, target, stop,
+                       atr_pct: float = 0.0, box_width_pct: float = 0.0):
+    """Format the one-line notes string for the action plan."""
+    if strategy == "WAIT_VOLATILE":
+        return (f"WAIT_VOLATILE: ATR14 {atr_pct:.1f}% / box width {box_width_pct:.0f}% — "
+                f"波動太大（thresholds: ATR≥{VOL_GUARD_ATR_PCT:.0f}% 或 box≥{VOL_GUARD_BOX_PCT:.0f}%），"
+                f"range mean-reversion 暫停，等波動收窄先再睇。")
+    if strategy == "WAIT_RR_TOO_THIN":
+        return "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。"
+    if strategy == "SELL_R1":
+        return (f"SELL_R1: in box ({s1:.0f}-{r1:.0f}), entry at R1 {trigger:.0f}, "
+                f"target mid {target:.0f}, stop {stop:.0f}")
+    if strategy == "BUY_S1":
+        return (f"BUY_S1: in box ({s1:.0f}-{r1:.0f}), entry at S1 {trigger:.0f}, "
+                f"target mid {target:.0f}, stop {stop:.0f}")
+    if strategy == "BREAK_LONG":
+        return (f"BREAK_LONG: close {current:.0f} above R1 {r1:.0f}, "
+                f"target R2 {target:.0f}, stop {stop:.0f}")
+    if strategy == "BREAK_SHORT":
+        return (f"BREAK_SHORT: close {current:.0f} below S1 {s1:.0f}, "
+                f"target S2 {target:.0f}, stop {stop:.0f}")
+    # WAIT_RANGE
+    return f"WAIT_RANGE: in box ({s1:.0f}-{r1:.0f}), pos {pos_pct:.0f}%, no clear setup"
+
+
+def compute_action_plan(df: pd.DataFrame, phase: str, current: float) -> dict:
+    """Deterministic action plan from OHLC + phase.
+
+    Pure function: takes DataFrame, phase string, current close.
+    Returns dict matching the action_plan JSON schema.
+
+    Decision rules (no LLM):
+      1. Compute s1/r1/s2/r2/s3/r3/s4/mid from rolling windows.
+      2. Breakout rules (priority): close > r1*1.005 → BREAK_LONG, close < s1*0.995 → BREAK_SHORT.
+      3. Phase + position rules: SELL_R1 in downtrend_active (pos>=70),
+         BUY_S1 in downtrend_recovery/uptrend (pos<=30), WAIT in base_building/range.
+      4. Strategy → trigger/target/stop mapping.
+      5. risk_pct, reward_pct, rr_ratio.
+      6. phase_match against _PHASE_MATCH table.
+    """
+    n = len(df)
+
+    # --- Insufficient data guard (need >= 20 bars for s1/r1) ---
+    if n < 20 or not np.isfinite(current):
+        return {
+            "verdict": "WAIT",
+            "strategy": "WAIT_RANGE",
+            "trigger_price": None,
+            "target_price": None,
+            "stop_price": None,
+            "risk_pct": 0.0,
+            "reward_pct": 0.0,
+            "rr_ratio": 0.0,
+            "phase_match": False,
+            "r1": None, "s1": None,
+            "s2": None, "r2": None,
+            "r3": None, "s3": None, "s4": None,
+            "current_position_pct": 50.0,
+            "notes": f"WAIT_RANGE: insufficient data (n={n}, need >=20 bars)",
+        }
+
+    # --- 1. Pivot levels (rolling windows, no overlap) ---
+    s1 = float(df["low"].iloc[-20:].min())
+    r1 = float(df["high"].iloc[-20:].max())
+    mid = (s1 + r1) / 2.0
+
+    # s2, r2: last 60 days excluding last 20
+    if n >= 60:
+        s2 = float(df["low"].iloc[-60:-20].min())
+        r2 = float(df["high"].iloc[-60:-20].max())
+    elif n > 20:
+        s2 = float(df["low"].iloc[:-20].min())
+        r2 = float(df["high"].iloc[:-20].max())
+    else:  # 20 <= n < 40 — partial window, fall back
+        s2, r2 = s1, r1
+
+    # s3, r3: last 120 days excluding last 60
+    if n >= 120:
+        s3 = float(df["low"].iloc[-120:-60].min())
+        r3 = float(df["high"].iloc[-120:-60].max())
+    elif n > 60:
+        s3 = float(df["low"].iloc[:-60].min())
+        r3 = float(df["high"].iloc[:-60].max())
+    else:
+        s3, r3 = s2, r2
+
+    # s4: all data excluding last 120 (cap at 200 since we fetch 200 by default)
+    if n > 120:
+        s4 = float(df["low"].iloc[:-120].min())
+    else:
+        s4 = s3
+
+    # --- current_position_pct (clamped to [0, 100]) ---
+    if r1 > s1:
+        pos_pct = (current - s1) / (r1 - s1) * 100.0
+    else:
+        # Degenerate: zero-width box (no trades within window) — center it.
+        pos_pct = 50.0
+    pos_pct = max(0.0, min(100.0, pos_pct))
+
+    # --- Volatility metrics (ATR14 % of price; 20d box width % of price) ---
+    _h, _l, _c = df["high"], df["low"], df["close"]
+    _prev_c = _c.shift(1)
+    _tr = pd.concat([_h - _l, (_h - _prev_c).abs(), (_l - _prev_c).abs()], axis=1).max(axis=1)
+    atr14 = float(_tr.rolling(14).mean().iloc[-1]) if n >= 15 else float(_tr.mean())
+    atr_pct = (atr14 / current * 100.0) if current > 0 else 0.0
+    box_width_pct = ((r1 - s1) / current * 100.0) if current > 0 else 0.0
+
+    # --- 2 & 3. Determine verdict (breakouts first, then phase rules) ---
+    verdict: Optional[str] = None
+    strategy: Optional[str] = None
+
+    if current > r1 * 1.005:
+        verdict, strategy = "BUY", "BREAK_LONG"
+    elif current < s1 * 0.995:
+        verdict, strategy = "SELL", "BREAK_SHORT"
+    elif phase == "uptrend":
+        if current > mid and pos_pct >= 70:
+            verdict, strategy = "WAIT", "WAIT_RANGE"
+        elif pos_pct <= 30:
+            verdict, strategy = "BUY", "BUY_S1"
+    elif phase == "downtrend_active":
+        if pos_pct >= 60:
+            verdict, strategy = "SELL", "SELL_R1"
+    elif phase == "downtrend_recovery":
+        if pos_pct <= 30:
+            verdict, strategy = "BUY", "BUY_S1"
+    elif phase == "base_building":
+        # 寬鬆 base_building 規則：上 60% 可 SELL, 下 30% 可 BUY
+        if pos_pct >= 60:
+            verdict, strategy = "SELL", "SELL_R1"
+        elif pos_pct <= 30:
+            verdict, strategy = "BUY", "BUY_S1"
+    elif phase == "range":
+        if pos_pct >= 70:
+            verdict, strategy = "SELL", "SELL_R1"
+        elif pos_pct <= 30:
+            verdict, strategy = "BUY", "BUY_S1"
+
+    # Default fallback — no rule fired (e.g., downtrend + mid box).
+    if verdict is None:
+        verdict, strategy = "WAIT", "WAIT_RANGE"
+
+    # --- 3b. Volatility guard (2026-08-25) ---
+    # Inside-box mean reversion (SELL_R1 / BUY_S1) is statistically unsafe when
+    # daily noise dwarfs the stop or the "box" is too wide to be a range.
+    if strategy in ("SELL_R1", "BUY_S1") and (
+        atr_pct >= VOL_GUARD_ATR_PCT or box_width_pct >= VOL_GUARD_BOX_PCT
+    ):
+        verdict, strategy = "WAIT", "WAIT_VOLATILE"
+
+    # --- 3c. Regime guard (2026-09-22, annotated 2026-09-28) ---
+    # Route strategies by ADX(14) regime:
+    #   - regime='range' (ADX<20): mean reversion only (SELL_R1/BUY_S1). Demote
+    #     breakouts to WAIT_RANGE — they statistically fail in ranges because
+    #     R:R becomes negative.
+    #   - regime='trend' (ADX>25): breakouts only (BREAK_LONG/BREAK_SHORT).
+    #     Demote mean reversion to WAIT — box-edge fades hit often.
+    #   - regime='dead' (20<=ADX<=25): no override (let phase routing decide).
+    #
+    # DO NOT veto the dead zone. Measured 2026-09-28 on this site's own signals
+    # (HK, 20 signal days, 1066 signals, 5-session forward, 0.25% costs):
+    #     regime=dead   n=219  win 71.7%  mean +2.7059%  PF 4.48   <-- BEST
+    #     regime=range  n=847  win 66.7%  mean +1.9328%  PF 2.92
+    # The dead zone is the best-performing regime for a MEAN-REVERSION strategy
+    # (weak trend = a range forming a trend, which is where box-edge fades work).
+    # It is only poisonous for TREND-FOLLOWING breakouts, which this site does
+    # not rely on. An earlier note here claimed 88.9% from "StratProof/RSI+ADX
+    # backtests" — that is same-bar indicator accuracy, not a trade result.
+    # The honest forward number for this logic is 67.7% win / +2.09% per trade.
+    _regime = _regime_fields(df)
+    _regime_label = _regime.get("regime", "n/a")
+    if _regime_label == "range" and strategy in ("BREAK_LONG", "BREAK_SHORT"):
+        verdict, strategy = "WAIT", "WAIT_REGIME"
+    elif _regime_label == "trend" and strategy in ("SELL_R1", "BUY_S1"):
+        verdict, strategy = "WAIT", "WAIT_REGIME"
+
+    # --- 3d. Volume confirmation gate (2026-09-22) ---
+    # Trigger-day volume > 1.5× 20-day average → confirm participation.
+    # If today's volume is below threshold, demote to WAIT — empirical lift
+    # in win rate from volume-confirmed breakouts is documented.
+    VOL_MULT = 1.5  # 50% above 20-day average
+    VOL_WINDOW = 20
+    if "volume" in df.columns and len(df) >= VOL_WINDOW + 1:
+        _vol_today = float(df["volume"].iloc[-1])
+        _vol_avg = float(df["volume"].iloc[-(VOL_WINDOW + 1):-1].mean())
+        if _vol_avg > 0 and _vol_today < VOL_MULT * _vol_avg:
+            # Low-volume day: most price action is noise. Demote actionable
+            # signals (breakouts especially) to WAIT.
+            if strategy in ("BREAK_LONG", "BREAK_SHORT"):
+                verdict, strategy = "WAIT", "WAIT_LOW_VOL"
+
+    # NOTE: a second, verbatim copy of the regime guard used to sit here.
+    # It was idempotent (the second pass saw strategy already rewritten to
+    # WAIT_REGIME and changed nothing) but it recomputed _regime_fields on
+    # every call for all 200 tickers x 3 markets. Removed 2026-09-28.
+
+    # --- 4. Trigger / target / stop per strategy ---
+    if strategy == "SELL_R1":
+        # Stop distance: never tighter than 2%, and never inside 1.5×ATR noise.
+        _stop_dist = max(0.02, STOP_ATR_MULT * atr_pct / 100.0)
+        trigger, target, stop = r1, mid, r1 * (1 + _stop_dist)
+    elif strategy == "BUY_S1":
+        _stop_dist = max(0.02, STOP_ATR_MULT * atr_pct / 100.0)
+        trigger, target, stop = s1, mid, s1 * (1 - _stop_dist)
+    elif strategy == "BREAK_LONG":
+        trigger, target, stop = current, r2, r1 * 0.99
+    elif strategy == "BREAK_SHORT":
+        trigger, target, stop = current, s2, s1 * 1.01
+    else:  # WAIT_RANGE / WAIT_VOLATILE
+        trigger, target, stop = None, None, None
+
+    # --- 5. Risk / reward / R:R ---
+    if trigger is not None and trigger > 0:
+        risk_pct = abs(stop - trigger) / trigger * 100.0
+        reward_pct = abs(target - trigger) / trigger * 100.0
+        rr_ratio = reward_pct / risk_pct if risk_pct > 0 else 0.0
+    else:
+        risk_pct = reward_pct = rr_ratio = 0.0
+
+    # --- 5b. Direction sanity check (v2.2) ---
+    # A BUY plan with target<trigger, or SELL plan with target>trigger,
+    # means the plan wants the price to move against the trade idea.
+    # abs() would mask this as a positive R:R. Demote to WAIT instead.
+    # (2026-08-25 fix: notes are plain strings — the old list-of-dicts format
+    #  was silently overwritten AND rendered as Python repr in HTML.)
+    _extra_notes: list = []
+    if verdict in ("BUY", "SELL") and trigger is not None and target is not None:
+        wrong_dir = (verdict == "BUY" and target <= trigger) or \
+                    (verdict == "SELL" and target >= trigger)
+        if wrong_dir:
+            verdict, strategy = "WAIT", "WAIT_RANGE"
+            trigger, target, stop = None, None, None
+            risk_pct = reward_pct = rr_ratio = 0.0
+            _extra_notes.append(
+                "sanity: 原始訊號 target 同 verdict 方向矛盾（BUY 但目標價較 trigger 低 / "
+                "SELL 但目標價較 trigger 高），已自動降級為 WAIT，避免被 abs() 化成假 R:R。"
+            )
+
+    # --- 5b-bis. Entry-level integrity note (2026-09-30) ---
+    # Found on 02318.HK: the page showed "BUY at S1 52.2" from the Action Plan
+    # and "IF 失守 52.20 (S1) THEN SHORT" from the scenarios, with nothing
+    # saying which applies. They are the same level described from two sides,
+    # and the rule that resolves it is the one the scenarios already imply:
+    # a level is only tradeable if price HOLDS it. Touching S1 and closing
+    # below is a support failure, not a dip to buy.
+    #
+    # This is a note, not a gate. The backtest enforces the hold rule at fill
+    # time (backtest_site_strategy.py, HOLD_CLOSE); demoting here would need
+    # intraday context this function does not have, and guessing would be worse
+    # than saying so.
+    if verdict in ("BUY", "SELL") and trigger is not None:
+        _lv = "support" if verdict == "BUY" else "resistance"
+        _extra_notes.append(
+            f"52.2 條規則（{verdict} plan，{_lv} {trigger:.2f}）："
+            f"① 跌到 {trigger:.2f}、收市守住喺 {trigger:.2f} 上面 → 照 BUY 條 plan 做（入場 {trigger:.2f}，"
+            f"止蝕 {(stop or 0):.2f}，目標 {(target or 0):.2f}）。"
+            f"② 收市跌穿 {trigger:.2f} → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，"
+            f"但 SHORT 係另一套 plan，唔係自動開倉。"
+            f"③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 {trigger:.2f} 上面』。"
+        )
+
+    # --- 5c. R:R floor after ATR-widened stops (2026-08-25) ---
+    # Widening the stop to clear 1.5×ATR noise is honest, but if the resulting
+    # risk kills the payoff the plan is not worth taking — demote instead of
+    # shipping an ugly R:R.
+    if verdict in ("BUY", "SELL") and rr_ratio > 0 and rr_ratio < RR_FLOOR:
+        verdict, strategy = "WAIT", "WAIT_RR_TOO_THIN"
+        trigger, target, stop = None, None, None
+        risk_pct = reward_pct = rr_ratio = 0.0
+        _extra_notes.append(
+            f"rr_floor: stop 加闊到 {STOP_ATR_MULT}×ATR 後 R:R < {RR_FLOOR}，賠率唔夠，降級 WAIT。"
+            f"等價格更近 trigger 或者波動收窄先再睇。"
+        )
+
+    # --- 6. phase_match ---
+    phase_match = phase in _PHASE_MATCH.get(strategy, set())
+
+    base_note = _action_plan_notes(strategy, s1, r1, mid, current, pos_pct,
+                                   trigger, target, stop,
+                                   atr_pct=atr_pct, box_width_pct=box_width_pct)
+    notes = base_note if not _extra_notes else (
+        base_note + " ｜ " + " ｜ ".join(_extra_notes)
+    )
+
+    return {
+        "verdict": verdict,
+        "strategy": strategy,
+        "trigger_price": round(trigger, 2) if trigger is not None else None,
+        "target_price": round(target, 2) if target is not None else None,
+        "stop_price": round(stop, 2) if stop is not None else None,
+        "risk_pct": round(risk_pct, 2),
+        "reward_pct": round(reward_pct, 2),
+        "rr_ratio": round(rr_ratio, 2),
+        "phase_match": phase_match,
+        "r1": round(r1, 2),
+        "s1": round(s1, 2),
+        "s2": round(s2, 2),
+        "r2": round(r2, 2),
+        "r3": round(r3, 2),
+        "s3": round(s3, 2),
+        "s4": round(s4, 2),
+        "current_position_pct": round(pos_pct, 1),
+        "notes": notes,
+    }
+
+
+# =============================================================================
+# 8-9. Misjudgments + final synthesis
+# =============================================================================
+
+COMMON_MISJUDGMENTS = [
+    {"claim": "跌過好多，所以一定牛", "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"},
+    {"claim": "今日陰燭，所以一定破位", "refute": "陰燭在支持之上，只是弱，不是已破"},
+    {"claim": "MACD 綠箭就一定上", "refute": "震盪市指標反覆；以水平位收市確認為優先"},
+    {"claim": "把歷史高位當短線目標", "refute": "路徑依賴，中間有多層供應；分段過關"},
+]
+
+
+# =============================================================================
+# 10. Chart rendering
+# =============================================================================
+
+CHART_STYLE = {
+    "bg": "#0d0f12",
+    "grid": "#1f2429",
+    "text": "#e0e3e8",
+    "text_dim": "#8a929b",
+    "up": "#26a69a",
+    "down": "#ef5350",
+    "resistance": "#b388ff",      # purple
+    "support": "#64b5f6",         # blue
+    "support_key": "#ff9800",     # orange (S1 KEY)
+    "peak": "#ff5252",            # red
+    "trough": "#40c4ff",          # cyan
+    "current": "#ffd54f",         # yellow
+    "title_bg": "#161a1f",
+}
+
+
+def _deoverlap_right_labels(ax, fig, entries):
+    """Spread right-margin label y positions so text labels never collide.
+
+    entries: list of dicts {y, text, color, fontsize, fontweight}. The horizontal
+    S/R lines stay at their TRUE price levels; only the text labels get nudged
+    (colour keeps the association clear). Returns [(entry, adjusted_y)] sorted
+    top-down. Uses iterative pairwise relaxation inside [lo, hi].
+    """
+    if not entries:
+        return []
+    ymin, ymax = ax.get_ylim()
+    span = max(ymax - ymin, 1e-9)
+    ax_h_in = max(ax.get_position().height * fig.get_figheight(), 1e-6)
+    fs_max = max(e["fontsize"] for e in entries)
+    lab_h = (fs_max / 72.0) * 1.35 / ax_h_in * span  # label height expressed in data units
+    gap = lab_h * 1.10
+    # Keep right-margin labels well ABOVE the x-axis month-label band.
+    # 2.0× label height from ymin reserves a clear band for "Aug 2026" type
+    # month labels without overlapping S/R level text.
+    lo, hi = ymin + lab_h * 2.0, ymax - lab_h * 0.30
+
+    order = sorted(range(len(entries)), key=lambda i: entries[i]["y"], reverse=True)
+    ys = [float(entries[i]["y"]) for i in order]
+    n = len(ys)
+    for _ in range(200):
+        moved = False
+        for i in range(n - 1):
+            d = ys[i] - ys[i + 1]
+            if d < gap - 1e-9:
+                p = (gap - d) / 2.0
+                ys[i] += p
+                ys[i + 1] -= p
+                moved = True
+        for i in range(n):
+            if ys[i] > hi:
+                ys[i] = hi
+                moved = True
+            elif ys[i] < lo:
+                ys[i] = lo
+                moved = True
+        if not moved:
+            break
+    return [(entries[order[k]], ys[k]) for k in range(n)]
+
+
+def render_chart(df: pd.DataFrame, snapshot: dict, ticker: str, name: str, out_path: str):
+    """Render the dark-theme candlestick + S/R chart."""
+    import matplotlib
+    matplotlib.use("Agg")  # 2026-09-22: headless backend so render works in worker threads
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import Rectangle
+    from matplotlib.lines import Line2D
+    import matplotlib.dates as mdates
+
+    s = CHART_STYLE
+    plt.rcParams.update({
+        "font.family": resolve_font_family(),
+        "axes.edgecolor": s["grid"],
+        "axes.labelcolor": s["text"],
+        "xtick.color": s["text_dim"],
+        "ytick.color": s["text_dim"],
+        "text.color": s["text"],
+    })
+
+    fig = plt.figure(figsize=(14, 12), facecolor=s["bg"])
+    # 3-row layout: title / chart / footer. Footer needs enough vertical room
+    # for the legend swatches + source line WITHOUT colliding with the chart's
+    # x-axis month labels. Chart's xaxis lives in gs[1] but the visible month
+    # labels render near gs[1]'s bottom edge — which used to clash with
+    # right-margin S/R text labels (R3 bottom ~8.0 etc.) that got pushed down
+    # by the de-overlapper. Increase footer height and reserve explicit
+    # bottom margin so month labels and S/R labels have separate vertical
+    # bands.
+    # 2026-10-12: volume panel added as a 3rd band (title / price / volume /
+    # footer). Month labels moved to the BOTTOM axis (ax_vol) because leaving
+    # them on the price axis would strand them in the middle of the figure.
+    gs = fig.add_gridspec(4, 1, height_ratios=[0.9, 10.6, 2.0, 0.8], hspace=0.10)
+    fig.subplots_adjust(bottom=0.07)
+
+    # --- Title block ---
+    ax_title = fig.add_subplot(gs[0])
+    ax_title.set_facecolor(s["title_bg"])
+    ax_title.set_xticks([]); ax_title.set_yticks([])
+    for spine in ax_title.spines.values():
+        spine.set_color(s["grid"])
+
+    last = snapshot["last_bar"]
+    chg_color = s["down"] if last["chg_pct"] < 0 else s["up"]
+    ticker_code = snapshot["ticker"].split(".")[-1] if "." in snapshot["ticker"] else snapshot["ticker"]
+    ticker_prefix = snapshot["ticker"].split(".")[0] if "." in snapshot["ticker"] else ""
+    display_name = name if name else ticker_code
+    title_text = f"{ticker_code}  {display_name}" if not ticker_prefix else f"{ticker_prefix}.{ticker_code}  {display_name}"
+    price_text = f"{last['C']}"
+    chg_text = f"{last['chg_pct']:+.2f}%  ({last['C'] - last['prev_close']:+.2f})"
+
+    t_title = ax_title.text(0.02, 0.65, title_text, fontsize=20, fontweight="bold", color=s["text"],
+                            transform=ax_title.transAxes, va="center")
+    ax_title.text(0.02, 0.18,
+                  f"Daily K  |  {snapshot['data_range']}  |  Peak {snapshot['peak']['date']} = {snapshot['peak']['price']}  |  Not advice",
+                  fontsize=10, color=s["text_dim"], transform=ax_title.transAxes, va="center")
+    # Price pinned to the far right edge; chg% measured and placed just left of it;
+    # long ticker names auto-shrink instead of colliding with the price.
+    t_price = ax_title.text(0.985, 0.50, price_text, fontsize=26, fontweight="bold", color=chg_color,
+                            transform=ax_title.transAxes, va="center", ha="right")
+    fig.canvas.draw()
+    _renderer = fig.canvas.get_renderer()
+    _inv = ax_title.transAxes.inverted()
+    _bb_p = t_price.get_window_extent(_renderer)
+    _px0 = _inv.transform((_bb_p.x0, 0))[0]
+    _x_chg = max(_px0 - 0.010, 0.40)
+    ax_title.text(_x_chg, 0.50, chg_text, fontsize=13, color=chg_color,
+                  transform=ax_title.transAxes, va="center", ha="right")
+    _bb_t = t_title.get_window_extent(_renderer)
+    _avail_px = (ax_title.transAxes.transform((_x_chg - 0.015, 0))[0]
+                 - ax_title.transAxes.transform((0.02, 0))[0])
+    if _avail_px > 0 and _bb_t.width > _avail_px:
+        t_title.set_fontsize(max(11, int(t_title.get_fontsize() * _avail_px / _bb_t.width)))
+
+    # --- Main chart ---
+    ax = fig.add_subplot(gs[1])
+    ax.set_facecolor(s["bg"])
+    for spine in ax.spines.values():
+        spine.set_color(s["grid"])
+
+    dates = df["date"].values
+    opens = df["open"].values
+    highs = df["high"].values
+    lows = df["low"].values
+    closes = df["close"].values
+
+    # Candlesticks
+    width = 0.7
+    for i in range(len(df)):
+        is_up = closes[i] >= opens[i]
+        color = s["up"] if is_up else s["down"]
+        # Wick
+        ax.plot([dates[i], dates[i]], [lows[i], highs[i]], color=color, linewidth=0.8, zorder=2)
+        # Body
+        body_low = min(opens[i], closes[i])
+        body_height = abs(closes[i] - opens[i])
+        if body_height < 0.001:
+            body_height = (highs[i] - lows[i]) * 0.01
+        rect = Rectangle(
+            (mdates.date2num(dates[i]) - width / 2, body_low),
+            width, body_height,
+            facecolor=color, edgecolor=color, linewidth=0.5, zorder=3,
+        )
+        ax.add_patch(rect)
+
+    # --- S/R lines ---
+    ymin, ymax = ax.get_ylim()
+    ymin = min(ymin, lows.min() * 0.97)
+    ymax = max(ymax, highs.max() * 1.02)
+    ax.set_ylim(ymin, ymax)
+
+    # Right-margin labels collected here, drawn de-overlapped at the end
+    _right_labels = []
+
+    def _add_rlabel(y, text, color, fontsize=10, fontweight="normal"):
+        _right_labels.append({"y": float(y), "text": text, "color": color,
+                              "fontsize": fontsize, "fontweight": fontweight})
+
+    last_close = last["C"]
+
+    # ------------------------------------------------------------------
+    # Chart S/R declutter (2026-08-25):
+    # Day-trade charts only need ACTIONABLE levels. Rules:
+    #   1. drop levels farther than LEVEL_MAX_DIST_PCT from last close
+    #      (e.g. 6869.HK crash low 30.80 when price is 140 → noise)
+    #   2. merge levels within LEVEL_MERGE_PCT into one line
+    #      (e.g. S1 91.15 vs S2 90.24 — one line, label "S1/S2")
+    #   3. cap at nearest LEVEL_KEEP_PER_SIDE per side
+    # Full ladders remain in the JSON snapshot + HTML info card.
+    # ------------------------------------------------------------------
+    LEVEL_MAX_DIST_PCT = 0.60
+    LEVEL_MERGE_PCT = 0.02
+    LEVEL_KEEP_PER_SIDE = 2
+
+    def _declutter_levels(levels, keep):
+        near = [dict(lv) for lv in levels
+                if last_close > 0
+                and abs(lv["level"] - last_close) / last_close <= LEVEL_MAX_DIST_PCT]
+        if not near:
+            return []
+        merged = []
+        for lv in sorted(near, key=lambda x: x["level"]):
+            if merged and abs(lv["level"] - merged[-1]["level"]) / last_close <= LEVEL_MERGE_PCT:
+                prev = merged[-1]
+                tags = list(prev.get("_tags", [prev["label"].split()[0]]))
+                new_tag = lv["label"].split()[0]
+                if new_tag not in tags:
+                    tags.append(new_tag)
+                prev["_tags"] = tags
+                prev["label"] = "/".join(tags[:3]) + (" KEY" if prev.get("_key") or "KEY" in lv["label"] else "")
+                prev["_key"] = bool(prev.get("_key") or "KEY" in lv["label"])
+            else:
+                lv["_tags"] = [lv["label"].split()[0]]
+                lv["_key"] = "KEY" in lv["label"]
+                merged.append(lv)
+        merged.sort(key=lambda x: abs(x["level"] - last_close))
+        kept = merged[:keep]
+        kept.sort(key=lambda x: x["level"])
+        return kept
+
+    _draw_supports = _declutter_levels(snapshot["supports"], LEVEL_KEEP_PER_SIDE)
+    _draw_resistances = _declutter_levels(snapshot["resistances"], LEVEL_KEEP_PER_SIDE)
+
+    # Peak line + marker (hline only when within relevance band; circle always)
+    peak = snapshot["peak"]
+    peak_dt = pd.to_datetime(peak["date"])
+    if last_close > 0 and peak["price"] <= last_close * (1 + LEVEL_MAX_DIST_PCT):
+        ax.axhline(y=peak["price"], color=s["peak"], linestyle="--", linewidth=1.0, alpha=0.7, zorder=4)
+        _add_rlabel(peak["price"], f" PEAK {peak['price']} ({peak_dt.strftime('%b %d')})", s["peak"], fontsize=9)
+    # Peak circle
+    if peak_dt in dates:
+        peak_idx = list(dates).index(peak_dt)
+        ax.plot(dates[peak_idx], peak["price"], "o", color=s["peak"], markersize=10,
+                markerfacecolor="none", markeredgewidth=2, zorder=6)
+        ax.annotate(f"PEAK {peak['price']}", xy=(dates[peak_idx], peak["price"]),
+                    xytext=(dates[peak_idx], peak["price"] + (ymax - ymin) * 0.04),
+                    color=s["peak"], fontsize=10, ha="center", fontweight="bold")
+
+    # Trough marker (NO line — the S4 line below serves that role)
+    trough = snapshot["trough"]
+    trough_dt = pd.to_datetime(trough["date"])
+    if trough_dt in dates:
+        trough_idx = list(dates).index(trough_dt)
+        ax.plot(dates[trough_idx], trough["price"], "o", color=s["trough"], markersize=10,
+                markerfacecolor="none", markeredgewidth=2, zorder=6)
+        ax.annotate(f"{trough_dt.strftime('%b %d')} low {trough['price']}",
+                    xy=(dates[trough_idx], trough["price"]),
+                    xytext=(dates[trough_idx], trough["price"] - (ymax - ymin) * 0.05),
+                    color=s["trough"], fontsize=9, ha="center", fontweight="bold")
+
+    # Support lines (decluttered — nearest 2, merged clusters, in-band only)
+    for s_lvl in _draw_supports:
+        is_key = s_lvl.get("_key", "KEY" in s_lvl["label"])
+        color = s["support_key"] if is_key else s["support"]
+        ls = "-" if is_key else "--"
+        lw = 1.8 if is_key else 1.0
+        ax.axhline(y=s_lvl["level"], color=color, linestyle=ls, linewidth=lw, alpha=0.7, zorder=4)
+        _add_rlabel(s_lvl["level"], f" {s_lvl['label']} ~{s_lvl['level']}", color,
+                    fontweight="bold" if is_key else "normal")
+
+    # Resistance lines (decluttered — nearest 2)
+    for r_lvl in _draw_resistances:
+        ax.axhline(y=r_lvl["level"], color=s["resistance"], linestyle="--",
+                   linewidth=1.0, alpha=0.7, zorder=4)
+        _add_rlabel(r_lvl["level"], f" {r_lvl['label']} ~{r_lvl['level']}", s["resistance"])
+
+    # Current price line + label (de-overlapped together with all other labels)
+    ax.axhline(y=last_close, color=s["current"], linestyle=":", linewidth=1.2, alpha=0.9, zorder=4)
+    _add_rlabel(last_close, f" ◯Last {last_close}", s["current"], fontweight="bold")
+
+    # --- Candlestick pattern annotations (REFERENCE ONLY) -------------------
+    # Deliberately NOT wired into anything decision-related: not the JSON
+    # snapshot, not action_plan, not the verdict. It is a visual annotation so
+    # the reader can see what pattern printed on which bar.
+    #
+    # Display rules, chosen to keep it reference material rather than a second
+    # signal (measured edge of TA filters over this signal set was +0.44pp with
+    # t<1, i.e. indistinguishable from zero):
+    #   - confirmed patterns only (unconfirmed ones are still forming)
+    #   - last PATTERN_WINDOW bars only (a full 200-bar chart shows ~56 hits,
+    #     which is noise, not information)
+    #   - neutral grey, no bullish/bearish wording and no directional glyph, so
+    #     the marker cannot read as a recommendation
+    #   - tiny label under the candle's low, outside the S/R label band
+    PATTERN_WINDOW = 90
+    try:
+        import candle_patterns as _cp
+        _pframe = df.rename(columns={"date": "time"})[["open", "high", "low", "close", "time"]]
+        _hits = _cp.detect(_pframe)
+        _hits = _hits[_hits["confirmed"]]
+        _idx_of_date = {pd.Timestamp(d): i for i, d in enumerate(dates)}
+        # Stagger label heights so nearby patterns don't overprint each other.
+        _LANES = 2
+        _MIN_GAP_DAYS = 12      # one label per ~2 weeks keeps the chart readable
+        _MAX_LABELS = 10
+        _lane_last = [None] * _LANES
+        _shown = []
+        for _, _h in _hits.iterrows():
+            _i = int(_h["index"])
+            if _i < len(dates) - PATTERN_WINDOW:
+                continue
+            _x = pd.Timestamp(_h["date"])
+            if _x not in _idx_of_date:
+                continue
+            _di = _idx_of_date[_x]
+            _gap = (ymax - ymin)
+            # Right-edge zone: the S/R right-margin labels (R1 today high,
+            # S1 bottom, Last ...) live at the far right of the price band, so a
+            # pattern label sitting just under a candle there lands on top of
+            # them. Push those labels well clear instead of dropping them —
+            # the most recent pattern is the one worth reading.
+            _near_right = _di >= len(dates) - 20
+            _base_off = 0.062 if _near_right else 0.020
+            _step = 0.024 if _near_right else 0.020
+            # pick the first lane that is clear both vertically and horizontally
+            _lane = None
+            for _l in range(_LANES):
+                _y_try = float(lows[_di]) - _gap * (_base_off + _step * _l)
+                _prev_x = _lane_last[_l]
+                if _prev_x is None or (_x - _prev_x).days >= _MIN_GAP_DAYS:
+                    _lane, _y_use = _l, _y_try
+                    break
+            if _lane is None or len(_shown) >= _MAX_LABELS:
+                continue   # too dense — skip rather than clutter
+            _lane_last[_lane] = _x
+            ax.plot(dates[_di], float(lows[_di]), "v", color=s["text_dim"],
+                    markersize=4.5, zorder=3, alpha=0.95)
+            ax.annotate(_h["pattern"], xy=(dates[_di], float(lows[_di])),
+                        xytext=(dates[_di], _y_use), color=s["text"],
+                        fontsize=8, ha="center", va="top", zorder=6,
+                        alpha=0.85,
+                        bbox=dict(boxstyle="round,pad=0.15", facecolor=s["bg"],
+                                  edgecolor="none", alpha=0.55))
+            _shown.append(_h["pattern"])
+    except Exception:
+        _shown = []          # never let an annotation bug break the chart
+
+    # Draw every right-margin label at a collision-free y position
+    _x_lab = mdates.date2num(dates[-1]) + 1
+    for _e, _y in _deoverlap_right_labels(ax, fig, _right_labels):
+        ax.text(_x_lab, _y, _e["text"], color=_e["color"], fontsize=_e["fontsize"],
+                va="center", ha="left", fontweight=_e["fontweight"], zorder=5, clip_on=False)
+
+    # Grid
+    ax.grid(True, color=s["grid"], linestyle="-", linewidth=0.5, alpha=0.5)
+    ax.set_axisbelow(True)
+
+    # Y-axis with price labels
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f"{x:.0f}"))
+
+    # Right margin for labels — keep tight so the rightmost S/R labels
+    # (R3 today high, R3 bottom etc.) and the August month label don't overlap.
+    ax.set_xlim(mdates.date2num(dates[0]) - 2, mdates.date2num(dates[-1]) + 2)
+
+    # --- MA overlay on the price panel (2026-10-12) -------------------------
+    # Context, never a signal: MA lines do not enter the action plan.
+    # MA20 = the "is price stretched from its recent norm" line, which is the
+    # quantity his S/R mean-reversion logic actually cares about; MA60 =
+    # the slower regime line.
+    try:
+        _close_s = pd.Series(closes, dtype="float64")
+        _ma20 = _close_s.rolling(20, min_periods=20).mean()
+        _ma60 = _close_s.rolling(60, min_periods=60).mean()
+        _xn = mdates.date2num(dates)
+        if _ma60.notna().any():
+            ax.plot(_xn, _ma60.values, color=s["text_dim"], linewidth=1.2,
+                    alpha=0.9, zorder=2.5, label="MA60")
+        if _ma20.notna().any():
+            ax.plot(_xn, _ma20.values, color=s["text"], linewidth=1.1,
+                    alpha=0.85, zorder=2.5, label="MA20")
+    except Exception:
+        pass
+
+    # --- Volume panel (2026-10-12) ---
+    # Shares the price axis's x so bars line up with the candles exactly.
+    # Volume is context, not a signal: it is drawn, never used by the action
+    # plan. Same rule as the candlestick-pattern annotations.
+    ax_vol = fig.add_subplot(gs[2], sharex=ax)
+    ax_vol.set_facecolor(s["bg"])
+    for spine in ax_vol.spines.values():
+        spine.set_color(s["grid"])
+    ax.tick_params(axis="x", labelbottom=False)      # labels move to ax_vol
+
+    if "volume" in df.columns and df["volume"].notna().any():
+        vols = df["volume"].values.astype(float)
+        v_up = closes >= opens
+        bar_w = width * 0.9
+        ax_vol.bar(mdates.date2num(dates)[v_up], vols[v_up], width=bar_w,
+                   color=s["up"], alpha=0.75, linewidth=0, zorder=2)
+        ax_vol.bar(mdates.date2num(dates)[~v_up], vols[~v_up], width=bar_w,
+                   color=s["down"], alpha=0.75, linewidth=0, zorder=2)
+        # 20-session average volume — the "is this breakout backed by volume" line
+        if len(vols) >= 20:
+            _vma = pd.Series(vols).rolling(20).mean()
+            ax_vol.plot(mdates.date2num(dates), _vma.values, color=s["text_dim"],
+                        linewidth=1.1, alpha=0.9, zorder=3)
+        ax_vol.set_ylim(0, float(np.nanmax(vols)) * 1.18)
+    else:
+        ax_vol.text(0.5, 0.5, "no volume data", transform=ax_vol.transAxes,
+                    ha="center", va="center", color=s["text_dim"], fontsize=9)
+    ax_vol.set_ylabel("Vol", color=s["text_dim"], fontsize=8)
+    ax_vol.tick_params(axis="y", labelsize=7, colors=s["text_dim"])
+    # Turn 1.4e8 into "140M" — scientific notation is unreadable at this size.
+    def _vol_fmt(x, _):
+        if x >= 1e9:
+            return f"{x/1e9:.1f}B"
+        if x >= 1e6:
+            return f"{x/1e6:.0f}M"
+        if x >= 1e3:
+            return f"{x/1e3:.0f}K"
+        return f"{x:.0f}"
+    ax_vol.yaxis.set_major_formatter(plt.FuncFormatter(_vol_fmt))
+    ax_vol.grid(True, alpha=0.25, color=s["grid"])
+    ax_vol.set_axisbelow(True)
+    # Date axis — month labels live on the BOTTOM band (the volume panel), so
+    # they sit at the foot of the figure instead of stranded mid-chart.
+    # Month labels live on the bottom-most DATA panel (ax_vol).
+    ax_vol.xaxis.set_major_locator(mdates.MonthLocator())
+    ax_vol.xaxis.set_major_formatter(mdates.DateFormatter("%b"))
+    ax_vol.tick_params(axis="x", labelsize=10)
+
+    # --- Footer ---
+    ax_foot = fig.add_subplot(gs[3])
+    ax_foot.set_facecolor(s["title_bg"])
+    ax_foot.set_xticks([]); ax_foot.set_yticks([])
+    for spine in ax_foot.spines.values():
+        spine.set_color(s["grid"])
+
+    # Legend with colored swatches in a single horizontal row
+    legend_items = [
+        ("Support", s["support"], "--"),
+        ("Key S1", s["support_key"], "-"),
+        ("Resistance", s["resistance"], "--"),
+        ("MA20", s["text"], "-"),
+        ("MA60", s["text_dim"], "-"),
+        ("Peak", s["peak"], "--"),
+        ("Current", s["current"], ":"),
+    ]
+    # Render each item: [swatch] Label
+    x_cursor = 0.02
+    for label, color, _ in legend_items:
+        # Swatch
+        ax_foot.add_patch(Rectangle((x_cursor, 0.55), 0.018, 0.30,
+                                     facecolor=color, edgecolor="none",
+                                     transform=ax_foot.transAxes))
+        x_cursor += 0.022
+        # Label
+        ax_foot.text(x_cursor, 0.70, label, fontsize=10, color=s["text"],
+                     transform=ax_foot.transAxes, va="center", ha="left")
+        x_cursor += 0.012 * len(label) + 0.025  # advance
+
+    # OHLV + source line
+    _vol = df.iloc[-1]["volume"]
+    volume_str = f"{int(_vol):,}" if _vol == _vol and _vol is not None else "n/a"
+    ohlv = f"O{last['O']}  H{last['H']}  L{last['L']}  C{last['C']}  V{volume_str}"
+    ax_foot.text(0.02, 0.20,
+                 f"Source: {snapshot['data_source']} {snapshot['ticker']} ({display_name})  |  {ohlv}  |  Education only — not investment advice",
+                 fontsize=9, color=s["text_dim"], transform=ax_foot.transAxes, va="center")
+
+    plt.savefig(out_path, dpi=130, facecolor=s["bg"], bbox_inches="tight")
+    plt.close(fig)
+
+
+# =============================================================================
+# Orchestrator
+# =============================================================================
+
+def _compute_patterns(df, window: int = 90, min_gap_days: int = 6,
+                      max_n: int = 5) -> list[dict]:
+    """Confirmed candlestick patterns over the last `window` bars.
+
+    Emitted into the JSON snapshot so the interactive canvas chart can draw
+    them. Same confirmed-only / de-cluttered rules as the PNG renderer, so the
+    two views agree. Never used by the action plan — annotation only.
+    """
+    try:
+        import candle_patterns as _cp
+    except Exception:
+        return []
+    try:
+        frame = df.rename(columns={"date": "time"})[["open", "high", "low", "close", "time"]]
+        hits = _cp.detect(frame)
+    except Exception:
+        return []
+    if hits is None or len(hits) == 0:
+        return []
+
+    dates = [pd.Timestamp(d) for d in df["date"]]
+    n = len(dates)
+    last_d = None
+    out: list[dict] = []
+    # Newest first so the de-clutter keeps the most recent labels.
+    order = sorted(range(len(hits)), key=lambda k: -int(hits.iloc[k]["index"]))
+    for k in order:
+        h = hits.iloc[k]
+        i = int(h["index"])
+        if i < n - window or i < 0 or i >= n:
+            continue
+        if not bool(h["confirmed"]):
+            continue
+        # newest-first iteration, so the gap is last_d (newer) - dates[i] (older)
+        if last_d is not None and (last_d - dates[i]).days < min_gap_days:
+            continue
+        # Same pattern name repeating within 30 days reads as noise; keep the
+        # most recent of each kind instead of stacking identical labels.
+        if any(o["name"] == str(h["pattern"])
+               and (last_d - dates[i]).days < 30 for o in out):
+            continue
+        last_d = dates[i]
+        out.append({
+            "name": str(h["pattern"]),
+            "bias": str(h["bias"]),
+            "date": dates[i].date().isoformat(),
+            "low": float(df["low"].iloc[i]),
+            "high": float(df["high"].iloc[i]),
+            "i": i,
+        })
+        if len(out) >= max_n:
+            break
+    return out
+
+
+def run(ticker: str, out_path: str, days: int = 200, source: str = "auto", asof: str | None = None) -> dict:
+    """Run the full pipeline. Returns the JSON snapshot.
+
+    asof: trim data to T-1 (yesterday's close) by default, or pass YYYY-MM-DD.
+    """
+    print(f"  fetching {ticker}...", file=sys.stderr)
+    df, source, stock_name = fetch_ohlc(ticker, days=days, source=source, asof=asof)
+    # 2026-10-14: yfinance returns an EMPTY name for some instruments — 02800.HK
+    # (盈富基金) did so on its first day in the turnover universe, and the HK hub
+    # published a table row with a blank Name cell. A blank is not a name: it is
+    # indistinguishable from "we lost it", and self_test rightly refused to ship
+    # it. Fall back to the symbol the user asked for, which is always present and
+    # always correct, rather than dropping the row — the bar data was fine.
+    stock_name = (stock_name or "").strip() or ticker
+    # NaN-row guard (2026-08-26): some HK ETPs/small caps return rows with NaN
+    # OHLCV from yfinance/futu → downstream int()/float() conversions crash
+    # ("cannot convert float NaN to integer") and the whole snapshot is lost.
+    # Drop broken rows up front; keep only bars with real OHLC.
+    _ohlc_cols = [c for c in ("open", "high", "low", "close") if c in df.columns]
+    df = df.dropna(subset=_ohlc_cols).reset_index(drop=True)
+    if len(df) < 20:
+        raise RuntimeError(f"only got {len(df)} rows for {ticker}")
+    print(f"  got {len(df)} bars from {source} ({stock_name})", file=sys.stderr)
+
+    # Phase
+    phase_info = detect_phase(df)
+    print(f"  phase: {phase_info['phase']}", file=sys.stderr)
+
+    current = float(df.iloc[-1]["close"])
+    prev_close = float(df.iloc[-1].get("last_close", df.iloc[-2]["close"]))
+    chg_pct = (current - prev_close) / prev_close * 100
+
+    last_bar = {
+        "date": str(df.iloc[-1]["date"].date()),
+        "O": round(float(df.iloc[-1]["open"]), 2),
+        "H": round(float(df.iloc[-1]["high"]), 2),
+        "L": round(float(df.iloc[-1]["low"]), 2),
+        "C": round(current, 2),
+        "prev_close": round(prev_close, 2),
+        "chg_pct": round(chg_pct, 2),
+    }
+
+    # S/R ladders
+    supports = build_support_ladder(
+        df, current,
+        phase_info["peak"]["price"], phase_info["trough"]["price"], phase_info["trough"]["date"],
+    )
+    resistances = build_resistance_ladder(
+        df, current,
+        phase_info["peak"]["price"], phase_info["peak"]["date"],
+        phase_info["trough"]["price"], phase_info["trough"]["date"],
+        phase_info["box_top"]["price"], phase_info["box_top"]["date"],
+    )
+    print(f"  supports: {[s['level'] for s in supports]}", file=sys.stderr)
+    print(f"  resistances: {[r['level'] for r in resistances]}", file=sys.stderr)
+
+    position = analyze_position(df, current, supports, resistances)
+    kline = analyze_kline_behavior(df, supports, resistances)
+    bias = synthesize_bias(phase_info["phase"], kline, position)
+    scenarios = build_scenarios(supports, resistances, current)
+    action_plan = compute_action_plan(df, phase_info["phase"], current)
+
+    snapshot = {
+        "ticker": normalize_ticker(ticker)[0],
+        "ticker_user": ticker,
+        "name": stock_name,
+        "data_source": source,
+        "data_range": f"{df.iloc[0]['date'].date()} → {df.iloc[-1]['date'].date()} ({len(df)} daily bars)",
+        "last_bar": last_bar,
+        "phase": phase_info["phase"],
+        # 2026-09-22: surface ADX regime so downstream rendering can show it
+        "adx": phase_info.get("adx"),
+        "plus_di": phase_info.get("plus_di"),
+        "minus_di": phase_info.get("minus_di"),
+        "regime": phase_info.get("regime"),
+        "adx_threshold_note": phase_info.get("adx_threshold_note"),
+        "phase_evidence": f"Peak {phase_info['peak']['price']} ({phase_info['peak']['date']}), trough {phase_info['trough']['price']} ({phase_info['trough']['date']}), box top {phase_info['box_top']['price']} ({phase_info['box_top']['date']})",
+        "peak": phase_info["peak"],
+        "trough": phase_info["trough"],
+        "box": {
+            "top": phase_info["box_top"]["price"],
+            "top_date": phase_info["box_top"]["date"],
+            "bottom": phase_info["trough"]["price"],
+            "period": f"{phase_info['trough']['date']} to {df.iloc[-1]['date'].date()}",
+        },
+        "drop_from_peak_pct": phase_info["drop_from_peak_pct"],
+        "recovery_from_crash_pct": phase_info["recovery_from_crash_pct"],
+        "supports": supports,
+        "resistances": resistances,
+        "position": position,
+        "kline_today": kline,
+        "bias": bias,
+        "scenarios": scenarios,
+        "common_misjudgments": COMMON_MISJUDGMENTS,
+        "action_plan": action_plan,
+        # Candlestick patterns, precomputed here so the interactive
+        # canvas chart can draw them. The PNG is only a <noscript> fallback
+        # (and is no longer shipped), so anything rendered only into the PNG
+        # never reaches a visitor. Patterns are annotation, never a signal:
+        # they do not touch action_plan / verdict.
+        "patterns": _compute_patterns(df),
+    }
+
+    # Render with stock name
+    render_chart(df, snapshot, ticker, stock_name, out_path)
+    print(f"  chart → {out_path}", file=sys.stderr)
+
+    return snapshot
+
+
+# =============================================================================
+# CLI
+# =============================================================================
+
+def main():
+    p = argparse.ArgumentParser(description="Daily OHLC + S/R chart for one ticker")
+    p.add_argument("-t", "--ticker", required=True, help="Ticker, e.g. 09992.HK, AAPL, 03888")
+    p.add_argument("-o", "--out", required=True, help="Output PNG path")
+    p.add_argument("--days", type=int, default=200, help="Lookback days (default 200)")
+    p.add_argument("--json", help="Also write JSON snapshot to this path")
+    p.add_argument("--source", choices=["futu", "yfinance", "auto"], default="auto",
+                   help="Data source: futu (OpenD), yfinance (web), or auto (try futu then yfinance)")
+    p.add_argument("--asof", help="Use data as of this date YYYY-MM-DD (default: T-1 / yesterday's close)")
+    args = p.parse_args()
+
+    try:
+        snap = run(args.ticker, args.out, days=args.days, source=args.source, asof=args.asof)
+    except Exception as e:
+        print(json.dumps({"error": str(e), "ticker": args.ticker}), file=sys.stderr)
+        sys.exit(1)
+
+    out_json = json.dumps(snap, ensure_ascii=False, indent=2)
+    print(out_json)
+    if args.json:
+        Path(args.json).write_text(out_json, encoding="utf-8")
+
+
+if __name__ == "__main__":
+    main()

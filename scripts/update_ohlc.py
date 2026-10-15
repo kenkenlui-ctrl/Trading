@@ -129,6 +129,17 @@ def one(tk: str, safe: str, out_dir: Path, asof: str, days: int, source: str):
     # history-destroying pass. Fail-closed on the WRITE solves the NaN case
     # and creates this one; the two rules have to coexist, so a SHORTER
     # result is never allowed to overwrite a longer file.
+    #
+    # 2026-10-14: ...unless the shortfall is fully explained by the null bars
+    # this same function just dropped. A vendor that returns a session with no
+    # settled price gives one clean bar fewer, and on 2026-10-14 Yahoo did
+    # exactly that for the whole JP universe: 399 cleaned bars against a stored
+    # 400, "dropped 1 null bar(s)". Read literally the rule rejected all 210 JP
+    # names — nothing was lost, since the stored file was kept, but the market
+    # was left unrefreshed and the run aborted at the MIN_OK_RATE floor. The
+    # two cases are distinguishable, and the distinction is exactly the number
+    # of bars we removed for having no price: a genuine truncation is not
+    # accounted for by nulls, so it is still rejected (400 -> 5 stays rejected).
     path = out_dir / f"{safe}_ohlc.json"
     have = None
     if path.exists():
@@ -137,7 +148,7 @@ def one(tk: str, safe: str, out_dir: Path, asof: str, days: int, source: str):
             have = len(old) if isinstance(old, list) else None
         except Exception:
             have = None
-    if have is not None and len(rows) < have:
+    if have is not None and len(rows) < have and (have - len(rows)) > dropped:
         return False, (f"{tk}: upstream returned only {len(rows)} bars, file has "
                        f"{have} — kept the longer series{note}")
 
