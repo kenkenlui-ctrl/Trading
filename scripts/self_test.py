@@ -270,6 +270,85 @@ def t_badge_is_data_driven() -> None:
 # --------------------------------------------------------------------------
 # 3. no published page may carry a 0 price where data is missing
 # --------------------------------------------------------------------------
+def t_no_retired_jp_claims() -> None:
+    """The withdrawn Japan portfolio figures may only appear as history.
+
+    2026-10-15: methodology.html kept publishing the withdrawn JP numbers
+    (+25.4%/yr vs +18.5%/yr = +6.9pp/yr) for weeks after the home page,
+    llms.txt and build_seo.py had all moved to the 2026-10-12 retest
+    (+18.03% vs +18.00% = +0.04pp/yr). Two pages on one site answered "what
+    did this strategy actually return" with different numbers, and the page
+    that explains how the numbers are produced was the wrong one.
+
+    A bare "these strings are banned" check would fail the moment the page
+    quotes the old figure in its correction log — which it must, because a
+    withdrawn claim that nobody can see withdrawn is a claim that looks live.
+    So the rule is CONTEXTUAL: the withdrawn figure may appear only on a page
+    that also says it was withdrawn.
+    """
+    sys.path.insert(0, str(REPO / "scripts"))
+    from rewrite_methodology_v2 import JP, _pct, _pp
+
+    # The verified figures, read from the retest summary rather than restated.
+    j = JP()
+    verified_gap = _pp(j["gap_pp"])
+    verified_v2 = _pct(j["v2_cagr"])
+
+    WITHDRAWN = ["+25.4%", "+18.5%", "+6.9 pp/年", "+702.0%"]
+    WITHDRAWAL_MARKERS = ("撤回", "已撤回", "withdrawn", "retracted",
+                          "唔好引用", "must not be cited")
+    # The corrected source must exist, or "verified" means nothing.
+    record("jp/retest summary is readable and is the source of the JP figures",
+           (REPO / "data" / "hk_retest_summary.json").exists(),
+           "data/hk_retest_summary.json is missing — the JP cells cannot be derived")
+
+    live = {}
+    for p in sorted(PUBLIC.rglob("*.html")):
+        rel = str(p.relative_to(PUBLIC))
+        if rel.startswith("en/"):
+            continue          # hand-maintained translations, not machine-built
+        try:
+            txt = p.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        hits = [w for w in WITHDRAWN if w in txt]
+        if not hits:
+            continue
+        if any(m in txt for m in WITHDRAWAL_MARKERS):
+            continue          # quoted inside the correction record — that is the point
+        live[rel] = hits
+    record("jp/withdrawn JP figures appear only inside a withdrawal notice",
+           not live,
+           f"{len(live)} page(s) publish a withdrawn JP figure as live: "
+           f"{list(live.items())[:3]}" if live else "")
+
+    # MUST-FAIL: the contextual rule has to actually reject a bare claim, and
+    # accept the same string inside a withdrawal notice. Without both, a page
+    # could satisfy the check by saying "withdrawn" once and then claiming it.
+    probe_live = "<p>日股 2016-26 v2 +25.4% 對等權 +18.5%</p>"
+    probe_history = "<p>已撤回「日股 +25.4%」呢個聲稱</p>"
+    check = lambda s: (not [w for w in WITHDRAWN if w in s]
+                       or any(m in s for m in WITHDRAWAL_MARKERS))
+    record("jp/withdrawn-claim rule must-fail: a bare claim is rejected",
+           not check(probe_live))
+    record("jp/withdrawn-claim rule must-pass: a correction notice is allowed",
+           check(probe_history))
+
+    # The page that explains the method must actually carry the current figures.
+    meth = PUBLIC / "methodology.html"
+    if meth.exists():
+        txt = meth.read_text(encoding="utf-8")
+        record("jp/methodology carries the verified JP figures",
+               verified_gap in txt and verified_v2 in txt,
+               f"expected {verified_gap!r} and {verified_v2!r} in methodology.html")
+        # And it must not still quote the withdrawn pair as its own result.
+        body = re.sub(r"<div class=\"callout\"[^>]*>.*?</div>", "", txt, flags=re.S)
+        record("jp/methodology body quotes no withdrawn JP figure",
+               not [w for w in WITHDRAWN if w in body],
+               f"outside the correction callout: "
+               f"{[w for w in WITHDRAWN if w in body]}")
+
+
 def t_no_zero_prices() -> None:
     bad = []
     for m in ("hk200", "us200", "jp200"):
@@ -1845,6 +1924,7 @@ def main() -> int:
         print("{" + ",".join(json.dumps(r) for r in results) + "}")
     for fn in (t_quote_never_zero, t_badge_is_data_driven, t_no_zero_prices,
                t_badges_agree, t_restamp_idempotent, t_sitemap_guard, t_v2_bars_fresh,
+               t_no_retired_jp_claims,
                t_glitch_mask, t_css_cachebuster, t_no_retired_v1_claims,
                t_candles_have_prices, t_track_record_page,
                t_short_settlement_arithmetic,

@@ -29,14 +29,134 @@ WHAT IT CHANGES (surgical, not a full rewrite)
     the theme script, the stylesheet links.
 
 Idempotent: re-running produces a byte-identical file.
+
+2026-10-15: the JP portfolio figures were still TYPED LITERALS here and had
+    drifted. The 2026-10-12 retest (data/hk_retest_summary.json) withdrew the
+    old +25.4%/yr vs +18.5%/yr = +6.9pp/yr headline; the home page, llms.txt
+    and build_seo.py all moved to +18.03% vs +18.00% = +0.04pp/yr, and this
+    page — which every "how were these numbers produced?" link points at —
+    did not. A figure typed in two places cannot stay in sync with itself, so
+    the JP cells are now READ from the retest summary. The old v2 figure was
+    also internally inconsistent: its stated +702.0% cumulative does not
+    follow from its own +25.4% CAGR over the 10.08-year bar window, while the
+    equal-weight row's +453.5% does. Cumulative returns here are therefore
+    computed from the verified CAGR over the window measured off the bar store
+    rather than pasted from a run that no longer exists.
 """
 from __future__ import annotations
 
+import glob
+import json
 import re
+from datetime import date
 from pathlib import Path
 
-PUB = Path("/Users/kenken/dev/dsa-hk/public")
+REPO = Path("/Users/kenken/dev/dsa-hk")
+PUB = REPO / "public"
 PAGE = PUB / "methodology.html"
+
+RETEST = REPO / "data" / "hk_retest_summary.json"
+BARS = REPO / "data" / "bt10y2"
+# The round-trip cost this page's JP numbers are quoted at. It must match the
+# cost build_home.py / build_seo.py quote, or the two pages disagree again.
+JP_COST = "cost_0.10%"
+
+
+def _bar_window_years() -> float:
+    """Length of the bar store the retest ran on, in years.
+
+    The retest summary stores CAGR and maxDD but not the cumulative return, and
+    a cumulative figure cannot be recovered from a CAGR without knowing the
+    window. Deriving the window from the bars themselves keeps the arithmetic
+    checkable instead of asserting a period someone once typed.
+    """
+    firsts, lasts = [], []
+    for p in glob.glob(str(BARS / "*.json")):
+        try:
+            rows = json.loads(Path(p).read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if isinstance(rows, list) and rows:
+            firsts.append(rows[0]["date"])
+            lasts.append(rows[-1]["date"])
+    if not lasts:
+        raise SystemExit("cannot read the bar store; refusing to invent a window")
+    a, b = date.fromisoformat(min(firsts)), date.fromisoformat(max(lasts))
+    return (b - a).days / 365.25
+
+
+def _num(x: float, dp: int = 2) -> str:
+    """Signed number using the typographic minus the rest of the page uses.
+
+    An ASCII "-" sitting in the same column as a hand-written U+2212 "−" renders
+    as a visibly different dash, and on a page whose entire claim is numerical
+    precision that is the wrong kind of detail to get wrong.
+    """
+    return f"{x:+.{dp}f}".replace("-", "\u2212")
+
+
+def _pct(x: float, dp: int = 2) -> str:
+    return f"{_num(x, dp)}%"
+
+
+def jp_figs() -> dict:
+    """JP portfolio figures, DERIVED from data/hk_retest_summary.json.
+
+    Raises on a missing key rather than falling back to a literal. A silent
+    fallback would reproduce exactly the drift this replaces: the page would
+    keep printing a withdrawn number whenever the source file moved or was
+    renamed, and the only symptom would be a stale public claim.
+    """
+    d = json.loads(RETEST.read_text(encoding="utf-8"))
+    p = d["jp"]["portfolio"]
+    ew, v2 = p["ew_bh"], p[f"v2_{JP_COST}"]
+    gap = p["v2_vs_ew_pp"][JP_COST]
+    yrs = _bar_window_years()
+
+    def cum(x: float) -> float:
+        return ((1 + x / 100) ** yrs - 1) * 100
+
+    def seg(period: str, field: str) -> float:
+        return gap[period][field]
+
+    return {
+        "cost_label": "0.10%",
+        "full": "2016-2026",
+        # full-period cells
+        "v2_cagr": v2["2016-2026"]["cagr%"],
+        "ew_cagr": ew["2016-2026"]["cagr%"],
+        "gap_pp": gap["2016-2026"]["v2_minus_ew_pp"],
+        "v2_dd": v2["2016-2026"]["maxDD%"],
+        "ew_dd": ew["2016-2026"]["maxDD%"],
+        "trades": v2["2016-2026"]["trades"],
+        "v2_cum": cum(v2["2016-2026"]["cagr%"]),
+        "ew_cum": cum(ew["2016-2026"]["cagr%"]),
+        "window_years": yrs,
+        # split-regime cells (§4.8)
+        "early_v2": v2["2016-2020"]["cagr%"],
+        "early_ew": ew["2016-2020"]["cagr%"],
+        "early_gap": gap["2016-2020"]["v2_minus_ew_pp"],
+        "late_v2": v2["2021-2026"]["cagr%"],
+        "late_ew": ew["2021-2026"]["cagr%"],
+        "late_gap": gap["2021-2026"]["v2_minus_ew_pp"],
+    }
+
+
+def _pp(x: float, dp: int = 2) -> str:
+    """Format a gap, which is measured in percentage POINTS per year."""
+    return f"{_num(x, dp)} pp/年"
+
+
+_JP: dict | None = None
+
+
+def JP() -> dict:
+    """Cached jp_figs(), so build_body's f-strings stay readable."""
+    global _JP
+    if _JP is None:
+        _JP = jp_figs()
+    return _JP
+
 
 TITLE = "Methodology · v2 訊號規則 · Leeks Terminal"
 DESC = (
@@ -92,8 +212,10 @@ FAQ = [
         "唯一分別係等 S1 定喺開市價直接買，v2 每單收益喺四個窗口全部高過對照組 2.6 至 6.6 倍。"
         "但組合層面：美股冇超額 —— 將同一批 201 隻股票等權每月再平衡，2016–26 年化 +27.4%，"
         "v2 只有 +27.2%。即係話每單揀得准，但喺美股呢個優勢冇轉化成跑贏「唔做嘢」嘅回報。"
-        "日股全期 +6.9 個百分點/年，但按市況拆開就唔成立：2016–20 落後純持有 7.9 點/年，"
-        "2021–26 先領先 16.7 點/年 —— 差額幾乎全部來自單一大市 regime，我哋唔當佢係 alpha。"
+        f"日股重測之後全期只差 {_pp(JP()['gap_pp'])}（v2 {_pct(JP()['v2_cagr'])} 對等權 "
+        f"{_pct(JP()['ew_cagr'])}），按市況拆開更加唔成立：2016–20 落後純持有 "
+        f"{abs(JP()['early_gap']):.1f} 點/年，2021–26 先領先 {JP()['late_gap']:.1f} 點/年 —— "
+        "差額幾乎全部來自單一大市 regime，我哋唔當佢係 alpha。"
         "詳見方法論頁 §4.6 同 §4.7。",
     ),
     (
@@ -262,9 +384,20 @@ def build_body() -> str:
         for m, r, c, dd, sh, n in [
             ("舊引擎（按網站原本方式顯示）· 2016–26", "−92.6%", "−23.6%", "−93.1%", "−2.43", "6,542"),
             ("v2 · 美股 · 2016–26", "+814.1%", "+27.2%", "−20.6%", "2.19", "6,675"),
-            ("v2 · 日股 · 2016–26", "+702.0%", "+25.4%", "−28.2%", "1.93", "4,576"),
+            # 2026-10-15: the two JP rows are read from the 2026-10-12 retest.
+            # Cumulative is derived from the verified CAGR over the measured bar
+            # window, because the retest summary carries no cumulative column
+            # and the pasted one (+702.0%) did not follow from its own CAGR.
+            # Sharpe is "—" rather than the old 1.93: the summary does not
+            # report it, and a figure carried over from a superseded run is
+            # worse than an admitted gap.
+            (f"v2 · 日股 · 2016–26（{JP()['cost_label']} 成本）",
+             f"{_pct(JP()['v2_cum'], 1)}", _pct(JP()["v2_cagr"]),
+             _pct(JP()["v2_dd"]), "—", f"{JP()['trades']:,}"),
             ("同一批股票等權每月再平衡 · 美股", "+1048.8%", "+27.4%", "−21.4%", "—", "—"),
-            ("同一批股票等權每月再平衡 · 日股", "+453.5%", "+18.5%", "−19.9%", "—", "—"),
+            ("同一批股票等權每月再平衡 · 日股",
+             f"{_pct(JP()['ew_cum'], 1)}", _pct(JP()["ew_cagr"]),
+             _pct(JP()["ew_dd"]), "—", "—"),
             ("大市指數 buy &amp; hold · 美股（^GSPC）", "+253.2%", "+13.3%", "−33.9%", "—", "—"),
             ("大市指數 buy &amp; hold · 日股（^N225）", "+307.4%", "+15.0%", "−31.8%", "—", "—"),
         ]
@@ -291,7 +424,7 @@ def build_body() -> str:
       <span>Engine: <b>rule-based (Python)</b></span>
       <span>規則版本: <b>v2（只做多）</b></span>
       <span>數據: <b>Yahoo Finance · T-1 OHLC</b></span>
-      <span>最後更新: <b><span id="meth-updated">2026-10-05</span></b></span>
+      <span>最後更新: <b><span id="meth-updated">2026-10-15</span></b></span>
     </div>
   </div>
 
@@ -304,17 +437,18 @@ def build_body() -> str:
     <table class="data-table method-prose" style="margin: var(--sp-3) 0;">
       <thead><tr><th>2016–26 年化</th><th>美股</th><th>日股</th></tr></thead>
       <tbody>
-        <tr><td>v2 組合</td><td>+27.2%</td><td>+25.4%</td></tr>
-        <tr><td>同一批股票等權持有</td><td><b>+27.4%</b></td><td>+18.5%</td></tr>
+        <tr><td>v2 組合</td><td>+27.2%</td><td>{_pct(JP()['v2_cagr'])}</td></tr>
+        <tr><td>同一批股票等權持有</td><td><b>+27.4%</b></td><td>{_pct(JP()['ew_cagr'])}</td></tr>
         <tr><td>大市指數 buy &amp; hold</td><td>+13.3%</td><td>+15.0%</td></tr>
       </tbody>
     </table>
     <p style="margin: var(--sp-2) 0; font-size: var(--text-sm);">
       <b>美股：v2 落後純持有 0.2 個百分點/年。</b> 表面睇落跑贏大市 14 個百分點，
       但嗰 14 點全部來自「呢 201 隻係今日嘅大型股」呢個選擇 —— 佢平均跑贏大市 14.1 點/年。
-      <b>日股：全期領先純持有 6.9 個百分點/年</b>，但呢個數拆開就冇咗 ——
-      2016–20 係<b>落後 7.9 個百分點/年</b>，2021–26 先領先 16.7 點/年（見 §4.8）。
-      最大回撤亦更深（−28.2% 對 −19.9%）。
+      <b>日股：全期只領先純持有 {_pp(JP()['gap_pp'])}</b>，按上面表嘅成本計，其實係打和 ——
+      而且拆開就更加唔企穩：2016–20 係<b>落後 {abs(JP()['early_gap']):.1f} 個百分點/年</b>，
+      2021–26 先領先 {JP()['late_gap']:.1f} 點/年（見 §4.8）。
+      最大回撤反而淺過純持有（{_pct(JP()['v2_dd'])} 對 {_pct(JP()['ew_dd'])}）。
     </p>
     <p style="margin: 0; font-size: var(--text-sm);">
       即係話：<b>每單優勢係真嘅（見 §4.6），但喺美股，佢冇轉化成跑贏「攞住同一批股票」
@@ -339,6 +473,21 @@ def build_body() -> str:
       point-in-time 名單（<code>scripts/portfolio_pit.py</code>）：剔除 17 隻遲入選股票後
       差額只由 +6.9 變 +6.0，證明遲入選唔係主因；但真正嘅偏差（已經唔存在嘅股票）
       用公開名單重建唔到。詳見 §4.7、§4.8 同第三項未解決限制。
+    </p>
+  </div>
+  <div class="callout" style="margin: var(--sp-4) 0; padding: var(--sp-4); border-left: 4px solid var(--amber); background: var(--amber-dim); border-radius: 4px;">
+    <p style="margin:0 0 var(--sp-2); font-size: var(--text-sm)">
+      <b>2026-10-15 — 撤回嗰句之後，連「差幾多」都要再量一次。</b>
+      上面 2026-10-06 撤回咗 +6.9，但當時只係話個數唔企穩，<b>冇重新報一個數</b>，
+      所以頁面一直留低 +25.4% 對 +18.5%、分段 7.9／16.7。2026-10-12 我哋重跑咗完整
+      10 年組合測試（<code>scripts/hk_retest.py</code> → <code>data/hk_retest_summary.json</code>），
+      喺 {JP()['cost_label']} 來回成本下：v2 <b>{_pct(JP()['v2_cagr'])}</b>、
+      同一批股票等權持有 <b>{_pct(JP()['ew_cagr'])}</b>，差 <b>{_pp(JP()['gap_pp'])}</b> ——
+      <b>基本上打和</b>，唔係一個可以攞出嚟講嘅優勢。分段一樣唔企穩：2016–20
+      <b>落後 {abs(JP()['early_gap']):.1f} 點/年</b>，2021–26 領先 {JP()['late_gap']:.1f} 點/年。
+      <br><br>
+      本頁所有日股數字而家係<b>由 <code>data/hk_retest_summary.json</code> 讀出嚟</b>，
+      唔再係手打 —— 同一個數字寫兩遍，就一定會有一遍過時。
     </p>
   </div>
   <table class="data-table method-prose">
@@ -568,10 +717,10 @@ def build_body() -> str:
       <tr><th>2016–26</th><th>美股年化</th><th>美股最大回撤</th><th>日股年化</th><th>日股最大回撤</th></tr>
     </thead>
     <tbody>
-      <tr><td>v2 組合</td><td>+27.2%</td><td>−20.6%</td><td>+25.4%</td><td>−28.2%</td></tr>
-      <tr><td>同一批股票等權每月再平衡</td><td><b>+27.4%</b></td><td>−21.4%</td><td>+18.5%</td><td>−19.9%</td></tr>
+      <tr><td>v2 組合</td><td>+27.2%</td><td>−20.6%</td><td>{_pct(JP()['v2_cagr'])}</td><td>{_pct(JP()['v2_dd'])}</td></tr>
+      <tr><td>同一批股票等權每月再平衡</td><td><b>+27.4%</b></td><td>−21.4%</td><td>{_pct(JP()['ew_cagr'])}</td><td>{_pct(JP()['ew_dd'])}</td></tr>
       <tr><td>大市指數 buy &amp; hold</td><td>+13.3%</td><td>−33.9%</td><td>+15.0%</td><td>−31.8%</td></tr>
-      <tr><td><b>v2 減「等權持有」</b></td><td><b>−0.2 pp/年</b></td><td>—</td><td><b>+6.9 pp/年</b><br><span style="font-size:0.82em;opacity:0.75">但拆分市況後不成立（§4.8）</span></td><td>—</td></tr>
+      <tr><td><b>v2 減「等權持有」</b></td><td><b>−0.2 pp/年</b></td><td>—</td><td><b>{_pp(JP()['gap_pp'])}</b><br><span style="font-size:0.82em;opacity:0.75">打和；且拆分市況後不成立（§4.8）</span></td><td>—</td></tr>
     </tbody>
   </table>
   <p>
@@ -580,15 +729,17 @@ def build_body() -> str:
     v2 做緊嘅嘢，同「攞住呢批股票」冇分別。
   </p>
   <p>
-    <b>日股答案係「全期 +6.9 個百分點」，但呢個數唔企穩。</b>
-    拆成兩個市況段之後，2016–20 落後純持有 7.9 點/年，2021–26 領先 16.7 點/年。
-    差額幾乎全部來自日股單一大牛市 —— 同一條規則喺另一個 regime 係負數。
-    所以呢 6.9 點唔當作 alpha，只當作「呢段時間呢個 regime 嘅結果」。
+    <b>日股答案係「冇」。</b> 2026-10-12 重測之後，全期只差 <b>{_pp(JP()['gap_pp'])}</b>
+    —— 喺 {JP()['cost_label']} 成本下兩條路行出嚟幾乎一樣，同「攞住同一批股票」冇分別。
+    而且呢個差額一拆就散：2016–20 落後純持有 {abs(JP()['early_gap']):.1f} 點/年，
+    2021–26 先領先 {JP()['late_gap']:.1f} 點/年。
+    差額主要來自日股單一大牛市 —— 同一條規則喺另一個 regime 係負數。
+    所以呢 {JP()['gap_pp']:.1f} 點唔當作 alpha，只當作「呢段時間呢個 regime 嘅結果」。
   </p>
 
   <h3>4.8 全期差額拆開睇：佢來自單一個市況</h3>
   <p style="margin: 0 0 var(--sp-3); font-size: var(--text-sm)">
-    全期數字最容易被誤讀成「十年都有 +6.9」。但 2016–26 其實橫跨兩個完全相反嘅 regime，
+    全期數字最容易被誤讀成「十年都有優勢」。但 2016–26 其實橫跨兩個完全相反嘅 regime，
     而 v2 喺兩個時段嘅表現係<b>一正一負</b>。下表用同一套機械重跑（<code>scripts/portfolio_pit.py</code>），
     只係將日曆切成兩段：
   </p>
@@ -603,13 +754,13 @@ def build_body() -> str:
     </thead>
     <tbody>
       <tr><td style="padding:var(--sp-2);border-bottom:1px solid var(--border)">日股 2016–2020</td>
-          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">+8.1%</td>
-          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">+16.0%</td>
-          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border);color:var(--red)"><b>−7.9 pp/年</b></td></tr>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">{_pct(JP()['early_v2'])}</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">{_pct(JP()['early_ew'])}</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border);color:var(--red)"><b>{_pp(JP()['early_gap'])}</b></td></tr>
       <tr><td style="padding:var(--sp-2);border-bottom:1px solid var(--border)">日股 2021–2026</td>
-          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">+37.2%</td>
-          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">+20.5%</td>
-          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border);color:var(--green)"><b>+16.7 pp/年</b></td></tr>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">{_pct(JP()['late_v2'])}</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">{_pct(JP()['late_ew'])}</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border);color:var(--green)"><b>{_pp(JP()['late_gap'])}</b></td></tr>
       <tr><td style="padding:var(--sp-2);border-bottom:1px solid var(--border)">美股 2016–2020</td>
           <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">+26.5%</td>
           <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">+28.5%</td>
@@ -621,8 +772,9 @@ def build_body() -> str:
     </tbody>
   </table>
   <p style="margin: 0 0 var(--sp-3); font-size: var(--text-sm)">
-    四格入面<b>冇一格係穩定嘅正數</b>。日股嗰 +6.9 全期數字，實際係「頭五年蝕 7.9、後五年賺 16.7」
-    嘅平均 —— 全部差額幾乎由 2021 年之後日股單一大牛市貢獻。
+    四格入面<b>冇一格係穩定嘅正數</b>。日股全期得 {_pp(JP()['gap_pp'])}，實際係「頭五年蝕
+    {abs(JP()['early_gap']):.1f}、後五年賺 {JP()['late_gap']:.1f}」嘅平均 ——
+    全部差額幾乎由 2021 年之後日股單一大牛市貢獻。
     美股更加直接：兩個時段都係零附近，冇任何 regime 過剩。
   </p>
   <p style="margin: 0 0 var(--sp-3); font-size: var(--text-sm)">
@@ -653,10 +805,10 @@ def build_body() -> str:
       <b>呢個過程記錄喺修正記錄一節，因為佢正正係點解絕對水平唔可以當真。</b>
     </p>
     <p style="margin: 0; font-size: var(--text-sm)">
-      <b>三、日股嗰 +6.9 個百分點拆開就冇咗，而且 point-in-time 偏差仍然未能量化。</b>
+      <b>三、日股本來嗰 +6.9 個百分點已經拆開就冇咗，重測之後連全期都只剩 {_pp(JP()['gap_pp'])}，而且 point-in-time 偏差仍然未能量化。</b>
       我哋用 Nikkei 官方 1970 年至今嘅成分股變更紀錄做咗 point-in-time 名單
       （<code>scripts/portfolio_pit.py</code>）：剔除 17 隻 2016-09-01 之後先入選嘅股票，
-      差額只由 +6.9 變 +6.0 —— 即遲入選唔係主因。
+      當年嗰個差額只由 +6.9 變 +6.0 —— 即遲入選唔係主因。
       但真正嘅偏差係<b>已經唔存在嘅股票</b>（2016 年係大盤、後來縮細／被剔除／除牌），
       佢哋完全唔喺今日名單，所以兩邊都冇計到。而 Nikkei log 只覆蓋 Nikkei 225 成員，
       同我哋嘅 TOPIX Core30 + Large70 只有 41/201 重疊，<b>重建唔到</b>。
@@ -770,7 +922,7 @@ def main() -> None:
             if node.get("@type") == "Article":
                 node["headline"] = "Leeks Terminal 訊號方法論 · v2 規則與修正記錄"
                 node["datePublished"] = "2026-08-24"
-                node["dateModified"] = "2026-10-05"
+                node["dateModified"] = "2026-10-15"
             if node.get("@type") == "FAQPage":
                 node["mainEntity"] = [
                     {"@type": "Question", "name": q,
