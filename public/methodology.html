@@ -34,7 +34,7 @@
       "mainEntityOfPage": "https://www.win9you.com/methodology",
       "inLanguage": "zh-Hant-HK",
       "datePublished": "2026-08-24",
-      "dateModified": "2026-10-15",
+      "dateModified": "2026-10-16",
       "author": {
         "@type": "Organization",
         "name": "Leeks Terminal"
@@ -213,7 +213,7 @@ function toggleTheme(){
       <span>Engine: <b>rule-based (Python)</b></span>
       <span>規則版本: <b>v2（只做多）</b></span>
       <span>數據: <b>Yahoo Finance · T-1 OHLC</b></span>
-      <span>最後更新: <b><span id="meth-updated">2026-10-15</span></b></span>
+      <span>最後更新: <b><span id="meth-updated">2026-10-16</span></b></span>
     </div>
   </div>
 
@@ -277,6 +277,42 @@ function toggleTheme(){
       <br><br>
       本頁所有日股數字而家係<b>由 <code>data/hk_retest_summary.json</code> 讀出嚟</b>，
       唔再係手打 —— 同一個數字寫兩遍，就一定會有一遍過時。
+    </p>
+  </div>
+  <div class="callout" style="margin: var(--sp-4) 0; padding: var(--sp-4); border-left: 4px solid var(--red); background: var(--red-dim); border-radius: 4px;">
+    <h3 style="margin-top: 0; font-size: var(--text-md);">⚠ 2026-10-16 — 我哋自己嘅入場時段規則，量出嚟係<b>差過隨機揀時段</b></h3>
+    <p style="margin: var(--sp-2) 0; font-size: var(--text-sm)">
+      Signal Search Sprint 1（<code>scripts/signal_search_s1.py</code>）將本頁描述嘅 v2 規則
+      每個維度逐個改（入場位、收市確認、止損、持有期、市況過濾），美股 11 個變體 × 3 個成本情境，
+      每一個都對同一批 179 隻股票、同一本 10 倉組合、同一組成本去跑。
+      為咗分清楚「規則有效」同「呢批股票本身就升」，每個變體都做咗 <b>placebo</b>：
+      規則、universe、倉位、成本全部照舊，只係<b>把入場日隨機換到另一個交易日</b>，跑 30 次。
+      <br><br>
+      現行入場規則（20 日低 S1 限價買入 + 收市確認）嘅結果：
+    </p>
+    <table class="data-table method-prose" style="margin: var(--sp-3) 0;">
+      <thead><tr><th>期間</th><th>真實差距</th><th>隨機入場 null</th><th>淨差距</th><th>z</th><th>喺 null 嘅百分位</th></tr></thead>
+      <tbody>
+        <tr><td>2016–2020</td><td>+0.41pp</td><td>+5.67 ± 3.98pp</td><td>−5.26pp</td><td>−1.32</td><td>6.7%</td></tr>
+        <tr><td>2021–2026</td><td>−6.48pp</td><td>+9.42 ± 3.38pp</td><td>−15.90pp</td><td><b>−4.71</b></td><td><b>0.0%</b></td></tr>
+      </tbody>
+    </table>
+    <p style="margin: var(--sp-2) 0; font-size: var(--text-sm)">
+      即係話：<b>喺 2021–26 嗰半，現行入場時段比隨機揀時段仲差，而 30 次隨機trial
+      冇一次好過佢（0.0 百分位）。</b> 11 個變體入面 <b>10 個</b> 喺兩個時段都係負 z。
+      最好嗰個（取消市況過濾）worst z 只有 +0.14，等於同自己嘅 null 分唔開。
+      <br><br>
+      <b>呢個結論唔係話策略蝕錢</b>，亦唔係話隨機入場係好策略 —— null 本身係正數，
+      嗰個正值來自「持有呢批 2016 年後被選中嘅大型股」同「組合平均只用咗 76.9% 資金」
+      呢兩件事，同入場時段無關。單筆層面嘅優勢亦冇變（見 §4.6）。
+      真正被否定嘅只有一樣：<b>用 S1 限價 + 收市確認去揀時段，喺組合層面冇帶來可量度嘅選股價值</b>。
+      <br><br>
+      <b>我們冇改 production</b>，現行規則照跑。原因係：呢個係一個 falsification 結果，
+      唔係一個新規則；Sprint 1 冇任何變體通過修正後 bar（要贏 null、且 z ≥ 1.96、且兩段都要），
+      所以唯一可以負責任嘅做法係公開咗佢，而唔係換一條未經證明嘅規則上去。
+      全部 11 個變體 × 3 個成本情境嘅 grid（每個變體嘅曝險、null 均值／標準差／z／百分位）
+      可以用 <code>scripts/signal_search_s1.py --placebo 30</code> 一次過重跑；
+      規則定義寫喺 <code>docs/signal-search-sprint-1-spec.md</code>。
     </p>
   </div>
   <table class="data-table method-prose">
