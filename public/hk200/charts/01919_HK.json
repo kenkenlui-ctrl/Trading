@@ -3,20 +3,20 @@
   "ticker_user": "01919.HK",
   "name": "COSCO SHIP HOLD",
   "data_source": "yfinance",
-  "data_range": "2025-12-19 → 2026-10-14 (200 daily bars)",
+  "data_range": "2025-12-23 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-14",
-    "O": 17.75,
-    "H": 17.96,
-    "L": 17.63,
-    "C": 17.92,
-    "prev_close": 17.75,
-    "chg_pct": 0.96
+    "date": "2026-10-16",
+    "O": 17.58,
+    "H": 17.58,
+    "L": 16.94,
+    "C": 17.19,
+    "prev_close": 17.34,
+    "chg_pct": -0.87
   },
-  "phase": "uptrend",
-  "adx": 17.09,
-  "plus_di": 29.63,
-  "minus_di": 13.47,
+  "phase": "base_building",
+  "adx": 16.31,
+  "plus_di": 23.76,
+  "minus_di": 20.08,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 18.04 (2026-08-24), trough 16.0 (2026-09-08), box top 17.96 (2026-10-14)",
@@ -32,43 +32,53 @@
     "top": 17.96,
     "top_date": "2026-10-14",
     "bottom": 16.0,
-    "period": "2026-09-08 to 2026-10-14"
+    "period": "2026-09-08 to 2026-10-16"
   },
-  "drop_from_peak_pct": 0.7,
-  "recovery_from_crash_pct": 12.0,
+  "drop_from_peak_pct": 4.7,
+  "recovery_from_crash_pct": 7.4,
   "supports": [
     {
       "level": 16.0,
       "label": "S1 bottom",
-      "touches": 54,
+      "touches": 44,
       "evidence": "structural bottom, near crash low 16.0"
     }
   ],
   "resistances": [
     {
-      "level": 17.96,
+      "level": 17.58,
       "label": "R1 today high",
-      "evidence": "today's high 17.959999084472656"
+      "evidence": "today's high 17.579999923706055"
+    },
+    {
+      "level": 17.96,
+      "label": "R3 Oct high",
+      "evidence": "box top 17.96, base period high"
+    },
+    {
+      "level": 20.0,
+      "label": "R5",
+      "evidence": "pre-crash supply, top before breakdown"
     }
   ],
   "position": {
-    "current": 17.92,
-    "in_box_pct": 98.0,
+    "current": 17.19,
+    "in_box_pct": 60.7,
     "nearest_support": "S1 bottom (16.0)",
-    "nearest_resistance": "R1 today high (17.96)"
+    "nearest_resistance": "R1 today high (17.58)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 17.75,
-    "H": 17.96,
-    "L": 17.63,
-    "C": 17.92,
-    "body_pct": 51.5,
-    "upper_wick_pct": 12.1,
-    "lower_wick_pct": 36.4
+    "close_position": "lower_half",
+    "O": 17.58,
+    "H": 17.58,
+    "L": 16.94,
+    "C": 17.19,
+    "body_pct": 60.9,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 39.1
   },
   "bias": {
     "short": {
@@ -76,18 +86,18 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bullish_continuation",
-      "reason": "higher highs / higher lows"
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 16.0 (KEY support)",
-      "then": "still range; watch 17.96 for next test"
+      "then": "still range; watch 17.58 for next test"
     },
     {
       "if": "break 16.0 on close",
@@ -98,8 +108,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 17.96 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 17.58 on close",
+      "then": "short-term bullish; next test 17.96"
+    },
+    {
+      "if": "break 17.96 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -129,7 +143,7 @@
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": false,
+    "phase_match": true,
     "r1": 17.96,
     "s1": 16.18,
     "s2": 14.96,
@@ -137,8 +151,8 @@
     "r3": 15.66,
     "s3": 12.87,
     "s4": 13.05,
-    "current_position_pct": 97.8,
-    "notes": "WAIT_RANGE: in box (16-18), pos 98%, no clear setup"
+    "current_position_pct": 56.7,
+    "notes": "WAIT_RANGE: in box (16-18), pos 57%, no clear setup"
   },
   "patterns": [
     {
@@ -147,7 +161,7 @@
       "date": "2026-09-21",
       "low": 16.56999969482422,
       "high": 17.399999618530273,
-      "i": 183
+      "i": 181
     },
     {
       "name": "利淡吞噬",
@@ -155,7 +169,7 @@
       "date": "2026-09-04",
       "low": 16.010000228881836,
       "high": 17.020000457763672,
-      "i": 172
+      "i": 170
     },
     {
       "name": "利淡反擊線",
@@ -163,7 +177,7 @@
       "date": "2026-08-28",
       "low": 17.010000228881836,
       "high": 17.420000076293945,
-      "i": 167
+      "i": 165
     }
   ]
 }

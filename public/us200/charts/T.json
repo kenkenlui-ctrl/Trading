@@ -3,20 +3,20 @@
   "ticker_user": "T",
   "name": "AT&T Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
+  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-13",
-    "O": 22.27,
-    "H": 23.02,
-    "L": 22.25,
-    "C": 22.85,
-    "prev_close": 22.49,
-    "chg_pct": 1.6
+    "date": "2026-10-16",
+    "O": 23.65,
+    "H": 23.85,
+    "L": 23.39,
+    "C": 23.44,
+    "prev_close": 23.5,
+    "chg_pct": -0.26
   },
   "phase": "base_building",
-  "adx": 24.79,
-  "plus_di": 17.11,
-  "minus_di": 38.94,
+  "adx": 24.38,
+  "plus_di": 22.35,
+  "minus_di": 31.83,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 29.44 (2026-03-24), trough 19.89 (2026-07-02), box top 26.93 (2026-09-15)",
@@ -32,23 +32,29 @@
     "top": 26.93,
     "top_date": "2026-09-15",
     "bottom": 19.89,
-    "period": "2026-07-02 to 2026-10-13"
+    "period": "2026-07-02 to 2026-10-16"
   },
-  "drop_from_peak_pct": 22.4,
-  "recovery_from_crash_pct": 14.9,
+  "drop_from_peak_pct": 20.4,
+  "recovery_from_crash_pct": 17.8,
   "supports": [
     {
+      "level": 24.0,
+      "label": "S1 KEY",
+      "touches": 10,
+      "evidence": "tested 10x in base period; -2.4% below current"
+    },
+    {
       "level": 20.0,
-      "label": "S1 bottom",
+      "label": "S2 bottom",
       "touches": 15,
       "evidence": "structural bottom, near crash low 19.89"
     }
   ],
   "resistances": [
     {
-      "level": 23.02,
+      "level": 23.85,
       "label": "R1 today high",
-      "evidence": "today's high 23.020000457763672"
+      "evidence": "today's high 23.850000381469727"
     },
     {
       "level": 26.93,
@@ -57,23 +63,23 @@
     }
   ],
   "position": {
-    "current": 22.85,
-    "in_box_pct": 41.1,
-    "nearest_support": "S1 bottom (20.0)",
-    "nearest_resistance": "R1 today high (23.02)"
+    "current": 23.44,
+    "in_box_pct": 49.6,
+    "nearest_support": "S1 KEY (24.0)",
+    "nearest_resistance": "R1 today high (23.85)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 22.27,
-    "H": 23.02,
-    "L": 22.25,
-    "C": 22.85,
-    "body_pct": 75.3,
-    "upper_wick_pct": 22.1,
-    "lower_wick_pct": 2.6
+    "touched_S1": true,
+    "close_position": "lower_half",
+    "O": 23.65,
+    "H": 23.85,
+    "L": 23.39,
+    "C": 23.44,
+    "body_pct": 45.7,
+    "upper_wick_pct": 43.5,
+    "lower_wick_pct": 10.9
   },
   "bias": {
     "short": {
@@ -91,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 20.0 (KEY support)",
-      "then": "still range; watch 23.02 for next test"
+      "if": "hold 24.0 (KEY support)",
+      "then": "still range; watch 23.85 for next test"
     },
     {
-      "if": "break 20.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 24.0 on close",
+      "then": "target 20.0 → lower (short-term bearish)"
     },
     {
       "if": "break 20.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 23.02 on close",
+      "if": "reclaim 23.85 on close",
       "then": "short-term bullish; next test 26.93"
     },
     {
@@ -130,33 +136,33 @@
     }
   ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 21.96,
-    "target_price": 24.4,
-    "stop_price": 21.07,
-    "risk_pct": 4.04,
-    "reward_pct": 11.11,
-    "rr_ratio": 2.75,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
     "phase_match": true,
-    "r1": 26.84,
+    "r1": 25.81,
     "s1": 21.96,
-    "s2": 21.7,
+    "s2": 22.55,
     "r2": 26.93,
-    "r3": 26.76,
+    "r3": 26.47,
     "s3": 19.89,
     "s4": 22.95,
-    "current_position_pct": 18.2,
-    "notes": "BUY_S1: in box (22-27), entry at S1 22, target mid 24, stop 21 ｜ 52.2 條規則（BUY plan，support 21.96）：① 跌到 21.96、收市守住喺 21.96 上面 → 照 BUY 條 plan 做（入場 21.96，止蝕 21.07，目標 24.40）。② 收市跌穿 21.96 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 21.96 上面』。"
+    "current_position_pct": 38.4,
+    "notes": "WAIT_RANGE: in box (22-26), pos 38%, no clear setup"
   },
   "patterns": [
     {
-      "name": "刺穿線",
+      "name": "平頭底",
       "bias": "bullish",
-      "date": "2026-10-12",
-      "low": 22.25,
-      "high": 22.65999984741211,
-      "i": 198
+      "date": "2026-10-14",
+      "low": 22.649999618530273,
+      "high": 23.190000534057617,
+      "i": 197
     },
     {
       "name": "射擊之星",
@@ -164,7 +170,7 @@
       "date": "2026-09-04",
       "low": 25.65999984741211,
       "high": 26.219999313354492,
-      "i": 173
+      "i": 170
     },
     {
       "name": "烏雲蓋頂",
@@ -172,15 +178,15 @@
       "date": "2026-08-03",
       "low": 23.299999237060547,
       "high": 23.75,
-      "i": 149
+      "i": 146
     },
     {
-      "name": "平頭底",
+      "name": "刺穿線",
       "bias": "bullish",
-      "date": "2026-07-16",
-      "low": 21.5,
-      "high": 22.18000030517578,
-      "i": 137
+      "date": "2026-07-15",
+      "low": 21.25,
+      "high": 21.709999084472656,
+      "i": 133
     },
     {
       "name": "利好反擊線",
@@ -188,7 +194,7 @@
       "date": "2026-06-26",
       "low": 22.31999969482422,
       "high": 22.719999313354492,
-      "i": 124
+      "i": 121
     }
   ]
 }

@@ -3,23 +3,23 @@
   "ticker_user": "HCA",
   "name": "HCA Healthcare, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
+  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-13",
-    "O": 459.54,
-    "H": 462.44,
-    "L": 455.81,
-    "C": 460.75,
-    "prev_close": 458.6,
-    "chg_pct": 0.47
+    "date": "2026-10-16",
+    "O": 472.15,
+    "H": 472.49,
+    "L": 453.94,
+    "C": 458.84,
+    "prev_close": 468.5,
+    "chg_pct": -2.06
   },
   "phase": "base_building",
-  "adx": 23.06,
-  "plus_di": 28.8,
-  "minus_di": 11.11,
-  "regime": "dead",
+  "adx": 27.6,
+  "plus_di": 30.26,
+  "minus_di": 16.14,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 556.52 (2026-03-12), trough 353.99 (2026-07-14), box top 462.44 (2026-10-13)",
+  "phase_evidence": "Peak 556.52 (2026-03-12), trough 353.99 (2026-07-14), box top 478.86 (2026-10-15)",
   "peak": {
     "date": "2026-03-12",
     "price": 556.52
@@ -29,19 +29,19 @@
     "price": 353.99
   },
   "box": {
-    "top": 462.44,
-    "top_date": "2026-10-13",
+    "top": 478.86,
+    "top_date": "2026-10-15",
     "bottom": 353.99,
-    "period": "2026-07-14 to 2026-10-13"
+    "period": "2026-07-14 to 2026-10-16"
   },
-  "drop_from_peak_pct": 17.2,
-  "recovery_from_crash_pct": 30.2,
+  "drop_from_peak_pct": 17.6,
+  "recovery_from_crash_pct": 29.6,
   "supports": [
     {
       "level": 428.0,
       "label": "S1 KEY",
       "touches": 11,
-      "evidence": "tested 11x in base period; 7.1% below current"
+      "evidence": "tested 11x in base period; 6.7% below current"
     },
     {
       "level": 424.0,
@@ -64,29 +64,34 @@
   ],
   "resistances": [
     {
-      "level": 462.44,
+      "level": 472.49,
       "label": "R1 today high",
-      "evidence": "today's high 462.44000244140625"
+      "evidence": "today's high 472.489990234375"
+    },
+    {
+      "level": 478.86,
+      "label": "R3 Oct high",
+      "evidence": "box top 478.86, base period high"
     }
   ],
   "position": {
-    "current": 460.75,
-    "in_box_pct": 98.4,
+    "current": 458.84,
+    "in_box_pct": 84.0,
     "nearest_support": "S1 KEY (428.0)",
-    "nearest_resistance": "R1 today high (462.44)"
+    "nearest_resistance": "R1 today high (472.49)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 459.54,
-    "H": 462.44,
-    "L": 455.81,
-    "C": 460.75,
-    "body_pct": 18.3,
-    "upper_wick_pct": 25.5,
-    "lower_wick_pct": 56.3
+    "close_position": "lower_half",
+    "O": 472.15,
+    "H": 472.49,
+    "L": 453.94,
+    "C": 458.84,
+    "body_pct": 71.8,
+    "upper_wick_pct": 1.8,
+    "lower_wick_pct": 26.4
   },
   "bias": {
     "short": {
@@ -98,14 +103,14 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 428.0 (KEY support)",
-      "then": "still range; watch 462.44 for next test"
+      "then": "still range; watch 472.49 for next test"
     },
     {
       "if": "break 428.0 on close",
@@ -116,8 +121,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 462.44 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 472.49 on close",
+      "then": "short-term bullish; next test 478.86"
+    },
+    {
+      "if": "break 478.86 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -139,24 +148,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 462.44,
-    "target_price": 441.22,
-    "stop_price": 479.39,
-    "risk_pct": 3.66,
-    "reward_pct": 4.59,
-    "rr_ratio": 1.25,
-    "phase_match": true,
-    "r1": 462.44,
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 478.86,
     "s1": 420.0,
-    "s2": 366.51,
+    "s2": 376.48,
     "r2": 436.5,
-    "r3": 479.44,
+    "r3": 452.39,
     "s3": 353.99,
-    "s4": 459.22,
-    "current_position_pct": 96.0,
-    "notes": "SELL_R1: in box (420-462), entry at R1 462, target mid 441, stop 479 ｜ 52.2 條規則（SELL plan，resistance 462.44）：① 跌到 462.44、收市守住喺 462.44 上面 → 照 BUY 條 plan 做（入場 462.44，止蝕 479.39，目標 441.22）。② 收市跌穿 462.44 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 462.44 上面』。"
+    "s4": 422.19,
+    "current_position_pct": 66.0,
+    "notes": "WAIT_RANGE: in box (420-479), pos 66%, no clear setup"
   },
   "patterns": [
     {
@@ -165,7 +174,7 @@
       "date": "2026-09-30",
       "low": 425.9599914550781,
       "high": 434.07000732421875,
-      "i": 190
+      "i": 187
     },
     {
       "name": "烏雲蓋頂",
@@ -173,7 +182,7 @@
       "date": "2026-09-23",
       "low": 433.8299865722656,
       "high": 446.3599853515625,
-      "i": 185
+      "i": 182
     },
     {
       "name": "三個白武士",
@@ -181,7 +190,7 @@
       "date": "2026-09-09",
       "low": 396.0,
       "high": 426.8299865722656,
-      "i": 175
+      "i": 172
     },
     {
       "name": "烏雲蓋頂",
@@ -189,7 +198,7 @@
       "date": "2026-08-06",
       "low": 405.3299865722656,
       "high": 415.7300109863281,
-      "i": 152
+      "i": 149
     },
     {
       "name": "刺穿線",
@@ -197,7 +206,7 @@
       "date": "2026-07-23",
       "low": 370.0,
       "high": 378.260009765625,
-      "i": 142
+      "i": 139
     }
   ]
 }

@@ -3,23 +3,23 @@
   "ticker_user": "LOW",
   "name": "Lowe's Companies, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
+  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-13",
-    "O": 188.16,
-    "H": 190.0,
-    "L": 186.0,
-    "C": 188.74,
-    "prev_close": 185.57,
-    "chg_pct": 1.71
+    "date": "2026-10-16",
+    "O": 197.06,
+    "H": 199.95,
+    "L": 195.97,
+    "C": 197.38,
+    "prev_close": 195.72,
+    "chg_pct": 0.85
   },
   "phase": "downtrend_active",
-  "adx": 23.34,
-  "plus_di": 23.75,
-  "minus_di": 21.65,
+  "adx": 22.71,
+  "plus_di": 33.72,
+  "minus_di": 17.75,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 293.06 (2026-02-12), trough 178.45 (2026-10-05), box top 190.0 (2026-10-13)",
+  "phase_evidence": "Peak 293.06 (2026-02-12), trough 178.45 (2026-10-05), box top 199.95 (2026-10-16)",
   "peak": {
     "date": "2026-02-12",
     "price": 293.06
@@ -29,52 +29,58 @@
     "price": 178.45
   },
   "box": {
-    "top": 190.0,
-    "top_date": "2026-10-13",
+    "top": 199.95,
+    "top_date": "2026-10-16",
     "bottom": 178.45,
-    "period": "2026-10-05 to 2026-10-13"
+    "period": "2026-10-05 to 2026-10-16"
   },
-  "drop_from_peak_pct": 35.6,
-  "recovery_from_crash_pct": 5.8,
+  "drop_from_peak_pct": 32.6,
+  "recovery_from_crash_pct": 10.6,
   "supports": [
     {
-      "level": 184.0,
+      "level": 192.0,
       "label": "S1 KEY",
       "touches": 6,
-      "evidence": "tested 6x in base period; 2.5% below current"
+      "evidence": "tested 6x in base period; 2.7% below current"
     },
     {
-      "level": 180.0,
-      "label": "S2 bottom",
-      "touches": 12,
+      "level": 188.0,
+      "label": "S2",
+      "touches": 5,
+      "evidence": "mid-base support, tested 5x"
+    },
+    {
+      "level": 184.0,
+      "label": "S3 bottom",
+      "touches": 9,
       "evidence": "structural bottom, near crash low 178.45"
     }
   ],
   "resistances": [
     {
-      "level": 190.0,
+      "level": 199.95,
       "label": "R1 today high",
-      "evidence": "today's high 190.0"
+      "evidence": "today's high 199.9499969482422"
     }
   ],
   "position": {
-    "current": 188.74,
-    "in_box_pct": 87.4,
-    "nearest_support": "S1 KEY (184.0)",
-    "nearest_resistance": "R1 today high (190.0)"
+    "current": 197.38,
+    "in_box_pct": 83.9,
+    "nearest_support": "S1 KEY (192.0)",
+    "nearest_resistance": "R1 today high (199.95)"
   },
   "kline_today": {
     "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 188.16,
-    "H": 190.0,
-    "L": 186.0,
-    "C": 188.74,
-    "body_pct": 14.5,
-    "upper_wick_pct": 31.5,
-    "lower_wick_pct": 54.0
+    "close_position": "lower_half",
+    "O": 197.06,
+    "H": 199.95,
+    "L": 195.97,
+    "C": 197.38,
+    "body_pct": 8.0,
+    "upper_wick_pct": 64.6,
+    "lower_wick_pct": 27.4
   },
   "bias": {
     "short": {
@@ -92,19 +98,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 184.0 (KEY support)",
-      "then": "still range; watch 190.0 for next test"
+      "if": "hold 192.0 (KEY support)",
+      "then": "still range; watch 199.95 for next test"
     },
     {
-      "if": "break 184.0 on close",
-      "then": "target 180.0 → lower (short-term bearish)"
+      "if": "break 192.0 on close",
+      "then": "target 188.0 → 184.0 (short-term bearish)"
     },
     {
-      "if": "break 180.0 (crash low)",
+      "if": "break 184.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 190.0 on close",
+      "if": "reclaim 199.95 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -127,24 +133,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 199.35,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 199.95,
+    "target_price": 189.2,
+    "stop_price": 207.23,
+    "risk_pct": 3.64,
+    "reward_pct": 5.38,
+    "rr_ratio": 1.48,
+    "phase_match": true,
+    "r1": 199.95,
     "s1": 178.45,
-    "s2": 194.09,
+    "s2": 192.09,
     "r2": 225.79,
-    "r3": 247.62,
-    "s3": 203.4,
+    "r3": 245.5,
+    "s3": 199.4,
     "s4": 224.15,
-    "current_position_pct": 49.2,
-    "notes": "WAIT_RANGE: in box (178-199), pos 49%, no clear setup"
+    "current_position_pct": 88.0,
+    "notes": "SELL_R1: in box (178-200), entry at R1 200, target mid 189, stop 207 ｜ 52.2 條規則（SELL plan，resistance 199.95）：① 跌到 199.95、收市守住喺 199.95 上面 → 照 BUY 條 plan 做（入場 199.95，止蝕 207.23，目標 189.20）。② 收市跌穿 199.95 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 199.95 上面』。"
   },
   "patterns": [
     {
@@ -153,7 +159,7 @@
       "date": "2026-10-13",
       "low": 186.0,
       "high": 190.0,
-      "i": 199
+      "i": 196
     },
     {
       "name": "平頭底",
@@ -161,7 +167,7 @@
       "date": "2026-09-04",
       "low": 200.50999450683594,
       "high": 205.47999572753906,
-      "i": 173
+      "i": 170
     },
     {
       "name": "三隻烏鴉",
@@ -169,7 +175,7 @@
       "date": "2026-08-17",
       "low": 213.55999755859375,
       "high": 216.35000610351562,
-      "i": 159
+      "i": 156
     },
     {
       "name": "烏雲蓋頂",
@@ -177,7 +183,7 @@
       "date": "2026-08-10",
       "low": 217.0,
       "high": 221.22999572753906,
-      "i": 154
+      "i": 151
     },
     {
       "name": "上升三法",
@@ -185,7 +191,7 @@
       "date": "2026-07-10",
       "low": 211.41000366210938,
       "high": 214.82000732421875,
-      "i": 133
+      "i": 130
     }
   ]
 }

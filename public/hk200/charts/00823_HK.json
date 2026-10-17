@@ -3,21 +3,21 @@
   "ticker_user": "00823.HK",
   "name": "LINK REIT",
   "data_source": "yfinance",
-  "data_range": "2025-12-19 → 2026-10-14 (200 daily bars)",
+  "data_range": "2025-12-23 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-14",
-    "O": 37.52,
-    "H": 37.9,
-    "L": 37.52,
-    "C": 37.76,
-    "prev_close": 37.76,
-    "chg_pct": 0.0
+    "date": "2026-10-16",
+    "O": 37.98,
+    "H": 38.34,
+    "L": 37.86,
+    "C": 38.2,
+    "prev_close": 37.9,
+    "chg_pct": 0.79
   },
   "phase": "base_building",
-  "adx": 25.35,
-  "plus_di": 20.51,
-  "minus_di": 21.85,
-  "regime": "trend",
+  "adx": 22.71,
+  "plus_di": 22.82,
+  "minus_di": 20.43,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 42.14 (2026-05-14), trough 35.12 (2026-06-24), box top 39.88 (2026-07-21)",
   "peak": {
@@ -32,23 +32,23 @@
     "top": 39.88,
     "top_date": "2026-07-21",
     "bottom": 35.12,
-    "period": "2026-06-24 to 2026-10-14"
+    "period": "2026-06-24 to 2026-10-16"
   },
-  "drop_from_peak_pct": 10.4,
-  "recovery_from_crash_pct": 7.5,
+  "drop_from_peak_pct": 9.3,
+  "recovery_from_crash_pct": 8.8,
   "supports": [
     {
       "level": 36.0,
       "label": "S1 bottom",
-      "touches": 33,
+      "touches": 58,
       "evidence": "structural bottom, near crash low 35.12"
     }
   ],
   "resistances": [
     {
-      "level": 37.9,
+      "level": 38.34,
       "label": "R1 today high",
-      "evidence": "today's high 37.900001525878906"
+      "evidence": "today's high 38.34000015258789"
     },
     {
       "level": 39.88,
@@ -57,23 +57,23 @@
     }
   ],
   "position": {
-    "current": 37.76,
-    "in_box_pct": 45.4,
+    "current": 38.2,
+    "in_box_pct": 56.7,
     "nearest_support": "S1 bottom (36.0)",
-    "nearest_resistance": "R1 today high (37.9)"
+    "nearest_resistance": "R1 today high (38.34)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 37.52,
-    "H": 37.9,
-    "L": 37.52,
-    "C": 37.76,
-    "body_pct": 63.2,
-    "upper_wick_pct": 36.8,
-    "lower_wick_pct": 0.0
+    "O": 37.98,
+    "H": 38.34,
+    "L": 37.86,
+    "C": 38.2,
+    "body_pct": 45.8,
+    "upper_wick_pct": 29.2,
+    "lower_wick_pct": 25.0
   },
   "bias": {
     "short": {
@@ -92,7 +92,7 @@
   "scenarios": [
     {
       "if": "hold 36.0 (KEY support)",
-      "then": "still range; watch 37.9 for next test"
+      "then": "still range; watch 38.34 for next test"
     },
     {
       "if": "break 36.0 on close",
@@ -103,7 +103,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 37.9 on close",
+      "if": "reclaim 38.34 on close",
       "then": "short-term bullish; next test 39.88"
     },
     {
@@ -130,24 +130,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 37.9,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 38.34,
+    "target_price": 37.23,
+    "stop_price": 39.13,
+    "risk_pct": 2.05,
+    "reward_pct": 2.9,
+    "rr_ratio": 1.41,
+    "phase_match": true,
+    "r1": 38.34,
     "s1": 36.12,
-    "s2": 36.66,
+    "s2": 36.32,
     "r2": 39.88,
     "r3": 42.14,
     "s3": 35.12,
     "s4": 34.18,
-    "current_position_pct": 92.1,
-    "notes": "WAIT_RANGE: in box (36-38), pos 92%, no clear setup"
+    "current_position_pct": 93.7,
+    "notes": "SELL_R1: in box (36-38), entry at R1 38, target mid 37, stop 39 ｜ 52.2 條規則（SELL plan，resistance 38.34）：① 跌到 38.34、收市守住喺 38.34 上面 → 照 BUY 條 plan 做（入場 38.34，止蝕 39.13，目標 37.23）。② 收市跌穿 38.34 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 38.34 上面』。"
   },
   "patterns": [
     {
@@ -156,7 +156,7 @@
       "date": "2026-10-06",
       "low": 36.439998626708984,
       "high": 36.959999084472656,
-      "i": 193
+      "i": 191
     },
     {
       "name": "刺穿線",
@@ -164,7 +164,7 @@
       "date": "2026-09-28",
       "low": 36.84000015258789,
       "high": 37.65999984741211,
-      "i": 188
+      "i": 186
     },
     {
       "name": "利好反擊線",
@@ -172,7 +172,7 @@
       "date": "2026-08-20",
       "low": 38.880001068115234,
       "high": 39.380001068115234,
-      "i": 161
+      "i": 159
     },
     {
       "name": "平頭頂",
@@ -180,7 +180,7 @@
       "date": "2026-08-12",
       "low": 38.220001220703125,
       "high": 38.70000076293945,
-      "i": 155
+      "i": 153
     },
     {
       "name": "吊頸",
@@ -188,7 +188,7 @@
       "date": "2026-07-24",
       "low": 38.599998474121094,
       "high": 39.220001220703125,
-      "i": 142
+      "i": 140
     }
   ]
 }

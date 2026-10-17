@@ -3,23 +3,23 @@
   "ticker_user": "HD",
   "name": "Home Depot, Inc. (The)",
   "data_source": "yfinance",
-  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
+  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-13",
-    "O": 295.0,
-    "H": 296.6,
-    "L": 291.01,
-    "C": 293.92,
-    "prev_close": 290.62,
-    "chg_pct": 1.14
+    "date": "2026-10-16",
+    "O": 309.66,
+    "H": 314.66,
+    "L": 308.32,
+    "C": 309.63,
+    "prev_close": 308.24,
+    "chg_pct": 0.45
   },
   "phase": "downtrend_active",
-  "adx": 27.88,
-  "plus_di": 24.74,
-  "minus_di": 25.49,
+  "adx": 26.16,
+  "plus_di": 37.38,
+  "minus_di": 20.32,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 397.63 (2026-02-12), trough 277.15 (2026-10-01), box top 296.6 (2026-10-13)",
+  "phase_evidence": "Peak 397.63 (2026-02-12), trough 277.15 (2026-10-01), box top 314.66 (2026-10-16)",
   "peak": {
     "date": "2026-02-12",
     "price": 397.63
@@ -29,52 +29,58 @@
     "price": 277.15
   },
   "box": {
-    "top": 296.6,
-    "top_date": "2026-10-13",
+    "top": 314.66,
+    "top_date": "2026-10-16",
     "bottom": 277.15,
-    "period": "2026-10-01 to 2026-10-13"
+    "period": "2026-10-01 to 2026-10-16"
   },
-  "drop_from_peak_pct": 26.1,
-  "recovery_from_crash_pct": 6.1,
+  "drop_from_peak_pct": 22.1,
+  "recovery_from_crash_pct": 11.7,
   "supports": [
     {
-      "level": 284.0,
+      "level": 300.0,
       "label": "S1 KEY",
-      "touches": 8,
-      "evidence": "tested 8x in base period; 3.4% below current"
+      "touches": 4,
+      "evidence": "tested 4x in base period; 3.1% below current"
     },
     {
-      "level": 280.0,
-      "label": "S2 bottom",
-      "touches": 4,
+      "level": 292.0,
+      "label": "S2",
+      "touches": 6,
+      "evidence": "mid-base support, tested 6x"
+    },
+    {
+      "level": 288.0,
+      "label": "S3 bottom",
+      "touches": 6,
       "evidence": "structural bottom, near crash low 277.15"
     }
   ],
   "resistances": [
     {
-      "level": 296.6,
+      "level": 314.66,
       "label": "R1 today high",
-      "evidence": "today's high 296.6000061035156"
+      "evidence": "rejection at 314.6600036621094 (long upper wick, close weak)"
     }
   ],
   "position": {
-    "current": 293.92,
-    "in_box_pct": 83.9,
-    "nearest_support": "S1 KEY (284.0)",
-    "nearest_resistance": "R1 today high (296.6)"
+    "current": 309.63,
+    "in_box_pct": 81.1,
+    "nearest_support": "S1 KEY (300.0)",
+    "nearest_resistance": "R1 today high (314.66)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 295.0,
-    "H": 296.6,
-    "L": 291.01,
-    "C": 293.92,
-    "body_pct": 19.3,
-    "upper_wick_pct": 28.6,
-    "lower_wick_pct": 52.1
+    "close_position": "lower_half",
+    "O": 309.66,
+    "H": 314.66,
+    "L": 308.32,
+    "C": 309.63,
+    "body_pct": 0.5,
+    "upper_wick_pct": 78.9,
+    "lower_wick_pct": 20.7
   },
   "bias": {
     "short": {
@@ -92,19 +98,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 284.0 (KEY support)",
-      "then": "still range; watch 296.6 for next test"
+      "if": "hold 300.0 (KEY support)",
+      "then": "still range; watch 314.66 for next test"
     },
     {
-      "if": "break 284.0 on close",
-      "then": "target 280.0 → lower (short-term bearish)"
+      "if": "break 300.0 on close",
+      "then": "target 292.0 → 288.0 (short-term bearish)"
     },
     {
-      "if": "break 280.0 (crash low)",
+      "if": "break 288.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 296.6 on close",
+      "if": "reclaim 314.66 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -128,7 +134,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -136,15 +142,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 310.4,
+    "r1": 314.66,
     "s1": 277.15,
-    "s2": 304.3,
+    "s2": 298.25,
     "r2": 358.36,
     "r3": 358.85,
     "s3": 289.1,
     "s4": 315.31,
-    "current_position_pct": 50.4,
-    "notes": "WAIT_RANGE: in box (277-310), pos 50%, no clear setup"
+    "current_position_pct": 86.6,
+    "notes": "WAIT_RANGE: in box (277-315), pos 87%, no clear setup"
   },
   "patterns": [
     {
@@ -153,7 +159,7 @@
       "date": "2026-09-22",
       "low": 300.17999267578125,
       "high": 306.30999755859375,
-      "i": 184
+      "i": 181
     },
     {
       "name": "烏雲蓋頂",
@@ -161,7 +167,7 @@
       "date": "2026-08-12",
       "low": 343.0299987792969,
       "high": 353.8699951171875,
-      "i": 156
+      "i": 153
     },
     {
       "name": "烏雲蓋頂",
@@ -169,7 +175,7 @@
       "date": "2026-07-06",
       "low": 345.79998779296875,
       "high": 358.8500061035156,
-      "i": 129
+      "i": 126
     },
     {
       "name": "利淡吞噬",
@@ -177,7 +183,7 @@
       "date": "2026-06-22",
       "low": 326.3399963378906,
       "high": 331.7300109863281,
-      "i": 120
+      "i": 117
     }
   ]
 }

@@ -3,23 +3,23 @@
   "ticker_user": "BSX",
   "name": "Boston Scientific Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
+  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-13",
-    "O": 43.95,
-    "H": 44.15,
-    "L": 42.46,
-    "C": 43.31,
-    "prev_close": 43.84,
-    "chg_pct": -1.21
+    "date": "2026-10-16",
+    "O": 44.45,
+    "H": 44.83,
+    "L": 43.89,
+    "C": 44.39,
+    "prev_close": 44.14,
+    "chg_pct": 0.57
   },
   "phase": "downtrend_active",
-  "adx": 19.4,
-  "plus_di": 19.54,
-  "minus_di": 21.06,
+  "adx": 17.16,
+  "plus_di": 22.55,
+  "minus_di": 17.88,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 94.75 (2026-01-26), trough 41.39 (2026-10-08), box top 49.66 (2026-09-02)",
+  "phase_evidence": "Peak 94.75 (2026-01-26), trough 41.39 (2026-10-08), box top 44.83 (2026-10-16)",
   "peak": {
     "date": "2026-01-26",
     "price": 94.75
@@ -29,86 +29,83 @@
     "price": 41.39
   },
   "box": {
-    "top": 49.66,
-    "top_date": "2026-09-02",
+    "top": 44.83,
+    "top_date": "2026-10-16",
     "bottom": 41.39,
-    "period": "2026-10-08 to 2026-10-13"
+    "period": "2026-10-08 to 2026-10-16"
   },
-  "drop_from_peak_pct": 54.3,
-  "recovery_from_crash_pct": 4.6,
+  "drop_from_peak_pct": 53.2,
+  "recovery_from_crash_pct": 7.2,
   "supports": [
     {
+      "level": 44.0,
+      "label": "S1 KEY",
+      "touches": 31,
+      "evidence": "tested 31x in base period; 0.9% below current"
+    },
+    {
       "level": 40.0,
-      "label": "S1 bottom",
+      "label": "S2 bottom",
       "touches": 10,
       "evidence": "structural bottom, near crash low 41.39"
     }
   ],
   "resistances": [
     {
-      "level": 44.15,
+      "level": 44.83,
       "label": "R1 today high",
-      "evidence": "today's high 44.150001525878906"
-    },
-    {
-      "level": 49.66,
-      "label": "R3 Sep high",
-      "evidence": "box top 49.66, base period high"
+      "evidence": "today's high 44.83000183105469"
     }
   ],
   "position": {
-    "current": 43.31,
-    "in_box_pct": 34.3,
-    "nearest_support": "S1 bottom (40.0)",
-    "nearest_resistance": "R1 today high (44.15)"
+    "current": 44.39,
+    "in_box_pct": 90.9,
+    "nearest_support": "S1 KEY (44.0)",
+    "nearest_resistance": "R1 today high (44.83)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bearish_rejection",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 43.95,
-    "H": 44.15,
-    "L": 42.46,
-    "C": 43.31,
-    "body_pct": 37.9,
-    "upper_wick_pct": 11.8,
-    "lower_wick_pct": 50.3
+    "O": 44.45,
+    "H": 44.83,
+    "L": 43.89,
+    "C": 44.39,
+    "body_pct": 6.4,
+    "upper_wick_pct": 40.4,
+    "lower_wick_pct": 53.2
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (34% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
       "reason": "making new lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 40.0 (KEY support)",
-      "then": "still range; watch 44.15 for next test"
+      "if": "hold 44.0 (KEY support)",
+      "then": "still range; watch 44.83 for next test"
     },
     {
-      "if": "break 40.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 44.0 on close",
+      "then": "target 40.0 → lower (short-term bearish)"
     },
     {
       "if": "break 40.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 44.15 on close",
-      "then": "short-term bullish; next test 49.66"
-    },
-    {
-      "if": "break 49.66 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 44.83 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -130,24 +127,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 45.74,
+    "target_price": 43.57,
+    "stop_price": 47.44,
+    "risk_pct": 3.71,
+    "reward_pct": 4.76,
+    "rr_ratio": 1.28,
+    "phase_match": true,
     "r1": 45.74,
     "s1": 41.39,
-    "s2": 42.5,
+    "s2": 42.55,
     "r2": 52.99,
-    "r3": 66.88,
+    "r3": 60.52,
     "s3": 42.2,
     "s4": 59.39,
-    "current_position_pct": 44.1,
-    "notes": "WAIT_RANGE: in box (41-46), pos 44%, no clear setup"
+    "current_position_pct": 69.0,
+    "notes": "SELL_R1: in box (41-46), entry at R1 46, target mid 44, stop 47 ｜ 52.2 條規則（SELL plan，resistance 45.74）：① 跌到 45.74、收市守住喺 45.74 上面 → 照 BUY 條 plan 做（入場 45.74，止蝕 47.44，目標 43.57）。② 收市跌穿 45.74 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 45.74 上面』。"
   },
   "patterns": [
     {
@@ -156,7 +153,7 @@
       "date": "2026-09-28",
       "low": 43.16999816894531,
       "high": 44.150001525878906,
-      "i": 188
+      "i": 185
     },
     {
       "name": "三個白武士",
@@ -164,7 +161,7 @@
       "date": "2026-09-21",
       "low": 42.720001220703125,
       "high": 43.810001373291016,
-      "i": 183
+      "i": 180
     },
     {
       "name": "刺穿線",
@@ -172,7 +169,7 @@
       "date": "2026-09-04",
       "low": 46.83000183105469,
       "high": 48.060001373291016,
-      "i": 173
+      "i": 170
     },
     {
       "name": "烏雲蓋頂",
@@ -180,7 +177,7 @@
       "date": "2026-08-24",
       "low": 48.77000045776367,
       "high": 50.380001068115234,
-      "i": 164
+      "i": 161
     },
     {
       "name": "利淡反擊線",
@@ -188,7 +185,7 @@
       "date": "2026-08-17",
       "low": 51.2400016784668,
       "high": 52.06999969482422,
-      "i": 159
+      "i": 156
     }
   ]
 }

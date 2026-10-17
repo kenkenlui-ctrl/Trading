@@ -1,91 +1,85 @@
 {
   "ticker": "HK.02828",
   "ticker_user": "02828.HK",
-  "name": "HSCEI ETF",
-  "data_source": "yfinance",
-  "data_range": "2025-12-18 → 2026-10-14 (200 daily bars)",
+  "name": "恒生中國企業",
+  "data_source": "futu",
+  "data_range": "2025-12-23 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-14",
-    "O": 83.98,
-    "H": 84.72,
-    "L": 83.02,
-    "C": 84.06,
-    "prev_close": 83.76,
-    "chg_pct": 0.36
+    "date": "2026-10-16",
+    "O": 83.86,
+    "H": 84.4,
+    "L": 83.18,
+    "C": 83.5,
+    "prev_close": 83.24,
+    "chg_pct": 0.31
   },
   "phase": "base_building",
-  "adx": 20.89,
-  "plus_di": 18.12,
-  "minus_di": 25.31,
-  "regime": "dead",
+  "adx": 15.97,
+  "plus_di": 18.18,
+  "minus_di": 22.01,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 98.3 (2026-01-29), trough 75.86 (2026-06-26), box top 90.0 (2026-07-30)",
+  "phase_evidence": "Peak 96.95 (2026-01-29), trough 75.21 (2026-06-26), box top 89.35 (2026-07-30)",
   "peak": {
     "date": "2026-01-29",
-    "price": 98.3
+    "price": 96.95
   },
   "trough": {
     "date": "2026-06-26",
-    "price": 75.86
+    "price": 75.21
   },
   "box": {
-    "top": 90.0,
+    "top": 89.35,
     "top_date": "2026-07-30",
-    "bottom": 75.86,
-    "period": "2026-06-26 to 2026-10-14"
+    "bottom": 75.21,
+    "period": "2026-06-26 to 2026-10-16"
   },
-  "drop_from_peak_pct": 14.5,
-  "recovery_from_crash_pct": 10.8,
+  "drop_from_peak_pct": 13.9,
+  "recovery_from_crash_pct": 11.0,
   "supports": [
     {
-      "level": 84.0,
-      "label": "S1 KEY",
-      "touches": 6,
-      "evidence": "tested 6x in base period; 0.1% below current"
-    },
-    {
       "level": 80.0,
-      "label": "S2",
+      "label": "S1 KEY",
       "touches": 11,
-      "evidence": "mid-base support, tested 11x"
+      "evidence": "tested 11x in base period; 4.2% below current"
     },
     {
       "level": 76.0,
-      "label": "S3 bottom",
+      "label": "S2 bottom",
       "touches": 4,
-      "evidence": "structural bottom, near crash low 75.86"
+      "evidence": "structural bottom, near crash low 75.21"
     }
   ],
   "resistances": [
     {
-      "level": 84.72,
+      "level": 84.4,
       "label": "R1 today high",
-      "evidence": "today's high 84.72000122070312"
+      "evidence": "today's high 84.4"
     },
     {
-      "level": 90.0,
+      "level": 89.35,
       "label": "R3 Jul high",
-      "evidence": "box top 90.0, base period high"
+      "evidence": "box top 89.35, base period high"
     }
   ],
   "position": {
-    "current": 84.06,
-    "in_box_pct": 57.6,
-    "nearest_support": "S1 KEY (84.0)",
-    "nearest_resistance": "R1 today high (84.72)"
+    "current": 83.5,
+    "in_box_pct": 56.2,
+    "nearest_support": "S1 KEY (80.0)",
+    "nearest_resistance": "R1 today high (84.4)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_rejection",
     "touched_R1": true,
-    "touched_S1": true,
-    "close_position": "upper_half",
-    "O": 83.98,
-    "H": 84.72,
-    "L": 83.02,
-    "C": 84.06,
-    "body_pct": 4.7,
-    "upper_wick_pct": 38.8,
-    "lower_wick_pct": 56.5
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 83.86,
+    "H": 84.4,
+    "L": 83.18,
+    "C": 83.5,
+    "body_pct": 29.5,
+    "upper_wick_pct": 44.3,
+    "lower_wick_pct": 26.2
   },
   "bias": {
     "short": {
@@ -103,23 +97,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 84.0 (KEY support)",
-      "then": "still range; watch 84.72 for next test"
+      "if": "hold 80.0 (KEY support)",
+      "then": "still range; watch 84.4 for next test"
     },
     {
-      "if": "break 84.0 on close",
-      "then": "target 80.0 → 76.0 (short-term bearish)"
+      "if": "break 80.0 on close",
+      "then": "target 76.0 → lower (short-term bearish)"
     },
     {
       "if": "break 76.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 84.72 on close",
-      "then": "short-term bullish; next test 90.0"
+      "if": "reclaim 84.4 on close",
+      "then": "short-term bullish; next test 89.35"
     },
     {
-      "if": "break 90.0 (box top)",
+      "if": "break 89.35 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -153,54 +147,54 @@
     "phase_match": true,
     "r1": 86.22,
     "s1": 81.72,
-    "s2": 84.14,
-    "r2": 90.0,
-    "r3": 93.0,
-    "s3": 75.86,
-    "s4": 84.44,
-    "current_position_pct": 52.0,
-    "notes": "WAIT_RANGE: in box (82-86), pos 52%, no clear setup"
+    "s2": 82.75,
+    "r2": 89.35,
+    "r3": 91.65,
+    "s3": 75.21,
+    "s4": 83.09,
+    "current_position_pct": 39.6,
+    "notes": "WAIT_RANGE: in box (82-86), pos 40%, no clear setup"
   },
   "patterns": [
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-10-05",
-      "low": 81.72000122070312,
-      "high": 82.45999908447266,
-      "i": 193
+      "low": 81.72,
+      "high": 82.46,
+      "i": 190
     },
     {
       "name": "利好反擊線",
       "bias": "bullish",
       "date": "2026-09-14",
-      "low": 84.63999938964844,
-      "high": 85.66000366210938,
-      "i": 179
+      "low": 83.99,
+      "high": 85.01,
+      "i": 176
     },
     {
       "name": "利淡吞噬",
       "bias": "bearish",
       "date": "2026-08-06",
-      "low": 87.22000122070312,
-      "high": 88.12000274658203,
-      "i": 152
+      "low": 86.57,
+      "high": 87.47,
+      "i": 149
     },
     {
       "name": "利淡反擊線",
       "bias": "bearish",
       "date": "2026-07-22",
-      "low": 84.58000183105469,
-      "high": 85.5199966430664,
-      "i": 141
+      "low": 83.93,
+      "high": 84.87,
+      "i": 138
     },
     {
       "name": "利好吞噬",
       "bias": "bullish",
       "date": "2026-07-02",
-      "low": 77.68000030517578,
-      "high": 79.54000091552734,
-      "i": 127
+      "low": 77.03,
+      "high": 78.89,
+      "i": 124
     }
   ]
 }

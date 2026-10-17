@@ -3,77 +3,78 @@
   "ticker_user": "07552.HK",
   "name": "XI2CSOPHSTECH",
   "data_source": "yfinance",
-  "data_range": "2025-12-18 → 2026-10-14 (200 daily bars)",
+  "data_range": "2025-12-23 → 2026-10-15 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-14",
-    "O": 2.13,
-    "H": 2.16,
-    "L": 2.01,
-    "C": 2.09,
+    "date": "2026-10-15",
+    "O": 2.17,
+    "H": 2.21,
+    "L": 2.15,
+    "C": 2.2,
     "prev_close": 2.09,
-    "chg_pct": -0.19
+    "chg_pct": 5.17
   },
-  "phase": "downtrend_active",
-  "adx": 29.46,
-  "plus_di": 34.47,
-  "minus_di": 14.92,
+  "phase": "uptrend",
+  "adx": 29.12,
+  "plus_di": 35.08,
+  "minus_di": 19.82,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 2.21 (2026-10-08), trough 1.72 (2026-09-01), box top 2.21 (2026-10-08)",
+  "phase_evidence": "Peak 2.21 (2026-10-15), trough 1.8 (2026-09-22), box top 2.21 (2026-10-15)",
   "peak": {
-    "date": "2026-10-08",
+    "date": "2026-10-15",
     "price": 2.21
   },
   "trough": {
-    "date": "2026-09-01",
-    "price": 1.72
+    "date": "2026-09-22",
+    "price": 1.8
   },
   "box": {
     "top": 2.21,
-    "top_date": "2026-10-08",
-    "bottom": 1.72,
-    "period": "2026-09-01 to 2026-10-14"
+    "top_date": "2026-10-15",
+    "bottom": 1.8,
+    "period": "2026-09-22 to 2026-10-15"
   },
-  "drop_from_peak_pct": 5.3,
-  "recovery_from_crash_pct": 21.4,
+  "drop_from_peak_pct": 0.7,
+  "recovery_from_crash_pct": 22.1,
   "supports": [
     {
+      "level": 4.0,
+      "label": "S1 KEY",
+      "touches": 22,
+      "evidence": "tested 22x in base period; -82.0% below current"
+    },
+    {
       "level": 0.0,
-      "label": "S1 bottom",
-      "touches": 42,
-      "evidence": "structural bottom, near crash low 1.72"
+      "label": "S2 bottom",
+      "touches": 25,
+      "evidence": "structural bottom, near crash low 1.8"
     }
   ],
   "resistances": [
     {
-      "level": 2.16,
-      "label": "R1 today high",
-      "evidence": "today's high 2.1640000343322754"
-    },
-    {
       "level": 2.21,
-      "label": "R3 Oct high",
-      "evidence": "box top 2.21, base period high"
+      "label": "R1 today high",
+      "evidence": "today's high 2.2139999866485596"
     }
   ],
   "position": {
-    "current": 2.09,
-    "in_box_pct": 94.6,
-    "nearest_support": "S1 bottom (0.0)",
-    "nearest_resistance": "R1 today high (2.16)"
+    "current": 2.2,
+    "in_box_pct": 99.5,
+    "nearest_support": "S1 KEY (4.0)",
+    "nearest_resistance": "R1 today high (2.21)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 2.13,
-    "H": 2.16,
-    "L": 2.01,
-    "C": 2.09,
-    "body_pct": 28.9,
-    "upper_wick_pct": 19.7,
-    "lower_wick_pct": 51.3
+    "O": 2.17,
+    "H": 2.21,
+    "L": 2.15,
+    "C": 2.2,
+    "body_pct": 46.7,
+    "upper_wick_pct": 26.7,
+    "lower_wick_pct": 26.7
   },
   "bias": {
     "short": {
@@ -81,8 +82,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bearish_continuation",
-      "reason": "making new lows"
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
     },
     "long": {
       "bias": "near_peak",
@@ -91,24 +92,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 0.0 (KEY support)",
-      "then": "still range; watch 2.16 for next test"
+      "if": "hold 4.0 (KEY support)",
+      "then": "still range; watch 2.21 for next test"
     },
     {
-      "if": "break 0.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 4.0 on close",
+      "then": "target 0.0 → lower (short-term bearish)"
     },
     {
       "if": "break 0.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 2.16 on close",
-      "then": "short-term bullish; next test 2.21"
-    },
-    {
-      "if": "break 2.21 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 2.21 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -131,7 +128,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -146,8 +143,8 @@
     "r3": 2.15,
     "s3": 1.45,
     "s4": 1.21,
-    "current_position_pct": 71.4,
-    "notes": "WAIT_RANGE: in box (2-2), pos 71%, no clear setup"
+    "current_position_pct": 96.1,
+    "notes": "WAIT_RANGE: in box (2-2), pos 96%, no clear setup"
   },
   "patterns": [
     {
@@ -156,7 +153,7 @@
       "date": "2026-10-05",
       "low": 2.0859999656677246,
       "high": 2.1540000438690186,
-      "i": 193
+      "i": 190
     },
     {
       "name": "上升三法",
@@ -164,7 +161,7 @@
       "date": "2026-09-22",
       "low": 1.7999999523162842,
       "high": 1.871999979019165,
-      "i": 185
+      "i": 182
     },
     {
       "name": "射擊之星",
@@ -172,7 +169,7 @@
       "date": "2026-09-04",
       "low": 1.7280000448226929,
       "high": 1.7920000553131104,
-      "i": 173
+      "i": 170
     },
     {
       "name": "刺穿線",
@@ -180,7 +177,7 @@
       "date": "2026-08-14",
       "low": 1.628000020980835,
       "high": 1.6820000410079956,
-      "i": 158
+      "i": 155
     },
     {
       "name": "利好反擊線",
@@ -188,7 +185,7 @@
       "date": "2026-07-13",
       "low": 1.6540000438690186,
       "high": 1.7580000162124634,
-      "i": 134
+      "i": 131
     }
   ]
 }

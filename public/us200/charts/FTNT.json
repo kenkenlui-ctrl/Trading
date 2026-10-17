@@ -3,99 +3,97 @@
   "ticker_user": "FTNT",
   "name": "Fortinet, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
+  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-13",
-    "O": 191.1,
-    "H": 197.13,
-    "L": 190.3,
-    "C": 190.76,
-    "prev_close": 192.94,
-    "chg_pct": -1.13
+    "date": "2026-10-16",
+    "O": 182.35,
+    "H": 182.94,
+    "L": 166.75,
+    "C": 169.13,
+    "prev_close": 181.91,
+    "chg_pct": -7.03
   },
-  "phase": "uptrend",
-  "adx": 36.37,
-  "plus_di": 29.84,
-  "minus_di": 9.76,
+  "phase": "downtrend_active",
+  "adx": 32.36,
+  "plus_di": 21.16,
+  "minus_di": 30.23,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 197.13 (2026-10-13), trough 148.25 (2026-08-21), box top 197.13 (2026-10-13)",
+  "phase_evidence": "Peak 197.13 (2026-10-13), trough 152.0 (2026-09-08), box top 197.13 (2026-10-13)",
   "peak": {
     "date": "2026-10-13",
     "price": 197.13
   },
   "trough": {
-    "date": "2026-08-21",
-    "price": 148.25
+    "date": "2026-09-08",
+    "price": 152.0
   },
   "box": {
     "top": 197.13,
     "top_date": "2026-10-13",
-    "bottom": 148.25,
-    "period": "2026-08-21 to 2026-10-13"
+    "bottom": 152.0,
+    "period": "2026-09-08 to 2026-10-16"
   },
-  "drop_from_peak_pct": 3.2,
-  "recovery_from_crash_pct": 28.7,
+  "drop_from_peak_pct": 14.2,
+  "recovery_from_crash_pct": 11.3,
   "supports": [
     {
-      "level": 176.0,
+      "level": 156.0,
       "label": "S1 KEY",
-      "touches": 6,
-      "evidence": "tested 6x in base period; 7.7% below current"
+      "touches": 4,
+      "evidence": "tested 4x in base period; 7.8% below current"
     },
     {
-      "level": 172.0,
-      "label": "S2",
-      "touches": 8,
-      "evidence": "mid-base support, tested 8x"
-    },
-    {
-      "level": 168.0,
-      "label": "S3",
-      "touches": 12,
-      "evidence": "mid-base support, tested 12x"
-    },
-    {
-      "level": 148.25,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-08-21, structural bottom"
+      "level": 152.0,
+      "label": "S2 bottom",
+      "touches": 5,
+      "evidence": "structural bottom, near crash low 152.0"
     }
   ],
   "resistances": [
     {
-      "level": 197.13,
+      "level": 182.94,
       "label": "R1 today high",
-      "evidence": "rejection at 197.1300048828125 (long upper wick, close weak)"
+      "evidence": "today's high 182.94000244140625"
+    },
+    {
+      "level": 190.0,
+      "label": "R2",
+      "evidence": "mid-box supply, round number 190"
+    },
+    {
+      "level": 197.13,
+      "label": "R3 Oct high",
+      "evidence": "box top 197.13, base period high"
     }
   ],
   "position": {
-    "current": 190.76,
-    "in_box_pct": 87.0,
-    "nearest_support": "S1 KEY (176.0)",
-    "nearest_resistance": "R1 today high (197.13)"
+    "current": 169.13,
+    "in_box_pct": 38.0,
+    "nearest_support": "S1 KEY (156.0)",
+    "nearest_resistance": "R1 today high (182.94)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 191.1,
-    "H": 197.13,
-    "L": 190.3,
-    "C": 190.76,
-    "body_pct": 5.0,
-    "upper_wick_pct": 88.3,
-    "lower_wick_pct": 6.7
+    "O": 182.35,
+    "H": 182.94,
+    "L": 166.75,
+    "C": 169.13,
+    "body_pct": 81.7,
+    "upper_wick_pct": 3.6,
+    "lower_wick_pct": 14.7
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (38% of box)"
     },
     "mid": {
-      "bias": "bullish_continuation",
-      "reason": "higher highs / higher lows"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -104,20 +102,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 176.0 (KEY support)",
-      "then": "still range; watch 197.13 for next test"
+      "if": "hold 156.0 (KEY support)",
+      "then": "still range; watch 182.94 for next test"
     },
     {
-      "if": "break 176.0 on close",
-      "then": "target 172.0 → 168.0 (short-term bearish)"
+      "if": "break 156.0 on close",
+      "then": "target 152.0 → lower (short-term bearish)"
     },
     {
-      "if": "break 148.25 (crash low)",
+      "if": "break 152.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 197.13 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 182.94 on close",
+      "then": "short-term bullish; next test 190.0"
+    },
+    {
+      "if": "break 197.13 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -149,14 +151,14 @@
     "rr_ratio": 0.0,
     "phase_match": false,
     "r1": 197.13,
-    "s1": 166.09,
+    "s1": 166.75,
     "s2": 143.77,
-    "r2": 174.05,
+    "r2": 176.1,
     "r3": 170.35,
-    "s3": 81.81,
+    "s3": 82.44,
     "s4": 73.55,
-    "current_position_pct": 79.5,
-    "notes": "WAIT_RANGE: in box (166-197), pos 79%, no clear setup"
+    "current_position_pct": 7.8,
+    "notes": "WAIT_RANGE: in box (167-197), pos 8%, no clear setup"
   },
   "patterns": [
     {
@@ -165,7 +167,7 @@
       "date": "2026-10-12",
       "low": 191.50999450683594,
       "high": 196.8699951171875,
-      "i": 198
+      "i": 195
     },
     {
       "name": "利淡反擊線",
@@ -173,7 +175,7 @@
       "date": "2026-10-02",
       "low": 180.0399932861328,
       "high": 183.08999633789062,
-      "i": 192
+      "i": 189
     },
     {
       "name": "黃昏之星",
@@ -181,7 +183,7 @@
       "date": "2026-09-03",
       "low": 154.47999572753906,
       "high": 158.69000244140625,
-      "i": 172
+      "i": 169
     },
     {
       "name": "利好吞噬",
@@ -189,7 +191,7 @@
       "date": "2026-08-25",
       "low": 151.6699981689453,
       "high": 154.3300018310547,
-      "i": 165
+      "i": 162
     },
     {
       "name": "平頭頂",
@@ -197,7 +199,7 @@
       "date": "2026-08-17",
       "low": 155.57000732421875,
       "high": 160.42999267578125,
-      "i": 159
+      "i": 156
     }
   ]
 }

@@ -3,23 +3,23 @@
   "ticker_user": "O",
   "name": "Realty Income Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
+  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-13",
-    "O": 55.25,
-    "H": 55.31,
-    "L": 54.24,
-    "C": 54.99,
-    "prev_close": 54.7,
-    "chg_pct": 0.53
+    "date": "2026-10-16",
+    "O": 55.85,
+    "H": 56.31,
+    "L": 55.53,
+    "C": 56.08,
+    "prev_close": 55.55,
+    "chg_pct": 0.95
   },
   "phase": "downtrend_active",
-  "adx": 52.15,
-  "plus_di": 13.93,
-  "minus_di": 29.29,
+  "adx": 43.89,
+  "plus_di": 21.09,
+  "minus_di": 22.01,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 67.94 (2026-02-27), trough 53.15 (2026-10-08), box top 61.97 (2026-09-03)",
+  "phase_evidence": "Peak 67.94 (2026-02-27), trough 53.15 (2026-10-08), box top 56.78 (2026-10-15)",
   "peak": {
     "date": "2026-02-27",
     "price": 67.94
@@ -29,56 +29,62 @@
     "price": 53.15
   },
   "box": {
-    "top": 61.97,
-    "top_date": "2026-09-03",
+    "top": 56.78,
+    "top_date": "2026-10-15",
     "bottom": 53.15,
-    "period": "2026-10-08 to 2026-10-13"
+    "period": "2026-10-08 to 2026-10-16"
   },
-  "drop_from_peak_pct": 19.1,
-  "recovery_from_crash_pct": 3.5,
+  "drop_from_peak_pct": 17.5,
+  "recovery_from_crash_pct": 5.5,
   "supports": [
     {
+      "level": 56.0,
+      "label": "S1 KEY",
+      "touches": 8,
+      "evidence": "tested 8x in base period; 0.1% below current"
+    },
+    {
       "level": 52.0,
-      "label": "S1 bottom",
-      "touches": 14,
+      "label": "S2 bottom",
+      "touches": 16,
       "evidence": "structural bottom, near crash low 53.15"
     }
   ],
   "resistances": [
     {
-      "level": 55.31,
+      "level": 56.31,
       "label": "R1 today high",
-      "evidence": "today's high 55.310001373291016"
+      "evidence": "today's high 56.310001373291016"
     },
     {
-      "level": 61.97,
-      "label": "R3 Sep high",
-      "evidence": "box top 61.97, base period high"
+      "level": 56.78,
+      "label": "R3 Oct high",
+      "evidence": "box top 56.78, base period high"
     }
   ],
   "position": {
-    "current": 54.99,
-    "in_box_pct": 30.0,
-    "nearest_support": "S1 bottom (52.0)",
-    "nearest_resistance": "R1 today high (55.31)"
+    "current": 56.08,
+    "in_box_pct": 85.4,
+    "nearest_support": "S1 KEY (56.0)",
+    "nearest_resistance": "R1 today high (56.31)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 55.25,
-    "H": 55.31,
-    "L": 54.24,
-    "C": 54.99,
-    "body_pct": 24.3,
-    "upper_wick_pct": 5.6,
-    "lower_wick_pct": 70.1
+    "O": 55.85,
+    "H": 56.31,
+    "L": 55.53,
+    "C": 56.08,
+    "body_pct": 29.5,
+    "upper_wick_pct": 29.5,
+    "lower_wick_pct": 41.0
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (30% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -91,23 +97,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 52.0 (KEY support)",
-      "then": "still range; watch 55.31 for next test"
+      "if": "hold 56.0 (KEY support)",
+      "then": "still range; watch 56.31 for next test"
     },
     {
-      "if": "break 52.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 56.0 on close",
+      "then": "target 52.0 → lower (short-term bearish)"
     },
     {
       "if": "break 52.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 55.31 on close",
-      "then": "short-term bullish; next test 61.97"
+      "if": "reclaim 56.31 on close",
+      "then": "short-term bullish; next test 56.78"
     },
     {
-      "if": "break 61.97 (box top)",
+      "if": "break 56.78 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -131,7 +137,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -139,15 +145,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 59.07,
+    "r1": 57.32,
     "s1": 53.15,
-    "s2": 58.52,
+    "s2": 56.55,
     "r2": 66.57,
     "r3": 67.15,
     "s3": 59.48,
     "s4": 55.92,
-    "current_position_pct": 31.1,
-    "notes": "WAIT_RANGE: in box (53-59), pos 31%, no clear setup"
+    "current_position_pct": 70.3,
+    "notes": "WAIT_RANGE: in box (53-57), pos 70%, no clear setup"
   },
   "patterns": [
     {
@@ -156,7 +162,7 @@
       "date": "2026-10-08",
       "low": 53.150001525878906,
       "high": 54.18000030517578,
-      "i": 196
+      "i": 193
     },
     {
       "name": "利好反擊線",
@@ -164,7 +170,7 @@
       "date": "2026-08-12",
       "low": 61.790000915527344,
       "high": 62.650001525878906,
-      "i": 156
+      "i": 153
     },
     {
       "name": "上升三法",
@@ -172,7 +178,7 @@
       "date": "2026-07-31",
       "low": 63.2400016784668,
       "high": 64.06999969482422,
-      "i": 148
+      "i": 145
     },
     {
       "name": "利淡反擊線",
@@ -180,7 +186,7 @@
       "date": "2026-07-23",
       "low": 64.4000015258789,
       "high": 65.4000015258789,
-      "i": 142
+      "i": 139
     },
     {
       "name": "烏雲蓋頂",
@@ -188,7 +194,7 @@
       "date": "2026-07-17",
       "low": 65.19000244140625,
       "high": 67.1500015258789,
-      "i": 138
+      "i": 135
     }
   ]
 }

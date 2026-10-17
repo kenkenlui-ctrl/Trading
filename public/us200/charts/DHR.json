@@ -3,23 +3,23 @@
   "ticker_user": "DHR",
   "name": "Danaher Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
+  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-13",
-    "O": 222.25,
-    "H": 225.71,
-    "L": 219.23,
-    "C": 222.84,
-    "prev_close": 221.2,
-    "chg_pct": 0.74
+    "date": "2026-10-16",
+    "O": 230.5,
+    "H": 231.93,
+    "L": 228.36,
+    "C": 229.04,
+    "prev_close": 231.5,
+    "chg_pct": -1.06
   },
   "phase": "base_building",
-  "adx": 26.82,
-  "plus_di": 29.75,
-  "minus_di": 14.42,
+  "adx": 30.23,
+  "plus_di": 32.07,
+  "minus_di": 11.75,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 242.8 (2026-01-22), trough 160.93 (2026-05-15), box top 228.38 (2026-09-28)",
+  "phase_evidence": "Peak 242.8 (2026-01-22), trough 160.93 (2026-05-15), box top 233.02 (2026-10-15)",
   "peak": {
     "date": "2026-01-22",
     "price": 242.8
@@ -29,31 +29,31 @@
     "price": 160.93
   },
   "box": {
-    "top": 228.38,
-    "top_date": "2026-09-28",
+    "top": 233.02,
+    "top_date": "2026-10-15",
     "bottom": 160.93,
-    "period": "2026-05-15 to 2026-10-13"
+    "period": "2026-05-15 to 2026-10-16"
   },
-  "drop_from_peak_pct": 8.2,
-  "recovery_from_crash_pct": 38.5,
+  "drop_from_peak_pct": 5.7,
+  "recovery_from_crash_pct": 42.3,
   "supports": [
     {
-      "level": 212.0,
+      "level": 220.0,
       "label": "S1 KEY",
+      "touches": 12,
+      "evidence": "tested 12x in base period; 3.9% below current"
+    },
+    {
+      "level": 212.0,
+      "label": "S2",
       "touches": 17,
-      "evidence": "tested 17x in base period; 4.9% below current"
+      "evidence": "mid-base support, tested 17x"
     },
     {
       "level": 208.0,
-      "label": "S2",
-      "touches": 14,
-      "evidence": "mid-base support, tested 14x"
-    },
-    {
-      "level": 204.0,
       "label": "S3",
-      "touches": 9,
-      "evidence": "mid-base support, tested 9x"
+      "touches": 11,
+      "evidence": "mid-base support, tested 11x"
     },
     {
       "level": 160.93,
@@ -64,34 +64,29 @@
   ],
   "resistances": [
     {
-      "level": 225.71,
+      "level": 231.93,
       "label": "R1 today high",
-      "evidence": "today's high 225.7100067138672"
-    },
-    {
-      "level": 228.38,
-      "label": "R3 Sep high",
-      "evidence": "box top 228.38, base period high"
+      "evidence": "today's high 231.92999267578125"
     }
   ],
   "position": {
-    "current": 222.84,
-    "in_box_pct": 91.8,
-    "nearest_support": "S1 KEY (212.0)",
-    "nearest_resistance": "R1 today high (225.71)"
+    "current": 229.04,
+    "in_box_pct": 95.9,
+    "nearest_support": "S1 KEY (220.0)",
+    "nearest_resistance": "R1 today high (231.93)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 222.25,
-    "H": 225.71,
-    "L": 219.23,
-    "C": 222.84,
-    "body_pct": 9.1,
-    "upper_wick_pct": 44.3,
-    "lower_wick_pct": 46.6
+    "close_position": "lower_half",
+    "O": 230.5,
+    "H": 231.93,
+    "L": 228.36,
+    "C": 229.04,
+    "body_pct": 40.9,
+    "upper_wick_pct": 40.1,
+    "lower_wick_pct": 19.0
   },
   "bias": {
     "short": {
@@ -109,24 +104,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 212.0 (KEY support)",
-      "then": "still range; watch 225.71 for next test"
+      "if": "hold 220.0 (KEY support)",
+      "then": "still range; watch 231.93 for next test"
     },
     {
-      "if": "break 212.0 on close",
-      "then": "target 208.0 → 204.0 (short-term bearish)"
+      "if": "break 220.0 on close",
+      "then": "target 212.0 → 208.0 (short-term bearish)"
     },
     {
       "if": "break 160.93 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 225.71 on close",
-      "then": "short-term bullish; next test 228.38"
-    },
-    {
-      "if": "break 228.38 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 231.93 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -157,24 +148,32 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 228.38,
-    "s1": 206.68,
-    "s2": 165.75,
+    "r1": 233.02,
+    "s1": 209.6,
+    "s2": 189.85,
     "r2": 220.67,
     "r3": 206.59,
     "s3": 160.93,
-    "s4": 181.01,
-    "current_position_pct": 74.5,
-    "notes": "WAIT_RANGE: in box (207-228), pos 74%, no clear setup"
+    "s4": 175.0,
+    "current_position_pct": 83.0,
+    "notes": "WAIT_RANGE: in box (210-233), pos 83%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-10-16",
+      "low": 228.36000061035156,
+      "high": 231.92999267578125,
+      "i": 199
+    },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-08-04",
       "low": 192.91000366210938,
       "high": 200.36000061035156,
-      "i": 150
+      "i": 147
     },
     {
       "name": "利淡反擊線",
@@ -182,7 +181,7 @@
       "date": "2026-06-17",
       "low": 176.60000610351562,
       "high": 182.4199981689453,
-      "i": 118
+      "i": 115
     }
   ]
 }

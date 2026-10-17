@@ -3,21 +3,21 @@
   "ticker_user": "09618.HK",
   "name": "JD-SW",
   "data_source": "yfinance",
-  "data_range": "2025-12-19 → 2026-10-14 (200 daily bars)",
+  "data_range": "2025-12-23 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-14",
-    "O": 105.4,
-    "H": 107.6,
-    "L": 103.9,
+    "date": "2026-10-16",
+    "O": 108.1,
+    "H": 108.3,
+    "L": 105.8,
     "C": 106.1,
     "prev_close": 104.9,
     "chg_pct": 1.14
   },
   "phase": "base_building",
-  "adx": 25.93,
-  "plus_di": 22.21,
-  "minus_di": 23.69,
-  "regime": "trend",
+  "adx": 23.36,
+  "plus_di": 25.59,
+  "minus_di": 20.5,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 132.5 (2026-05-14), trough 95.8 (2026-06-26), box top 130.9 (2026-08-03)",
   "peak": {
@@ -32,7 +32,7 @@
     "top": 130.9,
     "top_date": "2026-08-03",
     "bottom": 95.8,
-    "period": "2026-06-26 to 2026-10-14"
+    "period": "2026-06-26 to 2026-10-16"
   },
   "drop_from_peak_pct": 19.9,
   "recovery_from_crash_pct": 10.8,
@@ -52,9 +52,9 @@
   ],
   "resistances": [
     {
-      "level": 107.6,
+      "level": 108.3,
       "label": "R1 today high",
-      "evidence": "today's high 107.5999984741211"
+      "evidence": "today's high 108.30000305175781"
     },
     {
       "level": 120.0,
@@ -71,25 +71,25 @@
     "current": 106.1,
     "in_box_pct": 29.3,
     "nearest_support": "S1 KEY (104.0)",
-    "nearest_resistance": "R1 today high (107.6)"
+    "nearest_resistance": "R1 today high (108.3)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_pullback",
     "touched_R1": true,
-    "touched_S1": true,
-    "close_position": "upper_half",
-    "O": 105.4,
-    "H": 107.6,
-    "L": 103.9,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 108.1,
+    "H": 108.3,
+    "L": 105.8,
     "C": 106.1,
-    "body_pct": 18.9,
-    "upper_wick_pct": 40.5,
-    "lower_wick_pct": 40.5
+    "body_pct": 80.0,
+    "upper_wick_pct": 8.0,
+    "lower_wick_pct": 12.0
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (29% of box)"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (29% of box)"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -103,7 +103,7 @@
   "scenarios": [
     {
       "if": "hold 104.0 (KEY support)",
-      "then": "still range; watch 107.6 for next test"
+      "then": "still range; watch 108.3 for next test"
     },
     {
       "if": "break 104.0 on close",
@@ -114,7 +114,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 107.6 on close",
+      "if": "reclaim 108.3 on close",
       "then": "short-term bullish; next test 120.0"
     },
     {
@@ -142,7 +142,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -152,13 +152,13 @@
     "phase_match": false,
     "r1": 108.9,
     "s1": 100.4,
-    "s2": 104.3,
+    "s2": 103.4,
     "r2": 130.9,
     "r3": 132.5,
     "s3": 95.8,
     "s4": 95.9,
     "current_position_pct": 67.1,
-    "notes": "WAIT_RANGE: in box (100-109), pos 67%, no clear setup"
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 108.90）：① 跌到 108.90、收市守住喺 108.90 上面 → 照 BUY 條 plan 做（入場 108.90，止蝕 113.06，目標 104.65）。② 收市跌穿 108.90 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 108.90 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
     {
@@ -167,7 +167,7 @@
       "date": "2026-10-06",
       "low": 102.69999694824219,
       "high": 104.19999694824219,
-      "i": 193
+      "i": 191
     },
     {
       "name": "倒錘頭",
@@ -175,7 +175,7 @@
       "date": "2026-09-22",
       "low": 106.0,
       "high": 107.5,
-      "i": 184
+      "i": 182
     },
     {
       "name": "刺穿線",
@@ -183,7 +183,7 @@
       "date": "2026-09-10",
       "low": 104.30000305175781,
       "high": 105.80000305175781,
-      "i": 176
+      "i": 174
     },
     {
       "name": "烏雲蓋頂",
@@ -191,7 +191,7 @@
       "date": "2026-08-11",
       "low": 125.80000305175781,
       "high": 130.39999389648438,
-      "i": 154
+      "i": 152
     },
     {
       "name": "利好吞噬",
@@ -199,7 +199,7 @@
       "date": "2026-07-08",
       "low": 104.4000015258789,
       "high": 109.5,
-      "i": 130
+      "i": 128
     }
   ]
 }

@@ -3,20 +3,20 @@
   "ticker_user": "TT",
   "name": "Trane Technologies plc",
   "data_source": "yfinance",
-  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
+  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-13",
-    "O": 478.08,
-    "H": 479.99,
-    "L": 469.39,
-    "C": 478.01,
-    "prev_close": 477.55,
-    "chg_pct": 0.1
+    "date": "2026-10-16",
+    "O": 455.95,
+    "H": 468.49,
+    "L": 453.84,
+    "C": 458.89,
+    "prev_close": 457.36,
+    "chg_pct": 0.33
   },
   "phase": "downtrend_active",
-  "adx": 18.17,
-  "plus_di": 24.78,
-  "minus_di": 18.26,
+  "adx": 17.09,
+  "plus_di": 19.0,
+  "minus_di": 23.22,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 505.87 (2026-06-25), trough 413.97 (2026-09-15), box top 484.13 (2026-10-09)",
@@ -32,28 +32,28 @@
     "top": 484.13,
     "top_date": "2026-10-09",
     "bottom": 413.97,
-    "period": "2026-09-15 to 2026-10-13"
+    "period": "2026-09-15 to 2026-10-16"
   },
-  "drop_from_peak_pct": 5.5,
-  "recovery_from_crash_pct": 15.5,
+  "drop_from_peak_pct": 9.3,
+  "recovery_from_crash_pct": 10.9,
   "supports": [
     {
-      "level": 464.0,
-      "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 2.9% below current"
-    },
-    {
       "level": 448.0,
-      "label": "S2",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
+      "label": "S1 KEY",
+      "touches": 6,
+      "evidence": "tested 6x in base period; 2.4% below current"
     },
     {
       "level": 444.0,
-      "label": "S3",
+      "label": "S2",
       "touches": 5,
       "evidence": "mid-base support, tested 5x"
+    },
+    {
+      "level": 440.0,
+      "label": "S3",
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
     },
     {
       "level": 413.97,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 479.99,
+      "level": 468.49,
       "label": "R1 today high",
-      "evidence": "today's high 479.989990234375"
+      "evidence": "today's high 468.489990234375"
     },
     {
       "level": 484.13,
@@ -75,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 478.01,
-    "in_box_pct": 91.3,
-    "nearest_support": "S1 KEY (464.0)",
-    "nearest_resistance": "R1 today high (479.99)"
+    "current": 458.89,
+    "in_box_pct": 64.0,
+    "nearest_support": "S1 KEY (448.0)",
+    "nearest_resistance": "R1 today high (468.49)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 478.08,
-    "H": 479.99,
-    "L": 469.39,
-    "C": 478.01,
-    "body_pct": 0.7,
-    "upper_wick_pct": 18.0,
-    "lower_wick_pct": 81.3
+    "close_position": "lower_half",
+    "O": 455.95,
+    "H": 468.49,
+    "L": 453.84,
+    "C": 458.89,
+    "body_pct": 20.1,
+    "upper_wick_pct": 65.5,
+    "lower_wick_pct": 14.4
   },
   "bias": {
     "short": {
@@ -103,25 +103,25 @@
       "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 464.0 (KEY support)",
-      "then": "still range; watch 479.99 for next test"
+      "if": "hold 448.0 (KEY support)",
+      "then": "still range; watch 468.49 for next test"
     },
     {
-      "if": "break 464.0 on close",
-      "then": "target 448.0 → 444.0 (short-term bearish)"
+      "if": "break 448.0 on close",
+      "then": "target 444.0 → 440.0 (short-term bearish)"
     },
     {
       "if": "break 413.97 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 479.99 on close",
+      "if": "reclaim 468.49 on close",
       "then": "short-term bullish; next test 484.13"
     },
     {
@@ -148,33 +148,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 484.13,
-    "target_price": 450.55,
-    "stop_price": 501.64,
-    "risk_pct": 3.62,
-    "reward_pct": 6.94,
-    "rr_ratio": 1.92,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 484.13,
-    "s1": 416.97,
+    "s1": 425.09,
     "s2": 413.97,
     "r2": 493.71,
     "r3": 505.87,
     "s3": 439.42,
     "s4": 348.06,
-    "current_position_pct": 90.9,
-    "notes": "SELL_R1: in box (417-484), entry at R1 484, target mid 451, stop 502 ｜ 52.2 條規則（SELL plan，resistance 484.13）：① 跌到 484.13、收市守住喺 484.13 上面 → 照 BUY 條 plan 做（入場 484.13，止蝕 501.64，目標 450.55）。② 收市跌穿 484.13 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 484.13 上面』。"
+    "current_position_pct": 57.2,
+    "notes": "WAIT_RANGE: in box (425-484), pos 57%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-10-14",
+      "low": 466.5899963378906,
+      "high": 482.8999938964844,
+      "i": 197
+    },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-10-02",
       "low": 456.7300109863281,
       "high": 466.30999755859375,
-      "i": 192
+      "i": 189
     },
     {
       "name": "刺穿線",
@@ -182,7 +190,7 @@
       "date": "2026-09-09",
       "low": 440.0,
       "high": 447.2099914550781,
-      "i": 175
+      "i": 172
     },
     {
       "name": "利淡吞噬",
@@ -190,7 +198,7 @@
       "date": "2026-08-12",
       "low": 478.1600036621094,
       "high": 493.7099914550781,
-      "i": 156
+      "i": 153
     },
     {
       "name": "烏雲蓋頂",
@@ -198,7 +206,7 @@
       "date": "2026-07-07",
       "low": 467.010009765625,
       "high": 484.07000732421875,
-      "i": 130
+      "i": 127
     }
   ]
 }

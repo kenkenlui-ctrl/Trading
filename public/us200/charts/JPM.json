@@ -3,23 +3,23 @@
   "ticker_user": "JPM",
   "name": "JP Morgan Chase & Co.",
   "data_source": "yfinance",
-  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
+  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-13",
-    "O": 339.97,
-    "H": 344.36,
-    "L": 331.17,
-    "C": 331.43,
-    "prev_close": 334.3,
-    "chg_pct": -0.86
+    "date": "2026-10-16",
+    "O": 339.45,
+    "H": 344.4,
+    "L": 337.52,
+    "C": 339.72,
+    "prev_close": 335.53,
+    "chg_pct": 1.25
   },
   "phase": "downtrend_active",
-  "adx": 26.82,
-  "plus_di": 24.1,
-  "minus_di": 24.5,
-  "regime": "trend",
+  "adx": 23.35,
+  "plus_di": 27.19,
+  "minus_di": 23.11,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 366.5 (2026-08-13), trough 325.07 (2026-10-07), box top 344.36 (2026-10-13)",
+  "phase_evidence": "Peak 366.5 (2026-08-13), trough 325.07 (2026-10-07), box top 344.4 (2026-10-16)",
   "peak": {
     "date": "2026-08-13",
     "price": 366.5
@@ -29,51 +29,63 @@
     "price": 325.07
   },
   "box": {
-    "top": 344.36,
-    "top_date": "2026-10-13",
+    "top": 344.4,
+    "top_date": "2026-10-16",
     "bottom": 325.07,
-    "period": "2026-10-07 to 2026-10-13"
+    "period": "2026-10-07 to 2026-10-16"
   },
-  "drop_from_peak_pct": 9.6,
-  "recovery_from_crash_pct": 2.0,
+  "drop_from_peak_pct": 7.3,
+  "recovery_from_crash_pct": 4.5,
   "supports": [
     {
-      "level": 320.0,
-      "label": "S1 bottom",
-      "touches": 0,
+      "level": 332.0,
+      "label": "S1 KEY",
+      "touches": 12,
+      "evidence": "tested 12x in base period; 2.3% below current"
+    },
+    {
+      "level": 328.0,
+      "label": "S2",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 324.0,
+      "label": "S3 bottom",
+      "touches": 6,
       "evidence": "structural bottom, near crash low 325.07"
     }
   ],
   "resistances": [
     {
-      "level": 344.36,
+      "level": 344.4,
       "label": "R1 today high",
-      "evidence": "today's high 344.3599853515625"
+      "evidence": "today's high 344.3999938964844"
     }
   ],
   "position": {
-    "current": 331.43,
-    "in_box_pct": 46.9,
-    "nearest_support": "S1 bottom (320.0)",
-    "nearest_resistance": "R1 today high (344.36)"
+    "current": 339.72,
+    "in_box_pct": 77.1,
+    "nearest_support": "S1 KEY (332.0)",
+    "nearest_resistance": "R1 today high (344.4)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 339.97,
-    "H": 344.36,
-    "L": 331.17,
-    "C": 331.43,
-    "body_pct": 64.7,
-    "upper_wick_pct": 33.3,
-    "lower_wick_pct": 2.0
+    "O": 339.45,
+    "H": 344.4,
+    "L": 337.52,
+    "C": 339.72,
+    "body_pct": 3.9,
+    "upper_wick_pct": 68.0,
+    "lower_wick_pct": 28.1
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (47% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -86,19 +98,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 320.0 (KEY support)",
-      "then": "still range; watch 344.36 for next test"
+      "if": "hold 332.0 (KEY support)",
+      "then": "still range; watch 344.4 for next test"
     },
     {
-      "if": "break 320.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 332.0 on close",
+      "then": "target 328.0 → 324.0 (short-term bearish)"
     },
     {
-      "if": "break 320.0 (crash low)",
+      "if": "break 324.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 344.36 on close",
+      "if": "reclaim 344.4 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -130,15 +142,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 355.6,
+    "r1": 354.5,
     "s1": 325.07,
-    "s2": 337.3,
+    "s2": 343.07,
     "r2": 366.5,
     "r3": 351.24,
     "s3": 293.67,
     "s4": 279.1,
-    "current_position_pct": 20.8,
-    "notes": "WAIT_RANGE: in box (325-356), pos 21%, no clear setup"
+    "current_position_pct": 49.8,
+    "notes": "WAIT_RANGE: in box (325-354), pos 50%, no clear setup"
   },
   "patterns": [
     {
@@ -147,7 +159,7 @@
       "date": "2026-09-08",
       "low": 353.2300109863281,
       "high": 358.54998779296875,
-      "i": 174
+      "i": 171
     },
     {
       "name": "射擊之星",
@@ -155,7 +167,7 @@
       "date": "2026-08-19",
       "low": 355.6499938964844,
       "high": 363.04998779296875,
-      "i": 161
+      "i": 158
     },
     {
       "name": "利淡反擊線",
@@ -163,7 +175,7 @@
       "date": "2026-08-03",
       "low": 350.8399963378906,
       "high": 355.6199951171875,
-      "i": 149
+      "i": 146
     },
     {
       "name": "利淡吞噬",
@@ -171,7 +183,7 @@
       "date": "2026-07-10",
       "low": 335.7699890136719,
       "high": 338.5899963378906,
-      "i": 133
+      "i": 130
     },
     {
       "name": "烏雲蓋頂",
@@ -179,7 +191,7 @@
       "date": "2026-07-02",
       "low": 331.7699890136719,
       "high": 340.0,
-      "i": 128
+      "i": 125
     }
   ]
 }

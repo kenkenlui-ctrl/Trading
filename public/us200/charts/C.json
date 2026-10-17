@@ -3,77 +3,87 @@
   "ticker_user": "C",
   "name": "Citigroup, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
+  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-13",
-    "O": 131.35,
-    "H": 133.5,
-    "L": 124.44,
-    "C": 124.53,
-    "prev_close": 131.92,
-    "chg_pct": -5.6
+    "date": "2026-10-16",
+    "O": 124.0,
+    "H": 127.22,
+    "L": 123.42,
+    "C": 124.26,
+    "prev_close": 123.21,
+    "chg_pct": 0.85
   },
   "phase": "downtrend_active",
-  "adx": 20.34,
-  "plus_di": 18.57,
-  "minus_di": 34.62,
+  "adx": 22.93,
+  "plus_di": 22.55,
+  "minus_di": 35.24,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 147.96 (2026-06-18), trough 123.57 (2026-10-01), box top 133.5 (2026-10-13)",
+  "phase_evidence": "Peak 147.96 (2026-06-18), trough 120.2 (2026-10-15), box top 141.27 (2026-09-11)",
   "peak": {
     "date": "2026-06-18",
     "price": 147.96
   },
   "trough": {
-    "date": "2026-10-01",
-    "price": 123.57
+    "date": "2026-10-15",
+    "price": 120.2
   },
   "box": {
-    "top": 133.5,
-    "top_date": "2026-10-13",
-    "bottom": 123.57,
-    "period": "2026-10-01 to 2026-10-13"
+    "top": 141.27,
+    "top_date": "2026-09-11",
+    "bottom": 120.2,
+    "period": "2026-10-15 to 2026-10-16"
   },
-  "drop_from_peak_pct": 15.8,
-  "recovery_from_crash_pct": 0.8,
+  "drop_from_peak_pct": 16.0,
+  "recovery_from_crash_pct": 3.4,
   "supports": [
     {
       "level": 120.0,
       "label": "S1 bottom",
-      "touches": 0,
-      "evidence": "structural bottom, near crash low 123.57"
+      "touches": 4,
+      "evidence": "structural bottom, near crash low 120.2"
     }
   ],
   "resistances": [
     {
-      "level": 133.5,
+      "level": 127.22,
       "label": "R1 today high",
-      "evidence": "today's high 133.5"
+      "evidence": "today's high 127.22000122070312"
+    },
+    {
+      "level": 130.0,
+      "label": "R2",
+      "evidence": "mid-box supply, round number 130"
+    },
+    {
+      "level": 141.27,
+      "label": "R3 Sep high",
+      "evidence": "box top 141.27, base period high"
     }
   ],
   "position": {
-    "current": 124.53,
-    "in_box_pct": 33.6,
+    "current": 124.26,
+    "in_box_pct": 20.0,
     "nearest_support": "S1 bottom (120.0)",
-    "nearest_resistance": "R1 today high (133.5)"
+    "nearest_resistance": "R1 today high (127.22)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 131.35,
-    "H": 133.5,
-    "L": 124.44,
-    "C": 124.53,
-    "body_pct": 75.3,
-    "upper_wick_pct": 23.7,
-    "lower_wick_pct": 1.0
+    "O": 124.0,
+    "H": 127.22,
+    "L": 123.42,
+    "C": 124.26,
+    "body_pct": 6.8,
+    "upper_wick_pct": 77.9,
+    "lower_wick_pct": 15.3
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (34% of box)"
+      "bias": "defensive",
+      "reason": "near box bottom (20% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -87,7 +97,7 @@
   "scenarios": [
     {
       "if": "hold 120.0 (KEY support)",
-      "then": "still range; watch 133.5 for next test"
+      "then": "still range; watch 127.22 for next test"
     },
     {
       "if": "break 120.0 on close",
@@ -98,8 +108,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 133.5 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 127.22 on close",
+      "then": "short-term bullish; next test 130.0"
+    },
+    {
+      "if": "break 141.27 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -130,15 +144,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 136.89,
-    "s1": 123.57,
+    "r1": 135.73,
+    "s1": 120.2,
     "s2": 126.78,
     "r2": 141.27,
     "r3": 147.96,
     "s3": 119.76,
     "s4": 102.01,
-    "current_position_pct": 7.2,
-    "notes": "WAIT_RANGE: in box (124-137), pos 7%, no clear setup"
+    "current_position_pct": 26.1,
+    "notes": "WAIT_RANGE: in box (120-136), pos 26%, no clear setup"
   },
   "patterns": [
     {
@@ -147,7 +161,7 @@
       "date": "2026-09-25",
       "low": 132.1199951171875,
       "high": 134.72000122070312,
-      "i": 187
+      "i": 184
     },
     {
       "name": "利淡反擊線",
@@ -155,7 +169,7 @@
       "date": "2026-09-14",
       "low": 132.66000366210938,
       "high": 137.92999267578125,
-      "i": 178
+      "i": 175
     },
     {
       "name": "利好吞噬",
@@ -163,7 +177,7 @@
       "date": "2026-07-23",
       "low": 130.02000427246094,
       "high": 132.47000122070312,
-      "i": 142
+      "i": 139
     },
     {
       "name": "平頭頂",
@@ -171,7 +185,7 @@
       "date": "2026-07-14",
       "low": 132.16000366210938,
       "high": 144.2899932861328,
-      "i": 135
+      "i": 132
     },
     {
       "name": "烏雲蓋頂",
@@ -179,7 +193,7 @@
       "date": "2026-07-07",
       "low": 140.66000366210938,
       "high": 144.7100067138672,
-      "i": 130
+      "i": 127
     }
   ]
 }

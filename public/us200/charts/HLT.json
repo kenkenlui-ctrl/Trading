@@ -3,23 +3,23 @@
   "ticker_user": "HLT",
   "name": "Hilton Worldwide Holdings Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
+  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-13",
-    "O": 329.57,
-    "H": 330.38,
-    "L": 324.1,
-    "C": 329.59,
-    "prev_close": 327.54,
-    "chg_pct": 0.63
+    "date": "2026-10-16",
+    "O": 345.25,
+    "H": 350.91,
+    "L": 344.1,
+    "C": 345.12,
+    "prev_close": 342.98,
+    "chg_pct": 0.62
   },
-  "phase": "downtrend_active",
-  "adx": 25.67,
-  "plus_di": 27.69,
-  "minus_di": 11.79,
+  "phase": "base_building",
+  "adx": 31.83,
+  "plus_di": 41.72,
+  "minus_di": 8.43,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 358.0 (2026-06-17), trough 300.0 (2026-09-09), box top 330.38 (2026-10-13)",
+  "phase_evidence": "Peak 358.0 (2026-06-17), trough 300.0 (2026-09-09), box top 350.91 (2026-10-16)",
   "peak": {
     "date": "2026-06-17",
     "price": 358.0
@@ -29,58 +29,64 @@
     "price": 300.0
   },
   "box": {
-    "top": 330.38,
-    "top_date": "2026-10-13",
+    "top": 350.91,
+    "top_date": "2026-10-16",
     "bottom": 300.0,
-    "period": "2026-09-09 to 2026-10-13"
+    "period": "2026-09-09 to 2026-10-16"
   },
-  "drop_from_peak_pct": 7.9,
-  "recovery_from_crash_pct": 9.9,
+  "drop_from_peak_pct": 3.6,
+  "recovery_from_crash_pct": 15.0,
   "supports": [
     {
-      "level": 320.0,
+      "level": 324.0,
       "label": "S1 KEY",
+      "touches": 8,
+      "evidence": "tested 8x in base period; 6.1% below current"
+    },
+    {
+      "level": 320.0,
+      "label": "S2",
       "touches": 6,
-      "evidence": "tested 6x in base period; 2.9% below current"
+      "evidence": "mid-base support, tested 6x"
     },
     {
       "level": 316.0,
-      "label": "S2",
+      "label": "S3",
       "touches": 8,
       "evidence": "mid-base support, tested 8x"
     },
     {
-      "level": 312.0,
-      "label": "S3 bottom",
-      "touches": 9,
-      "evidence": "structural bottom, near crash low 300.0"
+      "level": 300.0,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-09-09, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 330.38,
+      "level": 350.91,
       "label": "R1 today high",
-      "evidence": "today's high 330.3800048828125"
+      "evidence": "rejection at 350.9100036621094 (long upper wick, close weak)"
     }
   ],
   "position": {
-    "current": 329.59,
-    "in_box_pct": 95.7,
-    "nearest_support": "S1 KEY (320.0)",
-    "nearest_resistance": "R1 today high (330.38)"
+    "current": 345.12,
+    "in_box_pct": 88.6,
+    "nearest_support": "S1 KEY (324.0)",
+    "nearest_resistance": "R1 today high (350.91)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 329.57,
-    "H": 330.38,
-    "L": 324.1,
-    "C": 329.59,
-    "body_pct": 0.3,
-    "upper_wick_pct": 12.6,
-    "lower_wick_pct": 87.1
+    "close_position": "lower_half",
+    "O": 345.25,
+    "H": 350.91,
+    "L": 344.1,
+    "C": 345.12,
+    "body_pct": 1.9,
+    "upper_wick_pct": 83.1,
+    "lower_wick_pct": 15.0
   },
   "bias": {
     "short": {
@@ -88,29 +94,29 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bearish_continuation",
-      "reason": "making new lows"
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 320.0 (KEY support)",
-      "then": "still range; watch 330.38 for next test"
+      "if": "hold 324.0 (KEY support)",
+      "then": "still range; watch 350.91 for next test"
     },
     {
-      "if": "break 320.0 on close",
-      "then": "target 316.0 → 312.0 (short-term bearish)"
+      "if": "break 324.0 on close",
+      "then": "target 320.0 → 316.0 (short-term bearish)"
     },
     {
-      "if": "break 312.0 (crash low)",
+      "if": "break 300.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 330.38 on close",
+      "if": "reclaim 350.91 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -142,24 +148,24 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 330.38,
-    "s1": 302.11,
+    "r1": 350.91,
+    "s1": 304.11,
     "s2": 300.0,
     "r2": 335.8,
     "r3": 358.0,
     "s3": 308.06,
     "s4": 285.11,
-    "current_position_pct": 97.2,
-    "notes": "WAIT_RANGE: in box (302-330), pos 97%, no clear setup"
+    "current_position_pct": 87.6,
+    "notes": "WAIT_RANGE: in box (304-351), pos 88%, no clear setup"
   },
   "patterns": [
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-10-07",
-      "low": 319.8800048828125,
-      "high": 323.0199890136719,
-      "i": 195
+      "date": "2026-10-16",
+      "low": 344.1000061035156,
+      "high": 350.9100036621094,
+      "i": 199
     },
     {
       "name": "黃昏之星",
@@ -167,7 +173,7 @@
       "date": "2026-10-01",
       "low": 313.6700134277344,
       "high": 319.1499938964844,
-      "i": 191
+      "i": 188
     },
     {
       "name": "平頭底",
@@ -175,7 +181,7 @@
       "date": "2026-09-14",
       "low": 305.8599853515625,
       "high": 311.3900146484375,
-      "i": 178
+      "i": 175
     },
     {
       "name": "利淡吞噬",
@@ -183,7 +189,7 @@
       "date": "2026-08-27",
       "low": 325.3699951171875,
       "high": 332.1499938964844,
-      "i": 167
+      "i": 164
     },
     {
       "name": "利淡反擊線",
@@ -191,7 +197,7 @@
       "date": "2026-06-25",
       "low": 339.8800048828125,
       "high": 348.2300109863281,
-      "i": 123
+      "i": 120
     }
   ]
 }

@@ -3,20 +3,20 @@
   "ticker_user": "PGR",
   "name": "Progressive Corporation (The)",
   "data_source": "yfinance",
-  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
+  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-13",
-    "O": 220.96,
-    "H": 223.78,
-    "L": 219.86,
-    "C": 222.88,
-    "prev_close": 220.28,
-    "chg_pct": 1.18
+    "date": "2026-10-16",
+    "O": 213.99,
+    "H": 218.72,
+    "L": 213.76,
+    "C": 218.49,
+    "prev_close": 213.75,
+    "chg_pct": 2.22
   },
   "phase": "downtrend_active",
-  "adx": 16.26,
-  "plus_di": 30.02,
-  "minus_di": 14.97,
+  "adx": 15.18,
+  "plus_di": 26.66,
+  "minus_di": 29.38,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 239.38 (2026-07-07), trough 200.96 (2026-09-24), box top 223.78 (2026-10-13)",
@@ -32,86 +32,95 @@
     "top": 223.78,
     "top_date": "2026-10-13",
     "bottom": 200.96,
-    "period": "2026-09-24 to 2026-10-13"
+    "period": "2026-09-24 to 2026-10-16"
   },
-  "drop_from_peak_pct": 6.9,
-  "recovery_from_crash_pct": 10.9,
+  "drop_from_peak_pct": 8.7,
+  "recovery_from_crash_pct": 8.7,
   "supports": [
     {
-      "level": 216.0,
-      "label": "S1 KEY",
-      "touches": 10,
-      "evidence": "tested 10x in base period; 3.1% below current"
-    },
-    {
       "level": 212.0,
-      "label": "S2",
-      "touches": 7,
-      "evidence": "mid-base support, tested 7x"
+      "label": "S1 KEY",
+      "touches": 11,
+      "evidence": "tested 11x in base period; 3.0% below current"
     },
     {
       "level": 208.0,
-      "label": "S3 bottom",
+      "label": "S2",
       "touches": 10,
+      "evidence": "mid-base support, tested 10x"
+    },
+    {
+      "level": 204.0,
+      "label": "S3 bottom",
+      "touches": 4,
       "evidence": "structural bottom, near crash low 200.96"
     }
   ],
   "resistances": [
     {
-      "level": 223.78,
+      "level": 218.72,
       "label": "R1 today high",
-      "evidence": "today's high 223.77999877929688"
+      "evidence": "today's high 218.72000122070312"
+    },
+    {
+      "level": 223.78,
+      "label": "R3 Oct high",
+      "evidence": "box top 223.78, base period high"
     }
   ],
   "position": {
-    "current": 222.88,
-    "in_box_pct": 94.3,
-    "nearest_support": "S1 KEY (216.0)",
-    "nearest_resistance": "R1 today high (223.78)"
+    "current": 218.49,
+    "in_box_pct": 73.3,
+    "nearest_support": "S1 KEY (212.0)",
+    "nearest_resistance": "R1 today high (218.72)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 220.96,
-    "H": 223.78,
-    "L": 219.86,
-    "C": 222.88,
-    "body_pct": 49.0,
-    "upper_wick_pct": 23.0,
-    "lower_wick_pct": 28.1
+    "O": 213.99,
+    "H": 218.72,
+    "L": 213.76,
+    "C": 218.49,
+    "body_pct": 90.7,
+    "upper_wick_pct": 4.6,
+    "lower_wick_pct": 4.6
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "bearish_continuation",
       "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 216.0 (KEY support)",
-      "then": "still range; watch 223.78 for next test"
+      "if": "hold 212.0 (KEY support)",
+      "then": "still range; watch 218.72 for next test"
     },
     {
-      "if": "break 216.0 on close",
-      "then": "target 212.0 → 208.0 (short-term bearish)"
+      "if": "break 212.0 on close",
+      "then": "target 208.0 → 204.0 (short-term bearish)"
     },
     {
-      "if": "break 208.0 (crash low)",
+      "if": "break 204.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 223.78 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 218.72 on close",
+      "then": "short-term bullish; next test 223.78"
+    },
+    {
+      "if": "break 223.78 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -137,20 +146,20 @@
     "strategy": "SELL_R1",
     "trigger_price": 223.78,
     "target_price": 212.37,
-    "stop_price": 229.89,
-    "risk_pct": 2.73,
+    "stop_price": 232.47,
+    "risk_pct": 3.88,
     "reward_pct": 5.1,
-    "rr_ratio": 1.87,
+    "rr_ratio": 1.31,
     "phase_match": true,
     "r1": 223.78,
     "s1": 200.96,
-    "s2": 203.11,
+    "s2": 203.18,
     "r2": 225.45,
     "r3": 239.38,
     "s3": 189.2,
     "s4": 192.02,
-    "current_position_pct": 96.1,
-    "notes": "SELL_R1: in box (201-224), entry at R1 224, target mid 212, stop 230 ｜ 52.2 條規則（SELL plan，resistance 223.78）：① 跌到 223.78、收市守住喺 223.78 上面 → 照 BUY 條 plan 做（入場 223.78，止蝕 229.89，目標 212.37）。② 收市跌穿 223.78 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 223.78 上面』。"
+    "current_position_pct": 76.8,
+    "notes": "SELL_R1: in box (201-224), entry at R1 224, target mid 212, stop 232 ｜ 52.2 條規則（SELL plan，resistance 223.78）：① 跌到 223.78、收市守住喺 223.78 上面 → 照 BUY 條 plan 做（入場 223.78，止蝕 232.47，目標 212.37）。② 收市跌穿 223.78 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 223.78 上面』。"
   },
   "patterns": [
     {
@@ -159,7 +168,7 @@
       "date": "2026-10-01",
       "low": 207.4199981689453,
       "high": 211.32000732421875,
-      "i": 191
+      "i": 188
     },
     {
       "name": "利淡吞噬",
@@ -167,7 +176,7 @@
       "date": "2026-08-31",
       "low": 216.4600067138672,
       "high": 219.13999938964844,
-      "i": 169
+      "i": 166
     },
     {
       "name": "烏雲蓋頂",
@@ -175,7 +184,7 @@
       "date": "2026-08-25",
       "low": 220.19000244140625,
       "high": 222.5800018310547,
-      "i": 165
+      "i": 162
     },
     {
       "name": "利好反擊線",
@@ -183,7 +192,7 @@
       "date": "2026-08-05",
       "low": 210.97000122070312,
       "high": 213.9499969482422,
-      "i": 151
+      "i": 148
     },
     {
       "name": "上升三法",
@@ -191,7 +200,7 @@
       "date": "2026-07-10",
       "low": 228.47000122070312,
       "high": 231.0,
-      "i": 133
+      "i": 130
     }
   ]
 }

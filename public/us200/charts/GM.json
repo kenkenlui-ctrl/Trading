@@ -3,23 +3,23 @@
   "ticker_user": "GM",
   "name": "General Motors Company",
   "data_source": "yfinance",
-  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
+  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-13",
-    "O": 82.88,
-    "H": 84.59,
-    "L": 82.49,
-    "C": 84.0,
-    "prev_close": 82.37,
-    "chg_pct": 1.98
+    "date": "2026-10-16",
+    "O": 84.76,
+    "H": 85.79,
+    "L": 83.44,
+    "C": 83.96,
+    "prev_close": 83.66,
+    "chg_pct": 0.36
   },
   "phase": "downtrend_active",
-  "adx": 22.37,
-  "plus_di": 20.86,
-  "minus_di": 20.67,
-  "regime": "dead",
+  "adx": 19.3,
+  "plus_di": 24.57,
+  "minus_di": 18.37,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 91.85 (2026-07-29), trough 76.44 (2026-10-01), box top 84.59 (2026-10-13)",
+  "phase_evidence": "Peak 91.85 (2026-07-29), trough 76.44 (2026-10-01), box top 85.79 (2026-10-16)",
   "peak": {
     "date": "2026-07-29",
     "price": 91.85
@@ -29,52 +29,58 @@
     "price": 76.44
   },
   "box": {
-    "top": 84.59,
-    "top_date": "2026-10-13",
+    "top": 85.79,
+    "top_date": "2026-10-16",
     "bottom": 76.44,
-    "period": "2026-10-01 to 2026-10-13"
+    "period": "2026-10-01 to 2026-10-16"
   },
-  "drop_from_peak_pct": 8.5,
-  "recovery_from_crash_pct": 9.9,
+  "drop_from_peak_pct": 8.6,
+  "recovery_from_crash_pct": 9.8,
   "supports": [
     {
-      "level": 80.0,
+      "level": 84.0,
       "label": "S1 KEY",
-      "touches": 23,
-      "evidence": "tested 23x in base period; 4.8% below current"
+      "touches": 5,
+      "evidence": "tested 5x in base period; -0.0% below current"
+    },
+    {
+      "level": 80.0,
+      "label": "S2",
+      "touches": 15,
+      "evidence": "mid-base support, tested 15x"
     },
     {
       "level": 76.0,
-      "label": "S2 bottom",
-      "touches": 7,
+      "label": "S3 bottom",
+      "touches": 5,
       "evidence": "structural bottom, near crash low 76.44"
     }
   ],
   "resistances": [
     {
-      "level": 84.59,
+      "level": 85.79,
       "label": "R1 today high",
-      "evidence": "today's high 84.58999633789062"
+      "evidence": "today's high 85.79000091552734"
     }
   ],
   "position": {
-    "current": 84.0,
-    "in_box_pct": 93.1,
-    "nearest_support": "S1 KEY (80.0)",
-    "nearest_resistance": "R1 today high (84.59)"
+    "current": 83.96,
+    "in_box_pct": 81.3,
+    "nearest_support": "S1 KEY (84.0)",
+    "nearest_resistance": "R1 today high (85.79)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 82.88,
-    "H": 84.59,
-    "L": 82.49,
-    "C": 84.0,
-    "body_pct": 53.3,
-    "upper_wick_pct": 28.1,
-    "lower_wick_pct": 18.6
+    "touched_S1": true,
+    "close_position": "lower_half",
+    "O": 84.76,
+    "H": 85.79,
+    "L": 83.44,
+    "C": 83.96,
+    "body_pct": 34.0,
+    "upper_wick_pct": 43.8,
+    "lower_wick_pct": 22.1
   },
   "bias": {
     "short": {
@@ -86,25 +92,25 @@
       "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 80.0 (KEY support)",
-      "then": "still range; watch 84.59 for next test"
+      "if": "hold 84.0 (KEY support)",
+      "then": "still range; watch 85.79 for next test"
     },
     {
-      "if": "break 80.0 on close",
-      "then": "target 76.0 → lower (short-term bearish)"
+      "if": "break 84.0 on close",
+      "then": "target 80.0 → 76.0 (short-term bearish)"
     },
     {
       "if": "break 76.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 84.59 on close",
+      "if": "reclaim 85.79 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -129,31 +135,39 @@
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
-    "trigger_price": 87.86,
-    "target_price": 82.15,
-    "stop_price": 91.41,
-    "risk_pct": 4.04,
-    "reward_pct": 6.5,
-    "rr_ratio": 1.61,
+    "trigger_price": 85.79,
+    "target_price": 81.12,
+    "stop_price": 88.9,
+    "risk_pct": 3.63,
+    "reward_pct": 5.45,
+    "rr_ratio": 1.5,
     "phase_match": true,
-    "r1": 87.86,
+    "r1": 85.79,
     "s1": 76.44,
-    "s2": 74.8,
+    "s2": 80.43,
     "r2": 91.85,
     "r3": 85.41,
     "s3": 70.43,
     "s4": 71.6,
-    "current_position_pct": 66.2,
-    "notes": "SELL_R1: in box (76-88), entry at R1 88, target mid 82, stop 91 ｜ 52.2 條規則（SELL plan，resistance 87.86）：① 跌到 87.86、收市守住喺 87.86 上面 → 照 BUY 條 plan 做（入場 87.86，止蝕 91.41，目標 82.15）。② 收市跌穿 87.86 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 87.86 上面』。"
+    "current_position_pct": 80.4,
+    "notes": "SELL_R1: in box (76-86), entry at R1 86, target mid 81, stop 89 ｜ 52.2 條規則（SELL plan，resistance 85.79）：① 跌到 85.79、收市守住喺 85.79 上面 → 照 BUY 條 plan 做（入場 85.79，止蝕 88.90，目標 81.12）。② 收市跌穿 85.79 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 85.79 上面』。"
   },
   "patterns": [
+    {
+      "name": "三隻烏鴉",
+      "bias": "bearish",
+      "date": "2026-10-16",
+      "low": 83.44000244140625,
+      "high": 85.79000091552734,
+      "i": 199
+    },
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-10-08",
       "low": 80.11000061035156,
       "high": 82.4800033569336,
-      "i": 196
+      "i": 193
     },
     {
       "name": "平頭頂",
@@ -161,7 +175,7 @@
       "date": "2026-09-02",
       "low": 83.94999694824219,
       "high": 86.63999938964844,
-      "i": 171
+      "i": 168
     },
     {
       "name": "早晨之星",
@@ -169,7 +183,7 @@
       "date": "2026-08-21",
       "low": 85.79000091552734,
       "high": 88.36000061035156,
-      "i": 163
+      "i": 160
     },
     {
       "name": "利淡吞噬",
@@ -177,15 +191,7 @@
       "date": "2026-08-03",
       "low": 87.29000091552734,
       "high": 90.30000305175781,
-      "i": 149
-    },
-    {
-      "name": "利好反擊線",
-      "bias": "bullish",
-      "date": "2026-07-15",
-      "low": 76.79000091552734,
-      "high": 78.16000366210938,
-      "i": 136
+      "i": 146
     }
   ]
 }

@@ -3,21 +3,21 @@
   "ticker_user": "COF",
   "name": "Capital One Financial Corporati",
   "data_source": "yfinance",
-  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
+  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-13",
-    "O": 201.09,
-    "H": 202.51,
-    "L": 194.39,
-    "C": 198.07,
-    "prev_close": 201.14,
-    "chg_pct": -1.53
+    "date": "2026-10-16",
+    "O": 200.6,
+    "H": 204.01,
+    "L": 200.27,
+    "C": 201.74,
+    "prev_close": 198.86,
+    "chg_pct": 1.45
   },
   "phase": "base_building",
-  "adx": 25.17,
-  "plus_di": 19.33,
-  "minus_di": 29.59,
-  "regime": "trend",
+  "adx": 22.6,
+  "plus_di": 24.76,
+  "minus_di": 24.78,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 259.64 (2026-01-06), trough 174.24 (2026-06-11), box top 228.14 (2026-08-14)",
   "peak": {
@@ -32,16 +32,22 @@
     "top": 228.14,
     "top_date": "2026-08-14",
     "bottom": 174.24,
-    "period": "2026-06-11 to 2026-10-13"
+    "period": "2026-06-11 to 2026-10-16"
   },
-  "drop_from_peak_pct": 23.7,
-  "recovery_from_crash_pct": 13.7,
+  "drop_from_peak_pct": 22.3,
+  "recovery_from_crash_pct": 15.8,
   "supports": [
     {
-      "level": 192.0,
+      "level": 196.0,
       "label": "S1 KEY",
-      "touches": 12,
-      "evidence": "tested 12x in base period; 3.1% below current"
+      "touches": 21,
+      "evidence": "tested 21x in base period; 2.8% below current"
+    },
+    {
+      "level": 192.0,
+      "label": "S2",
+      "touches": 16,
+      "evidence": "mid-base support, tested 16x"
     },
     {
       "level": 174.24,
@@ -52,9 +58,9 @@
   ],
   "resistances": [
     {
-      "level": 202.51,
+      "level": 204.01,
       "label": "R1 today high",
-      "evidence": "today's high 202.50999450683594"
+      "evidence": "today's high 204.00999450683594"
     },
     {
       "level": 228.14,
@@ -63,28 +69,28 @@
     }
   ],
   "position": {
-    "current": 198.07,
-    "in_box_pct": 44.2,
-    "nearest_support": "S1 KEY (192.0)",
-    "nearest_resistance": "R1 today high (202.51)"
+    "current": 201.74,
+    "in_box_pct": 51.0,
+    "nearest_support": "S1 KEY (196.0)",
+    "nearest_resistance": "R1 today high (204.01)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 201.09,
-    "H": 202.51,
-    "L": 194.39,
-    "C": 198.07,
-    "body_pct": 37.2,
-    "upper_wick_pct": 17.5,
-    "lower_wick_pct": 45.3
+    "O": 200.6,
+    "H": 204.01,
+    "L": 200.27,
+    "C": 201.74,
+    "body_pct": 30.5,
+    "upper_wick_pct": 60.7,
+    "lower_wick_pct": 8.8
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (44% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -97,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 192.0 (KEY support)",
-      "then": "still range; watch 202.51 for next test"
+      "if": "hold 196.0 (KEY support)",
+      "then": "still range; watch 204.01 for next test"
     },
     {
-      "if": "break 192.0 on close",
-      "then": "target 174.24 → lower (short-term bearish)"
+      "if": "break 196.0 on close",
+      "then": "target 192.0 → 174.24 (short-term bearish)"
     },
     {
       "if": "break 174.24 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 202.51 on close",
+      "if": "reclaim 204.01 on close",
       "then": "short-term bullish; next test 228.14"
     },
     {
@@ -136,24 +142,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 207.0,
+    "target_price": 198.39,
+    "stop_price": 213.96,
+    "risk_pct": 3.36,
+    "reward_pct": 4.16,
+    "rr_ratio": 1.24,
     "phase_match": true,
-    "r1": 208.33,
+    "r1": 207.0,
     "s1": 189.78,
-    "s2": 195.89,
+    "s2": 196.51,
     "r2": 228.14,
     "r3": 213.32,
     "s3": 174.24,
     "s4": 174.98,
-    "current_position_pct": 44.7,
-    "notes": "WAIT_RANGE: in box (190-208), pos 45%, no clear setup"
+    "current_position_pct": 69.5,
+    "notes": "SELL_R1: in box (190-207), entry at R1 207, target mid 198, stop 214 ｜ 52.2 條規則（SELL plan，resistance 207.00）：① 跌到 207.00、收市守住喺 207.00 上面 → 照 BUY 條 plan 做（入場 207.00，止蝕 213.96，目標 198.39）。② 收市跌穿 207.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 207.00 上面』。"
   },
   "patterns": [
     {
@@ -162,7 +168,7 @@
       "date": "2026-10-08",
       "low": 193.02999877929688,
       "high": 199.57000732421875,
-      "i": 196
+      "i": 193
     },
     {
       "name": "刺穿線",
@@ -170,7 +176,7 @@
       "date": "2026-09-02",
       "low": 211.72999572753906,
       "high": 220.55999755859375,
-      "i": 171
+      "i": 168
     },
     {
       "name": "平頭底",
@@ -178,7 +184,7 @@
       "date": "2026-08-27",
       "low": 214.55999755859375,
       "high": 218.69000244140625,
-      "i": 167
+      "i": 164
     },
     {
       "name": "烏雲蓋頂",
@@ -186,7 +192,7 @@
       "date": "2026-08-17",
       "low": 221.33999633789062,
       "high": 226.8000030517578,
-      "i": 159
+      "i": 156
     },
     {
       "name": "利淡反擊線",
@@ -194,7 +200,7 @@
       "date": "2026-07-06",
       "low": 204.05999755859375,
       "high": 208.08999633789062,
-      "i": 129
+      "i": 126
     }
   ]
 }

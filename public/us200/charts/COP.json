@@ -3,84 +3,90 @@
   "ticker_user": "COP",
   "name": "ConocoPhillips",
   "data_source": "yfinance",
-  "data_range": "2025-12-26 → 2026-10-13 (200 daily bars)",
+  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-13",
-    "O": 138.47,
-    "H": 141.06,
-    "L": 138.0,
-    "C": 140.9,
-    "prev_close": 137.56,
-    "chg_pct": 2.43
+    "date": "2026-10-16",
+    "O": 142.69,
+    "H": 146.59,
+    "L": 142.24,
+    "C": 146.51,
+    "prev_close": 141.73,
+    "chg_pct": 3.37
   },
   "phase": "uptrend",
-  "adx": 19.73,
-  "plus_di": 36.65,
-  "minus_di": 16.19,
-  "regime": "range",
+  "adx": 25.03,
+  "plus_di": 41.49,
+  "minus_di": 13.18,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 141.62 (2026-09-15), trough 123.46 (2026-09-29), box top 141.06 (2026-10-13)",
+  "phase_evidence": "Peak 146.59 (2026-10-16), trough 123.46 (2026-09-29), box top 146.59 (2026-10-16)",
   "peak": {
-    "date": "2026-09-15",
-    "price": 141.62
+    "date": "2026-10-16",
+    "price": 146.59
   },
   "trough": {
     "date": "2026-09-29",
     "price": 123.46
   },
   "box": {
-    "top": 141.06,
-    "top_date": "2026-10-13",
+    "top": 146.59,
+    "top_date": "2026-10-16",
     "bottom": 123.46,
-    "period": "2026-09-29 to 2026-10-13"
+    "period": "2026-09-29 to 2026-10-16"
   },
-  "drop_from_peak_pct": 0.5,
-  "recovery_from_crash_pct": 14.1,
+  "drop_from_peak_pct": 0.1,
+  "recovery_from_crash_pct": 18.7,
   "supports": [
     {
-      "level": 136.0,
+      "level": 140.0,
       "label": "S1 KEY",
-      "touches": 12,
-      "evidence": "tested 12x in base period; 3.5% below current"
+      "touches": 4,
+      "evidence": "tested 4x in base period; 4.4% below current"
+    },
+    {
+      "level": 136.0,
+      "label": "S2",
+      "touches": 10,
+      "evidence": "mid-base support, tested 10x"
     },
     {
       "level": 132.0,
-      "label": "S2",
-      "touches": 9,
-      "evidence": "mid-base support, tested 9x"
+      "label": "S3",
+      "touches": 8,
+      "evidence": "mid-base support, tested 8x"
     },
     {
-      "level": 128.0,
-      "label": "S3 bottom",
-      "touches": 7,
-      "evidence": "structural bottom, near crash low 123.46"
+      "level": 123.46,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-09-29, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 141.06,
+      "level": 146.59,
       "label": "R1 today high",
-      "evidence": "today's high 141.05999755859375"
+      "evidence": "today's high 146.58999633789062"
     }
   ],
   "position": {
-    "current": 140.9,
-    "in_box_pct": 98.8,
-    "nearest_support": "S1 KEY (136.0)",
-    "nearest_resistance": "R1 today high (141.06)"
+    "current": 146.51,
+    "in_box_pct": 99.7,
+    "nearest_support": "S1 KEY (140.0)",
+    "nearest_resistance": "R1 today high (146.59)"
   },
   "kline_today": {
     "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 138.47,
-    "H": 141.06,
-    "L": 138.0,
-    "C": 140.9,
-    "body_pct": 79.4,
-    "upper_wick_pct": 5.2,
-    "lower_wick_pct": 15.4
+    "O": 142.69,
+    "H": 146.59,
+    "L": 142.24,
+    "C": 146.51,
+    "body_pct": 87.8,
+    "upper_wick_pct": 1.8,
+    "lower_wick_pct": 10.3
   },
   "bias": {
     "short": {
@@ -98,19 +104,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 136.0 (KEY support)",
-      "then": "still range; watch 141.06 for next test"
+      "if": "hold 140.0 (KEY support)",
+      "then": "still range; watch 146.59 for next test"
     },
     {
-      "if": "break 136.0 on close",
-      "then": "target 132.0 → 128.0 (short-term bearish)"
+      "if": "break 140.0 on close",
+      "then": "target 136.0 → 132.0 (short-term bearish)"
     },
     {
-      "if": "break 128.0 (crash low)",
+      "if": "break 123.46 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 141.06 on close",
+      "if": "reclaim 146.59 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -142,15 +148,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 141.06,
+    "r1": 146.59,
     "s1": 123.46,
     "s2": 113.21,
     "r2": 141.62,
     "r3": 128.28,
     "s3": 102.69,
-    "s4": 90.75,
-    "current_position_pct": 99.1,
-    "notes": "WAIT_RANGE: in box (123-141), pos 99%, no clear setup"
+    "s4": 93.13,
+    "current_position_pct": 99.7,
+    "notes": "WAIT_RANGE: in box (123-147), pos 100%, no clear setup"
   },
   "patterns": [
     {
@@ -159,7 +165,7 @@
       "date": "2026-09-16",
       "low": 132.3800048828125,
       "high": 139.19000244140625,
-      "i": 180
+      "i": 177
     },
     {
       "name": "三隻烏鴉",
@@ -167,7 +173,7 @@
       "date": "2026-09-10",
       "low": 134.6999969482422,
       "high": 138.88999938964844,
-      "i": 176
+      "i": 173
     },
     {
       "name": "利淡反擊線",
@@ -175,7 +181,7 @@
       "date": "2026-08-24",
       "low": 132.92999267578125,
       "high": 135.6300048828125,
-      "i": 164
+      "i": 161
     },
     {
       "name": "烏雲蓋頂",
@@ -183,7 +189,7 @@
       "date": "2026-07-17",
       "low": 113.44999694824219,
       "high": 116.26000213623047,
-      "i": 138
+      "i": 135
     },
     {
       "name": "刺穿線",
@@ -191,7 +197,7 @@
       "date": "2026-07-07",
       "low": 104.55000305175781,
       "high": 108.80999755859375,
-      "i": 130
+      "i": 127
     }
   ]
 }
