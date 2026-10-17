@@ -774,8 +774,10 @@ def _num(x, dp: int = 2) -> str:
 def render_v2_action_card(hit: dict | None, market: str) -> str:
     """The page's one and only Action Plan card, rendered from v2."""
     fmt = _num
+    _is_hk = str(market).upper() == "HK"
+    _badge = "未納入 v2" if _is_hk else "無訊號"
     if hit is None:
-        if str(market).lower() + "200" == "hk200":
+        if _is_hk:
             why = ("港股目前<b>未納入 v2</b>，所以冇 v2 行動計劃。"
                    "頁面下半部嘅價格行為分析仍然有效，但唔構成 v2 訊號。")
         else:
@@ -785,7 +787,7 @@ def render_v2_action_card(hit: dict | None, market: str) -> str:
       <div class="info-card fade-in">
         <h3 style="display:flex;justify-content:space-between;align-items:center;">
           <span>Action Plan</span>
-          <span style="font-family:var(--font-mono);font-size:var(--text-md);color:var(--dim);">無訊號</span>
+          <span style="font-family:var(--font-mono);font-size:var(--text-md);color:var(--dim);">{_badge}</span>
         </h3>
         <div class="phase-block">
           <span class="name">v2 訊號</span>
@@ -972,7 +974,11 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
         v2_stop_txt = fmt(v2_hit["stop"])
         v2_state, v2_colour = "SIGNAL", "var(--bull)"
     else:
-        v2_state, v2_colour = "無訊號", "var(--dim)"
+        # HK is a distinct state, not "no signal": it was never screened. The
+        # JSON-LD headline quotes v2_state, and "無訊號" there reads as a
+        # screened HK name that failed — which is not what happened.
+        v2_state = "未納入 v2" if str(market).upper() == "HK" else "無訊號"
+        v2_colour = "var(--dim)"
         v2_dist_txt = v2_entry_txt = v2_stop_txt = "—"
 
     # 2026-10-18: the hero used to read "{name} · BUY_S1 · 60% win (60d, n=5)

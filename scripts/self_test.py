@@ -2049,7 +2049,17 @@ def t_one_action_authority_per_page() -> None:
         if market == "hk200":
             if hit:
                 return "HK page unexpectedly has a v2 signal"
-            return "" if "未納入 v2" in t else "HK page does not say 'not covered by v2'"
+            if "未納入 v2" not in t:
+                return "HK page does not say 'not covered by v2'"
+            # "無訊號" means "screened and failed"; HK was never screened, so
+            # the phrase must not survive anywhere on the page — including the
+            # JSON-LD headline, which is what an AI answer engine quotes.
+            if "今日無 v2 訊號" in t:
+                return "HK page says 'no v2 signal' instead of 'not covered'"
+            m = _re.search(r'"headline":\s*"([^"]*)"', t)
+            if m and "無訊號" in m.group(1):
+                return f"JSON-LD headline asserts a verdict for HK: {m.group(1)}"
+            return ""
         if hit:
             if "v2 Action:" not in t or "SIGNAL" not in t:
                 return "v2 signal missing from page"
