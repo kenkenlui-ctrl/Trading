@@ -1,8 +1,9 @@
 {
   "ticker": "7741.T",
-  "asof": "2026-10-16",
-  "close": 25650.0,
-  "chg_pct": 2.7850130234422066,
+  "ticker_user": "7741.T",
+  "name": "HOYA Corporation",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 24955.0,
@@ -12,15 +13,29 @@
     "prev_close": 24955.0,
     "chg_pct": 2.7850130234422066
   },
-  "name": "HOYA Corporation",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 25650.0,
-    "in_box_pct": 99.1,
-    "nearest_support": "S1 KEY (24880.0)",
-    "nearest_resistance": "R1 today high (25680.0)"
+  "adx": 25.54,
+  "plus_di": 32.44,
+  "minus_di": 13.29,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 30400.0 (2026-04-15), trough 22165.0 (2026-09-16), box top 25750.0 (2026-10-14)",
+  "peak": {
+    "date": "2026-04-15",
+    "price": 30400.0
   },
+  "trough": {
+    "date": "2026-09-16",
+    "price": 22165.0
+  },
+  "box": {
+    "top": 25750.0,
+    "top_date": "2026-10-14",
+    "bottom": 22165.0,
+    "period": "2026-09-16 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 15.6,
+  "recovery_from_crash_pct": 15.7,
   "supports": [
     {
       "level": 24880.0,
@@ -42,6 +57,75 @@
       "evidence": "today's high 25680.0"
     }
   ],
+  "position": {
+    "current": 25650.0,
+    "in_box_pct": 99.1,
+    "nearest_support": "S1 KEY (24880.0)",
+    "nearest_resistance": "R1 today high (25680.0)"
+  },
+  "kline_today": {
+    "type": "bullish_reclaim",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 24955.0,
+    "H": 25680.0,
+    "L": 24950.0,
+    "C": 25650.0,
+    "body_pct": 95.2,
+    "upper_wick_pct": 4.1,
+    "lower_wick_pct": 0.7
+  },
+  "bias": {
+    "short": {
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 24880.0 (KEY support)",
+      "then": "still range; watch 25680.0 for next test"
+    },
+    {
+      "if": "break 24880.0 on close",
+      "then": "target 22165.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 22165.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 25680.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
     "strategy": "WAIT_REGIME",
@@ -61,5 +145,63 @@
     "s4": 23345.0,
     "current_position_pct": 97.2,
     "notes": "WAIT_RANGE: in box (22165-25750), pos 97%, no clear setup"
+  },
+  "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-10-07",
+      "low": 25060.0,
+      "high": 25365.0,
+      "i": 193
+    },
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-09-16",
+      "low": 22165.0,
+      "high": 22455.0,
+      "i": 181
+    },
+    {
+      "name": "早晨之星",
+      "bias": "bullish",
+      "date": "2026-09-01",
+      "low": 24435.0,
+      "high": 25130.0,
+      "i": 170
+    },
+    {
+      "name": "吊頸",
+      "bias": "bearish",
+      "date": "2026-08-14",
+      "low": 26340.0,
+      "high": 26845.0,
+      "i": 158
+    },
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-08-06",
+      "low": 24950.0,
+      "high": 25600.0,
+      "i": 153
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 25650.0,
+  "chg_pct": 2.7850130234422066,
+  "kline": {
+    "type": "bullish_reclaim",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 24955.0,
+    "H": 25680.0,
+    "L": 24950.0,
+    "C": 25650.0,
+    "body_pct": 95.2,
+    "upper_wick_pct": 4.1,
+    "lower_wick_pct": 0.7
   }
 }

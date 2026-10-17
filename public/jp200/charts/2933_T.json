@@ -1,32 +1,47 @@
 {
   "ticker": "2933.T",
-  "asof": "2026-10-14",
-  "close": NaN,
-  "chg_pct": NaN,
-  "last_bar": {
-    "date": "2026-10-14",
-    "O": 1067.0,
-    "H": 1072.0,
-    "L": 1060.0,
-    "C": NaN,
-    "prev_close": 1073.0,
-    "chg_pct": NaN
-  },
+  "ticker_user": "2933.T",
   "name": "Kibun Foods Inc.",
-  "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 1073.0,
-    "in_box_pct": 34.3,
-    "nearest_support": "S1 KEY (1040.0)",
-    "nearest_resistance": "R3 Sep high (1144.0)"
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
+  "last_bar": {
+    "date": "2026-10-16",
+    "O": 1073.0,
+    "H": 1075.0,
+    "L": 1063.0,
+    "C": 1072.0,
+    "prev_close": 1074.0,
+    "chg_pct": -0.18621973929237035
   },
+  "phase": "downtrend_active",
+  "adx": 32.73,
+  "plus_di": 17.36,
+  "minus_di": 27.47,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 1144.0 (2026-09-01), trough 1035.0 (2026-10-08), box top 1075.0 (2026-10-16)",
+  "peak": {
+    "date": "2026-09-01",
+    "price": 1144.0
+  },
+  "trough": {
+    "date": "2026-10-08",
+    "price": 1035.0
+  },
+  "box": {
+    "top": 1075.0,
+    "top_date": "2026-10-16",
+    "bottom": 1035.0,
+    "period": "2026-10-08 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 6.3,
+  "recovery_from_crash_pct": 3.6,
   "supports": [
     {
       "level": 1040.0,
       "label": "S1 KEY",
       "touches": 4,
-      "evidence": "tested 4x in base period; 3.1% below current"
+      "evidence": "tested 4x in base period; 3.0% below current"
     },
     {
       "level": 1036.0,
@@ -37,14 +52,78 @@
   ],
   "resistances": [
     {
-      "level": 1073.0,
+      "level": 1075.0,
       "label": "R1 today high",
-      "evidence": "today's high 1073.0"
+      "evidence": "today's high 1075.0"
+    }
+  ],
+  "position": {
+    "current": 1072.0,
+    "in_box_pct": 92.3,
+    "nearest_support": "S1 KEY (1040.0)",
+    "nearest_resistance": "R1 today high (1075.0)"
+  },
+  "kline_today": {
+    "type": "bearish_rejection",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 1073.0,
+    "H": 1075.0,
+    "L": 1063.0,
+    "C": 1072.0,
+    "body_pct": 8.3,
+    "upper_wick_pct": 16.7,
+    "lower_wick_pct": 75.0
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 1040.0 (KEY support)",
+      "then": "still range; watch 1075.0 for next test"
     },
     {
-      "level": 1144.0,
-      "label": "R3 Sep high",
-      "evidence": "box top 1144.0, base period high"
+      "if": "break 1040.0 on close",
+      "then": "target 1036.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 1036.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 1075.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -61,10 +140,68 @@
     "s1": 1035.0,
     "s2": 1072.0,
     "r2": 1144.0,
-    "r3": 1085.0,
+    "r3": 1088.0,
     "s3": 1013.0,
     "s4": 1022.0,
-    "current_position_pct": 36.9,
-    "notes": "WAIT_RANGE: in box (1035-1138), pos 37%, no clear setup"
+    "current_position_pct": 35.9,
+    "notes": "WAIT_RANGE: in box (1035-1138), pos 36%, no clear setup"
+  },
+  "patterns": [
+    {
+      "name": "利好吞噬",
+      "bias": "bullish",
+      "date": "2026-10-15",
+      "low": 1062.0,
+      "high": 1074.0,
+      "i": 198
+    },
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-10-09",
+      "low": 1037.0,
+      "high": 1055.0,
+      "i": 195
+    },
+    {
+      "name": "上升三法",
+      "bias": "bullish",
+      "date": "2026-09-29",
+      "low": 1095.0,
+      "high": 1110.0,
+      "i": 187
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-09-18",
+      "low": 1126.0,
+      "high": 1136.0,
+      "i": 183
+    },
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-09-01",
+      "low": 1133.0,
+      "high": 1144.0,
+      "i": 170
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 1072.0,
+  "chg_pct": -0.18621973929237035,
+  "kline": {
+    "type": "bearish_rejection",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 1073.0,
+    "H": 1075.0,
+    "L": 1063.0,
+    "C": 1072.0,
+    "body_pct": 8.3,
+    "upper_wick_pct": 16.7,
+    "lower_wick_pct": 75.0
   }
 }

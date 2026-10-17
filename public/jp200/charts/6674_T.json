@@ -1,8 +1,9 @@
 {
   "ticker": "6674.T",
-  "asof": "2026-10-16",
-  "close": 5030.0,
-  "chg_pct": 0.11942675159235527,
+  "ticker_user": "6674.T",
+  "name": "GS Yuasa Corporation",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 5084.0,
@@ -12,15 +13,29 @@
     "prev_close": 5024.0,
     "chg_pct": 0.11942675159235527
   },
-  "name": "GS Yuasa Corporation",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 5030.0,
-    "in_box_pct": 16.7,
-    "nearest_support": "S1 bottom (4880.0)",
-    "nearest_resistance": "R1 today high (5099.0)"
+  "adx": 17.05,
+  "plus_di": 19.87,
+  "minus_di": 33.61,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 7899.0 (2026-06-22), trough 4881.0 (2026-09-04), box top 5779.0 (2026-10-07)",
+  "peak": {
+    "date": "2026-06-22",
+    "price": 7899.0
   },
+  "trough": {
+    "date": "2026-09-04",
+    "price": 4881.0
+  },
+  "box": {
+    "top": 5779.0,
+    "top_date": "2026-10-07",
+    "bottom": 4881.0,
+    "period": "2026-09-04 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 36.3,
+  "recovery_from_crash_pct": 3.1,
   "supports": [
     {
       "level": 4880.0,
@@ -39,6 +54,79 @@
       "level": 5779.0,
       "label": "R3 Oct high",
       "evidence": "box top 5779.0, base period high"
+    }
+  ],
+  "position": {
+    "current": 5030.0,
+    "in_box_pct": 16.7,
+    "nearest_support": "S1 bottom (4880.0)",
+    "nearest_resistance": "R1 today high (5099.0)"
+  },
+  "kline_today": {
+    "type": "bearish_pullback",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 5084.0,
+    "H": 5099.0,
+    "L": 4966.0,
+    "C": 5030.0,
+    "body_pct": 40.6,
+    "upper_wick_pct": 11.3,
+    "lower_wick_pct": 48.1
+  },
+  "bias": {
+    "short": {
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (17% of box)"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 4880.0 (KEY support)",
+      "then": "still range; watch 5099.0 for next test"
+    },
+    {
+      "if": "break 4880.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 4880.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 5099.0 on close",
+      "then": "short-term bullish; next test 5779.0"
+    },
+    {
+      "if": "break 5779.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -60,5 +148,63 @@
     "s4": 3532.0,
     "current_position_pct": 7.9,
     "notes": "WAIT_RANGE: in box (4966-5779), pos 8%, no clear setup"
+  },
+  "patterns": [
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-10-08",
+      "low": 5488.0,
+      "high": 5668.0,
+      "i": 194
+    },
+    {
+      "name": "三個白武士",
+      "bias": "bullish",
+      "date": "2026-09-14",
+      "low": 4913.0,
+      "high": 5100.0,
+      "i": 179
+    },
+    {
+      "name": "早晨之星",
+      "bias": "bullish",
+      "date": "2026-08-21",
+      "low": 5115.0,
+      "high": 5278.0,
+      "i": 163
+    },
+    {
+      "name": "利好吞噬",
+      "bias": "bullish",
+      "date": "2026-07-03",
+      "low": 6446.0,
+      "high": 6798.0,
+      "i": 130
+    },
+    {
+      "name": "利淡吞噬",
+      "bias": "bearish",
+      "date": "2026-06-25",
+      "low": 7034.0,
+      "high": 7447.0,
+      "i": 124
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 5030.0,
+  "chg_pct": 0.11942675159235527,
+  "kline": {
+    "type": "bearish_pullback",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 5084.0,
+    "H": 5099.0,
+    "L": 4966.0,
+    "C": 5030.0,
+    "body_pct": 40.6,
+    "upper_wick_pct": 11.3,
+    "lower_wick_pct": 48.1
   }
 }

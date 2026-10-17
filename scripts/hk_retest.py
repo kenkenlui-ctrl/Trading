@@ -328,10 +328,41 @@ def walk(cands: list[dict], cost_rt: float) -> tuple[pd.DataFrame, dict]:
 
 # -------- equal-weight B&H of the universe --------
 def ew_bh(px: dict[str, pd.DataFrame], cal: pd.DatetimeIndex) -> pd.Series:
-    b1src = pd.DataFrame({s: p.close for s, p in px.items()}).reindex(cal)
-    b1src = b1src.loc[b1src.notna().any(axis=1)]
-    cal = b1src.index
-    mm = b1src.pct_change().groupby([cal.year, cal.month]).transform("mean").mean(axis=1)
+    """TRUE monthly-rebalanced equal-weight buy-and-hold of the same names.
+
+    2026-10-17 CORRECTION. This used to be:
+
+        mm = b1src.pct_change().groupby([cal.year, cal.month]).transform("mean").mean(axis=1)
+
+    `transform("mean")` returns, for each calendar month, each ticker's MEAN
+    DAILY return, broadcast back onto EVERY session in that month — including
+    the first, whose pct_change() is genuinely NaN, so the benchmark also
+    manufactured one full day of return per month out of nothing. The result is
+    a series that compounds the arithmetic mean daily return instead of the
+    realised path, which adds roughly n*sigma^2/2 per month: a volatility
+    artefact worth several pp/yr that inflates the BENCHMARK, making the
+    strategy look worse than it is.
+
+    Measured artefact on this repo's own universe/windows (see
+    scripts/measure_ew_bias.py), daily-rebalanced EW as the lower bound:
+        hk200 +4.66pp/yr   us200 +2.47pp/yr   jp200 +1.38pp/yr
+
+    Monthly rebalance is used rather than daily because it is the LESS
+    forgiving benchmark for the strategy — a higher EW makes v2 harder to beat.
+    Costs are NOT charged here, matching the published "held passively" claim;
+    only the rebalance mechanism changed.
+    """
+    src = pd.DataFrame({s: p.close for s, p in px.items()}).reindex(cal)
+    src = src.loc[src.notna().any(axis=1)]
+    if src.empty:
+        return pd.Series(dtype=float)
+    mr = src.resample("ME").last().pct_change()
+    # dropna() is load-bearing: the first month-end pct_change() is genuinely
+    # NaN, and the window CAGR maths below divides by the first value in the
+    # slice — a leading NaN turns every window that starts at the series head
+    # into NaN. The old transform("mean") version never hit this because it
+    # manufactured a value for that first session.
+    mm = mr.mean(axis=1).dropna()
     return (100_000 * (1 + mm).cumprod()).ffill()
 
 

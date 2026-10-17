@@ -1,8 +1,9 @@
 {
   "ticker": "3191.T",
-  "asof": "2026-10-16",
-  "close": 2296.0,
-  "chg_pct": 0.48140043763675866,
+  "ticker_user": "3191.T",
+  "name": "Joyful Honda Co.,Ltd.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 2288.0,
@@ -12,15 +13,29 @@
     "prev_close": 2285.0,
     "chg_pct": 0.48140043763675866
   },
-  "name": "Joyful Honda Co.,Ltd.",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 2296.0,
-    "in_box_pct": 68.2,
-    "nearest_support": "S1 KEY (2248.0)",
-    "nearest_resistance": "R3 Aug high (2324.0)"
+  "adx": 14.0,
+  "plus_di": 25.46,
+  "minus_di": 18.96,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 2545.0 (2026-07-30), trough 2171.0 (2026-08-05), box top 2324.0 (2026-08-12)",
+  "peak": {
+    "date": "2026-07-30",
+    "price": 2545.0
   },
+  "trough": {
+    "date": "2026-08-05",
+    "price": 2171.0
+  },
+  "box": {
+    "top": 2324.0,
+    "top_date": "2026-08-12",
+    "bottom": 2171.0,
+    "period": "2026-08-05 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 9.8,
+  "recovery_from_crash_pct": 5.8,
   "supports": [
     {
       "level": 2248.0,
@@ -53,6 +68,79 @@
       "evidence": "box top 2324.0, base period high"
     }
   ],
+  "position": {
+    "current": 2296.0,
+    "in_box_pct": 68.2,
+    "nearest_support": "S1 KEY (2248.0)",
+    "nearest_resistance": "R3 Aug high (2324.0)"
+  },
+  "kline_today": {
+    "type": "bullish_hold",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 2288.0,
+    "H": 2296.0,
+    "L": 2274.0,
+    "C": 2296.0,
+    "body_pct": 36.4,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 63.6
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 2248.0 (KEY support)",
+      "then": "still range; watch 2296.0 for next test"
+    },
+    {
+      "if": "break 2248.0 on close",
+      "then": "target 2244.0 → 2236.0 (short-term bearish)"
+    },
+    {
+      "if": "break 2236.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 2296.0 on close",
+      "then": "short-term bullish; next test 2324.0"
+    },
+    {
+      "if": "break 2324.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
@@ -72,5 +160,63 @@
     "s4": 2045.0,
     "current_position_pct": 84.0,
     "notes": "SELL_R1: in box (2186-2317), entry at R1 2317, target mid 2252, stop 2365 ｜ 52.2 條規則（SELL plan，resistance 2317.00）：① 跌到 2317.00、收市守住喺 2317.00 上面 → 照 BUY 條 plan 做（入場 2317.00，止蝕 2364.79，目標 2251.50）。② 收市跌穿 2317.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2317.00 上面』。"
+  },
+  "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-09-18",
+      "low": 2250.0,
+      "high": 2291.0,
+      "i": 183
+    },
+    {
+      "name": "平頭底",
+      "bias": "bullish",
+      "date": "2026-09-11",
+      "low": 2214.0,
+      "high": 2246.0,
+      "i": 178
+    },
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-07-22",
+      "low": 2268.0,
+      "high": 2291.0,
+      "i": 142
+    },
+    {
+      "name": "三隻烏鴉",
+      "bias": "bearish",
+      "date": "2026-07-06",
+      "low": 2213.0,
+      "high": 2252.0,
+      "i": 131
+    },
+    {
+      "name": "利好反擊線",
+      "bias": "bullish",
+      "date": "2026-06-24",
+      "low": 2170.0,
+      "high": 2203.0,
+      "i": 123
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 2296.0,
+  "chg_pct": 0.48140043763675866,
+  "kline": {
+    "type": "bullish_hold",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 2288.0,
+    "H": 2296.0,
+    "L": 2274.0,
+    "C": 2296.0,
+    "body_pct": 36.4,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 63.6
   }
 }

@@ -1,8 +1,9 @@
 {
   "ticker": "4568.T",
-  "asof": "2026-10-16",
-  "close": 2740.5,
-  "chg_pct": 3.3760844964164427,
+  "ticker_user": "4568.T",
+  "name": "Daiichi Sankyo Company, Limited",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 2682.0,
@@ -12,15 +13,29 @@
     "prev_close": 2651.0,
     "chg_pct": 3.3760844964164427
   },
-  "name": "Daiichi Sankyo Company, Limited",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 2740.5,
-    "in_box_pct": 61.2,
-    "nearest_support": "S1 KEY (2680.0)",
-    "nearest_resistance": "R1 today high (2768.5)"
+  "adx": 17.72,
+  "plus_di": 28.66,
+  "minus_di": 30.2,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 3625.0 (2026-01-13), trough 2390.0 (2026-06-05), box top 2962.5 (2026-09-25)",
+  "peak": {
+    "date": "2026-01-13",
+    "price": 3625.0
   },
+  "trough": {
+    "date": "2026-06-05",
+    "price": 2390.0
+  },
+  "box": {
+    "top": 2962.5,
+    "top_date": "2026-09-25",
+    "bottom": 2390.0,
+    "period": "2026-06-05 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 24.4,
+  "recovery_from_crash_pct": 14.7,
   "supports": [
     {
       "level": 2680.0,
@@ -59,6 +74,79 @@
       "evidence": "box top 2962.5, base period high"
     }
   ],
+  "position": {
+    "current": 2740.5,
+    "in_box_pct": 61.2,
+    "nearest_support": "S1 KEY (2680.0)",
+    "nearest_resistance": "R1 today high (2768.5)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 2682.0,
+    "H": 2768.5,
+    "L": 2670.0,
+    "C": 2740.5,
+    "body_pct": 59.4,
+    "upper_wick_pct": 28.4,
+    "lower_wick_pct": 12.2
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 2680.0 (KEY support)",
+      "then": "still range; watch 2768.5 for next test"
+    },
+    {
+      "if": "break 2680.0 on close",
+      "then": "target 2672.0 → 2624.0 (short-term bearish)"
+    },
+    {
+      "if": "break 2390.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 2768.5 on close",
+      "then": "short-term bullish; next test 2962.5"
+    },
+    {
+      "if": "break 2962.5 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
     "strategy": "WAIT_RANGE",
@@ -78,5 +166,63 @@
     "s4": 2684.0,
     "current_position_pct": 47.7,
     "notes": "WAIT_RANGE: in box (2538-2962), pos 48%, no clear setup"
+  },
+  "patterns": [
+    {
+      "name": "利好反擊線",
+      "bias": "bullish",
+      "date": "2026-10-06",
+      "low": 2711.0,
+      "high": 2757.0,
+      "i": 192
+    },
+    {
+      "name": "利淡吞噬",
+      "bias": "bearish",
+      "date": "2026-09-28",
+      "low": 2819.0,
+      "high": 2875.5,
+      "i": 186
+    },
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-09-10",
+      "low": 2679.0,
+      "high": 2709.5,
+      "i": 177
+    },
+    {
+      "name": "平頭頂",
+      "bias": "bearish",
+      "date": "2026-07-31",
+      "low": 2562.0,
+      "high": 2775.5,
+      "i": 149
+    },
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-07-13",
+      "low": 2671.0,
+      "high": 2722.5,
+      "i": 136
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 2740.5,
+  "chg_pct": 3.3760844964164427,
+  "kline": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 2682.0,
+    "H": 2768.5,
+    "L": 2670.0,
+    "C": 2740.5,
+    "body_pct": 59.4,
+    "upper_wick_pct": 28.4,
+    "lower_wick_pct": 12.2
   }
 }

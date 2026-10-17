@@ -1,8 +1,9 @@
 {
   "ticker": "6367.T",
-  "asof": "2026-10-16",
-  "close": 21345.0,
-  "chg_pct": 0.16424213984045366,
+  "ticker_user": "6367.T",
+  "name": "Daikin Industries,Ltd.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 21225.0,
@@ -12,15 +13,29 @@
     "prev_close": 21310.0,
     "chg_pct": 0.16424213984045366
   },
-  "name": "Daikin Industries,Ltd.",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 21345.0,
-    "in_box_pct": 82.2,
-    "nearest_support": "S1 KEY (20764.0)",
-    "nearest_resistance": "R1 today high (21490.0)"
+  "adx": 22.29,
+  "plus_di": 22.46,
+  "minus_di": 19.45,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 26440.0 (2026-07-07), trough 20210.0 (2026-09-16), box top 21585.0 (2026-10-15)",
+  "peak": {
+    "date": "2026-07-07",
+    "price": 26440.0
   },
+  "trough": {
+    "date": "2026-09-16",
+    "price": 20210.0
+  },
+  "box": {
+    "top": 21585.0,
+    "top_date": "2026-10-15",
+    "bottom": 20210.0,
+    "period": "2026-09-16 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 19.3,
+  "recovery_from_crash_pct": 5.6,
   "supports": [
     {
       "level": 20764.0,
@@ -48,6 +63,75 @@
       "evidence": "today's high 21490.0"
     }
   ],
+  "position": {
+    "current": 21345.0,
+    "in_box_pct": 82.2,
+    "nearest_support": "S1 KEY (20764.0)",
+    "nearest_resistance": "R1 today high (21490.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 21225.0,
+    "H": 21490.0,
+    "L": 21225.0,
+    "C": 21345.0,
+    "body_pct": 45.3,
+    "upper_wick_pct": 54.7,
+    "lower_wick_pct": 0.0
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 20764.0 (KEY support)",
+      "then": "still range; watch 21490.0 for next test"
+    },
+    {
+      "if": "break 20764.0 on close",
+      "then": "target 20728.0 → 20676.0 (short-term bearish)"
+    },
+    {
+      "if": "break 20676.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 21490.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
@@ -67,5 +151,63 @@
     "s4": 17380.0,
     "current_position_pct": 82.5,
     "notes": "SELL_R1: in box (20210-21585), entry at R1 21585, target mid 20898, stop 22103 ｜ 52.2 條規則（SELL plan，resistance 21585.00）：① 跌到 21585.00、收市守住喺 21585.00 上面 → 照 BUY 條 plan 做（入場 21585.00，止蝕 22102.90，目標 20897.50）。② 收市跌穿 21585.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 21585.00 上面』。"
+  },
+  "patterns": [
+    {
+      "name": "利好反擊線",
+      "bias": "bullish",
+      "date": "2026-09-24",
+      "low": 20455.0,
+      "high": 21035.0,
+      "i": 184
+    },
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-09-09",
+      "low": 20300.0,
+      "high": 20875.0,
+      "i": 176
+    },
+    {
+      "name": "三個白武士",
+      "bias": "bullish",
+      "date": "2026-09-03",
+      "low": 20675.0,
+      "high": 20930.0,
+      "i": 172
+    },
+    {
+      "name": "黃昏之星",
+      "bias": "bearish",
+      "date": "2026-07-08",
+      "low": 25275.0,
+      "high": 25880.0,
+      "i": 133
+    },
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-06-05",
+      "low": 23625.0,
+      "high": 23900.0,
+      "i": 110
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 21345.0,
+  "chg_pct": 0.16424213984045366,
+  "kline": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 21225.0,
+    "H": 21490.0,
+    "L": 21225.0,
+    "C": 21345.0,
+    "body_pct": 45.3,
+    "upper_wick_pct": 54.7,
+    "lower_wick_pct": 0.0
   }
 }

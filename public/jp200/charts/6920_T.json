@@ -1,8 +1,9 @@
 {
   "ticker": "6920.T",
-  "asof": "2026-10-16",
-  "close": 41200.0,
-  "chg_pct": 5.048444671086183,
+  "ticker_user": "6920.T",
+  "name": "Lasertec Corporation",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 39900.0,
@@ -12,15 +13,29 @@
     "prev_close": 39220.0,
     "chg_pct": 5.048444671086183
   },
-  "name": "Lasertec Corporation",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 41200.0,
-    "in_box_pct": 54.7,
-    "nearest_support": "S1 KEY (39832.0)",
-    "nearest_resistance": "R1 today high (41920.0)"
+  "adx": 33.79,
+  "plus_di": 22.14,
+  "minus_di": 19.59,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 58580.0 (2026-06-19), trough 31840.0 (2026-09-03), box top 48950.0 (2026-10-02)",
+  "peak": {
+    "date": "2026-06-19",
+    "price": 58580.0
   },
+  "trough": {
+    "date": "2026-09-03",
+    "price": 31840.0
+  },
+  "box": {
+    "top": 48950.0,
+    "top_date": "2026-10-02",
+    "bottom": 31840.0,
+    "period": "2026-09-03 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 29.7,
+  "recovery_from_crash_pct": 29.4,
   "supports": [
     {
       "level": 39832.0,
@@ -47,6 +62,79 @@
       "evidence": "box top 48950.0, base period high"
     }
   ],
+  "position": {
+    "current": 41200.0,
+    "in_box_pct": 54.7,
+    "nearest_support": "S1 KEY (39832.0)",
+    "nearest_resistance": "R1 today high (41920.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 39900.0,
+    "H": 41920.0,
+    "L": 39830.0,
+    "C": 41200.0,
+    "body_pct": 62.2,
+    "upper_wick_pct": 34.4,
+    "lower_wick_pct": 3.3
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 39832.0 (KEY support)",
+      "then": "still range; watch 41920.0 for next test"
+    },
+    {
+      "if": "break 39832.0 on close",
+      "then": "target 31840.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 31840.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 41920.0 on close",
+      "then": "short-term bullish; next test 48950.0"
+    },
+    {
+      "if": "break 48950.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
     "strategy": "WAIT_RANGE",
@@ -66,5 +154,63 @@
     "s4": 27800.0,
     "current_position_pct": 49.1,
     "notes": "WAIT_RANGE: in box (33710-48950), pos 49%, no clear setup"
+  },
+  "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-09-30",
+      "low": 40730.0,
+      "high": 42860.0,
+      "i": 188
+    },
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-09-03",
+      "low": 31840.0,
+      "high": 34060.0,
+      "i": 172
+    },
+    {
+      "name": "利好身懷六甲",
+      "bias": "bullish",
+      "date": "2026-08-19",
+      "low": 34610.0,
+      "high": 36040.0,
+      "i": 161
+    },
+    {
+      "name": "利好吞噬",
+      "bias": "bullish",
+      "date": "2026-08-13",
+      "low": 40140.0,
+      "high": 41580.0,
+      "i": 157
+    },
+    {
+      "name": "平頭底",
+      "bias": "bullish",
+      "date": "2026-08-04",
+      "low": 40870.0,
+      "high": 44100.0,
+      "i": 151
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 41200.0,
+  "chg_pct": 5.048444671086183,
+  "kline": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 39900.0,
+    "H": 41920.0,
+    "L": 39830.0,
+    "C": 41200.0,
+    "body_pct": 62.2,
+    "upper_wick_pct": 34.4,
+    "lower_wick_pct": 3.3
   }
 }

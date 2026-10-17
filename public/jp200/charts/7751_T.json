@@ -1,8 +1,9 @@
 {
   "ticker": "7751.T",
-  "asof": "2026-10-16",
-  "close": 4817.0,
-  "chg_pct": 0.9641584573464757,
+  "ticker_user": "7751.T",
+  "name": "Canon Inc.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 4799.0,
@@ -12,15 +13,29 @@
     "prev_close": 4771.0,
     "chg_pct": 0.9641584573464757
   },
-  "name": "Canon Inc.",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 4817.0,
-    "in_box_pct": 94.5,
-    "nearest_support": "S1 KEY (4608.0)",
-    "nearest_resistance": "R1 today high (4865.0)"
+  "adx": 27.41,
+  "plus_di": 29.15,
+  "minus_di": 9.46,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 5033.0 (2026-02-09), trough 3987.0 (2026-05-07), box top 4865.0 (2026-10-16)",
+  "peak": {
+    "date": "2026-02-09",
+    "price": 5033.0
   },
+  "trough": {
+    "date": "2026-05-07",
+    "price": 3987.0
+  },
+  "box": {
+    "top": 4865.0,
+    "top_date": "2026-10-16",
+    "bottom": 3987.0,
+    "period": "2026-05-07 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 4.3,
+  "recovery_from_crash_pct": 20.8,
   "supports": [
     {
       "level": 4608.0,
@@ -54,6 +69,75 @@
       "evidence": "today's high 4865.0"
     }
   ],
+  "position": {
+    "current": 4817.0,
+    "in_box_pct": 94.5,
+    "nearest_support": "S1 KEY (4608.0)",
+    "nearest_resistance": "R1 today high (4865.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 4799.0,
+    "H": 4865.0,
+    "L": 4791.0,
+    "C": 4817.0,
+    "body_pct": 24.3,
+    "upper_wick_pct": 64.9,
+    "lower_wick_pct": 10.8
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 4608.0 (KEY support)",
+      "then": "still range; watch 4865.0 for next test"
+    },
+    {
+      "if": "break 4608.0 on close",
+      "then": "target 4576.0 → 4568.0 (short-term bearish)"
+    },
+    {
+      "if": "break 3987.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 4865.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
     "strategy": "WAIT_REGIME",
@@ -73,5 +157,47 @@
     "s4": 4214.0,
     "current_position_pct": 89.5,
     "notes": "WAIT_RANGE: in box (4409-4865), pos 89%, no clear setup"
+  },
+  "patterns": [
+    {
+      "name": "上升三法",
+      "bias": "bullish",
+      "date": "2026-09-08",
+      "low": 4362.0,
+      "high": 4486.0,
+      "i": 175
+    },
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-08-12",
+      "low": 4551.0,
+      "high": 4638.0,
+      "i": 156
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-07-15",
+      "low": 4384.0,
+      "high": 4444.0,
+      "i": 138
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 4817.0,
+  "chg_pct": 0.9641584573464757,
+  "kline": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 4799.0,
+    "H": 4865.0,
+    "L": 4791.0,
+    "C": 4817.0,
+    "body_pct": 24.3,
+    "upper_wick_pct": 64.9,
+    "lower_wick_pct": 10.8
   }
 }

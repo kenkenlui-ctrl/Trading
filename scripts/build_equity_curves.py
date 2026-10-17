@@ -13,6 +13,7 @@ import statistics
 from datetime import datetime, timedelta
 from pathlib import Path
 from collections import Counter
+import perf_figures  # noqa: E402
 
 REPO = Path("/Users/kenken/dev/dsa-hk")
 
@@ -302,8 +303,8 @@ def render_html(horizon: str, hold_days: int, label: str, r: dict) -> str:
 本頁 {r['n_traded']} 單係機器喺 9 年內產生嘅，唔係你會做到嘅單數。
 入場係掛 S1 限價單，但模擬假設每個訊號都以 S1 精確成交。
 <b>持倉期越短，單數越多、曲線越靚</b> —— 呢個係供給假設嘅產物，唔係 alpha。
-只有 <b>T+10（現行引擎規則）</b> 嘅回報同已發布嘅組合測試一致（美股 27.2% vs
-同一批股票等權持有 27.4%，差 −0.2 pp/年）。絕對水平仍然帶靜態倖存者偏差（今日名單倒套 9 年），
+只有 <b>T+10（現行引擎規則）</b> 嘅回報同已發布嘅組合測試同源。組合測試嗰邊：{perf_figures.us_gap_sentence('zh')}。
+絕對水平仍然帶靜態倖存者偏差（今日名單倒套 9 年），
 可比較嘅只有四條曲線之間嘅關係。
 </div>
 
@@ -422,9 +423,8 @@ T+1 報 {rows[0]['cagr']:+.1f}%/年，係因為佢喺同一段時間產生 {rows
 
 <div class="cav">
 <strong>點解淨係 T+10 可以信？</strong><br>
-只有 T+10 嘅絕對水平同已發布嘅組合測試對得上（美股 v2 <b>27.18%</b> vs
-同一批股票等權持有 <b>27.4%</b>，差 <b>−0.2 pp/年</b>）—— 即係呢個引擎喺組合層面
-<b>冇 alpha</b>。但組合層面冇 alpha <b>唔等於</b> 揀股冇價值：對「同日同股隨便入場」
+只有 T+10 嘅絕對水平同已發布嘅組合測試對得上 —— {perf_figures.us_gap_sentence('zh')}。所以呢個引擎喺組合層面
+<b>冇一個可以攞出嚟講嘅穩定 alpha</b>。但組合層面冇穩定 alpha <b>唔等於</b> 揀股冇價值：對「同日同股隨便入場」
 嘅基準，v2 每單多賺約 1 pp（見 <a href="/methodology" style="color:var(--accent);">方法論</a>）。
 兩個基準唔同，答案就唔同。
 </div>
@@ -463,7 +463,7 @@ def main():
 
     A page must not carry a second portfolio model. Everything on screen now
     comes from the walk in v2_equity_export.py, which is the same one that
-    produced the published 27.2% vs 27.4% comparison.
+    produced the published v2-vs-equal-weight comparison.
     """
     p = _resolve_source()
     d = json.load(open(p))

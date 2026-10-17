@@ -1,8 +1,9 @@
 {
   "ticker": "8035.T",
-  "asof": "2026-10-16",
-  "close": 10630.0,
-  "chg_pct": 2.5566811384466925,
+  "ticker_user": "8035.T",
+  "name": "Tokyo Electron Limited",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 10365.0,
@@ -12,15 +13,29 @@
     "prev_close": 10365.0,
     "chg_pct": 2.5566811384466925
   },
-  "name": "Tokyo Electron Limited",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 10630.0,
-    "in_box_pct": 28.6,
-    "nearest_support": "S1 KEY (10312.0)",
-    "nearest_resistance": "R1 today high (10675.0)"
+  "adx": 21.67,
+  "plus_di": 19.66,
+  "minus_di": 32.95,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 16252.0 (2026-07-01), trough 9716.0 (2026-07-29), box top 12915.0 (2026-10-06)",
+  "peak": {
+    "date": "2026-07-01",
+    "price": 16252.0
   },
+  "trough": {
+    "date": "2026-07-29",
+    "price": 9716.0
+  },
+  "box": {
+    "top": 12915.0,
+    "top_date": "2026-10-06",
+    "bottom": 9716.0,
+    "period": "2026-07-29 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 34.6,
+  "recovery_from_crash_pct": 9.4,
   "supports": [
     {
       "level": 10312.0,
@@ -52,6 +67,79 @@
       "evidence": "pre-crash supply, top before breakdown"
     }
   ],
+  "position": {
+    "current": 10630.0,
+    "in_box_pct": 28.6,
+    "nearest_support": "S1 KEY (10312.0)",
+    "nearest_resistance": "R1 today high (10675.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 10365.0,
+    "H": 10675.0,
+    "L": 10250.0,
+    "C": 10630.0,
+    "body_pct": 62.4,
+    "upper_wick_pct": 10.6,
+    "lower_wick_pct": 27.1
+  },
+  "bias": {
+    "short": {
+      "bias": "defensive",
+      "reason": "near box bottom (29% of box)"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 10312.0 (KEY support)",
+      "then": "still range; watch 10675.0 for next test"
+    },
+    {
+      "if": "break 10312.0 on close",
+      "then": "target 9716.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 9716.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 10675.0 on close",
+      "then": "short-term bullish; next test 12915.0"
+    },
+    {
+      "if": "break 12915.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
     "strategy": "WAIT_RANGE",
@@ -71,5 +159,63 @@
     "s4": 6012.0,
     "current_position_pct": 26.6,
     "notes": "WAIT_RANGE: in box (9800-12915), pos 27%, no clear setup"
+  },
+  "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-10-02",
+      "low": 11995.0,
+      "high": 12435.0,
+      "i": 190
+    },
+    {
+      "name": "三個白武士",
+      "bias": "bullish",
+      "date": "2026-09-16",
+      "low": 10008.0,
+      "high": 10340.0,
+      "i": 181
+    },
+    {
+      "name": "利好反擊線",
+      "bias": "bullish",
+      "date": "2026-09-07",
+      "low": 11034.0,
+      "high": 11342.0,
+      "i": 174
+    },
+    {
+      "name": "早晨之星",
+      "bias": "bullish",
+      "date": "2026-08-12",
+      "low": 11184.0,
+      "high": 11660.0,
+      "i": 156
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-06-23",
+      "low": 14592.0,
+      "high": 15960.0,
+      "i": 122
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 10630.0,
+  "chg_pct": 2.5566811384466925,
+  "kline": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 10365.0,
+    "H": 10675.0,
+    "L": 10250.0,
+    "C": 10630.0,
+    "body_pct": 62.4,
+    "upper_wick_pct": 10.6,
+    "lower_wick_pct": 27.1
   }
 }

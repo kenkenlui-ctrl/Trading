@@ -12,6 +12,7 @@ import json
 import shutil
 from datetime import datetime, date, timedelta
 from pathlib import Path
+import perf_figures
 from mobile_nav import mobile_bottom_nav
 from build_dashboard import site_label
 import os as _os_i18n
@@ -45,19 +46,39 @@ _STRINGS = {
             "冇目標價，第 10 個交易日收市離場。"
             "<br><br>"
             "<b style=\"color: var(--amber);\">港股未納入 v2。</b>"
-            "實測之後港股喺 v2 之下係負數：按 <b>0.25%</b> 來回成本（本頁假設嘅成本，"
-            "亦即免佣 HK$100k 單嘅實際成本），2016–26 年化 v2 <b>+11.0%</b>、"
-            "同一批股票等權持有 <b>+19.1%</b>，即係落後 <b>8.1 個百分點/年</b>；"
-            "成本收到零（v2 +13.2% vs 等權 +19.1%）都仲係落後 <b>5.9 點</b>。"
+            "實測之後港股喺 v2 之下係負數：按 <b>0.25%</b> 來回成本"
+            "（本頁三個市場統一用呢個口徑，係現有數據入面最苛刻嗰個），"
+            "2016–26 年化 v2 <b>{HK_V2}</b>、同一批股票等權持有 <b>{HK_EW}</b>，"
+            "即係落後 <b>{HK_GAP} 個百分點/年</b>；成本收到零"
+            "（v2 {HK_V2_FREE}）都仲係落後 <b>{HK_GAP_FREE} 點</b>。"
             "唔係成本問題，係規則本身喺港股冇效，"
             "所以引擎目前只行美股同日股；<a href=\"/hk200/\">/hk200/</a> 顯示嘅仍然係舊版引擎。"
             "<br><br>"
             "<b style=\"color: var(--amber);\">呢個係一個規則，唔係一個保證。</b>"
-            "每單表現係實測，但<b>每單有優勢 ≠ 跑贏大市</b>：用同一批美股等權單純持有，"
-            "2016–26 年化 +27.4%，我哋嘅規則 +27.2% —— 差額係零。"
-            "<b>日股亦冇可持續優勢</b>：按 <b>0.10%</b> 來回成本（本頁假設嘅日股成本），"
-            "2016–26 年化 v2 <b>+18.03%</b>、同一批股票等權持有 <b>+18.00%</b>，"
-            "差 <b>0.04 個百分點</b> —— 基本上打和。"
+            "每單表現係實測，但<b>每單有優勢 ≠ 跑贏大市</b>。同一批股票純粹等權持有，"
+            "2016–26 年化：美股 v2 <b>{US_V2}</b> vs 等權 <b>{US_EW}</b>"
+            "（{US_VERDICT} <b>{US_GAP}</b> 點/年）；"
+            "日股 v2 <b>{JP_V2}</b> vs 等權 <b>{JP_EW}</b>"
+            "（{JP_VERDICT} <b>{JP_GAP}</b> 點/年）。"
+            "差距喺單一十年窗口內量度，唔係預測。"
+            "<br>"
+            "<b>而且呢啲差距唔穩定</b> —— 分兩段睇（點/年）：美股 2016–20 "
+            "<b>{US_GAP_EARLY}</b>、2021–26 <b>{US_GAP_LATE}</b>；"
+            "日股 <b>{JP_GAP_EARLY}</b>、<b>{JP_GAP_LATE}</b>；"
+            "港股 <b>{HK_GAP_EARLY}</b>、<b>{HK_GAP_LATE}</b>。"
+            "<b>三個市場全期數字都會變號</b>，代表差額主要由單一大市 regime 決定，"
+            "<b>唔應該當成一個可持續 alpha 去引用</b>。"
+            "<br>"
+            "同一批數字如果用 <b>0.10%</b> 成本：美股{US_VERDICT_MID} <b>{US_GAP_MID}</b> 點、"
+            "日股{JP_VERDICT_MID} <b>{JP_GAP_MID}</b> 點、港股落後 <b>{HK_GAP_MID}</b> 點。"
+            "上面 0.25% 係三個市場之中現有數據最苛刻嗰個口徑，兩個成本一齊列，"
+            "唔想畀人一句「揀咗個对自己有利嘅成本」。"
+            "<br><br>"
+            "<b style=\"color: var(--amber);\">2026-10-17 修正記錄：以上等權數字之前係錯嘅。</b>"
+            "舊基準將每隻股票「當月平均日收益」廣播落嗰個月嘅每一個交易日，"
+            "等於用算術平均代替真實價格路徑，令等權年化虛高 <b>2.0 至 3.7 個百分點</b>"
+            "（美股 +2.6、日股 +2.0、港股 +3.7），亦即係令規則睇落比實際差。"
+            "三個市場全部受影響，已改為真實月度再平衡並重跑。"
             "<a href=\"/methodology\">完整方法論同修正記錄 →</a>"
         ),
         "en": (
@@ -71,11 +92,33 @@ _STRINGS = {
             "no target, time exit at the close of the 10th session."
             "<br><br>"
             "<b style=\"color: var(--amber);\">This is a rule, not a promise.</b> The per-trade result is measured, "
-            "but <b>a per-trade edge is not the same as beating the market</b>: holding the same US names "
-            "passively and equally weighted returned 27.4%/yr over 2016-26, against 27.2% for this rule — "
-            "a difference of zero. Japan has no durable edge either: at the 0.10% round-trip "
-            "cost this page assumes, v2 returned 18.03%/yr over 2016-26 against 18.00% for "
-            "equal-weight holding of the same names — a 0.04pp/yr gap, which is nothing. "
+            "but <b>a per-trade edge is not the same as beating the market</b>. Holding the same names "
+            "passively and equally weighted, over 2016-26 at a <b>0.25%</b> round-trip cost "
+            "(one uniform, deliberately harsh cost for all three markets): "
+            "US v2 <b>{US_V2}</b> vs equal weight <b>{US_EW}</b> "
+            "({US_VERDICT_EN} by <b>{US_GAP}</b>pp/yr); "
+            "Japan v2 <b>{JP_V2}</b> vs equal weight <b>{JP_EW}</b> "
+            "({JP_VERDICT_EN} by <b>{JP_GAP}</b>pp/yr). "
+            "These are measured over one ten-year window, not forecasts."
+            "<br>"
+            "<b>And these gaps are not stable.</b> Split into two halves (pp/yr): US "
+            "<b>{US_GAP_EARLY}</b> in 2016-20 and <b>{US_GAP_LATE}</b> in 2021-26; "
+            "Japan <b>{JP_GAP_EARLY}</b> and <b>{JP_GAP_LATE}</b>; "
+            "Hong Kong <b>{HK_GAP_EARLY}</b> and <b>{HK_GAP_LATE}</b>. "
+            "<b>The sign flips in all three markets</b>, so the full-window number is "
+            "driven by a single market regime and <b>should not be quoted as a durable alpha</b>."
+            "<br>"
+            "On the same data at a <b>0.10%</b> round-trip cost: US {US_VERDICT_MID} equal weight by "
+            "<b>{US_GAP_MID}</b>pp/yr, Japan {JP_VERDICT_MID} by <b>{JP_GAP_MID}</b>pp/yr, Hong Kong trails "
+            "by <b>{HK_GAP_MID}</b>pp/yr. The 0.25% figure above is the harshest cost that exists for all "
+            "three markets; both costs are shown rather than only the one that reads best."
+            "<br><br>"
+            "<b style=\"color: var(--amber);\">Correction log, 2026-10-17: the equal-weight figures above were previously wrong.</b> "
+            "The old benchmark broadcast each stock's <i>mean daily return for the month</i> onto every session "
+            "in that month, compounding the arithmetic mean instead of the realised price path. That inflated "
+            "equal-weight returns by <b>2.0 to 3.7pp/yr</b> (US +2.6, Japan +2.0, HK +3.7) — i.e. it made the "
+            "rule look worse than it was. All three markets were affected; the benchmark is now a true monthly "
+            "rebalance and every figure above was recomputed from it. "
             "<a href=\"/methodology\">Full methodology and correction log →</a>"
         ),
     },
@@ -106,6 +149,36 @@ def _universe_counts() -> dict:
         d = Path(__file__).resolve().parent.parent / "public" / mkt / "ticker"
         out[mkt[:2].upper()] = len(list(d.glob("*.html"))) if d.is_dir() else 0
     return out
+
+
+def T_strict(key: str, **kw) -> str:
+    """Like T() but never swallows a formatting error.
+
+    2026-10-17: T() does `except Exception: pass`, so a renamed placeholder
+    silently leaves a literal "{HK_V2}" on the published page. These figures are
+    performance claims about someone's money, so a broken format must stop the
+    build rather than ship.
+    """
+    entry = _STRINGS.get(key, {})
+    v = entry.get(_SITE_LANG) or entry.get("zh") or key
+    return v.format(**kw)
+
+
+_RETEST_SUMMARY = perf_figures.SUMMARY
+_PUBLISH_WINDOW = perf_figures.WINDOW
+_PUBLISH_COST = perf_figures.COST
+
+
+def _perf() -> dict:
+    """10-year v2-vs-equal-weight figures. Thin wrapper over perf_figures so
+    self_test.py can assert the page matches its source; the loader itself is
+    shared with mobile_nav.py (which renders the same figures on ~200 HK pages).
+    """
+    return perf_figures.load()
+
+
+def _perf_fmt(p: dict) -> dict:
+    return perf_figures.fmt(p, _SITE_LANG)
 
 
 def T(key: str, **kw) -> str:
@@ -509,8 +582,12 @@ def build_home_page():
     # 2026-08-30: i18n strings for hero (built once, used in template below)
     subtitle = T("home_subtitle_zh")
     counts = _universe_counts()
-    lede = T("home_lede_zh", HK=counts.get("HK", "?"), US=counts.get("US", "?"),
-             JP=counts.get("JP", "?"))
+    # 2026-10-17: the lede's performance figures come from the retest summary,
+    # never from a literal. T_strict so a missing placeholder fails the build.
+    perf = _perf()
+    perf_f = _perf_fmt(perf)
+    lede = T_strict("home_lede_zh", HK=counts.get("HK", "?"), US=counts.get("US", "?"),
+                    JP=counts.get("JP", "?"), **_perf_fmt(perf))
 
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant-HK">
@@ -672,7 +749,7 @@ function toggleTheme(){{
       {cards if cards else '<div class="card text-dim">今日未有 v2 訊號 — 全部個股都未企穩 S1</div>'}
     </div>
     {f'<p class="text-dim" style="margin-top: var(--sp-3); font-size: var(--text-sm);">以上 6 個係 {n_v2} 個訊號中最接近觸發入場位嘅，按距 S1 距離排序。完整名單 → <a href="/us200/">US</a> · <a href="/jp200/">JP</a></p>' if cards else ''}
-    {f'<p class="text-dim" style="margin-top: var(--sp-3); font-size: var(--text-sm);"><b style="color: var(--amber);">港股未包含喺呢版。</b>v2 引擎目前只行 US 同 JP（{mkt_bits}）—— 實測港股喺 0.25% 實際成本下 v2 年化 <b>+11.0%</b>、等權持有 <b>+19.1%</b>，落後 <b>8.1 個百分點/年</b>；零成本都仲係落後 5.9 點，所以 <code>INCLUDE_HK=False</code>。<a href="/hk200/">/hk200/</a> 仍然顯示舊版 (v1) 引擎嘅號，唔應該當成 v2 訊號用。</p>' if hk_in_v2 == 0 else ''}
+    {f'<p class="text-dim" style="margin-top: var(--sp-3); font-size: var(--text-sm);"><b style="color: var(--amber);">港股未包含喺呢版。</b>v2 引擎目前只行 US 同 JP（{mkt_bits}）—— 實測港股喺 0.25% 實際成本下 v2 年化 <b>{perf_f['HK_V2']}</b>、等權持有 <b>{perf_f['HK_EW']}</b>，落後 <b>{perf_f['HK_GAP']} 個百分點/年</b>；零成本都仲係落後 {perf_f['HK_GAP_FREE']} 點，所以 <code>INCLUDE_HK=False</code>。<a href="/hk200/">/hk200/</a> 仍然顯示舊版 (v1) 引擎嘅號，唔應該當成 v2 訊號用。</p>' if hk_in_v2 == 0 else ''}
   </div>
 </section>
 

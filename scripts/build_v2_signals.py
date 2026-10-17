@@ -141,6 +141,14 @@ MARKETS = {
 # Even at zero cost v2 is -5.9pp/yr behind, so this is a rules problem and not a
 # cost problem — the verdict is unchanged, the magnitude was understated. Only
 # the comment moved; INCLUDE_HK was already False and stays False.
+#
+# 2026-10-17: both numbers above are VOID. The equal-weight leg of that
+# measurement came from the defective transform("mean") benchmark (see
+# hk_retest.ew_bh), which overstated equal weight by ~+3.7pp/yr in HK. On the
+# corrected benchmark the HK gap is roughly -4.4pp/yr at 0.25% cost, not -8.1.
+# The verdict (INCLUDE_HK = False) still holds — v2 must beat equal weight by
+# 1pp and still does not — but the magnitude above should not be quoted. Read
+# it from data/hk_retest_summary.json via scripts/perf_figures.py.
 INCLUDE_HK = False  # measured 2026-10-12: -8.1pp/yr at the 0.25% cost this site assumes (-5.9pp/yr at zero cost)
 
 

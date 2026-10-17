@@ -1,8 +1,9 @@
 {
   "ticker": "9984.T",
-  "asof": "2026-10-16",
-  "close": 4944.0,
-  "chg_pct": 1.8961253091508645,
+  "ticker_user": "9984.T",
+  "name": "SoftBank Group Corp.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 4960.0,
@@ -12,15 +13,29 @@
     "prev_close": 4852.0,
     "chg_pct": 1.8961253091508645
   },
-  "name": "SoftBank Group Corp.",
   "phase": "downtrend_recovery",
-  "kline": {},
-  "position": {
-    "current": 4944.0,
-    "in_box_pct": 18.1,
-    "nearest_support": "S1 KEY (4796.0)",
-    "nearest_resistance": "R1 today high (5010.0)"
+  "adx": 19.75,
+  "plus_di": 19.77,
+  "minus_di": 39.64,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 9074.0 (2026-06-02), trough 4500.0 (2026-07-30), box top 6959.0 (2026-09-09)",
+  "peak": {
+    "date": "2026-06-02",
+    "price": 9074.0
   },
+  "trough": {
+    "date": "2026-07-30",
+    "price": 4500.0
+  },
+  "box": {
+    "top": 6959.0,
+    "top_date": "2026-09-09",
+    "bottom": 4500.0,
+    "period": "2026-07-30 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 45.5,
+  "recovery_from_crash_pct": 9.9,
   "supports": [
     {
       "level": 4796.0,
@@ -52,6 +67,79 @@
       "evidence": "box top 6959.0, base period high"
     }
   ],
+  "position": {
+    "current": 4944.0,
+    "in_box_pct": 18.1,
+    "nearest_support": "S1 KEY (4796.0)",
+    "nearest_resistance": "R1 today high (5010.0)"
+  },
+  "kline_today": {
+    "type": "bearish_rejection",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 4960.0,
+    "H": 5010.0,
+    "L": 4836.0,
+    "C": 4944.0,
+    "body_pct": 9.2,
+    "upper_wick_pct": 28.7,
+    "lower_wick_pct": 62.1
+  },
+  "bias": {
+    "short": {
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (18% of box)"
+    },
+    "mid": {
+      "bias": "neutral",
+      "reason": ""
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 4796.0 (KEY support)",
+      "then": "still range; watch 5010.0 for next test"
+    },
+    {
+      "if": "break 4796.0 on close",
+      "then": "target 4500.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 4500.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 5010.0 on close",
+      "then": "short-term bullish; next test 6660.0"
+    },
+    {
+      "if": "break 6959.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
     "strategy": "WAIT_VOLATILE",
@@ -71,5 +159,55 @@
     "s4": 3365.0,
     "current_position_pct": 7.2,
     "notes": "WAIT_VOLATILE: ATR14 6.9% / box width 40% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
+  },
+  "patterns": [
+    {
+      "name": "利淡吞噬",
+      "bias": "bearish",
+      "date": "2026-10-06",
+      "low": 6271.0,
+      "high": 6432.0,
+      "i": 192
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-09-29",
+      "low": 5931.0,
+      "high": 6362.0,
+      "i": 187
+    },
+    {
+      "name": "早晨之星",
+      "bias": "bullish",
+      "date": "2026-09-07",
+      "low": 5814.0,
+      "high": 6217.0,
+      "i": 174
+    },
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-08-25",
+      "low": 4882.0,
+      "high": 5090.0,
+      "i": 165
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 4944.0,
+  "chg_pct": 1.8961253091508645,
+  "kline": {
+    "type": "bearish_rejection",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 4960.0,
+    "H": 5010.0,
+    "L": 4836.0,
+    "C": 4944.0,
+    "body_pct": 9.2,
+    "upper_wick_pct": 28.7,
+    "lower_wick_pct": 62.1
   }
 }

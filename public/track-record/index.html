@@ -31,8 +31,8 @@ if (ic) ic.textContent = t === "dark" ? "●" : "○";
 喺 0.5% 之內、2–3 倉上限之下揀邊幾個本身未驗證。<b>唯一能證偽呢個結論嘅方法
 就係下面嗰個記錄</b>，唔係再跑多個回測。
 </div><h2 style="margin-top:var(--sp-5);font-size:var(--text-md);">基準（實測 · 樣本外）</h2><table class="tr-table"><thead><tr><th>市場</th><th>v2 訊號數</th><th>v2 平均/單</th><th>對照數</th><th>對照平均/單</th><th>差距</th></tr></thead><tbody><tr><td class="mono">jp200</td><td class="mono">2,187</td><td class="mono">+2.354%</td><td class="mono">93,167</td><td class="mono">+0.693%</td><td class="mono" style="color:var(--bull);"><b>+1.661 pp</b></td></tr><tr><td class="mono">us200</td><td class="mono">2,982</td><td class="mono">+1.772%</td><td class="mono">100,636</td><td class="mono">+0.696%</td><td class="mono" style="color:var(--bull);"><b>+1.076 pp</b></td></tr></tbody></table><ul style="color:var(--fg-2);font-size:var(--text-sm);line-height:1.7;margin-top:var(--sp-3);"><li><b>jp200</b>：樣本外 2,187 個 v2 訊號平均 <b>+2.354%</b>，同日同股隨便入場嘅 93,167 個對照平均 <b>+0.693%</b> → 差距 <b style='color:var(--bull);'>+1.661 pp/單</b>（train→test 時間切分，test t=8.87 / 6.53）。</li><li><b>us200</b>：樣本外 2,982 個 v2 訊號平均 <b>+1.772%</b>，同日同股隨便入場嘅 100,636 個對照平均 <b>+0.696%</b> → 差距 <b style='color:var(--bull);'>+1.076 pp/單</b>（train→test 時間切分，test t=7.67 / 7.03）。</li></ul><div class="cav"><strong>同時要記住相反嗰個結論。</strong>
-同一個引擎對「同一批 200 隻股票等權持有」嘅基準，組合層面 <b>冇 alpha</b>
-（美股 v2 27.18% vs 等權 27.4%，差 −0.2 pp/年）。所以正確用法係：
+同一個引擎對「同一批 200 隻股票等權持有」嘅基準，組合層面 <b>冇一個穩定嘅 alpha</b>
+（美股 v2 +26.0% vs 等權持有 +24.6%，0.25% 成本口徑下差 1.4 點/年 —— 但呢個唔係一個穩定嘅優勢：2016–20 係 +3.7 點、2021–26 係 -2.0 點，全期數字會變號，代表差額由單一 regime 決定，唔應該當成持久 alpha 去引用）。所以正確用法係：
 <b>呢個係一個揀股工具，唔係一個要跟嘅組合</b>。兩個基準唔同，答案就唔同。
 </div><h2 style="margin-top:var(--sp-5);font-size:var(--text-md);">你嘅實盤記錄</h2><div class="tr-empty"><b>暫時 0 單記錄。</b><p style="margin:8px 0 0">呢個係刻意留白，唔係 bug。呢一頁唯一嘅目的係記錄<b>真實</b>成交 ——
 而家未有一單。補資料方法：打開 <code>data/track_record.json</code>，喺 <code>trades</code>
@@ -45,7 +45,7 @@ if (ic) ic.textContent = t === "dark" ? "●" : "○";
 下次跑 <code>python3 scripts/build_track_record.py</code> 就會出現喺上面。</p></div><div class="cav"><strong>呢頁唔會由網站落單。</strong>
 訊號只係通知，落手永遠喺你嘅券商 app。記錄呢一頁亦都係人手填 ——
 冇任何自動對接會幫你「記低」一單你冇做過嘅交易。
-</div><p class="last-updated">最後更新: 2026-10-17 23:19 HKT</p><style>
+</div><p class="last-updated">最後更新: 2026-10-17 23:48 HKT</p><style>
 .tr-table { width:100%; border-collapse:collapse; font-size:var(--text-sm); font-family:var(--font-mono); margin-top:var(--sp-3); overflow-x:auto; display:block; }
 .tr-table th, .tr-table td { padding:7px 10px; border-bottom:1px solid var(--border); text-align:left; white-space:nowrap; }
 .tr-table th { color:var(--dim); font-weight:600; }

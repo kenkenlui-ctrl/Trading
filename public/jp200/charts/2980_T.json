@@ -1,8 +1,9 @@
 {
   "ticker": "2980.T",
-  "asof": "2026-10-16",
-  "close": 2386.0,
-  "chg_pct": 3.784254023488476,
+  "ticker_user": "2980.T",
+  "name": "SRE Holdings Corporation",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 2332.0,
@@ -12,15 +13,29 @@
     "prev_close": 2299.0,
     "chg_pct": 3.784254023488476
   },
-  "name": "SRE Holdings Corporation",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 2386.0,
-    "in_box_pct": 89.1,
-    "nearest_support": "S1 KEY (2328.0)",
-    "nearest_resistance": "R1 today high (2397.0)"
+  "adx": 7.47,
+  "plus_di": 25.47,
+  "minus_di": 25.19,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 4150.0 (2026-05-11), trough 2199.0 (2026-09-11), box top 2397.0 (2026-10-16)",
+  "peak": {
+    "date": "2026-05-11",
+    "price": 4150.0
   },
+  "trough": {
+    "date": "2026-09-11",
+    "price": 2199.0
+  },
+  "box": {
+    "top": 2397.0,
+    "top_date": "2026-10-16",
+    "bottom": 2199.0,
+    "period": "2026-09-11 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 42.5,
+  "recovery_from_crash_pct": 8.5,
   "supports": [
     {
       "level": 2328.0,
@@ -48,6 +63,75 @@
       "evidence": "today's high 2397.0"
     }
   ],
+  "position": {
+    "current": 2386.0,
+    "in_box_pct": 89.1,
+    "nearest_support": "S1 KEY (2328.0)",
+    "nearest_resistance": "R1 today high (2397.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 2332.0,
+    "H": 2397.0,
+    "L": 2331.0,
+    "C": 2386.0,
+    "body_pct": 81.8,
+    "upper_wick_pct": 16.7,
+    "lower_wick_pct": 1.5
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 2328.0 (KEY support)",
+      "then": "still range; watch 2397.0 for next test"
+    },
+    {
+      "if": "break 2328.0 on close",
+      "then": "target 2320.0 → 2296.0 (short-term bearish)"
+    },
+    {
+      "if": "break 2296.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 2397.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
     "strategy": "WAIT_RR_TOO_THIN",
@@ -67,5 +151,55 @@
     "s4": 2418.0,
     "current_position_pct": 92.9,
     "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 2397.00）：① 跌到 2397.00、收市守住喺 2397.00 上面 → 照 BUY 條 plan 做（入場 2397.00，止蝕 2483.76，目標 2319.00）。② 收市跌穿 2397.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2397.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+  },
+  "patterns": [
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-10-06",
+      "low": 2320.0,
+      "high": 2356.0,
+      "i": 192
+    },
+    {
+      "name": "利好吞噬",
+      "bias": "bullish",
+      "date": "2026-08-24",
+      "low": 2427.0,
+      "high": 2478.0,
+      "i": 164
+    },
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-06-17",
+      "low": 2427.0,
+      "high": 2626.0,
+      "i": 118
+    },
+    {
+      "name": "錘頭",
+      "bias": "bullish",
+      "date": "2026-06-05",
+      "low": 2517.0,
+      "high": 2639.0,
+      "i": 110
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 2386.0,
+  "chg_pct": 3.784254023488476,
+  "kline": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 2332.0,
+    "H": 2397.0,
+    "L": 2331.0,
+    "C": 2386.0,
+    "body_pct": 81.8,
+    "upper_wick_pct": 16.7,
+    "lower_wick_pct": 1.5
   }
 }

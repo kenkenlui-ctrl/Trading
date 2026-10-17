@@ -1,8 +1,9 @@
 {
   "ticker": "9433.T",
-  "asof": "2026-10-16",
-  "close": 2910.0,
-  "chg_pct": 0.4314063848144922,
+  "ticker_user": "9433.T",
+  "name": "KDDI Corporation",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 2887.0,
@@ -12,15 +13,29 @@
     "prev_close": 2897.5,
     "chg_pct": 0.4314063848144922
   },
-  "name": "KDDI Corporation",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 2910.0,
-    "in_box_pct": 30.0,
-    "nearest_support": "S1 bottom (2824.0)",
-    "nearest_resistance": "R1 today high (2929.5)"
+  "adx": 20.15,
+  "plus_di": 16.43,
+  "minus_di": 19.78,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 3121.0 (2026-07-30), trough 2779.0 (2026-08-10), box top 3111.0 (2026-09-17)",
+  "peak": {
+    "date": "2026-07-30",
+    "price": 3121.0
   },
+  "trough": {
+    "date": "2026-08-10",
+    "price": 2779.0
+  },
+  "box": {
+    "top": 3111.0,
+    "top_date": "2026-09-17",
+    "bottom": 2779.0,
+    "period": "2026-08-10 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 6.8,
+  "recovery_from_crash_pct": 4.7,
   "supports": [
     {
       "level": 2824.0,
@@ -39,6 +54,79 @@
       "level": 3111.0,
       "label": "R3 Sep high",
       "evidence": "box top 3111.0, base period high"
+    }
+  ],
+  "position": {
+    "current": 2910.0,
+    "in_box_pct": 30.0,
+    "nearest_support": "S1 bottom (2824.0)",
+    "nearest_resistance": "R1 today high (2929.5)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 2887.0,
+    "H": 2929.5,
+    "L": 2886.5,
+    "C": 2910.0,
+    "body_pct": 53.5,
+    "upper_wick_pct": 45.3,
+    "lower_wick_pct": 1.2
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 2824.0 (KEY support)",
+      "then": "still range; watch 2929.5 for next test"
+    },
+    {
+      "if": "break 2824.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 2824.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 2929.5 on close",
+      "then": "short-term bullish; next test 3111.0"
+    },
+    {
+      "if": "break 3111.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -60,5 +148,63 @@
     "s4": 2512.0,
     "current_position_pct": 22.8,
     "notes": "BUY_S1: in box (2850-3111), entry at S1 2850, target mid 2981, stop 2784 ｜ 52.2 條規則（BUY plan，support 2850.50）：① 跌到 2850.50、收市守住喺 2850.50 上面 → 照 BUY 條 plan 做（入場 2850.50，止蝕 2783.65，目標 2980.75）。② 收市跌穿 2850.50 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2850.50 上面』。"
+  },
+  "patterns": [
+    {
+      "name": "利好反擊線",
+      "bias": "bullish",
+      "date": "2026-10-08",
+      "low": 2877.0,
+      "high": 2915.0,
+      "i": 194
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-09-18",
+      "low": 3033.0,
+      "high": 3098.0,
+      "i": 183
+    },
+    {
+      "name": "利好身懷六甲",
+      "bias": "bullish",
+      "date": "2026-08-18",
+      "low": 2810.0,
+      "high": 2854.0,
+      "i": 160
+    },
+    {
+      "name": "平頭頂",
+      "bias": "bearish",
+      "date": "2026-08-05",
+      "low": 2808.0,
+      "high": 2882.0,
+      "i": 152
+    },
+    {
+      "name": "三隻烏鴉",
+      "bias": "bearish",
+      "date": "2026-07-22",
+      "low": 2820.0,
+      "high": 2880.0,
+      "i": 142
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 2910.0,
+  "chg_pct": 0.4314063848144922,
+  "kline": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 2887.0,
+    "H": 2929.5,
+    "L": 2886.5,
+    "C": 2910.0,
+    "body_pct": 53.5,
+    "upper_wick_pct": 45.3,
+    "lower_wick_pct": 1.2
   }
 }

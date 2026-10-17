@@ -1,8 +1,9 @@
 {
   "ticker": "2982.T",
-  "asof": "2026-10-16",
-  "close": 397.0,
-  "chg_pct": 1.534526854219953,
+  "ticker_user": "2982.T",
+  "name": "A.D.Works Group Co.,Ltd.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 394.0,
@@ -12,15 +13,29 @@
     "prev_close": 391.0,
     "chg_pct": 1.534526854219953
   },
-  "name": "A.D.Works Group Co.,Ltd.",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 397.0,
-    "in_box_pct": 30.9,
-    "nearest_support": "S1 KEY (388.0)",
-    "nearest_resistance": "R1 today high (399.0)"
+  "adx": 27.32,
+  "plus_di": 16.36,
+  "minus_di": 29.51,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 512.0 (2026-02-12), trough 370.0 (2026-05-14), box top 444.0 (2026-09-07)",
+  "peak": {
+    "date": "2026-02-12",
+    "price": 512.0
   },
+  "trough": {
+    "date": "2026-05-14",
+    "price": 370.0
+  },
+  "box": {
+    "top": 444.0,
+    "top_date": "2026-09-07",
+    "bottom": 370.0,
+    "period": "2026-05-14 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 22.5,
+  "recovery_from_crash_pct": 7.3,
   "supports": [
     {
       "level": 388.0,
@@ -53,6 +68,79 @@
       "evidence": "box top 444.0, base period high"
     }
   ],
+  "position": {
+    "current": 397.0,
+    "in_box_pct": 30.9,
+    "nearest_support": "S1 KEY (388.0)",
+    "nearest_resistance": "R1 today high (399.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 394.0,
+    "H": 399.0,
+    "L": 394.0,
+    "C": 397.0,
+    "body_pct": 60.0,
+    "upper_wick_pct": 40.0,
+    "lower_wick_pct": 0.0
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 388.0 (KEY support)",
+      "then": "still range; watch 399.0 for next test"
+    },
+    {
+      "if": "break 388.0 on close",
+      "then": "target 384.0 → 376.0 (short-term bearish)"
+    },
+    {
+      "if": "break 376.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 399.0 on close",
+      "then": "short-term bullish; next test 444.0"
+    },
+    {
+      "if": "break 444.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
     "strategy": "WAIT_REGIME",
@@ -72,5 +160,55 @@
     "s4": 382.0,
     "current_position_pct": 16.3,
     "notes": "WAIT_RANGE: in box (389-438), pos 16%, no clear setup"
+  },
+  "patterns": [
+    {
+      "name": "倒錘頭",
+      "bias": "bullish",
+      "date": "2026-10-14",
+      "low": 394.0,
+      "high": 401.0,
+      "i": 197
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-09-02",
+      "low": 430.0,
+      "high": 437.0,
+      "i": 171
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-07-28",
+      "low": 409.0,
+      "high": 414.0,
+      "i": 146
+    },
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-06-24",
+      "low": 395.0,
+      "high": 405.0,
+      "i": 123
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 397.0,
+  "chg_pct": 1.534526854219953,
+  "kline": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 394.0,
+    "H": 399.0,
+    "L": 394.0,
+    "C": 397.0,
+    "body_pct": 60.0,
+    "upper_wick_pct": 40.0,
+    "lower_wick_pct": 0.0
   }
 }

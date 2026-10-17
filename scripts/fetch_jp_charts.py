@@ -46,8 +46,15 @@ import yfinance as yf  # type: ignore
 import pandas as pd  # type: ignore
 
 
-def fetch_jp_ohlc(ticker: str, days: int = 200) -> pd.DataFrame | None:
-    """Fetch OHLC from yfinance, return JST-trading-day-indexed df."""
+def fetch_jp_ohlc(ticker: str, days: int = 200, asof: str | None = None) -> pd.DataFrame | None:
+    """Fetch OHLC from yfinance, return JST-trading-day-indexed df.
+
+    2026-10-17: `asof` trims to that session's close. Without it this frame ran
+    to whatever bar Yahoo had at fetch time, so JP's hand-built `last_bar` could
+    be an intraday/live bar while daily_sr (which defaults to its own T-1) was
+    reporting the previous session — a split-brain payload. HK/US already pass
+    an explicit --asof for exactly this reason.
+    """
     try:
         # yfinance uses Yahoo format: 7203.T → ok
         df = yf.Ticker(ticker).history(period=f"{days + 30}d", auto_adjust=False)
@@ -57,6 +64,10 @@ def fetch_jp_ohlc(ticker: str, days: int = 200) -> pd.DataFrame | None:
         df = df[["Open", "High", "Low", "Close", "Volume"]].copy()
         df.columns = ["open", "high", "low", "close", "volume"]
         df.index = pd.to_datetime(df.index).tz_localize(None)
+        if asof:
+            df = df[df.index <= pd.Timestamp(asof)]
+            if len(df) < 50:
+                return None
         # JST = UTC+9, but yfinance already returns JST-naive dates. Just take last `days` rows.
         df = df.tail(days)
         return df
@@ -65,10 +76,10 @@ def fetch_jp_ohlc(ticker: str, days: int = 200) -> pd.DataFrame | None:
         return None
 
 
-def process_one(code: str) -> tuple[str, bool]:
+def process_one(code: str, asof: str | None = None) -> tuple[str, bool]:
     """Process one JP ticker: fetch OHLC, run analysis, render chart, save JSON."""
     try:
-        df = fetch_jp_ohlc(code)
+        df = fetch_jp_ohlc(code, asof=asof)
         if df is None or len(df) < 60:
             return (code, False)
 
@@ -82,7 +93,7 @@ def process_one(code: str) -> tuple[str, bool]:
         # Use daily_sr.run() to do fetch + analysis + chart render
         # run() returns the JSON snapshot — save it directly
         try:
-            snapshot = daily_sr.run(code, str(out_png), days=200, source="yfinance")
+            snapshot = daily_sr.run(code, str(out_png), days=200, source="yfinance", asof=asof)
         except Exception as e:
             print(f"  {code} run err: {e}")
             return (code, False)
@@ -155,7 +166,19 @@ def process_one(code: str) -> tuple[str, bool]:
             except Exception:
                 _prev_name = ""
 
+        # 2026-10-17: parity. HK/US publish the RAW daily_sr snapshot (27 keys)
+        # — batch_hk200_fresh.py / batch_us200.py just shell out to daily_sr.py
+        # with `--json <path>` and let it write the file. JP re-built the dict
+        # by hand and kept 12 of the 27, so every /jp200/ detail page lost
+        # phase evidence, trade scenarios, patterns, peak/trough/box, ADX/regime
+        # and bias — all of which daily_sr.run() had already computed and handed
+        # back, just discarded. Spreading the snapshot is a serialisation-only
+        # change: no indicator, threshold or signal rule is touched, the values
+        # are exactly the ones daily_sr returned.
         snap_out = {
+            **snapshot,
+            # JP overrides below (the 4 JP-only keys + the fields JP sources
+            # from its own 400-bar frame / name cache rather than daily_sr).
             "ticker": code,
             "asof": data_asof or snapshot.get("asof", ""),
             "close": close,
@@ -180,12 +203,13 @@ def process_one(code: str) -> tuple[str, bool]:
                 else None
             ),
             "name": _jp_name(code) or _prev_name,
-            "phase": snapshot.get("phase"),
-            "kline": snapshot.get("kline", {}),
-            "position": snapshot.get("position", {}),
-            "supports": snapshot.get("supports", []),
-            "resistances": snapshot.get("resistances", []),
-            "action_plan": snapshot.get("action_plan", {}),
+            # 2026-10-17: `kline` was reading a key daily_sr does not emit — it
+            # publishes this under `kline_today`. So every JP snapshot has
+            # shipped "kline": {} since the field was added, while HK/US carry
+            # the real `kline_today`. JP-only key kept (page/builders reference
+            # it) and repointed at the same computed value — still purely a
+            # serialisation fix, no new computation.
+            "kline": snapshot.get("kline_today", {}),
         }
         out_json.write_text(json.dumps(snap_out, ensure_ascii=False, indent=2), encoding="utf-8")
         return (code, True)
@@ -198,6 +222,10 @@ def main():
     import argparse
     p = argparse.ArgumentParser()
     p.add_argument("--top", type=int, help="Only process top N tickers (test mode)")
+    # 2026-10-17: explicit as-of date, mirroring the HK/US batch generators.
+    # Without it daily_sr re-derives its own T-1, which silently diverges from
+    # the date the rest of the pipeline was told to build for.
+    p.add_argument("--asof", help="JP close date YYYY-MM-DD (default: daily_sr's T-1)")
     args = p.parse_args()
 
     tickers = json.load(open(JP_UNIVERSE, encoding="utf-8"))
@@ -209,7 +237,7 @@ def main():
     failed = 0
     for i, code in enumerate(tickers, 1):
         print(f"[{i}/{len(tickers)}] {code} ...", flush=True)
-        ticker, ok = process_one(code)
+        ticker, ok = process_one(code, asof=args.asof)
         if ok:
             success += 1
         else:

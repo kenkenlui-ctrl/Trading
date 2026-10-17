@@ -1,8 +1,9 @@
 {
   "ticker": "1433.T",
-  "asof": "2026-10-16",
-  "close": 1210.0,
-  "chg_pct": 2.5423728813559254,
+  "ticker_user": "1433.T",
+  "name": "Besterra Co., Ltd.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 1190.0,
@@ -12,15 +13,29 @@
     "prev_close": 1180.0,
     "chg_pct": 2.5423728813559254
   },
-  "name": "Besterra Co., Ltd.",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 1210.0,
-    "in_box_pct": 62.2,
-    "nearest_support": "S1 KEY (1176.0)",
-    "nearest_resistance": "R1 today high (1214.0)"
+  "adx": 18.11,
+  "plus_di": 19.69,
+  "minus_di": 22.33,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 1355.0 (2026-02-27), trough 1003.0 (2026-05-20), box top 1336.0 (2026-08-31)",
+  "peak": {
+    "date": "2026-02-27",
+    "price": 1355.0
   },
+  "trough": {
+    "date": "2026-05-20",
+    "price": 1003.0
+  },
+  "box": {
+    "top": 1336.0,
+    "top_date": "2026-08-31",
+    "bottom": 1003.0,
+    "period": "2026-05-20 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 10.7,
+  "recovery_from_crash_pct": 20.6,
   "supports": [
     {
       "level": 1176.0,
@@ -59,6 +74,79 @@
       "evidence": "box top 1336.0, base period high"
     }
   ],
+  "position": {
+    "current": 1210.0,
+    "in_box_pct": 62.2,
+    "nearest_support": "S1 KEY (1176.0)",
+    "nearest_resistance": "R1 today high (1214.0)"
+  },
+  "kline_today": {
+    "type": "bullish_reclaim",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 1190.0,
+    "H": 1214.0,
+    "L": 1189.0,
+    "C": 1210.0,
+    "body_pct": 80.0,
+    "upper_wick_pct": 16.0,
+    "lower_wick_pct": 4.0
+  },
+  "bias": {
+    "short": {
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 1176.0 (KEY support)",
+      "then": "still range; watch 1214.0 for next test"
+    },
+    {
+      "if": "break 1176.0 on close",
+      "then": "target 1144.0 → 1136.0 (short-term bearish)"
+    },
+    {
+      "if": "break 1003.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 1214.0 on close",
+      "then": "short-term bullish; next test 1336.0"
+    },
+    {
+      "if": "break 1336.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
     "strategy": "WAIT_RR_TOO_THIN",
@@ -78,5 +166,63 @@
     "s4": 1026.0,
     "current_position_pct": 75.9,
     "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 1229.00）：① 跌到 1229.00、收市守住喺 1229.00 上面 → 照 BUY 條 plan 做（入場 1229.00，止蝕 1263.06，目標 1189.50）。② 收市跌穿 1229.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1229.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+  },
+  "patterns": [
+    {
+      "name": "平頭底",
+      "bias": "bullish",
+      "date": "2026-10-06",
+      "low": 1204.0,
+      "high": 1229.0,
+      "i": 192
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-09-07",
+      "low": 1273.0,
+      "high": 1303.0,
+      "i": 174
+    },
+    {
+      "name": "利淡吞噬",
+      "bias": "bearish",
+      "date": "2026-07-22",
+      "low": 1144.0,
+      "high": 1158.0,
+      "i": 142
+    },
+    {
+      "name": "平頭頂",
+      "bias": "bearish",
+      "date": "2026-07-13",
+      "low": 1132.0,
+      "high": 1155.0,
+      "i": 136
+    },
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-07-01",
+      "low": 1120.0,
+      "high": 1135.0,
+      "i": 128
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 1210.0,
+  "chg_pct": 2.5423728813559254,
+  "kline": {
+    "type": "bullish_reclaim",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 1190.0,
+    "H": 1214.0,
+    "L": 1189.0,
+    "C": 1210.0,
+    "body_pct": 80.0,
+    "upper_wick_pct": 16.0,
+    "lower_wick_pct": 4.0
   }
 }

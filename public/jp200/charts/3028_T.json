@@ -1,56 +1,140 @@
 {
   "ticker": "3028.T",
-  "asof": "2026-10-14",
-  "close": NaN,
-  "chg_pct": NaN,
-  "last_bar": {
-    "date": "2026-10-14",
-    "O": 2378.0,
-    "H": 2378.0,
-    "L": 2363.0,
-    "C": NaN,
-    "prev_close": 2381.0,
-    "chg_pct": NaN
-  },
+  "ticker_user": "3028.T",
   "name": "Alpen Co.,Ltd.",
-  "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 2381.0,
-    "in_box_pct": 96.8,
-    "nearest_support": "S1 KEY (2332.0)",
-    "nearest_resistance": "R1 today high (2383.0)"
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
+  "last_bar": {
+    "date": "2026-10-16",
+    "O": 2414.0,
+    "H": 2447.0,
+    "L": 2409.0,
+    "C": 2447.0,
+    "prev_close": 2414.0,
+    "chg_pct": 1.3670256835128347
   },
+  "phase": "uptrend",
+  "adx": 19.65,
+  "plus_di": 34.92,
+  "minus_di": 12.28,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 2447.0 (2026-10-16), trough 2310.0 (2026-10-08), box top 2447.0 (2026-10-16)",
+  "peak": {
+    "date": "2026-10-16",
+    "price": 2447.0
+  },
+  "trough": {
+    "date": "2026-10-08",
+    "price": 2310.0
+  },
+  "box": {
+    "top": 2447.0,
+    "top_date": "2026-10-16",
+    "bottom": 2310.0,
+    "period": "2026-10-08 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 0.0,
+  "recovery_from_crash_pct": 5.9,
   "supports": [
     {
-      "level": 2332.0,
+      "level": 2364.0,
       "label": "S1 KEY",
-      "touches": 6,
-      "evidence": "tested 6x in base period; 2.1% below current"
+      "touches": 4,
+      "evidence": "tested 4x in base period; 3.4% below current"
     },
     {
-      "level": 2328.0,
+      "level": 2348.0,
       "label": "S2",
-      "touches": 8,
-      "evidence": "mid-base support, tested 8x"
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
     },
     {
-      "level": 2320.0,
+      "level": 2332.0,
       "label": "S3 bottom",
-      "touches": 5,
-      "evidence": "structural bottom, near crash low 2270.0"
+      "touches": 7,
+      "evidence": "structural bottom, near crash low 2310.0"
     }
   ],
   "resistances": [
     {
-      "level": 2383.0,
+      "level": 2447.0,
       "label": "R1 today high",
-      "evidence": "today's high 2383.0"
+      "evidence": "today's high 2447.0"
+    }
+  ],
+  "position": {
+    "current": 2447.0,
+    "in_box_pct": 100.0,
+    "nearest_support": "S1 KEY (2364.0)",
+    "nearest_resistance": null
+  },
+  "kline_today": {
+    "type": "bullish_reclaim",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 2414.0,
+    "H": 2447.0,
+    "L": 2409.0,
+    "C": 2447.0,
+    "body_pct": 86.8,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 13.2
+  },
+  "bias": {
+    "short": {
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
+    },
+    "mid": {
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 2364.0 (KEY support)",
+      "then": "still range; watch 2447.0 for next test"
+    },
+    {
+      "if": "break 2364.0 on close",
+      "then": "target 2348.0 → 2332.0 (short-term bearish)"
+    },
+    {
+      "if": "break 2332.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 2447.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -58,14 +142,72 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 2383.0,
-    "s1": 2270.0,
-    "s2": 2133.0,
+    "r1": 2447.0,
+    "s1": 2291.0,
+    "s2": 2143.0,
     "r2": 2405.0,
-    "r3": 2147.0,
+    "r3": 2181.0,
     "s3": 1851.0,
     "s4": 2001.0,
-    "current_position_pct": 98.2,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 2383.00）：① 跌到 2383.00、收市守住喺 2383.00 上面 → 照 BUY 條 plan 做（入場 2383.00，止蝕 2430.66，目標 2326.50）。② 收市跌穿 2383.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2383.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 100.0,
+    "notes": "WAIT_RANGE: in box (2291-2447), pos 100%, no clear setup"
+  },
+  "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-10-14",
+      "low": 2363.0,
+      "high": 2378.0,
+      "i": 197
+    },
+    {
+      "name": "上升三法",
+      "bias": "bullish",
+      "date": "2026-10-08",
+      "low": 2310.0,
+      "high": 2337.0,
+      "i": 194
+    },
+    {
+      "name": "利好反擊線",
+      "bias": "bullish",
+      "date": "2026-09-25",
+      "low": 2319.0,
+      "high": 2345.0,
+      "i": 185
+    },
+    {
+      "name": "射擊之星",
+      "bias": "bearish",
+      "date": "2026-09-03",
+      "low": 2322.0,
+      "high": 2355.0,
+      "i": 172
+    },
+    {
+      "name": "利淡吞噬",
+      "bias": "bearish",
+      "date": "2026-08-21",
+      "low": 2350.0,
+      "high": 2388.0,
+      "i": 163
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 2447.0,
+  "chg_pct": 1.3670256835128347,
+  "kline": {
+    "type": "bullish_reclaim",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 2414.0,
+    "H": 2447.0,
+    "L": 2409.0,
+    "C": 2447.0,
+    "body_pct": 86.8,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 13.2
   }
 }

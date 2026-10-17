@@ -1,8 +1,9 @@
 {
   "ticker": "6954.T",
-  "asof": "2026-10-16",
-  "close": 5987.0,
-  "chg_pct": 1.35432537667175,
+  "ticker_user": "6954.T",
+  "name": "Fanuc Corporation",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 5940.0,
@@ -12,15 +13,29 @@
     "prev_close": 5907.0,
     "chg_pct": 1.35432537667175
   },
-  "name": "Fanuc Corporation",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 5987.0,
-    "in_box_pct": 38.6,
-    "nearest_support": "S1 bottom (5784.0)",
-    "nearest_resistance": "R1 today high (6084.0)"
+  "adx": 13.45,
+  "plus_di": 25.55,
+  "minus_di": 28.83,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 8880.0 (2026-05-14), trough 5592.0 (2026-09-11), box top 6310.0 (2026-10-07)",
+  "peak": {
+    "date": "2026-05-14",
+    "price": 8880.0
   },
+  "trough": {
+    "date": "2026-09-11",
+    "price": 5592.0
+  },
+  "box": {
+    "top": 6310.0,
+    "top_date": "2026-10-07",
+    "bottom": 5592.0,
+    "period": "2026-09-11 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 32.6,
+  "recovery_from_crash_pct": 7.1,
   "supports": [
     {
       "level": 5784.0,
@@ -39,6 +54,79 @@
       "level": 6310.0,
       "label": "R3 Oct high",
       "evidence": "box top 6310.0, base period high"
+    }
+  ],
+  "position": {
+    "current": 5987.0,
+    "in_box_pct": 38.6,
+    "nearest_support": "S1 bottom (5784.0)",
+    "nearest_resistance": "R1 today high (6084.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 5940.0,
+    "H": 6084.0,
+    "L": 5927.0,
+    "C": 5987.0,
+    "body_pct": 29.9,
+    "upper_wick_pct": 61.8,
+    "lower_wick_pct": 8.3
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 5784.0 (KEY support)",
+      "then": "still range; watch 6084.0 for next test"
+    },
+    {
+      "if": "break 5784.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 5784.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 6084.0 on close",
+      "then": "short-term bullish; next test 6310.0"
+    },
+    {
+      "if": "break 6310.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -60,5 +148,55 @@
     "s4": 5252.0,
     "current_position_pct": 50.6,
     "notes": "WAIT_RANGE: in box (5656-6310), pos 51%, no clear setup"
+  },
+  "patterns": [
+    {
+      "name": "早晨之星",
+      "bias": "bullish",
+      "date": "2026-09-25",
+      "low": 5857.0,
+      "high": 6008.0,
+      "i": 185
+    },
+    {
+      "name": "三個白武士",
+      "bias": "bullish",
+      "date": "2026-09-14",
+      "low": 5625.0,
+      "high": 5795.0,
+      "i": 179
+    },
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-08-19",
+      "low": 5971.0,
+      "high": 6148.0,
+      "i": 161
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-06-23",
+      "low": 7457.0,
+      "high": 7938.0,
+      "i": 122
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 5987.0,
+  "chg_pct": 1.35432537667175,
+  "kline": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 5940.0,
+    "H": 6084.0,
+    "L": 5927.0,
+    "C": 5987.0,
+    "body_pct": 29.9,
+    "upper_wick_pct": 61.8,
+    "lower_wick_pct": 8.3
   }
 }

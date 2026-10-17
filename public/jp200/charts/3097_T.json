@@ -1,8 +1,9 @@
 {
   "ticker": "3097.T",
-  "asof": "2026-10-16",
-  "close": 5730.0,
-  "chg_pct": 1.9572953736654908,
+  "ticker_user": "3097.T",
+  "name": "The Monogatari Corporation",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 5670.0,
@@ -12,15 +13,29 @@
     "prev_close": 5620.0,
     "chg_pct": 1.9572953736654908
   },
-  "name": "The Monogatari Corporation",
   "phase": "range",
-  "kline": {},
-  "position": {
-    "current": 5730.0,
-    "in_box_pct": 89.5,
-    "nearest_support": "S1 KEY (5440.0)",
-    "nearest_resistance": "R1 today high (5790.0)"
+  "adx": 13.95,
+  "plus_di": 30.73,
+  "minus_di": 19.86,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 6010.0 (2026-08-31), trough 5190.0 (2026-09-18), box top 5790.0 (2026-10-16)",
+  "peak": {
+    "date": "2026-08-31",
+    "price": 6010.0
   },
+  "trough": {
+    "date": "2026-09-18",
+    "price": 5190.0
+  },
+  "box": {
+    "top": 5790.0,
+    "top_date": "2026-10-16",
+    "bottom": 5190.0,
+    "period": "2026-09-18 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 4.7,
+  "recovery_from_crash_pct": 10.4,
   "supports": [
     {
       "level": 5440.0,
@@ -48,6 +63,75 @@
       "evidence": "today's high 5790.0"
     }
   ],
+  "position": {
+    "current": 5730.0,
+    "in_box_pct": 89.5,
+    "nearest_support": "S1 KEY (5440.0)",
+    "nearest_resistance": "R1 today high (5790.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 5670.0,
+    "H": 5790.0,
+    "L": 5660.0,
+    "C": 5730.0,
+    "body_pct": 46.2,
+    "upper_wick_pct": 46.2,
+    "lower_wick_pct": 7.7
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral",
+      "reason": "no clear direction"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 5440.0 (KEY support)",
+      "then": "still range; watch 5790.0 for next test"
+    },
+    {
+      "if": "break 5440.0 on close",
+      "then": "target 5400.0 → 5220.0 (short-term bearish)"
+    },
+    {
+      "if": "break 5220.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 5790.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
@@ -67,5 +151,47 @@
     "s4": 4070.0,
     "current_position_pct": 90.0,
     "notes": "SELL_R1: in box (5190-5790), entry at R1 5790, target mid 5490, stop 6028 ｜ 52.2 條規則（SELL plan，resistance 5790.00）：① 跌到 5790.00、收市守住喺 5790.00 上面 → 照 BUY 條 plan 做（入場 5790.00，止蝕 6028.18，目標 5490.00）。② 收市跌穿 5790.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 5790.00 上面』。"
+  },
+  "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-09-09",
+      "low": 5700.0,
+      "high": 5860.0,
+      "i": 176
+    },
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-08-26",
+      "low": 5680.0,
+      "high": 5750.0,
+      "i": 166
+    },
+    {
+      "name": "平頭頂",
+      "bias": "bearish",
+      "date": "2026-07-22",
+      "low": 4980.0,
+      "high": 5130.0,
+      "i": 142
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 5730.0,
+  "chg_pct": 1.9572953736654908,
+  "kline": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 5670.0,
+    "H": 5790.0,
+    "L": 5660.0,
+    "C": 5730.0,
+    "body_pct": 46.2,
+    "upper_wick_pct": 46.2,
+    "lower_wick_pct": 7.7
   }
 }

@@ -1,8 +1,9 @@
 {
   "ticker": "3042.T",
-  "asof": "2026-10-16",
-  "close": 950.0,
-  "chg_pct": 18.75,
+  "ticker_user": "3042.T",
+  "name": "SecuAvail Inc.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 890.0,
@@ -12,15 +13,29 @@
     "prev_close": 800.0,
     "chg_pct": 18.75
   },
-  "name": "SecuAvail Inc.",
   "phase": "uptrend",
-  "kline": {},
-  "position": {
-    "current": 950.0,
-    "in_box_pct": 100.0,
-    "nearest_support": "S1 KEY (300.0)",
-    "nearest_resistance": null
+  "adx": 56.77,
+  "plus_di": 54.52,
+  "minus_di": 0.96,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 406.0 (2026-01-16), trough 270.0 (2026-06-10), box top 950.0 (2026-10-16)",
+  "peak": {
+    "date": "2026-01-16",
+    "price": 406.0
   },
+  "trough": {
+    "date": "2026-06-10",
+    "price": 270.0
+  },
+  "box": {
+    "top": 950.0,
+    "top_date": "2026-10-16",
+    "bottom": 270.0,
+    "period": "2026-06-10 to 2026-10-16"
+  },
+  "drop_from_peak_pct": -134.0,
+  "recovery_from_crash_pct": 251.9,
   "supports": [
     {
       "level": 300.0,
@@ -54,6 +69,75 @@
       "evidence": "today's high 950.0"
     }
   ],
+  "position": {
+    "current": 950.0,
+    "in_box_pct": 100.0,
+    "nearest_support": "S1 KEY (300.0)",
+    "nearest_resistance": null
+  },
+  "kline_today": {
+    "type": "bullish_reclaim",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 890.0,
+    "H": 950.0,
+    "L": 890.0,
+    "C": 950.0,
+    "body_pct": 100.0,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 0.0
+  },
+  "bias": {
+    "short": {
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
+    },
+    "mid": {
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 300.0 (KEY support)",
+      "then": "still range; watch 950.0 for next test"
+    },
+    {
+      "if": "break 300.0 on close",
+      "then": "target 296.0 → 292.0 (short-term bearish)"
+    },
+    {
+      "if": "break 270.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 950.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
     "strategy": "WAIT_RANGE",
@@ -73,5 +157,63 @@
     "s4": 272.0,
     "current_position_pct": 100.0,
     "notes": "WAIT_RANGE: in box (291-950), pos 100%, no clear setup"
+  },
+  "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-10-07",
+      "low": 440.0,
+      "high": 494.0,
+      "i": 193
+    },
+    {
+      "name": "倒錘頭",
+      "bias": "bullish",
+      "date": "2026-10-01",
+      "low": 296.0,
+      "high": 363.0,
+      "i": 189
+    },
+    {
+      "name": "吊頸",
+      "bias": "bearish",
+      "date": "2026-08-24",
+      "low": 300.0,
+      "high": 302.0,
+      "i": 164
+    },
+    {
+      "name": "平頭底",
+      "bias": "bullish",
+      "date": "2026-08-05",
+      "low": 285.0,
+      "high": 295.0,
+      "i": 152
+    },
+    {
+      "name": "黃昏之星",
+      "bias": "bearish",
+      "date": "2026-07-24",
+      "low": 293.0,
+      "high": 299.0,
+      "i": 144
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 950.0,
+  "chg_pct": 18.75,
+  "kline": {
+    "type": "bullish_reclaim",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 890.0,
+    "H": 950.0,
+    "L": 890.0,
+    "C": 950.0,
+    "body_pct": 100.0,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 0.0
   }
 }

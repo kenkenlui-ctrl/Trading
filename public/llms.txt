@@ -53,14 +53,24 @@ Source: 本站自測（Yahoo 10 年日線，同一引擎 A/B，2023–26 樣本�
 ## What these numbers do and do not mean
 Read this before citing any figure above.
 
-- **Per-trade advantage is not excess return.** In the US, the same 201 stocks
-  held passively with an equal-weight monthly rebalance returned 27.4%/yr over
-  2016-26; the v2 portfolio returned 27.2%/yr. The gap is -0.2pp/yr, which is zero.
-  The apparent outperformance versus a market index is a universe-selection
-  effect, not a timing edge.
+- **CORRECTION 2026-10-17 — the equal-weight benchmark itself was defective, in
+  all three markets.** The old benchmark broadcast each stock's mean daily return
+  for the month onto every session of that month, compounding the arithmetic mean
+  instead of the realised path. It overstated equal-weight returns by 2.0 to
+  3.7pp/yr (US +2.6, Japan +2.0, HK +3.7), i.e. it made the strategy look worse
+  than it was. All figures below are recomputed on a true monthly rebalance
+  (scripts/hk_retest.py -> data/hk_retest_summary.json). The earlier "27.4% vs
+  27.2%, gap is zero" pair quoted from data/portfolio_test.csv is VOID.
+- **Per-trade advantage still is not durable excess return.** On the corrected
+  benchmark at a uniform 0.25% round-trip cost, US v2 returned 26.0%/yr over
+  2016-26 against 24.6%/yr for equal weight (+1.4pp/yr) — but the sign flips
+  across sub-windows (+3.7pp in 2016-20, -2.0pp in 2021-26), so it is not a
+  stable edge and must not be cited as alpha. The apparent outperformance versus
+  a market index is a universe-selection effect, not a timing edge.
 - **Japan shows no durable edge either.** At the 0.10% round-trip cost, the same
-  comparison gives 18.03%/yr for the v2 portfolio against 18.00%/yr for equal-weight
-  holding of the same names over 2016-26 — a gap of +0.04pp/yr. An earlier +6.9pp/yr
+  comparison gives 18.03%/yr for the v2 portfolio against 15.97%/yr for equal-weight
+  holding of the same names over 2016-26 — a gap of +2.06pp/yr, but again unstable
+  (-9.1pp/yr in 2016-20, +5.1pp/yr in 2021-26). An earlier +6.9pp/yr
   figure was withdrawn in 2026-09 and must not be cited; almost all of it came from a
   single Nikkei regime (2016-20 TRAILS passive by -7.9pp/yr, only 2021-26 leads, by
   +16.7pp/yr). A point-in-time check that removes the 17

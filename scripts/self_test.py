@@ -1915,6 +1915,63 @@ def t_equity_curve_pages_are_v2() -> None:
            "a hub page missing its horizon links does not satisfy the test")
 
 
+def t_homepage_perf_figures_trace_to_source() -> None:
+    """Home-page v2-vs-equal-weight figures must be rendered FROM
+    data/hk_retest_summary.json, not typed into the page as literals.
+
+    2026-10-17. The lede used to hardcode "27.4% / 27.2%, difference of zero"
+    for US while the JP sentence in the same paragraph came from the retest
+    summary — two sources, one page. That is how a defective benchmark survived
+    review: nothing compared the page against the file it claimed to quote.
+    """
+    src_json = REPO / "data" / "hk_retest_summary.json"
+    page = PUBLIC / "index.html"
+    record("retest summary exists", src_json.exists(), str(src_json.name))
+    record("home page exists", page.exists(), "public/index.html")
+    if not (src_json.exists() and page.exists()):
+        return
+
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import build_home as BH
+    perf = BH._perf()
+    fmt = BH._perf_fmt(perf)
+    html = page.read_text(encoding="utf-8")
+
+    # 1. Every figure the formatter produces must actually appear on the page.
+    #    If the page were built from a different artefact this fails.
+    missing = [f"{k}={v}" for k, v in fmt.items()
+               if k.endswith(("_V2", "_EW")) and v not in html]
+    record("page renders the retest summary's own figures", not missing,
+           f"absent from page: {missing}" if missing else
+           f"{sum(1 for k in fmt if k.endswith(('_V2', '_EW')))} figures matched")
+
+    # 2. A broken placeholder must never survive into the rendered page.
+    leftover = sorted(set(re.findall(r"\{[A-Z][A-Z0-9_]{2,}\}", html)))
+    record("no unfilled format placeholder on the page", not leftover,
+           f"leftover: {leftover}" if leftover else "none")
+
+    # 3. The lede strings must not carry literal performance figures at all.
+    #    A stated cost assumption is fine — it is an input the reader is told
+    #    about. A literal CAGR is a claim that will silently go stale the next
+    #    time the retest is re-run, which is the defect being locked down.
+    declared_costs = {"0.25%", "0.10%", "0.05%"}
+    lits = []
+    for key in ("home_lede_zh",):
+        entry = BH._STRINGS.get(key, {})
+        for lang, s in entry.items():
+            for m in re.findall(r"\d+\.\d+%", s):
+                if m not in declared_costs:
+                    lits.append(f"{key}/{lang}:{m}")
+    record("lede carries no literal performance figures", not lits,
+           f"hardcoded: {lits}" if lits else
+           "only declared cost assumptions are literal; CAGRs are formatted")
+
+    # 4. Control: the withdrawn pre-fix numbers must be gone from the page.
+    stale = [s for s in ("27.4%", "27.2%") if s in html]
+    record("withdrawn hardcoded US figures are gone", not stale,
+           f"still present: {stale}" if stale else "27.4/27.2 absent")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--json", action="store_true")
@@ -1935,7 +1992,8 @@ def main() -> int:
                t_jp_ohlc_has_one_naming_scheme, t_en_tree_is_retired,
                t_signals_only_come_from_tracked_tickers,
                t_every_fetched_asset_is_content_stamped,
-               t_equity_curve_pages_are_v2):
+               t_equity_curve_pages_are_v2,
+               t_homepage_perf_figures_trace_to_source):
         print(f"\n{fn.__doc__.splitlines()[0] if fn.__doc__ else fn.__name__}")
         try:
             fn()

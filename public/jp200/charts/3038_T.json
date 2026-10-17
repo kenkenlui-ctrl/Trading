@@ -1,8 +1,9 @@
 {
   "ticker": "3038.T",
-  "asof": "2026-10-16",
-  "close": 2983.5,
-  "chg_pct": -0.1506024096385561,
+  "ticker_user": "3038.T",
+  "name": "Kobe Bussan Co., Ltd.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 2988.0,
@@ -12,15 +13,29 @@
     "prev_close": 2988.0,
     "chg_pct": -0.1506024096385561
   },
-  "name": "Kobe Bussan Co., Ltd.",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 2983.5,
-    "in_box_pct": 66.5,
-    "nearest_support": "S1 KEY (2784.0)",
-    "nearest_resistance": "R1 today high (3020.0)"
+  "adx": 19.73,
+  "plus_di": 28.06,
+  "minus_di": 18.6,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 3974.0 (2026-01-20), trough 2516.0 (2026-06-19), box top 3219.0 (2026-09-15)",
+  "peak": {
+    "date": "2026-01-20",
+    "price": 3974.0
   },
+  "trough": {
+    "date": "2026-06-19",
+    "price": 2516.0
+  },
+  "box": {
+    "top": 3219.0,
+    "top_date": "2026-09-15",
+    "bottom": 2516.0,
+    "period": "2026-06-19 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 24.9,
+  "recovery_from_crash_pct": 18.6,
   "supports": [
     {
       "level": 2784.0,
@@ -59,6 +74,79 @@
       "evidence": "box top 3219.0, base period high"
     }
   ],
+  "position": {
+    "current": 2983.5,
+    "in_box_pct": 66.5,
+    "nearest_support": "S1 KEY (2784.0)",
+    "nearest_resistance": "R1 today high (3020.0)"
+  },
+  "kline_today": {
+    "type": "bearish_rejection",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 2988.0,
+    "H": 3020.0,
+    "L": 2972.5,
+    "C": 2983.5,
+    "body_pct": 9.5,
+    "upper_wick_pct": 67.4,
+    "lower_wick_pct": 23.2
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 2784.0 (KEY support)",
+      "then": "still range; watch 3020.0 for next test"
+    },
+    {
+      "if": "break 2784.0 on close",
+      "then": "target 2768.0 → 2764.0 (short-term bearish)"
+    },
+    {
+      "if": "break 2516.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 3020.0 on close",
+      "then": "short-term bullish; next test 3219.0"
+    },
+    {
+      "if": "break 3219.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "BUY",
     "strategy": "BUY_S1",
@@ -78,5 +166,63 @@
     "s4": 3081.0,
     "current_position_pct": 27.1,
     "notes": "BUY_S1: in box (2896-3219), entry at S1 2896, target mid 3058, stop 2818 ｜ 52.2 條規則（BUY plan，support 2896.00）：① 跌到 2896.00、收市守住喺 2896.00 上面 → 照 BUY 條 plan 做（入場 2896.00，止蝕 2817.58，目標 3057.50）。② 收市跌穿 2896.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2896.00 上面』。"
+  },
+  "patterns": [
+    {
+      "name": "上升三法",
+      "bias": "bullish",
+      "date": "2026-09-29",
+      "low": 2929.0,
+      "high": 2986.0,
+      "i": 187
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-09-18",
+      "low": 3030.0,
+      "high": 3117.0,
+      "i": 183
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-08-04",
+      "low": 2768.0,
+      "high": 2886.0,
+      "i": 151
+    },
+    {
+      "name": "利好反擊線",
+      "bias": "bullish",
+      "date": "2026-07-24",
+      "low": 2586.0,
+      "high": 2667.0,
+      "i": 144
+    },
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-06-10",
+      "low": 2633.0,
+      "high": 2693.5,
+      "i": 113
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 2983.5,
+  "chg_pct": -0.1506024096385561,
+  "kline": {
+    "type": "bearish_rejection",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 2988.0,
+    "H": 3020.0,
+    "L": 2972.5,
+    "C": 2983.5,
+    "body_pct": 9.5,
+    "upper_wick_pct": 67.4,
+    "lower_wick_pct": 23.2
   }
 }

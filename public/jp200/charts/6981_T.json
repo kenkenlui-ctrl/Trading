@@ -1,8 +1,9 @@
 {
   "ticker": "6981.T",
-  "asof": "2026-10-16",
-  "close": 6900.0,
-  "chg_pct": 2.2373684990368847,
+  "ticker_user": "6981.T",
+  "name": "Murata Manufacturing Co., Ltd.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 6800.0,
@@ -12,15 +13,29 @@
     "prev_close": 6749.0,
     "chg_pct": 2.2373684990368847
   },
-  "name": "Murata Manufacturing Co., Ltd.",
   "phase": "downtrend_recovery",
-  "kline": {},
-  "position": {
-    "current": 6900.0,
-    "in_box_pct": 33.3,
-    "nearest_support": "S1 KEY (6692.0)",
-    "nearest_resistance": "R1 today high (7075.0)"
+  "adx": 21.82,
+  "plus_di": 18.15,
+  "minus_di": 33.32,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 12895.0 (2026-06-22), trough 5861.0 (2026-07-29), box top 8980.0 (2026-10-06)",
+  "peak": {
+    "date": "2026-06-22",
+    "price": 12895.0
   },
+  "trough": {
+    "date": "2026-07-29",
+    "price": 5861.0
+  },
+  "box": {
+    "top": 8980.0,
+    "top_date": "2026-10-06",
+    "bottom": 5861.0,
+    "period": "2026-07-29 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 46.5,
+  "recovery_from_crash_pct": 17.7,
   "supports": [
     {
       "level": 6692.0,
@@ -47,6 +62,79 @@
       "evidence": "box top 8980.0, base period high"
     }
   ],
+  "position": {
+    "current": 6900.0,
+    "in_box_pct": 33.3,
+    "nearest_support": "S1 KEY (6692.0)",
+    "nearest_resistance": "R1 today high (7075.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 6800.0,
+    "H": 7075.0,
+    "L": 6660.0,
+    "C": 6900.0,
+    "body_pct": 24.1,
+    "upper_wick_pct": 42.2,
+    "lower_wick_pct": 33.7
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral",
+      "reason": ""
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 6692.0 (KEY support)",
+      "then": "still range; watch 7075.0 for next test"
+    },
+    {
+      "if": "break 6692.0 on close",
+      "then": "target 5861.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 5861.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 7075.0 on close",
+      "then": "short-term bullish; next test 8980.0"
+    },
+    {
+      "if": "break 8980.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
     "strategy": "WAIT_VOLATILE",
@@ -66,5 +154,63 @@
     "s4": 2821.5,
     "current_position_pct": 10.3,
     "notes": "WAIT_VOLATILE: ATR14 6.3% / box width 34% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
+  },
+  "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-10-07",
+      "low": 8536.0,
+      "high": 8870.0,
+      "i": 193
+    },
+    {
+      "name": "早晨之星",
+      "bias": "bullish",
+      "date": "2026-09-11",
+      "low": 7075.0,
+      "high": 7400.0,
+      "i": 178
+    },
+    {
+      "name": "三個白武士",
+      "bias": "bullish",
+      "date": "2026-08-25",
+      "low": 6871.0,
+      "high": 7165.0,
+      "i": 165
+    },
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-07-14",
+      "low": 8469.0,
+      "high": 9136.0,
+      "i": 137
+    },
+    {
+      "name": "平頭頂",
+      "bias": "bearish",
+      "date": "2026-07-07",
+      "low": 9181.0,
+      "high": 10380.0,
+      "i": 132
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 6900.0,
+  "chg_pct": 2.2373684990368847,
+  "kline": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 6800.0,
+    "H": 7075.0,
+    "L": 6660.0,
+    "C": 6900.0,
+    "body_pct": 24.1,
+    "upper_wick_pct": 42.2,
+    "lower_wick_pct": 33.7
   }
 }

@@ -1,8 +1,9 @@
 {
   "ticker": "3076.T",
-  "asof": "2026-10-16",
-  "close": 3095.0,
-  "chg_pct": 0.8143322475570036,
+  "ticker_user": "3076.T",
+  "name": "Ai Holdings Corporation",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 3080.0,
@@ -12,15 +13,29 @@
     "prev_close": 3070.0,
     "chg_pct": 0.8143322475570036
   },
-  "name": "Ai Holdings Corporation",
   "phase": "uptrend",
-  "kline": {},
-  "position": {
-    "current": 3095.0,
-    "in_box_pct": 96.2,
-    "nearest_support": "S1 KEY (2984.0)",
-    "nearest_resistance": "R1 today high (3100.0)"
+  "adx": 16.16,
+  "plus_di": 30.29,
+  "minus_di": 17.67,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 3100.0 (2026-10-16), trough 2937.0 (2026-09-30), box top 3100.0 (2026-10-16)",
+  "peak": {
+    "date": "2026-10-16",
+    "price": 3100.0
   },
+  "trough": {
+    "date": "2026-09-30",
+    "price": 2937.0
+  },
+  "box": {
+    "top": 3100.0,
+    "top_date": "2026-10-16",
+    "bottom": 2937.0,
+    "period": "2026-09-30 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 0.2,
+  "recovery_from_crash_pct": 5.4,
   "supports": [
     {
       "level": 2984.0,
@@ -48,6 +63,75 @@
       "evidence": "today's high 3100.0"
     }
   ],
+  "position": {
+    "current": 3095.0,
+    "in_box_pct": 96.2,
+    "nearest_support": "S1 KEY (2984.0)",
+    "nearest_resistance": "R1 today high (3100.0)"
+  },
+  "kline_today": {
+    "type": "bullish_hold",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 3080.0,
+    "H": 3100.0,
+    "L": 3055.0,
+    "C": 3095.0,
+    "body_pct": 33.3,
+    "upper_wick_pct": 11.1,
+    "lower_wick_pct": 55.6
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
+    },
+    "long": {
+      "bias": "near_peak",
+      "reason": "near all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 2984.0 (KEY support)",
+      "then": "still range; watch 3100.0 for next test"
+    },
+    {
+      "if": "break 2984.0 on close",
+      "then": "target 2976.0 → 2968.0 (short-term bearish)"
+    },
+    {
+      "if": "break 2968.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 3100.0 on close",
+      "then": "short-term bullish; next test next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
     "strategy": "WAIT_RANGE",
@@ -67,5 +151,55 @@
     "s4": 2615.0,
     "current_position_pct": 96.9,
     "notes": "WAIT_RANGE: in box (2937-3100), pos 97%, no clear setup"
+  },
+  "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-10-07",
+      "low": 2986.0,
+      "high": 3025.0,
+      "i": 193
+    },
+    {
+      "name": "黃昏之星",
+      "bias": "bearish",
+      "date": "2026-09-16",
+      "low": 2978.0,
+      "high": 3015.0,
+      "i": 181
+    },
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-08-27",
+      "low": 2959.0,
+      "high": 2993.0,
+      "i": 167
+    },
+    {
+      "name": "吊頸",
+      "bias": "bearish",
+      "date": "2026-08-03",
+      "low": 2826.0,
+      "high": 2917.0,
+      "i": 150
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 3095.0,
+  "chg_pct": 0.8143322475570036,
+  "kline": {
+    "type": "bullish_hold",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 3080.0,
+    "H": 3100.0,
+    "L": 3055.0,
+    "C": 3095.0,
+    "body_pct": 33.3,
+    "upper_wick_pct": 11.1,
+    "lower_wick_pct": 55.6
   }
 }

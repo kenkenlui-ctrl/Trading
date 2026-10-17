@@ -22,6 +22,11 @@ MOBILE_BOTTOM_NAV = '''
 </nav>
 '''
 
+# 2026-10-17: the HK "not covered by v2" banner below is rendered on ~200 HK
+# ticker pages, so its figures come from perf_figures (the retest summary) and
+# never from a literal — a stale number there repeats hundreds of times.
+import perf_figures  # noqa: E402
+
 
 def mobile_bottom_nav(active: str = "", en: bool = False) -> str:
     """Bottom tab bar for <=768px.
@@ -103,8 +108,7 @@ def render_v2_block(market: str) -> str:
                 '<h2 style="margin-top:0">呢一版未涵蓋港股</h2>'
                 '<p style="font-size:0.85rem;opacity:0.75;margin:6px 0 0">'
                 '港股行緊舊版 (v1) 引擎，<b>唔屬於 v2</b>。我哋自己嘅研究發現港股喺 '
-                '按 0.25% 來回成本實測，2016–26 年化 v2 +11.0%、等權持有 +19.1%，'
-                '落後 8.1 個百分點/年；零成本都仲係落後 5.9 點，所以 v2 暫時只行美股同日股。'
+                + perf_figures.hk_note('zh') +
                 '下面嘅表格由 v1 產生，唔應該當成 v2 訊號。</p></div></div>'
             )
         return ""
@@ -238,8 +242,7 @@ def render_v2_status_for_ticker(market: str, safe: str) -> str:
             '<h2 style="margin-top:0">呢一頁未涵蓋於現行引擎</h2>'
             '<p style="font-size:0.85rem;opacity:0.75;margin:6px 0 0">'
             '港股目前行緊舊版 (v1) 引擎，<b>唔屬於 v2</b>。我哋自己嘅研究發現港股喺 '
-            '按 0.25% 來回成本實測，2016–26 年化 v2 +11.0%、等權持有 +19.1%，'
-            '落後 8.1 個百分點/年；零成本都仲係落後 5.9 點，所以 v2 暫時只行美股同日股。'
+            + perf_figures.hk_note('zh') +
             '下面嘅內容由 v1 產生，唔應該當成 v2 訊號。'
             '</p></div></div>'
         )

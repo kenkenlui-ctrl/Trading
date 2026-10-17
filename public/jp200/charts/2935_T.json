@@ -1,8 +1,9 @@
 {
   "ticker": "2935.T",
-  "asof": "2026-10-16",
-  "close": 1166.0,
-  "chg_pct": 0.952380952380949,
+  "ticker_user": "2935.T",
+  "name": "Pickles Holdings Co.,Ltd.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 1155.0,
@@ -12,15 +13,29 @@
     "prev_close": 1155.0,
     "chg_pct": 0.952380952380949
   },
-  "name": "Pickles Holdings Co.,Ltd.",
   "phase": "base_building",
-  "kline": {},
-  "position": {
-    "current": 1166.0,
-    "in_box_pct": 63.9,
-    "nearest_support": "S1 KEY (1100.0)",
-    "nearest_resistance": "R3 Sep high (1219.0)"
+  "adx": 23.53,
+  "plus_di": 14.66,
+  "minus_di": 19.83,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 1394.0 (2025-12-29), trough 1067.0 (2026-06-02), box top 1219.0 (2026-09-15)",
+  "peak": {
+    "date": "2025-12-29",
+    "price": 1394.0
   },
+  "trough": {
+    "date": "2026-06-02",
+    "price": 1067.0
+  },
+  "box": {
+    "top": 1219.0,
+    "top_date": "2026-09-15",
+    "bottom": 1067.0,
+    "period": "2026-06-02 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 16.4,
+  "recovery_from_crash_pct": 9.3,
   "supports": [
     {
       "level": 1100.0,
@@ -53,6 +68,79 @@
       "evidence": "box top 1219.0, base period high"
     }
   ],
+  "position": {
+    "current": 1166.0,
+    "in_box_pct": 63.9,
+    "nearest_support": "S1 KEY (1100.0)",
+    "nearest_resistance": "R3 Sep high (1219.0)"
+  },
+  "kline_today": {
+    "type": "bullish_reclaim",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 1155.0,
+    "H": 1166.0,
+    "L": 1154.0,
+    "C": 1166.0,
+    "body_pct": 91.7,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 8.3
+  },
+  "bias": {
+    "short": {
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 1100.0 (KEY support)",
+      "then": "still range; watch 1166.0 for next test"
+    },
+    {
+      "if": "break 1100.0 on close",
+      "then": "target 1096.0 → 1072.0 (short-term bearish)"
+    },
+    {
+      "if": "break 1072.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 1166.0 on close",
+      "then": "short-term bullish; next test 1219.0"
+    },
+    {
+      "if": "break 1219.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "BUY",
     "strategy": "BUY_S1",
@@ -72,5 +160,63 @@
     "s4": 1107.0,
     "current_position_pct": 23.2,
     "notes": "BUY_S1: in box (1150-1219), entry at S1 1150, target mid 1184, stop 1127 ｜ 52.2 條規則（BUY plan，support 1150.00）：① 跌到 1150.00、收市守住喺 1150.00 上面 → 照 BUY 條 plan 做（入場 1150.00，止蝕 1127.00，目標 1184.50）。② 收市跌穿 1150.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1150.00 上面』。"
+  },
+  "patterns": [
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-10-16",
+      "low": 1154.0,
+      "high": 1166.0,
+      "i": 199
+    },
+    {
+      "name": "利好反擊線",
+      "bias": "bullish",
+      "date": "2026-10-06",
+      "low": 1160.0,
+      "high": 1167.0,
+      "i": 192
+    },
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-09-24",
+      "low": 1204.0,
+      "high": 1219.0,
+      "i": 184
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-09-18",
+      "low": 1206.0,
+      "high": 1216.0,
+      "i": 183
+    },
+    {
+      "name": "平頭頂",
+      "bias": "bearish",
+      "date": "2026-09-08",
+      "low": 1197.0,
+      "high": 1205.0,
+      "i": 175
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 1166.0,
+  "chg_pct": 0.952380952380949,
+  "kline": {
+    "type": "bullish_reclaim",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 1155.0,
+    "H": 1166.0,
+    "L": 1154.0,
+    "C": 1166.0,
+    "body_pct": 91.7,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 8.3
   }
 }

@@ -1,8 +1,9 @@
 {
   "ticker": "3199.T",
-  "asof": "2026-10-16",
-  "close": 1230.0,
-  "chg_pct": -0.24330900243308973,
+  "ticker_user": "3199.T",
+  "name": "Watahan & Co.,Ltd.",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 1228.0,
@@ -12,15 +13,29 @@
     "prev_close": 1233.0,
     "chg_pct": -0.24330900243308973
   },
-  "name": "Watahan & Co.,Ltd.",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 1230.0,
-    "in_box_pct": 23.6,
-    "nearest_support": "S1 bottom (1192.0)",
-    "nearest_resistance": "R1 today high (1233.0)"
+  "adx": 31.66,
+  "plus_di": 12.85,
+  "minus_di": 33.42,
+  "regime": "trend",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 1521.0 (2026-02-25), trough 1221.0 (2026-10-16), box top 1353.0 (2026-09-01)",
+  "peak": {
+    "date": "2026-02-25",
+    "price": 1521.0
   },
+  "trough": {
+    "date": "2026-10-16",
+    "price": 1221.0
+  },
+  "box": {
+    "top": 1353.0,
+    "top_date": "2026-09-01",
+    "bottom": 1221.0,
+    "period": "2026-10-16 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 19.1,
+  "recovery_from_crash_pct": 0.7,
   "supports": [
     {
       "level": 1192.0,
@@ -39,6 +54,79 @@
       "level": 1353.0,
       "label": "R3 Sep high",
       "evidence": "box top 1353.0, base period high"
+    }
+  ],
+  "position": {
+    "current": 1230.0,
+    "in_box_pct": 23.6,
+    "nearest_support": "S1 bottom (1192.0)",
+    "nearest_resistance": "R1 today high (1233.0)"
+  },
+  "kline_today": {
+    "type": "bullish_hold",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 1228.0,
+    "H": 1233.0,
+    "L": 1221.0,
+    "C": 1230.0,
+    "body_pct": 16.7,
+    "upper_wick_pct": 25.0,
+    "lower_wick_pct": 58.3
+  },
+  "bias": {
+    "short": {
+      "bias": "defensive",
+      "reason": "near box bottom (24% of box)"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 1192.0 (KEY support)",
+      "then": "still range; watch 1233.0 for next test"
+    },
+    {
+      "if": "break 1192.0 on close",
+      "then": "target next S → lower (short-term bearish)"
+    },
+    {
+      "if": "break 1192.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 1233.0 on close",
+      "then": "short-term bullish; next test 1353.0"
+    },
+    {
+      "if": "break 1353.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
     }
   ],
   "action_plan": {
@@ -60,5 +148,63 @@
     "s4": 1392.0,
     "current_position_pct": 9.1,
     "notes": "WAIT_RANGE: in box (1221-1320), pos 9%, no clear setup"
+  },
+  "patterns": [
+    {
+      "name": "利好反擊線",
+      "bias": "bullish",
+      "date": "2026-10-16",
+      "low": 1221.0,
+      "high": 1233.0,
+      "i": 199
+    },
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-09-08",
+      "low": 1309.0,
+      "high": 1328.0,
+      "i": 175
+    },
+    {
+      "name": "吊頸",
+      "bias": "bearish",
+      "date": "2026-09-02",
+      "low": 1323.0,
+      "high": 1335.0,
+      "i": 171
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-08-26",
+      "low": 1333.0,
+      "high": 1345.0,
+      "i": 166
+    },
+    {
+      "name": "平頭底",
+      "bias": "bullish",
+      "date": "2026-08-14",
+      "low": 1319.0,
+      "high": 1341.0,
+      "i": 158
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 1230.0,
+  "chg_pct": -0.24330900243308973,
+  "kline": {
+    "type": "bullish_hold",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 1228.0,
+    "H": 1233.0,
+    "L": 1221.0,
+    "C": 1230.0,
+    "body_pct": 16.7,
+    "upper_wick_pct": 25.0,
+    "lower_wick_pct": 58.3
   }
 }

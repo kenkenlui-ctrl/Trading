@@ -34,6 +34,7 @@ import json
 import sys
 from collections import Counter
 from pathlib import Path
+import perf_figures  # noqa: E402
 
 REPO = Path("/Users/kenken/dev/dsa-hk")
 CONTROL = REPO / "data" / "control_test.csv"
@@ -211,8 +212,8 @@ def render(bench: list[dict], trades: list[dict]) -> str:
 
 <div class="cav">
 <strong>同時要記住相反嗰個結論。</strong>
-同一個引擎對「同一批 200 隻股票等權持有」嘅基準，組合層面 <b>冇 alpha</b>
-（美股 v2 27.18% vs 等權 27.4%，差 −0.2 pp/年）。所以正確用法係：
+同一個引擎對「同一批 200 隻股票等權持有」嘅基準，組合層面 <b>冇一個穩定嘅 alpha</b>
+（{perf_figures.us_gap_sentence('zh')}）。所以正確用法係：
 <b>呢個係一個揀股工具，唔係一個要跟嘅組合</b>。兩個基準唔同，答案就唔同。
 </div>
 

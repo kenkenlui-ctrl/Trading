@@ -101,7 +101,7 @@ python3 /Users/kenken/dev/dsa-hk/charts/us200/batch_us200.py --date "$ASOF_US" 2
 # LAST writer of the JP OHLC files, not the first.
 echo
 echo "[1a] JP charts + snapshots (yfinance, was never in this pipeline)..."
-python3 scripts/fetch_jp_charts.py 2>&1 | tail -3 || echo "  JP fetch (continue anyway)"
+python3 scripts/fetch_jp_charts.py --asof "$ASOF_JP" 2>&1 | tail -3 || echo "  JP fetch (continue anyway)"
 
 # --- Step 1b: Refresh the raw OHLC series that the interactive charts AND v2 read ---
 # 2026-10-07. This step was MISSING, and its absence had two consequences that

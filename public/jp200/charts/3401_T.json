@@ -1,8 +1,9 @@
 {
   "ticker": "3401.T",
-  "asof": "2026-10-16",
-  "close": 1685.0,
-  "chg_pct": 2.2761760242792084,
+  "ticker_user": "3401.T",
+  "name": "Teijin Limited",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 1674.0,
@@ -12,15 +13,29 @@
     "prev_close": 1647.5,
     "chg_pct": 2.2761760242792084
   },
-  "name": "Teijin Limited",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 1685.0,
-    "in_box_pct": 49.1,
-    "nearest_support": "S1 KEY (1644.0)",
-    "nearest_resistance": "R1 today high (1688.5)"
+  "adx": 10.27,
+  "plus_di": 27.03,
+  "minus_di": 25.26,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 1825.0 (2026-09-01), trough 1606.0 (2026-09-09), box top 1744.0 (2026-09-18)",
+  "peak": {
+    "date": "2026-09-01",
+    "price": 1825.0
   },
+  "trough": {
+    "date": "2026-09-09",
+    "price": 1606.0
+  },
+  "box": {
+    "top": 1744.0,
+    "top_date": "2026-09-18",
+    "bottom": 1606.0,
+    "period": "2026-09-09 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 7.7,
+  "recovery_from_crash_pct": 4.9,
   "supports": [
     {
       "level": 1644.0,
@@ -53,6 +68,79 @@
       "evidence": "box top 1744.0, base period high"
     }
   ],
+  "position": {
+    "current": 1685.0,
+    "in_box_pct": 49.1,
+    "nearest_support": "S1 KEY (1644.0)",
+    "nearest_resistance": "R1 today high (1688.5)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 1674.0,
+    "H": 1688.5,
+    "L": 1667.0,
+    "C": 1685.0,
+    "body_pct": 51.2,
+    "upper_wick_pct": 16.3,
+    "lower_wick_pct": 32.6
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 1644.0 (KEY support)",
+      "then": "still range; watch 1688.5 for next test"
+    },
+    {
+      "if": "break 1644.0 on close",
+      "then": "target 1632.0 → 1628.0 (short-term bearish)"
+    },
+    {
+      "if": "break 1628.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 1688.5 on close",
+      "then": "short-term bullish; next test 1744.0"
+    },
+    {
+      "if": "break 1744.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
     "strategy": "WAIT_RANGE",
@@ -72,5 +160,63 @@
     "s4": 1292.5,
     "current_position_pct": 53.4,
     "notes": "WAIT_RANGE: in box (1618-1744), pos 53%, no clear setup"
+  },
+  "patterns": [
+    {
+      "name": "利好反擊線",
+      "bias": "bullish",
+      "date": "2026-10-16",
+      "low": 1667.0,
+      "high": 1688.5,
+      "i": 199
+    },
+    {
+      "name": "平頭頂",
+      "bias": "bearish",
+      "date": "2026-09-28",
+      "low": 1686.0,
+      "high": 1720.0,
+      "i": 186
+    },
+    {
+      "name": "上升三法",
+      "bias": "bullish",
+      "date": "2026-09-08",
+      "low": 1622.0,
+      "high": 1707.0,
+      "i": 175
+    },
+    {
+      "name": "錘頭",
+      "bias": "bullish",
+      "date": "2026-08-05",
+      "low": 1612.0,
+      "high": 1659.0,
+      "i": 152
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-07-28",
+      "low": 1681.0,
+      "high": 1735.0,
+      "i": 146
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 1685.0,
+  "chg_pct": 2.2761760242792084,
+  "kline": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 1674.0,
+    "H": 1688.5,
+    "L": 1667.0,
+    "C": 1685.0,
+    "body_pct": 51.2,
+    "upper_wick_pct": 16.3,
+    "lower_wick_pct": 32.6
   }
 }

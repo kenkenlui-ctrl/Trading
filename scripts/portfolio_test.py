@@ -271,15 +271,27 @@ def main() -> int:
         ib = load(src / f"{MARKETS[mkt][0]}.json")
         cal = ib.index
         # B0 index, B1 same-universe equal weight (the benchmark that matters).
-        # .mean(axis=1) is load-bearing: transform("mean") on a DataFrame returns a
-        # per-TICKER monthly mean, so prod() without it multiplies 201 tickers per
-        # session and "grows" the benchmark to 10^70%.
+        # 2026-10-17 CORRECTION — see hk_retest.ew_bh() for the full note. This
+        # used to be:
+        #     b1src.pct_change().groupby([cal.year, cal.month]).transform("mean").mean(axis=1)
+        # `transform("mean")` broadcasts each ticker's MEAN DAILY return over
+        # every session of the month (including the first, whose pct_change() is
+        # NaN), so the benchmark compounded the arithmetic mean instead of the
+        # realised path and manufactured one day of return per month. It
+        # inflated the BENCHMARK by ~+2 to +3.4pp/yr, i.e. it understated every
+        # arm measured against it. Now a true monthly rebalance, matching the
+        # convention in hk_retest.ew_bh() so both engines publish the same
+        # benchmark number. Monthly rebalance is the LESS forgiving choice for
+        # the strategy; costs are not charged, matching the "held passively"
+        # claim.
         b1src = pd.DataFrame(px).reindex(cal)
         b1src = b1src.loc[b1src.notna().any(axis=1)]
         cal = b1src.index
-        mm = b1src.pct_change().groupby(
-            [cal.year, cal.month]).transform("mean").mean(axis=1)
-        b1 = (100_000 * (1 + mm).cumprod()).ffill()
+        if b1src.empty:
+            b1 = pd.Series(dtype=float)
+        else:
+            b1 = (100_000 * (1 + b1src.resample("ME").last().pct_change()
+                             .mean(axis=1)).cumprod()).ffill()
         # the benchmark index gets the same glitch treatment as everything else
         b0 = ib.close.copy()
         for d in mask.get(MARKETS[mkt][0], set()):

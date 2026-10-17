@@ -1,8 +1,9 @@
 {
   "ticker": "1459.T",
-  "asof": "2026-10-16",
-  "close": 110.0,
-  "chg_pct": -1.7857142857142905,
+  "ticker_user": "1459.T",
+  "name": "Rakuten ETF-Nikkei 225 Double Inverse Index",
+  "data_source": "yfinance",
+  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
   "last_bar": {
     "date": "2026-10-16",
     "O": 110.0,
@@ -12,15 +13,29 @@
     "prev_close": 112.0,
     "chg_pct": -1.7857142857142905
   },
-  "name": "Rakuten ETF-Nikkei 225 Double Inverse Index",
   "phase": "downtrend_active",
-  "kline": {},
-  "position": {
-    "current": 110.0,
-    "in_box_pct": 80.0,
-    "nearest_support": "S1 KEY (108.0)",
-    "nearest_resistance": "R1 today high (112.0)"
+  "adx": 18.59,
+  "plus_di": 31.41,
+  "minus_di": 23.19,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 220.0 (2026-03-23), trough 94.0 (2026-10-06), box top 114.0 (2026-10-15)",
+  "peak": {
+    "date": "2026-03-23",
+    "price": 220.0
   },
+  "trough": {
+    "date": "2026-10-06",
+    "price": 94.0
+  },
+  "box": {
+    "top": 114.0,
+    "top_date": "2026-10-15",
+    "bottom": 94.0,
+    "period": "2026-10-06 to 2026-10-16"
+  },
+  "drop_from_peak_pct": 50.0,
+  "recovery_from_crash_pct": 17.0,
   "supports": [
     {
       "level": 108.0,
@@ -64,6 +79,79 @@
       "evidence": "psychological round number, pre-crash zone 150"
     }
   ],
+  "position": {
+    "current": 110.0,
+    "in_box_pct": 80.0,
+    "nearest_support": "S1 KEY (108.0)",
+    "nearest_resistance": "R1 today high (112.0)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": true,
+    "close_position": "lower_half",
+    "O": 110.0,
+    "H": 112.0,
+    "L": 108.0,
+    "C": 110.0,
+    "body_pct": 0.0,
+    "upper_wick_pct": 50.0,
+    "lower_wick_pct": 50.0
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 108.0 (KEY support)",
+      "then": "still range; watch 112.0 for next test"
+    },
+    {
+      "if": "break 108.0 on close",
+      "then": "target 104.0 → 100.0 (short-term bearish)"
+    },
+    {
+      "if": "break 94.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 112.0 on close",
+      "then": "short-term bullish; next test 114.0"
+    },
+    {
+      "if": "break 114.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
   "action_plan": {
     "verdict": "WAIT",
     "strategy": "WAIT_RANGE",
@@ -83,5 +171,63 @@
     "s4": 151.0,
     "current_position_pct": 57.1,
     "notes": "WAIT_RANGE: in box (94-122), pos 57%, no clear setup"
+  },
+  "patterns": [
+    {
+      "name": "倒錘頭",
+      "bias": "bullish",
+      "date": "2026-10-15",
+      "low": 107.0,
+      "high": 114.0,
+      "i": 198
+    },
+    {
+      "name": "平頭底",
+      "bias": "bullish",
+      "date": "2026-10-08",
+      "low": 97.0,
+      "high": 99.0,
+      "i": 194
+    },
+    {
+      "name": "三隻烏鴉",
+      "bias": "bearish",
+      "date": "2026-09-16",
+      "low": 118.0,
+      "high": 121.0,
+      "i": 181
+    },
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-09-10",
+      "low": 113.0,
+      "high": 117.0,
+      "i": 177
+    },
+    {
+      "name": "早晨之星",
+      "bias": "bullish",
+      "date": "2026-09-03",
+      "low": 115.0,
+      "high": 119.0,
+      "i": 172
+    }
+  ],
+  "asof": "2026-10-16",
+  "close": 110.0,
+  "chg_pct": -1.7857142857142905,
+  "kline": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": true,
+    "close_position": "lower_half",
+    "O": 110.0,
+    "H": 112.0,
+    "L": 108.0,
+    "C": 110.0,
+    "body_pct": 0.0,
+    "upper_wick_pct": 50.0,
+    "lower_wick_pct": 50.0
   }
 }
