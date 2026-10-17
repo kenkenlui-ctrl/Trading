@@ -107,9 +107,11 @@ def render_v2_block(market: str) -> str:
                 '<div class="info-card" style="border-left:3px solid var(--amber)">'
                 '<h2 style="margin-top:0">呢一版未涵蓋港股</h2>'
                 '<p style="font-size:0.85rem;opacity:0.75;margin:6px 0 0">'
-                '港股行緊舊版 (v1) 引擎，<b>唔屬於 v2</b>。我哋自己嘅研究發現港股喺 '
+                '港股<b>未納入 v2</b>，所以呢頁冇港股入場計劃。'
+                '舊版 (v1) 引擎嘅行動建議（BUY/SELL/WAIT）已於 2026-10-18 全站移除。'
+                '我哋自己嘅研究發現港股喺 '
                 + perf_figures.hk_note('zh') +
-                '下面嘅表格由 v1 產生，唔應該當成 v2 訊號。</p></div></div>'
+                '下面只列價格行為分析（Phase / S-R ladder / 情境），唔構成 v2 訊號。</p></div></div>'
             )
         return ""
 
@@ -238,15 +240,22 @@ def render_v2_status_for_ticker(market: str, safe: str,
 
     key = (market or "").lower() + "200"
     if key == "hk200":
+        # 2026-10-18 (2-into-1). This banner used to say HK "is running the old
+        # v1 engine" and that the content below came from v1. Both are now
+        # false: the v1 action output was removed from every market including
+        # HK, so there is no engine left that produces a HK action. HK is
+        # simply not screened, and what remains on the page is price-behaviour
+        # description with no action attached to it.
         return (
             '<div class="container" style="margin:22px 0 6px">'
             '<div class="info-card" style="border-left:3px solid var(--amber)">'
             '<h2 style="margin-top:0">呢一頁未涵蓋於現行引擎</h2>'
             '<p style="font-size:0.85rem;opacity:0.75;margin:6px 0 0">'
-            '港股目前行緊舊版 (v1) 引擎，<b>唔屬於 v2</b>。我哋自己嘅研究發現港股喺 '
+            '港股<b>未納入 v2</b>，所以本站<b>冇</b>任何港股行動計劃 —— '
+            '舊版引擎嘅行動建議亦已全站移除。我哋自己嘅研究發現港股喺 '
             + perf_figures.hk_note('zh') +
-            '下面嘅內容由 v1 產生，唔應該當成 v2 訊號。'
-            '</p></div></div>'
+            '下面只係價格行為分析（phase / S-R ladder / 情境），唔構成 v2 訊號，'
+            '亦唔應該當成入場建議。</p></div></div>'
         )
 
     p = Path(__file__).resolve().parent.parent / "public" / "v2-signals.json"
@@ -262,39 +271,43 @@ def render_v2_status_for_ticker(market: str, safe: str,
     asof = rows[0].get("asof", "") if rows else ""
 
     if hit:
-        dist = hit.get("dist_to_entry_pct")
-        d_txt = "已到入場位" if abs(dist or 0) < 0.05 else f"距入場位 {abs(dist):.2f}%"
-        body = (
-            f'<div style="font-size:1.15rem;margin:2px 0">{d_txt}</div>'
-            f'<div style="font-size:0.78rem;opacity:0.75">'
-            f'T-1 收市 {hit["last_close"]} · 入場 S1 <b>{hit["entry_s1"]}</b> · '
-            f'止損 {hit["stop"]}（{hit["stop_dist_pct"]:.2f}%）</div>'
-        )
+        # 2026-10-18 (2-into-1). This card used to repeat 距入場位 / 入場 S1 /
+        # 止損 above the Action Plan card, which now owns those numbers as the
+        # page's single action authority. Two cards printing the same entry on
+        # one page is the same class of problem as two cards printing
+        # different verdicts, so the levels now live in exactly one place and
+        # this card keeps only what the Action Plan does not say: the risk
+        # caveat and the withdrawal record.
+        # No entry / stop / distance here on purpose — the Action Plan card
+        # below is where those numbers live now, and printing them twice puts
+        # the page back to two places that can disagree.
+        body = ('<div style="font-size:1.15rem;margin:2px 0">'
+                '本頁行動計劃由 v2 提供 ↓</div>')
         tag = "v2 訊號"
         col = "var(--bull)"
-        # 2026-10-18 consistency fix. The hero card above this block carries the
-        # RETIRED v1 engine's verdict, and on a name like AMD it reads "Action:
-        # WAIT" directly above a concrete entry and stop. Both are true of their
-        # own engine, but a reader cannot tell they are different engines
-        # answering different questions — so when they disagree we say so here
-        # rather than leaving the page to appear self-contradictory.
-        conflict = ""
-        vd = (old_verdict or "").upper()
-        if vd and vd not in ("BUY", "SELL", "OK"):
-            conflict = (
+        # 2026-10-18 (2-into-1). This used to be a "the two engines disagree"
+        # warning that quoted the RETIRED v1 verdict (WAIT/SELL/BUY) beside the
+        # v2 entry — which kept the retired engine alive as a second opinion.
+        # The retired engine no longer renders an action anywhere on the site,
+        # so there is nothing left to disagree with. What survives is the part
+        # that was always true about v2 itself: it has no downtrend filter, so
+        # it can fire mid-decline with a stop that is genuinely wide.
+        risk_note = ""
+        if old_phase and ("down" in str(old_phase).lower()
+                          or "bear" in str(old_phase).lower()):
+            risk_note = (
                 '<p style="font-size:0.78rem;margin:8px 0 0;color:var(--amber)">'
-                '⚠ <b>兩個引擎睇法唔一致</b>：v2 仍然出入場計劃，但舊版引擎'
-                f'（技術面 {old_phase or "—"}）判 {vd}。'
-                'v2 係「跌到低位就接」嘅規則，設計上冇跌勢過濾，'
-                '所以跌市中段一樣會出單 —— 見下方止損距離，'
-                '風險由你自行判斷。</p>'
+                '<b>技術面注意</b>：v2 設計上冇跌勢過濾（跌到 20 日低位就接），'
+                f'所以喺技術面 {old_phase} 狀態一樣會出單 —— '
+                '留意下面止損距離，風險由你自行判斷。</p>'
             )
-        body += conflict
+        body += risk_note
     else:
         body = (
             '<div style="font-size:1.15rem;margin:2px 0">今日無 v2 訊號</div>'
             f'<div style="font-size:0.78rem;opacity:0.75">'
-            f'該股今日未通過 v2 篩選（{key.upper()} 今日共 {len(rows)} 隻通過）。</div>'
+            f'該股今日未通過 v2 篩選（{key.upper()} 今日共 {len(rows)} 隻通過）。'
+            '頁面下半部嘅價格行為分析仍然有效，但唔構成入場計劃。</div>'
         )
         tag = "v2"
         col = "var(--fg-2)"
@@ -309,9 +322,10 @@ def render_v2_status_for_ticker(market: str, safe: str,
       收市企穩 S1 先算成交 · 止損 S1 下方 3 倍 ATR · 冇目標價，第 10 個交易日收市離場。
     </p>
     <p style="font-size:0.75rem;opacity:0.6;margin:6px 0 0">
-      下面仍然顯示舊版 (v1) 引擎嘅 action plan。10 年回測顯示嗰四個策略
-      （SELL_R1 / BUY_S1 / BREAK_LONG / BREAK_SHORT）於 2016–2026 並無正期望值，
-      已由 v2 取代。<a href="/methodology">修正記錄 →</a>
+      本頁嘅行動計劃<b>只有 v2 一個來源</b>：舊版四個策略（SELL_R1 / BUY_S1 /
+      BREAK_LONG / BREAK_SHORT）於 2016–2026 回測並無正期望值，已於 2026-10-18
+      由頁面移除。價格行為分析（phase / S/R ladder / 情境）仍然保留，
+      但佢哋係描述，唔係行動指示。<a href="/methodology">修正記錄 →</a>
     </p>
   </div>
 </div>

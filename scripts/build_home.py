@@ -749,7 +749,7 @@ function toggleTheme(){{
       {cards if cards else '<div class="card text-dim">今日未有 v2 訊號 — 全部個股都未企穩 S1</div>'}
     </div>
     {f'<p class="text-dim" style="margin-top: var(--sp-3); font-size: var(--text-sm);">以上 6 個係 {n_v2} 個訊號中最接近觸發入場位嘅，按距 S1 距離排序。完整名單 → <a href="/us200/">US</a> · <a href="/jp200/">JP</a></p>' if cards else ''}
-    {f'<p class="text-dim" style="margin-top: var(--sp-3); font-size: var(--text-sm);"><b style="color: var(--amber);">港股未包含喺呢版。</b>v2 引擎目前只行 US 同 JP（{mkt_bits}）—— 實測港股喺 0.25% 實際成本下 v2 年化 <b>{perf_f['HK_V2']}</b>、等權持有 <b>{perf_f['HK_EW']}</b>，落後 <b>{perf_f['HK_GAP']} 個百分點/年</b>；零成本都仲係落後 {perf_f['HK_GAP_FREE']} 點，所以 <code>INCLUDE_HK=False</code>。<a href="/hk200/">/hk200/</a> 仍然顯示舊版 (v1) 引擎嘅號，唔應該當成 v2 訊號用。</p>' if hk_in_v2 == 0 else ''}
+    {f'<p class="text-dim" style="margin-top: var(--sp-3); font-size: var(--text-sm);"><b style="color: var(--amber);">港股未包含喺呢版。</b>v2 引擎目前只行 US 同 JP（{mkt_bits}）—— 實測港股喺 0.25% 實際成本下 v2 年化 <b>{perf_f['HK_V2']}</b>、等權持有 <b>{perf_f['HK_EW']}</b>，落後 <b>{perf_f['HK_GAP']} 個百分點/年</b>；零成本都仲係落後 {perf_f['HK_GAP_FREE']} 點，所以 <code>INCLUDE_HK=False</code>。<a href="/hk200/">/hk200/</a> 只列價格行為分析，冇行動計劃，亦唔應該當成 v2 訊號用。</p>' if hk_in_v2 == 0 else ''}
   </div>
 </section>
 

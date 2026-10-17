@@ -68,30 +68,6 @@ def _canvas_js_version() -> str:
         return "0"
 
 
-def wilson_lower(wins: float, n: float, z: float = 1.96) -> float:
-    """Lower bound of the Wilson score interval, in percent.
-
-    Mirrors build_home.wilson_lower so the index table and the homepage cards
-    quote the same sample-size-aware number. Raw win% overstates small samples
-    (5/5 renders as "100%"); the lower bound is what the data supports.
-    """
-    if not n or n <= 0:
-        return 0.0
-    p = max(0.0, min(1.0, wins / n))
-    denom = 1 + z * z / n
-    centre = p + z * z / (2 * n)
-    margin = z * ((p * (1 - p) / n + z * z / (4 * n * n)) ** 0.5)
-    return max(0.0, (centre - margin) / denom) * 100
-
-
-def edge_win_lower(edge: dict) -> float:
-    """Wilson lower bound for a plan_edge dict (win_pct + n)."""
-    n = edge.get("n", 0) or 0
-    if n <= 0:
-        return 0.0
-    return wilson_lower(round(edge.get("win_pct", 0) / 100 * n), n)
-
-
 @lru_cache(maxsize=8)
 def data_asof(market: str) -> str:
     """T-1 for a market, derived from that market's own bars.
@@ -295,101 +271,39 @@ def load_ticker_json(ticker: str, market: str) -> dict | None:
         return None
 
 
-def load_backtest(ticker: str) -> dict | None:
-    """Load per-ticker backtest JSON written by backtest_futu.py."""
-    safe = ticker.replace(".", "_")
-    # 2026-09-17: HK.NNNNN format tickers have backtest stored as NNNNN_HK.json
-    # Try the raw safe form first, then strip "HK." prefix.
-    candidates = [f"{safe}.json"]
-    if ticker.startswith("HK."):
-        candidates.append(f"{ticker[3:]}.HK.json")
-    elif ticker.startswith("JP."):
-        candidates.append(f"{ticker[3:]}.T.json")
-    for fn in candidates:
-        p = BACKTEST_OUT / fn
-        if p.exists():
-            try:
-                return json.load(open(p))
-            except Exception:
-                return None
-    return None
-
-
-# 2026-10-02: the Win% badge was "laundering" the opposite direction. A row
-# showing Action=BUY could carry the win% of SELL_R1, so the number users read
-# as confidence in the displayed action was actually a different setup's record.
-# Fix: the badge is now keyed on the plan's own direction, and enforces the
-# n >= 5 rule the methodology page documents (it was only documented, never
-# enforced in the renderer — n=1..4 badges were being shown).
-MIN_EDGE_N = 5
-
-_LONG_STRATS = ("BUY_S1", "BREAK_LONG")
-_SHORT_STRATS = ("SELL_R1", "BREAK_SHORT")
-
-
-def strats_for_verdict(verdict: str) -> tuple[str, ...]:
-    """Backtest strategies that can legitimately justify this plan's action."""
-    if verdict == "BUY":
-        return _LONG_STRATS
-    if verdict == "SELL":
-        return _SHORT_STRATS
-    return ()
-
-
-def pick_recent_edge(
-    bt: dict | None,
-    verdict: str = "",
-    recent_windows=("60", "90", "30", "197"),
-) -> dict | None:
-    """Highest-win% strategy for THIS plan's direction, with min n=5.
-
-    2026-10-02: previously direction-agnostic (n>=3), which is what produced
-    "Action BUY + Strategy SELL_R1 · 100% win" rows. Returns None when the
-    plan's own direction has no qualifying sample — the renderer then shows
-    "—", which is honest.
-    """
-    if not bt or not bt.get("windows"):
-        return None
-    allowed = strats_for_verdict(verdict)
-    if not allowed:
-        return None
-    for w in recent_windows:
-        wd = bt["windows"].get(w)
-        if not wd:
-            continue
-        for strat in allowed:
-            data = wd.get(strat)
-            if not data:
-                continue
-            n = data.get("n", 0)
-            win = data.get("win_pct", 0)
-            tot = data.get("total_pnl", 0)
-            if n >= MIN_EDGE_N and tot > 0:
-                return {
-                    "strategy": strat,
-                    "window": w,
-                    "win_pct": win,
-                    "n": n,
-                    "total_pnl": tot,
-                    "avg_pnl": data.get("avg_pnl", 0),
-                }
-    return None
+# 2026-10-18 (2-into-1). Deleted from this module, all now dead:
+#   load_backtest()        - read data/backtest_out/<t>.json purely to fill the
+#                           retired strategies' Win% column (674 file reads/build)
+#   MIN_EDGE_N / _LONG_STRATS / _SHORT_STRATS / strats_for_verdict()
+#   pick_recent_edge()     - "highest-win% strategy for THIS verdict", whose only
+#                           consumer was the Win% badge that no longer renders
+#   wilson_lower() / edge_win_lower() - the sample-size-aware bound on that badge
+# The backtest files themselves are untouched and /backtest still reads them.
 
 
 def render_action_row(t: dict) -> str:
-    """Render a single table row for the action plan table."""
+    """Render a single row of the screener table.
+
+    2026-10-18 (2-into-1). This row used to carry SIX columns of the retired
+    v1 engine: Action (BUY/SELL/WAIT), Trigger, Target, Stop, Win% (90d) and
+    Strategy — where "Strategy" spelled out the withdrawn SELL_R1 / BUY_S1 /
+    BREAK_LONG / BREAK_SHORT names and "Win%" was that strategy's historical
+    record. So /us200/ showed one engine's calls in the table and a different
+    engine's calls in the v2 card sitting directly above it, and the two
+    disagreed on most rows.
+
+    The table is now v2's. It lists every name in the universe, marks which
+    ones v2 has an entry for, and quotes the two levels v2 actually uses —
+    the S1 limit entry and the 3x-ATR stop — plus how far the last close sits
+    from entry, which is the number that decides whether tomorrow's limit
+    order could fill at all. Phase stays because it is price-behaviour
+    description, not an instruction.
+    """
     ticker = t["ticker"]
-    safe = ticker.replace(".", "_")
     name = t.get("name", "")
     last = t.get("last", 0)
     chg = t.get("chg_pct", 0)
     phase = t.get("phase", "range")
-    ap = t.get("action_plan", {})
-    verdict = ap.get("verdict", "WAIT")
-    trigger = ap.get("trigger_price")
-    target = ap.get("target_price")
-    stop = ap.get("stop_price")
-    edge = t.get("edge")  # {strategy, win_pct, n, total_pnl, window}
     detail_url = t["detail_url"]
 
     phase_short = {
@@ -400,9 +314,6 @@ def render_action_row(t: dict) -> str:
         "range": ("Range", "tag-dim"),
     }.get(phase, (phase, "tag-dim"))
     phase_label, phase_class = phase_short
-
-    action_class = {"BUY": "bull", "SELL": "bear", "WAIT": "wait"}.get(verdict, "wait")
-    row_class = {"BUY": "row-bull", "SELL": "row-bear", "WAIT": "row-wait"}.get(verdict, "row-wait")
 
     def fmt(x, dp=2):
         if x is None:
@@ -420,63 +331,47 @@ def render_action_row(t: dict) -> str:
         except Exception:
             return "—"
 
-    if verdict == "WAIT":
-        trigger_s = target_s = stop_s = "—"
-        str(verdict)  # silence unused warning
-        # 2026-09-16: For WAIT tickers, still show backtest Win% via plan_edge
-        # (set by d88 _ref fallback loop) so user sees historical performance
-        # even when there's no actionable setup today.
-        _plan_edge = t.get("plan_edge")
-        if _plan_edge and _plan_edge.get("win_pct", 0) > 0 and _plan_edge.get("n", 0) >= 1:
-            win_s = f"~{edge_win_lower(_plan_edge):.0f}%"
-            strat_s = _plan_edge.get("strategy", "RANGE") + " (ref)"
-        else:
-            win_s = "—"
-            strat_s = "RANGE"
+    # One lookup, one engine. HK is a third state rather than "no signal",
+    # because the difference matters when you ask "why does this one have
+    # nothing?" — for HK the honest answer is "we never screened it", not
+    # "we screened it and it failed".
+    market = t.get("market", "")
+    v2 = v2_signal_for(market, ticker.replace(".", "_"))
+    if v2:
+        v2_action = "SIGNAL"
+        action_class = "bull"
+        row_class = "row-bull"
+        entry_s = fmt(v2.get("entry_s1"))
+        stop_s = fmt(v2.get("stop"))
+        _d = v2.get("dist_to_entry_pct") or 0.0
+        dist_s = "0%" if abs(_d) < 0.05 else f"{abs(_d):.2f}%"
+    elif str(market).upper() == "HK":
+        v2_action = "未納入 v2"
+        action_class = "wait"
+        row_class = "row-wait"
+        entry_s = stop_s = dist_s = "—"
     else:
-        trigger_s = fmt(trigger)
-        target_s = fmt(target, dp=2 if last and last < 100 else (1 if last and last < 1000 else 0))
-        stop_s = fmt(stop, dp=2 if last and last < 100 else (1 if last and last < 1000 else 0))
-        if edge:
-            win_s = f"{edge['win_pct']:.0f}%"
-            strat_s = edge["strategy"]
-        else:
-            win_s = "—"
-            strat_s = "—"
-
-    # 2026-09-12: data-detail for filter tooltip + (ref) tag for fallback stats.
-    # Uses plan_edge (set by build_for_market with _ref fallback) so WAIT
-    # tickers get a "(ref)" stat instead of "—" when backtest has any signal.
-    _plan_edge = t.get("plan_edge")
-    if _plan_edge:
-        _wl = edge_win_lower(_plan_edge)
-        _plan_detail = (
-            f"~{_wl:.0f}% · n={_plan_edge['n']} (ref)" if _plan_edge.get("_ref")
-            else f"{_wl:.0f}% · n={_plan_edge['n']}"
-        )
-    else:
-        _plan_detail = "—"
+        v2_action = "無訊號"
+        action_class = "wait"
+        row_class = "row-wait"
+        entry_s = stop_s = dist_s = "—"
 
     chg_cls = "text-bear" if chg and chg < 0 else ("text-bull" if chg and chg > 0 else "")
-    # 2026-10-05: a row is "actionable" when it carries a real plan — an
-    # actual trigger/target/stop to act on. Keying this off the backtest
-    # win% reference instead (first attempt) hid 199 of 200 rows, because the
-    # plan_edge reference only exists when that strategy has n>=5 history.
-    # Actionable means "has a plan", not "has a backtest sample".
-    _has_plan = "1" if (verdict != "WAIT" and "—" not in (trigger_s, target_s, stop_s)) else "0"
+    # "Has a plan" now means exactly one thing: v2 produced an entry. The old
+    # version derived it from the v1 row carrying trigger/target/stop, i.e.
+    # from the withdrawn engine's definition of actionable.
+    _has_plan = "1" if v2 else "0"
     return f"""
-    <tr data-action="{verdict}" data-phase="{phase}" data-detail="{_plan_detail}" data-plan="{_has_plan}" class="{row_class}">
+    <tr data-action="{v2_action}" data-phase="{phase}" data-plan="{_has_plan}" class="{row_class}">
       <td><a href="{detail_url}" class="mono" style="color: var(--fg);">{ticker}</a></td>
       <td>{name}</td>
       <td class="cell-right mono">{fmt(last)}</td>
       <td class="cell-right mono {chg_cls}">{fmt_pct(chg)}</td>
       <td><span class="tag {phase_class}">{phase_label}</span></td>
-      <td><span class="cell-action {action_class}">{verdict}</span></td>
-      <td class="cell-right mono">{trigger_s}</td>
-      <td class="cell-right mono text-bull">{target_s}</td>
+      <td><span class="cell-action {action_class}">{v2_action}</span></td>
+      <td class="cell-right mono text-bull">{entry_s}</td>
       <td class="cell-right mono text-bear">{stop_s}</td>
-      <td class="cell-right mono">{win_s}</td>
-      <td class="mono text-dim">{strat_s}</td>
+      <td class="cell-right mono text-dim">{dist_s}</td>
     </tr>"""
 
 
@@ -516,7 +411,13 @@ function filterTable() {
     const matchSearch = !search || ticker.includes(search) || name.includes(search);
     const matchAction = !currentAction || action === currentAction;
     const matchPhase = !currentPhase || phase === currentPhase;
-    const matchPlan = !signalOnly || row.dataset.plan === '1';
+    // 2026-10-18: the ⚡ chip and the v2-state chips express the same thing,
+    // so combining them is either redundant (SIGNAL) or impossible (無訊號,
+    // which showed "0 of 232" with no explanation). When the user has picked a
+    // specific state, that choice wins and the ⚡ chip does not narrow further.
+    const matchPlan = (!signalOnly || currentAction)
+      ? true
+      : row.dataset.plan === '1';
     const show = matchSearch && matchAction && matchPhase && matchPlan;
     row.style.display = show ? '' : 'none';
     if (show) visible++;
@@ -607,7 +508,7 @@ def build_dashboard_page(
       "@type": "FAQPage",
       "mainEntity": [
         {"@type": "Question", "name": "港股 200 點樣揀？", "acceptedAnswer": {"@type": "Answer", "text": "用 5-day 平均成交額排序頭 200 隻，全部 T-1 收市 data，每日 refresh。"}},
-        {"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {"@type": "Answer", "text": "10-step 價格行為 framework，分 phase + S/R ladder + 4 strategies (SELL_R1 / BUY_S1 / BREAK_LONG / BREAK_SHORT)。T-1 OHLC 純 Python deterministic 計算。"}},
+        {"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {"@type": "Answer", "text": "價格行為分析框架（phase + S/R ladder + 情境），由 T-1 OHLC 純 Python deterministic 計算。行動計劃統一由 v2 引擎提供；舊版四個策略（SELL_R1 / BUY_S1 / BREAK_LONG / BREAK_SHORT）於 2016–2026 回測並無正期望值，已於 2026-10-18 從頁面移除。"}},
         {"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {"@type": "Answer", "text": "已扣 Futu 免佣 + 0.25% round-trip (HK)，純 signal + backtest 結果。"}}
       ]
     }"""
@@ -617,7 +518,7 @@ def build_dashboard_page(
       "@type": "FAQPage",
       "mainEntity": [
         {"@type": "Question", "name": "美股 200 點樣揀？", "acceptedAnswer": {"@type": "Answer", "text": "用 5-day 平均成交額排序頭 200 隻，全部 T-1 收市 data，每日 refresh。"}},
-        {"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {"@type": "Answer", "text": "10-step 價格行為 framework，分 phase + S/R ladder + 4 strategies。T-1 OHLC 純 Python deterministic 計算。"}},
+        {"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {"@type": "Answer", "text": "價格行為分析框架（phase + S/R ladder + 情境），由 T-1 OHLC 純 Python deterministic 計算。行動計劃統一由 v2 引擎提供；舊版四個策略已於 2016–2026 回測證明並無正期望值，於 2026-10-18 從頁面移除。"}},
         {"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {"@type": "Answer", "text": "已扣 0.05% round-trip (US)，Futu 免佣。"}}
       ]
     }"""
@@ -627,7 +528,7 @@ def build_dashboard_page(
       "@type": "FAQPage",
       "mainEntity": [
         {"@type": "Question", "name": "日股 200 點樣揀？", "acceptedAnswer": {"@type": "Answer", "text": "由 Topix Core30 + Large70 開始，yfinance verify 流通量，200 隻全部 T-1 收市 data。"}},
-        {"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {"@type": "Answer", "text": "10-step 價格行為 framework。T-1 OHLC 純 Python deterministic 計算。"}},
+        {"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {"@type": "Answer", "text": "價格行為分析框架（phase + S/R ladder + 情境）。行動計劃統一由 v2 引擎提供；舊版四個策略已於 2016–2026 回測證明並無正期望值，於 2026-10-18 從頁面移除。"}},
         {"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {"@type": "Answer", "text": "已扣 0.05% round-trip (JP)，Futu 免佣。"}}
       ]
     }"""
@@ -757,12 +658,11 @@ function toggleTheme(){{
   <div class="filter-bar">
     <label>Filter</label>
     <input type="text" id="search" placeholder="Search ticker or name..." onkeyup="filterTable()">
-    <label>Action</label>
+    <label>v2</label>
     <div style="display: flex; gap: 6px;">
       <button type="button" class="filter-chip active" data-action="">All</button>
-      <button type="button" class="filter-chip" data-action="BUY">🟢 BUY</button>
-      <button type="button" class="filter-chip" data-action="SELL">🔴 SELL</button>
-      <button type="button" class="filter-chip" data-action="WAIT">⚪ WAIT</button>
+      <button type="button" class="filter-chip" data-action="SIGNAL">🟢 SIGNAL</button>
+      <button type="button" class="filter-chip" data-action="無訊號">⚪ 無訊號</button>
     </div>
     <label>Phase</label>
     <div style="display: flex; gap: 6px;">
@@ -774,7 +674,7 @@ function toggleTheme(){{
       <button type="button" class="filter-chip" data-phase="range">Range</button>
     </div>
     <label style="margin-left: auto;" id="rowCount">{len(universe)} of {len(universe)}</label>
-    <button type="button" class="filter-chip active" id="signalOnly" data-signal="1" title="Hide rows with no action plan (no trigger / target / stop)">⚡ 只看有訊號</button>
+    <button type="button" class="filter-chip active" id="signalOnly" data-signal="1" title="只顯示 v2 有入場計劃嘅股">⚡ 只看有訊號</button>
   </div>
 
   <div style="overflow: auto; max-height: calc(100vh - 76px); overscroll-behavior: contain; border: 1px solid var(--border); border-radius: var(--radius-lg);">
@@ -786,12 +686,10 @@ function toggleTheme(){{
     <th data-col="last" class="cell-right">Last</th>
     <th data-col="chg" class="cell-right">Chg%</th>
     <th data-col="phase">Phase</th>
-    <th data-col="action">Action</th>
-    <th data-col="trigger" class="cell-right">Trigger</th>
-    <th data-col="target" class="cell-right">Target</th>
-    <th data-col="stop" class="cell-right">Stop</th>
-    <th data-col="win" class="cell-right">Win% (90d)</th>
-    <th data-col="strategy">Strategy</th>
+    <th data-col="action">v2 Action</th>
+    <th data-col="entry" class="cell-right">入場 S1</th>
+    <th data-col="stop" class="cell-right">止損 (3×ATR)</th>
+    <th data-col="dist" class="cell-right">距入場</th>
   </tr>
   </thead>
   <tbody id="tableBody">{rows_html}
@@ -823,6 +721,117 @@ function toggleTheme(){{
 </html>"""
 
 
+_V2_CACHE: dict | None = None
+
+
+def _v2_index() -> dict:
+    """(market_key, symbol) -> signal, loaded once per build.
+
+    v2_signal_for is called once per screener row and once per detail page
+    (~900 times per build). Re-reading and re-parsing v2-signals.json on each
+    call turned a one-file read into ~900 of them.
+    """
+    global _V2_CACHE
+    if _V2_CACHE is None:
+        idx: dict = {}
+        f = PUBLIC / "v2-signals.json"
+        if f.exists():
+            try:
+                d = json.loads(f.read_text(encoding="utf-8"))
+                for r in d.get("signals", []):
+                    idx[(r.get("market"), r.get("symbol"))] = r
+            except Exception:
+                idx = {}
+        _V2_CACHE = idx
+    return _V2_CACHE
+
+
+def v2_signal_for(market: str, symbol: str) -> dict | None:
+    """The single source of action authority.
+
+    2026-10-18: every ticker page carried TWO verdicts. This one is v2 — the
+    engine the site publishes. The other came from the retired v1 engine, whose
+    action_plan literally emitted SELL_R1 / BUY_S1 / BREAK_LONG / BREAK_SHORT,
+    the four strategies the methodology page says were withdrawn after showing
+    no positive expectancy over 2016-2026. Two engines, one of them already
+    retired, both rendered as "the Action" — so v2 now answers this question
+    alone. None of v2's rules change; only who is allowed to have an opinion."""
+    key = str(market).lower() + "200"   # callers pass "US"/"JP"/"HK"
+    return _v2_index().get((key, symbol))
+
+
+def _num(x, dp: int = 2) -> str:
+    """Same formatting the page already uses for levels (render_detail_page has
+    its own local copy; kept identical so the two do not drift)."""
+    if x is None:
+        return "—"
+    try:
+        return f"{float(x):,.{dp}f}"
+    except Exception:
+        return str(x)
+
+
+def render_v2_action_card(hit: dict | None, market: str) -> str:
+    """The page's one and only Action Plan card, rendered from v2."""
+    fmt = _num
+    if hit is None:
+        if str(market).lower() + "200" == "hk200":
+            why = ("港股目前<b>未納入 v2</b>，所以冇 v2 行動計劃。"
+                   "頁面下半部嘅價格行為分析仍然有效，但唔構成 v2 訊號。")
+        else:
+            why = ("該股今日未通過 v2 篩選，<b>無行動計劃</b>。"
+                   f"{str(market).upper()} 今日有訊號嘅股數見上面 v2 訊號卡。")
+        return f"""
+      <div class="info-card fade-in">
+        <h3 style="display:flex;justify-content:space-between;align-items:center;">
+          <span>Action Plan</span>
+          <span style="font-family:var(--font-mono);font-size:var(--text-md);color:var(--dim);">無訊號</span>
+        </h3>
+        <div class="phase-block">
+          <span class="name">v2 訊號</span>
+          <span class="value" style="color:var(--dim)">{why}</span>
+        </div>
+      </div>"""
+
+    dist = hit.get("dist_to_entry_pct")
+    dist_txt = "已到入場位" if abs(dist or 0) < 0.05 else f"距入場位 {abs(dist):.2f}%"
+    return f"""
+      <div class="info-card fade-in" style="border-left:3px solid var(--bull);">
+        <h3 style="display:flex;justify-content:space-between;align-items:center;">
+          <span>Action Plan <span style="font-size:var(--text-xs);opacity:0.55">v2 · 唯一行動權威</span></span>
+          <span style="font-family:var(--font-mono);font-size:var(--text-md);color:var(--bull);">SIGNAL</span>
+        </h3>
+        <div class="phase-block">
+          <span class="name">現價距離</span>
+          <span class="value text-bull">{dist_txt}</span>
+        </div>
+        <div class="phase-block">
+          <span class="name">入場（S1 限價）</span>
+          <span class="value text-bull">{fmt(hit["entry_s1"])}</span>
+        </div>
+        <div class="phase-block">
+          <span class="name">止損（3×ATR）</span>
+          <span class="value text-bear">{fmt(hit["stop"])}（{hit["stop_dist_pct"]:.2f}%）</span>
+        </div>
+        <div class="phase-block">
+          <span class="name">倉位</span>
+          <span class="value">{hit["shares_at_1pct_risk"]} 股 · 風險 {hit["risk_pct_actual"]:.2f}% · 名義 {hit["notional_pct"]:.1f}%</span>
+        </div>
+        <div class="phase-block">
+          <span class="name">目標</span>
+          <span class="value text-dim">冇目標價</span>
+        </div>
+        <div class="phase-block">
+          <span class="name">離場</span>
+          <span class="value">{hit["exit_rule"]}</span>
+        </div>
+        <div class="phase-block">
+          <span class="name">成交條件</span>
+          <span class="value" style="font-size:var(--text-xs);color:var(--dim)">掛單喺 S1，<b>收市要企穩 S1 先算成交</b>；未收穩就當日無交易。</span>
+        </div>
+      </div>"""
+
+
 def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | None = None) -> str:
     """Render a single ticker detail page."""
     ticker = t["ticker"]
@@ -833,7 +842,6 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
     phase = t.get("phase", "range")
     ap = t.get("action_plan", {})
     verdict = ap.get("verdict", "WAIT")
-    edge = t.get("edge")
     chart_url = t["chart_url"]
     chart_v = t.get("chart_v") or t_minus_1().isoformat()
     market = t["market"]
@@ -908,7 +916,23 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
     risk = ap.get("risk_pct")
     reward = ap.get("reward_pct")
     rr = ap.get("rr_ratio")
-    notes = ap.get("notes", "")
+    # 2026-10-18: this used to be daily_sr's action_plan.notes, which literally
+    # opens with the retired strategy name ("WAIT_RANGE: in box (...)"). The
+    # user-facing note now states the same box/position facts without naming a
+    # strategy the site has withdrawn.
+    _box = t.get("box") or {}
+    notes = (f"箱體 S1 {_num(ap.get('s1'))} – R1 {_num(ap.get('r1'))}，"
+             f"現價處於箱體 {ap.get('current_position_pct', 50):.0f}% 位置。"
+             f"技術面：{phase_label}。")
+    # 2026-10-18: the retired v1 verdict used to be printed here under the label
+    # "Bias (短)", which mislabelled an action as a bias. The real short-horizon
+    # bias already existed in daily_sr's output and is a description of price
+    # behaviour, not an instruction — so that is what this row now shows.
+    _bias = t.get("bias", {}) or {}
+    _short = (_bias.get("short", {}) or {})
+    bias_short = _short.get("bias") or "—"
+    if _short.get("reason"):
+        bias_short += f"（{_short['reason']}）"
 
     r1 = ap.get("r1")
     s1 = ap.get("s1")
@@ -932,30 +956,74 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
         except Exception:
             return "—"
 
-    if edge:
-        edge_str = f"{edge['strategy']} · {edge['win_pct']:.0f}% win ({edge['window']}d, n={edge['n']}) · {edge['total_pnl']:+.1f}%"
-        reliability = "HIGH" if edge["n"] >= 10 and edge["win_pct"] >= 60 else ("MED" if edge["n"] >= 5 else "LOW")
-        rel_color = "var(--bull)" if reliability == "HIGH" else ("var(--amber)" if reliability == "MED" else "var(--bear)")
+    # 2026-10-18: the live v2 signal for THIS ticker. This is resolved FIRST,
+    # before any of the text that quotes it (meta description, JSON-LD, hero,
+    # action card) so there is exactly one place that decides what v2 says and
+    # one place it can be read from.
+    # HK gets an explicit "not covered by v2" notice instead of a verdict.
+    v2_hit = v2_signal_for(market, safe)
+    v2_status = render_v2_status_for_ticker(
+        market, safe, old_verdict=verdict, old_phase=phase_label)
+    v2_action_card = render_v2_action_card(v2_hit, market)
+    if v2_hit:
+        _d = v2_hit.get("dist_to_entry_pct") or 0.0
+        v2_dist_txt = ("已到入場位" if abs(_d) < 0.05 else f"{abs(_d):.2f}%")
+        v2_entry_txt = fmt(v2_hit["entry_s1"])
+        v2_stop_txt = fmt(v2_hit["stop"])
+        v2_state, v2_colour = "SIGNAL", "var(--bull)"
     else:
-        edge_str = "No edge in recent regime"
-        reliability = "—"
-        rel_color = "var(--dim)"
+        v2_state, v2_colour = "無訊號", "var(--dim)"
+        v2_dist_txt = v2_entry_txt = v2_stop_txt = "—"
 
-    if verdict == "BUY":
-        verdict_color = "var(--bull)"
-    elif verdict == "SELL":
-        verdict_color = "var(--bear)"
+    # 2026-10-18: the hero used to read "{name} · BUY_S1 · 60% win (60d, n=5)
+    # · +5.0%". That win% is the historical record of one of the four
+    # strategies the methodology page withdrew in 2026-10 — so on a page that
+    # now shows a live v2 entry it read as confidence in the v2 signal, which
+    # it never measured. A ticker page states what it knows: which engine has
+    # the action, and what the price behaviour is.
+    edge_str = f"T-1 收市數據 · {market}"
+
+    # 2026-10-18 (2-into-1). The hero meta line used to say "Action / 距離 /
+    # 入場 / 止損全部來自 v2" on every market including HK — which is false for
+    # HK, which v2 does not scan at all. Claiming a source that does not cover
+    # the number is worse than showing nothing, so HK gets its own line.
+    _hk = (market or "").upper() == "HK"
+    if _hk:
+        hero_meta_html = (
+            f'<span>Phase: <b style="color: {phase_color};">{phase_label}</b></span>'
+            '<span>行動計劃: <b style="color: var(--dim)">無 —— 港股未納入 v2</b></span>'
+            '<span>入場 / 止損: <b style="color: var(--dim)">不適用</b></span>'
+        )
+        hero_note_html = (
+            '↑ Phase 係價格行為分析（<b>唔係</b>行動指示）。'
+            '本站<b>冇</b>港股行動計劃：v2 唔覆蓋港股，舊版引擎嘅行動建議亦已全站移除。'
+        )
     else:
-        verdict_color = "var(--dim)"
+        hero_meta_html = (
+            f'<span>Phase: <b style="color: {phase_color};">{phase_label}</b></span>'
+            f'<span>v2 Action: <b style="color: {v2_colour};">{v2_state}</b></span>'
+            f'<span>現價距離: <b>{v2_dist_txt}</b></span>'
+            f'<span>入場 / 止損: <b class="text-bull">{v2_entry_txt}</b> / '
+            f'<b class="text-bear">{v2_stop_txt}</b></span>'
+        )
+        hero_note_html = (
+            '↑ Phase 係價格行為分析（<b>唔係</b>行動指示）；'
+            '<b>Action / 距離 / 入場 / 止損全部來自 v2</b>，係本頁唯一嘅行動權威。'
+        )
 
     chg_str = fmt_pct(chg)
     chg_color = "var(--bear)" if chg and chg < 0 else ("var(--bull)" if chg and chg > 0 else "var(--fg)")
 
+    # 2026-10-18: these four lines used to instruct the reader to execute the
+    # withdrawn strategies — "SELL_R1 entry", "SHORT confirmation". They now
+    # state the same price levels as conditions and say what v2 does about
+    # them, so the card describes the levels instead of competing with the
+    # single action authority.
     scenarios_html = f'''
-        <li><b>IF</b> {("反彈至 " + fmt(r1)) if r1 else "反彈至 R1"} 區間, <b>THEN</b> SELL_R1 entry，target {fmt(s1) if s1 else "mid"}, stop {(fmt(r1 * 1.02) if r1 else "—")}</li>
-        <li><b>IF</b> 失守 {fmt(s1) if s1 else "S1"} (S1), <b>THEN</b> SHORT confirmation，target {fmt(s1 * 0.99) if s1 else "—"} → {fmt(s1 * 0.985) if s1 else "—"}</li>
-        <li><b>IF</b> 突破 {fmt(r1 * 1.02) if r1 else "—"} 企穩, <b>THEN</b> 反轉睇 {fmt(r1 * 1.05) if r1 else "—"} → {fmt(r3) if r3 else "R3"}</li>
-        <li><b>IF</b> 跌穿 {fmt(s4) if s4 else "S4"} (crash low), <b>THEN</b> 中期 bear confirm，avoid</li>
+        <li><b>IF</b> 反彈至 {fmt(r1) if r1 else "R1"}（箱頂 R1）, <b>THEN</b> 阻力區；v2 只喺 S1 掛限價單，<b>唔會</b>喺呢個位入場</li>
+        <li><b>IF</b> 收市失守 {fmt(s1) if s1 else "S1"}（S1）, <b>THEN</b> support 失效 —— v2 要求<b>收市企穩 S1</b> 先算成交，收穿即當日無交易</li>
+        <li><b>IF</b> 突破 {fmt(r1 * 1.02) if r1 else "—"} 企穩, <b>THEN</b> 離開整固，下一個參考位 {fmt(r3) if r3 else "R3"}</li>
+        <li><b>IF</b> 跌穿 {fmt(s4) if s4 else "S4"}（crash low）, <b>THEN</b> 中期結構失效，無論 v2 有冇訊號都唔應該持有</li>
     '''
 
     # SEO/GEO: canonical URL (Cloudflare Pages pretty URL = extensionless, no
@@ -965,13 +1033,40 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
 
     # SEO/GEO: description carries the concrete verdict + levels so search
     # engines and AI answer engines can quote a self-contained answer.
-    desc_parts = [f"{ticker} {name} 即日鮮 Action Plan", f"Phase: {phase_label}", f"{verdict}"]
-    if verdict != "WAIT" and trigger is not None and target is not None and stop is not None:
-        desc_parts.append(f"trigger {fmt(trigger)} / target {fmt(target)} / stop {fmt(stop)}")
+    # 2026-10-18: the meta description used to carry the retired engine's
+    # verdict, so a search result for a name with a live v2 entry could read
+    # "... Action Plan · WAIT". It now quotes v2.
+    if v2_hit:
+        desc_parts = [f"{ticker} {name} v2 Action Plan", "SIGNAL",
+                      f"入場 {fmt(v2_hit['entry_s1'])} / 止損 {fmt(v2_hit['stop'])}",
+                      f"現價距離 {abs(v2_hit.get('dist_to_entry_pct') or 0):.2f}%",
+                      f"技術面 {phase_label}"]
+    elif (market or "").upper() == "HK":
+        # "今日無 v2 訊號" would imply HK was screened and failed. It was never
+        # screened. Say which one it is.
+        desc_parts = [f"{ticker} {name} 港股未納入 v2",
+                      "本站冇港股行動計劃",
+                      f"技術面 {phase_label}"]
+    else:
+        desc_parts = [f"{ticker} {name} v2 Action Plan", "今日無 v2 訊號",
+                      f"技術面 {phase_label}"]
     desc_parts.append(f"T-{1}收市數據 · 教育用途非投資建議")
     meta_desc = " · ".join(desc_parts)
 
     t1_iso = t_minus_1().isoformat()
+    # 2026-10-18 (2-into-1 + a real bug fix). This headline used to carry the
+    # RETIRED v1 engine's verdict into structured data, where a search engine or
+    # an AI reader sees "Action Plan (WAIT)" with no indication of which engine
+    # said it. The retired engine no longer states an action anywhere, so the
+    # headline states the one engine that does.
+    #
+    # The note above is a PYTHON comment and must stay outside the f-string.
+    # Commit aea38b0c put its "# ..." explanation lines INSIDE the JSON-LD
+    # f-string, so every one of the 674 ticker pages shipped
+    # `<script type="application/ld+json">` whose payload was not parseable
+    # JSON (# is not a JSON comment) — search engines silently dropped the
+    # whole block. Never put a "#" line inside an ld+json literal again;
+    # self_test.py now asserts every block parses.
     detail_jsonld = f"""{{
   "@context": "https://schema.org",
   "@graph": [
@@ -985,12 +1080,7 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
     }},
     {{
       "@type": "Article",
-      # 2026-10-18 consistency fix. This headline carried the RETIRED v1
-      # engine's verdict into structured data, where a search engine or an AI
-      # reader sees "Action Plan (WAIT)" with no indication of which engine
-      # said it — while the page body shows a v2 entry and stop. Name the
-      # engine instead of asserting a verdict the current engine never made.
-      "headline": "{ticker} {name} 技術面（舊版引擎）: {verdict} · 現行 v2 訊號見正文",
+      "headline": "{ticker} {name} 技術面 {phase_label} · v2 Action: {v2_state}",
       "url": "{canon_url}",
       "mainEntityOfPage": "{canon_url}",
       "inLanguage": "zh-Hant-HK",
@@ -1014,19 +1104,11 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
     {_nb(next_row, "next")}
   </div>"""
 
-    edge_note_html = (
-        f'''<p class="text-dim" style="font-size: var(--text-xs); margin-top: var(--sp-3); max-width: 640px;">
-      註：Backtest win% 係「{edge["strategy"]}」策略喺過去 {edge["window"]} 日嘅歷史表現（edge），
-      唔等於今日 {verdict} 嘅預測成功率；今日決策以下方 Action Plan 為準。
-    </p>''' if edge else '')
+    # 2026-10-18: this note existed only to qualify the retired strategy's
+    # win%. With the win% gone there is nothing left to qualify — the Action
+    # Plan below is v2's, and v2's own record is published on /backtest.
+    edge_note_html = ""
 
-    # 2026-10-06: the live v2 verdict for THIS ticker, so a detail page is not
-    # silently a v1 page. HK gets an explicit "not covered by v2" notice.
-    # 2026-10-18 consistency fix: the v2 card needs to know what the retired
-    # engine said, so it can disclose a disagreement instead of rendering a
-    # page whose headline verdict and v2 plan appear to contradict each other.
-    v2_status = render_v2_status_for_ticker(
-        market, safe, old_verdict=verdict, old_phase=phase_label)
     _jsv = _canvas_js_version()
 
     return f"""<!DOCTYPE html>
@@ -1128,14 +1210,10 @@ function toggleTheme(){{
       {name} · {edge_str} · Phase: {phase_label}
     </p>
     <div class="hero-meta">
-      <span>Phase: <b style="color: {phase_color};">{phase_label}</b></span>
-      <span>Action: <b style="color: {verdict_color};">{verdict}</b></span>
-      <span>Strategy: <b>{edge["strategy"] if edge else "—"}</b></span>
-      <span>Reliability: <b style="color: {rel_color};">{reliability}</b></span>
+      {hero_meta_html}
     </div>
     <p style="font-size:0.72rem;opacity:0.55;margin:2px 0 0">
-      ↑ Phase / Action / Strategy / Reliability 由<b>舊版 (v1) 引擎</b>判斷，
-      <b>唔係</b>現行 v2 訊號。v2 嘅入場、止損同倉位喺下面。
+      {hero_note_html}
     </p>
     {edge_note_html}
   </div>
@@ -1187,7 +1265,7 @@ function toggleTheme(){{
         </div>
         <div class="phase-block">
           <span class="name">⑤ Bias (短)</span>
-          <span class="value" style="color: {verdict_color};">{verdict}</span>
+          <span class="value" style="color: var(--dim)">{bias_short}</span>
         </div>
         <div class="phase-block">
           <span class="name">⑥ Notes</span>
@@ -1208,44 +1286,7 @@ function toggleTheme(){{
     </div>
 
     <div>
-      <div class="info-card fade-in" style="border-left: 3px solid {verdict_color};">
-        <h3 style="display: flex; justify-content: space-between; align-items: center;">
-          <span>Action Plan</span>
-          <span class="cell-action" style="font-family: var(--font-mono); font-size: var(--text-md); color: {verdict_color};">{verdict}</span>
-        </h3>
-        <div class="phase-block">
-          <span class="name">Strategy</span>
-          <span class="value">{edge["strategy"] if edge else "WAIT_RANGE"}</span>
-        </div>
-        <div class="phase-block">
-          <span class="name">Trigger</span>
-          <span class="value" style="color: {verdict_color};">{fmt(trigger)}</span>
-        </div>
-        <div class="phase-block">
-          <span class="name">Target</span>
-          <span class="value text-bull">{fmt(target)}</span>
-        </div>
-        <div class="phase-block">
-          <span class="name">Stop</span>
-          <span class="value text-bear">{fmt(stop)}</span>
-        </div>
-        <div class="phase-block">
-          <span class="name">Risk</span>
-          <span class="value text-bear">{fmt_pct(risk)}</span>
-        </div>
-        <div class="phase-block">
-          <span class="name">Reward</span>
-          <span class="value text-bull">{fmt_pct(reward)}</span>
-        </div>
-        <div class="phase-block">
-          <span class="name">R:R</span>
-          <span class="value text-accent">{fmt(rr, 2)} : 1</span>
-        </div>
-        {f'''<div class="phase-block" style="background: var(--bull-dim);">
-          <span class="name" style="color: var(--bull);">Backtest {edge["window"]}d</span>
-          <span class="value text-bull">{edge["win_pct"]:.0f}% win (n={edge["n"]}) · {edge["total_pnl"]:+.1f}%</span>
-        </div>''' if edge else ''}
-      </div>
+      {v2_action_card}
 
       <div class="info-card mt-4 fade-in fade-in-2">
         <h3>Key levels</h3>
@@ -1301,7 +1342,7 @@ def build_for_market(market: str):
         ticker_dir = PUBLIC / "hk200" / "ticker"
         market_name = "HK"
         title_kicker = "HK · 200 names"
-        title_lede = "港股 200 by 5-day 平均成交額排序。即日鮮信號 — 200 隻個股一表答晒：邊隻做 BUY/SELL/WAIT、trigger/target/stop 喺邊、win% 60d backtest 點。T-1 收市 data。已扣 HK 0.25% round-trip 成本。"
+        title_lede = "港股 200 by 5-day 平均成交額排序。港股 <b>未納入 v2</b>，所以呢頁冇港股入場計劃 —— 舊版引擎嘅 BUY/SELL/WAIT 行動建議已於 2026-10-18 全站移除。表內係價格行為分析（Phase）同 T-1 收市價。回測口徑：HK 0.25% round-trip 成本。"
     elif market == "JP":
         universe = []
         jp_univ = REPO / "jp_universe_200.json"
@@ -1313,7 +1354,7 @@ def build_for_market(market: str):
         ticker_dir = PUBLIC / "jp200" / "ticker"
         market_name = "JP"
         title_kicker = "JP · 200 names"
-        title_lede = "日股 200 (Topix Core30 + Large70) by 5-day 平均成交額排序。即日鮮信號 — 200 隻個股一表答晒：邊隻做 BUY/SELL/WAIT、trigger/target/stop 喺邊、win% 60d backtest 點。T-1 收市 data。已扣 0.05% round-trip 成本。"
+        title_lede = "日股 200 (Topix Core30 + Large70) by 5-day 平均成交額排序。v2 係本站<b>唯一</b>嘅行動權威：跌到 20 日低位 S1 掛限價單、收市企穩先算成交、止損 3×ATR、第 10 個交易日離場。舊版四個策略已於 2026-10-18 移除。T-1 收市 data，回測口徑 0.05% round-trip 成本。"
     else:
         universe = []
         if US_PUBLISHED.exists():
@@ -1328,7 +1369,7 @@ def build_for_market(market: str):
         ticker_dir = PUBLIC / "us200" / "ticker"
         market_name = "US"
         title_kicker = "US · 200 names"
-        title_lede = "美股 200 by 5-day 平均成交額排序。即日鮮信號 — 200 隻個股一表答晒：邊隻做 BUY/SELL/WAIT、trigger/target/stop 喺邊、win% 60d backtest 點。T-1 收市 data。已扣 US 0.05% round-trip 成本。"
+        title_lede = "美股 200 by 5-day 平均成交額排序。v2 係本站<b>唯一</b>嘅行動權威：跌到 20 日低位 S1 掛限價單、收市企穩先算成交、止損 3×ATR、第 10 個交易日離場。舊版四個策略已於 2026-10-18 移除。T-1 收市 data，回測口徑 US 0.05% round-trip 成本。"
 
     if not universe:
         print(f"⚠ {market}: empty universe, skip")
@@ -1338,13 +1379,14 @@ def build_for_market(market: str):
 
     # Phase counts for hero
     phase_counts = {}
-    action_counts = {"BUY": 0, "SELL": 0, "WAIT": 0}
+    # 2026-10-18 (2-into-1): counts the engine the page now publishes (v2),
+    # not the retired v1 verdict, which no longer renders anywhere.
+    action_counts = {"SIGNAL": 0, "無訊號": 0, "未納入 v2": 0}
     rows = []
     chart_copied = 0
 
     for i, ticker in enumerate(universe):
         tj = load_ticker_json(ticker, market_name)
-        bt = load_backtest(ticker)
         if not tj:
             # No JSON — skip but log
             continue
@@ -1361,28 +1403,6 @@ def build_for_market(market: str):
         phase = tj.get("phase", "range")
         ap = tj.get("action_plan", {})
         verdict = ap.get("verdict", "WAIT")
-
-        edge = pick_recent_edge(bt, verdict)
-        if not edge:
-            # fallback to backtest_futu best_strategy — but skip if it's a
-            # placeholder (name='—', n=0) since 0% is meaningless, and skip it
-            # if it belongs to the opposite direction (2026-10-02) or has a
-            # sample below the documented n >= 5.
-            if bt and bt.get("best_strategy"):
-                bs = bt["best_strategy"]
-                if (
-                    bs.get("name")
-                    and bs["name"] in strats_for_verdict(verdict)
-                    and bs.get("n_trades", 0) >= MIN_EDGE_N
-                ):
-                    edge = {
-                        "strategy": bs["name"],
-                        "window": bs["window"],
-                        "win_pct": bs["win_pct"],
-                        "n": bs["n_trades"],
-                        "total_pnl": bs["total_pnl"],
-                        "avg_pnl": bs.get("avg_pnl", 0),
-                    }
 
         safe = ticker.replace(".", "_")
         # Extensionless on purpose. The <noscript> block renders this as
@@ -1435,7 +1455,6 @@ def build_for_market(market: str):
             "chg_pct": chg,
             "phase": phase,
             "action_plan": ap,
-            "edge": edge,
             # Canonical pretty URL: extensionless, NO trailing slash
             # (.html and trailing-slash forms both 308 here — SEO audit 2026-08-25)
             "detail_url": f"/{market.lower()}200/ticker/{safe}",
@@ -1444,7 +1463,10 @@ def build_for_market(market: str):
             "market": market_name,
         }
         rows.append(row)
-        action_counts[verdict] = action_counts.get(verdict, 0) + 1
+        _v2_hit = v2_signal_for(market_name, safe)
+        _v2_state = ("SIGNAL" if _v2_hit else
+                     ("未納入 v2" if market_name == "HK" else "無訊號"))
+        action_counts[_v2_state] = action_counts.get(_v2_state, 0) + 1
         phase_counts[phase] = phase_counts.get(phase, 0) + 1
 
         # Copy chart PNG + JSON (metadata) + OHLC (raw candlesticks)
@@ -1476,64 +1498,20 @@ def build_for_market(market: str):
         if (i + 1) % 20 == 0:
             print(f"  [{i+1}/{len(universe)}] {ticker} ...")
 
-    # Sort rows: actionable first, then by win%, then by ticker
+    # 2026-10-18 (2-into-1): the sort used to put SELL first, then BUY, then
+    # WAIT, breaking ties on the retired strategy's win%. That decided which
+    # names a visitor saw first using an engine the site no longer publishes.
+    # The table is v2's now, so it sorts on v2: names with an entry first,
+    # closest to entry first among those (the ones whose limit order could
+    # actually fill), then everything else alphabetically.
     def row_sort_key(r):
-        act = r.get("action_plan", {}).get("verdict", "WAIT")
-        act_priority = {"SELL": 0, "BUY": 1, "WAIT": 2}.get(act, 3)
-        edge = r.get("edge")
-        win = edge["win_pct"] if edge else 0
-        return (act_priority, -win, r["ticker"])
+        v2 = v2_signal_for(market_name, r["ticker"].replace(".", "_"))
+        if v2:
+            return (0, abs(v2.get("dist_to_entry_pct") or 0.0), r["ticker"])
+        return (1, 0.0, r["ticker"])
+
 
     rows_sorted = sorted(rows, key=row_sort_key)
-
-    # 2026-09-12 (d88 ref fallback): patch each row to use highest-n strategy
-    # stats when plan strategy has 0 trades. The index build handles its own
-    # version of this; here we just inject the (ref) data into the row dict
-    # so render_action_row's `t.get("plan_edge")` finds it.
-    for _row in rows_sorted:
-        if _row.get("plan_edge") is not None:
-            continue
-        # 2026-10-02: the (ref) fallback is now direction-locked and n>=5.
-        # It previously scanned every strategy and accepted n>=1, which is how
-        # 56 rows ended up showing the opposite direction's record and 20 rows
-        # showed samples of 1-4 trades while the methodology page claimed n>=5.
-        _verdict = _row.get("action_plan", {}).get("verdict", "WAIT")
-        _allowed = strats_for_verdict(_verdict)
-        if not _allowed:
-            continue
-        try:
-            _bt = load_backtest(_row["ticker"])
-        except Exception:
-            _bt = None
-        if not _bt:
-            continue
-        _ref_n, _ref_data = 0, None
-        for _w in ("60", "90", "30", "197"):
-            _wd = _bt.get("windows", {}).get(_w)
-            if not _wd:
-                continue
-            for _sname in _allowed:
-                _sd = _wd.get(_sname)
-                if not isinstance(_sd, dict) or _sd.get("n", 0) <= _ref_n:
-                    continue
-                if _sd.get("total_pnl", 0) <= 0:
-                    continue
-                _ref_n = _sd["n"]
-                _ref_data = dict(_sd)
-                _ref_data["strategy"] = _sname  # so render can use edge["strategy"]
-                _ref_data["window"] = _w       # so render can use edge["window"]
-                _ref_data["n"] = _sd["n"]      # alias for n_trades (edge uses "n")
-        if _ref_data and _ref_n >= MIN_EDGE_N:
-            _row["plan_edge"] = dict(_ref_data)
-            _row["plan_edge"]["_weak"] = True
-            _row["plan_edge"]["_ref"] = True
-            # 2026-09-16: also inject into `edge` so the Win% 90D column renders
-            # the (ref) stat instead of "—" for WAIT/no-plan-strategy tickers.
-            # Without this, plan_edge is only used for tooltip data-detail but
-            # the visible column stays empty — which is why user kept seeing
-            # "Win% 90D blank" after every deploy.
-            if not _row.get("edge"):
-                _row["edge"] = _row["plan_edge"]
 
     rows_html = "".join(render_action_row(r) for r in rows_sorted)
 
@@ -1583,7 +1561,7 @@ def build_for_market(market: str):
     out_index.write_text(html, encoding="utf-8")
     print(f"  → {out_index} ({out_index.stat().st_size:,} bytes)")
     print(f"  Phase dist: {phase_counts}")
-    print(f"  Action dist: {action_counts}")
+    print(f"  v2 Action dist: {action_counts}")
 
 
 def main():

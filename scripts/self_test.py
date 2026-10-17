@@ -1972,63 +1972,193 @@ def t_homepage_perf_figures_trace_to_source() -> None:
            f"still present: {stale}" if stale else "27.4/27.2 absent")
 
 
-def t_ticker_page_engines_are_labelled() -> None:
-    """Consistency (2026-10-18): a ticker page must never show a headline
-    verdict and a v2 entry/stop plan without saying they come from different
-    engines answering different questions.
+def t_one_action_authority_per_page() -> None:
+    """2-into-1 (2026-10-18): the site must have exactly ONE engine that is
+    allowed to state an action, and it must be v2.
 
-    The live case: AMD rendered "Action: WAIT" (retired v1 engine) directly
-    above "入場 S1 526.83 · 止損 448.28" (v2), which reads as a page
-    contradicting itself. 70 US and 65 JP pages had the same shape.
+    Before this change every ticker page carried two verdicts — the retired v1
+    engine's BUY/SELL/WAIT (whose action_plan literally emitted SELL_R1 /
+    BUY_S1 / BREAK_LONG / BREAK_SHORT) and v2's entry/stop. 70 US and 65 JP
+    pages read "Action: WAIT" directly above a live v2 entry, and the index
+    tables published six columns of v1 output including a "Strategy" column
+    naming the withdrawn strategies.
+
+    What is asserted here:
+      1. no retired verdict is rendered as an action anywhere;
+      2. the withdrawn strategy names appear only inside the withdrawal
+         notice that explains why they are gone;
+      3. every ticker page's action state agrees, name by name, with
+         public/v2-signals.json — the page cannot drift from its source;
+      4. HK says "not covered" rather than "no signal", because HK was never
+         screened and the two answers mean different things;
+      5. each index table's rows agree with the same source.
+
+    Three MUST-FAIL guards prove the checks can actually fail: a page with the
+    action line stripped, a page with a retired verdict injected, and a page
+    whose action state disagrees with the source.
     """
     import json as _json
+    import re as _re
+
     sig_path = PUBLIC / "v2-signals.json"
-    record("v2-signals.json exists for the consistency check", sig_path.exists())
+    record("v2-signals.json exists for the single-authority check", sig_path.exists())
     if not sig_path.exists():
         return
     sig = _json.loads(sig_path.read_text())
     items = sig.get("signals", [])
     if isinstance(items, dict):
         items = list(items.values())
-    v2 = {mkt: {x["symbol"] for x in items if x.get("market") == mkt}
-          for mkt in ("us200", "jp200", "hk200")}
+    by_key = {(x.get("market"), x.get("symbol")): x for x in items}
 
-    unlabelled, false_notice = [], []
-    for mkt in ("us200", "jp200", "hk200"):
-        for p in sorted(PUBLIC.glob(f"{mkt}/ticker/*.html")):
+    MARKETS = ("us200", "jp200", "hk200")
+    pages = {m: sorted(PUBLIC.glob(f"{m}/ticker/*.html")) for m in MARKETS}
+    total = sum(len(v) for v in pages.values())
+    record("ticker pages found for the single-authority check", total > 0, f"{total} pages")
+
+    # 1. no retired verdict rendered as an action
+    verdict_re = _re.compile(
+        r'<span class="cell-action[^"]*">\s*(BUY|SELL|WAIT)\b'
+        r'|<span>\s*Action[^<]*</span>\s*<span[^>]*>\s*(BUY|SELL|WAIT)\b'
+        r'|舊版[^<]{0,24}(BUY|SELL|WAIT)\b')
+    leaked = []
+    for m in MARKETS:
+        for p in pages[m]:
+            for mt in verdict_re.finditer(p.read_text(encoding="utf-8")):
+                leaked.append(f"{m}/{p.stem}:{mt.group(1) or mt.group(2)}")
+    record("no retired verdict is rendered as an action", not leaked,
+           f"leaked: {leaked[:5]}" if leaked else f"{total} pages clean")
+
+    # 2. withdrawn strategy names survive only inside the withdrawal notice
+    contexts = set()
+    for m in MARKETS:
+        for p in pages[m]:
+            t = p.read_text(encoding="utf-8")
+            for mt in _re.finditer("SELL_R1", t):
+                a, b = max(0, mt.start() - 220), min(len(t), mt.end() + 260)
+                contexts.add(_re.sub(r"\s+", " ", _re.sub(r"<[^>]+>", " ", t[a:b])).strip())
+    withdrawal = ("舊版四個策略" in (next(iter(contexts)) if contexts else "")
+                  and "已於 2026-10-18" in (next(iter(contexts)) if contexts else ""))
+    record("withdrawn strategy names appear only in the withdrawal notice",
+           bool(contexts) and len(contexts) == 1 and withdrawal,
+           f"{len(contexts)} distinct context(s)" if contexts else "no occurrence found")
+
+    # 3./4. every page's action state agrees with the source
+    def page_agrees(market: str, sym: str, t: str) -> str:
+        """Return "" when the page's action state matches the source, else why."""
+        hit = by_key.get((market, sym))
+        if market == "hk200":
+            if hit:
+                return "HK page unexpectedly has a v2 signal"
+            return "" if "未納入 v2" in t else "HK page does not say 'not covered by v2'"
+        if hit:
+            if "v2 Action:" not in t or "SIGNAL" not in t:
+                return "v2 signal missing from page"
+            if "唯一行動權威" not in t:
+                return "signal page not labelled as the single authority"
+            if f"{hit['entry_s1']:,.2f}" not in t:
+                return f"entry {hit['entry_s1']:,.2f} absent from page"
+            if f"{hit['stop']:,.2f}" not in t:
+                return f"stop {hit['stop']:,.2f} absent from page"
+            return ""
+        return "" if "今日無 v2 訊號" in t else "no-signal page does not say so"
+
+    mismatch, hk_wrong = [], []
+    for m in MARKETS:
+        for p in pages[m]:
             sym = p.stem
-            txt = p.read_text(encoding="utf-8")
-            if "舊版 (v1) 引擎</b>判斷" not in txt and "舊版 (v1) 引擎</b>判斷" not in txt:
-                unlabelled.append(f"{mkt}/{sym}")
-            has_v2 = sym in v2.get(mkt, set())
-            notice = "兩個引擎睇法唔一致" in txt
-            if has_v2 and notice:
+            why = page_agrees(m, sym, p.read_text(encoding="utf-8"))
+            if not why:
                 continue
-            if not has_v2 and notice:
-                false_notice.append(f"{mkt}/{sym}")
-    record("every ticker page attributes the headline verdict to its engine",
-           not unlabelled, f"unlabelled: {unlabelled[:5]}" if unlabelled else
-           f"{len(list(PUBLIC.glob('*/ticker/*.html')))} pages labelled")
-    record("no conflict notice on a page with no v2 signal", not false_notice,
-           f"false notice: {false_notice[:5]}" if false_notice else "none")
+            (hk_wrong if m == "hk200" else mismatch).append(f"{m}/{sym}: {why}")
+    record("every ticker page's action agrees with v2-signals.json",
+           not mismatch, f"mismatch: {mismatch[:5]}" if mismatch
+           else f"{total} pages traced to source")
+    record("HK pages say 'not covered by v2', never 'no signal'", not hk_wrong,
+           f"wrong: {hk_wrong[:5]}" if hk_wrong else
+           f"{len(pages['hk200'])} HK pages correct")
 
-    # MUST-FAIL: a page that HAS a v2 plan and a non-BUY/SELL old verdict must
-    # carry the notice. Probe by deleting the notice from a live page copy.
-    probe = None
-    for p in sorted(PUBLIC.glob("us200/ticker/*.html")):
+    # 5. index tables agree with the same source
+    tab_bad, tab_rows = [], {}
+    for m in MARKETS:
+        f = PUBLIC / f"{m}/index.html"
+        if not f.exists():
+            tab_bad.append(f"{m}/index.html missing")
+            continue
+        s = f.read_text(encoding="utf-8")
+        trs = _re.findall(r'<tr data-action="([^"]*)"[^>]*>(.*?)</tr>', s, _re.S)
+        tab_rows[m] = len(trs)
+        n_sig = sum(1 for k in by_key if k[0] == m)
+        got_sig = sum(1 for a, _ in trs if a == "SIGNAL")
+        if got_sig != n_sig:
+            tab_bad.append(f"{m}: {got_sig} SIGNAL rows vs {n_sig} in source")
+        if m == "hk200" and any(a != "未納入 v2" for a, _ in trs):
+            tab_bad.append("hk200 table carries a non-'not covered' state")
+        for a, body in trs:
+            if a != "SIGNAL":
+                continue
+            cells = [_re.sub(r"<[^>]+>", "", c) for c in
+                     _re.findall(r"<td[^>]*>(.*?)</td>", body, _re.S)]
+            mt = _re.search(r'mono" style="color: var\(--fg\);">([^<]+)<', body)
+            if not mt or len(cells) < 9:
+                tab_bad.append(f"{m}: malformed SIGNAL row")
+                continue
+            src = by_key.get((m, mt.group(1).replace(".", "_")))
+            if src is None:
+                tab_bad.append(f"{m}/{mt.group(1)} SIGNAL but absent from source")
+            elif (cells[6].strip() != f"{src['entry_s1']:,.2f}"
+                  or cells[7].strip() != f"{src['stop']:,.2f}"):
+                tab_bad.append(f"{m}/{mt.group(1)} levels differ from source")
+    record("index tables match v2-signals.json name by name", not tab_bad,
+           f"bad: {tab_bad[:5]}" if tab_bad else str(tab_rows))
+
+    # --- MUST-FAIL guards -------------------------------------------------
+    # Each guard mutates an in-memory COPY and re-runs one assertion, so a
+    # check that cannot fail can never pass by accident.
+
+    # Probe a page that actually HAS a signal — a no-signal page's agreement
+    # test does not look at the action line, so mutating it proves nothing.
+    probe_page = None
+    for p in pages["us200"]:
+        if by_key.get(("us200", p.stem)) is None:
+            continue
         t = p.read_text(encoding="utf-8")
-        if "兩個引擎睇法唔一致" in t:
-            probe = t
+        if "v2 Action:" in t:
+            probe_page = (p, t)
             break
-    if probe is None:
-        record("MUST-FAIL conflict notice present where engines disagree", False,
-               "no page carries a conflict notice to probe")
-        return
-    stripped = probe.replace("兩個引擎睇法唔一致", "")
-    needs = ("兩個引擎睇法唔一致" in probe
-             and "兩個引擎睇法唔一致" not in stripped)
-    record("MUST-FAIL removing the notice is detectable", needs,
-           "stripping the conflict notice still passes the presence check")
+    record("a us200 page with a live v2 signal exists to probe",
+           probe_page is not None,
+           probe_page[0].name if probe_page else "none found")
+    if probe_page is None:
+        record("MUST-FAIL a page with its action line removed is detected", False,
+               "no page with a v2 action line to probe")
+    else:
+        p, t = probe_page
+        sym = p.stem
+        record("control: the unmutated probe page agrees with the source",
+               page_agrees("us200", sym, t) == "", f"probe {p.name}")
+
+        stripped = t.replace("v2 Action:", "removed label:")
+        record("MUST-FAIL a page with its action line removed is detected",
+               page_agrees("us200", sym, stripped) != "",
+               "stripping the action label left the agreement check passing")
+
+        injected = t.replace(
+            "</title>",
+            '</title><span class="cell-action bull">WAIT</span>')
+        record("MUST-FAIL an injected retired verdict is caught",
+               bool(verdict_re.search(injected)) and not verdict_re.search(t),
+               "the verdict regex did not fire on the injected copy")
+
+        flipped = t.replace("SIGNAL", "無訊號")
+        record("MUST-FAIL an action state that disagrees with the source is caught",
+               page_agrees("us200", sym, flipped) != "",
+               "flipping the state left the agreement check passing")
+
+        bad_stop = t.replace(f"{by_key[('us200', sym)]['stop']:,.2f}", "1.11")
+        record("MUST-FAIL a wrong stop level is caught",
+               page_agrees("us200", sym, bad_stop) != "",
+               "a tampered stop level passed the agreement check")
+
 
 
 def main() -> int:
@@ -2053,7 +2183,7 @@ def main() -> int:
                t_every_fetched_asset_is_content_stamped,
                t_equity_curve_pages_are_v2,
                t_homepage_perf_figures_trace_to_source,
-               t_ticker_page_engines_are_labelled):
+               t_one_action_authority_per_page):
         print(f"\n{fn.__doc__.splitlines()[0] if fn.__doc__ else fn.__name__}")
         try:
             fn()
