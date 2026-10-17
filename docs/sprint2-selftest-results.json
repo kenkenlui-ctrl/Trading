@@ -1,0 +1,390 @@
+{
+  "sprint": "website/pipeline-integrity-2",
+  "generated_at": "2026-10-17T16:03:31+00:00",
+  "mode": "research_only",
+  "flags": {
+    "staleness_banner_flag": false,
+    "deploy_gate_flag": false,
+    "fingerprint_flag": false,
+    "crossval_flag": false,
+    "restatement_flag": false,
+    "gap_receipt_flag": false
+  },
+  "flags_enabled": [],
+  "production_modified": false,
+  "totals": {
+    "checks": 60,
+    "passed": 60,
+    "failed": 0,
+    "must_fail_guards": 10
+  },
+  "items": {
+    "A1_staleness_states": {
+      "status": "done_and_verified",
+      "flag": "staleness_banner_flag",
+      "files": [
+        "scripts/integrity/freshness.py"
+      ],
+      "notes": "FRESH/STALE/NOT_RUN/SOURCE_DOWN; SOURCE_DOWN outranks a present snapshot"
+    },
+    "A2_deploy_gate": {
+      "status": "done_and_verified",
+      "flag": "deploy_gate_flag",
+      "files": [
+        "scripts/integrity/gate.py",
+        "scripts/integrity/receipts.py"
+      ],
+      "notes": "fail-closed across the whole export set; no partial publish"
+    },
+    "A3_fingerprints": {
+      "status": "done_and_verified",
+      "flag": "fingerprint_flag",
+      "files": [
+        "scripts/integrity/fingerprints.py"
+      ],
+      "notes": "append-only JSONL; receipt joins to its run"
+    },
+    "B1_cross_source_validation": {
+      "status": "done_and_verified",
+      "flag": "crossval_flag",
+      "files": [
+        "scripts/integrity/crossval.py"
+      ],
+      "notes": "independent implementation; exact-match comparison, not statistical"
+    },
+    "B2_restatement_tracking": {
+      "status": "done_and_verified",
+      "flag": "restatement_flag",
+      "files": [
+        "scripts/integrity/restatement.py"
+      ],
+      "notes": "full-file hash per session; NEW_SESSION/UNCHANGED/RESTATEMENT"
+    },
+    "B3_data_gap_receipts": {
+      "status": "done_and_verified",
+      "flag": "gap_receipt_flag",
+      "files": [
+        "scripts/integrity/gap_receipts.py"
+      ],
+      "notes": "gap excluded from candidates AND denominators; gap vs rule rejection split"
+    },
+    "guardrail_no_lookahead": {
+      "status": "probe_passes",
+      "flag": "crossval_flag",
+      "files": [
+        "scripts/integrity/crossval.py"
+      ],
+      "notes": "T-day bar present in input is discarded by date, not by convention"
+    },
+    "guardrail_production_untouched": {
+      "status": "verified",
+      "flag": null,
+      "files": [
+        "scripts/sprint2_selftests.py"
+      ],
+      "notes": "0 sprint2 identifiers across 9 production build/deploy scripts"
+    }
+  },
+  "results": [
+    {
+      "name": "A1 state: within limit -> FRESH",
+      "ok": true,
+      "detail": "got FRESH"
+    },
+    {
+      "name": "A1 state: exactly at limit -> FRESH",
+      "ok": true,
+      "detail": "got FRESH"
+    },
+    {
+      "name": "A1 state: just over limit -> STALE",
+      "ok": true,
+      "detail": "got STALE"
+    },
+    {
+      "name": "A1 state: 58h old (the real incident) -> STALE",
+      "ok": true,
+      "detail": "got STALE"
+    },
+    {
+      "name": "A1 state: no input -> NOT_RUN",
+      "ok": true,
+      "detail": "got NOT_RUN"
+    },
+    {
+      "name": "A1 state: vendor down -> SOURCE_DOWN",
+      "ok": true,
+      "detail": "got SOURCE_DOWN"
+    },
+    {
+      "name": "A1 FRESH renders no banner",
+      "ok": true,
+      "detail": "banner must be empty when FRESH"
+    },
+    {
+      "name": "A1 STALE renders a banner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "A1 banner shows as-of, staleness and market/session",
+      "ok": true,
+      "detail": "資料過期 · us200 2026-10-16 · 最後輸入 2026-10-14T14:00:00+00:00，已過 58.0 小時（上限 36 小時）"
+    },
+    {
+      "name": "A1 NOT_RUN banner never claims previous-session numbers",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "MUST-FAIL stale payload carries STALE and a banner",
+      "ok": true,
+      "detail": "a stale export must not be serialisable as fresh"
+    },
+    {
+      "name": "MUST-FAIL SOURCE_DOWN outranks a stale-looking timestamp",
+      "ok": true,
+      "detail": "state=SOURCE_DOWN"
+    },
+    {
+      "name": "A2 good export passes",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "must-fail: version-mismatched export blocked",
+      "ok": true,
+      "detail": "demo_engine:version_mismatch"
+    },
+    {
+      "name": "must-fail: receipt-less export blocked",
+      "ok": true,
+      "detail": "demo_engine:missing_receipt"
+    },
+    {
+      "name": "must-fail: receipt-tampered export blocked",
+      "ok": true,
+      "detail": "demo_engine:input_drift:input_a.txt"
+    },
+    {
+      "name": "must-fail: vanished input blocked",
+      "ok": true,
+      "detail": "demo_engine:input_missing:input_a.txt"
+    },
+    {
+      "name": "must-fail: self-test failure blocks deploy",
+      "ok": true,
+      "detail": "self_test_failed"
+    },
+    {
+      "name": "must-fail: crossval disagreement blocks deploy",
+      "ok": true,
+      "detail": "crossval_failed"
+    },
+    {
+      "name": "must-fail: unpinned engine blocked",
+      "ok": true,
+      "detail": "demo_engine:version_not_pinned"
+    },
+    {
+      "name": "MUST-FAIL receipt overwrite refused",
+      "ok": true,
+      "detail": "payload already carries a '__receipt__'; refusing to overwri"
+    },
+    {
+      "name": "A3 two records appended",
+      "ok": true,
+      "detail": "2 lines"
+    },
+    {
+      "name": "A3 lookup by run_id",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "A3 terminal_state recorded",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "A3 receipt joins to fingerprint record",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "MUST-FAIL invalid terminal_state refused",
+      "ok": true,
+      "detail": "refusing to append a record with no valid terminal_state"
+    },
+    {
+      "name": "MUST-FAIL orphan receipt does not resolve to a run",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "B1 independent plan returns a decision",
+      "ok": true,
+      "detail": "not in uptrend"
+    },
+    {
+      "name": "B1 reports bars used = n, never n+1",
+      "ok": true,
+      "detail": "bars_used=400"
+    },
+    {
+      "name": "B1 identical implementations agree",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "must-fail: disagreeing signal blocked",
+      "ok": true,
+      "detail": "differing=['entry_s1']"
+    },
+    {
+      "name": "MUST-FAIL rejection receipt carries both hashes",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "probe: T-day bar present in input",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no-look-ahead: T-day bar changes nothing",
+      "ok": true,
+      "detail": "asof 2026-10-16 == T-1 2026-10-16, bars_used 400 of 401"
+    },
+    {
+      "name": "MUST-FAIL probe has teeth (a T-1 cutoff that includes T-day DOES move it)",
+      "ok": true,
+      "detail": "leaked entry_s1=0.01 vs T-1 96.8436"
+    },
+    {
+      "name": "B1 real-data agreement",
+      "ok": true,
+      "detail": "407/407 agree (100.00%), 0 disagree"
+    },
+    {
+      "name": "B2 first ingest is NEW_SESSION",
+      "ok": true,
+      "detail": "NEW_SESSION"
+    },
+    {
+      "name": "B2 byte-identical re-ingest is UNCHANGED",
+      "ok": true,
+      "detail": "UNCHANGED"
+    },
+    {
+      "name": "B2 vendor re-issue is RESTATEMENT",
+      "ok": true,
+      "detail": "RESTATEMENT"
+    },
+    {
+      "name": "B2 restatement carries before/after hashes",
+      "ok": true,
+      "detail": "c0c60ec3ffa5 -> a214c8ac2464"
+    },
+    {
+      "name": "B2 vendor version markers captured",
+      "ok": true,
+      "detail": "{\"exported_at\": \"2026-10-17T06:00:00Z\", \"file_version\": \"4\"}"
+    },
+    {
+      "name": "B2 restatements() lists the event",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "MUST-FAIL a genuinely new bar is NOT called a restatement",
+      "ok": true,
+      "detail": "event=NEW_SESSION"
+    },
+    {
+      "name": "must-fail: restatement names its dependents",
+      "ok": true,
+      "detail": "dependents=['data/v2_signals.json']"
+    },
+    {
+      "name": "B3 receipt carries rows_returned=0",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "B3 gap excluded from candidates",
+      "ok": true,
+      "detail": "['AAPL', 'AVB', 'MSFT', 'NVDA'] -> ['AAPL', 'MSFT', 'NVDA']"
+    },
+    {
+      "name": "B3 gap excluded from DENOMINATORS too",
+      "ok": true,
+      "detail": "['AAPL', 'AVB', 'MSFT', 'NVDA', 'AMD'] -> ['AAPL', 'MSFT', 'NVDA', 'AMD']"
+    },
+    {
+      "name": "B3 other symbols untouched in both sets",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "B3 receipt logged",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "MUST-FAIL non-empty gap receipt refused",
+      "ok": true,
+      "detail": "a MISSING_BAR receipt must carry rows_returned == 0"
+    },
+    {
+      "name": "MUST-FAIL gap and rule rejection counted separately",
+      "ok": true,
+      "detail": "{\"MISSING_BAR\": 1, \"SOURCE_LATE\": 0, \"RULE_REJECTION\": 1, \"QUARANTINED\": 0}"
+    },
+    {
+      "name": "MUST-FAIL rule rejection does not silently shrink denominators",
+      "ok": true,
+      "detail": "cands=['AAPL', 'AVB', 'MSFT', 'NVDA'] denoms=['AAPL', 'AVB', 'MSFT', 'NVDA', 'AMD']"
+    },
+    {
+      "name": "B3 unfilled gap quarantined at next session",
+      "ok": true,
+      "detail": "{\"session\": \"2026-10-16\", \"market\": \"us200\", \"symbol\": \"AVB\", \"reason\": \"QUARANTINED\", \"action\": \"QUARANTINE\", \"query_time\": \"2026-10-17T16:03:31+00:00\", \"observed_at\": \"2026-10-17T16:03:31+00:00\", \"rows_returned\": 0}"
+    },
+    {
+      "name": "B3 refilled gap is not quarantined",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "MUST-FAIL a rule rejection is never quarantined as a gap",
+      "ok": true,
+      "detail": "['QUARANTINED']"
+    },
+    {
+      "name": "all sprint2 flags default OFF",
+      "ok": true,
+      "detail": "{\"staleness_banner_flag\": false, \"deploy_gate_flag\": false, \"fingerprint_flag\": false, \"crossval_flag\": false, \"restatement_flag\": false, \"gap_receipt_flag\": false}"
+    },
+    {
+      "name": "flag file exists and is committed-shaped",
+      "ok": true,
+      "detail": "config/integrity_flags.json"
+    },
+    {
+      "name": "no flag is currently enabled",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "must-fail: no sprint2 identifier in any build/deploy path",
+      "ok": true,
+      "detail": "0 references across 9 production scripts"
+    },
+    {
+      "name": "missing flag config → everything OFF",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}
