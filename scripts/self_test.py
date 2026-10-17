@@ -1972,6 +1972,65 @@ def t_homepage_perf_figures_trace_to_source() -> None:
            f"still present: {stale}" if stale else "27.4/27.2 absent")
 
 
+def t_ticker_page_engines_are_labelled() -> None:
+    """Consistency (2026-10-18): a ticker page must never show a headline
+    verdict and a v2 entry/stop plan without saying they come from different
+    engines answering different questions.
+
+    The live case: AMD rendered "Action: WAIT" (retired v1 engine) directly
+    above "入場 S1 526.83 · 止損 448.28" (v2), which reads as a page
+    contradicting itself. 70 US and 65 JP pages had the same shape.
+    """
+    import json as _json
+    sig_path = PUBLIC / "v2-signals.json"
+    record("v2-signals.json exists for the consistency check", sig_path.exists())
+    if not sig_path.exists():
+        return
+    sig = _json.loads(sig_path.read_text())
+    items = sig.get("signals", [])
+    if isinstance(items, dict):
+        items = list(items.values())
+    v2 = {mkt: {x["symbol"] for x in items if x.get("market") == mkt}
+          for mkt in ("us200", "jp200", "hk200")}
+
+    unlabelled, false_notice = [], []
+    for mkt in ("us200", "jp200", "hk200"):
+        for p in sorted(PUBLIC.glob(f"{mkt}/ticker/*.html")):
+            sym = p.stem
+            txt = p.read_text(encoding="utf-8")
+            if "舊版 (v1) 引擎</b>判斷" not in txt and "舊版 (v1) 引擎</b>判斷" not in txt:
+                unlabelled.append(f"{mkt}/{sym}")
+            has_v2 = sym in v2.get(mkt, set())
+            notice = "兩個引擎睇法唔一致" in txt
+            if has_v2 and notice:
+                continue
+            if not has_v2 and notice:
+                false_notice.append(f"{mkt}/{sym}")
+    record("every ticker page attributes the headline verdict to its engine",
+           not unlabelled, f"unlabelled: {unlabelled[:5]}" if unlabelled else
+           f"{len(list(PUBLIC.glob('*/ticker/*.html')))} pages labelled")
+    record("no conflict notice on a page with no v2 signal", not false_notice,
+           f"false notice: {false_notice[:5]}" if false_notice else "none")
+
+    # MUST-FAIL: a page that HAS a v2 plan and a non-BUY/SELL old verdict must
+    # carry the notice. Probe by deleting the notice from a live page copy.
+    probe = None
+    for p in sorted(PUBLIC.glob("us200/ticker/*.html")):
+        t = p.read_text(encoding="utf-8")
+        if "兩個引擎睇法唔一致" in t:
+            probe = t
+            break
+    if probe is None:
+        record("MUST-FAIL conflict notice present where engines disagree", False,
+               "no page carries a conflict notice to probe")
+        return
+    stripped = probe.replace("兩個引擎睇法唔一致", "")
+    needs = ("兩個引擎睇法唔一致" in probe
+             and "兩個引擎睇法唔一致" not in stripped)
+    record("MUST-FAIL removing the notice is detectable", needs,
+           "stripping the conflict notice still passes the presence check")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--json", action="store_true")
@@ -1993,7 +2052,8 @@ def main() -> int:
                t_signals_only_come_from_tracked_tickers,
                t_every_fetched_asset_is_content_stamped,
                t_equity_curve_pages_are_v2,
-               t_homepage_perf_figures_trace_to_source):
+               t_homepage_perf_figures_trace_to_source,
+               t_ticker_page_engines_are_labelled):
         print(f"\n{fn.__doc__.splitlines()[0] if fn.__doc__ else fn.__name__}")
         try:
             fn()

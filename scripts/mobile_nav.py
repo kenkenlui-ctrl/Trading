@@ -214,7 +214,9 @@ def render_v2_block(market: str) -> str:
 """
 
 
-def render_v2_status_for_ticker(market: str, safe: str) -> str:
+def render_v2_status_for_ticker(market: str, safe: str,
+                                old_verdict: str | None = None,
+                                old_phase: str | None = None) -> str:
     """Per-ticker v2 verdict for a detail page, injected above the v1 content.
 
     2026-10-06: only build_dashboard_page (the hub) called render_v2_block, so
@@ -270,6 +272,24 @@ def render_v2_status_for_ticker(market: str, safe: str) -> str:
         )
         tag = "v2 訊號"
         col = "var(--bull)"
+        # 2026-10-18 consistency fix. The hero card above this block carries the
+        # RETIRED v1 engine's verdict, and on a name like AMD it reads "Action:
+        # WAIT" directly above a concrete entry and stop. Both are true of their
+        # own engine, but a reader cannot tell they are different engines
+        # answering different questions — so when they disagree we say so here
+        # rather than leaving the page to appear self-contradictory.
+        conflict = ""
+        vd = (old_verdict or "").upper()
+        if vd and vd not in ("BUY", "SELL", "OK"):
+            conflict = (
+                '<p style="font-size:0.78rem;margin:8px 0 0;color:var(--amber)">'
+                '⚠ <b>兩個引擎睇法唔一致</b>：v2 仍然出入場計劃，但舊版引擎'
+                f'（技術面 {old_phase or "—"}）判 {vd}。'
+                'v2 係「跌到低位就接」嘅規則，設計上冇跌勢過濾，'
+                '所以跌市中段一樣會出單 —— 見下方止損距離，'
+                '風險由你自行判斷。</p>'
+            )
+        body += conflict
     else:
         body = (
             '<div style="font-size:1.15rem;margin:2px 0">今日無 v2 訊號</div>'

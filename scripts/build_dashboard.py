@@ -985,7 +985,12 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
     }},
     {{
       "@type": "Article",
-      "headline": "{ticker} {name} 即日鮮 Action Plan ({verdict})",
+      # 2026-10-18 consistency fix. This headline carried the RETIRED v1
+      # engine's verdict into structured data, where a search engine or an AI
+      # reader sees "Action Plan (WAIT)" with no indication of which engine
+      # said it — while the page body shows a v2 entry and stop. Name the
+      # engine instead of asserting a verdict the current engine never made.
+      "headline": "{ticker} {name} 技術面（舊版引擎）: {verdict} · 現行 v2 訊號見正文",
       "url": "{canon_url}",
       "mainEntityOfPage": "{canon_url}",
       "inLanguage": "zh-Hant-HK",
@@ -1017,7 +1022,11 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
 
     # 2026-10-06: the live v2 verdict for THIS ticker, so a detail page is not
     # silently a v1 page. HK gets an explicit "not covered by v2" notice.
-    v2_status = render_v2_status_for_ticker(market, safe)
+    # 2026-10-18 consistency fix: the v2 card needs to know what the retired
+    # engine said, so it can disclose a disagreement instead of rendering a
+    # page whose headline verdict and v2 plan appear to contradict each other.
+    v2_status = render_v2_status_for_ticker(
+        market, safe, old_verdict=verdict, old_phase=phase_label)
     _jsv = _canvas_js_version()
 
     return f"""<!DOCTYPE html>
@@ -1124,6 +1133,10 @@ function toggleTheme(){{
       <span>Strategy: <b>{edge["strategy"] if edge else "—"}</b></span>
       <span>Reliability: <b style="color: {rel_color};">{reliability}</b></span>
     </div>
+    <p style="font-size:0.72rem;opacity:0.55;margin:2px 0 0">
+      ↑ Phase / Action / Strategy / Reliability 由<b>舊版 (v1) 引擎</b>判斷，
+      <b>唔係</b>現行 v2 訊號。v2 嘅入場、止損同倉位喺下面。
+    </p>
     {edge_note_html}
   </div>
 </div>
