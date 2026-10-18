@@ -78,3 +78,40 @@ python3 scripts/signal_search_s1.py --market us --placebo 300 --placebo-seed 202
 Whether any Sprint 1 variation ships. Sprint 2's flags all remain OFF, and the
 recommended order is `deploy_gate_flag` → `crossval_flag`. This re-run settles
 the measurement, not the rollout.
+
+---
+
+## Outcome — 2026-10-19
+
+### Step 1: invariance check (same seed 20261016, same 30 trials, fixed benchmark)
+
+The sharpest test of the prediction above: if the benchmark really does cancel,
+then re-running with **the same seed and the same trial count** must leave every
+decision variable bit-identical, because the placebo draws are unchanged and
+only `EW` moved.
+
+It did. Across all 11 variations × both sub-periods, `net_pp`, `worst_z` and
+`clears_placebo_bar` were **identical to two decimal places**. Verdict
+unchanged: nothing cleared.
+
+`EW` itself moved a lot: **27.22%/yr → 24.63%/yr**, i.e. the old benchmark
+inflated the buy-and-hold comparison by **2.59pp/yr**.
+
+**One part of the pre-registration was wrong.** It predicted that `real_gap_pp`
+and `null_mean_pp` would move by *opposite* signs. They move by the **same**
+sign, by the same amount (+2.01pp on the base cell, 2016-20). That is not a
+conflict with the prediction above — it is the mechanism behind it: a single
+benchmark offset shifts both quantities equally, which is precisely why their
+difference is invariant. The prediction stated the right conclusion and the
+wrong reason for it. Recorded rather than quietly dropped, because a
+pre-registration edited after the fact is not a pre-registration.
+
+### Step 2: production re-run (seed 20261019, 300 trials)
+
+The old run used **30 trials**, which is a thin estimate of a null's spread.
+300 was used for the production run. Trial count is not a pass criterion — no
+threshold, required cell or interpretation depends on it — and more trials
+tighten the null estimate, so this is the conservative direction. Same
+reasoning as the amendment to the close-confirmation pre-registration.
+
+Result appended below once the run completed.
