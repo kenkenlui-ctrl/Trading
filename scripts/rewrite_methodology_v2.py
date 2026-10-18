@@ -281,6 +281,61 @@ def _table_note(f: dict) -> str:
     return "拆分市況後方向唔變（§4.8）"
 
 
+def _ab_n_range() -> str:
+    """Trade-count range across the four A/B cells, read not typed.
+
+    The page used to hardcode "2,193–5,812", which were the counts from the
+    superseded data/bt10y run. The current data/bt10y2 run measures a different
+    range entirely, so the sentence was describing a measurement that no longer
+    exists."""
+    ns = [AB["windows"][m][AB_RULE][w_]["n"]
+          for m in ("us200", "jp200") for w_ in ("train", "test")]
+    return f"{min(ns):,}–{max(ns):,}"
+
+
+def _close_hold_control_note() -> str:
+    """The placebo verdict, or an explicit statement that it was not run.
+
+    "B beats A" on its own cannot separate two readings: the close carries
+    information, or the rule simply trades less. B keeps roughly half of A's
+    trades, so a reader who is not told about a control has no way to tell
+    which one this evidence supports. The thresholds were fixed in advance in
+    docs/close-confirmation-prereg-2026-10-18.md."""
+    pl = AB.get("placebo")
+    if not pl:
+        return ('<p style="font-size: var(--text-sm); color: var(--amber);">'
+                '⚠ <b>呢個 A/B 暫時冇對照組。</b>來源檔 <code>data/ab_close_hold.json</code> '
+                '嘅 <code>placebo</code> 區係空嘅（嗰次重跑冇加 <code>--placebo</code>），'
+                '所以上面只證明「B 嘅平均高過 A」，<b>未能排除「只係交易少咗所以平均高」</b>。'
+                '重跑 <code>scripts/ab_close_hold.py --placebo 300</code> 就會出現。</p>')
+    cells = pl.get("cells", {})
+    zs = [c["z"] for m in cells.values() for c in m.values() if c.get("z") is not None]
+    gaps = [c["gap_vs_null_pp"] for m in cells.values() for c in m.values()
+            if c.get("gap_vs_null_pp") is not None]
+    powered = all(c.get("has_power") for m in cells.values() for c in m.values())
+    verdict = pl.get("verdict", "?")
+    ok = verdict == "PASS" and powered
+    return (
+        f'<p style="font-size: var(--text-sm);"><b>但呢個比較有一個必要嘅對照組，'
+        f'因為 B 臂只保留 A 臂一半交易</b> —— 「交易少咗所以平均高」同「揀得準」'
+        f'睇落一模一樣。為此喺跑之前已經把門檻寫死落 '
+        f'<code>docs/close-confirmation-prereg-2026-10-18.md</code>（z ≥ {pl["z_crit"]}，'
+        f'四格全要，並且規定如果 B 落喺對照 null 之內就要公開為 negative result），'
+        f'然後用一個<b>同 B 一樣大細、但係隨機抽嘅 A 臂子集</b>做安慰劑對照 '
+        f'（{pl["trials"]} trials/cell）。</p>'
+        f'<p style="font-size: var(--text-sm);">'
+        f'{"四格全部企喺 null 之上" if ok else "預先登記結果：" + verdict}：'
+        f'差距 {min(gaps):+.2f} 至 {max(gaps):+.2f} 個百分點，z 由 {min(zs):.2f} 到 '
+        f'{max(zs):.2f}，門檻 {pl["z_crit"]}。'
+        f'{"四個對照組嘅標準差都唔係 0，即係個對照組真係有檢定力（sd = 0 嘅安慰劑會喺冇測過任何嘢嘅情況下通過）。" if powered else "⚠ 有對照組 sd = 0，個測試無效。"}'
+        f' 結論係<b>收市企穩呢個條件帶資訊</b>，唔係單純減少交易量。</p>'
+        f'<p style="font-size: var(--text-sm); color: var(--amber);">'
+        f'<b>兩點要講清楚：</b>（一）呢個測試<b>唔係</b>10 日持有嘅結論 —— '
+        f'兩臂都固定 HOLD = 10，量度嘅係<b>入場資格</b>；10 日、5 日、15 日、20 日邊個好'
+        f'仍然未答。（二）P2 係主要對照組，已經跑；次要對照組 P1（隨機換交易日）'
+        f'已經實作但<b>未執行</b>，唔可以講成兩樣都做咗。</p>')
+
+
 def _oos_win_sentence() -> str:
     """Real per-trade out-of-sample win rates, read from data/ab_close_hold.json.
 
@@ -962,9 +1017,10 @@ def build_body() -> str:
   </table>
   <p>
     <b>四個格全部改善</b>（每單升、t 升），所以唔係單一窗口嘅 accident。
-    每一格交易筆數 2,193–5,812，遠高於本項目「1,000 單先可以出貨」嘅門檻。
+    每一格交易筆數 {_ab_n_range()}，遠高於本項目「1,000 單先可以出貨」嘅門檻。
     代價係交易量減半 —— 呢個規則賺錢嘅方式係<em>唔做錯單</em>，唔係做多啲單。
   </p>
+  {_close_hold_control_note()}
   <h3>4.6 對照組測試：S1 入場係咪真係有選時價值？</h3>
   <p>
     要分清楚「揀上升趨勢股持有」同「等佢跌到 S1 先入」呢兩件事，

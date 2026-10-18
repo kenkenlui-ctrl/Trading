@@ -10,9 +10,14 @@ Sections rendered (in order):
   4. Live stop/target adoption (NEW 2026-09-09)
   5. Universe filter (NEW 2026-09-09)
   6. Risk metrics (NEW 2026-09-09 — portfolio sim)
-  7. Walk-forward OOS (NEW 2026-09-09)
+  7. Close-confirmation A/B (NEW 2026-10-18 — read from
+     data/ab_close_hold.json; states the scope of the −4.05% withdrawal,
+     which is a dead pipeline and not a verdict on the 10-day hold question)
+  8. Walk-forward OOS (NEW 2026-09-09)
 
 Regenerated every time monthly_swing_backtest.py runs (called from main build).
+Section 7 does NOT depend on that script — it reads the v2 A/B artifact, so it
+survives monthly_swing_backtest.py being unrunnable.
 """
 from __future__ import annotations
 import json
@@ -161,6 +166,133 @@ def _withheld_risk_block(tbl: str, cls: str) -> str:
     )
 
 
+_AB_JSON = REPO / "data" / "ab_close_hold.json"
+
+
+def _ab_read() -> dict:
+    """The close-confirmation A/B, read from the run that produced it.
+
+    Raised, not degraded, for the same reason build_v2_signals._oos() raises:
+    a performance claim rendered from a missing source is byte-identical to a
+    correct one, which is the whole failure mode this project keeps hitting.
+    """
+    try:
+        return json.loads(_AB_JSON.read_text(encoding="utf-8"))
+    except Exception as e:  # noqa: BLE001
+        raise SystemExit(f"FATAL: cannot read {_AB_JSON}: {e} — run "
+                         f"scripts/ab_close_hold.py --placebo 300 first")
+
+
+def _close_hold_block() -> str:
+    """The live answer to the question this page's dead pipeline was asking.
+
+    Why this exists on /backtest at all
+    -----------------------------------
+    The −4.05% T+10 figure was withdrawn on 2026-10-18 because the run that
+    produced it reads data/dsa_hk.db, whose daily_report table is empty — the
+    monthly_swing pipeline is dead. The honest scope of that withdrawal is
+    usually stated wrong. What died is the PIPELINE, not the QUESTION. "Should
+    a position be held for 10 sessions after a support entry?" is not answered
+    by a broken database, and treating one dead pipeline as a verdict on the
+    idea would be its own kind of error.
+
+    The question is answered — on other bars, in the v2 engine, by a run that
+    does reproduce. ab_close_hold.py holds HOLD = 10 in BOTH arms, so the hold
+    length is held constant while the entry qualification is varied. That
+    makes this a live experiment about the same holding horizon this page is
+    about, not a different one.
+
+    And it is falsifiable, which the dead pipeline's output was not. B keeps
+    only about half of A's trades, so "B beats A" on its own cannot separate
+    "the close carries information" from "the rule just trades less". The
+    thresholds were fixed in advance in docs/close-confirmation-prereg-2026-10-18.md
+    and a size-matched placebo subset of arm A acts as the null. If B landed
+    inside that null the pre-registration required publishing it as a negative
+    result.
+
+    SCOPE WARNING, stated on the page rather than left implicit: this measures
+    the FILL CONDITION. HOLD = 10 is identical in both arms, so this result is
+    NOT a mandate for 10 days over 5, 15 or 20 — that sweep is Signal Search
+    Sprint 1's, and it is not in this artifact.
+    """
+    d = _ab_read()
+    pl = d.get("placebo")
+    if not pl:
+        # A run with --placebo 0 writes null. Printing the raw A/B here would
+        # look identical to a placebo-backed claim, which is the point.
+        return ('<section class="section-closehold"><div class="container">'
+                '<h2>同一個問題仲生猛 · Close-confirmation A/B</h2>'
+                '<div class="info-card" style="border-left:3px solid var(--amber);'
+                'margin:16px 0"><p>呢一節嘅來源 <code>data/ab_close_hold.json</code> '
+                '<b>冇 placebo 區</b>（嗰次重跑冇加 <code>--placebo</code>）。'
+                '一個冇對照嘅兩臂比較讀落同「有對照、企得穩」一模一樣，'
+                '所以呢度寧願唔印。重跑 '
+                '<code>scripts/ab_close_hold.py --placebo 300</code> 就會出現。</p>'
+                '</div></div></section>')
+
+    cells = pl.get("cells", {})
+    rows = []
+    for mkt in ("us200", "jp200"):
+        if mkt not in cells:
+            continue
+        label = {"us200": "美股 US200", "jp200": "日股 JP200"}[mkt]
+        for win in ("train", "test"):
+            c = cells[mkt].get(win)
+            if not c:
+                continue
+            wl = "2016–22 訓練" if win == "train" else "2023–26 樣本外"
+            if not c.get("has_power"):
+                badge = '<span style="color:var(--red)">無檢定力</span>'
+            elif c.get("passes"):
+                badge = '<span style="color:var(--green)">通過</span>'
+            else:
+                badge = '<span style="color:var(--red)">不通過</span>'
+            rows.append(
+                f"<tr><td>{label}</td><td>{wl}</td>"
+                f"<td>{c['B_n']:,}</td>"
+                f"<td>{c['B_avg%']:+.3f}%</td>"
+                f"<td>{c['P2_null_mean%']:+.3f}%</td>"
+                f"<td>{c['gap_vs_null_pp']:+.3f}pp</td>"
+                f"<td>{c['z']:.2f}</td><td>{badge}</td></tr>")
+
+    verdict = pl.get("verdict", "?")
+    npass = pl.get("cells_passing", "?")
+    lead = ("通過" if verdict == "PASS" else "唔通過")
+    return (
+        '<section class="section-closehold"><div class="container">'
+        '<h2>同一個問題仲生猛 · Close-confirmation A/B</h2>'
+        '<p style="font-size:0.95rem;opacity:0.85;max-width:74ch">'
+        '上面撤回嘅 −4.05% 死嘅係<b>一條 pipeline</b>（訊號庫個表係空嘅，'
+        '重跑唔到），唔係「10 日持有」呢個問題本身。一個壞咗嘅資料庫唔能夠'
+        '否定一個研究問題 —— 咁講同錯用一個數字一樣錯。同一個問題而家喺另一條'
+        '<b>仲生猛、而且重跑得出</b>嘅實驗度：<code>scripts/ab_close_hold.py</code>。'
+        '兩臂都用 <b>HOLD = 10</b>，只有入場資格唔同（開市高過 S1 vs 開市同收市'
+        '都企喺 S1 之上），所以呢個正正就係呢一頁嘅持有長度，只係喺另一個引擎度'
+        '重新驗證。</p>'
+        '<div class="info-card" style="border-left:3px solid var(--green);margin:16px 0">'
+        '<p style="margin:0"><b>預先登記結果：{_html.escape(lead)}</b>（{_html.escape(str(npass))} '
+        '格通過，門檻 z ≥ {pl["z_crit"]}，四格全要）。門檻喺跑之前已經寫死落 '
+        '<code>docs/close-confirmation-prereg-2026-10-18.md</code>，事後唔准改。'
+        'B 臂只保留 A 臂約一半交易，所以「B 贏 A」本身唔夠 —— 一個同 B 一樣大細、'
+        '但係隨機抽嘅 A 臂子集做咗對照 null。如果收市確認只係令你<b>交易少啲</b>，'
+        'B 應該落喺嗰條 null 入面；佢冇。</p></div>'
+        '<table class="data-table"><thead><tr>'
+        '<th>市場</th><th>窗口</th><th>B 單數</th><th>B 平均</th>'
+        '<th>安慰劑 null 均值</th><th>差距</th><th>z</th><th>判定</th>'
+        '</tr></thead><tbody>' + "".join(rows) + '</tbody></table>'
+        '<p style="font-size:0.85rem;opacity:0.8;max-width:74ch">'
+        '<b>範圍提醒：</b>呢個量度嘅係<b>入場資格</b>，唔係持有日數。兩臂都係 10 日，'
+        '所以呢個結果<b>唔係</b>「10 日好過 5/15/20 日」嘅證據 —— 嗰個掃描係 '
+        'Signal Search Sprint 1 嘅 hold sweep，唔喺呢個 artifact 度。'
+        '四格都高過 null 講嘅係<b>收市企穩呢個條件帶資訊</b>，唔係「持有耐啲就賺得多」。'
+        '</p>'
+        '<p style="font-size:0.8rem;opacity:0.7">'
+        f'來源 <code>data/ab_close_hold.json</code>（bars: {d["bars_dir"]}，'
+        f'split: {d["split"]}，hold: {d["hold_days"]}，'
+        f'{pl["trials"]} trials/cell，seed {pl["seed"]}）。</p>'
+        '</div></section>')
+
+
 def _num(v):
     """Return a display number, or None when the source had no value."""
     if v in (None, "", "?"):
@@ -277,7 +409,7 @@ def render() -> str:
     <h1>回測報告 · <em class="italic">T+10 Swing vs T+1 Day-trade</em></h1>
     <p class="lede">{n_signals} 個 BUY 訊號嘅 6 個月回測，全部<b>淨回報</b>（扣交易成本）。
     同一批訊號，T+10 持有平均 <b>+{t10_avg}%</b>，係 T+1 即日鮮（+{t1_avg}%）嘅 {float(t10_avg)/max(float(t1_avg), 0.01):.0f}× 倍。
-    2026-10-18 update: the <b>−4.05%</b> T+10 figure previously quoted here has been withdrawn. It had no artifact: the run that produced it (<code>scripts/monthly_swing_backtest.py</code>) reads <code>data/dsa_hk.db</code>, whose <code>daily_report</code> table is empty, so it cannot be reproduced. The <a href="/equity_curve_t10">ten-year v2 equity curves</a> are a different experiment (2017–26 US, same v2 rules) and are not a substitute. What stands on this page is the per-trade table below, which is reproducible from its own run.</p>
+    2026-10-18 update: the <b>−4.05%</b> T+10 figure previously quoted here has been withdrawn. It had no artifact: the run that produced it (<code>scripts/monthly_swing_backtest.py</code>) reads <code>data/dsa_hk.db</code>, whose <code>daily_report</code> table is empty, so it cannot be reproduced. What died there is one dead pipeline, not the question — whether a support entry should be held for 10 sessions is answered below by a run that does reproduce. The <a href="/equity_curve_t10">ten-year v2 equity curves</a> are a different experiment (2017–26 US, same v2 rules) and are not a substitute for either. What stands on this page is the per-trade table below, which is reproducible from its own run.</p>
     <div class="hero-meta">
       <span>Window: {window}</span>
       <span>Signals: {n_signals}</span>
@@ -298,6 +430,8 @@ def render() -> str:
 {_section_block("Universe filter (20d ADV, fail-closed)", universe_html, "section-universe") if universe_html else ''}
 
 {_withheld_risk_block(risk_tbl, "section-risk")}
+
+{_close_hold_block()}
 
 {_section_block("Walk-forward OOS (80/20 train/test split)", oos_tbl, "section-oos") if oos_tbl else ''}
 
@@ -390,14 +524,26 @@ def render() -> str:
     # 12. It is not a portfolio return, it is a sum of per-trade percentages
     # with the cap ignored.
     risk_mgmt = _risk_managed_return()
+    # z range for the close-confirmation A/B, read not typed. If the placebo
+    # block is missing, say nothing quantitative rather than quote a stale z.
+    _pl = _ab_read().get("placebo") or {}
+    _zs = [c["z"] for m in _pl.get("cells", {}).values() for c in m.values()
+           if c.get("z") is not None]
+    _zspan = (f"z 由 {min(_zs):.1f} 到 {max(_zs):.1f}，門檻 1.96"
+              if _zs else "門檻 1.96（來源未跑 placebo，暫時唔報數）")
     risk_txt = (
         f"風險預算下嘅 T+10 組合回報為 {risk_mgmt}"
         if risk_mgmt else
         "呢個窗口嘅 T+10 風險管理組合回報<b>冇一個可以引用嘅數字</b>："
         "產生佢嘅 monthly swing backtest 依賴嘅訊號庫（<code>data/dsa_hk.db</code> "
         "嘅 <code>daily_report</code> 表）而家係空嘅，重跑唔到。"
-        "站上曾經引用過嘅 −4.05% 查唔到任何來源，已經停用；"
-        "10 年期 v2 規則嘅定資模擬見 <a href='/equity_curve_t10'>權益曲線頁</a>，"
+        "站上曾經引用過嘅 −4.05% 查唔到任何來源，已經停用。"
+        "但要分清楚：死嘅係<b>呢一條 pipeline</b>，唔係「10 日持有」呢個問題 —— "
+        "壞咗嘅資料庫唔能夠否定一個研究問題。"
+        "同一個問題而家喺 close-confirmation A/B 度重新驗證（兩臂都係 HOLD = 10，"
+        f"美股同日股、訓練同樣本外共四格，全部企喺預先登記嘅安慰劑對照之上，{_zspan}），"
+        "見下面「同一個問題仲生猛」一節。"
+        "另外 10 年期 v2 規則嘅定資模擬見 <a href='/equity_curve_t10'>權益曲線頁</a>，"
         "但嗰個係另一個實驗（2017–26 美股、同一套 v2 規則），唔可以攞嚟代表呢一頁。"
     )
 

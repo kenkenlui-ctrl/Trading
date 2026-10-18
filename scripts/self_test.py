@@ -2427,6 +2427,168 @@ def t_per_trade_stats_trace_to_source() -> None:
            "the scanner did not flag the n = 2,992 copy that was live on 2026-10-18")
 
 
+PREREG = REPO / "docs" / "close-confirmation-prereg-2026-10-18.md"
+_PREREG_Z = 1.96
+_REQUIRED_CELLS = (("us200", "train"), ("us200", "test"),
+                   ("jp200", "train"), ("jp200", "test"))
+
+
+def _prereg_verdict(cells: dict, z_crit: float) -> tuple[str, list[str]]:
+    """Re-derive the pre-registered verdict from the cells alone.
+
+    Deliberately does NOT read the run's own "verdict" string. A gate that
+    checks a stored conclusion against itself passes forever; this one
+    recomputes, so a verdict that no longer matches its cells turns red.
+
+    Mirrors docs/close-confirmation-prereg-2026-10-18.md: all four cells must
+    clear gap > 0 AND z >= z_crit, and any cell without power (sd == 0) voids
+    the whole test.
+    """
+    problems: list[str] = []
+    n_pass = 0
+    for mkt, win in _REQUIRED_CELLS:
+        c = cells.get(mkt, {}).get(win)
+        if not c:
+            problems.append(f"{mkt} {win}: cell missing")
+            continue
+        if not c.get("has_power"):
+            problems.append(f"{mkt} {win}: no power (sd={c.get('P2_null_sd%')})")
+            continue
+        z = c.get("z")
+        gap = c.get("gap_vs_null_pp")
+        if z is None or gap is None:
+            problems.append(f"{mkt} {win}: z or gap missing")
+            continue
+        if gap > 0 and z >= z_crit:
+            n_pass += 1
+        else:
+            problems.append(f"{mkt} {win}: gap={gap} z={z} below {z_crit}")
+    if problems and any("no power" in p for p in problems):
+        return "VOID", problems
+    if not problems and n_pass == len(_REQUIRED_CELLS):
+        return "PASS", problems
+    return ("MIXED", problems) if n_pass else ("FAIL", problems)
+
+
+def t_close_confirmation_placebo_holds_up() -> None:
+    """The shipped close-hold rule must rest on a real, pre-registered control.
+
+    2026-10-18. B keeps only ~51% of A's trades, so "B beats A" is consistent
+    with "the rule just trades less". A gate now exists so that this specific
+    claim cannot be made by a run that never ran a control, and cannot be
+    passed by a control that cannot move (the Sprint 1 trap: a permutation that
+    reordered a set without changing any pairing, returning sd = 0.00).
+
+    Three things are checked that a plain artifact-presence test would miss:
+    the verdict is re-derived rather than read, the threshold in the artifact
+    is compared against the one written into the pre-registration, and the
+    withdrawal notice on /backtest is scoped to the dead pipeline rather than
+    to the research question.
+    """
+    import json as _json
+    import re as _re
+
+    src = REPO / "data" / "ab_close_hold.json"
+    if not src.exists():
+        record("ab_close_hold.json exists (placebo gate)", False, str(src))
+        return
+    d = _json.loads(src.read_text(encoding="utf-8"))
+
+    pl = d.get("placebo")
+    record("the shipped run recorded a placebo block", bool(pl),
+           "data/ab_close_hold.json has placebo=null — that run used "
+           "--placebo 0, so the close-hold rule currently has no control behind it")
+    if not pl:
+        return
+
+    cells = pl.get("cells", {})
+    missing = [f"{m}/{w}" for m, w in _REQUIRED_CELLS if not cells.get(m, {}).get(w)]
+    record("all four pre-registered cells are present", not missing,
+           f"missing: {missing}" if missing else "US/JP x train/test")
+
+    dead = [f"{m}/{w} (sd={cells.get(m, {}).get(w, {}).get('P2_null_sd%')})"
+            for m, w in _REQUIRED_CELLS
+            if cells.get(m, {}).get(w) and not cells[m][w].get("has_power")]
+    record("every control has power (sd != 0)", not dead,
+           f"no power: {dead}" if dead else
+           "a zero-sd control passes its gate while testing nothing")
+
+    verdict, problems = _prereg_verdict(cells, _PREREG_Z)
+    record("verdict re-derived from the cells", verdict == pl.get("verdict"),
+           f"cells imply {verdict}, artifact says {pl.get('verdict')}"
+           f"{'; ' + '; '.join(problems) if problems else ''}")
+    record("the four required cells clear the pre-registered bar",
+           verdict == "PASS",
+           f"{verdict}: {'; '.join(problems)}" if verdict != "PASS"
+           else f"{pl.get('cells_passing')} cells, z_crit {_PREREG_Z}")
+
+    # The threshold must be the one fixed in advance. If someone loosens
+    # z_crit to make a mixed run read as a pass, this is what catches it.
+    record("artifact z_crit equals the pre-registered 1.96",
+           float(pl.get("z_crit", -1)) == _PREREG_Z,
+           f"artifact z_crit={pl.get('z_crit')}, pre-registered {_PREREG_Z} — "
+           f"the bar was moved after the run")
+    if PREREG.exists():
+        doc = PREREG.read_text(encoding="utf-8")
+        record("the pre-registration still declares the 1.96 bar",
+               _re.search(r"(?:≥|>=|=)\s*1\.96", doc) is not None,
+               "the pre-registration document no longer states the threshold it "
+               "was written to fix")
+        record("the pre-registration predates the run",
+               doc.split("\n")[2].find("before") != -1
+               or "before" in doc.split("\n")[2].lower(),
+               "the document's 'written before the run' claim is gone")
+    else:
+        record("the pre-registration document exists", False, str(PREREG))
+
+    # /backtest must scope the withdrawal to the pipeline, not to the question.
+    bt = PUBLIC / "backtest.html"
+    if bt.exists():
+        txt = _re.sub(r"\s+", " ", _re.sub(r"<[^>]+>", " ", bt.read_text(encoding="utf-8")))
+        record("/backtest scopes the withdrawal to a dead pipeline, not the question",
+               "一條 pipeline" in txt and "壞咗嘅資料庫唔能夠否定一個研究問題" in txt,
+               "the page still reads as if the dead run retired the 10-day-hold "
+               "question itself")
+        record("/backtest publishes the placebo-backed A/B section",
+               "section-closehold" in bt.read_text(encoding="utf-8"),
+               "the close-confirmation section is absent")
+        record("/backtest states the A/B does not test the hold length",
+               "唔係</b>「10 日好過 5/15/20 日」" in txt or "入場資格" in txt,
+               "the section does not scope itself to the fill condition, so a "
+               "reader could take it as a mandate for HOLD = 10")
+
+    # ---- MUST-FAIL probes: each must be rejected by the logic above --------
+    base = {m: {w: {"has_power": True, "z": 9.0, "gap_vs_null_pp": 1.0,
+                    "P2_null_sd%": 0.08} for w in ("train", "test")}
+            for m in ("us200", "jp200")}
+
+    zero_sd = {m: {w: dict(c) for w, c in base[m].items()} for m in base}
+    zero_sd["us200"]["test"] = {"has_power": False, "z": None, "gap_vs_null_pp": None,
+                                "P2_null_sd%": 0.0}
+    record("MUST-FAIL a zero-sd control is voided, not passed",
+           _prereg_verdict(zero_sd, _PREREG_Z)[0] == "VOID",
+           "a control with no power was allowed to pass")
+
+    weak = {m: {w: dict(c) for w, c in base[m].items()} for m in base}
+    weak["jp200"]["test"] = {"has_power": True, "z": 1.2, "gap_vs_null_pp": 0.2,
+                             "P2_null_sd%": 0.08}
+    record("MUST-FAIL a sub-threshold z is not counted as a pass",
+           _prereg_verdict(weak, _PREREG_Z)[0] != "PASS",
+           "z=1.2 was treated as clearing a 1.96 bar")
+
+    neg = {m: {w: dict(c) for w, c in base[m].items()} for m in base}
+    neg["us200"]["train"] = {"has_power": True, "z": 12.0, "gap_vs_null_pp": -1.0,
+                             "P2_null_sd%": 0.08}
+    record("MUST-FAIL a negative gap is not counted as a pass",
+           _prereg_verdict(neg, _PREREG_Z)[0] != "PASS",
+           "a cell below its own null was treated as clearing the bar")
+
+    record("MUST-FAIL a loosened z_crit does not rescue a weak run",
+           _prereg_verdict(weak, 0.5)[0] == "PASS",
+           "lowering z_crit to 0.5 did not flip the weak run — the gate may be "
+           "reading a stored verdict rather than the cells")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--json", action="store_true")
@@ -2452,7 +2614,8 @@ def main() -> int:
                t_one_action_authority_per_page,
                t_equity_curve_stats_are_internally_consistent,
                t_no_withdrawn_figures_are_published,
-               t_per_trade_stats_trace_to_source):
+               t_per_trade_stats_trace_to_source,
+               t_close_confirmation_placebo_holds_up):
         print(f"\n{fn.__doc__.splitlines()[0] if fn.__doc__ else fn.__name__}")
         try:
             fn()

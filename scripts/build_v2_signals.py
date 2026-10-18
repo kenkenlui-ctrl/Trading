@@ -53,19 +53,37 @@ PARAMS = dict(stop_atr=3.0, hold=10, atr_max=0.06, box_max=0.35,
 EQUITY_DEFAULT = {"us200": 100_000.0, "jp200": 5_000_000.0, "hk200": 100_000.0}
 
 # 2026-10-05: close-hold requirement, measured on our own bars.
+# 2026-10-18: the A/B that justifies it was re-run with a pre-registered
+# placebo control, and this comment was wrong on both counts.
 #
-# A/B (scripts/ab_close_hold.py, data/bt10y 10y bars, same fill rules, same
-# costs, ONLY the entry qualification differs) — reject the fill when the
-# session closes back below S1 after touching it:
+# WRONG CLAIM, now removed. This comment used to say the rule "is the finding"
+# and carry a four-row numeric table citing data/bt10y — a bar store that is
+# now empty. Every figure in it had drifted: the cells quoted +1.913 / +1.777 /
+# +1.034 / +2.414 against the current run's +1.922 / +1.772 / +1.058 / +2.354,
+# and the "kept" fractions and t-stats drifted with them. A hand-typed table in
+# a comment has no way to notice that, which is exactly why the 2026-10-18
+# audit found two divergent copies of these numbers across this file and
+# rewrite_methodology_v2.py. It does not get a corrected copy here.
 #
-#   US  train 2016-22  kept 51.0%  +0.888% -> +1.913%   t +5.96 -> +10.67
-#   US  test  2023-26  kept 51.5%  +0.783% -> +1.777%   t +3.73 -> +7.67
-#   JP  train 2016-22  kept 46.7%  +0.149% -> +1.034%   t +1.54 -> +5.08
-#   JP  test  2023-26  kept 51.1%  +1.211% -> +2.414%   t +6.40 -> +9.31
+# WHAT THE RULE IS. Reject the fill when the session closes back below S1 after
+# touching it: arm B requires opens-above-S1 AND closes-at/above-S1, where the
+# weaker pre-2026-10-05 rule (arm A) required only the open.
 #
-# All four cells improve on both average and date-clustered t, so it is not a
-# window artefact. Each cell has 2,193-5,812 trades, far above the >=1,000
-# bar this project set after the 2026-10-01 pilot-sample lesson.
+# WHY IT IS STILL ON. B keeps roughly half of A's trades, so "B beats A" alone
+# cannot distinguish "the close carries information" from "the rule just trades
+# less". That question was pre-registered in
+# docs/close-confirmation-prereg-2026-10-18.md — thresholds, the required
+# cells and the fail interpretation fixed BEFORE the run, because a control
+# written afterwards is not a control. The answer lives in
+# data/ab_close_hold.json under "placebo"; the per-window figures live under
+# "windows". Both consumers read that file. Do not retype a number here, and do
+# not retype one into any other file: read the artifact.
+#
+# Standing caveat that survives any rerun: this A/B measures the FILL
+# CONDITION, not the 10-day hold. HOLD = 10 is identical in both arms. Whether
+# 10 is the right hold under close-confirmation is a separate question, and it
+# belongs to Signal Search Sprint 1's hold sweep (5/10/15/20) — do not read a
+# mandate for the hold length out of this result.
 CLOSE_HOLD = True
 
 # The shipped rule is now OUR measured rule, so the setup statistics attached
