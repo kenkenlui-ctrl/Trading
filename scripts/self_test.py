@@ -2940,6 +2940,22 @@ def t_closed_decisions_are_recorded_and_enforced() -> None:
                    "the spec does not show where the coin-flip null sits relative "
                    "to base and regime=none, so reading 1 cannot be checked")
 
+            # 2026-10-19, Kenneth. Reading 1's wording ("useless but not
+            # harmful") understated a large harm as an absence of benefit: base
+            # and regime=none are nowhere near each other, so the gate does make
+            # a difference. And the regime=none anchor is confounded — 2.4x the
+            # deployment, against a null that was never deployment-matched.
+            # Both corrections have to stay in the file or the next reader will
+            # take the ordering at face value.
+            record("the axis B outcome withdraws the 'not harmful' wording",
+                   "too soft" in s2f and "worst of the three" in s2f,
+                   "the spec still calls the gate 'useless but not harmful'; the "
+                   "measured ordering makes it the worst of three options")
+            record("the axis B outcome flags regime=none as a confounded anchor",
+                   "confounded" in s2f and "12,885" in s2f,
+                   "the no-gate ordering rests on an anchor that deploys 2.4x the "
+                   "capital of the arm it is compared to")
+
     # ---- MUST-FAIL: an "undecided" phrasing must be rejected -------------
     undecided = ("P1（隨機換交易日）已經實作但<b>未執行</b>，唔可以講成兩樣都做咗。")
     decided = "呢個測試<b>只有一個對照組</b>，唔係兩個"

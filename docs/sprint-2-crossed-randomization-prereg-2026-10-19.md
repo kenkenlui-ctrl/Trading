@@ -281,6 +281,30 @@ it does not fall below base, so the null is not mis-specified.
 
 The predicted direction was case 1. Confirmed.
 
+> **Reading 1's wording was too soft, and is corrected here.**
+> "Useless but not harmful" was wrong: base (+2.42 / −3.86) and `regime=none`
+> (+16.51 / +18.92) are nowhere near each other, so the gate *does* make a
+> difference — a large one. On the placebo-adjusted `net_pp` scale the gate
+> costs **11.8pp/yr in 2016-20 and 18.3pp/yr in 2021-26**. The full ordering is
+> `no-gate > coin-flip > real gate` in both sub-periods, so the gate is the
+> **worst of the three options**, not an inert one. Kenneth's reading, not mine.
+>
+> The three-way test in this document only distinguishes *where the coin-flip
+> null lands*. It was never designed to determine the sign of the gate's
+> effect, and using it that way understates a large harm as an absence of
+> benefit.
+
+> **But the `regime=none` anchor is confounded, and this comparison is not
+> safe yet.** `regime=none` executes **12,885 trades at 84.5% exposure** against
+> base's **5,261 at 76.9%** — 2.4× the deployment. Its net is measured against a
+> Sprint 1 null that did not record trades or exposure, and Sprint 1's placebo
+> was not deployment-matched either (+38% trades). So `regime=none`'s
+> +6.00 / +1.62 may be exposure rather than the removal of a harmful gate.
+> The gate-harm reading stands on the **base vs coin-flip** comparison, which IS
+> deployment-matched (5,261 vs 5,261, exposure 76.9% vs 78.2%). The
+> `no-gate > coin-flip > gate` ordering is **provisional** until the
+> deployment-matched no-gate test below is run.
+
 ### What this says about where the 2021-26 damage comes from
 
 Kenneth's prior was that the anti-selection in 2021-26 is the MA200 gate's
