@@ -31,6 +31,7 @@ Usage:
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -44,7 +45,29 @@ from core import features, _simulate, cost_rt  # noqa: E402
 from bt_clean import bars_dir, load as load_clean, _load_mask_cache, filter_candidates  # noqa: E402
 
 OUT = REPO / "data" / "portfolio_test.csv"
-HOLD, MAX_SLOTS, RISK, MAX_NOTIONAL = 10, 10, 0.01, 0.10
+# 2026-10-18: INITIAL and MAX_SLOTS were literals (100_000.0 at three sites,
+# MAX_SLOTS=10) while every published page described the walk as "$1,000,000
+# initial, 5 concurrent". build_equity_curves.py printed that description over
+# a curve whose equity series started at 100,000 and ended at 914,068 — so the
+# stat block read "Initial Capital US$1,000,000 / Final Equity US$914,068 /
+# Total Return +814.07%", three numbers no single run can produce.
+#
+# They are real parameters, not presentation: sizing is `RISK * equity` capped
+# at `MAX_NOTIONAL * equity` and floored to whole board lots, so the starting
+# capital and the slot count both change the trade list. Exposed here so the
+# simulation and the page that describes it cannot disagree again.
+HOLD = 10
+RISK, MAX_NOTIONAL = 0.01, 0.10
+INITIAL = float(os.environ.get("PT_INITIAL_EQUITY", 1_000_000))
+# 10 is the rule this site publishes ("最多 10 倉" in methodology.html, four
+# places). build_equity_curves.py captioned the curves "5 concurrent" while the
+# walk ran 10 — that caption was the error, not the model, so the default stays
+# at the published rule. 2026-10-18: measured both. At 5 slots the book is
+# slot-bound (avg 4.5 of 5 open) and skips most signals, and v2 trails
+# equal-weight by 8-9pp/yr in all three markets; at 10 it does not. The cap is
+# therefore load-bearing for the published result, which is exactly why it has
+# to be stated on the page rather than buried in a literal.
+MAX_SLOTS = int(os.environ.get("PT_MAX_SLOTS", 10))
 COST = "realistic"
 # Index, not ETF, and not 1306_T: the ETF's own series has an unadjusted 10:1
 # glitch (two sessions at 1/10 scale in March 2026) which shows up as a -91%
@@ -126,7 +149,7 @@ def walk(cands: list[dict], mkt: str) -> tuple[pd.DataFrame | None, int]:
     d = pd.DataFrame(cands).sort_values(["entry_date", "ret5d"])
     d["cost"] = [cost_rt(mkt, COST, w == "stop") for w in d.why]
     dates = sorted(set(d.entry_date) | set(d.exit_date))
-    equity, pos, curve, peak_one_name = 100_000.0, [], [], 0
+    equity, pos, curve, peak_one_name = INITIAL, [], [], 0
     for dt in dates:
         keep = []
         for p in pos:
@@ -183,7 +206,7 @@ def walk_signed(cands: list[dict], mkt: str) -> tuple[pd.DataFrame | None, int]:
     d["cost"] = [cost_rt(mkt, COST, w == "stop") for w in d.why]
 
     dates = sorted(set(d.entry_date) | set(d.exit_date))
-    equity, pos, curve, peak_one_name = 100_000.0, [], [], 0
+    equity, pos, curve, peak_one_name = INITIAL, [], [], 0
     for dt in dates:
         keep = []
         for p in pos:
@@ -290,8 +313,15 @@ def main() -> int:
         if b1src.empty:
             b1 = pd.Series(dtype=float)
         else:
-            b1 = (100_000 * (1 + b1src.resample("ME").last().pct_change()
-                             .mean(axis=1)).cumprod()).ffill()
+            # dropna() is load-bearing — see the identical note in
+            # hk_retest.ew_bh. The first month-end pct_change() is genuinely
+            # NaN; without dropping it, (1 + NaN).cumprod() propagates Na
+            # across the whole series and every window CAGR becomes NaN. This
+            # arm has been emitting NaN, which is why data/portfolio_test.csv
+            # went stale and the home page had to be rewired to
+            # hk_retest_summary.json instead.
+            mm = b1src.resample("ME").last().pct_change().mean(axis=1).dropna()
+            b1 = (INITIAL * (1 + mm).cumprod()).ffill()
         # the benchmark index gets the same glitch treatment as everything else
         b0 = ib.close.copy()
         for d in mask.get(MARKETS[mkt][0], set()):
@@ -313,7 +343,7 @@ def main() -> int:
                          "candidates": len(acc[lab]), "avg_slots": round(curve.open.mean(), 1),
                          "peak_lots_one_name": peak})
             eq = curve.set_index("date").equity
-            byyear, prev = {}, 100_000.0
+            byyear, prev = {}, INITIAL
             for y in sorted(set(eq.index.year)):
                 ye = eq[eq.index.year == y].iloc[-1]
                 byyear[y] = (ye / prev - 1) * 100

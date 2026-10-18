@@ -143,11 +143,43 @@ def _fmt(m: dict) -> str:
 
 
 def write_llms_txt(hk_count: int, us_count: int) -> Path:
-    d = t_minus_1().isoformat()
+    d = date.today().isoformat()
     v = _v2_numbers()
     oos = v.get("oos", {})
     us, jp = oos.get("us200", {}), oos.get("jp200", {})
     counts = _universe_counts()
+
+    # 2026-10-18: the US and Japan comparison paragraphs were literals
+    # (27.4%/27.2%/-0.2pp and 18.03%/18.00%/+0.04pp). Those predate the
+    # equal-weight benchmark fix, so llms.txt — the file every answer engine
+    # reads — was repeating withdrawn numbers under the brand. They now come
+    # from perf_figures, the same loader the home page and methodology page
+    # use, at one uniform 0.25% cost leg. llms.txt cannot flatter the strategy
+    # by quoting a cheaper scenario the rest of the site does not.
+    sys.path.insert(0, str(REPO / "scripts"))
+    import perf_figures
+    pf = perf_figures.fmt(perf_figures.load(), "en")
+    US_GAP_EN = (
+        f"In the US, the same names held passively with an equal-weight monthly "
+        f"rebalance returned {pf['US_EW']}/yr over 2016-26; the v2 portfolio returned "
+        f"{pf['US_V2']}/yr. The gap is {pf['US_GAP']}pp/yr "
+        f"({'in v2 favour' if pf['US_WINS'] == 'true' else 'against v2'}). "
+        f"It is not a stable edge: the sign flips between 2016-20 "
+        f"({pf['US_GAP_EARLY']}pp) and 2021-26 ({pf['US_GAP_LATE']}pp), so the "
+        f"full-window figure is regime-driven and must not be cited as durable alpha. "
+        f"At zero cost the gap is {pf['US_GAP_FREE']}pp."
+    )
+    JP_GAP_EN = (
+        f"At the 0.25% round-trip cost the same comparison gives {pf['JP_V2']}/yr "
+        f"for v2 against {pf['JP_EW']}/yr for equal-weight holding of the same names "
+        f"over 2016-26 — a gap of {pf['JP_GAP']}pp/yr "
+        f"({'in v2 favour' if pf['JP_WINS'] == 'true' else 'against v2'}). At the "
+        f"cheaper 0.10% cost the figures are {pf['JP_V2_MID']}/yr vs "
+        f"{pf['JP_EW']}/yr ({pf['JP_GAP_MID']}pp), so no cost assumption rescues it. "
+        f"Sub-periods at 0.25%: 2016-20 {pf['JP_GAP_EARLY']}pp, 2021-26 "
+        f"{pf['JP_GAP_LATE']}pp. An earlier +6.9pp/yr figure was withdrawn in 2026-09 "
+        f"and must not be cited; almost all of it came from a single Nikkei regime."
+    )
 
     content = f"""# Leeks Terminal (https://www.win9you.com/)
 
@@ -204,18 +236,12 @@ Source: {v.get('source') or 'see the methodology page'}
 ## What these numbers do and do not mean
 Read this before citing any figure above.
 
-- **Per-trade advantage is not excess return.** In the US, the same 201 stocks
-  held passively with an equal-weight monthly rebalance returned 27.4%/yr over
-  2016-26; the v2 portfolio returned 27.2%/yr. The gap is -0.2pp/yr, which is zero.
+- **Per-trade advantage is not excess return.** {US_GAP_EN}
   The apparent outperformance versus a market index is a universe-selection
   effect, not a timing edge.
-- **Japan shows no durable edge either.** At the 0.10% round-trip cost, the same
-  comparison gives 18.03%/yr for the v2 portfolio against 18.00%/yr for equal-weight
-  holding of the same names over 2016-26 — a gap of +0.04pp/yr. An earlier +6.9pp/yr
-  figure was withdrawn in 2026-09 and must not be cited; almost all of it came from a
-  single Nikkei regime (2016-20 TRAILS passive by -7.9pp/yr, only 2021-26 leads, by
-  +16.7pp/yr). A point-in-time check that removes the 17
-  names which entered the index after 2016-09-01 moves that old gap only +6.9 -> +6.0pp,
+- **Japan shows no durable edge either.** {JP_GAP_EN}
+  A point-in-time check that removes the 17
+  names which entered the index after 2016-09-01 moves the old gap only +6.9 -> +6.0pp,
   so late entrants are not the cause; but stocks that were large in 2016 and
   later shrank or delisted are absent from every arm and cannot be reconstructed
   from public membership data (our universe is TOPIX Core30+Large70, which overlaps
@@ -223,9 +249,14 @@ Read this before citing any figure above.
 - **The 10-year backtest universe is not point-in-time.** It is today's large caps
   applied retroactively, so every absolute 10-year level carries survivorship bias.
   Only differences between arms running the same stock set are meaningful.
-- An earlier site claim of "T+10 +3.02% / +3.05%" was a sum of per-trade
-  percentages, not a portfolio return, and has been retracted. Under fixed-capital
-  sizing the T+10 portfolio return is -4.05%.
+- Two earlier site claims are retracted and must not be cited. "T+10 +3.02% /
+  +3.05%" was a sum of per-trade percentages, not a portfolio return. A later
+  "T+10 -4.05% under fixed-capital sizing" has also been withdrawn: no artifact
+  anywhere produced it, and the run that would have
+  (scripts/monthly_swing_backtest.py) reads a signal table that is now empty,
+  so it cannot be reproduced. Where a number cannot be traced to a run, this
+  site does not publish it. The ten-year v2 fixed-capital walk is at
+  /equity_curve_t10.
 
 ## Data
 - T-1 daily OHLC. Hong Kong: Futu OpenD. US and Japan: Yahoo Finance.

@@ -96,10 +96,36 @@ CLOSE_HOLD = True
 # Re-measured 2026-10-05 on data/bt10y2 (407 symbols re-fetched one at a time;
 # 8 cached files were corrupt) with bars whose [entry-210d, exit] window touches
 # a data glitch excluded. See bt_clean.py.
-V2_OOS = {
-    "us200": {"win_pct": 60.3, "win95": [None, None], "avg_net_pct": 1.77, "n": 2982},
-    "jp200": {"win_pct": 65.5, "win95": [None, None], "avg_net_pct": 2.35, "n": 2187},
-}
+# 2026-10-18: this was a hand-typed copy of data/ab_close_hold.csv, and a
+# second hand-typed copy lived in rewrite_methodology_v2.py. They drifted —
+# the methodology page shipped n=2,992 / 60.2% / 1.78% where the engine
+# measures 2,982 / 60.3% / 1.772%, and its JP row was wrong in every field
+# including profit factor and t. Read the measurement instead.
+_AB_JSON = REPO / "data" / "ab_close_hold.json"
+
+
+def _oos() -> dict:
+    """Per-trade out-of-sample stats, read from the run that produced them.
+
+    Raised, not degraded: a performance claim rendered from a missing source
+    looks identical to a correct one, which is the whole failure mode here."""
+    try:
+        d = json.loads(_AB_JSON.read_text())
+        w = d["windows"]
+        out = {}
+        for m in ("us200", "jp200"):
+            t = w[m][d["rule_set"]]["test"]
+            out[m] = {"win_pct": t["win%"], "win95": [None, None],
+                      "avg_net_pct": t["avg%"], "n": t["n"],
+                      "profit_factor": t["pf"], "t_stat": t["t"]}
+        return out
+    except Exception as e:  # noqa: BLE001
+        raise SystemExit(f"FATAL: cannot read {_AB_JSON}: {e} — run "
+                         f"scripts/ab_close_hold.py first")
+
+
+V2_OOS = _oos()
+
 V2_SOURCE = ("本站自測（Yahoo 10 年日線，同一引擎 A/B，2023–26 樣本外）；"
              "含收市企穩 S1 條件。單筆數字，唔等於跑贏被動持有同一批股票，見分析方法論頁")
 V2_IS_THIRD_PARTY = False

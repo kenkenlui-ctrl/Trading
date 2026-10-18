@@ -103,23 +103,62 @@ def _sign(v) -> str:
 
 
 def _risk_managed_return() -> str:
-    """Read the T+10 portfolio return off the equity-curve page.
+    """Removed 2026-10-18.
 
-    That page is the only artifact on the site that actually enforced the
-    concurrency cap, so its number is the one the FAQ and the meta description
-    are allowed to quote. If the page is missing, return "" and the callers
-    drop the figure instead of inventing one.
+    This scraped the T+10 "Total Return" off /equity_curve_t_10.html and the FAQ
+    then published it as *this page's* risk-managed portfolio result: "風險預算下
+    （1% 風險/單、5 倉上限）嘅 T+10 組合回報為 +814.07%". Three things were wrong
+    with that sentence:
+
+      - wrong dataset. /equity_curve_t_10.html is the v2 rule set over 2017-26
+        US large caps (2,003 of 6,675 signals). This page is a 119-signal HK
+        swing backtest over 2026-06-27..07-31. Two unrelated books.
+      - wrong slots. The curve walk used 10 concurrent positions, not 5. The
+        caption that said 5 was itself wrong and has been fixed.
+      - the source page titles itself "機械供給上限 · 非可達成回報" — a mechanical
+        supply ceiling it explicitly says is not an achievable return. Quoting
+        it as a result was quoting the disclaimer.
+
+    And the figure that DID belong to this page (-4.05%, quoted in the hero,
+    the FAQ and llms.txt) has no artifact anywhere and cannot be regenerated:
+    scripts/monthly_swing_backtest.py reads data/dsa_hk.db, whose daily_report
+    table is empty (0 rows), so it exits "No BUY signals in window".
+
+    So this returns "" and the callers state the absence instead of filling it
+    with a number from a different experiment.
     """
-    import html as _h
-    p = REPO / "public" / "equity_curve_t_10.html"
-    if not p.exists():
+    return ""
+
+
+def _withheld_risk_block(tbl: str, cls: str) -> str:
+    """The upstream "Risk metrics" block, withheld with the reason shown.
+
+    data/monthly_backtest/latest.md carries a section headed "T+10 portfolio sim
+    (1% risk/trade, 5 concurrent cap — matches d71 honest equity curve)" whose
+    rows read Trades taken 120 / Total return +44.02% / Final capital
+    HK$1,440,219. Over this page's ~25-weekday window with 10-day holds and 5
+    slots, the cap admits at most about 12 trades; the block claims 120, so the
+    cap was not applied and +44.02% is a sum of per-trade percentages wearing a
+    portfolio label. The page's own prose already retracted that number while
+    the table kept printing it.
+
+    Printing a table whose heading contradicts its contents is worse than
+    printing neither, so the rows are withheld and the reason is stated where
+    they were. Everything else in that markdown file is per-trade and is still
+    rendered.
+    """
+    if not tbl:
         return ""
-    txt = p.read_text(encoding="utf-8")
-    m = re.search(r"Total Return.*?ec-stat-value[^>]*>([^<]+)<", txt, re.S)
-    if not m:
-        return ""
-    val = _h.unescape(m.group(1)).strip()
-    return val if re.fullmatch(r"[+-][0-9.]+%", val) else ""
+    return (
+        '<div class="info-card" style="border-left:3px solid var(--amber);margin:16px 0">'
+        '<h3 style="margin-top:0">Risk metrics（組合回報）— 已停止引用</h3>'
+        '<p style="font-size:0.85rem;opacity:0.8">上游 backtest 報告呢一節聲稱'
+        '「1% 風險/單、5 倉上限」，但同一個表寫住 <b>Trades taken 120</b>：'
+        '呢個窗口得約 25 個交易日、每單持有 10 日，5 個倉位最多只做得約 12 單。'
+        '即係上限根本冇套用，<b>+44.02%</b> 係逐筆百分比相加而唔係組合回報。'
+        '站上嘅文字版已經撤回咗個數，但表格一直留住佢，所以由 2026-10-18 起'
+        '連表格一齊停止引用。單筆統計仍然喺上面嘅表。</p></div>'
+    )
 
 
 def _num(v):
@@ -238,7 +277,7 @@ def render() -> str:
     <h1>回測報告 · <em class="italic">T+10 Swing vs T+1 Day-trade</em></h1>
     <p class="lede">{n_signals} 個 BUY 訊號嘅 6 個月回測，全部<b>淨回報</b>（扣交易成本）。
     同一批訊號，T+10 持有平均 <b>+{t10_avg}%</b>，係 T+1 即日鮮（+{t1_avg}%）嘅 {float(t10_avg)/max(float(t1_avg), 0.01):.0f}× 倍。
-    2026-09-11 update: <b>honest equity curves (1% risk/trade, 5 concurrent, HK$1M)</b>: <a href="/equity_curve_t_1.html" style="color:var(--bull);">T+1 +15.80%</a> · <a href="/equity_curve_t_3.html">T+3 +8.94%</a> · <a href="/equity_curve_t_5.html">T+5 +7.91%</a> · <a href="/equity_curve_t_10.html" style="color:var(--bear);">T+10 -4.05%</a>. T+1 day-trade = realistic edge; T+10 swing loses under proper sizing.</p>
+    2026-10-18 update: the <b>−4.05%</b> T+10 figure previously quoted here has been withdrawn. It had no artifact: the run that produced it (<code>scripts/monthly_swing_backtest.py</code>) reads <code>data/dsa_hk.db</code>, whose <code>daily_report</code> table is empty, so it cannot be reproduced. The <a href="/equity_curve_t10">ten-year v2 equity curves</a> are a different experiment (2017–26 US, same v2 rules) and are not a substitute. What stands on this page is the per-trade table below, which is reproducible from its own run.</p>
     <div class="hero-meta">
       <span>Window: {window}</span>
       <span>Signals: {n_signals}</span>
@@ -258,7 +297,7 @@ def render() -> str:
 
 {_section_block("Universe filter (20d ADV, fail-closed)", universe_html, "section-universe") if universe_html else ''}
 
-{_section_block("Risk metrics — T+10 portfolio sim (1% risk/trade, 5 concurrent cap — matches d71 honest equity curve)", risk_tbl, "section-risk") if risk_tbl else ''}
+{_withheld_risk_block(risk_tbl, "section-risk")}
 
 {_section_block("Walk-forward OOS (80/20 train/test split)", oos_tbl, "section-oos") if oos_tbl else ''}
 
@@ -268,7 +307,11 @@ def render() -> str:
     <ul>
       <li><b>Live stop/target 取代 hardcoded</b> — 51% 訊號用 live signal 嘅 stop/target（avg −2.45%/+4.07%，比舊 hardcoded T+10 −10%/+15% 緊），其餘 49% 因 DB 缺 stop/target 或 sanity bounds 外而 fall back 去 hardcoded。</li>
       <li><b>T+10 即日鮮嘅優勢係頻率</b> — 單筆 +0.72% 但可以日日做；T+10 單筆大但要忍 10 日波動。兩者唔互斥，可以並行 paper-trade 驗證。</li>
-      <li><b>Equity curve per horizon (honest fixed-capital sim)</b> — 2026-09-11 update: replaced loose +55% "sum-of-pct" figure with per-horizon equity curves (1% risk/trade, 5 concurrent, HK$1M initial): <a href="/equity_curve_t_1.html">T+1 +15.80% / 4.19% DD / Calmar 34</a> · <a href="/equity_curve_t_3.html">T+3 +8.94%</a> · <a href="/equity_curve_t_5.html">T+5 +7.91%</a> · <a href="/equity_curve_t_10.html">T+10 -4.05%</a> (slot full, 86% skipped). T+1 day-trade is the realistic edge; T+10 swing doesn't survive risk-managed sizing.</li>
+      <li><b>Equity curve per horizon</b> — the loose "+55% sum-of-pct" figure was
+      replaced by <a href="/equity_curve_t10">per-horizon fixed-capital curves</a>
+      for the ten-year v2 rule set (1% risk/trade, 10 concurrent, US$1M).
+      Those are a different experiment from this page's six-week HK swing window;
+      each page now states its own model rather than quoting the other's number.</li>
       <li><b>Walk-forward OOS 初步 positive</b> — 80/20 split：train 60.4% WR vs OOS 56.0% WR（−4.4pp degradation），OOS 25 trades 樣本仍細，要至少 3 cycle OOS 先有 statistical evidence。</li>
       <li><b>高 signal score 唔保證 T+10 更好</b> — 分桶顯示 high-score 組 T+1 反而 -0.24%（過熱回歸），low-score 組 T+10 仲有 +1.63%。分數係方向信心，唔係持貨期指引。</li>
       <li><b>樣本限制</b> — 121 個訊號來自 yfinance 有數據嘅 regular stocks（ETP/warrant 缺數據）；6 個月窗口未涵蓋多日熊市。每月 1 號自動重跑滾動更新。</li>
@@ -335,7 +378,7 @@ def render() -> str:
         "about": (
             f"Multi-horizon backtest of a deterministic price-action signal engine over "
             f"{n_signals.split(' ')[0]} BUY signals (net of HK/US friction costs, LIVE stop/target, "
-            f"risk-managed portfolio sizing at 1% risk/trade with a 5 concurrent cap, "
+            f"risk-managed portfolio sizing at 1% risk/trade with a 10 concurrent cap, "
             f"80/20 walk-forward OOS validation)."
         ),
     }
@@ -347,9 +390,16 @@ def render() -> str:
     # 12. It is not a portfolio return, it is a sum of per-trade percentages
     # with the cap ignored.
     risk_mgmt = _risk_managed_return()
-    risk_txt = (f"風險預算下（1% 風險/單、5 倉上限）嘅 T+10 組合回報為 {risk_mgmt}"
-                if risk_mgmt else
-                "風險預算下嘅 T+10 組合回報為負，確切數字見 T+10 權益曲線頁")
+    risk_txt = (
+        f"風險預算下嘅 T+10 組合回報為 {risk_mgmt}"
+        if risk_mgmt else
+        "呢個窗口嘅 T+10 風險管理組合回報<b>冇一個可以引用嘅數字</b>："
+        "產生佢嘅 monthly swing backtest 依賴嘅訊號庫（<code>data/dsa_hk.db</code> "
+        "嘅 <code>daily_report</code> 表）而家係空嘅，重跑唔到。"
+        "站上曾經引用過嘅 −4.05% 查唔到任何來源，已經停用；"
+        "10 年期 v2 規則嘅定資模擬見 <a href='/equity_curve_t10'>權益曲線頁</a>，"
+        "但嗰個係另一個實驗（2017–26 美股、同一套 v2 規則），唔可以攞嚟代表呢一頁。"
+    )
 
     faq_ld = {
         "@context": "https://schema.org",

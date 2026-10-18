@@ -94,24 +94,41 @@ def iso(days_ago: float, base: str = "2026-10-17T00:00:00+00:00") -> str:
     return t.replace(microsecond=0).isoformat()
 
 
+# 2026-10-18: the "within limit" and "no input" / "vendor down" cases below
+# called classify() with no `now=`, so they were scored against the real wall
+# clock while their timestamps came from a hard-coded base of 2026-10-17. That
+# makes them pass or fail depending on when the suite is run — this one went
+# STALE on its own once real time passed 36h after the fixture's base, with no
+# code change. Every case now pins `now` to the fixture's own reference, like
+# its neighbours already did. A freshness test that drifts with the calendar is
+# not a freshness test.
+
+
 # ---------------------------------------------------------------- A1
 def test_a1_freshness():
     print("\nA1 — freshness states and banner")
     session = "2026-10-16"
     cases = [
-        ("within limit", FR.classify(iso(0.5), session), FR.FRESH),
+        ("within limit", FR.classify(iso(0.5), session, now=iso(0)), FR.FRESH),
         ("exactly at limit", FR.classify(iso(1.5), session, now=iso(0)), FR.FRESH),
         ("just over limit", FR.classify(iso(1.6), session, now=iso(0)), FR.STALE),
         ("58h old (the real incident)", FR.classify(iso(58 / 24), session, now=iso(0)), FR.STALE),
-        ("no input", FR.classify(None, session), FR.NOT_RUN),
-        ("vendor down", FR.classify(iso(0.1), session, source_error="timeout"), FR.SOURCE_DOWN),
+        ("no input", FR.classify(None, session, now=iso(0)), FR.NOT_RUN),
+        ("vendor down", FR.classify(iso(0.1), session, now=iso(0), source_error="timeout"), FR.SOURCE_DOWN),
     ]
     for label, got, want in cases:
         record(f"A1 state: {label} -> {want}", got.state == want,
                f"got {got.state}" + ("" if got.state == want else ""))
 
-    fresh = FR.classify(iso(0.5), session, market="us200")
-    record("A1 FRESH renders no banner", FR.banner(fresh) == "", "banner must be empty when FRESH")
+    # Pinned `now=` for the same reason as the cases above: this one was also
+    # reading the wall clock, so "a FRESH page renders no banner" turned into
+    # "a stale page renders a banner" once real time passed the limit.
+    fresh = FR.classify(iso(0.5), session, now=iso(0), market="us200")
+    record("A1 FRESH renders no banner", FR.banner(fresh) == "",
+           f"banner must be empty when FRESH, got: {FR.banner(fresh)!r}")
+    stale = FR.classify(iso(58 / 24), session, now=iso(0), market="us200")
+    record("MUST-FAIL a STALE page does render a banner", FR.banner(stale) != "",
+           "the banner check cannot distinguish fresh from stale")
 
     stale = FR.classify(iso(58 / 24), session, now=iso(0), market="us200")
     b = FR.banner(stale)

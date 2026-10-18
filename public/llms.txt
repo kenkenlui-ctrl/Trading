@@ -45,26 +45,20 @@ badges were also removed: their correlation with the next trade was -0.001. Do n
 cite them as current.
 
 ## Measured results (out-of-sample 2023-26, net of costs, date-clustered t)
-- US: 勝率 60.3%、每單平均淨 1.77%、n = 2,982
-- JP: 勝率 65.5%、每單平均淨 2.35%、n = 2,187
+- US: 勝率 60.3%、每單平均淨 1.772%、n = 2,982
+- JP: 勝率 65.5%、每單平均淨 2.354%、n = 2,187
 
 Source: 本站自測（Yahoo 10 年日線，同一引擎 A/B，2023–26 樣本外）；含收市企穩 S1 條件。單筆數字，唔等於跑贏被動持有同一批股票，見分析方法論頁
 
 ## What these numbers do and do not mean
 Read this before citing any figure above.
 
-- **Per-trade advantage is not excess return.** In the US, the same 201 stocks
-  held passively with an equal-weight monthly rebalance returned 27.4%/yr over
-  2016-26; the v2 portfolio returned 27.2%/yr. The gap is -0.2pp/yr, which is zero.
+- **Per-trade advantage is not excess return.** In the US, the same names held passively with an equal-weight monthly rebalance returned +24.6%/yr over 2016-26; the v2 portfolio returned +25.6%/yr. The gap is 1.0pp/yr (in v2 favour). It is not a stable edge: the sign flips between 2016-20 (+3.7pp) and 2021-26 (-2.4pp), so the full-window figure is regime-driven and must not be cited as durable alpha. At zero cost the gap is 7.4pp.
   The apparent outperformance versus a market index is a universe-selection
   effect, not a timing edge.
-- **Japan shows no durable edge either.** At the 0.10% round-trip cost, the same
-  comparison gives 18.03%/yr for the v2 portfolio against 18.00%/yr for equal-weight
-  holding of the same names over 2016-26 — a gap of +0.04pp/yr. An earlier +6.9pp/yr
-  figure was withdrawn in 2026-09 and must not be cited; almost all of it came from a
-  single Nikkei regime (2016-20 TRAILS passive by -7.9pp/yr, only 2021-26 leads, by
-  +16.7pp/yr). A point-in-time check that removes the 17
-  names which entered the index after 2016-09-01 moves that old gap only +6.9 -> +6.0pp,
+- **Japan shows no durable edge either.** At the 0.25% round-trip cost the same comparison gives +15.6%/yr for v2 against +16.0%/yr for equal-weight holding of the same names over 2016-26 — a gap of 0.3pp/yr (against v2). At the cheaper 0.10% cost the figures are +18.1%/yr vs +16.0%/yr (2.1pp), so no cost assumption rescues it. Sub-periods at 0.25%: 2016-20 -9.0pp, 2021-26 +5.1pp. An earlier +6.9pp/yr figure was withdrawn in 2026-09 and must not be cited; almost all of it came from a single Nikkei regime.
+  A point-in-time check that removes the 17
+  names which entered the index after 2016-09-01 moves the old gap only +6.9 -> +6.0pp,
   so late entrants are not the cause; but stocks that were large in 2016 and
   later shrank or delisted are absent from every arm and cannot be reconstructed
   from public membership data (our universe is TOPIX Core30+Large70, which overlaps
@@ -72,9 +66,14 @@ Read this before citing any figure above.
 - **The 10-year backtest universe is not point-in-time.** It is today's large caps
   applied retroactively, so every absolute 10-year level carries survivorship bias.
   Only differences between arms running the same stock set are meaningful.
-- An earlier site claim of "T+10 +3.02% / +3.05%" was a sum of per-trade
-  percentages, not a portfolio return, and has been retracted. Under fixed-capital
-  sizing the T+10 portfolio return is -4.05%.
+- Two earlier site claims are retracted and must not be cited. "T+10 +3.02% /
+  +3.05%" was a sum of per-trade percentages, not a portfolio return. A later
+  "T+10 -4.05% under fixed-capital sizing" has also been withdrawn: no artifact
+  anywhere produced it, and the run that would have
+  (scripts/monthly_swing_backtest.py) reads a signal table that is now empty,
+  so it cannot be reproduced. Where a number cannot be traced to a run, this
+  site does not publish it. The ten-year v2 fixed-capital walk is at
+  /equity_curve_t10.
 
 ## Data
 - T-1 daily OHLC. Hong Kong: Futu OpenD. US and Japan: Yahoo Finance.
@@ -88,4 +87,4 @@ Leeks Terminal is an educational decision-support tool, NOT investment advice.
 Trading involves substantial risk of loss. Past backtested performance does not
 guarantee future results. Full disclaimer: https://www.win9you.com/disclaimer
 
-Last regenerated: 2026-10-16
+Last regenerated: 2026-10-18

@@ -5,7 +5,7 @@ page is misleading. This script simulates a real portfolio for each horizon
 (T+1, T+3, T+5, T+10) and outputs 4 HTML pages with daily equity curve,
 CAGR, max drawdown, win rate, skipped signals.
 
-Config (locked d71): 1% risk per trade, 5 concurrent cap, fixed capital US$1M (US universe).
+Config: {model()["risk_per_trade"]*100:.0f}% risk per trade, {model()["max_slots"]} concurrent cap, fixed capital US${model()["initial_equity"]:,.0f} (US universe).
 """
 from __future__ import annotations
 import json
@@ -36,9 +36,43 @@ def _cssver() -> str:
     except Exception:
         return "1"
 
-INITIAL = 1_000_000
+# 2026-10-18: these two were literals and they were BOTH wrong for the data
+# they described. The walk (v2_equity_export -> portfolio_test) ran on
+# 100,000 with a 10-slot cap; this file captioned it "$1,000,000, 5
+# concurrent". The stat block therefore read "Initial Capital US$1,000,000 /
+# Final Equity US$914,068 / Total Return +814.07%" — three numbers no single
+# run produces, and a $1M account that finished down 8.6% while also claiming
+# an 814% gain.
+#
+# The model is now read out of the file that produced the numbers. If the
+# walk's parameters change, this page says so instead of lying about them.
+_MODEL: dict | None = None
+
+
+def model() -> dict:
+    """initial_equity / max_slots / risk, read from the export payload."""
+    global _MODEL
+    if _MODEL is None:
+        d = json.load(open(_resolve_source()))
+        m = d.get("model")
+        if not m:
+            raise SystemExit(
+                f"FATAL: {_resolve_source().name} carries no 'model' block — "
+                f"re-run scripts/v2_equity_export.py")
+        _MODEL = m
+    return _MODEL
+
+
+class _ModelView:
+    """Module-level INITIAL/CAP shims that fail loudly rather than silently
+    keeping the old literals if anything reads them before model() loads."""
+    def __getattr__(self, k):
+        return model()[k]
+
+
+INITIAL = _ModelView()
 RISK = 0.01  # 1% per trade (locked d71)
-CAP = 5  # concurrent cap (locked d71)
+CAP = _ModelView()
 COST_RT = 0.0025  # HK 0.25% round-trip already in return_pct
 
 HORIZONS = {
@@ -214,7 +248,7 @@ def render_html(horizon: str, hold_days: int, label: str, r: dict) -> str:
 
     summary = f"""
 <div class="ec-summary">
-  <div class="ec-stat"><div class="ec-stat-label">Initial Capital</div><div class="ec-stat-value">{CURRENCY}{INITIAL:,}</div></div>
+  <div class="ec-stat"><div class="ec-stat-label">Initial Capital</div><div class="ec-stat-value">{CURRENCY}{INITIAL:,.0f}</div></div>
   <div class="ec-stat"><div class="ec-stat-label">Final Equity</div><div class="ec-stat-value" style="color:{'var(--bull)' if r['return_pct']>0 else 'var(--bear)'};">{CURRENCY}{r['final_equity']:,.0f}</div></div>
   <div class="ec-stat"><div class="ec-stat-label">Total Return</div><div class="ec-stat-value" style="color:{'var(--bull)' if r['return_pct']>0 else 'var(--bear)'};">{'+' if r['return_pct']>0 else ''}{r['return_pct']:.2f}%</div></div>
   <div class="ec-stat"><div class="ec-stat-label">Max Drawdown</div><div class="ec-stat-value" style="color:var(--bear);">-{r['max_dd_pct']:.2f}%</div></div>
@@ -257,7 +291,7 @@ def render_html(horizon: str, hold_days: int, label: str, r: dict) -> str:
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{horizon} 機械供給上限 · 非可達成回報 · Equity Curve · Leeks Terminal</title>
-<meta name="description" content="{horizon} {label} fixed-capital portfolio equity curve. US$1M, 1% risk/trade, 5 concurrent cap. Daily mark-to-market, real paper-trade simulation.">
+<meta name="description" content="{horizon} {label} fixed-capital portfolio equity curve. US${model()["initial_equity"]:,.0f}, {model()["risk_per_trade"]*100:.0f}% risk/trade, {model()["max_slots"]} concurrent cap. Daily mark-to-market, real paper-trade simulation.">
 <meta name="robots" content="noindex,follow">
 <link rel="canonical" href="https://www.win9you.com/equity_curve_{horizon.lower().replace('+','_')}.html">
 <link rel="stylesheet" href="/leeks.css?v={_cssver()}">
@@ -288,7 +322,7 @@ def render_html(horizon: str, hold_days: int, label: str, r: dict) -> str:
 唔係 alpha。真人執行唔會有呢個成交率。
 </div>
 
-<p class="lede" style="color: var(--fg-2); max-width: 800px;">Fixed-capital simulation of the {horizon} strategy. Initial capital US$1,000,000, 1% risk per trade, max {CAP} concurrent positions. Daily mark-to-market.</p>
+<p class="lede" style="color: var(--fg-2); max-width: 800px;">Fixed-capital simulation of the {horizon} strategy. Initial capital US${model()["initial_equity"]:,.0f}, {model()["risk_per_trade"]*100:.0f}% risk per trade, max {model()["max_slots"]} concurrent positions. Daily mark-to-market.</p>
 
 <div class="cav">
 <strong>2026-10-07 — 數據源已更換，呢頁嘅歷史數字全部作廢。</strong>
@@ -330,7 +364,7 @@ def render_html(horizon: str, hold_days: int, label: str, r: dict) -> str:
 <h2 style="margin-top: var(--sp-5); font-size: var(--text-md);">Methodology</h2>
 <ul style="color: var(--fg-2); font-size: var(--text-sm); line-height: 1.6;">
 <li><b>Universe:</b> {r['n_signals']} {horizon} signals from {daily[0]['date']} to {daily[-1]['date']}</li>
-<li><b>Initial capital:</b> US$1,000,000</li>
+<li><b>Initial capital:</b> US${model()["initial_equity"]:,.0f}</li>
 <li><b>Risk per trade:</b> 1% of equity (position sized to stop distance)</li>
 <li><b>Max concurrent:</b> {CAP} positions; if full, signal skipped</li>
 <li><b>Holding period:</b> {hold_days} trading days; exit at end OR at stop/target (already in return_pct)</li>
@@ -387,7 +421,7 @@ def render_index(rows: list[dict]) -> str:
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Equity curves · 四個持倉期 · Leeks Terminal</title>
-<meta name="description" content="US$1M fixed-capital equity curves for T+1/T+3/T+5/T+10 under the current v2 rule set, with the daily-trade-rate caveat that decides whether any of them is reachable.">
+<meta name="description" content="US${model()["initial_equity"]:,.0f} fixed-capital equity curves for T+1/T+3/T+5/T+10 under the current v2 rule set, with the daily-trade-rate caveat that decides whether any of them is reachable.">
 <meta name="robots" content="noindex,follow">
 <link rel="canonical" href="https://www.win9you.com/equity_curve_t10.html">
 <link rel="stylesheet" href="/leeks.css?v={_cssver()}">
@@ -405,7 +439,7 @@ def render_index(rows: list[dict]) -> str:
 <h1 style="margin-top: var(--sp-3);">📈 Equity curves · 四個持倉期</h1>
 <p class="lede" style="color: var(--fg-2); max-width: 800px;">
 同一套 v2 規則、同一個組合模型（<code>portfolio_test.walk</code>）、同一批美股，
-只改持倉期。原始資本 US$1,000,000，每單風險 1%，同時最多 {CAP} 倉，每日 mark-to-market。
+只改持倉期。原始資本 US${model()["initial_equity"]:,.0f}，每單風險 {model()["risk_per_trade"]*100:.0f}%，同時最多 {model()["max_slots"]} 倉，每日 mark-to-market。
 </p>
 
 <div class="cav" style="border-left:4px solid var(--red);background:var(--red-dim);">
@@ -465,8 +499,15 @@ def main():
     comes from the walk in v2_equity_export.py, which is the same one that
     produced the published v2-vs-equal-weight comparison.
     """
+    global INITIAL, CAP
     p = _resolve_source()
     d = json.load(open(p))
+    # Bind the two module-level names to the values the walk actually used, so
+    # the captions and the stat block are the same numbers as the equity series.
+    INITIAL = float(model()["initial_equity"])
+    CAP = int(model()["max_slots"])
+    print(f"  model: initial US${INITIAL:,.0f}, {CAP} concurrent slots, "
+          f"{model()['risk_per_trade']*100:.0f}% risk/trade")
     curves = {(c["market"], c["hold"]): c for c in d["curves"]}
     print(f"  equity curves source: {p.name} (v2 rule set, market={MARKET}, "
           f"portfolio model = portfolio_test.walk)")

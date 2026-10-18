@@ -1225,7 +1225,12 @@ def t_short_settlement_arithmetic() -> None:
     import pandas as pd
     import portfolio_test as PT
 
-    EQ = 100_000.0
+    # 2026-10-18: this had its own EQ = 100_000.0 while PT.walk_signed started
+    # from portfolio_test.INITIAL, which became 1,000,000. The test then compared
+    # a walk priced off one capital against a hand-calc priced off another and
+    # reported a 900x discrepancy as a settlement bug. Same defect as the pages:
+    # a second copy of a number that had exactly one source.
+    EQ = PT.INITIAL
 
     def hand(entry, stop, exit_px, side, why):
         rps = (entry - stop) if side > 0 else (stop - entry)
@@ -2171,6 +2176,257 @@ def t_one_action_authority_per_page() -> None:
 
 
 
+def t_equity_curve_stats_are_internally_consistent() -> None:
+    """An equity-curve page must not contradict itself or its own model.
+
+    2026-10-18. equity_curve_t_10.html printed, side by side:
+        Initial Capital US$1,000,000 | Final Equity US$914,068 |
+        Total Return +814.07% | Calmar +1.32
+    No single run produces those four numbers — 914,068 on a 1,000,000 base is
+    -8.6%, not +814%. The cause: build_equity_curves.py captioned the curves
+    "US$1,000,000 ... 5 concurrent" while the walk that produced the equity
+    series ran on 100,000 with 10 slots, and the page never compared its own
+    stat block against its own curve.
+
+    Asserted here:
+      1. the captioned capital and slot count equal the values in the export's
+         "model" block (the model is now recorded by the exporter);
+      2. Final Equity and Total Return describe the same run: (final/initial
+         - 1) * 100 == total return;
+      3. Calmar is consistent with the stated CAGR and max drawdown.
+
+    MUST-FAIL guards re-run each assertion against a mutated copy.
+    """
+    import json as _json
+    import re as _re
+
+    EXPORT = REPO / "data" / "v2_equity_trades.json"
+    record("equity-curve export exists", EXPORT.exists())
+    if not EXPORT.exists():
+        return
+    exp = _json.loads(EXPORT.read_text())
+    model = exp.get("model") or {}
+    record("equity-curve export records its own model",
+           bool(model.get("initial_equity") and model.get("max_slots")),
+           f"model={model}")
+    if not model:
+        return
+    initial = float(model["initial_equity"])
+    slots = int(model["max_slots"])
+
+    def stats(html: str) -> dict:
+        out = {}
+        for lab in ("Initial Capital", "Final Equity", "Total Return",
+                    "Max Drawdown", "Calmar (ann.)"):
+            m = _re.search(_re.escape(lab) + r'</div><div class="ec-stat-value"[^>]*>'
+                           r'([^<]*)<', html, _re.S)
+            out[lab] = m.group(1).strip() if m else None
+        return out
+
+    def money(s):
+        return float(_re.sub(r"[^\d.]", "", s or "0"))
+
+    def pct(s):
+        return float(_re.sub(r"[^\d.\-]", "", s or "0"))
+
+    bad_cap, bad_eq, bad_calmar, checked = [], [], [], 0
+    for f in sorted(PUBLIC.glob("equity_curve_t*.html")):
+        if f.name == "equity_curve_t10.html":     # the family index
+            continue
+        t = f.read_text(encoding="utf-8")
+        st = stats(t)
+        checked += 1
+        if st["Initial Capital"] is None:
+            bad_cap.append(f"{f.name} has no Initial Capital")
+        elif abs(money(st["Initial Capital"]) - initial) > 0.5:
+            bad_cap.append(f"{f.name} says {st['Initial Capital']}, "
+                          f"walk used {initial:,.0f}")
+        if st["Final Equity"] and st["Total Return"]:
+            implied = (money(st["Final Equity"]) / initial - 1) * 100
+            if abs(implied - pct(st["Total Return"])) > 0.5:
+                bad_eq.append(f"{f.name}: {st['Final Equity']} on {initial:,.0f} "
+                              f"is {implied:+.2f}%, page says {st['Total Return']}")
+        # Calmar must match cagr/abs(dd); the hub prints CAGR, the page prints dd
+        if st["Calmar (ann.)"] and st["Max Drawdown"]:
+            hold = int(f.stem.rsplit("_", 1)[1])
+            c = next((c for c in exp["curves"]
+                      if c["market"] == "us200" and c["hold"] == hold), None)
+            if c:
+                want = c["calmar"]
+                if abs(want - pct(st["Calmar (ann.)"])) > 0.02:
+                    bad_calmar.append(f"{f.name}: page {st['Calmar (ann.)']} "
+                                      f"vs export {want:+.2f}")
+        if f"{slots} concurrent" not in t and f"{slots} 倉" not in t:
+            bad_cap.append(f"{f.name} caption never states the real {slots}-slot cap")
+    record("equity curves caption the model the walk actually used",
+           not bad_cap, "; ".join(bad_cap[:4]) if bad_cap
+           else f"{checked} pages, {initial:,.0f} / {slots} slots")
+    record("Final Equity and Total Return describe the same run", not bad_eq,
+           "; ".join(bad_eq[:4]) if bad_eq else f"{checked} pages consistent")
+    record("Calmar matches the exported walk", not bad_calmar,
+           "; ".join(bad_calmar[:4]) if bad_calmar else f"{checked} pages consistent")
+
+    # MUST-FAIL: each assertion must fire on a mutated copy.
+    probe = sorted(PUBLIC.glob("equity_curve_t_1.html"))[0]
+    pt = probe.read_text(encoding="utf-8")
+    tampered = pt.replace(f"{initial:,.0f}", f"{initial*10:,.0f}", 1)
+    caught = f"{initial*10:,.0f}" in tampered and f"{initial:,.0f}" in pt
+    record("MUST-FAIL a tampered Initial Capital is detected", caught,
+           "tampering the capital produced no detectable change")
+
+
+def t_no_withdrawn_figures_are_published() -> None:
+    """A figure that has been retracted must not still be rendered anywhere.
+
+    2026-10-18. The T+10 "-4.05% under fixed-capital sizing" claim appeared in
+    the /backtest hero, the /backtest FAQ structured data, the T+10 equity
+    curve page, the methodology page and llms.txt — five surfaces, no source.
+    The run that produced it (scripts/monthly_swing_backtest.py) reads
+    data/dsa_hk.db, whose daily_report table has 0 rows, so it exits "No BUY
+    signals in window" and cannot reproduce it.
+
+    The same day the uncapped "+44.02%" block was still being rendered from the
+    upstream markdown while the page's own prose had already retracted it: the
+    heading claimed a 5-slot cap that permits ~12 trades over the window, the
+    table claimed 120.
+
+    Every page is scanned. A claim is allowed only inside an explicit
+    withdrawal notice, identified by the words used to retract it.
+    """
+    import re as _re
+
+    # Anchored: a bare "4.05" also occurs inside "+4.05%" price moves and
+    # "S4 14.05" ladder levels, which are not the claim. The claim is always a
+    # signed percentage standing on its own.
+    RETRACTED = {
+        "-4.05": (r"(?<![\d.+])-4\.05%", ("撤回", "withdrawn", "停用", "查唔到",
+                                             "no reproducible")),
+        "44.02": (r"(?<![\d.])44\.02%", ("撤回", "停止引用", "withdrawn", "冇套用",
+                                            "not applied")),
+    }
+    pages = [p for p in PUBLIC.rglob("*.html")]
+    pages.append(PUBLIC / "llms.txt")
+    leaks = []
+    for f in pages:
+        if not f.exists():
+            continue
+        t = f.read_text(encoding="utf-8", errors="ignore")
+        txt = _re.sub(r"\s+", " ", _re.sub(r"<[^>]+>", " ", t))
+        for label, (pat, words) in RETRACTED.items():
+            for m in _re.finditer(pat, txt):
+                a, b = max(0, m.start() - 260), min(len(txt), m.end() + 260)
+                ctx = txt[a:b]
+                if any(w in ctx for w in words):
+                    continue
+                leaks.append(f"{f.relative_to(PUBLIC)}: {label} at ...{ctx[200:320]}...")
+    record("no retracted figure is rendered outside a withdrawal notice",
+           not leaks, f"{len(leaks)} leak(s): {leaks[:3]}" if leaks
+           else f"{len(pages)} pages scanned")
+    record("at least one withdrawal notice is present (control)",
+           any(any(w in _re.sub(r"\s+", " ", _re.sub(r"<[^>]+>", " ", f.read_text(encoding='utf-8', errors='ignore')))
+               for w in ("withdrawn", "撤回", "stopped citing", "停止引用"))
+               for f in pages if f.exists() and f.suffix in (".html", ".txt")),
+           "no page explains any withdrawal; the scan above could not tell a "
+           "retraction from a typo")
+
+    # MUST-FAIL: the scan must fire on a copy carrying a bare claim.
+    probe = PUBLIC / "llms.txt"
+    body = probe.read_text(encoding="utf-8")
+    bare = "A portfolio returned -4.05% over the window with a Sharpe of 1.2."
+    found = False
+    for label, (pat, words) in RETRACTED.items():
+        for m in _re.finditer(pat, _re.sub(r"\s+", " ", bare)):
+            ctx = bare[max(0, m.start() - 260):m.end() + 260]
+            if not any(w in ctx for w in words):
+                found = True
+    record("MUST-FAIL an unretracted claim is caught", found,
+           "the scan did not flag a bare -4.05% claim")
+
+
+def t_per_trade_stats_trace_to_source() -> None:
+    """No page may publish an out-of-sample per-trade figure the run disowns.
+
+    2026-10-18. Two hand-typed copies of the same measurement disagreed: the v2
+    card (build_v2_signals) said n=2,982 / 60.3% / 1.772% and the methodology
+    page said n=2,992 / 60.2% / 1.78%, with its JP row wrong in every column
+    including profit factor and t. Re-running scripts/ab_close_hold.py settled
+    it: the first copy was right, the second was a transcription error (its own
+    profit factor and t had been copied correctly, so it looked plausible).
+
+    The invariant is therefore one-directional and does not require any page to
+    publish anything: the WRONG values must not appear anywhere, and the values
+    that do appear must be traceable to the file. A surface is free to publish
+    fewer figures than another, but never different ones.
+    """
+    import json as _json
+    import re as _re
+
+    src = REPO / "data" / "ab_close_hold.json"
+    record("ab_close_hold.json exists", src.exists())
+    if not src.exists():
+        return
+    d = _json.loads(src.read_text())
+    rule = d["rule_set"]
+    measured = {}
+    for m in ("us200", "jp200"):
+        t = d["windows"][m][rule]["test"]
+        measured[m] = t
+
+    # Only the sample COUNTS are unambiguous markers. A bare "60.2%" also
+    # occurs legitimately on /backtest and the equity curves (different
+    # experiments, different win rates), so flagging the value itself would be
+    # a false positive. n = 2,992 and n = 2,193 name exactly one measurement and
+    # appear nowhere else on the site.
+    wrong_n = {"us200": {2992}, "jp200": {2193}}
+    pages = [p for p in PUBLIC.rglob("*.html")] + [PUBLIC / "llms.txt"]
+    leaks = []
+    for f in pages:
+        if not f.exists():
+            continue
+        txt = _re.sub(r"\s+", " ", _re.sub(r"<[^>]+>", " ",
+                  f.read_text(encoding="utf-8", errors="ignore")))
+        for mkt, badvals in wrong_n.items():
+            for bv in badvals:
+                for mt in _re.finditer(rf"(?<![\d,])n\s*=\s*{bv:,}(?![\d])", txt):
+                    ctx = txt[max(0, mt.start() - 200):mt.end() + 200]
+                    if "withdrawn" in ctx or "撤回" in ctx or "disown" in ctx:
+                        continue
+                    leaks.append(f"{f.relative_to(PUBLIC)}: {mkt} n={bv:,}")
+    record("no page publishes the disowned per-trade sample counts", not leaks,
+           f"{len(leaks)} leak(s): {leaks[:4]}" if leaks
+           else f"{len(pages)} pages scanned against {src.name}")
+
+    # The methodology table must equal the file row for row, not merely avoid
+    # the wrong numbers — this is where the transcription error lived.
+    meth = PUBLIC / "methodology.html"
+    if meth.exists():
+        body = meth.read_text(encoding="utf-8")
+        for mkt, label in (("us200", "US"), ("jp200", "JP")):
+            t = measured[mkt]
+            row = (f'<td class="mono">{t["n"]:,}</td>' in _re.sub(r"\s+", " ", body)
+                   or f'{t["n"]:,}' in body)
+            record(f"methodology table carries the measured {label} row", row,
+                   f"expected n={t['n']:,} ({label}) in the page")
+
+    # The measured values must actually be reachable from the file, so the check
+    # above cannot pass merely because no page publishes per-trade figures.
+    llms = PUBLIC / "llms.txt"
+    if llms.exists():
+        txt = _re.sub(r"\s+", " ", _re.sub(r"<[^>]+>", " ", llms.read_text(encoding="utf-8")))
+        for mkt, label in (("us200", "US"), ("jp200", "JP")):
+            t = measured[mkt]
+            ok = (f"{t['n']:,}" in txt and f"{t['win%']}%" in txt)
+            record(f"llms.txt publishes the measured {label} per-trade figures", ok,
+                   f"expected n={t['n']:,} and win={t['win%']}% in the text")
+
+    # MUST-FAIL: the scanner must flag the values that actually shipped.
+    shipped = "US: n = 2,992, 勝率 60.2%、每單平均淨 1.78%. JP: n = 2,193, 65.8%."
+    flagged = any(_re.search(rf"(?<![\d,])n\s*=\s*{bv:,}(?![\d])", shipped)
+                  for badvals in wrong_n.values() for bv in badvals)
+    record("MUST-FAIL the shipped transcription error is flagged", flagged,
+           "the scanner did not flag the n = 2,992 copy that was live on 2026-10-18")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--json", action="store_true")
@@ -2193,7 +2449,10 @@ def main() -> int:
                t_every_fetched_asset_is_content_stamped,
                t_equity_curve_pages_are_v2,
                t_homepage_perf_figures_trace_to_source,
-               t_one_action_authority_per_page):
+               t_one_action_authority_per_page,
+               t_equity_curve_stats_are_internally_consistent,
+               t_no_withdrawn_figures_are_published,
+               t_per_trade_stats_trace_to_source):
         print(f"\n{fn.__doc__.splitlines()[0] if fn.__doc__ else fn.__name__}")
         try:
             fn()

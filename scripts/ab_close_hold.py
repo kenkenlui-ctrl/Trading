@@ -41,6 +41,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from datetime import datetime
 from pathlib import Path
 
 import numpy as np
@@ -54,6 +55,7 @@ from bt_clean import bars_dir, load as load_clean, _load_mask_cache  # noqa: E40
 
 BARS = bars_dir()
 OUT = REPO / "data" / "ab_close_hold.csv"
+OUT_JSON = REPO / "data" / "ab_close_hold.json"
 SPLIT = pd.Timestamp("2023-01-01")     # train < SPLIT <= test
 HOLD = 10
 MARKETS = {"us200": "SPY", "jp200": "1306_T"}
@@ -224,8 +226,28 @@ def main() -> int:
         pd.DataFrame(rows).to_csv(OUT, index=False)
         print(f"\nwrote {OUT}")
 
+    # 2026-10-18: this script's numbers were being re-typed by hand into
+    # build_v2_signals.py (V2_OOS) and rewrite_methodology_v2.py. The two
+    # copies drifted — the methodology page shipped n=2,992 / 60.2% / 1.78%
+    # where this script measures 2,982 / 60.3% / 1.772%, and the JP row was
+    # wrong in every field including profit factor and t. The JSON payload was
+    # only ever printed to stdout, so neither consumer could read it. It is
+    # written to a file now, and both read it from here.
+    payload = {
+        "generated_at": datetime.now().isoformat(timespec="seconds"),
+        "bars_dir": BARS.name,
+        "split": SPLIT.strftime("%Y-%m-%d"),
+        "hold_days": HOLD,
+        "rule_set": "B_close-hold",
+        "engine": "v2 (core.features + _simulate, cost_rt)",
+        "windows": report["windows"],
+    }
+    OUT_JSON.write_text(json.dumps(payload, ensure_ascii=False, indent=2),
+                        encoding="utf-8")
+    print(f"wrote {OUT_JSON}")
+
     if a.json:
-        print("\n" + json.dumps(report, ensure_ascii=False, indent=2))
+        print("\n" + json.dumps(payload, ensure_ascii=False, indent=2))
     return 0
 
 

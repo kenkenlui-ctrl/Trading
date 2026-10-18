@@ -92,7 +92,7 @@ def run_portfolio(cands: list[dict], mkt: str) -> tuple[list[dict], pd.DataFrame
     d = pd.DataFrame(cands).sort_values(["entry_date", "ret5d"])
     d["cost"] = [PT.cost_rt(mkt, PT.COST, w == "stop") for w in d.why]
     dates = sorted(set(d.entry_date) | set(d.exit_date))
-    equity, pos, curve, fills = 100_000.0, [], [], []
+    equity, pos, curve, fills = PT.INITIAL, [], [], []
     for dt in dates:
         keep = []
         for p in pos:
@@ -183,7 +183,22 @@ def main() -> int:
             print(f"  {mkt} hold={hold:2}: {len(fills):4} trades  CAGR {cagr:6.1f}%  "
                   f"maxDD {dd:5.2f}%  WR {wr:4.1f}%")
 
+    # 2026-10-18: the model that produced these numbers was written nowhere in
+    # the output. build_equity_curves.py rendered a hardcoded
+    # "Initial Capital US$1,000,000 ... 5 concurrent" caption over a curve
+    # whose equity series started at 100,000 and ended at 914,068 — so the page
+    # read as a $1M account that finished down 8.6% while also claiming
+    # +814.07%. The caption is now read back out of this file, so the two
+    # cannot drift apart again.
     OUT.write_text(json.dumps({
+        "model": {
+            "initial_equity": PT.INITIAL,
+            "max_slots": PT.MAX_SLOTS,
+            "risk_per_trade": PT.RISK,
+            "max_notional_per_name": PT.MAX_NOTIONAL,
+            "hold_days": PT.HOLD,
+            "walk": "portfolio_test.walk_rec (slot-constrained, daily mark-to-market)",
+        },
         "curves": summary,
         "source": "v2 (build_v2_signals rules) via portfolio_test machinery",
         "note": ("Regenerated from the live v2 rule set. The previous source "

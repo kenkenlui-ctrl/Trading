@@ -8,13 +8,21 @@ WHY
     documented the four v1 strategies the audit had just retired.
 
     Worse, the same audit (Finding 3) had already flagged that the T+10 headline
-    appeared as +3.02% on methodology, +1.63% on /backtest and -4.05% on the
-    T+10 equity curve. All three were live simultaneously.
+    appeared as +3.02% on methodology, +1.63% on /backtest and a third figure on
+    the T+10 equity curve. All three were live simultaneously.
 
     User decision (2026-10-05): v2 becomes the primary description, a public
     correction record is added, third-party figures carry explicit provenance,
-    and T+10 stops being a headline — the honest fixed-capital figure (-4.05%)
-    becomes the single reference point.
+    and T+10 stops being a headline.
+
+2026-10-18: the T+10 figure this page promoted as "the honest fixed-capital
+    number" is itself withdrawn. No artifact anywhere produced it: the run that
+    could have, scripts/monthly_swing_backtest.py, reads data/dsa_hk.db, whose
+    daily_report table has 0 rows, so it exits "No BUY signals in window" and
+    cannot reproduce anything. A performance number with no run behind it is
+    not evidence, so it is removed rather than replaced. Note the 10-year v2
+    walk on /equity_curve_t* is a DIFFERENT experiment (US, 2017-26) and is not
+    a substitute here — this page must not borrow it.
 
 WHAT IT CHANGES (surgical, not a full rewrite)
     - <main> body            → new v2 content
@@ -51,15 +59,47 @@ import re
 from datetime import date
 from pathlib import Path
 
+# The home page's single source of truth for "v2 vs equal weight"
+# (scripts/perf_figures.py -> data/hk_retest_summary.json). 2026-10-18: this
+# page was missed in that migration, so it kept its own literals and started
+# contradicting the home page. Imported so the two pages cannot be pointed at
+# different cost legs again — see the JP_COST check below.
+import perf_figures
+
 REPO = Path("/Users/kenken/dev/dsa-hk")
 PUB = REPO / "public"
 PAGE = PUB / "methodology.html"
 
+# Per-trade out-of-sample statistics, read from the run that produced them
+# (scripts/ab_close_hold.py -> data/ab_close_hold.json). Raised, not degraded.
+_AB_PATH = REPO / "data" / "ab_close_hold.json"
+try:
+    AB = json.loads(_AB_PATH.read_text())
+    AB_RULE = AB["rule_set"]
+except Exception as _e:  # noqa: BLE001
+    raise SystemExit(f"FATAL: cannot read {_AB_PATH}: {_e} — run "
+                     f"scripts/ab_close_hold.py first")
+
 RETEST = REPO / "data" / "hk_retest_summary.json"
 BARS = REPO / "data" / "bt10y2"
-# The round-trip cost this page's JP numbers are quoted at. It must match the
-# cost build_home.py / build_seo.py quote, or the two pages disagree again.
-JP_COST = "cost_0.10%"
+# The round-trip cost this page's US and JP numbers are quoted at. It must match
+# the cost build_home.py / build_seo.py quote, or the two pages disagree again.
+#
+# 2026-10-18: this was "cost_0.10%". That is the cheaper-cost leg and it is the
+# one that flatters v2, while the home page publishes every market at
+# perf_figures.COST (0.25%) — the harshest leg that exists for all three
+# markets. Quoting the cheap leg here and the harsh leg on the home page is the
+# same cherry-pick this project already withdrew once, so both markets now
+# quote the home page's leg and the check below fails the build if they ever
+# drift apart again. A 0.10% figure may still appear, but only as an explicitly
+# labelled cheaper-cost scenario sitting next to the 0.25% one.
+JP_COST = "cost_0.25%"
+if JP_COST != perf_figures.COST:
+    raise SystemExit(
+        f"FATAL: this page quotes {JP_COST} but the home page publishes "
+        f"{perf_figures.COST}; two cost legs across two pages is exactly the "
+        f"cherry-pick being removed."
+    )
 
 
 def _bar_window_years() -> float:
@@ -99,8 +139,14 @@ def _pct(x: float, dp: int = 2) -> str:
     return f"{_num(x, dp)}%"
 
 
-def jp_figs() -> dict:
-    """JP portfolio figures, DERIVED from data/hk_retest_summary.json.
+def _mkt_figs(mkt: str) -> dict:
+    """Portfolio figures for ONE market, DERIVED from data/hk_retest_summary.json.
+
+    2026-10-18: US was still a wall of literals here while JP had already been
+    converted, so the two markets were being measured from the same file by two
+    different standards — and the US literals had drifted far enough to say
+    "the gap is -0.2pp, i.e. a draw" when the regenerated measurement puts it
+    at -8.9pp/yr. One loader, one cost leg, every market.
 
     Raises on a missing key rather than falling back to a literal. A silent
     fallback would reproduce exactly the drift this replaces: the page would
@@ -108,24 +154,33 @@ def jp_figs() -> dict:
     renamed, and the only symptom would be a stale public claim.
     """
     d = json.loads(RETEST.read_text(encoding="utf-8"))
-    p = d["jp"]["portfolio"]
+    p = d[mkt]["portfolio"]
     ew, v2 = p["ew_bh"], p[f"v2_{JP_COST}"]
     gap = p["v2_vs_ew_pp"][JP_COST]
+    # 2026-10-18: the cheaper-cost leg, carried ONLY because the page publishes
+    # it as an explicitly labelled scenario sitting next to the headline leg.
+    # A cheaper number on its own is the cherry-pick this page is being fixed
+    # for, so it is never allowed to appear without JP_COST's figures beside it.
+    mid, gap_mid = p[f"v2_{perf_figures.MID_COST}"], p["v2_vs_ew_pp"][perf_figures.MID_COST]
     yrs = _bar_window_years()
 
+    # Cumulative ("total") is not a column in the summary, so it is raised from
+    # the verified CAGR over the same measured window the CAGR came from —
+    # never pasted from a run that no longer exists.
     def cum(x: float) -> float:
         return ((1 + x / 100) ** yrs - 1) * 100
 
-    def seg(period: str, field: str) -> float:
-        return gap[period][field]
-
     return {
-        "cost_label": "0.10%",
+        "mkt": mkt,
+        "cost_label": JP_COST.replace("cost_", ""),
+        "mid_cost_label": perf_figures.MID_COST.replace("cost_", ""),
         "full": "2016-2026",
         # full-period cells
         "v2_cagr": v2["2016-2026"]["cagr%"],
         "ew_cagr": ew["2016-2026"]["cagr%"],
         "gap_pp": gap["2016-2026"]["v2_minus_ew_pp"],
+        "v2_mid_cagr": mid["2016-2026"]["cagr%"],
+        "gap_mid_pp": gap_mid["2016-2026"]["v2_minus_ew_pp"],
         "v2_dd": v2["2016-2026"]["maxDD%"],
         "ew_dd": ew["2016-2026"]["maxDD%"],
         "trades": v2["2016-2026"]["trades"],
@@ -142,12 +197,109 @@ def jp_figs() -> dict:
     }
 
 
+def jp_figs() -> dict:
+    """JP portfolio figures, DERIVED. See _mkt_figs()."""
+    return _mkt_figs("jp")
+
+
+def us_figs() -> dict:
+    """US portfolio figures, DERIVED. Same shape as jp_figs(), same source file."""
+    return _mkt_figs("us")
+
+
 def _pp(x: float, dp: int = 2) -> str:
     """Format a gap, which is measured in percentage POINTS per year."""
     return f"{_num(x, dp)} pp/年"
 
 
+def _vs_hold(x: float, dp: int = 1) -> str:
+    """A gap against equal-weight holding, with the direction computed from it.
+
+    2026-10-18: the copy used to assert the direction in words ("只領先",
+    "落後 0.2 個百分點", "基本上打和") while the number underneath came from a
+    measurement. When the measurement moved and the words did not, the page
+    said v2 "leads" while printing a negative gap. The verdict now follows the
+    sign, so a reversal cannot survive in the prose.
+    """
+    return f"{'領先' if x > 0 else '落後'} {_num(abs(x), dp)} 點/年"
+
+
+def _gap_color(x: float) -> str:
+    """Row colour follows the sign of the gap, for the same reason as _vs_hold.
+
+    2026-10-18: the JP 2021-26 row was painted green unconditionally. When the
+    regenerated measurement made that gap negative, the page would have printed
+    a loss in the colour of a gain. Colour is not decoration on a table whose
+    entire claim is "did this beat holding still".
+    """
+    return "var(--red)" if x < 0 else "var(--green)"
+
+
+# --- sign-robust verdict copy ------------------------------------------------
+# 2026-10-18. data/hk_retest_summary.json was regenerated *while this edit was
+# in progress* (generated_at 16:07 -> 16:12), and every hard-coded direction
+# word on the page went stale in the space of five minutes: US flipped from
+# -8.90pp to +0.96pp, JP from -8.40pp to -0.34pp. That is the whole argument for
+# deriving the verdicts instead of writing them: a page that is rebuilt from a
+# file which can change under it must compute what it says. Nothing below
+# asserts a magnitude threshold (there is no stated one in the source data);
+# every word is a function of the sign that was actually measured.
+
+
+def _sub_line(f: dict) -> str:
+    """The two sub-window gaps, direction computed."""
+    return (f"2016–20 {_vs_hold(f['early_gap'])}、2021–26 {_vs_hold(f['late_gap'])}")
+
+
+def _regime(f: dict) -> str:
+    """One clause on whether the gap holds its sign across both halves."""
+    if (f["early_gap"] > 0) != (f["late_gap"] > 0):
+        return ("但要留意：差額嘅正負號喺 2016–20 同 2021–26 之間<b>會變</b>，"
+                "即係全期嗰個數由單一 regime 決定，唔應該當成持久 alpha 去引用")
+    return "而且兩個時段方向一致"
+
+
+def _verdict(f: dict) -> str:
+    """The closing conclusion for one market — always true of the measurement.
+
+    Written so that no branch can claim an edge the split-regime data does not
+    support, and no branch can claim a persistent loss that is actually a flip.
+    """
+    e, l, full = f["early_gap"], f["late_gap"], f["gap_pp"]
+    if (e > 0) != (l > 0):
+        return ("兩個時段嘅正負號相反，所以全期差距唔係一個跨市況都成立嘅優勢 —— "
+                "我哋唔當佢係 alpha")
+    if e > 0 and full > 0:
+        return "兩個時段都係正數；但差額細，唔足以當成持久 alpha"
+    return "兩個時段都係負數，換 regime 救唔到 —— 我哋唔當佢係 alpha"
+
+
+def _table_note(f: dict) -> str:
+    """Short annotation for the gap row of the §4.7 table."""
+    if (f["early_gap"] > 0) != (f["late_gap"] > 0):
+        return "全期差距細，拆分市況後正負號會變（§4.8）"
+    return "拆分市況後方向唔變（§4.8）"
+
+
+def _oos_win_sentence() -> str:
+    """Real per-trade out-of-sample win rates, read from data/ab_close_hold.json.
+
+    2026-10-18: replaced "v2 嘅回測樣本外勝率約 50–54%". That range contradicted
+    this page's own table a screen above it (US 60.3%, JP 65.5% out-of-sample).
+    Understating a measured win rate in a disclaimer is its own kind of
+    dishonesty — it reads as comfort rather than risk. Replaced with the real
+    figures, and the honest caveat is kept: a per-trade win rate is not
+    portfolio excess return, and §4.7 measures the portfolio layer as negative
+    for both markets.
+    """
+    us = AB["windows"]["us200"][AB_RULE]["test"]
+    jp = AB["windows"]["jp200"][AB_RULE]["test"]
+    return (f"美股 {us['win%']}%／{us['n']:,} 單、日股 {jp['win%']}%／{jp['n']:,} 單"
+            f"（樣本外 2023–26，<code>data/ab_close_hold.json</code>）")
+
+
 _JP: dict | None = None
+_US: dict | None = None
 
 
 def JP() -> dict:
@@ -158,12 +310,37 @@ def JP() -> dict:
     return _JP
 
 
+def US() -> dict:
+    """Cached us_figs()."""
+    global _US
+    if _US is None:
+        _US = us_figs()
+    return _US
+
+
 TITLE = "Methodology · v2 訊號規則 · Leeks Terminal"
 DESC = (
     "現行 v2 訊號規則：只做多 · S1 限價入場 · 3×ATR 止損 · 10 個交易日時間離場 · "
     "200 天線 + 大市過濾。附 2026-10 第三方 10 年審計之修正記錄。OHLC-only，零 LLM 幻覺。"
 )
 
+# FAQ answers are serialised straight into the page's
+# <script type="application/ld+json"> FAQPage block by build_faq_json()/main().
+# Nothing inside an FAQ entry may be a Python comment that reaches the JSON —
+# a "#" line inside that f-string shipped 674 unparseable ticker pages on
+# 2026-10-18 (commit aea38b0c). Explanations live HERE, above the literal.
+#
+# 2026-10-18, two answers in this list were quoting withdrawn numbers:
+#   - the timing question carried US literals (equal weight +27.4%, v2 +27.2%,
+#     "差額 −0.2 pp/年，等於零") from a run that has since been regenerated. The
+#     live figures come from US() now, and the verdict wording follows the sign
+#     of the measured gap instead of asserting a direction in the copy.
+#   - the disclaimer question claimed "樣本外勝率約 50–54%", which contradicts
+#     this page's own table a screen above it (US 60.3%, JP 65.5%). Fixed to the
+#     measured per-trade rates via _oos_win_sentence(), keeping the caveat that
+#     per-trade win rate is not portfolio excess return.
+#   - the T+10 answer promoted a fixed-capital T+10 total return as "the honest
+#     number"; that figure is withdrawn too (no run produced it).
 FAQ = [
     (
         "Leeks Terminal 嘅信號係點計出嚟嘅？",
@@ -189,10 +366,27 @@ FAQ = [
     ),
     (
         "T+10 swing 而家點計？以前話 +3.02% 係咪假嘅？",
+        # 2026-10-18: the second half of this answer promoted a fixed-capital
+        # T+10 total return as "the honest number" in place of +3.02%. That
+        # number has been withdrawn too — nothing anywhere produced it, and the
+        # run that could have (scripts/monthly_swing_backtest.py) reads
+        # data/dsa_hk.db, whose daily_report table has 0 rows, so it exits
+        # "No BUY signals in window" and cannot reproduce it. The part of the
+        # answer that is still true is kept (the +3.02% sum-of-per-trade-
+        # percentages claim is retracted); the unsupported replacement is
+        # dropped rather than swapped for another number. The 10-year v2 walk
+        # on /equity_curve_t* is a different experiment and is NOT borrowed here.
         "以前網站多處引用 T+10 swing +3.02%，嗰個係逐筆百分比直接相加，"
-        "等於假設每一單都用盡 100% 資金同時持有，唔係一個投資組合回報。"
-        "誠實嘅定資模擬（本金 HK$1,000,000、每單 1% 風險、最多 5 個同時持倉、每日 mark-to-market）"
-        "實測 T+10 總回報係 <b>−4.05%</b>（期末權益 HK$959,531，最大回撤 −4.89%）。"
+        "等於假設每一單都用盡 100% 資金同時持有，唔係一個投資組合回報 —— "
+        "<b>呢個數我哋已經撤回</b>。"
+        "<br><br>2026-10-18：我哋曾經用一個「誠實定資模擬」嘅 T+10 總回報去取代佢，"
+        "而家<b>連嗰個數都一齊撤回</b>，因為佢冇任何 run 產生過："
+        "唯一可能產生佢嘅 <code>scripts/monthly_swing_backtest.py</code> 讀嘅 "
+        "<code>data/dsa_hk.db</code> 入面，<code>daily_report</code> 表係 <b>0 行</b>，"
+        "個 script 會直接以「No BUY signals in window」結束，根本跑唔到。"
+        "一個背後冇 run 嘅回測數字唔係證據，所以我哋唔會用另一個數字填返個位。"
+        "（<code>/equity_curve_t*</code> 嗰條係十年美股 v2 曲線，係另一個實驗，"
+        "唔係同一個六星期港股 swing 窗口，唔可以攞嚟頂。）"
         "而家網站唔再將 T+10 當成 edge 宣傳。",
     ),
     (
@@ -210,12 +404,15 @@ FAQ = [
         "v2 係咪真係有選時能力，定只係買上升趨勢股？",
         "要分兩層答。單筆層面：有優勢 —— 同一批股票、同一個篩選、同一個大市過濾，"
         "唯一分別係等 S1 定喺開市價直接買，v2 每單收益喺四個窗口全部高過對照組 2.6 至 6.6 倍。"
-        "但組合層面：美股冇超額 —— 將同一批 201 隻股票等權每月再平衡，2016–26 年化 +27.4%，"
-        "v2 只有 +27.2%。即係話每單揀得准，但喺美股呢個優勢冇轉化成跑贏「唔做嘢」嘅回報。"
-        f"日股重測之後全期只差 {_pp(JP()['gap_pp'])}（v2 {_pct(JP()['v2_cagr'])} 對等權 "
-        f"{_pct(JP()['ew_cagr'])}），按市況拆開更加唔成立：2016–20 落後純持有 "
-        f"{abs(JP()['early_gap']):.1f} 點/年，2021–26 先領先 {JP()['late_gap']:.1f} 點/年 —— "
-        "差額幾乎全部來自單一大市 regime，我哋唔當佢係 alpha。"
+        f"但組合層面：美股冇穩定超額 —— 將同一批股票等權每月再平衡，2016–26 年化 "
+        f"{_pct(US()['ew_cagr'])}，v2 {_pct(US()['v2_cagr'])}，"
+        f"即係 v2 {_vs_hold(US()['gap_pp'])}；{_regime(US())}。"
+        "即係話每單揀得准，但呢個優勢喺美股冇轉化成一個穩定、"
+        "跑贏「唔做嘢」嘅回報。"
+        f"日股喺同一個 {JP()['cost_label']} 成本口徑下，v2 {_vs_hold(JP()['gap_pp'])}"
+        f"（v2 {_pct(JP()['v2_cagr'])} 對等權 {_pct(JP()['ew_cagr'])}）；"
+        f"按市況拆開：{_sub_line(JP())} —— "
+        f"{_verdict(JP())}。"
         "詳見方法論頁 §4.6 同 §4.7。",
     ),
     (
@@ -226,7 +423,11 @@ FAQ = [
     (
         "呢個站係投資建議嗎？",
         "不是。全部內容屬教育用途並附免責聲明。短線交易風險極高，過往表現不代表將來回報；"
-        "v2 嘅回測樣本外勝率約 50–54%，屬統計噪音範圍，唔構成任何回報承諾。",
+        f"v2 每單樣本外勝率係{_oos_win_sentence()}。"
+        f"但要睇清楚：每單勝率唔等於組合超額回報 —— 組合層面 v2 喺美股"
+        f"{_vs_hold(US()['gap_pp'])}、日股{_vs_hold(JP()['gap_pp'])}（對「乜都唔做、"
+        "淨係等權持有同一批股票」，{JP()['cost_label']} 成本口徑）。"
+        "唔構成任何回報承諾。",
     ),
 ]
 
@@ -258,9 +459,18 @@ def build_body() -> str:
          "但頁面呈現方式令人誤以為係信心指標",
          "已停用，改顯示 setup 樣本外勝率 + 樣本數 n"),
         ("T+10 swing「+3.02% net」",
-         "嗰個係逐筆百分比相加，假設每單都用盡 100% 資金。誠實定資模擬實測係 "
-         "<b>−4.05%</b>（期末權益 HK$959,531）",
-         "已撤回，唔再當 headline"),
+         # 2026-10-18: this cell used to carry a fixed-capital T+10 total return
+         # as the "honest" replacement for +3.02%. Withdrawn as well — no run
+         # produced it, and scripts/monthly_swing_backtest.py reads a
+         # daily_report table with 0 rows, so it cannot reproduce it. Not
+         # replaced by another number.
+         "嗰個係逐筆百分比相加，假設每單都用盡 100% 資金。曾經用一個「誠實定資模擬」"
+         "嘅 T+10 總回報頂上，<b>該數字已於 2026-10-18 一併撤回</b>："
+         "冇任何 run 產生過佢，唯一可能產生佢嘅 "
+         "<code>scripts/monthly_swing_backtest.py</code> 讀嘅 "
+         "<code>data/dsa_hk.db</code> 入面 <code>daily_report</code> 表係 0 行，"
+         "個 script 直接以「No BUY signals in window」結束",
+         "兩個數都已撤回，唔再當 headline，亦唔會用另一個數字填返"),
         ("Portfolio sim「+55% 6mo, MaxDD 1.96%」",
          "同一個 sum-of-pct 口徑；該數字已於 2026-09-11 被明確標示為非投資組合回報",
          "已撤回"),
@@ -280,10 +490,16 @@ def build_body() -> str:
          "已重新逐隻抓取成獨立資料庫，"
          "並加咗 fail-closed 過濾：任何交易窗（連同前 210 日特徵暖機）碰到壞 bar 就唔准入統計。"
          "舊嘅 +1811.8%／Sharpe 2.97 組合數字已撤回，原因見 §4.7"),
+        # 2026-10-18: this cell was typed in from a superseded run and asserted a
+        # direction in words ("等於零"). The summary was then regenerated twice
+        # in one afternoon and the sign moved twice. Derived from US() now, and
+        # the verdict sentence is computed from the measured sign via _verdict()
+        # so the cell cannot contradict the number in the same row.
         ("「v2 有選時優勢」呢句話",
-         "每單層面成立，但組合層面：v2 美股年化 +27.2%，"
-         "同一批 201 隻股票等權每月再平衡就有 +27.4% —— 差額 −0.2 pp/年，等於零",
-         "已改寫：公開講明每單優勢 ≠ 超額回報，美股層面冇 alpha。見 §4.7"),
+         f"每單層面成立，但組合層面：v2 美股年化 {_pct(US()['v2_cagr'])}，"
+         f"同一批股票等權每月再平衡就有 {_pct(US()['ew_cagr'])} —— "
+         f"差額 {_pp(US()['gap_pp'])}（{_vs_hold(US()['gap_pp'])}）；{_regime(US())}",
+         "已改寫：公開講明每單優勢 ≠ 超額回報，美股層面冇可引用嘅持久 alpha。見 §4.7"),
     ]
     fix_rows = "\n".join(
         f"""      <tr>
@@ -294,6 +510,27 @@ def build_body() -> str:
         for a, b, c in rows_fix
     )
 
+    # 2026-10-18: these three tables were literals, and two of them disagreed
+    # with the run that produced them — n=2,992/60.2%/1.78% where the engine
+    # measures 2,982/60.3%/1.772%, and a JP row wrong in every column
+    # including profit factor and t. Nothing re-derived them, so a typo lived
+    # on the published page indefinitely. They are rendered from
+    # data/ab_close_hold.json now; a changed measurement changes the page.
+    def _win(mkt, arm, window):
+        return AB["windows"][mkt][arm][window]
+
+    def _numrow(mkt, arm, window):
+        w = _win(mkt, arm, window)
+        return (mkt.upper(), w["n"], f'{w["win%"]}%', f'{w["avg%"]:+.3f}%',
+                f'{w["pf"]:.2f}', f'{w["t"]:+.2f}')
+
+    def _abrow(mkt, window, label):
+        a, b = _win(mkt, "A_open-hold", window), _win(mkt, "B_close-hold", window)
+        kept = b["n"] / a["n"] * 100
+        return (mkt.upper(), label, f"{kept:.1f}%",
+                f'{a["avg%"]:+.3f}% → {b["avg%"]:+.3f}%',
+                f'{a["t"]:+.2f} → {b["t"]:+.2f}')
+
     train_rows = "\n".join(
         f"""      <tr>
         <td>{m}</td>
@@ -303,10 +540,8 @@ def build_body() -> str:
         <td class="mono">{pf}</td>
         <td class="mono">{t}</td>
       </tr>"""
-        for m, n, w, avg, pf, t in [
-            ("US", 3693, "64.5%", "+1.91%", "2.25", "+10.67"),
-            ("JP", 2424, "55.3%", "+1.03%", "1.51", "+5.08"),
-        ]
+        for m, n, w, avg, pf, t in (
+            _numrow("us200", AB_RULE, "train"), _numrow("jp200", AB_RULE, "train"))
     )
 
     oos_rows = "\n".join(
@@ -318,10 +553,8 @@ def build_body() -> str:
         <td class="mono">{pf}</td>
         <td class="mono">{t}</td>
       </tr>"""
-        for m, n, w, avg, pf, t in [
-            ("US", 2992, "60.2%", "+1.78%", "2.05", "+7.67"),
-            ("JP", 2193, "65.8%", "+2.41%", "2.72", "+9.31"),
-        ]
+        for m, n, w, avg, pf, t in (
+            _numrow("us200", AB_RULE, "test"), _numrow("jp200", AB_RULE, "test"))
     )
 
     ab_rows = "\n".join(
@@ -329,15 +562,18 @@ def build_body() -> str:
         <td>{m}</td>
         <td>{w}</td>
         <td class="mono">{kept}</td>
-        <td class="mono">{a1} → {a2}</td>
-        <td class="mono">{t1} → {t2}</td>
+        <td class="mono">{avg}</td>
+        <td class="mono">{t}</td>
       </tr>"""
-        for m, w, kept, a1, a2, t1, t2 in [
-            ("US", "訓練 2016–22", "51.0%", "+0.888%", "+1.913%", "+5.96", "+10.67"),
-            ("US", "樣本外 2023–26", "51.5%", "+0.783%", "+1.777%", "+3.73", "+7.67"),
-            ("JP", "訓練 2016–22", "46.7%", "+0.149%", "+1.034%", "+1.54", "+5.08"),
-            ("JP", "樣本外 2023–26", "51.1%", "+1.211%", "+2.414%", "+6.40", "+9.31"),
-        ]
+        # 2026-10-18: this generator unpacked 7 names from _abrow()'s 5-tuple
+        # ("a1 → a2" and "t1 → t2" were being re-joined in the template even
+        # though _abrow already formats the arrow inside each string), so the
+        # build raised ValueError and this page had not rendered at all. The
+        # five columns match the §4.5 header (市場 / 窗口 / 保留交易 / 每單平均 /
+        # 日期叢集 t); the derived content is unchanged, only the unpacking was.
+        for m, w, kept, avg, t in (
+            _abrow("us200", "train", "訓練 2016–22"), _abrow("us200", "test", "樣本外 2023–26"),
+            _abrow("jp200", "train", "訓練 2016–22"), _abrow("jp200", "test", "樣本外 2023–26"))
     )
 
     ctrl_rows = "\n".join(
@@ -383,7 +619,18 @@ def build_body() -> str:
       </tr>"""
         for m, r, c, dd, sh, n in [
             ("舊引擎（按網站原本方式顯示）· 2016–26", "−92.6%", "−23.6%", "−93.1%", "−2.43", "6,542"),
-            ("v2 · 美股 · 2016–26", "+814.1%", "+27.2%", "−20.6%", "2.19", "6,675"),
+            # 2026-10-18: both US rows were literals (+814.1% / +27.2% / −20.6%
+            # / 2.19 / 6,675 and +1048.8% / +27.4% / −21.4%) from a superseded
+            # run; the regenerated summary now reads both markets off the same
+            # loader as JP. Cumulative is derived from the verified CAGR over the
+            # measured bar window, because the summary carries no cumulative
+            # column — the same treatment the JP rows got on 2026-10-15.
+            # Sharpe is "—" for the same reason JP's is: the summary does not
+            # report it, and a figure carried over from a superseded run is worse
+            # than an admitted gap.
+            (f"v2 · 美股 · 2016–26（{US()['cost_label']} 成本）",
+             f"{_pct(US()['v2_cum'], 1)}", _pct(US()["v2_cagr"]),
+             _pct(US()["v2_dd"]), "—", f"{US()['trades']:,}"),
             # 2026-10-15: the two JP rows are read from the 2026-10-12 retest.
             # Cumulative is derived from the verified CAGR over the measured bar
             # window, because the retest summary carries no cumulative column
@@ -394,8 +641,10 @@ def build_body() -> str:
             (f"v2 · 日股 · 2016–26（{JP()['cost_label']} 成本）",
              f"{_pct(JP()['v2_cum'], 1)}", _pct(JP()["v2_cagr"]),
              _pct(JP()["v2_dd"]), "—", f"{JP()['trades']:,}"),
-            ("同一批股票等權每月再平衡 · 美股", "+1048.8%", "+27.4%", "−21.4%", "—", "—"),
-            ("同一批股票等權每月再平衡 · 日股",
+            (f"同一批股票等權每月再平衡 · 美股",
+             f"{_pct(US()['ew_cum'], 1)}", _pct(US()["ew_cagr"]),
+             _pct(US()["ew_dd"]), "—", "—"),
+            (f"同一批股票等權每月再平衡 · 日股",
              f"{_pct(JP()['ew_cum'], 1)}", _pct(JP()["ew_cagr"]),
              _pct(JP()["ew_dd"]), "—", "—"),
             ("大市指數 buy &amp; hold · 美股（^GSPC）", "+253.2%", "+13.3%", "−33.9%", "—", "—"),
@@ -437,22 +686,31 @@ def build_body() -> str:
     <table class="data-table method-prose" style="margin: var(--sp-3) 0;">
       <thead><tr><th>2016–26 年化</th><th>美股</th><th>日股</th></tr></thead>
       <tbody>
-        <tr><td>v2 組合</td><td>+27.2%</td><td>{_pct(JP()['v2_cagr'])}</td></tr>
-        <tr><td>同一批股票等權持有</td><td><b>+27.4%</b></td><td>{_pct(JP()['ew_cagr'])}</td></tr>
+        <tr><td>v2 組合</td><td>{_pct(US()['v2_cagr'])}</td><td>{_pct(JP()['v2_cagr'])}</td></tr>
+        <tr><td>同一批股票等權持有</td><td><b>{_pct(US()['ew_cagr'])}</b></td><td>{_pct(JP()['ew_cagr'])}</td></tr>
         <tr><td>大市指數 buy &amp; hold</td><td>+13.3%</td><td>+15.0%</td></tr>
       </tbody>
     </table>
+    <!-- 2026-10-18: the US cells of this table and the paragraph below were
+         typed in by hand from a superseded run; derived from US() now. The
+         "beats the index by N points" claim is deleted outright — it is
+         v2-minus-^GSPC and ^GSPC is not in the retest summary, so it cannot be
+         derived. The JP verdict now follows the sign of the measured gap. -->
     <p style="margin: var(--sp-2) 0; font-size: var(--text-sm);">
-      <b>美股：v2 落後純持有 0.2 個百分點/年。</b> 表面睇落跑贏大市 14 個百分點，
-      但嗰 14 點全部來自「呢 201 隻係今日嘅大型股」呢個選擇 —— 佢平均跑贏大市 14.1 點/年。
-      <b>日股：全期只領先純持有 {_pp(JP()['gap_pp'])}</b>，按上面表嘅成本計，其實係打和 ——
-      而且拆開就更加唔企穩：2016–20 係<b>落後 {abs(JP()['early_gap']):.1f} 個百分點/年</b>，
-      2021–26 先領先 {JP()['late_gap']:.1f} 點/年（見 §4.8）。
-      最大回撤反而淺過純持有（{_pct(JP()['v2_dd'])} 對 {_pct(JP()['ew_dd'])}）。
+      <b>美股：v2 {_vs_hold(US()['gap_pp'])}</b>（2016–20 {_vs_hold(US()['early_gap'])}、
+      2021–26 {_vs_hold(US()['late_gap'])}）。呢批股票本身就係一個極強嘅對照 ——
+      「乜都唔做、淨係等權持有同一批今日嘅大型股」已經跑贏大市十幾個百分點，
+      而嗰十幾個百分點全部來自「呢批係今日嘅大型股」呢個選擇，唔係來自揀時段。
+      <b>日股：全期 v2 {_vs_hold(JP()['gap_pp'])}</b>（{JP()['cost_label']} 成本口徑；
+      2016–20 {_vs_hold(JP()['early_gap'])}、2021–26 {_vs_hold(JP()['late_gap'])}）——
+      兩個市場嘅正負號都喺兩段之間變換（見 §4.8），所以全期嗰個差距唔應該當成
+      持久 alpha 去引用。
+      最大回撤反而淺過純持有（{_pct(JP()['v2_dd'])} 對 {_pct(JP()['ew_dd'])}）——
+      減少咗回撤，但冇製造穩定嘅超額回報。
     </p>
     <p style="margin: 0; font-size: var(--text-sm);">
-      即係話：<b>每單優勢係真嘅（見 §4.6），但喺美股，佢冇轉化成跑贏「攞住同一批股票」
-      嘅超額回報。</b> 詳情同限制見 §4.7。
+      即係話：<b>每單優勢係真嘅（見 §4.6），但喺美股，佢冇轉化成一個穩定、跑贏
+      「攞住同一批股票」嘅超額回報。</b> 詳情同限制見 §4.7。
     </p>
   </div>
 
@@ -463,13 +721,22 @@ def build_body() -> str:
     呢一節我哋刻意保留，唔打算改。
   </p>
   <div class="callout" style="margin: var(--sp-4) 0; padding: var(--sp-4); border-left: 4px solid var(--amber); background: var(--amber-dim); border-radius: 4px;">
+    <!-- 2026-10-18: the US sub-period gaps quoted in the paragraph below were
+         hard-coded from the old measurement; derived from US() now. The JP
+         figures in these two callouts are the historical measurement being
+         withdrawn here — what the 2026-10-12 retest replaced. They are not in
+         the regenerated summary, so they stay as the dated record of the
+         retracted claim. -->
     <p style="margin:0 0 var(--sp-2); font-size: var(--text-sm)">
       <b>2026-10-06 — 撤回一句聲稱。</b>
       我哋之前喺首頁、方法論同 llms.txt 都寫過「日股 +6.9 個百分點/年」。
       <b>呢個數唔企穩，我哋撤回佢。</b> 拆開市況之後：日股 2016–20 落後純持有
-      <b>7.9 點/年</b>，2021–26 先領先 16.7 點/年；美股兩個時段分別 −2.0 同 +1.0。
-      四格冇一格係穩定正數，所以 +6.9 只係「輸嘅五年」同「贏嘅五年」嘅平均，
-      唔係一個跨市況都成立嘅優勢。同時我哋用 Nikkei 官方成分股變更紀錄做咗
+      <b>7.9 點/年</b>，2021–26 先領先 16.7 點/年；美股兩個時段分別
+      <b>{_vs_hold(US()['early_gap'])}</b>同<b>{_vs_hold(US()['late_gap'])}</b>
+      （2026-10-18 按統一成本口徑重測後嘅數）。
+      當時四格冇一格係穩定正數，所以 +6.9 只係「輸嘅五年」同「贏嘅五年」嘅平均，
+      唔係一個跨市況都成立嘅優勢 —— 2026-10-18 重測之後，兩個市場一樣冇一個
+      regime 企得穩（見 §4.8）。同時我哋用 Nikkei 官方成分股變更紀錄做咗
       point-in-time 名單（<code>scripts/portfolio_pit.py</code>）：剔除 17 隻遲入選股票後
       差額只由 +6.9 變 +6.0，證明遲入選唔係主因；但真正嘅偏差（已經唔存在嘅股票）
       用公開名單重建唔到。詳見 §4.7、§4.8 同第三項未解決限制。
@@ -480,14 +747,23 @@ def build_body() -> str:
       <b>2026-10-15 — 撤回嗰句之後，連「差幾多」都要再量一次。</b>
       上面 2026-10-06 撤回咗 +6.9，但當時只係話個數唔企穩，<b>冇重新報一個數</b>，
       所以頁面一直留低 +25.4% 對 +18.5%、分段 7.9／16.7。2026-10-12 我哋重跑咗完整
-      10 年組合測試（<code>scripts/hk_retest.py</code> → <code>data/hk_retest_summary.json</code>），
-      喺 {JP()['cost_label']} 來回成本下：v2 <b>{_pct(JP()['v2_cagr'])}</b>、
-      同一批股票等權持有 <b>{_pct(JP()['ew_cagr'])}</b>，差 <b>{_pp(JP()['gap_pp'])}</b> ——
-      <b>基本上打和</b>，唔係一個可以攞出嚟講嘅優勢。分段一樣唔企穩：2016–20
-      <b>落後 {abs(JP()['early_gap']):.1f} 點/年</b>，2021–26 領先 {JP()['late_gap']:.1f} 點/年。
+      10 年組合測試（<code>scripts/hk_retest.py</code> → <code>data/hk_retest_summary.json</code>）。
       <br><br>
-      本頁所有日股數字而家係<b>由 <code>data/hk_retest_summary.json</code> 讀出嚟</b>，
+      <b>2026-10-18 更新：</b>呢一節原本報嘅係 {JP()['mid_cost_label']} 成本口徑
+      （v2 <b>{_pct(JP()['v2_mid_cagr'])}</b>、等權 <b>{_pct(JP()['ew_cagr'])}</b>，
+      差 {_pp(JP()['gap_mid_pp'])}），而首頁三個市場一律用 {JP()['cost_label']}。
+      同一頁寫兩個成本口徑 = 自行揀一個好睇嘅講，所以我哋
+      改用同首頁一致嘅 {JP()['cost_label']}：v2 <b>{_pct(JP()['v2_cagr'])}</b>、
+      同一批股票等權持有 <b>{_pct(JP()['ew_cagr'])}</b>，差 <b>{_pp(JP()['gap_pp'])}</b>
+      —— 兩個成本口徑嘅正負號根本唔同（{JP()['mid_cost_label']} 成本下係
+      <b>{_vs_hold(JP()['gap_mid_pp'])}</b>），所以淨係報好睇嗰個就係自欺。
+      分段睇：{_sub_line(JP())}。
+      <br><br>
+      本頁所有美股同日股數字而家係<b>由 <code>data/hk_retest_summary.json</code> 讀出嚟</b>，
       唔再係手打 —— 同一個數字寫兩遍，就一定會有一遍過時。
+      同一個道理，呢頁<b>連方向嘅措辭都係由符號計出嚟</b>：呢個檔案喺 2026-10-18
+      當日下午重跑過兩次，差距嘅正負號轉咗兩次，所以頁面唔會再自己斷言
+      「領先」定「落後」。
     </p>
   </div>
   <div class="callout" style="margin: var(--sp-4) 0; padding: var(--sp-4); border-left: 4px solid var(--red); background: var(--red-dim); border-radius: 4px;">
@@ -746,38 +1022,64 @@ def build_body() -> str:
   <p>
     測試設計：v2 同對照組行<b>完全同一套組合機器</b> —— 每單風險 1%、最多 10 倉、
     單一名字名義上限 10%、總曝險 ≤100%、倉位滿時以最超賣者優先。
-    成本照市場所屬扣除（美股 0.05% 費用 + 雙邊滑價，日股另計）。兩邊唯一分別仍然係入場方式。
+    <!-- 2026-10-18: was "成本照市場所屬扣除（美股 0.05% 費用 + 雙邊滑價，日股另
+         計）", i.e. a per-market cost. Both markets are now quoted at one
+         uniform leg — the same one the home page publishes — so a page cannot
+         flatter v2 by quietly picking the cheaper market. -->
+    兩個市場一律用同一個 {JP()['cost_label']} 來回成本口徑（<code>{JP_COST}</code>，
+    同首頁一致）。兩邊唯一分別仍然係入場方式。
   </p>
   <table class="data-table method-prose">
     <thead>
       <tr><th>2016–26</th><th>美股年化</th><th>美股最大回撤</th><th>日股年化</th><th>日股最大回撤</th></tr>
     </thead>
     <tbody>
-      <tr><td>v2 組合</td><td>+27.2%</td><td>−20.6%</td><td>{_pct(JP()['v2_cagr'])}</td><td>{_pct(JP()['v2_dd'])}</td></tr>
-      <tr><td>同一批股票等權每月再平衡</td><td><b>+27.4%</b></td><td>−21.4%</td><td>{_pct(JP()['ew_cagr'])}</td><td>{_pct(JP()['ew_dd'])}</td></tr>
+      <!-- 2026-10-18: the US column of this table was typed in by hand from a
+         superseded run and is now derived from US(). The "beats the index by
+         N points" claim is deleted outright — it is v2-minus-^GSPC and ^GSPC
+         is not in the retest summary, so it cannot be derived. The JP verdict
+         now follows the sign of the measured gap instead of asserting a draw. -->
+      <tr><td>v2 組合</td><td>{_pct(US()['v2_cagr'])}</td><td>{_pct(US()['v2_dd'])}</td><td>{_pct(JP()['v2_cagr'])}</td><td>{_pct(JP()['v2_dd'])}</td></tr>
+      <tr><td>同一批股票等權每月再平衡</td><td><b>{_pct(US()['ew_cagr'])}</b></td><td>{_pct(US()['ew_dd'])}</td><td>{_pct(JP()['ew_cagr'])}</td><td>{_pct(JP()['ew_dd'])}</td></tr>
       <tr><td>大市指數 buy &amp; hold</td><td>+13.3%</td><td>−33.9%</td><td>+15.0%</td><td>−31.8%</td></tr>
-      <tr><td><b>v2 減「等權持有」</b></td><td><b>−0.2 pp/年</b></td><td>—</td><td><b>{_pp(JP()['gap_pp'])}</b><br><span style="font-size:0.82em;opacity:0.75">打和；且拆分市況後不成立（§4.8）</span></td><td>—</td></tr>
+      <tr><td><b>v2 減「等權持有」</b></td><td><b>{_pp(US()['gap_pp'])}</b></td><td>—</td><td><b>{_pp(JP()['gap_pp'])}</b><br><span style="font-size:0.82em;opacity:0.75">{_table_note(JP())}</span></td><td>—</td></tr>
     </tbody>
   </table>
+  <!-- 2026-10-18: the "beats the index by N points" pair deleted — it is
+       v2-minus-^GSPC and ^GSPC is not in the retest summary, so it cannot be
+       derived. The "difference is zero" verdict is now derived and no longer
+       zero. -->
   <p>
-    <b>美股答案係「冇」。</b> v2 表面上年化 +27.2%、跑贏大市 13.9 個百分點，但同一批股票
-    乜都唔做就係 +27.4%、跑贏大市 14.1 個百分點。<b>差額 −0.2 個百分點，即係零。</b>
-    v2 做緊嘅嘢，同「攞住呢批股票」冇分別。
+    <b>美股答案係「冇一個穩定嘅超額」。</b> 同一批股票乜都唔做，年化就有
+    <b>{_pct(US()['ew_cagr'])}</b>，v2 <b>{_pct(US()['v2_cagr'])}</b> ——
+    <b>{_pp(US()['gap_pp'])}</b>，即係 v2 {_vs_hold(US()['gap_pp'])}。
+    {_verdict(US())}。
+    呢個對照本身就已經跑贏大市十幾個百分點，而嗰十幾個百分點全部來自
+    「呢批係今日嘅大型股」呢個選擇，唔係來自揀時段。
   </p>
   <p>
-    <b>日股答案係「冇」。</b> 2026-10-12 重測之後，全期只差 <b>{_pp(JP()['gap_pp'])}</b>
-    —— 喺 {JP()['cost_label']} 成本下兩條路行出嚟幾乎一樣，同「攞住同一批股票」冇分別。
-    而且呢個差額一拆就散：2016–20 落後純持有 {abs(JP()['early_gap']):.1f} 點/年，
-    2021–26 先領先 {JP()['late_gap']:.1f} 點/年。
-    差額主要來自日股單一大牛市 —— 同一條規則喺另一個 regime 係負數。
-    所以呢 {JP()['gap_pp']:.1f} 點唔當作 alpha，只當作「呢段時間呢個 regime 嘅結果」。
+    <!-- 2026-10-18: this paragraph asserted a fixed direction and a fixed
+         "the gap breaks apart when you split by regime" story. Both were true
+         of one particular regeneration and false of the next; the summary was
+         rebuilt twice in one afternoon. Every clause below is now computed
+         from the measured signs via _sub_line() / _verdict(). -->
+    <b>日股答案係「冇一個穩定嘅超額」。</b> 2026-10-12 重測、2026-10-18 改用
+    {JP()['cost_label']} 口徑之後，v2 全期 <b>{_vs_hold(JP()['gap_pp'])}</b>
+    —— 同一批股票乜都唔做，差距只有咁多。拆開市況睇：
+    <b>{_sub_line(JP())}</b>。
+    {_verdict(JP())}。
   </p>
 
-  <h3>4.8 全期差額拆開睇：佢來自單一個市況</h3>
+  <h3>4.8 全期差額拆開睇：會唔會淨係係單一個市況造成？</h3>
   <p style="margin: 0 0 var(--sp-3); font-size: var(--text-sm)">
+    <!-- 2026-10-18: the heading asserted a conclusion ("佢來自單一個市況")
+         and the opening asserted "一正一負". Both described one particular
+         regeneration of the summary and were wrong by the next one, so the
+         heading is now a question and the assertion is gone. The split is still
+         run: it is the test that decides the question. -->
     全期數字最容易被誤讀成「十年都有優勢」。但 2016–26 其實橫跨兩個完全相反嘅 regime，
-    而 v2 喺兩個時段嘅表現係<b>一正一負</b>。下表用同一套機械重跑（<code>scripts/portfolio_pit.py</code>），
-    只係將日曆切成兩段：
+    所以最緊要係睇清楚兩段各自點。下表用同一套機械重跑（<code>scripts/portfolio_pit.py</code>），
+    只係將日曆切成兩段，四格全部由 <code>data/hk_retest_summary.json</code> 讀出：
   </p>
   <table style="width:100%;border-collapse:collapse;margin:0 0 var(--sp-3);font-size: var(--text-sm)">
     <thead>
@@ -789,34 +1091,42 @@ def build_body() -> str:
       </tr>
     </thead>
     <tbody>
+      <!-- 2026-10-18: both US rows were typed in from the superseded run;
+           derived from US() now. Cell colour also follows the sign of the
+           measured gap — the JP late-period row used to be painted green
+           unconditionally. -->
       <tr><td style="padding:var(--sp-2);border-bottom:1px solid var(--border)">日股 2016–2020</td>
           <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">{_pct(JP()['early_v2'])}</td>
           <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">{_pct(JP()['early_ew'])}</td>
-          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border);color:var(--red)"><b>{_pp(JP()['early_gap'])}</b></td></tr>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border);color:{_gap_color(JP()['early_gap'])}"><b>{_pp(JP()['early_gap'])}</b></td></tr>
       <tr><td style="padding:var(--sp-2);border-bottom:1px solid var(--border)">日股 2021–2026</td>
           <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">{_pct(JP()['late_v2'])}</td>
           <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">{_pct(JP()['late_ew'])}</td>
-          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border);color:var(--green)"><b>{_pp(JP()['late_gap'])}</b></td></tr>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border);color:{_gap_color(JP()['late_gap'])}"><b>{_pp(JP()['late_gap'])}</b></td></tr>
       <tr><td style="padding:var(--sp-2);border-bottom:1px solid var(--border)">美股 2016–2020</td>
-          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">+26.5%</td>
-          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">+28.5%</td>
-          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border);color:var(--red)"><b>−2.0 pp/年</b></td></tr>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">{_pct(US()['early_v2'])}</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">{_pct(US()['early_ew'])}</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border);color:{_gap_color(US()['early_gap'])}"><b>{_pp(US()['early_gap'])}</b></td></tr>
       <tr><td style="padding:var(--sp-2);border-bottom:1px solid var(--border)">美股 2021–2026</td>
-          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">+27.6%</td>
-          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">+26.6%</td>
-          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border);color:var(--amber)"><b>+1.0 pp/年</b></td></tr>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">{_pct(US()['late_v2'])}</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border)">{_pct(US()['late_ew'])}</td>
+          <td style="text-align:right;padding:var(--sp-2);border-bottom:1px solid var(--border);color:{_gap_color(US()['late_gap'])}"><b>{_pp(US()['late_gap'])}</b></td></tr>
     </tbody>
   </table>
   <p style="margin: 0 0 var(--sp-3); font-size: var(--text-sm)">
-    四格入面<b>冇一格係穩定嘅正數</b>。日股全期得 {_pp(JP()['gap_pp'])}，實際係「頭五年蝕
-    {abs(JP()['early_gap']):.1f}、後五年賺 {JP()['late_gap']:.1f}」嘅平均 ——
-    全部差額幾乎由 2021 年之後日股單一大牛市貢獻。
-    美股更加直接：兩個時段都係零附近，冇任何 regime 過剩。
+    <!-- 2026-10-18: this paragraph hard-coded a reading ("four cells, none
+         positive", "both periods in the same direction"). Those described one
+         regeneration of the summary and were wrong by the next one — the file
+         was rebuilt twice during this edit. Every clause is now computed from
+         the measured signs so it cannot contradict the table above it. -->
+    日股全期 {_pp(JP()['gap_pp'])}，{_sub_line(JP())} —— {_verdict(JP())}。
+    美股：兩個時段分別 {_vs_hold(US()['early_gap'])} 同
+    {_vs_hold(US()['late_gap'])} —— {_verdict(US())}。
   </p>
   <p style="margin: 0 0 var(--sp-3); font-size: var(--text-sm)">
-    呢個唔代表規則冇用 ——
+    呢個唔代表規則完全冇用 ——
     <a href="/equity_curve_t_1.html">佢喺單一交易層面仍然有可重現嘅優勢</a>，
-    而 v2 嘅市況過濾本身亦確實減少咗熊市持倉（美股最大回撤 −20.6% vs 純持有 −21.4%）。
+    而 v2 嘅市況過濾本身亦確實減少咗熊市持倉（美股最大回撤 {_pct(US()['v2_dd'])} vs 純持有 {_pct(US()['ew_dd'])}）。
     但「減少虧損」同「產生超額回報」係兩件事，我哋只證明咗前一半。
     <b>實際意義：唔好預期呢條規則喺大市唔升嘅年份跑贏單純持有。</b>
   </p>
@@ -826,7 +1136,10 @@ def build_body() -> str:
       <b>一、股票名單係靜態嘅，結構上 100% 帶倖存者偏差。</b>
       呢 201 隻係用今日市值／排名抽出嚟，之後直接套落 2016–26 全部歷史。
       名單冇 as-of 日期，所以任何 10 年絕對水平都唔可信 ——
-      包括上面「等權持有 +27.4%」嗰個數。唯一可信嘅係 v2 同等權持有之間嘅<b>相對差</b>，
+      <!-- 2026-10-18: the equal-weight figure quoted in this limitation used to
+           be a literal; it now points at the derived row so the limitation and
+           the number it qualifies cannot drift apart. -->
+      包括上面「等權持有 {_pct(US()['ew_cagr'])}」嗰個數。唯一可信嘅係 v2 同等權持有之間嘅<b>相對差</b>，
       因為兩邊行同一批股票。
     </p>
     <p style="margin: var(--sp-2) 0; font-size: var(--text-sm)">
@@ -893,9 +1206,17 @@ def build_body() -> str:
 {faq_html}
 
   <div class="callout disclaimer mt-5" style="border-left: 4px solid var(--amber); background: var(--amber-dim); border-radius: 4px; padding: var(--sp-4);">
+    <!-- 2026-10-18: the old out-of-sample win-rate range contradicted this
+           page's own derived table above it and is replaced by the measured
+           per-trade rates. The honest caveat is kept, in the
+           direction the measurement supports: a per-trade win rate is not
+           portfolio excess return, and §4.7 measures the portfolio layer as
+           negative for both markets. -->
     <p style="margin: 0;">
       <b>免責聲明：</b>教育用途，非投資建議。Backtest 唔等於 live 表現。
-      v2 樣本外勝率約 50–54%，屬統計噪音範圍。短線及 swing 交易都可能損失全部本金。
+      v2 每單樣本外勝率係{_oos_win_sentence()}；但每單勝率唔等於組合超額回報 ——
+      組合層面 v2 喺美股{_vs_hold(US()['gap_pp'])}、日股{_vs_hold(JP()['gap_pp'])}
+      對「乜都唔做、淨係等權持有同一批股票」。短線及 swing 交易都可能損失全部本金。
     </p>
   </div>
 

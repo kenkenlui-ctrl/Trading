@@ -41,6 +41,7 @@ import pandas as pd
 
 REPO = Path("/Users/kenken/dev/dsa-hk")
 sys.path.insert(0, str(REPO / "scripts" / "v2engine"))
+import portfolio_test as PT  # noqa: E402  (one definition of capital/slots)
 from core import features, _simulate  # noqa: E402
 
 HK_BARS = REPO / "data" / "bt10y2_hk"
@@ -286,8 +287,14 @@ def walk(cands: list[dict], cost_rt: float) -> tuple[pd.DataFrame, dict]:
     d = pd.DataFrame(cands).sort_values(["entry_date", "ret5d"]).reset_index(drop=True)
     if "ret5d" not in d.columns:
         d["ret5d"] = 0.0
-    MAX_SLOTS, RISK, MAX_NOTIONAL = 10, 0.01, 0.10
-    equity, pos, curve = 100_000.0, [], []
+    # 2026-10-18: these were literals here AND a second copy in
+    # portfolio_test.py. Two independent walk implementations meant the
+    # published portfolio numbers and the published equity curves could come
+    # from different books — which is how the site ended up quoting +26.0%/yr
+    # (this file) next to +27.18%/yr and "+814.07% total" (the
+    # portfolio_test-derived curves) over the same window. One definition now.
+    MAX_SLOTS, RISK, MAX_NOTIONAL = PT.MAX_SLOTS, PT.RISK, PT.MAX_NOTIONAL
+    equity, pos, curve = PT.INITIAL, [], []
     for dt in sorted(set(d.entry_date) | set(d.exit_date)):
         keep = []
         for p in pos:
@@ -363,7 +370,7 @@ def ew_bh(px: dict[str, pd.DataFrame], cal: pd.DatetimeIndex) -> pd.Series:
     # into NaN. The old transform("mean") version never hit this because it
     # manufactured a value for that first session.
     mm = mr.mean(axis=1).dropna()
-    return (100_000 * (1 + mm).cumprod()).ffill()
+    return (PT.INITIAL * (1 + mm).cumprod()).ffill()
 
 
 # -------- per-trade summary --------
