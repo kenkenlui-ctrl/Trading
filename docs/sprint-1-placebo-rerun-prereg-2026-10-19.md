@@ -114,4 +114,51 @@ threshold, required cell or interpretation depends on it — and more trials
 tighten the null estimate, so this is the conservative direction. Same
 reasoning as the amendment to the close-confirmation pre-registration.
 
-Result appended below once the run completed.
+**Verdict: nothing cleared. 0 of 11.**
+
+| variation | z_min @30 | z_min @300 | null sd 16-20 / 21-26 | passes |
+|---|---|---|---|---|
+| base | −4.71 | −4.65 | 4.18 / 3.58 | no |
+| s1_10, closehold | −2.31 | −2.05 | 4.38 / 4.28 | no |
+| s1_30, closehold | −3.78 | −4.39 | 3.83 / 3.40 | no |
+| s1_20, **noclosehold** | −2.62 | −2.84 | 3.64 / 2.92 | no |
+| s1_20, stop_2x | −4.86 | −4.50 | 4.68 / 4.19 | no |
+| s1_20, stop_4x | −3.63 | −3.71 | 3.52 / 3.09 | no |
+| s1_20, **hold_5** | −5.37 | −5.05 | 3.88 / 3.36 | no |
+| s1_20, **hold_15** | −3.04 | −3.40 | 4.14 / 3.72 | no |
+| s1_20, **hold_20** | −1.87 | −2.28 | 4.20 / 3.67 | no |
+| s1_20, cross50_200 | −5.41 | −4.79 | 4.01 / 3.46 | no |
+| s1_20, **regime=none** | +0.14 | +0.45 | 3.52 / 3.60 | no |
+
+`EW` benchmark: **27.22%/yr → 24.63%/yr** (the old one overstated the
+buy-and-hold comparison by 2.59pp/yr). Output:
+`reports/signal_search_s1_us_placebo.json`.
+
+### What the extra 270 trials did, and did not do
+
+They did **not** change the verdict, and the pre-registration had already
+predicted why. The closest cell, `regime=none`, moved from z = +0.14 to
+z = +0.45 — i.e. **away** from 1.96, not towards it. Its null sd is ~3.6pp, so
+reaching z ≥ 1.96 at its measured net of +1.62pp would need sd ≤ 0.83pp, a 4×
+reduction that more sampling cannot produce. More trials stabilize the sd
+*estimate*; they do not shrink the true sd.
+
+So the value of 300 over 30 is precision on the sd, not a different answer. Had
+any cell been genuinely near the bar, the tighter estimate is exactly what you
+would want before acting on it.
+
+### Two findings worth keeping from this grid
+
+**The hold sweep answers a question the site had left open.** HOLD 5 / 10 / 15 /
+20 give z_min −5.05 / −4.65 / −3.40 / −2.28. The trend is the tell: longer
+holds look progressively less bad, which is precisely the beta exposure of a
+rising universe that the placebo is built to absorb. Once absorbed, none of the
+four clears its own null. **The hold length is not where the edge is**, and this
+grid does not support changing HOLD away from 10.
+
+**`noclosehold` is not rescued by this grid either** (z −2.84). That is a
+separate result from the close-confirmation A/B in
+`docs/close-confirmation-prereg-2026-10-18.md`, which found close-hold clearly
+better on a *per-trade* basis across four cells. The two are consistent: the
+close-hold requirement improves the trades you take, without producing a
+portfolio that beats equal-weight holding.

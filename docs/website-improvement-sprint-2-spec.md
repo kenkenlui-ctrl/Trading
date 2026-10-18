@@ -53,9 +53,9 @@ Why this sprint exists — each item is a measured or near-missed failure, not a
 
 ### Phase B — Validation depth
 
-**B1. Four-gate cross-source validation.**
-1. Implement a SECOND, independent implementation of the v2 signal computation (different code path; may share the same vendor input files). Written without copying the first implementation's internals — the spec (S1 = 20-day low, close confirmation, 3×ATR stop, 10-day exit, T-1 only) is the contract.
-2. Nightly (or on each signal build): both implementations run; publish the signal set only if they agree exactly. ANY disagreement → publish nothing for that session, log both outputs, raise an alert. A disagreement is a finding, not a bug to smooth over.
+**B1. Four-gate independent-implementation validation.**
+1. Implement a SECOND, independent implementation of the v2 signal computation (different code path) using the SAME vendor input files as the first implementation. This tests implementation independence, NOT data-source independence — do not bring a second vendor; write-path lineage checks are out of scope for this sprint. Written without copying the first implementation's internals — the spec (S1 = 20-day low, close confirmation, 3×ATR stop, 10-day exit, T-1 only) is the contract.
+2. Nightly (or on each signal build): both implementations run; publish the signal set only if they agree exactly. ANY disagreement → publish nothing for that session, log both outputs, raise an alert. A disagreement is a finding, not a bug to smooth over. When debugging a disagreement, check denominator definitions first (candidate-set vs denominator boundaries, zero-value/expiry handling) before assuming logic bugs — inconsistent denominators are the most common source of false disagreements.
 3. Version-control all thresholds/parameters used by both implementations (no hardcoded magic numbers diverging silently).
 4. Keep auditable rejection receipts: every rejected/pulled signal set gets a receipt (timestamp, reason, both outputs' hashes).
 
