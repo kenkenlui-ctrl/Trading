@@ -2589,6 +2589,60 @@ def t_close_confirmation_placebo_holds_up() -> None:
            "reading a stored verdict rather than the cells")
 
 
+def t_no_unrendered_template_placeholders() -> None:
+    """No published page may contain an f-string that was never interpolated.
+
+    2026-10-18, found on the live site immediately after deploying the
+    close-confirmation section. The block was built by implicit string
+    concatenation where three of the fragments carried `{}` placeholders but
+    were not f-strings, so the page rendered this, in the middle of the
+    pre-registered verdict:
+
+        預先登記結果：{_html.escape(lead)} （{_html.escape(str(npass))} 格通過
+
+    It passed 175/175. Every gate checked for the section's presence and its
+    wording, and neither asked whether the numbers inside it were numbers. A
+    placeholder is the most convincing possible output: it looks like a claim,
+    it is grammatically correct, and it is completely unbacked.
+
+    CSS and JS legitimately contain braces, so script/style blocks are removed
+    before the scan, and the scan runs on text with tags stripped.
+    """
+    import re as _re
+
+    def placeholders(html_text: str) -> list[str]:
+        stripped = _re.sub(r"<(script|style)\b.*?</\1>", " ", html_text,
+                            flags=re.S | re.I)
+        text = _re.sub(r"<[^>]+>", " ", stripped)
+        # An f-string placeholder: {name}, {name[key]}, {"lit"}, {f(x)}
+        return _re.findall(r"\{[A-Za-z_][A-Za-z0-9_.\[\]\"'()!]*"
+                           r"(?:[^{}<>]{0,60})\}", text)
+
+    bad = []
+    for f in sorted(PUBLIC.rglob("*.html")):
+        hits = placeholders(f.read_text(encoding="utf-8", errors="ignore"))
+        if hits:
+            bad.append(f"{f.relative_to(PUBLIC)}: {hits[:3]}")
+    record("no page renders an unexpanded f-string placeholder", not bad,
+           f"{len(bad)} page(s): {bad[:3]}" if bad else "all pages scanned")
+
+    # MUST-FAIL: the version actually shipped on 2026-10-18, which carried the
+    # unexpanded verdict line past 175/175 of the other gates.
+    broken = ('<div class="info-card"><p><b>預先登記結果：{_html.escape(lead)}</b>'
+              '（{_html.escape(str(npass))} 格通過，門檻 z ≥ {pl["z_crit"]}）'
+              '</p></div>')
+    record("MUST-FAIL the shipped broken verdict line is caught",
+           bool(placeholders(broken)),
+           "the scan did not flag the placeholder line that was live on 2026-10-18")
+
+    clean = ('<p style="color:var(--blue)">預先登記結果：通過（4/4 格通過，'
+             '門檻 z ≥ 1.96）</p><style>.a{color:red}</style>'
+             '<script>var o={a:1};function f(){}</script>')
+    record("MUST-FAIL-free control: interpolated text and real CSS/JS pass",
+           not placeholders(clean),
+           "the scan flagged ordinary braces in CSS or JS")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--json", action="store_true")
@@ -2615,7 +2669,8 @@ def main() -> int:
                t_equity_curve_stats_are_internally_consistent,
                t_no_withdrawn_figures_are_published,
                t_per_trade_stats_trace_to_source,
-               t_close_confirmation_placebo_holds_up):
+               t_close_confirmation_placebo_holds_up,
+               t_no_unrendered_template_placeholders):
         print(f"\n{fn.__doc__.splitlines()[0] if fn.__doc__ else fn.__name__}")
         try:
             fn()
