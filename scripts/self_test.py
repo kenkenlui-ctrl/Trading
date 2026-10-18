@@ -2553,9 +2553,24 @@ def t_close_confirmation_placebo_holds_up() -> None:
                "section-closehold" in bt.read_text(encoding="utf-8"),
                "the close-confirmation section is absent")
         record("/backtest states the A/B does not test the hold length",
-               "唔係</b>「10 日好過 5/15/20 日」" in txt or "入場資格" in txt,
+               "唔係</b>持有日數" in txt or "入場資格" in txt,
                "the section does not scope itself to the fill condition, so a "
                "reader could take it as a mandate for HOLD = 10")
+        # 2026-10-19, Kenneth's correction. The A/B holds HOLD = 10 in BOTH arms,
+        # so it measures the FILL CONDITION and says nothing about the horizon.
+        # The page previously said the A/B "is exactly this page's holding
+        # length, re-verified in another engine", which reads as if it had
+        # answered the horizon question. It had not, and had not been asked to.
+        record("/backtest does not claim the A/B answers the hold-length question",
+               "所以呢個正正就係呢一頁嘅持有長度" not in txt
+               and "只係喺另一個引擎度重新驗證" not in txt
+               and "對持有日數冇任何話說" in txt,
+               "the page still presents the close-hold A/B as a verdict on the "
+               "10-day horizon; it is a verdict on the entry fill only")
+        record("/backtest points the hold question at the Sprint 1 hold sweep",
+               "hold sweep" in txt and "null 之下" in txt,
+               "the page does not say where the hold-length question is actually "
+               "answered")
 
     # ---- MUST-FAIL probes: each must be rejected by the logic above --------
     base = {m: {w: {"has_power": True, "z": 9.0, "gap_vs_null_pp": 1.0,

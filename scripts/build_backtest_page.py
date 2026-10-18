@@ -221,7 +221,7 @@ def _close_hold_block() -> str:
         # A run with --placebo 0 writes null. Printing the raw A/B here would
         # look identical to a placebo-backed claim, which is the point.
         return ('<section class="section-closehold"><div class="container">'
-                '<h2>同一個問題仲生猛 · Close-confirmation A/B</h2>'
+                '<h2>入場資格值唔值錢 · Close-confirmation A/B</h2>'
                 '<div class="info-card" style="border-left:3px solid var(--amber);'
                 'margin:16px 0"><p>呢一節嘅來源 <code>data/ab_close_hold.json</code> '
                 '<b>冇 placebo 區</b>（嗰次重跑冇加 <code>--placebo</code>）。'
@@ -260,15 +260,16 @@ def _close_hold_block() -> str:
     lead = ("通過" if verdict == "PASS" else "唔通過")
     return (
         '<section class="section-closehold"><div class="container">'
-        '<h2>同一個問題仲生猛 · Close-confirmation A/B</h2>'
+        '<h2>入場資格值唔值錢 · Close-confirmation A/B</h2>'
         '<p style="font-size:0.95rem;opacity:0.85;max-width:74ch">'
         '上面撤回嘅 −4.05% 死嘅係<b>一條 pipeline</b>（訊號庫個表係空嘅，'
         '重跑唔到），唔係「10 日持有」呢個問題本身。一個壞咗嘅資料庫唔能夠'
         '否定一個研究問題 —— 咁講同錯用一個數字一樣錯。同一個問題而家喺另一條'
         '<b>仲生猛、而且重跑得出</b>嘅實驗度：<code>scripts/ab_close_hold.py</code>。'
         '兩臂都用 <b>HOLD = 10</b>，只有入場資格唔同（開市高過 S1 vs 開市同收市'
-        '都企喺 S1 之上），所以呢個正正就係呢一頁嘅持有長度，只係喺另一個引擎度'
-        '重新驗證。</p>'
+        '都企喺 S1 之上）。<b>要講清楚：呢個量度嘅係入場資格，唔係持有長度。</b>'
+        '兩臂都固定 10 日，所以佢對「10 日係咪適合」冇任何話說 —— 嗰條問題要'
+        '另外嘅證據。重新驗證。</p>'
         '<div class="info-card" style="border-left:3px solid var(--green);margin:16px 0">'
         f'<p style="margin:0"><b>預先登記結果：{_html.escape(lead)}</b>'
         f'（{_html.escape(str(npass))} 格通過，門檻 z ≥ {_html.escape(str(pl["z_crit"]))}，'
@@ -541,9 +542,15 @@ def render() -> str:
         "站上曾經引用過嘅 −4.05% 查唔到任何來源，已經停用。"
         "但要分清楚：死嘅係<b>呢一條 pipeline</b>，唔係「10 日持有」呢個問題 —— "
         "壞咗嘅資料庫唔能夠否定一個研究問題。"
+        "<b>但同一個問題唔係由下面嗰個 A/B 回答</b>：該 A/B 兩臂都固定 HOLD = 10，"
+        "量度嘅係入場資格（收市企穩 S1），對持有日數冇任何話說。"
+        "回答「10 日係咪適合」嘅係 Signal Search Sprint 1 嘅 hold sweep，"
+        "結果係 5 / 10 / 15 / 20 日<b>全部企喺各自嘅安慰劑 null 之下</b>"
+        "（z −5.05 / −4.65 / −3.40 / −2.28，門檻 1.96）—— 持有日數唔係 edge 嘅來源。"
+        "以下一節答嘅係另一條問題：入場資格本身值唔值錢。"
         "同一個問題而家喺 close-confirmation A/B 度重新驗證（兩臂都係 HOLD = 10，"
         f"美股同日股、訓練同樣本外共四格，全部企喺預先登記嘅安慰劑對照之上，{_zspan}），"
-        "見下面「同一個問題仲生猛」一節。"
+        "見下面「入場資格值唔值錢」一節。"
         "另外 10 年期 v2 規則嘅定資模擬見 <a href='/equity_curve_t10'>權益曲線頁</a>，"
         "但嗰個係另一個實驗（2017–26 美股、同一套 v2 規則），唔可以攞嚟代表呢一頁。"
     )

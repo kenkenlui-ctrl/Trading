@@ -60,12 +60,29 @@ was measured against a benchmark that manufactured return.
 
 ## What would falsify the prediction
 
-If the verdict, `z` or `passes` **changes**, then the benchmark's error was not
-a constant offset across the placebo and the real run — it was time-varying in a
-way that does not cancel. That would be more serious than the arithmetic error
-itself, and would mean the placebo machinery is comparing two different
-benchmarks. In that case the correct response is to fix the harness, not to
-interpret the new number.
+> **Withdrawn as vacuous, 2026-10-19.** Kenneth's objection, which is correct:
+> the original clause read "if the verdict, `z` or `passes` changes, the
+> benchmark's error was not a constant offset". But the derivation immediately
+> above had already shown those three quantities are **invariant by
+> construction** under a constant-offset benchmark. So the falsification test
+> was bound to a measurement that could not move — it was not falsifiable, it
+> was decorative. A gate that cannot fail is not a gate.
+>
+> **The quantities that DO carry the information** are `real_gap_pp` and
+> `null_mean_pp`, which move by the benchmark delta with the same sign and
+> magnitude. Those were the ones actually checked, and the check caught a real
+> error in this document's own sign prediction.
+>
+> **Rule for the next pre-registration: bind the falsification clause to
+> quantities you predicted will MOVE.** If a quantity is invariant by
+> construction, it cannot be evidence — so it cannot be the thing that would
+> overturn the conclusion.
+
+A falsifiable version would have been: *"the correction must move
+`real_gap_pp` by the same amount and the same sign as `null_mean_pp`, in both
+sub-periods. If either fails to move, or they move by different amounts, the
+benchmark is being applied inconsistently between the real run and the placebo
+trials."*
 
 ## Reproduction
 
@@ -162,3 +179,48 @@ separate result from the close-confirmation A/B in
 better on a *per-trade* basis across four cells. The two are consistent: the
 close-hold requirement improves the trades you take, without producing a
 portfolio that beats equal-weight holding.
+
+## Appendix — is "random beats real" an artefact?
+
+Kenneth read the headline correctly and asked the right next question: the base
+cell's `null_mean` is **+8.21pp (2016-20) / +12.80pp (2021-26)** while the real
+rule's gap is +2.42 / −3.86. At the same sample size, **random entry timing
+returned more than v2's entry timing.** That is a claim about the world, so it
+needs controls before anyone acts on it — and it must not be dismissed as a bug
+either.
+
+**Two candidate mechanisms, both measured rather than argued.**
+
+*Mechanism 1 — the placebo deploys more capital.* Refuted. `placebo()` draws
+its pool from any post-warmup session without applying the regime gate, which
+looks like extra beta. Measured: placebo exposure **74.5%** against the real
+rule's **76.9%** — it deploys *less*. Mechanism dead.
+
+*Mechanism 2 — the placebo executes more trades.* Real, and worth about 0.9pp.
+`n_draw = len(idx)` fixes the number of signals *before* the fill filter, so
+the placebo executes **7,280** trades against the real rule's **5,261** (+38%).
+
+| variant | trades | exposure | null_mean 16-20 / 21-26 | net |
+|---|---|---|---|---|
+| real rule | 5,261 | 76.9% | — | +2.42 / −3.86 |
+| Sprint 1 as coded | 7,280 | 74.5% | +7.88 / +11.95 | −5.46 / −15.80 |
+| trade-matched (×0.72) | 5,227 | 71.0% | +6.99 / +10.42 | −4.58 / −14.28 |
+| fewer than real (×0.60) | 4,355 | 68.6% | +3.64 / +8.75 | −1.23 / −12.61 |
+
+Matching executed trades recovers ~0.9pp. **The result survives it.** Even a
+placebo doing *fewer* trades than the real rule and holding 8pp less capital
+returns +3.64 / +8.75 against the real rule's +2.42 / −3.86.
+
+**Conclusion: the anti-timing signal is real and not an exposure or trade-count
+artefact.** It is also not specific to this repo — Zhou, Mu, Chen & Sornette,
+*Investment Strategies Used as Spectroscopy of Financial Markets Reveal New
+Stylized Facts*, PLOS ONE 6(9) 2011 (PMC3173398), ran the same class of design
+on Shenzhen Stock Exchange 2003 order flow — "random strategies with respect to
+timing that share otherwise all other characteristics" — and found "random
+strategies are found to perform much better than real ones, both for winners
+and losers." Different domain, same direction.
+
+This does **not** mean v2 has nothing. It means the *entry-timing* component
+does not carry the edge, and that the question of which other component might
+is now the live one — see
+`docs/sprint-2-crossed-randomization-prereg-2026-10-19.md`.
