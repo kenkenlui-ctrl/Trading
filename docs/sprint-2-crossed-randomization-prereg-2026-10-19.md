@@ -178,8 +178,8 @@ measurement, not a ship decision.
 
 | window | real gap | null mean | null sd | net | z | pct |
 |---|---|---|---|---|---|---|
-| 2016-2020 | +2.42 | +2.84 | 2.80 | **−0.42** | −0.15 | 38% |
-| 2021-2026 | −3.86 | +6.10 | 2.63 | **−9.95** | −3.79 | 1% |
+| 2016-2020 | +2.42 | +2.84 | 2.80 | **−0.42** | −0.15 | 46.3% |
+| 2021-2026 | −3.86 | +6.10 | 2.63 | **−9.95** | −3.79 | 0.0% |
 
 Deployment matched: null executed **5,261 trades (+0.0%)** at **77.2% exposure
 (+0.3pp)** against the real rule's 5,261 at 76.9%. Condition 1 satisfied, so
@@ -191,8 +191,15 @@ capital deployed.
 
 **The pre-registered direction was right.** The prediction was "the null lands
 near or slightly above the real rule". 2016-20 is a dead heat (real gap +2.42
-against a null of +2.84, 38th percentile). 2021-26 is not: the real rule is
-below its own null at the 1st percentile.
+against a null of +2.84, **46.3rd percentile — just above the median**).
+2021-26 is not: the real rule sits at the **0.0th percentile**, below every one
+of the 300 null trials.
+
+> The percentiles above were originally hand-typed as 38% and 1%. Neither figure
+> was in the artifact; both were wrong. They are now read from
+> `reports/signal_search_s2_us_axis_a.json` and a gate checks them, because a
+> hand-typed copy of a measured number is the failure this project keeps
+> meeting — two copies of these numbers already drifted apart once on 2026-10-18.
 
 ### Two things that had to be fixed before this number meant anything
 
@@ -235,3 +242,73 @@ per-trade edge (four cells, z 8.9–13.2, `docs/close-confirmation-prereg-2026-1
 is real at the trade level without producing a portfolio that beats equal-weight
 holding. Those findings are already consistent; this sprint is testing whether
 anything else is left.
+
+---
+
+## Outcome — axis B, 2026-10-19
+
+`scripts/signal_search_s2.py --axis B --market us --trials 300 --seed 20261019`
+
+The null applies the ma200 + slope gate on a coin flip per candidate: heads
+enforces it, tails ignores it. So `P(keep) = 0.5·P(gate) + 0.5`, which places it
+strictly between the two Sprint 1 cells it is read against. The regime pool has
+12,885 candidates over 1,943 dates; **47% pass the gate**. Kept candidates are
+capped at the real run's per-date count so the deployment match holds.
+
+| window | real gap | null mean | null sd | net | z | pct |
+|---|---|---|---|---|---|---|
+| 2016-2020 | +2.42 | +3.42 | 2.70 | **−1.00** | −0.37 | 27.7% |
+| 2021-2026 | −3.86 | +3.56 | 2.49 | **−7.42** | −2.98 | 0.0% |
+
+Deployment matched: **5,261 trades (+0.0%)**, exposure **78.2% (+1.3pp)**.
+
+**VERDICT: FAIL.** The gate does not beat applying it on a coin flip.
+
+### Which of the three readings this is — pre-committed case 1
+
+Placing it against the Sprint 1 anchors on `net_pp`:
+
+| | 2016-2020 | 2021-2026 |
+|---|---|---|
+| `base` — gate always on | −5.79 | −16.66 |
+| **axis B — gate on a coin flip** | **−1.00** | **−7.42** |
+| `regime=none` — gate always off | +6.00 | +1.62 |
+
+Coin-flip lands **between** base and `regime=none` in **both** sub-periods.
+That is **reading 1: the gate is useless but not harmful.** Not reading 2 — it
+does not beat `regime=none`, so there is no anti-gate finding. Not reading 3 —
+it does not fall below base, so the null is not mis-specified.
+
+The predicted direction was case 1. Confirmed.
+
+### What this says about where the 2021-26 damage comes from
+
+Kenneth's prior was that the anti-selection in 2021-26 is the MA200 gate's
+doing. The numbers support it as the largest single drag: base net −16.66 versus
+`regime=none` net +1.62, so switching the gate off recovers roughly 18pp/yr in
+that sub-period and nothing at all in 2016-20.
+
+But it does not rescue anything. `regime=none` still fails its own bar
+(z +0.45, from Sprint 1), and the coin-flip null sits above the real rule in
+both windows. **The gate is a large drag that costs the strategy most of what
+it has in the later period, and removing it does not turn the strategy into
+something that beats its own null.**
+
+### The three axes together
+
+| axis | what was randomized | worst z | verdict |
+|---|---|---|---|
+| C — entry timing | which session | −4.65 | FAIL |
+| A — stock selection | which name | −3.79 | FAIL |
+| B — regime gate | whether to apply it | −2.98 | FAIL |
+
+No component of v2 beats its own null, in either sub-period, under any of the
+three counterfactuals. The close-hold per-trade edge remains real and
+separately measured (four cells, z 8.9–13.2). These are not in conflict: buying
+better trades is not the same as a portfolio that beats simply holding the same
+names, which is what the published HK/US/JP gaps already say (US +0.96pp/yr,
+HK −4.36pp/yr, JP −0.34pp/yr at 0.25% cost).
+
+Nothing on the site changes as a result — the published figures already carry
+"no portfolio excess return". What is new is the sharper claim: the edge is not
+hiding in a component that was simply untested.

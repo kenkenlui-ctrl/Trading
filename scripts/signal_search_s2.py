@@ -203,6 +203,104 @@ def score(real_gap: dict, null: dict, z_crit: float = Z_CRIT) -> dict:
             "z_crit": z_crit}
 
 
+def build_regime_pool(px: dict, feats: dict, cfg: "s1.Cfg") -> dict:
+    """Per-date candidates with the regime GATE REMOVED, each tagged with it.
+
+    Axis B randomizes one decision: whether the ma200 + slope + market-up gate
+    is applied at all. To do that the candidate set has to exist without the
+    gate, so it is built here with the gate removed and the gate's verdict
+    carried alongside. Everything else — data validity, ATR cap, box cap, entry
+    mechanics, stop, exit, sizing, holding period — is untouched.
+
+    This is the same shape as axis A's universe pool, and for the same reason:
+    drawing from the rule's own output cannot test the rule.
+    """
+    pool: dict = defaultdict(list)
+    for sym, b in px.items():
+        f = feats[sym]
+        mu = s1.market_up_series  # not used; the gate verdict is computed below
+        O, H, L, C = (b[k].to_numpy(float) for k in ("open", "high", "low", "close"))
+        s1v = s1.s1_series(b, cfg.s1_lb).to_numpy()
+        atr = f.atr_pct.to_numpy()
+        ma200 = f.ma200.to_numpy()
+        slope = f.ma200_slope.to_numpy()
+        pc = f.prev_close.to_numpy()
+        boxw = f.R1.to_numpy() / s1v - 1
+        valid = (~np.isnan(s1v) & ~np.isnan(atr) & ~np.isnan(ma200)
+                 & ~np.isnan(slope) & ~np.isnan(pc))
+        valid &= (atr < s1.ATR_MAX) & (boxw < s1.BOX_MAX)
+        for i in np.where(valid)[0]:
+            if not (O[i] > s1v[i] and L[i] <= s1v[i]):
+                continue
+            if cfg.close_conf and C[i] < s1v[i]:
+                continue
+            stop = s1v[i] * (1 - cfg.stop_atr * atr[i])
+            if not (0 < stop < s1v[i]):
+                continue
+            r = _simulate(1, i, s1v[i], stop, 1e12, O, H, L, C, cfg.hold, True)
+            if r is None:
+                continue
+            j, xp, why = r
+            gate_ok = bool(pc[i] > ma200[i] and slope[i] > 0)
+            pool[b.index[i]].append(
+                {"sym": sym, "entry_date": b.index[i], "exit_date": b.index[j],
+                 "entry": s1v[i], "stop": stop, "exit": xp, "why": why,
+                 "ret5d": f.ret_5d.to_numpy()[i], "gate_ok": gate_ok})
+    return dict(pool)
+
+
+def placebo_axis_b(real: list, pool: dict, ordinal: dict, cost: float,
+                   ew_cagr: dict, trials: int, seed: int,
+                   match_deployment: bool = True) -> dict:
+    """Apply the regime gate on a coin flip per candidate instead of always.
+
+    For each candidate at each real signal date, draw Bernoulli(0.5):
+      - heads: the gate is ENFORCED — keep the candidate only if it passes
+      - tails: the gate is IGNORED  — keep the candidate either way
+
+    So P(keep) = 0.5*P(gate) + 0.5, which places this null strictly between the
+    two Sprint 1 cells it is being read against: `base` (gate always on) and
+    `regime=none` (gate always off).
+
+    `match_deployment` caps the kept candidates at the real run's per-date
+    count. Without it the null sits roughly halfway between base and
+    regime=none in trade count, which fails the VOID rule on deployment rather
+    than on merit — the reading rules in the pre-registration are written
+    against deployment-matched values, so the values have to be matched.
+    """
+    rng = np.random.default_rng(seed)
+    by_date: dict = {}
+    for rc in real:
+        by_date.setdefault(rc["entry_date"], []).append(rc)
+
+    gaps = {w: [] for w in s1.WINDOWS}
+    trades, exposure = [], []
+    for _ in range(trials):
+        cands = []
+        for dt, rcs in by_date.items():
+            alts = pool.get(dt)
+            if not alts:
+                cands.extend(rcs)
+                continue
+            kept = []
+            for c in alts:
+                if rng.random() < 0.5:
+                    if c["gate_ok"]:
+                        kept.append(c)
+                else:
+                    kept.append(c)
+            if match_deployment and len(kept) > len(rcs):
+                idx = rng.permutation(len(kept))[:len(rcs)]
+                kept = [kept[int(j)] for j in idx]
+            cands.extend({**c, "why": "p"} for c in kept)
+        curve, meta = s1.walk(cands, cost, ordinal)
+        trades.append(meta["trades"])
+        exposure.append(meta["avg_exposure"] * 100)
+        for w in s1.WINDOWS:
+            gaps[w].append(s1.window_stats(curve, w)["cagr%"] - ew_cagr[w])
+    return {"gaps": gaps, "trades": trades, "exposure": exposure}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--market", default="us", choices=["us", "hk"])
@@ -212,8 +310,15 @@ def main() -> int:
     ap.add_argument("--config", default="baseline",
                     choices=["baseline"], help="axis A is defined on the shipped config")
     ap.add_argument("--oversample", type=float, default=1.0,
-                    help="draw N x real candidates per date; >1 breaks the "
-                         "deployment match and the cell is VOID by the rule")
+                    help="axis A only: draw N x real candidates per date; >1 "
+                         "breaks the deployment match and the cell is VOID")
+    ap.add_argument("--no-match", action="store_true",
+                    help="axis B: do not cap the null at the real run's per-date "
+                         "trade count; the cell then fails the deployment match "
+                         "and is VOID, which is the control for the cap")
+    ap.add_argument("--axis", default="A", choices=["A", "B"],
+                    help="A randomizes stock selection, B randomizes the "
+                         "regime gate. Both are pre-registered in the spec.")
     a = ap.parse_args()
 
     bars_dir, ipath, _, mkt_key = s1.BARS[a.market]
@@ -231,8 +336,9 @@ def main() -> int:
 
     print(f"{a.market}: {len(px)} tickers, cost={scen} "
           f"({cost_rt(mkt_key, scen, True)*100:.3f}% rt w/ stop slide)")
-    print(f"axis A — randomize STOCK, keep timing. {a.trials} trials, seed {a.seed}")
 
+    print(f"axis {a.axis} — " + ("randomize STOCK, keep timing" if a.axis == "A"
+                                 else "randomize the REGIME GATE, keep everything else"))
     real, screened_pool = build_pool(px, feats, cfg, mkt_up)
     curve, meta = s1.walk(real, cost, ordinal)
     ew_cagr = {w: s1.window_stats_series(ew, w)["cagr%"] for w in s1.WINDOWS}
@@ -249,12 +355,20 @@ def main() -> int:
     # walk() already sees unchanged. That null has sd = 0.000 and reproduces the
     # real result to the decimal: a placebo that tests nothing while reading as
     # a clean pass. Identical failure mode to Sprint 1's rng.permutation.
-    upool = build_universe_pool(px, feats, cfg)
-    print(f"universe pool: {len(upool)} dates, median "
-          f"{np.median([len(v) for v in upool.values()]):.0f}/date")
-
-    null = placebo_axis_a(real, upool, ordinal, cost, ew_cagr, a.trials, a.seed,
-                          oversample=a.oversample)
+    if a.axis == "A":
+        upool = build_universe_pool(px, feats, cfg)
+        print(f"universe pool: {len(upool)} dates, median "
+              f"{np.median([len(v) for v in upool.values()]):.0f}/date")
+        null = placebo_axis_a(real, upool, ordinal, cost, ew_cagr, a.trials,
+                              a.seed, oversample=a.oversample)
+    else:
+        upool = build_regime_pool(px, feats, cfg)
+        g_ok = sum(1 for v in upool.values() for c in v if c["gate_ok"])
+        g_all = sum(len(v) for v in upool.values())
+        print(f"regime pool: {len(upool)} dates, {g_all} candidates, "
+              f"{g_ok} pass the gate ({g_ok/max(1,g_all)*100:.0f}%)")
+        null = placebo_axis_b(real, upool, ordinal, cost, ew_cagr, a.trials,
+                              a.seed, match_deployment=not a.no_match)
     ok, why = deployment_ok(meta["trades"], meta["avg_exposure"] * 100,
                             null["trades"], null["exposure"])
     gate = score(real_gap, null)
@@ -273,11 +387,19 @@ def main() -> int:
     print(f"\ndeployment: {why}")
     print(f"VERDICT: {verdict}   (z_crit {Z_CRIT}, both sub-periods required)")
     if ok and not gate["clears_bar"]:
-        print("Reading: stock selection does not beat a random eligible stock "
-              "from the same session.")
+        msg = ("stock selection does not beat a random name at the same session"
+               if a.axis == "A" else
+               "the regime gate does not beat applying it on a coin flip")
+        print(f"Reading: {msg}.")
+        if a.axis == "B":
+            print("  Now place this between the Sprint 1 anchors using net_pp "
+                  "(base -5.79/-16.66, regime=none +6.00/+1.62) per the three "
+                  "pre-committed readings in the spec. The gate check itself is "
+                  "FAIL; the placement is what names the reading.")
 
     out = {"spec": "docs/sprint-2-crossed-randomization-prereg-2026-10-19.md",
-           "axis": "A — stock selection", "market": a.market,
+           "axis": f"{a.axis} — " + ("stock selection" if a.axis == "A" else "regime gate"),
+           "market": a.market,
            "config": asdict(cfg), "cost_scenario": scen,
            "trials": a.trials, "seed": a.seed,
            "generated_at": __import__("datetime").datetime.now().isoformat(timespec="seconds"),
@@ -297,7 +419,7 @@ def main() -> int:
            "universe_pool_dates": len(upool)}
     rep = REPO / "reports"
     rep.mkdir(exist_ok=True)
-    path = rep / f"signal_search_s2_{a.market}_axis_a.json"
+    path = rep / f"signal_search_s2_{a.market}_axis_{a.axis.lower()}.json"
     path.write_text(json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"wrote {path}")
     return 0

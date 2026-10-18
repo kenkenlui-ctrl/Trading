@@ -2905,6 +2905,40 @@ def t_closed_decisions_are_recorded_and_enforced() -> None:
         sd_ok = all(v["null_sd_pp"] > 0 for v in da["gate"]["windows"].values())
         record("the axis A null has power (sd > 0 in both windows)", sd_ok,
                "an axis A null with sd = 0 passes its gate while testing nothing")
+        # 2026-10-19, Kenneth caught this: the spec's outcome table said the
+        # percentiles were 38% and 1%. The JSON says 46.3 and 0.0. Neither typed
+        # figure came from the artifact — they were invented, and 0.0 vs 1%
+        # changes what the result means: the real gap is below EVERY null
+        # trial, not just the lowest percentile band.
+        for w, v in da["gate"]["windows"].items():
+            row = [ln for ln in s2.splitlines()
+                   if ln.strip().startswith("| " + w)]
+            record(f"axis A spec quotes the measured {w} percentile", bool(row)
+                and f"{v['null_percentile']}%" in row[0],
+                f"the spec table row for {w} does not carry the measured "
+                f"percentile {v['null_percentile']}%")
+
+        rep_b = REPO / "reports" / "signal_search_s2_us_axis_b.json"
+        if rep_b.exists():
+            db = _json.loads(rep_b.read_text(encoding="utf-8"))
+            record("the axis B run is deployment-matched, so the cell is not void",
+                   bool(db.get("deployment_matched")),
+                   db.get("deployment_note", "axis B null was not deployment-matched"))
+            sd_b = all(v["null_sd_pp"] > 0 for v in db["gate"]["windows"].values())
+            record("the axis B null has power (sd > 0 in both windows)", sd_b,
+                   "an axis B null with sd = 0 passes its gate while testing nothing")
+            # Three readings were pre-committed for axis B, selected by where the
+            # coin-flip null lands between the two Sprint 1 anchors. A run that
+            # does not state which one applied leaves the interpretation open
+            # after the fact, which is the back door the spec closed.
+            record("the axis B outcome names which pre-committed reading applied",
+                   "reading 1" in s2f,
+                   "axis B has three pre-committed readings and the outcome does "
+                   "not say which one the numbers select")
+            record("the axis B outcome places the null against both anchors",
+                   "−1.00" in s2f and "−7.42" in s2f and "+6.00" in s2f,
+                   "the spec does not show where the coin-flip null sits relative "
+                   "to base and regime=none, so reading 1 cannot be checked")
 
     # ---- MUST-FAIL: an "undecided" phrasing must be rejected -------------
     undecided = ("P1（隨機換交易日）已經實作但<b>未執行</b>，唔可以講成兩樣都做咗。")
