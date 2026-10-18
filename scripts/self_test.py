@@ -2643,6 +2643,195 @@ def t_no_unrendered_template_placeholders() -> None:
            "the scan flagged ordinary braces in CSS or JS")
 
 
+def t_no_script_carries_the_defective_ew_benchmark() -> None:
+    """The 2026-10-17 benchmark defect must not reappear in any script.
+
+    The defect was one line:
+
+        mm = src.pct_change().groupby([cal.year, cal.month]).transform("mean").mean(axis=1)
+
+    `transform("mean")` broadcasts each month's mean DAILY return onto every
+    session in that month, including the first, whose pct_change() is genuinely
+    NaN — so the benchmark manufactures one full day's return per month out of
+    nothing and inflates the buy-and-hold comparison by several pp/yr. Measured
+    on this repo's own us200 bars: +3.12pp/yr over 2016-20, +3.44pp/yr over
+    2021-26.
+
+    `hk_retest.ew_bh` was fixed on 2026-10-17. `signal_search_s1.py` kept its own
+    copy of the same defective line and was still using it on 2026-10-19, which
+    is how a Sprint 1 placebo null got measured against a benchmark that the
+    rest of the site had already stopped trusting.
+
+    The lesson is not "remember to fix hk_retest too". It is that a defect fixed
+    in one place stays fixed only if the pattern itself is banned everywhere.
+    """
+    import ast as _ast
+    import re as _re
+
+    # Scripts that must keep the line, each with the reason it is allowed to.
+    # An allowlist with no justification is just a list of exceptions nobody
+    # re-checks, so the reason is part of the entry.
+    ALLOWED = {
+        "measure_ew_bias.py":
+            "read-only diagnostic; reproducing the defect is the whole point",
+        "breakout_test.py":
+            "ew_curve_repoB1() reproduces portfolio_test.py's PRE-2026-10-17 B1 "
+            "on purpose, so historical figures stay reproducible",
+    }
+
+    def chain(node) -> str:
+        """Dotted path of an attribute/call chain, e.g. a.b.groupby."""
+        parts = []
+        while isinstance(node, _ast.Attribute):
+            parts.append(node.attr)
+            node = node.value
+        if isinstance(node, _ast.Name):
+            parts.append(node.id)
+        return ".".join(reversed(parts))
+
+    def uses_defect(tree) -> bool:
+        """True if the module CALLS .transform("mean") on a .groupby(...) chain.
+
+        Matched on the syntax tree, not on text. Text matching cannot tell a
+        call from a docstring that quotes the line to explain the fix, and
+        hk_retest.ew_bh's own correction note quotes it verbatim — so a text
+        scanner flags the fix itself. An earlier version of this check used
+        tokenize and stripped string literals, which made the pattern
+        unsatisfiable: it removed the very "mean" literal the pattern requires
+        and reported PASS while three real call sites stood.
+        """
+        for node in _ast.walk(tree):
+            if not isinstance(node, _ast.Call):
+                continue
+            f = node.func
+            if not isinstance(f, _ast.Attribute) or f.attr != "transform":
+                continue
+            if not node.args or not isinstance(node.args[0], _ast.Constant):
+                continue
+            if node.args[0].value != "mean":
+                continue
+            if isinstance(f.value, _ast.Call) and \
+                    isinstance(f.value.func, _ast.Attribute) and \
+                    f.value.func.attr == "groupby":
+                return True
+        return False
+
+    hits = []
+    for f in sorted((REPO / "scripts").rglob("*.py")):
+        if "__pycache__" in f.parts or f.name in ALLOWED:
+            continue
+        try:
+            tree = _ast.parse(f.read_text(encoding="utf-8", errors="ignore"))
+        except SyntaxError:
+            continue
+        if uses_defect(tree):
+            hits.append(str(f.relative_to(REPO)))
+    record("no script executes the defective transform('mean') EW benchmark",
+           not hits,
+           f"still executed at: {hits}" if hits
+           else f"parsed every .py under scripts/; allowlisted: {sorted(ALLOWED)}")
+
+    # MUST-FAIL: the line as signal_search_s1.py carried it until 2026-10-19,
+    # and the fixed function's own docstring, which quotes the same text.
+    bad_src = ('def ew_bh(px):\n'
+               '    cal = src.index\n'
+               '    mm = src.pct_change().groupby([cal.year, cal.month])'
+               '.transform("mean").mean(axis=1)\n'
+               '    return (100_000 * (1 + mm).cumprod()).ffill()\n')
+    record("MUST-FAIL the Sprint 1 copy of the defect is caught",
+           uses_defect(_ast.parse(bad_src)),
+           "the scanner did not flag the line signal_search_s1.py carried")
+
+    doc_src = ('def ew_bh(px, cal):\n'
+               '    """Fixed. This used to be:\n'
+               '        mm = b1src.pct_change().groupby([cal.year, cal.month])'
+               '.transform("mean").mean(axis=1)\n'
+               '    which manufactured one full day of return per month."""\n'
+               '    return None\n')
+    record("MUST-FAIL-free control: the fixed function's own note is not flagged",
+           not uses_defect(_ast.parse(doc_src)),
+           "the scanner flagged documentation that quotes the defect to explain it")
+
+    # The fix must actually be the canonical implementation, not just a rename.
+    s1 = REPO / "scripts" / "signal_search_s1.py"
+    if s1.exists():
+        src = s1.read_text(encoding="utf-8")
+        record("signal_search_s1 imports hk_retest's benchmark, not its own",
+               "from hk_retest import ew_bh as _canonical_ew_bh" in src,
+               "signal_search_s1.py still defines its own ew_bh — one model, one "
+               "definition; a second copy can drift and did")
+
+
+def t_closed_decisions_are_recorded_and_enforced() -> None:
+    """Decisions taken on 2026-10-19 must be visible where they apply.
+
+    Three were closed: P1 is not run, the Sprint 1 placebo is re-run on the
+    corrected benchmark, and monthly_swing is retired rather than rescued.
+
+    A decision that lives only in a chat transcript is not a decision the next
+    reader meets. Each one is recorded where the work is, and each is checked
+    here so it cannot silently drift back into "pending".
+    """
+    import re as _re
+
+    def read(p):
+        f = REPO / p
+        return f.read_text(encoding="utf-8") if f.exists() else ""
+
+    # ---- 1. P1 closed by decision, not merely unfinished ------------------
+    prereg = read("docs/close-confirmation-prereg-2026-10-18.md")
+    record("P1 is recorded as a decision not to run it",
+           "P1 will not be run" in prereg and "one* pre-registered control" in prereg,
+           "the pre-registration does not say P1 was closed on purpose")
+    mt = PUBLIC / "methodology.html"
+    if mt.exists():
+        t = _re.sub(r"\s+", " ", _re.sub(r"<[^>]+>", " ",
+                 mt.read_text(encoding="utf-8")))
+        record("methodology says the test has ONE control, not two",
+               "只有一個對照組" in t and "唔係兩個" in t,
+               "the methodology page still implies a second control exists")
+        record("methodology no longer claims P1 was merely un-run",
+               "P1（隨機換交易日）已經實作但" not in t,
+               "the page still describes P1 as 'implemented but not executed', "
+               "which reads as an open TODO rather than a closed decision")
+
+    # ---- 2. monthly_swing retired and guarded ----------------------------
+    ms = read("scripts/monthly_swing_backtest.py")
+    record("monthly_swing_backtest.py carries a RETIRED tombstone",
+           "RETIRED 2026-10-19" in ms and "daily_report" in ms,
+           "the retired generator has no tombstone explaining why it is dead")
+    record("monthly_swing_backtest refuses to run without an explicit override",
+           "--i-know-it-is-dead" in ms,
+           "the retirement guard is missing — anyone running it still gets the "
+           "original confusing exit instead of the reason")
+    rec = REPO / "docs" / "sprint-1-placebo-rerun-prereg-2026-10-19.md"
+    record("the retirement names the experiment that answers the question instead",
+           "scripts/ab_close_hold.py" in ms and "close-confirmation-prereg" in ms,
+           "the tombstone retires the pipeline without pointing at what replaced "
+           "the question, which is how a retirement becomes a silent loss")
+
+    # ---- 3. Sprint 1 placebo re-run is recorded with its prediction --------
+    note = read("docs/sprint-1-placebo-rerun-prereg-2026-10-19.md")
+    record("the Sprint 1 re-run was pre-registered before running",
+           "What would falsify the prediction" in note and
+           "net_pp         = (C_real" in note,
+           "the re-run has no pre-run note, so its result cannot be checked "
+           "against a prediction made in advance")
+    record("the pre-run note states which outputs must NOT move",
+           "expected **unchanged**" in note and "real_gap_pp" in note,
+           "the note does not say what was expected to change, so agreement "
+           "could not be distinguished from a re-run that simply found what it "
+           "wanted")
+
+    # ---- MUST-FAIL: an "undecided" phrasing must be rejected -------------
+    undecided = ("P1（隨機換交易日）已經實作但<b>未執行</b>，唔可以講成兩樣都做咗。")
+    decided = "呢個測試<b>只有一個對照組</b>，唔係兩個"
+    record("MUST-FAIL the old 'still pending' phrasing is rejected",
+           (decided in decided) and (undecided != decided)
+           and ("未執行" not in decided),
+           "the control for this gate does not discriminate")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--json", action="store_true")
@@ -2670,7 +2859,9 @@ def main() -> int:
                t_no_withdrawn_figures_are_published,
                t_per_trade_stats_trace_to_source,
                t_close_confirmation_placebo_holds_up,
-               t_no_unrendered_template_placeholders):
+               t_no_unrendered_template_placeholders,
+               t_no_script_carries_the_defective_ew_benchmark,
+               t_closed_decisions_are_recorded_and_enforced):
         print(f"\n{fn.__doc__.splitlines()[0] if fn.__doc__ else fn.__name__}")
         try:
             fn()

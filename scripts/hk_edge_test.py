@@ -45,6 +45,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent / "v2engine"))
+from hk_retest import ew_bh as _canonical_ew_bh  # noqa: E402
 
 from core import cost_rt  # noqa: E402
 from bt_clean import _load_mask_cache, filter_candidates  # noqa: E402
@@ -108,8 +109,11 @@ def run(names: list[str], up: pd.Series, scenario: str, mask: dict):
     b1 = pd.DataFrame(px).reindex(cal)
     b1 = b1.loc[b1.notna().any(axis=1)]
     cal = b1.index
-    mm = b1.pct_change().groupby([cal.year, cal.month]).transform("mean").mean(axis=1)
-    b1 = (100_000 * (1 + mm).cumprod()).ffill()
+    # 2026-10-19: this was the pre-2026-10-17 benchmark, which manufactured one
+    # day of return per month and inflated the equal-weight hold by several
+    # pp/yr. It is now the canonical implementation, so this script and
+    # hk_retest.py cannot publish two different benchmarks.
+    b1 = _canonical_ew_bh(px, cal)
     curve, _ = PT.walk(cands, MKT)
     if curve is None:
         return None

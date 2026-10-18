@@ -44,6 +44,7 @@ import pandas as pd
 REPO = Path("/Users/kenken/dev/dsa-hk")
 sys.path.insert(0, str(REPO / "scripts" / "v2engine"))
 from core import _simulate, cost_rt  # noqa: E402
+from hk_retest import ew_bh as _canonical_ew_bh  # noqa: E402
 
 BARS = {
     "us": (REPO / "data" / "bt10y2", REPO / "data" / "bt10y2" / "IDX_GSPC.json",
@@ -303,16 +304,26 @@ def walk(cands: list[dict], cost: float, ordinal: dict[pd.Timestamp, int]
 # benchmark
 # ======================================================================================
 def ew_bh(px: dict[str, pd.DataFrame]) -> pd.Series:
-    """Equal-weight MONTHLY rebalance of the same names — the only benchmark
-    that can answer 'did the rules add anything', because this universe is
-    today's large caps applied backwards."""
+    """Equal-weight MONTHLY rebalance of the same names.
+
+    2026-10-19. This used to be a SECOND, independent copy of the benchmark:
+
+        mm = src.pct_change().groupby([cal.year, cal.month]).transform("mean").mean(axis=1)
+
+    which is the exact line that hk_retest.ew_bh carried until 2026-10-17,
+    when it was found to manufacture one full day's return per month and inflate
+    the benchmark by ~2.47pp/yr on us200. hk_retest was fixed; this copy was
+    not, so Sprint 1's placebo null (+8.62pp, measured 2026-10-16) was measured
+    against the defective benchmark while the rest of the site used the fixed
+    one. One model, one definition — this is now a thin adapter over the
+    canonical function, kept only because hk_retest's takes the calendar
+    explicitly.
+
+    The benchmark is the only thing 'did the rules add anything' can be measured
+    against, because this universe is today's large caps applied backwards.
+    """
     cal = sorted(set().union(*[set(b.index) for b in px.values()]))
-    cal = pd.DatetimeIndex(cal)
-    src = pd.DataFrame({s: b.close.reindex(cal) for s, b in px.items()})
-    src = src.loc[src.notna().any(axis=1)]
-    cal = src.index
-    mm = src.pct_change().groupby([cal.year, cal.month]).transform("mean").mean(axis=1)
-    return (100_000 * (1 + mm).cumprod()).ffill()
+    return _canonical_ew_bh(px, pd.DatetimeIndex(cal))
 
 
 def window_stats(curve: pd.DataFrame, win: str) -> dict:

@@ -326,8 +326,20 @@ def ew_curve(px: dict[str, pd.Series], cal: pd.DatetimeIndex, mkt: str) -> pd.Se
 
 
 def ew_curve_repoB1(px: dict[str, pd.Series], cal: pd.DatetimeIndex, mkt: str) -> pd.Series:
-    """portfolio_test.py's B1 exactly as written, kept only as an audit reference.
-    See ew_curve() for why it is not used as the headline benchmark."""
+    """portfolio_test.py's B1 AS IT WAS WRITTEN BEFORE 2026-10-17.
+
+    Kept only so the historical figures measured against the old benchmark can
+    be reproduced. It is NOT the current benchmark and must never be used as
+    one.
+
+    2026-10-17: portfolio_test.py's B1 was corrected. The line below is the
+    defect it carried — it manufactures one full day's return per month and
+    inflates the equal-weight hold by ~2-3.4pp/yr, which understated every arm
+    measured against it. portfolio_test.py, hk_retest.py, hk_edge_test.py,
+    portfolio_pit.py, portfolio_bench.py and signal_search_s1.py have all moved
+    to the canonical hk_retest.ew_bh(). This function deliberately has NOT, and
+    is the one allowlisted exception in
+    t_no_script_carries_the_defective_ew_benchmark."""
     src = pd.DataFrame(px).reindex(cal)
     src = src.loc[src.notna().any(axis=1)]
     if src.empty:

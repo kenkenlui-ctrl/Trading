@@ -1,23 +1,44 @@
-"""Monthly swing backtest — runs 6-month rolling forward-return analysis.
+"""Monthly swing backtest — RETIRED 2026-10-19. Kept as a tombstone.
 
-Refactored 2026-09-09 to use:
-1. LIVE signal's stop/target from daily_report (instead of hardcoded -10%/+15% for T+10)
-2. Point-in-time universe filter (20d ADV at signal date) — placeholder, requires Volume in fetch
-3. Portfolio simulator (concurrent cap, position sizing, equity curve, compounding)
-4. Risk metrics (max DD, Sortino, Calmar, loss streak, time-underwater)
-5. Walk-forward OOS (80/20 train/test split) — 1 cycle, framework for future
+STATUS: RETIRED. This generator can no longer produce a valid result and is
+not being repaired. See "Why" below before reading any of the rest.
 
-Backward compatible: same CLI (`--months`, `--out-dir`), same output filenames,
-same headline tables. New sections appended after the existing 3.
+Why
+---
+This script's input is the signal database `data/dsa_hk.db`, table
+`daily_report`. That table has **0 rows**. `load_signals()` therefore returns
+nothing and `main()` exits at the first BUY-signal query. Nothing below this
+docstring can run, and no amount of debugging inside this file will change
+that: the defect is missing upstream data, not logic here.
 
-Hardcoded HORIZONS dict is kept as FALLBACK when live stop/target missing
-(~20% of older signals don't have populated stop_loss/target_price).
+Kenneth's decision, 2026-10-19: retire the pipeline, do not rescue it. The
+question "should a support entry be held for 10 sessions" is NOT answered by a
+dead database, and treating one broken generator as a verdict on the idea
+would be its own kind of error. The question is answered instead by
+`scripts/ab_close_hold.py` (close-confirmation A/B, HOLD = 10 held constant in
+both arms, pre-registered placebo control) — see
+`docs/close-confirmation-prereg-2026-10-18.md` and `/backtest`.
 
-Usage:
-  python3 scripts/monthly_swing_backtest.py                # default 6mo
-  python3 scripts/monthly_swing_backtest.py --months 12
-  python3 scripts/monthly_swing_backtest.py --no-portfolio-sim
-  python3 scripts/monthly_swing_backtest.py --no-oos
+Consequences already applied
+  - The `-4.05%` T+10 figure this pipeline used to produce was WITHDRAWN on
+    2026-10-18 and is not replaced by any number from another experiment. Four
+    pages state the withdrawal and why.
+  - The upstream `+44.02%` "risk metrics" table is withheld rather than
+    rendered: it claims 120 trades in a ~25-session window where a 5-slot cap
+    admits about 12, so the cap was never applied and the figure is a sum of
+    per-trade percentages wearing a portfolio label.
+
+What still consumes its output
+  `scripts/build_backtest_page.py` renders `data/monthly_backtest/latest.md`,
+  which is the last successfully produced report. That markdown is a frozen
+  historical artifact. Nothing regenerates it, and it must not be described as
+  current. If it is ever deleted, /backtest loses its per-trade tables — so the
+  file is kept; the generator is what was retired.
+
+To run anyway: `--i-know-it-is-dead` skips the guard. You will get the original
+"No BUY signals in window" exit, because that is still true.
+
+Original documentation follows.
 """
 from __future__ import annotations
 
@@ -671,7 +692,31 @@ def main():
                          "Volume missing). exclude=default (fail-closed, honest). "
                          "include=pre-2026-10-02 lenient behaviour, kept only to reproduce "
                          "old numbers for comparison.")
+    ap.add_argument("--i-know-it-is-dead", action="store_true",
+                    help="RETIRED script. Bypass the guard and take the original "
+                         "'No BUY signals in window' exit.")
     args = ap.parse_args()
+
+    if not args.i_know_it_is_dead:
+        print("""
+RETIRED 2026-10-19 — this generator is not being repaired.
+
+  data/dsa_hk.db -> daily_report has 0 rows, so there is nothing to analyse.
+  The defect is missing upstream data, not logic in this file.
+
+  The T+10 question this was meant to answer is answered instead by
+  scripts/ab_close_hold.py, which holds HOLD = 10 constant across both arms and
+  carries a pre-registered placebo control:
+      docs/close-confirmation-prereg-2026-10-18.md
+      https://www.win9you.com/backtest
+
+  Nothing is lost by stopping here, and the -4.05% figure this produced has
+  already been withdrawn rather than replaced.
+
+  To take the original exit anyway: --i-know-it-is-dead
+""")
+        return 2
+
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 

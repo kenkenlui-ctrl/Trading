@@ -144,3 +144,25 @@ controls with non-zero sd → **H1**. See `data/ab_close_hold.json`.
 **Left undone:** P1 (the shuffled-session secondary control) was implemented in
 `ab_close_hold.py::p1_shuffled_sessions()` but not executed. Only the primary
 control P2 has been run. Do not describe this test as having two controls.
+
+### Decision on P1 — 2026-10-19, Kenneth
+
+**P1 will not be run. The test keeps P2 only.**
+
+Reasoning, as recorded: the primary control is already decisive. P2 holds
+universe, market filter, entry level, stop, exit, costs and **sample size**
+constant and varies only the selection rule, which is the axis the hypothesis
+is actually about — B keeps ~half of A's trades, and the claim under test is
+whether the selection picks better rather than merely trading less. P1 would
+have varied a different axis (which session the signal lands on) at
+substantially higher cost, since it needs a per-symbol candidate cache across
+179 tickers per trial. Running it would not have made the H1/H2 question any
+sharper; it would have added a second number to defend.
+
+P1 is left in the source as a reference implementation. It is not dead code in
+the sense that matters — it documents what a second control would look like —
+but it has never been run and must never be cited as evidence. If a future
+question needs it, the cost is per-symbol candidate caching, not a rewrite.
+
+The honest phrasing for any surface is therefore: *one* pre-registered control,
+run. Not two.

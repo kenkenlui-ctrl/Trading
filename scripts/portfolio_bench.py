@@ -21,6 +21,7 @@ import pandas as pd
 REPO = Path("/Users/kenken/dev/dsa-hk")
 sys.path.insert(0, str(REPO / "scripts" / "v2engine"))
 sys.path.insert(0, str(REPO / "scripts"))
+from hk_retest import ew_bh as _canonical_ew_bh  # noqa: E402
 from core import features, _simulate, cost_rt  # noqa: E402
 from portfolio_diag import load, up_series, cands_v2, cands_control, walk  # noqa: E402
 
@@ -69,18 +70,21 @@ def main() -> int:
         rows.append(stats(ib.close, f"{mkt} B0 index B&H"))
 
         # B1 universe equal-weight MONTHLY rebalance
-        # axis=1 is load-bearing: .prod() on a DataFrame collapses ACROSS columns
-        # (one number per ticker) instead of down the time axis.
-        eq = (1 + r.groupby([cal.year, cal.month]).transform("mean")).prod(axis=1)
-        b1 = 100_000 * eq.cumprod()
+        # 2026-10-19: the previous form broadcast each month's MEAN DAILY
+        # return onto every session of that month (including the first, whose
+        # pct_change() is NaN), manufacturing a day of return per month and
+        # inflating the equal-weight hold by several pp/yr — the defect fixed in
+        # hk_retest.ew_bh and portfolio_test.py on 2026-10-17. Both arms now
+        # call the canonical implementation so this bench cannot disagree with
+        # the published benchmark.
+        b1 = _canonical_ew_bh({c: pd.DataFrame({c: px[c]}) for c in px.columns}, cal)
         rows.append(stats(b1, f"{mkt} B1 universe EW"))
 
         # B2 same, minus the 20 best 10y performers -> is the premium just survivors?
         tot = px.iloc[-1] / px.iloc[0] - 1
         drop = tot.sort_values(ascending=False).head(20).index.tolist()
-        r2 = px.drop(columns=drop).pct_change()
-        eq2 = (1 + r2.groupby([cal.year, cal.month]).transform("mean")).prod(axis=1)
-        b2 = 100_000 * eq2.cumprod()
+        keep = [c for c in px.columns if c not in drop]
+        b2 = _canonical_ew_bh({c: pd.DataFrame({c: px[c]}) for c in keep}, cal)
         rows.append(stats(b2, f"{mkt} B2 universe EW -top20"))
 
         # B3 daily equal-weight rebalance (no monthly batching)

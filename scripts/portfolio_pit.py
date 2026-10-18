@@ -49,6 +49,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent / "v2engine"))
+from hk_retest import ew_bh as _canonical_ew_bh  # noqa: E402
 
 from core import features, _simulate  # noqa: E402
 from bt_clean import bars_dir, load as load_clean, _load_mask_cache, filter_candidates  # noqa: E402
@@ -96,8 +97,11 @@ def run_arm(names: set[str], up: pd.Series, src: Path, mask: dict) -> tuple | No
     b1src = pd.DataFrame(px).reindex(cal)
     b1src = b1src.loc[b1src.notna().any(axis=1)]
     cal = b1src.index
-    mm = b1src.pct_change().groupby([cal.year, cal.month]).transform("mean").mean(axis=1)
-    b1 = (100_000 * (1 + mm).cumprod()).ffill()
+    # 2026-10-19: canonical benchmark — this arm carried the pre-2026-10-17
+    # transform("mean") defect, which overstated the equal-weight hold. Any
+    # PIT comparison measured before this line was changed is against a
+    # benchmark that manufactured ~1 day of return per month.
+    b1 = _canonical_ew_bh(px, cal)
 
     curve, _peak = PT.walk(cands, MKT)
     if curve is None:
