@@ -169,3 +169,69 @@ regime gate untested, which is the one Sprint 1 hinted might be load-bearing.
 
 Rollout. Sprint 2's deploy flags all remain OFF. This sprint is a
 measurement, not a ship decision.
+
+---
+
+## Outcome — axis A, 2026-10-19
+
+`scripts/signal_search_s2.py --market us --trials 300 --seed 20261019`
+
+| window | real gap | null mean | null sd | net | z | pct |
+|---|---|---|---|---|---|---|
+| 2016-2020 | +2.42 | +2.84 | 2.80 | **−0.42** | −0.15 | 38% |
+| 2021-2026 | −3.86 | +6.10 | 2.63 | **−9.95** | −3.79 | 1% |
+
+Deployment matched: null executed **5,261 trades (+0.0%)** at **77.2% exposure
+(+0.3pp)** against the real rule's 5,261 at 76.9%. Condition 1 satisfied, so
+the cell is not void.
+
+**VERDICT: FAIL.** Stock selection does not beat a random universe name at the
+same session, under the same entry mechanics, with the same trade count and
+capital deployed.
+
+**The pre-registered direction was right.** The prediction was "the null lands
+near or slightly above the real rule". 2016-20 is a dead heat (real gap +2.42
+against a null of +2.84, 38th percentile). 2021-26 is not: the real rule is
+below its own null at the 1st percentile.
+
+### Two things that had to be fixed before this number meant anything
+
+**The obvious null is vacuous, and it failed silently.** The first
+implementation drew the replacement stock from the *screen's own output* at
+each session. That null reproduced the real result to the decimal — sd
+**0.000**, net −0.00 — because v2 admits essentially every qualifying name:
+**median 2 candidates per entry session**, 413 of 1,384 sessions with only one
+eligible name. There is almost nothing to shuffle. A permutation of a multiset
+that `walk()` already receives unchanged is a placebo that passes while testing
+nothing — the same `rng.permutation` failure as Sprint 1, reached by a
+different route.
+
+The null that actually answers the question draws from the **whole universe** at
+each real signal session, keeping the entry mechanics and removing the regime
+gate, ATR cap and box cap, since those *are* the stock-selection rule under
+test. That pool has median 4 names per date.
+
+**A units bug made the first result spectacular and wrong.** An earlier version
+stored raw CAGR in the null series while `score()` compared it against `real_gap`
+(CAGR − EW) — off by the whole benchmark, ~26pp/yr. It reported the null
+beating the rule by 25pp/yr. Caught by an identity control: re-walking the
+identical candidate list must reproduce the real gap exactly. It did, which
+located the discrepancy. The same class of error as the 2026-10-17 benchmark
+defect, caught this time before it was written down anywhere.
+
+`oversample > 1` was measured and rejected: at 2× and 3× the null executes
++98% and +196% more trades, which the VOID rule exists to catch.
+
+### What this adds up to
+
+Axes A and C now agree, and they agree in the same direction:
+
+- **C (timing)** — real loses to its own null, z −4.65.
+- **A (stock selection)** — real does not beat a random name, z −0.15 / −3.79.
+
+Axis B is unrun. If it also comes back "null ≈ or above real", the honest
+conclusion is that no component of v2 beats its own null, and the close-hold
+per-trade edge (four cells, z 8.9–13.2, `docs/close-confirmation-prereg-2026-10-18.md`)
+is real at the trade level without producing a portfolio that beats equal-weight
+holding. Those findings are already consistent; this sprint is testing whether
+anything else is left.

@@ -2787,6 +2787,7 @@ def t_closed_decisions_are_recorded_and_enforced() -> None:
     reader meets. Each one is recorded where the work is, and each is checked
     here so it cannot silently drift back into "pending".
     """
+    import json as _json
     import re as _re
 
     def read(p):
@@ -2876,10 +2877,34 @@ def t_closed_decisions_are_recorded_and_enforced() -> None:
            "null_mean without separating them; they differ by ~0.3pp, which "
            "reads as a typo rather than a different measurement")
     record("the Sprint 1 appendix records what cannot be audited retroactively",
-           "cannot be closed retroactively" in note,
+           "cannot be closed retroactively" in _flat(note),
            "Sprint 1 never stored the null's trade count or exposure, so its own "
            "null cannot be checked against Sprint 2's deployment criterion, and "
            "that gap is not stated")
+
+    # Axis A's outcome, and the two defects that had to be fixed before the
+    # number meant anything. Both are silent-pass failure modes: one produced a
+    # placebo with sd = 0, the other produced a spectacularly wrong number.
+    s2f = _flat(s2)
+    record("the axis A outcome records its own vacuous first null",
+           "sd" in s2f and "0.000" in s2f and "median 2 candidates" in s2f,
+           "the spec does not record that the obvious within-date shuffle has "
+           "sd = 0 because v2 admits every qualifying name — a placebo that "
+           "passes while testing nothing must be on the record, not just fixed")
+    record("the axis A outcome records the units bug it had",
+           "units bug" in s2f and "identity control" in s2f,
+           "the null series was compared against a gap while holding raw CAGR, "
+           "inflating the result by the whole benchmark; that near-miss is the "
+           "kind of error that gets repeated if it is not written down")
+    rep_a = REPO / "reports" / "signal_search_s2_us_axis_a.json"
+    if rep_a.exists():
+        da = _json.loads(rep_a.read_text(encoding="utf-8"))
+        record("the axis A run is deployment-matched, so the cell is not void",
+               bool(da.get("deployment_matched")),
+               da.get("deployment_note", "axis A null was not deployment-matched"))
+        sd_ok = all(v["null_sd_pp"] > 0 for v in da["gate"]["windows"].values())
+        record("the axis A null has power (sd > 0 in both windows)", sd_ok,
+               "an axis A null with sd = 0 passes its gate while testing nothing")
 
     # ---- MUST-FAIL: an "undecided" phrasing must be rejected -------------
     undecided = ("P1（隨機換交易日）已經實作但<b>未執行</b>，唔可以講成兩樣都做咗。")
