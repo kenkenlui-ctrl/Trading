@@ -2793,6 +2793,15 @@ def t_closed_decisions_are_recorded_and_enforced() -> None:
         f = REPO / p
         return f.read_text(encoding="utf-8") if f.exists() else ""
 
+    def _flat(text: str) -> str:
+        """Collapse blockquote markers and wrapping.
+
+        A gate that reads a document's line breaks will fail on a document
+        whose phrase happens to straddle a wrapped line — which is a gate that
+        gets deleted rather than fixed. Read the prose, not the layout.
+        """
+        return _re.sub(r"\s+", " ", _re.sub(r"^\s*>\s?", "", text, flags=_re.M))
+
     # ---- 1. P1 closed by decision, not merely unfinished ------------------
     prereg = read("docs/close-confirmation-prereg-2026-10-18.md")
     record("P1 is recorded as a decision not to run it",
@@ -2837,6 +2846,40 @@ def t_closed_decisions_are_recorded_and_enforced() -> None:
            "the note does not say what was expected to change, so agreement "
            "could not be distinguished from a re-run that simply found what it "
            "wanted")
+
+    # 2026-10-19, Kenneth: a pre-registration that does not say how to READ a
+    # result is not sealed — the interpretation stays open after the run. Axis B
+    # is the case that needed it most, because Sprint 1 already measured a
+    # neighbouring cell (regime=none) and the two are different counterfactuals.
+    s2 = read("docs/sprint-2-crossed-randomization-prereg-2026-10-19.md")
+    record("the Sprint 2 pre-registration fixes how axis B is read",
+           all(k in s2 for k in ("Coin-flip net lands between base",
+                                 "Coin-flip beats", "Coin-flip is worse than base",
+                                 "anti-gate")),
+           "axis B has a null whose outcome has three possible readings and no "
+           "pre-committed rule for which one applies — that is an open back door "
+           "to rationalise any result")
+    record("the Sprint 2 pre-registration separates 'no gate' from 'random gate'",
+           "different counterfactual" in s2,
+           "the document does not distinguish the two regime counterfactuals, so "
+           "a coin-flip result could be read as if it were the regime=none cell")
+    record("the Sprint 2 pre-registration names which anchors the reading uses",
+           "−5.79 / −16.66" in s2 and "+6.00 / +1.62" in s2,
+           "the three-way rule is stated without the measured anchors it is "
+           "compared against")
+
+    # 2026-10-19: the Sprint 1 appendix quoted two different runs' null_mean in
+    # one table, labelled so that the probe looked like the real run.
+    record("the Sprint 1 appendix does not mix two runs' numbers",
+           "12-trial calibration probe" in _flat(note) and "must not be mixed" in _flat(note),
+           "the appendix presents a 12-trial probe alongside the 300-trial run's "
+           "null_mean without separating them; they differ by ~0.3pp, which "
+           "reads as a typo rather than a different measurement")
+    record("the Sprint 1 appendix records what cannot be audited retroactively",
+           "cannot be closed retroactively" in note,
+           "Sprint 1 never stored the null's trade count or exposure, so its own "
+           "null cannot be checked against Sprint 2's deployment criterion, and "
+           "that gap is not stated")
 
     # ---- MUST-FAIL: an "undecided" phrasing must be rejected -------------
     undecided = ("P1（隨機換交易日）已經實作但<b>未執行</b>，唔可以講成兩樣都做咗。")

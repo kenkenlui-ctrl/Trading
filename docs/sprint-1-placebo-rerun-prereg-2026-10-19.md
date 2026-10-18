@@ -198,18 +198,34 @@ rule's **76.9%** — it deploys *less*. Mechanism dead.
 
 *Mechanism 2 — the placebo executes more trades.* Real, and worth about 0.9pp.
 `n_draw = len(idx)` fixes the number of signals *before* the fill filter, so
-the placebo executes **7,280** trades against the real rule's **5,261** (+38%).
+the placebo executes ~38% more trades than the real rule.
 
-| variant | trades | exposure | null_mean 16-20 / 21-26 | net |
+> **Two different runs appear below and must not be mixed.** The
+> `+8.21 / +12.80` quoted in the paragraph above is the **300-trial run** (seed
+> 20261019). The placebo rows in this table come from a **12-trial calibration
+> probe** (seed 7) run separately, because it is the only run that recorded
+> trade count and exposure. The two differ by ~0.3pp, which is small enough to
+> read as a rounding slip and is in fact a different measurement.
+
+| run | executed trades | exposure | null_mean 16-20 / 21-26 | net 16-20 / 21-26 |
 |---|---|---|---|---|
-| real rule | 5,261 | 76.9% | — | +2.42 / −3.86 |
-| Sprint 1 as coded | 7,280 | 74.5% | +7.88 / +11.95 | −5.46 / −15.80 |
-| trade-matched (×0.72) | 5,227 | 71.0% | +6.99 / +10.42 | −4.58 / −14.28 |
-| fewer than real (×0.60) | 4,355 | 68.6% | +3.64 / +8.75 | −1.23 / −12.61 |
+| real rule (300-trial run) | 5,261 | 76.9% | — | +2.42 / −3.86 |
+| probe: as coded | 7,280 | 74.5% | +7.88 / +11.95 | −5.46 / −15.80 |
+| probe: trade-matched (×0.72) | 5,227 | 71.0% | +6.99 / +10.42 | −4.58 / −14.28 |
+| probe: fewer than real (×0.60) | 4,355 | 68.6% | +3.64 / +8.75 | −1.23 / −12.61 |
 
 Matching executed trades recovers ~0.9pp. **The result survives it.** Even a
 placebo doing *fewer* trades than the real rule and holding 8pp less capital
 returns +3.64 / +8.75 against the real rule's +2.42 / −3.86.
+
+**A gap that cannot be closed retroactively.** Sprint 2 adopts
+deployment-matching as a pass criterion, and this appendix is the measurement
+that forces it — but the **300-trial Sprint 1 run never recorded the null's
+trade count or exposure**. Its cells store only `n`, `net_pp`, `null_mean_pp`,
+`null_percentile`, `null_sd_pp`, `passes`, `real_gap_pp` and `z`. So Sprint 1's
+own null cannot be audited against the criterion Sprint 2 adopts; the probe
+above is the closest available evidence and it is 12 trials. Any re-run must
+record `trades` and `avg_exposure_pct` per null cell.
 
 **Conclusion: the anti-timing signal is real and not an exposure or trade-count
 artefact.** It is also not specific to this repo — Zhou, Mu, Chen & Sornette,

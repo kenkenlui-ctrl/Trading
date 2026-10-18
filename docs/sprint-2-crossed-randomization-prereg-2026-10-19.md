@@ -71,6 +71,47 @@ three comparisons.
 nor fail — and is re-run with calibration. A null that deploys more capital and
 returns more is not evidence about the axis; it is evidence about capital.
 
+### Axis B is a different counterfactual from `regime=none` — read them together
+
+Sprint 1 already measured one cell of the regime axis: `regime=none` turns the
+ma200 gate **off entirely**. Axis B's null does something different — it
+applies the gate **on a coin flip**, so half the time the gate is there and half
+the time it is not. "No gate" and "random gate" are two different questions:
+
+- `regime=none` asks *what happens if we never gate*
+- axis B asks *whether gating at all is better than not bothering to decide*
+
+Sprint 1 anchors, on net_pp (higher = the real rule fares better against its
+own null), from the 300-trial run:
+
+| cell | gate | net 2016-20 / 2021-26 | exposure |
+|---|---|---|---|
+| base | always on | **−5.79 / −16.66** | 76.9% |
+| regime=none | never on | **+6.00 / +1.62** | 84.5% |
+
+**Reading axis B against those two anchors — fixed now, so it cannot be
+rationalised afterwards:**
+
+1. **Coin-flip net lands between base and `regime=none`** — the gate is
+   *useless but not harmful*. Half the time it helps, half it hurts, netting to
+   nothing better than never gating. The correct response is not to remove it
+   (removing it also fails the bar) and not to defend it; it is to say the gate
+   carries no information.
+2. **Coin-flip beats `regime=none` as well as base** — the gate is
+   *systematically choosing the wrong side*, not merely failing to help. That is
+   an **anti-gate** finding, the same shape as the anti-timing result: the
+   component is worse than the null that destroys it. Any prose on the site
+   describing the trend filter as protective would have to be withdrawn.
+3. **Coin-flip is worse than base** — the null itself is mis-specified, since a
+   gate that is on half the time should not lose to a gate that is always on by
+   more than sampling noise. **Void axis B and fix the null**; do not report it
+   as evidence about the gate.
+
+These anchors are the as-run values, and `regime=none` deploys 7.6pp more
+capital than base, which inflates its gap and its null together. Once axis B's
+null is deployment-matched, the comparison above is made on **matched** values,
+and if that reorders the anchors, the ordering changes with them — not the rule.
+
 ### Falsification — bound to quantities that can move
 
 Per the lesson from the 2026-10-19 Sprint 1 re-run: a falsification clause must
@@ -98,11 +139,14 @@ Stated as directional expectations so the run can contradict them:
   the real rule. If timing is worth nothing (C), the S1 screen cannot be
   selecting good *stocks* either; it should be selecting good *moments*, which
   C says do not exist.
-- **B (regime gate)** — expect the null to land **above** the real rule. In the
-  Sprint 1 grid, `regime=none` had the best net of any cell (+6.00 / +1.62 vs
-  base −5.79 / −16.66), so removing the gate appeared to help. Careful reading:
-  `regime=none` also deployed 84.5% vs 76.9%, which inflates both its gap and
-  its own null. That is exactly what the deployment match is for.
+- **B (regime gate)** — expect **case 1** of the three readings above: the
+  coin-flip null lands **between** base and `regime=none`. A gate applied half
+  the time should interpolate between always-on and never-on; that is the
+  natural expectation and it is what makes case 2 (anti-gate) and case 3
+  (broken null) informative rather than assumed. Sprint 1's `regime=none` had
+  the best net of any cell (+6.00 / +1.62 vs base −5.79 / −16.66) — but note it
+  deployed 84.5% against base's 76.9%, which inflates its gap and its own null
+  together. That is what the deployment match is for.
 
 If A and B both come back "null ≈ real", the honest conclusion is that v2 has
 **no component that beats its own null**, and that the close-hold per-trade
