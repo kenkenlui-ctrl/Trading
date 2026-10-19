@@ -52,6 +52,7 @@ import sys
 from collections import deque
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Callable, Optional
 
 import numpy as np
 import pandas as pd
@@ -96,6 +97,15 @@ class ExecConfig:
     max_concurrent: int | None = None   # C2 concentration cap (None = unlimited)
     max_cohort_names: int | None = None  # per-cohort basket cap
     name_cap_rank: str = "ret5d"  # which names survive a cap: 'ret5d' or 'atr'
+    # C4: a callable date -> float that scales the cohort's capital, so the
+    # book can be held at less than 100% equity (the <=60% baseline, and the
+    # risk-parity scaling). None means every cohort takes 1/hold of the book.
+    # NOTE: a dataclass field REQUIRES an annotation -- an unannotated
+    # assignment is only a class attribute and cannot be passed to __init__.
+    capital_scale_fn: Optional[Callable[[pd.Timestamp], float]] = None
+    # C3: a callable (signal_date, names) -> float giving the trailing-stop
+    # distance for that cohort, as a fraction. None disables the trailing exit.
+    trail_fn: Optional[Callable[[pd.Timestamp, list], Optional[float]]] = None
 
 
 # ======================================================================================
@@ -263,7 +273,10 @@ def run_cohort(baskets: dict[pd.Timestamp, list[str]],
 
     side = cfg.cost_rt / 2.0
     cash = 1.0
-    cohorts: deque = deque()
+    # A cohort lives in a SLOT, so a cohort that exits early (on a trailing
+    # stop) leaves its slot empty until that slot's scheduled refill rather
+    # than shifting every other cohort's age.
+    slots: dict[int, dict] = {}
     rows = []
 
     # A fill lag means the basket decided on day s is bought at the close of
@@ -296,18 +309,30 @@ def run_cohort(baskets: dict[pd.Timestamp, list[str]],
             v = np.where(bad, px, v)
         return v
 
+    def liquidate(c, i):
+        nonlocal cash
+        v = value(i, c["cols"], c["px"])
+        cash += float(np.dot(c["sh"], v)) * (1.0 - side)
+
     for i, t in enumerate(cal):
-        # 1) liquidate cohorts that have reached their age
-        while cohorts and (i - cohorts[0]["i"]) >= cfg.hold:
-            old = cohorts.popleft()
-            v = value(i, old["cols"], old["px"])
-            cash += float(np.dot(old["sh"], v)) * (1.0 - side)
+        # 1) liquidate cohorts that have reached their age, and any cohort
+        #    whose trailing stop has fired
+        for k, c in list(slots.items()):
+            v = value(i, c["cols"], c["px"])
+            c["value"] = float(np.dot(c["sh"], v))
+            if c["value"] > c["peak"]:
+                c["peak"] = c["value"]
+            if i - c["i"] >= cfg.hold:
+                liquidate(c, i)
+                del slots[k]
+            elif c["trail"] is not None and c["value"] < c["peak"] * (1.0 - c["trail"]):
+                liquidate(c, i)
+                del slots[k]
 
         # 2) mark to market
         eq = cash
-        for c in cohorts:
-            v = value(i, c["cols"], c["px"])
-            eq += float(np.dot(c["sh"], v))
+        for c in slots.values():
+            eq += c.get("value", 0.0)
 
         # 3) the basket decided `lag` sessions ago, filled at today's close.
         # The signal date supplies the basket; today's tradability decides
@@ -343,7 +368,7 @@ def run_cohort(baskets: dict[pd.Timestamp, list[str]],
                     sel = order[:cfg.max_cohort_names]
                     names, cols = names[sel], cols[sel]
                 if cfg.max_concurrent is not None:
-                    held = sum(len(c["cols"]) for c in cohorts)
+                    held = sum(len(c["cols"]) for c in slots.values())
                     room = cfg.max_concurrent - held
                     if room < len(cols):
                         if room <= 0:
@@ -355,7 +380,8 @@ def run_cohort(baskets: dict[pd.Timestamp, list[str]],
         # 4) buy the cohort
         filled = 0
         if len(cols) and eq > 0:
-            cap = eq / cfg.hold
+            scale = 1.0 if cfg.capital_scale_fn is None else float(cfg.capital_scale_fn(t))
+            cap = eq / cfg.hold * scale
             if weights and sig is not None and sig in weights:
                 wmap = weights[sig]
                 w = np.array([abs(wmap.get(str(s), 0.0)) for s in names], dtype=float)
@@ -370,20 +396,28 @@ def run_cohort(baskets: dict[pd.Timestamp, list[str]],
             if len(cols):
                 sh = (cap * w) / px
                 cash -= float(np.dot(sh, px)) * (1.0 + side)
-                cohorts.append({"i": i, "cols": cols, "sh": sh, "px": px,
-                                "names": names})
+                trail = None
+                if cfg.trail_fn is not None and sig is not None:
+                    trail = cfg.trail_fn(sig, list(names))
+                val0 = float(np.dot(sh, px))
+                slots[i % max(1, cfg.hold)] = {
+                    "i": i, "cols": cols, "sh": sh, "px": px, "names": names,
+                    "peak": val0, "value": val0, "trail": trail}
                 filled = len(cols)
 
         # 5) mark again with the new cohort in place
         eq2 = cash
-        for c in cohorts:
+        for c in slots.values():
             v = value(i, c["cols"], c["px"])
-            eq2 += float(np.dot(c["sh"], v))
+            c["value"] = float(np.dot(c["sh"], v))
+            if c["value"] > c["peak"]:
+                c["peak"] = c["value"]
+            eq2 += c["value"]
         invested2 = eq2 - cash
 
         rows.append({"date": t, "equity": eq2,
                      "exposure": (invested2 / eq2) if eq2 > 0 else 0.0,
-                     "n_names": sum(len(c["cols"]) for c in cohorts),
+                     "n_names": sum(len(c["cols"]) for c in slots.values()),
                      "n_basket": len(cols), "filled": filled})
 
     return pd.DataFrame(rows).set_index("date")

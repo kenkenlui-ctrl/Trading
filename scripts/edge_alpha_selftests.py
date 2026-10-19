@@ -275,6 +275,45 @@ def test_metrics_are_sane() -> None:
            f"got cagr {m['2016-2026']['cagr%']}")
 
 
+def test_capital_scale_holds_less_than_full() -> None:
+    """C4's <=60% baseline: the book must actually be held at ~60%."""
+    px, cal = simple_market({"A": [100, 101, 102, 103], "B": [50, 51, 52, 53]})
+    closes = cf.close_matrix(px, cal)
+    trad = cf.tradable_matrix(px, cal)
+    cfg = cf.ExecConfig(hold=2, cost_rt=0.0, capital_scale_fn=lambda d: 0.6)
+    curve = cf.run_cohort({d: ["A", "B"] for d in cal}, closes, trad, cal, cfg)
+    ramped = float(curve["exposure"].iloc[cfg.hold:].mean())
+    record("the capital scale holds the book at the requested fraction",
+           abs(ramped - 0.6) < 0.01,
+           f"mean exposure after the ramp {ramped:.4f}, expected ~0.60")
+
+
+def test_trailing_stop_exits_early() -> None:
+    """C3's trailing exit: a cohort that gives back more than the trail must
+    be liquidated before its time exit, and its capital must not keep falling.
+    """
+    # the name rises then collapses
+    px, cal = simple_market({"A": [100, 120, 90, 85, 80, 75]})
+    closes = cf.close_matrix(px, cal)
+    trad = cf.tradable_matrix(px, cal)
+    baskets = {d: ["A"] for d in cal}
+
+    no_trail = cf.ExecConfig(hold=4, cost_rt=0.0)
+    with_trail = cf.ExecConfig(hold=4, cost_rt=0.0,
+                                trail_fn=lambda sig, names: 0.10)
+
+    e_none = cf.run_cohort(baskets, closes, trad, cal, no_trail)["equity"]
+    e_tr = cf.run_cohort(baskets, closes, trad, cal, with_trail)["equity"]
+    record("the trailing stop exits before the time exit",
+           float(e_tr.iloc[-1]) > float(e_none.iloc[-1]),
+           f"trailing {e_tr.iloc[-1]:.4f} vs no trailing {e_none.iloc[-1]:.4f}; "
+           f"the trailing version should keep more of the peak")
+    record("the trailing stop does not fire on a rising series",
+           abs(float(e_tr.iloc[1]) - 1.05) < 1e-9,
+           f"equity after the first rally {e_tr.iloc[1]:.4f}, expected 1.05 "
+           f"(a hold=4 cohort holds 1/4 of the book, so 0.75 cash + 0.30)")
+
+
 def main() -> int:
     print("Edge → Alpha self-tests (close-fill engine)")
     test_features_are_shifted()
@@ -284,6 +323,8 @@ def main() -> int:
     test_fill_lag_shifts_the_fill_not_the_signal()
     test_placebo_matches_the_daily_count()
     test_universe_fallback_keeps_exposure_at_100()
+    test_capital_scale_holds_less_than_full()
+    test_trailing_stop_exits_early()
     test_metrics_are_sane()
     test_prefix_consistency()
     total = PASSED + FAILED
