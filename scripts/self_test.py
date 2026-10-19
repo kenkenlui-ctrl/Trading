@@ -2192,6 +2192,301 @@ def t_p0_site_figures_match_the_artifact() -> None:
                "predicate still passes on the mutated text")
 
 
+def t_og_image_figures_match_the_artifact() -> None:
+    """The OG image must carry the site's numbers, and card 1 must name the
+    three markets the site actually covers.
+
+    The card used to say "200+200 HK + US universe" — a hardcoded brand line
+    that was wrong twice over. The site publishes 241 HK, 232 US and 201 JP
+    ticker pages (674 in total), and the engine's own markets are US + JP, so
+    "HK + US" described an universe the site does not run. The card is also
+    the one asset that gets scraped into other people's pages, so a wrong
+    number on it outlives the page it came from.
+
+    A PNG's pixels cannot be read by a test, so the generator writes down the
+    figures it rendered, next to the image, in public/og-image.figures.json.
+    This gate checks that file. The sidecar is only worth trusting if the
+    generator cannot type a number into it, so the gate also opens the
+    generator's own source and refuses a universe figure held as code or as
+    text — the count has to be counted, not typed.
+
+    The card is not read back from the sidecar alone: the generator's card
+    logic is executed (without running its drawing code, which would
+    overwrite the PNG) and the cards it produces are checked against the
+    artifacts and against the published tree. The sidecar is then required
+    to record exactly those cards.
+
+    All three controls run against the REAL files: the sidecar is written
+    back with a wrong count, the generator's str(total) is replaced with a
+    typed sum, and a universe figure is appended to the generator as text.
+    The same predicates are re-evaluated on what is on disk, and every file
+    is restored and re-checked afterwards. A control that only proves the
+    arithmetic works on a copy proves nothing about the files the build
+    ships.
+    """
+    sidecar_p = PUBLIC / "og-image.figures.json"
+    gen_p = REPO / "scripts" / "generate_og_image.py"
+    md_p = REPO / "data" / "monthly_backtest" / "latest.md"
+    ab_p = REPO / "data" / "ab_close_hold.json"
+    png_p = PUBLIC / "og-image.png"
+
+    missing = [p.name for p in (sidecar_p, gen_p, md_p, ab_p, png_p) if not p.exists()]
+    record("every file the OG-image gate needs is present", not missing,
+           f"missing: {missing}")
+    if missing:
+        return
+
+    # --- the published tree, counted here rather than imported -------------
+    # If this called build_home._universe_counts() it would be checking the
+    # generator against itself. Count the published pages directly.
+    tree = {}
+    for mkt in ("hk200", "us200", "jp200"):
+        d = PUBLIC / mkt / "ticker"
+        tree[mkt[:2].upper()] = len(list(d.glob("*.html"))) if d.is_dir() else 0
+    total = sum(tree.get(k, 0) for k in ("HK", "US", "JP"))
+    banned_nums = {total, *tree.values()}
+
+    # --- the artifacts the other three cards quote -------------------------
+    md = md_p.read_text(encoding="utf-8")
+    i = md.find("## Headline")
+    j = md.find("\n## ", i + 5)
+    block = md[i: j] if i >= 0 and j > 0 else ""
+    hl = {}
+    for line in block.splitlines():
+        line = line.strip()
+        if not line.startswith("|"):
+            continue
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        if len(cells) < 5 or set(cells[0]) <= set("|-: "):
+            continue
+        hl[cells[0]] = {"n": cells[1], "wr": cells[2], "avg": cells[3]}
+    ab = json.loads(ab_p.read_text(encoding="utf-8"))
+    win = f"{ab['windows']['us200']['B_close-hold']['test']['win%']}%"
+
+    def markets_in(text: str) -> set:
+        """The market codes a line of copy names."""
+        return {m for m in ("HK", "US", "JP")
+                if re.search(rf"\b{m}\b", str(text))}
+
+    def card_checks(cards: list) -> list:
+        """The predicate over the card list the generator produces.
+
+        Every card's big value is TEXT, so it must be a string: a card that
+        printed a computed integer instead of the rendered string would be
+        rendered by PIL just the same, and the check that the number is the
+        tree's would pass on 674 while the image says "674" only by luck of
+        the draw call. Requiring str keeps the check on what is painted.
+        """
+        res = []
+        res.append((len(cards) == 4,
+                    f"the OG image has four cards: {len(cards)}"))
+        if len(cards) < 4:
+            return res
+        big, sub = cards[0][0], cards[0][1]
+        res.append((isinstance(big, str) and big == str(total),
+                    f"card 1 prints the total published pages: {big!r} vs {total}"))
+        res.append((all(m in sub for m in ("HK", "US", "JP")),
+                    f"card 1 names HK, US and JP: {sub!r}"))
+        res.append(("200+200" not in str(big) and "200+200" not in str(sub),
+                    f"card 1 does not carry the retired '200+200' claim: {big!r} {sub!r}"))
+        t10 = (hl.get("T+10 (10-day swing)") or {}).get("avg")
+        t1 = (hl.get("T+1 (day-trade)") or {}).get("avg")
+        res.append((cards[1][0] == t10 and cards[1][1] == "T+10 avg/trade",
+                    f"card 2 is the T+10 average from the artifact: "
+                    f"{cards[1][:2]} vs {t10}"))
+        res.append((cards[2][0] == t1 and cards[2][1] == "T+1 avg/trade",
+                    f"card 3 is the T+1 average from the artifact: "
+                    f"{cards[2][:2]} vs {t1}"))
+        res.append((cards[3][0] == win and cards[3][1] == "US win rate, OOS",
+                    f"card 4 is the US out-of-sample win rate from the artifact: "
+                    f"{cards[3][:2]} vs {win}"))
+        return res
+
+    def load_cards(src: str) -> dict:
+        """Run the generator's card logic without running its drawing code.
+
+        generate_og_image.py is a script: importing it would redraw and
+        overwrite public/og-image.png mid-test. So the module's literal
+        constants and its functions are lifted out of the source and executed
+        here, and only the card list and the brand line are asked for. They
+        are then the ones a build would paint, not an echo of a file.
+        """
+        import pathlib as _pathlib
+
+        def literal_value(v) -> bool:
+            if isinstance(v, ast.Constant):
+                return True
+            if isinstance(v, (ast.Tuple, ast.List)):
+                return all(literal_value(e) for e in v.elts)
+            return False
+
+        mod = ast.parse(src)
+        keep = [n for n in mod.body
+                if isinstance(n, ast.FunctionDef)
+                or (isinstance(n, ast.Assign) and literal_value(n.value))]
+        ns = {"json": json, "pathlib": _pathlib, "sys": sys, "REPO": REPO}
+        exec(compile(ast.Module(body=keep, type_ignores=[]), str(gen_p), "exec"), ns)
+        return {"cards": ns["_cards"](), "tagline": ns["_tagline"]()}
+
+    def source_checks(src: str) -> list:
+        """Two scans, each scoped where the number could actually be typed.
+
+        A scan of every numeric constant in the file is useless here: the
+        drawing code is full of layout numbers and the palette holds
+        FG = (232, 234, 240), so a universe count of 232 was "found" in a
+        colour channel. Numbers can only reach the card through the
+        functions that build it, so the numeric scan is scoped to those.
+
+        Strings are different: a rendered figure is a string, and the
+        generator's docstrings quote the counts in prose to explain why the
+        card changed. Docstrings are excluded; every other string in the
+        file is scanned.
+        """
+        mod = ast.parse(src)
+        docs = set()
+        for node in ast.walk(mod):
+            if isinstance(node, (ast.Module, ast.FunctionDef,
+                                  ast.AsyncFunctionDef, ast.ClassDef)):
+                body = node.body
+                if (body and isinstance(body[0], ast.Expr)
+                        and isinstance(body[0].value, ast.Constant)
+                        and isinstance(body[0].value.value, str)):
+                    docs.add(id(body[0].value))
+
+        strings = [n.value for n in ast.walk(mod)
+                   if isinstance(n, ast.Constant) and isinstance(n.value, str)
+                   and id(n) not in docs]
+        hard_strs = [s for s in strings
+                     if "200+200" in s or s in {str(c) for c in banned_nums}]
+
+        fn_nums = []
+        for node in mod.body:
+            if isinstance(node, ast.FunctionDef):
+                for n in ast.walk(node):
+                    if (isinstance(n, ast.Constant)
+                            and isinstance(n.value, (int, float))
+                            and not isinstance(n.value, bool)):
+                        fn_nums.append(n.value)
+        hard_nums = sorted({n for n in fn_nums if n in banned_nums})
+        return [(not hard_nums,
+                 f"the OG generator types no universe number: {hard_nums}"),
+                (not hard_strs,
+                 f"the OG generator holds no universe figure as text: {hard_strs}")]
+
+    # ---- the generator as the build left it -------------------------------
+    gen_txt = gen_p.read_text(encoding="utf-8")
+    try:
+        built = load_cards(gen_txt)
+    except Exception as e:
+        record("the OG generator's card logic runs", False,
+               f"{type(e).__name__}: {e}")
+        return
+    record("the OG generator's card logic runs", True)
+    cards, tagline = built["cards"], built["tagline"]
+    for ok, msg in card_checks(cards):
+        record(msg, ok, "the OG image's numbers are not the site's numbers")
+    record("the OG image's brand line names the same markets as its universe card",
+           markets_in(tagline) == markets_in(cards[0][1]),
+           f"the brand line {tagline!r} names {sorted(markets_in(tagline))} but "
+           f"the card names {sorted(markets_in(cards[0][1]))}")
+    for ok, msg in source_checks(gen_txt):
+        record(msg, ok, "the OG generator can hardcode a universe number")
+
+    # ---- the sidecar the build wrote next to the image --------------------
+    sidecar_txt = sidecar_p.read_text(encoding="utf-8")
+    try:
+        fig = json.loads(sidecar_txt)
+    except Exception as e:
+        record("the OG image's figures sidecar parses", False,
+               f"{type(e).__name__}: {e}")
+        return
+    side_cards = [(c.get("big"), c.get("sub")) for c in (fig.get("cards") or [])]
+    record("the OG image's sidecar records the card the generator printed",
+           side_cards == [(c[0], c[1]) for c in cards],
+           f"sidecar {side_cards} vs generator {[(c[0], c[1]) for c in cards]}")
+    record("the OG image's sidecar universe counts are the published tree's",
+           (fig.get("universe_ticker_pages") or {}) == tree,
+           f"sidecar {fig.get('universe_ticker_pages')} vs tree {tree}")
+    record("the OG image's sidecar records the brand line the generator printed",
+           fig.get("tagline") == tagline,
+           f"sidecar {fig.get('tagline')!r} vs generator {tagline!r}")
+    for ok, msg in card_checks([(c.get("big"), c.get("sub"), "")
+                                for c in (fig.get("cards") or [])]):
+        record(msg.replace("the OG", "the sidecar's"), ok,
+               "the sidecar records numbers the site does not publish")
+
+    # ---- MUST-FAIL: corrupt the REAL sidecar and re-evaluate -------------
+    try:
+        bad = json.loads(sidecar_txt)
+        bad["cards"][0]["big"] = str(total + 1)
+        sidecar_p.write_text(json.dumps(bad, ensure_ascii=False, indent=2) + "\n",
+                             encoding="utf-8")
+        on_disk = json.loads(sidecar_p.read_text(encoding="utf-8"))
+        red = card_checks([(c.get("big"), c.get("sub"), "")
+                           for c in (on_disk.get("cards") or [])])
+        record("MUST-FAIL a wrong universe count on the sidecar is rejected",
+               not all(ok for ok, _ in red),
+               "the control for this gate does not discriminate: the same "
+               "predicate still passes on the corrupted sidecar")
+    finally:
+        sidecar_p.write_text(sidecar_txt, encoding="utf-8")
+    record("the sidecar is restored after the control",
+           sidecar_p.read_text(encoding="utf-8") == sidecar_txt,
+           "the sidecar was left corrupted by the control")
+
+    # ---- MUST-FAIL: type the universe into the REAL generator -------------
+    # str(total) -> 241 + 232 + 201: the card still adds up, so only a check
+    # on the source can tell a counted number from a typed one.
+    try:
+        assert gen_txt.count("(str(total),") == 1
+        gen_p.write_text(gen_txt.replace("(str(total),", "(241 + 232 + 201,"),
+                         encoding="utf-8")
+        tampered = gen_p.read_text(encoding="utf-8")
+        red_cards = card_checks(load_cards(tampered)["cards"])
+        red_src = source_checks(tampered)
+        record("MUST-FAIL a typed universe total in the generator is rejected",
+               not all(ok for ok, _ in red_cards) and not all(ok for ok, _ in red_src),
+               "the control for this gate does not discriminate: the same "
+               "predicate still passes on a generator that types the number")
+    finally:
+        gen_p.write_text(gen_txt, encoding="utf-8")
+    record("the generator is restored after the control",
+           gen_p.read_text(encoding="utf-8") == gen_txt,
+           "the generator was left corrupted by the control")
+
+    # ---- MUST-FAIL: let the brand line drop a market ----------------------
+    try:
+        needle = '" + ".join(_universe_counts().keys())'
+        assert gen_txt.count(needle) == 1
+        gen_p.write_text(gen_txt.replace(needle, '"HK + US"'), encoding="utf-8")
+        tampered = gen_p.read_text(encoding="utf-8")
+        built_bad = load_cards(tampered)
+        record("MUST-FAIL a brand line that drops a market is rejected",
+               markets_in(built_bad["tagline"]) != markets_in(built_bad["cards"][0][1]),
+               "the control for this gate does not discriminate: a brand line "
+               "naming fewer markets than the card is not detected")
+    finally:
+        gen_p.write_text(gen_txt, encoding="utf-8")
+    record("the generator is restored after the brand-line control",
+           gen_p.read_text(encoding="utf-8") == gen_txt,
+           "the generator was left corrupted by the control")
+
+    # ---- MUST-FAIL: a universe figure held as text in the generator -------
+    try:
+        gen_p.write_text(gen_txt + f'\nHARDCODED_UNIVERSE = "{total}"\n',
+                         encoding="utf-8")
+        red = source_checks(gen_p.read_text(encoding="utf-8"))
+        record("MUST-FAIL a universe figure held as text in the generator is rejected",
+               not all(ok for ok, _ in red),
+               "the control for this gate does not discriminate: the same "
+               "predicate still passes on a generator holding the number")
+    finally:
+        gen_p.write_text(gen_txt, encoding="utf-8")
+    record("the generator is restored after the text control",
+           gen_p.read_text(encoding="utf-8") == gen_txt,
+           "the generator was left corrupted by the control")
+
+
 def t_one_action_authority_per_page() -> None:
     """2-into-1 (2026-10-18): the site must have exactly ONE engine that is
     allowed to state an action, and it must be v2.
@@ -4003,6 +4298,7 @@ def main() -> int:
                t_equity_curve_pages_are_v2,
                t_homepage_perf_figures_trace_to_source,
                t_p0_site_figures_match_the_artifact,
+               t_og_image_figures_match_the_artifact,
                t_one_action_authority_per_page,
                t_equity_curve_stats_are_internally_consistent,
                t_no_withdrawn_figures_are_published,

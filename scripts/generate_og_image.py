@@ -23,6 +23,7 @@ import json
 import pathlib
 import random
 import re
+import sys
 
 REPO = pathlib.Path("/Users/kenken/dev/dsa-hk")
 
@@ -52,19 +53,64 @@ def _oos_win_pct() -> str:
     return f"{d['windows']['us200']['B_close-hold']['test']['win%']}%"
 
 
+def _universe_counts() -> dict:
+    """Published ticker pages per market, counted from the built tree.
+
+    The same counter the home page's hero uses (build_home._universe_counts),
+    so the card and the hero cannot disagree. The card used to say "200+200
+    HK + US" while the site publishes 241 HK, 232 US and 201 JP pages, and
+    the engine's own markets are US + JP.
+    """
+    sys.path.insert(0, str(REPO / "scripts"))
+    from build_home import _universe_counts as counter
+    return counter()
+
+
+def _tagline() -> str:
+    """The brand line's market list, from the same counter as the card.
+
+    The image used to say "HK + US" in the tagline while the card underneath
+    it counted three markets. A picture that contradicts itself is worse than
+    either version, and the market list is a fact about the build, not a
+    slogan — so it is counted, not typed.
+    """
+    return " + ".join(_universe_counts().keys()) + " 即日鮮 AI 交易決策儀表板"
+
+
 def _cards() -> list:
     hl = _headline_rows()
     t10 = hl.get("T+10 (10-day swing)")
     t1 = hl.get("T+1 (day-trade)")
     if not t10 or not t1:
         raise SystemExit("generate_og_image: the Headline table lost a horizon")
-    # "200+200" is the brand line (HK + US universe), not a performance figure.
+    counts = _universe_counts()
+    total = sum(int(counts.get(k, 0)) for k in ("HK", "US", "JP"))
+    if total <= 0:
+        raise SystemExit("generate_og_image: no published ticker pages found")
     return [
-        ("200+200", "HK + US universe", "#e8eaf0"),
+        (str(total), " · ".join(counts.keys()), "#e8eaf0"),
         (t10["avg"], "T+10 avg/trade", "#10b981"),
         (t1["avg"], "T+1 avg/trade", DIM),
         (_oos_win_pct(), "US win rate, OOS", DIM),
     ]
+
+
+def _write_figures(cards: list) -> None:
+    """Record what the card printed, so a gate can check the image.
+
+    A PNG cannot be read by a test, so the generator writes down the figures
+    it rendered next to it. public/og-image.figures.json is what the
+    consistency gate compares against the artifacts.
+    """
+    from datetime import datetime
+    out = REPO / "public" / "og-image.figures.json"
+    out.write_text(json.dumps({
+        "generated_at": datetime.now().isoformat(timespec="seconds"),
+        "universe_ticker_pages": _universe_counts(),
+        "tagline": _tagline(),
+        "cards": [{"big": big, "sub": sub} for big, sub, _ in cards],
+    }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"→ {out}")
 
 
 W, H = 1200, 630
@@ -91,6 +137,11 @@ f_statl = ImageFont.truetype("/System/Library/Fonts/Menlo.ttc", 21)
 f_foot = ImageFont.truetype("/System/Library/Fonts/Menlo.ttc", 22)
 f_foot2 = ImageFont.truetype("/System/Library/Fonts/Menlo.ttc", 22)
 
+# The card and the brand line are counted from the published tree before
+# anything is drawn, so the image cannot contradict itself.
+cards = _cards()
+tagline = _tagline()
+
 # Background + frames
 d.rectangle([0, 0, W, H], fill=BG)
 d.rectangle([16, 16, W - 17, H - 17], outline=BORDER, width=1)
@@ -102,10 +153,9 @@ d.text((70, 62), "FIRST-PARTY DATA · T-1 OHLC ONLY", font=f_kicker, fill=AMBER)
 # Title
 d.text((66, 100), "Leeks Terminal", font=f_title, fill=FG)
 d.rectangle([70, 118, 230, 126], fill=BULL)
-d.text((70, 195), "HK + US 即日鮮 AI 交易決策儀表板", font=f_sub, fill=FG2)
+d.text((70, 195), tagline, font=f_sub, fill=FG2)
 
 # Stat cards — every figure from an artifact (see _cards).
-cards = _cards()
 x0, y0 = 90, 290
 for i, (big, sub, col) in enumerate(cards):
     x = x0 + i * 265
@@ -131,3 +181,4 @@ d.text((90, 585), "www.win9you.com  ·  Educational use only · Not investment a
 
 img.save(OUT, "PNG", optimize=True)
 print(f"OG image: {img.size[0]}x{img.size[1]} saved to {OUT}")
+_write_figures(cards)
