@@ -151,6 +151,107 @@ that SELECTION_LUCKY or SELECTION_DEAD is the likely outcome. That is exactly
 why the SELECTION_REAL branch is spelled out in full, and why the `arm1_nogate`
 arm is included even though the spec does not require it.
 
+## Direction A — outcome, 2026-10-19
+
+300 placebo trials, seed 20261019, 179 names, 2534 sessions (2016-09-01 to
+2026-10-01), 0.25% round trip, 10-session hold.
+
+### The arms
+
+| | arm 2 — the universe | arm 1 — v2's screen | arm 1, no gate |
+|---|---|---|---|
+| CAGR 2016-20 | 17.71% | 20.69% | 19.48% |
+| CAGR 2021-26 | 16.84% | 11.72% | 12.26% |
+| Sharpe 2016-20 | 0.86 | 0.96 | 0.94 |
+| Sharpe 2021-26 | 0.93 | 0.67 | 0.72 |
+| **gap vs the universe** | — | **+2.98 / −5.12** | **+1.77 / −4.58** |
+| clears +1.0pp/yr in both windows | — | **False** | **False** |
+| beats its placebo null | — | False | False |
+
+Full sample, reported for comparison with the site's published figures rather
+than for the decision: the universe arm compounds at 17.01% and v2's screen at
+15.39%, a gap of −1.62pp/yr.
+
+### The placebo
+
+| arm | window | gap vs universe | null (random picks, same count) | z | percentile |
+|---|---|---|---|---|---|
+| arm 1 | 2016-2020 | +2.98 | +0.02 (sd 2.508) | +1.18 | 87.7% |
+| arm 1 | 2021-2026 | −5.12 | −0.23 (sd 2.950) | −1.66 | 4.3% |
+| arm 1, no gate | 2016-2020 | +1.77 | −0.17 (sd 2.319) | +0.84 | 79.7% |
+| arm 1, no gate | 2021-2026 | −4.58 | −0.51 (sd 2.910) | −1.40 | 8.7% |
+
+A random draw of the same number of names, on the same sessions, deployed the
+same way, scores close to the universe in both windows. v2's screen is above
+that null in 2016-20 and below it in 2021-26, and neither difference reaches
+|z| = 1.96. The null has power in all four cells, so this is a measurement and
+not a shrug.
+
+### The pre-registered decision
+
+**SELECTION_DEAD** for the spec's arm, and **SELECTION_DEAD** for the no-gate
+arm. Neither arm clears the +1.0pp/yr threshold in both sub-periods, so
+Amendment B's SELECTION_LUCKY branch does not apply either — that branch
+requires the threshold to be cleared first. The verdict does not depend on the
+placebo: the screen fails the spec's own rule before the placebo is consulted.
+
+### The fill-lag sensitivity
+
+Amendment A4 requires the same signals filled at the next session's close to be
+reported. It changes nothing: the lag-1 run returns SELECTION_DEAD for the
+spec's arm and SELECTION_DEAD for the no-gate arm, with gaps of +2.32 / −5.13
+against the same-close fill's +2.98 / −5.12. The result does not rest on the
+same-close execution assumption.
+
+### Validity
+
+- **Exposure matched**: the two arms' average invested fraction differs by
+0.012pp in 2016-20 and 0.007pp in 2021-26. The arms are comparable on
+deployment, so the gap is not an exposure artefact.
+- **No cell is void**: all four placebo nulls have non-zero spread (2.508,
+2.950, 2.319, 2.910), so every cell is a measurement rather than a shrug.
+- **No look ahead**: the independent audit (`scripts/edge_alpha_audit.py`)
+passes 9/9 checks, including truncating the whole universe at 5 dates with no
+change to any selection at or before the cut, and corrupting every bar on
+2024-03-22 with no change to any earlier selection.
+- **Glitch mask coverage**: the repository's glitch mask contains no symbol
+from the US universe, so it removes 0 name-days here and is a no-op for this
+market. The same is true of the shipped close-hold A/B. Saying "glitch applied"
+would imply a protection that is not there, so it is stated.
+- **The universe fallback bites**: the v2 screen selects nothing on 1141 of
+2534 sessions, so arm 1 holds the universe on 45% of sessions and its own picks
+on the rest. That is Amendment A2, and it means arm 1 is "the screen where it
+has an opinion, the universe otherwise".
+
+### What this means
+
+Direction A asked whether the portfolio shortfall came from the SELECTION or
+from the PLUMBING. The plumbing is now gone — full deployment, no slots, no
+limit-fill asymmetry, no sizing friction — and the screen still does not beat
+holding the same universe. So the shortfall is the selection, not the plumbing.
+
+**Direction B is not authorised.** **Direction D is triggered**: the v2
+real-money plan stops. In this repository that means no flag to turn off —
+every Sprint 2 flag is OFF and no production flag was moved at any point — and
+it means the site's stated 30-day paper-trade-then-real-money framing, which is
+a public position rather than a deployed plan, is now contradicted by the
+evidence.
+
+**What is not refuted.** The per-trade close-hold edge (four cells, z 8.9-13.2,
+all powered) was measured per trade, in the limit-fill vehicle, and Direction A
+does not touch it. A real per-trade advantage that neither a 10-slot book nor a
+fully-invested equal-weight portfolio can express is a third possibility, and
+it is the one thing this programme has not yet tested.
+
+**One caveat on the vehicle.** Arm 1 holds the universe on every session where
+the screen has no opinion, which is 45% of them, so arm 1 is not a pure
+concentrated bet on the screen's picks — it is the screen layered over a
+passive hold. A vehicle that held cash instead on those sessions would have a
+different exposure, and the spec's requirement that both arms be 100% invested
+is what rules that variant out of the headline.
+
+---
+
 # Amendment C — Direction C's dimensions, defined before implementation
 
 **Written:** 2026-10-19, before any Direction C run. The spec lists the four

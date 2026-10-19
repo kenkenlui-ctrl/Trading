@@ -61,7 +61,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent / "v2engine"))
 
 import signal_search_s1 as s1  # noqa: E402
-from bt_clean import build_mask  # noqa: E402
+from bt_clean import build_mask, _load_mask_cache  # noqa: E402
 
 WINDOWS = {
     "2016-2026": (pd.Timestamp("2016-01-01"), pd.Timestamp("2027-01-01")),
@@ -458,7 +458,15 @@ def glitch_bad_days(px: dict[str, pd.DataFrame], cal: pd.DatetimeIndex,
     and one bad bar contaminates the features, not just that day's price. The
     same rule is applied here.
     """
-    mask = build_mask()
+    # The repo's cached mask is the same source the shipped engine uses, and it
+    # is a superset of what build_mask() finds live, so use the cache.
+    #
+    # COVERAGE NOTE, measured 2026-10-19: the mask contains 16 symbols and
+    # NONE of them is in the US universe (it holds HK and JP names plus SOFI).
+    # For the US market this function is therefore a no-op, and the Direction A
+    # report must say so rather than let "glitch applied" imply a protection
+    # that is not there.
+    mask = _load_mask_cache()
     bad: dict[str, set] = {}
     for sym, b in px.items():
         g = mask.get(sym)

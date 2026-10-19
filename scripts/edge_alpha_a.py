@@ -53,6 +53,10 @@ SPEC = "docs/edge-to-alpha-prereg-spec-2026-10-19.md"
 Z_CRIT = 1.96
 THRESHOLD_PP = 1.0          # the spec's +1.0pp/yr
 W = ("2016-2020", "2021-2026")
+# The decision rule uses the two sub-periods above. The full sample is
+# reported alongside so the new vehicle can be compared with the
+# site's published figures, which are full-sample.
+ALL = ("2016-2026",)
 
 
 # ======================================================================================
@@ -247,7 +251,7 @@ def main() -> int:
     rep_ng = arm_report(c_arm1ng, "arm1_nogate", null_ng, tr_ng, ex_ng, c_arm2)
 
     expo_gap = {w: round(abs(rep_arm1["exposure_pct_after_ramp"][w]
-                            - rep_arm2_expo(c_arm2, w, a.hold)), 3) for w in W}
+                            - arm2_expo(c_arm2, w, a.hold)), 3) for w in W}
     out = {
         "spec": SPEC,
         "amendments": "A (construction) and B (outcome readings)",
@@ -277,6 +281,19 @@ def main() -> int:
         "arm1": rep_arm1,
         "arm1_nogate": rep_ng,
         "exposure_gap_arm1_vs_arm2_pp": expo_gap,
+        "full_sample": {
+            "note": "not part of the decision rule; reported so this vehicle can "
+                    "be compared with the site's published full-sample figures",
+            "arm1_cagr_pct": round(cagr_of(c_arm1, "2016-2026"), 3),
+            "arm1_nogate_cagr_pct": round(cagr_of(c_arm1ng, "2016-2026"), 3),
+            "arm2_cagr_pct": round(cagr_of(c_arm2, "2016-2026"), 3),
+            "arm1_gap_vs_arm2_pp": round(cagr_of(c_arm1, "2016-2026")
+                                         - cagr_of(c_arm2, "2016-2026"), 3),
+            "arm1_nogate_gap_vs_arm2_pp": round(cagr_of(c_arm1ng, "2016-2026")
+                                                - cagr_of(c_arm2, "2016-2026"), 3),
+            "arm1_sharpe": cf.metrics(c_arm1)["2016-2026"]["sharpe"],
+            "arm2_sharpe": cf.metrics(c_arm2)["2016-2026"]["sharpe"],
+        },
         "verdict": rep_arm1["classification"],
         "verdict_secondary_nogate": rep_ng["classification"],
     }

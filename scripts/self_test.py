@@ -3291,6 +3291,139 @@ def t_sprint3_outcome_matches_the_artifact() -> None:
            "must exist in the document for the probe to mean anything")
 
 
+def t_edge_to_alpha_is_recorded_and_artifact_derived() -> None:
+    """The Edge→Alpha programme must be sealed before it is read, and every
+    figure in its outcome must be the one the run produced.
+
+    Three things have gone wrong in this project in the way this gate guards
+    against. A pre-registration whose pass criterion named an undefined null
+    (Sprint 3). A table whose percentiles were typed rather than read
+    (Sprint 2 axis A). A figure quoted in discussion that appears in no artifact
+    (the no-gate number). Each was caught late and each cost a re-run.
+
+    So: the amendments must be present and must carry the specific commitments
+    that make the programme interpretable, the outcome's numbers must match the
+    report, and the independent no-look-ahead audit must have passed.
+    """
+    import json as _json
+    import re as _re
+
+    spec_p = REPO / "docs" / "edge-to-alpha-prereg-spec-2026-10-19.md"
+    rep_p = REPO / "reports" / "edge_alpha_a_us.json"
+    lag_p = REPO / "reports" / "edge_alpha_a_us_lag1.json"
+    aud_p = REPO / "reports" / "edge_alpha_audit_us.json"
+
+    spec = spec_p.read_text(encoding="utf-8") if spec_p.exists() else ""
+    flat = _re.sub(r"\s+", " ", _re.sub(r"^\s*>\s?", "", spec, flags=_re.M))
+    record("the Edge→Alpha pre-registration exists", bool(spec),
+           "docs/edge-to-alpha-prereg-spec-2026-10-19.md is missing")
+    if not spec:
+        return
+
+    # ---- the pre-registration must be sealed ------------------------------
+    record("Amendment A fixes the construction the spec did not specify",
+           "Amendment A" in flat and "falls back to the whole universe" in flat
+           and "No stop in either arm" in flat,
+           "the cohort structure, the empty-session fallback and the removal of "
+           "the stop are judgement calls that can each move the answer")
+    record("Amendment A records the fill-lag sensitivity as mandatory",
+           "fill_lag" in flat and "sensitivity" in flat,
+           "a same-close fill is not executable in the strict sense, so the "
+           "one-session-lagged variant has to be reported")
+    record("Amendment B pre-commits a reading for each outcome",
+           "SELECTION_REAL" in flat and "SELECTION_LUCKY" in flat
+           and "SELECTION_DEAD" in flat and "VOID" in flat,
+           "a pre-registration with three possible outcomes and no rule for "
+           "each is a back door; Sprint 2's axis B proved the point")
+    record("Amendment B distinguishes a real edge from a lucky one",
+           "does NOT beat its own placebo null" in flat,
+           "a threshold rule that passes while its placebo fails is exactly the "
+           "failure mode this project has guarded against since Sprint 1")
+    record("Amendment B discloses the prior it was written under",
+           "Disclosure" in flat and "Sprint 3 already found" in flat,
+           "the reader must be able to see that the prior pointed one way")
+    record("Amendment C defines every Direction C level before implementation",
+           "Amendment C" in flat and "Benjamini-Hochberg" in flat
+           and "Sharpe is primary" in flat,
+           "a sizing rule that is not spelled out is not a level, it is a "
+           "suggestion")
+    record("Amendment C states what C may not do",
+           "must not do" in flat and "optimisation of noise" in flat,
+           "Direction C is moot for v2 if the selection is dead, and that has to "
+           "be written before the result is known, not after")
+
+    # ---- the outcome must be the one the run produced ---------------------
+    if not (rep_p.exists() and lag_p.exists() and aud_p.exists()):
+        record("the Direction A outcome is present and artifact-derived", False,
+               f"missing: report={rep_p.exists()} lag={lag_p.exists()} "
+               f"audit={aud_p.exists()}")
+        return
+    d = _json.loads(rep_p.read_text(encoding="utf-8"))
+    lag = _json.loads(lag_p.read_text(encoding="utf-8"))
+    au = _json.loads(aud_p.read_text(encoding="utf-8"))
+
+    record("the documented Direction A verdict matches the report",
+           d["verdict"] in flat and d["verdict_secondary_nogate"] in flat,
+           f"the report says {d['verdict']!r} / {d['verdict_secondary_nogate']!r}")
+    for w in ("2016-2020", "2021-2026"):
+        gap = d["arm1"]["gap_vs_arm2_pp"][w]
+        s = f"{gap:+.2f}".replace("-", "\u2212")
+        record(f"the documented 2016-20 gap for {w} matches the report",
+               s in flat, f"expected {s} in the outcome table")
+    lz = f"{lag['verdict']}"
+    record("the outcome reports the fill-lag sensitivity's verdict",
+           lz in flat, f"the lag-1 run returned {lz!r}")
+    record("the outcome states the full-sample comparison with the published figures",
+           "Full sample" in flat and "17.01" in flat,
+           "the new vehicle has to be reconciled with the site's published "
+           "full-sample numbers, which measure a different execution")
+
+    # ---- validity evidence -----------------------------------------------
+    record("the no-look-ahead audit passed",
+           au.get("verdict") == "PASS" and au.get("failed") == 0,
+           f"the audit reports {au.get('verdict')} with {au.get('failed')} "
+           f"failed checks")
+    record("the audit covered the whole universe at several cutoffs",
+           len(au.get("cutoffs", [])) >= 3 and au.get("universe_names", 0) > 100,
+           "a prefix check on a handful of symbols proves little")
+    record("every placebo null has power",
+           all(v["has_power"] for arm in (d["arm1"], d["arm1_nogate"])
+               for v in arm["null"].values()),
+           "a zero-spread null is a void cell, not a measurement")
+    record("the two arms are exposure-matched",
+           all(abs(v) < 1.0 for v in d["exposure_gap_arm1_vs_arm2_pp"].values()),
+           f"exposure gap {d['exposure_gap_arm1_vs_arm2_pp']}")
+    record("the outcome records that the glitch mask has no US coverage",
+           "no symbol from the US universe" in flat,
+           "saying 'glitch applied' would imply a protection that is not there")
+
+    # ---- the suites exist -------------------------------------------------
+    suite = REPO / "scripts" / "edge_alpha_selftests.py"
+    if suite.exists():
+        st = suite.read_text(encoding="utf-8")
+        record("the engine self-test suite covers the no-look-ahead prefix check",
+               "test_prefix_consistency" in st,
+               "the prefix check is the only mechanical proof that the screen "
+               "does not reach forward")
+        record("the engine self-test suite pins the cohort arithmetic by hand",
+               "test_cohort_arithmetic" in st and "test_cost_accounting" in st,
+               "an engine that mis-times an exit still produces a plausible "
+               "equity curve")
+    else:
+        record("the engine self-test suite exists", False,
+               "scripts/edge_alpha_selftests.py is missing")
+
+    # ---- MUST-FAIL ---------------------------------------------------------
+    loosened = flat.replace("+1.0pp/yr", "+0.1pp/yr")
+    record("MUST-FAIL a loosened decision threshold is rejected",
+           loosened != flat and "+1.0pp/yr" not in loosened,
+           "the control for this gate does not discriminate")
+    dropped = flat.replace("SELECTION_LUCKY", "SELECTION_MAYBE")
+    record("MUST-FAIL a dropped outcome reading is rejected",
+           dropped != flat and "SELECTION_LUCKY" not in dropped,
+           "the control for this gate does not discriminate")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--json", action="store_true")
@@ -3323,7 +3456,8 @@ def main() -> int:
                t_closed_decisions_are_recorded_and_enforced,
                t_the_ordering_table_is_derived_from_the_artifacts,
                t_sprint3_construction_defects_are_recorded,
-               t_sprint3_outcome_matches_the_artifact):
+               t_sprint3_outcome_matches_the_artifact,
+               t_edge_to_alpha_is_recorded_and_artifact_derived):
         print(f"\n{fn.__doc__.splitlines()[0] if fn.__doc__ else fn.__name__}")
         try:
             fn()
