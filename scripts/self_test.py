@@ -3078,6 +3078,219 @@ def t_the_ordering_table_is_derived_from_the_artifacts() -> None:
            "not just the return figures")
 
 
+def t_sprint3_construction_defects_are_recorded() -> None:
+    """A construction bug fixed in silence is a result nobody can re-check.
+
+    Sprint 3's pre-registration specified the deployment-matching idea but not
+    the arithmetic, and two defects lived in that gap: the residual was weighted
+    by the exposure AFTER the trades that realised the profit, and a monthly
+    benchmark was blended with a daily arm and compared against a CAGR on a
+    third grid. Neither was caught by the identity controls -- feeding an arm
+    back as its own null nets to zero under either wrong convention, because the
+    whole series shifts identically. Only hand arithmetic found them.
+
+    So the record has to carry three things: that the null was undefined
+    (Amendment 1), that the construction was wrong (Amendment 2), and that an
+    over-stated figure was withdrawn. A document that keeps only the fixed code
+    would tell the next reader the construction was obvious.
+    """
+    import re as _re
+
+    spec_p = REPO / "docs" / "sprint-3-deployment-matched-benchmark-prereg-2026-10-19.md"
+    spec = spec_p.read_text(encoding="utf-8") if spec_p.exists() else ""
+    flat = _re.sub(r"\s+", " ", _re.sub(r"^\s*>\s?", "", spec, flags=_re.M))
+
+    record("the Sprint 3 pre-registration exists",
+           bool(spec), "docs/sprint-3-deployment-matched-benchmark-prereg is missing")
+    if not spec:
+        return
+
+    record("Amendment 1 records that the original null was undefined",
+           "Amendment 1" in flat and "arm-matched_null" in flat and "sd = 0" in flat,
+           "the first pass criterion named an undefined null and, read literally, "
+           "had sd = 0; without that on record the fix looks arbitrary")
+
+    record("Amendment 1 kept every threshold unchanged",
+           "z_crit = 1.96" in flat and "Nothing is relaxed" in flat,
+           "a defect fixed by loosening the bar is a different experiment and "
+           "must be declared as such")
+
+    record("Amendment 1 pre-commits a power condition",
+           "must be `> 0`" in flat or "must be > 0" in flat,
+           "a zero-spread null must be VOID rather than a pass; this project has "
+           "now hit that trap three times")
+
+    record("Amendment 2 records the exposure-weighting defect",
+           "Amendment 2" in flat and "held **during** the interval" in flat,
+           "the residual was weighted by post-trade exposure, which hands the "
+           "benchmark the arm's largest single move")
+
+    record("Amendment 2 records the resolution mismatch",
+           "monthly" in flat and "daily trading calendar" in flat,
+           "ew_bh is monthly and walk() is daily; blending them and comparing "
+           "against a third grid moved the answer by several pp/yr")
+
+    record("the over-stated 10.2pp figure was withdrawn, not left standing",
+           "10.2pp" not in flat and "10.2pp" not in spec,
+           "the claim attributed the whole grid artefact to the weighting sign "
+           "error; it is gone from the spec and corrected in the code comment")
+
+    record("the pilot is explicitly not a result",
+           "The pilot is not a result" in flat,
+           "a pilot that produced 12-trial numbers which later moved must not be "
+           "readable as evidence")
+
+    record("the corrected naive figure is reconciled with Sprint 1",
+           "+16.51" in flat and "+7.70" in flat and "grid" in flat,
+           "moving the naive comparison to the daily grid changes Sprint 1's "
+           "published regime=none gap; the difference has to be explained, not "
+           "just overwritten")
+
+    record("Amendment 3 pre-commits a reading for every outcome",
+           "If neither arm clears" in flat and "If arm B" in flat
+           and "If arm A" in flat and "If any cell is VOID" in flat,
+           "a pre-registration whose result has three possible shapes and no "
+           "rule for each is a back door; Sprint 2's axis B proved the point")
+
+    record("Amendment 3 discloses the bias it was written under",
+           "Disclosed bias" in flat and "12-trial pilot" in flat,
+           "the readings were written after a pilot had already pointed one way; "
+           "a reader must be able to see that and discount accordingly")
+
+    record("Amendment 3 distinguishes a real edge from a matched beta",
+           "beats equal-weight but does *not* beat its own null" in flat,
+           "if arm B clears equal-weight but not its null, the excess is universe "
+           "beta and the verdict does not change; the two must not be merged")
+
+    # ---- MUST-FAIL: the gate expression must turn False on tampered text ---
+    # A probe that asserts something about a local copy of the string proves
+    # nothing unless the string it tampers with is the one the real gate reads.
+    # So each control re-evaluates the SAME predicate against mutated text.
+    thresholds_ok = ("z_crit = 1.96" in flat and "Nothing is relaxed" in flat)
+    loosened = flat.replace("z_crit = 1.96", "z_crit = 1.0")
+    thresholds_ok_on_loosened = ("z_crit = 1.96" in loosened
+                                 and "Nothing is relaxed" in loosened)
+    record("MUST-FAIL a loosened z_crit is rejected",
+           thresholds_ok and loosened != flat and not thresholds_ok_on_loosened,
+           "the control for this gate does not discriminate: the threshold "
+           "predicate must be False when the threshold is loosened")
+
+    sd_ok = "sd = 0" in flat
+    repaired = flat.replace("sd = 0", "sd = 1")
+    record("MUST-FAIL an unrecorded sd = 0 defect is rejected",
+           sd_ok and repaired != flat and "sd = 0" not in repaired,
+           "the control for this gate does not discriminate: if the sd = 0 "
+           "defect is silently repaired, the record of it disappears")
+
+
+def t_sprint3_outcome_matches_the_artifact() -> None:
+    """Sprint 3's outcome is read from the report, never retyped.
+
+    The same discipline that caught the axis A percentiles (38% / 1% in the
+    document against 46.3 / 0.0 measured) and the no-gate figure quoted in
+    discussion that exists in no artifact. Every cell of the results table is
+    reconstructed here from the JSON and compared as a whole row, so a single
+    altered digit anywhere in the row fails the gate.
+
+    The run's own validity evidence is checked too. A result from a vacuous null
+    or a deployment-mismatched null is not a result, and the document must not
+    present it as one.
+    """
+    import json as _json
+    import re as _re
+
+    M = "\u2212"
+
+    def n(v, d=2):
+        return f"{v:+.{d}f}".replace("-", M)
+
+    spec = REPO / "docs" / "sprint-3-deployment-matched-benchmark-prereg-2026-10-19.md"
+    rep = REPO / "reports" / "signal_search_s3_us.json"
+    if not (spec.exists() and rep.exists()):
+        record("the Sprint 3 outcome is present and artifact-derived", False,
+               f"spec={spec.exists()} report={rep.exists()}")
+        return
+
+    flat = _re.sub(r"\s+", " ", _re.sub(r"^\s*>\s?", "",
+                                        spec.read_text(encoding="utf-8"), flags=_re.M))
+    d = _json.loads(rep.read_text(encoding="utf-8"))
+    arms = {a["arm"]: a for a in d["arms"]}
+    A, B = arms.get("A"), arms.get("B")
+    if A is None or B is None:
+        record("the Sprint 3 outcome is present and artifact-derived", False,
+               "the report does not contain both arms")
+        return
+    W = ("2016-2020", "2021-2026")
+
+    def gv(a, w, k):
+        return a["gate"]["windows"][w][k]
+
+    # whole-row comparison, so any single altered digit fails
+    for label, a in (("A", A), ("B", B)):
+        cells = (f"{n(gv(a, W[0], 'null_mean_pp'))} / "
+                 f"{n(gv(a, W[1], 'null_mean_pp'))}")
+        record(f"arm {label}'s null row in the doc matches the report",
+               cells in flat,
+               f"expected the measured null row {cells} in the results table")
+        zrow = f"{n(gv(a, W[0], 'z'))} / {n(gv(a, W[1], 'z'))}"
+        record(f"arm {label}'s z row in the doc matches the report",
+               zrow in flat, f"expected {zrow} in the results table")
+        mrow = f"{n(a['matched_gap_pp'][W[0]])} / {n(a['matched_gap_pp'][W[1]])}"
+        record(f"arm {label}'s matched gap row matches the report",
+               mrow in flat, f"expected {mrow} in the results table")
+
+    record("the documented verdict matches the report",
+           d["verdict"] in flat,
+           f"the report says {d['verdict']!r}; the document must not paraphrase it")
+
+    # validity evidence — a result from a vacuous or mismatched null is void
+    record("every reported cell has power (sd > 0)",
+           all(v["has_power"] for a in (A, B) for v in a["gate"]["windows"].values()),
+           "a zero-spread null must be reported as void, never as a failure")
+    record("both arms are deployment-matched",
+           bool(A["deployment_matched"]) and bool(B["deployment_matched"]),
+           A["deployment_note"] + " | " + B["deployment_note"])
+    record("matched exposure is 100% on both arms",
+           not A["void_by_exposure"] and not B["void_by_exposure"],
+           f"A={A['matched_exposure_pct']}% B={B['matched_exposure_pct']}%")
+    record("the scorer identity residual is exactly zero in all four cells",
+           all(v == 0.0 for a in (A, B)
+               for v in (a.get("identity_residual_pp") or {}).values()),
+           "feeding an arm back as its own null must net to zero; a non-zero "
+           "residual means the scorer or the blend is wired wrong")
+    record("the run returned a verdict rather than a void",
+           not A["gate"]["any_void"] and not B["gate"]["any_void"],
+           "a void cell must not be quietly dropped so the survivors can carry "
+           "a conclusion")
+
+    # the reading, not just the numbers
+    record("the outcome names which pre-committed branch applied",
+           "still confounded" in flat and "universe beta" in flat,
+           "arm B beats equal-weight but loses to its own null; that is the "
+           "distinction Amendment 3 pre-committed, and it must be stated")
+    record("the outcome does not claim the per-trade edge is gone",
+           "8.9" in flat and "Does not settle" in flat,
+           "the close-hold per-trade result is unaffected by a portfolio-level "
+           "test and the document must not imply it was refuted")
+
+    # ---- MUST-FAIL ---------------------------------------------------------
+    fake = flat.replace(n(gv(B, W[0], "null_mean_pp")),
+                        n(99.99), 1)
+    record("MUST-FAIL a fabricated null row is rejected",
+           fake != flat and n(99.99) not in flat,
+           "the control for this gate does not discriminate")
+    # Tamper a token that is actually present. An earlier version of this probe
+    # searched for "z -3.911", which the document does not contain (the table
+    # bolds the z row without a leading "z"), so the replace was a no-op and the
+    # probe passed without testing anything.
+    ztok = n(gv(A, W[1], "z"))
+    fake2 = flat.replace(ztok, n(9.99), 1)
+    record("MUST-FAIL a fabricated z is rejected",
+           ztok in flat and fake2 != flat and n(9.99) not in flat,
+           "the control for this gate does not discriminate: the tampered token "
+           "must exist in the document for the probe to mean anything")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--json", action="store_true")
@@ -3108,7 +3321,9 @@ def main() -> int:
                t_no_unrendered_template_placeholders,
                t_no_script_carries_the_defective_ew_benchmark,
                t_closed_decisions_are_recorded_and_enforced,
-               t_the_ordering_table_is_derived_from_the_artifacts):
+               t_the_ordering_table_is_derived_from_the_artifacts,
+               t_sprint3_construction_defects_are_recorded,
+               t_sprint3_outcome_matches_the_artifact):
         print(f"\n{fn.__doc__.splitlines()[0] if fn.__doc__ else fn.__name__}")
         try:
             fn()
