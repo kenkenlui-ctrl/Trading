@@ -1977,6 +1977,221 @@ def t_homepage_perf_figures_trace_to_source() -> None:
            f"still present: {stale}" if stale else "27.4/27.2 absent")
 
 
+def t_p0_site_figures_match_the_artifact() -> None:
+    """docs/win9you-p0-fix-spec-2026-10-18.md's four acceptance criteria,
+    executed against the built site.
+
+    All five fixes that spec asks for were applied in the 2026-10-19 build,
+    and the live site was byte-identical to it, so the spec's own work was
+    done. But nothing was CHECKING them. The numbers were right by
+    construction that morning, not by a rule, and the artifacts these pages
+    quote are regenerated: a re-run moves the numbers, and the pages only
+    stay right because a build re-renders them. A page edited by hand, or a
+    generator that stops quoting the artifact, would have changed the site
+    with nothing going red.
+
+    The checks are phrased as "every gap claim on the page must be a value
+    an artifact contains", not "the page must contain these values". The
+    second form is satisfied by a page that carries the right figures AND a
+    wrong one, which is the contradiction the spec was written about. The
+    first form catches the extra number.
+
+    Two of the checks are not about a number but about a claim:
+      - the /backtest Headline table's "Total" column is the sum of the
+        per-trade percentage returns (120 x +1.63% = +195.3%), the same
+        arithmetic the site withdrew as "+44.02%", sitting under a
+        "Headline" heading while the same page said the risk-managed
+        portfolio return had no citable number;
+      - the OG image is the one asset that gets scraped into other people's
+        pages, so a retracted figure on it travels further than the page it
+        came from.
+    """
+    import json as _json
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import perf_figures
+
+    pf = perf_figures.fmt(perf_figures.load(), "en")
+    src_p = REPO / "data" / "hk_retest_summary.json"
+    ab_p = REPO / "data" / "ab_close_hold.json"
+    sig_p = PUBLIC / "v2-signals.json"
+    og_p = REPO / "scripts" / "generate_og_image.py"
+    files = {
+        "llms": PUBLIC / "llms.txt",
+        "methodology": PUBLIC / "methodology.html",
+        "us200": PUBLIC / "us200" / "index.html",
+        "jp200": PUBLIC / "jp200" / "index.html",
+        "backtest": PUBLIC / "backtest.html",
+    }
+    gone = [n for n, p in files.items() if not p.exists()]
+    for n, p in (("hk_retest_summary.json", src_p), ("ab_close_hold.json", ab_p),
+                 ("v2-signals.json", sig_p), ("generate_og_image.py", og_p)):
+        if not p.exists():
+            gone.append(n)
+    record("every artifact and page the P0 check needs is present", not gone,
+           f"missing: {gone}")
+    if gone:
+        return
+    src = _json.loads(src_p.read_text(encoding="utf-8"))
+    ab = _json.loads(ab_p.read_text(encoding="utf-8"))
+    oos = (_json.loads(sig_p.read_text(encoding="utf-8")).get("setup_oos") or {})
+    og_src = og_p.read_text(encoding="utf-8", errors="replace")
+    T = {n: p.read_text(encoding="utf-8", errors="replace") for n, p in files.items()}
+
+    # ---- the values a page may quote, derived from the artifacts ----------
+    def allowed_values() -> set:
+        vals = set()
+
+        def add(v):
+            for dp in (1, 2):
+                vals.add(f"{abs(float(v)):.{dp}f}")
+        for k in ("US_GAP", "US_GAP_EARLY", "US_GAP_LATE", "JP_GAP",
+                  "JP_GAP_EARLY", "JP_GAP_LATE", "JP_GAP_MID", "HK_GAP",
+                  "HK_GAP_EARLY", "HK_GAP_LATE"):
+            add(pf[k])
+        for m in ("hk", "us", "jp"):
+            for wins in src[m]["portfolio"]["v2_vs_ew_pp"].values():
+                for d in wins.values():
+                    add(d["v2_minus_ew_pp"])
+        for cell in ab["placebo"]["cells"].values():
+            for d in cell.values():
+                add(d["gap_vs_null_pp"])
+        return vals
+
+    # The 2026-10-06 retracted Japan claim (+6.9) and the figures it left
+    # behind (+25.4% vs +18.5%, sub-periods 7.9 / 16.7). They have no
+    # artifact — that is what a retraction means — so they are allowed only
+    # where the page is talking about the retraction. Measured: every
+    # occurrence is within 173 characters of a retraction marker, so 400 is a
+    # tight window with more than twice the headroom.
+    HISTORY = {"6.9", "7.9", "16.7", "25.4", "18.5"}
+    MARKERS = ("撤回", "withdrawn", "retract", "唔企穩", "拆開就冇咗")
+
+    def site_checks(texts):
+        """The predicate, factored so the controls can re-evaluate it."""
+        res = []
+        allowed = allowed_values()
+        llms = texts["llms"]
+        meth = texts["methodology"]
+        flat = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", meth))
+
+        # --- criterion 1: llms.txt quotes the artifact, not a literal ------
+        want = {
+            "US_V2": f"{pf['US_V2']}/yr", "US_EW": f"{pf['US_EW']}/yr",
+            "US_GAP": f"{pf['US_GAP']}pp/yr",
+            "US_GAP_EARLY": f"{pf['US_GAP_EARLY']}pp",
+            "US_GAP_LATE": f"{pf['US_GAP_LATE']}pp",
+            "US_GAP_FREE": f"{pf['US_GAP_FREE']}pp",
+            "JP_V2": f"{pf['JP_V2']}/yr", "JP_EW": f"{pf['JP_EW']}/yr",
+            "JP_GAP": f"{pf['JP_GAP']}pp/yr",
+            "JP_GAP_MID": f"{pf['JP_GAP_MID']}pp",
+            "JP_GAP_EARLY": f"{pf['JP_GAP_EARLY']}pp",
+            "JP_GAP_LATE": f"{pf['JP_GAP_LATE']}pp",
+        }
+        absent = [k for k, v in want.items() if v not in llms]
+        res.append((not absent,
+                    f"llms.txt quotes the retest summary's own figures: {absent}"))
+        pre = [s for s in ("27.4%/yr", "27.2%/yr", "18.03%/yr", "18.00%/yr",
+                           "0.04pp", "0.2pp/yr") if s in llms]
+        res.append((not pre,
+                    f"llms.txt still carries a pre-fix literal: {pre}"))
+        for mk, key in (("us200", "US"), ("jp200", "JP")):
+            m = oos.get(mk) or {}
+            expect = (f"勝率 {m.get('win_pct')}%、每單平均淨 {m.get('avg_net_pct')}%、"
+                      f"n = {m.get('n'):,}")
+            res.append((expect in llms,
+                        f"llms.txt's {key} per-trade line is the artifact's"))
+
+        # --- criterion 2: the methodology page states no untraceable gap ----
+        claims = re.findall(r"[+\u2212-]?\d+\.\d+\s*(?:\u9ede/\u5e74|pp/\u5e74|\u500b\u767e\u5206\u9ede)",
+                            flat)
+        untraceable = []
+        for c in claims:
+            num = c.split()[0].lstrip("+\u2212-")
+            if num in allowed or num in HISTORY:
+                continue
+            untraceable.append(c)
+        res.append((not untraceable,
+                    f"methodology quotes a gap no artifact contains: {sorted(set(untraceable))}"))
+        stray = []
+        for num in HISTORY:
+            for m in re.finditer(r"(?<![\d.])" + re.escape(num) + r"(?![\d])", flat):
+                ctx = flat[max(0, m.start() - 400):m.end() + 400]
+                if not any(k in ctx for k in MARKERS):
+                    stray.append(num)
+                    break
+        res.append((not stray,
+                    f"a retracted figure is quoted outside a retraction notice: {sorted(set(stray))}"))
+        res.append(("0.2 \u500b\u767e\u5206\u9ede" not in flat,
+                    "the methodology page's old 'US trails by 0.2pp' line is gone"))
+        res.append((not re.search(r"50[\u2013-]54%", flat),
+                    "the methodology FAQ's old '50-54%' win rate is gone"))
+        for mk, key in (("us200", "US"), ("jp200", "JP")):
+            m = oos.get(mk) or {}
+            res.append((f"{m.get('win_pct')}%" in flat
+                        and f"{m.get('n'):,}" in flat,
+                        f"the methodology FAQ's {key} per-trade figures are the artifact's"))
+
+        # --- criterion 3: no retired strategy is published as a signal -----
+        for page in ("us200", "jp200"):
+            cells = re.findall(r"<td[^>]*>(.*?)</td>", texts[page], flags=re.S)
+            bad = [c for c in cells
+                   if re.search(r"SELL_R1|BREAK_SHORT|BREAK_LONG", re.sub(r"<[^>]+>", "", c))]
+            res.append((not bad,
+                        f"{page} publishes a retired strategy as a signal: {bad[:3]}"))
+
+        # --- criterion 4: one authoritative T+10 figure on /backtest -------
+        bt = re.sub(r"<script.*?</script>", " ", texts["backtest"], flags=re.S)
+        res.append(("814.07" not in texts["backtest"],
+                    "/backtest still carries the +814.07% figure"))
+        res.append((not re.search(r"<th>\s*Total\s*</th>", texts["backtest"]),
+                    "/backtest's Headline table still has a Total column"))
+        for num in ("44.02", "4.05"):
+            stray = False
+            for m in re.finditer(re.escape(num), bt):
+                ctx = bt[max(0, m.start() - 500):m.end() + 500]
+                if not any(k in ctx for k in MARKERS + ("停止引用", "停用", "唔可以引用")):
+                    stray = True
+                    break
+            res.append((not stray,
+                        f"/backtest quotes {num} outside a withdrawal notice"))
+        return res
+
+    for ok, msg in site_checks(T):
+        record(msg, ok, "the P0 acceptance criteria do not hold on the built site")
+
+    # ---- the OG image generator may not carry a retired figure ------------
+    # The quoted code-literal forms, not the bare digits: the generator's
+    # docstring explains WHY +3.05% came off the card, and that explanation
+    # must not trip the check that the number is gone.
+    og_stale = [s for s in ('"+3.02%"', '"+3.05%"', '"+44.02%"', '"+814.07%"',
+                            '"-4.05%"', '"+4.05%"', '"+0.38%"', '"+1.63%"')
+                if s in og_src]
+    record("the OG image generator carries no retired figure",
+           not og_stale,
+           f"the generator still prints: {og_stale}")
+
+    # ---- MUST-FAIL: re-evaluate the same predicate on mutated text -------
+    def mutate(s, a, b):
+        if a not in s:
+            return s
+        return s.replace(a, b)
+
+    tampered = dict(T)
+    tampered["llms"] = mutate(T["llms"], f"{pf['US_V2']}/yr", "+99.99%/yr")
+    tampered["methodology"] = mutate(T["methodology"],
+                                     f"{pf['JP_GAP']} \u9ede/\u5e74",
+                                     "+99.99 \u9ede/\u5e74")
+    tampered["us200"] = mutate(T["us200"], "</td>", "SELL_R1</td>")
+    tampered["backtest"] = mutate(T["backtest"], "<th>Avg</th>",
+                                  "<th>Total</th><th>Avg</th>")
+    for label, texts in (("a tampered llms.txt figure", tampered),):
+        res = site_checks(texts)
+        record(f"MUST-FAIL {label} is rejected",
+               not all(ok for ok, _ in res),
+               "the control for this gate does not discriminate: the same "
+               "predicate still passes on the mutated text")
+
+
 def t_one_action_authority_per_page() -> None:
     """2-into-1 (2026-10-18): the site must have exactly ONE engine that is
     allowed to state an action, and it must be v2.
@@ -3787,6 +4002,7 @@ def main() -> int:
                t_every_fetched_asset_is_content_stamped,
                t_equity_curve_pages_are_v2,
                t_homepage_perf_figures_trace_to_source,
+               t_p0_site_figures_match_the_artifact,
                t_one_action_authority_per_page,
                t_equity_curve_stats_are_internally_consistent,
                t_no_withdrawn_figures_are_published,

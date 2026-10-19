@@ -56,6 +56,40 @@ def _md_table_to_html(md: str) -> str:
     return f'<table class="data-table"><thead><tr>{th}</tr></thead><tbody>{"".join(trs)}</tbody></table>'
 
 
+def _drop_md_cols(md: str, names: tuple) -> str:
+    """Drop named columns from a markdown table.
+
+    The Headline table's "Total" column is the SUM OF THE PER-TRADE
+    PERCENTAGE RETURNS, not a portfolio return: 120 T+10 trades at a
+    +1.63% average give +195.3%, which is exactly 120 x 1.63%. That is the
+    same arithmetic the site withdrew as "+44.02% ... 逐筆百分比相加而唔係
+    組合回報" from the Risk metrics table three sections down, and the same
+    arithmetic the FAQ warns about ("每單 ≠ 組合"). Publishing it under a
+    "Total" header, on a page that says the risk-managed portfolio return has
+    no citable number, is one table over from the defect that was already
+    fixed. So the column comes out, and the reason stays on the page.
+    """
+    lines = [l for l in md.strip().splitlines() if l.strip()]
+    if not lines:
+        return md
+
+    def cells(line: str):
+        return [c.strip() for c in line.strip().strip("|").split("|")]
+
+    head = cells(lines[0])
+    keep = [i for i, c in enumerate(head) if c not in names]
+    if len(keep) == len(head):
+        return md
+    out = []
+    for line in lines:
+        cs = cells(line)
+        if all(re.fullmatch(r":?-{3,}:?", c) for c in cs):
+            out.append("| " + " | ".join("---" for _ in keep) + " |")
+        else:
+            out.append("| " + " | ".join(cs[i] for i in keep if i < len(cs)) + " |")
+    return "\n".join(out)
+
+
 def _md_bullets_to_html(md: str) -> str:
     """Convert a bullet list block to styled HTML <ul>.
     Supports `**bold**` inline markdown. Skips blank lines, H2/H3 headers,
@@ -347,12 +381,15 @@ def render() -> str:
         title = sec.splitlines()[0].strip() if sec else ""
         section_map[title] = sec
 
-    def section_table(title_match: str) -> str:
+    def section_table(title_match: str, drop_cols: tuple = ()) -> str:
         for k, v in section_map.items():
             if title_match.lower() in k.lower():
                 tbl_match = re.search(r"(\|[^\n]+\|(?:\n\|[^\n]+)*)", v)
                 if tbl_match:
-                    return _md_table_to_html(tbl_match.group(1))
+                    md_tbl = tbl_match.group(1)
+                    if drop_cols:
+                        md_tbl = _drop_md_cols(md_tbl, drop_cols)
+                    return _md_table_to_html(md_tbl)
         return ""
 
     def section_bullets(title_match: str) -> str:
@@ -361,7 +398,9 @@ def render() -> str:
                 return _md_bullets_to_html(v)
         return ""
 
-    headline_tbl = section_table("Headline")
+    # The "Total" column is the sum of the per-trade percentage returns, not
+    # a portfolio return — see _drop_md_cols. It is not published.
+    headline_tbl = section_table("Headline", drop_cols=("Total",))
     bear_tbl = section_table("Bear regime")
     sig_tbl = section_table("Sig score")
     risk_tbl = section_table("Risk metrics")
@@ -423,6 +462,12 @@ def render() -> str:
 
 <div class="container">
   {('<h2>Headline（淨回報 · Live stop/target）</h2>' + headline_tbl) if headline_tbl else ''}
+  {('<p style="font-size:0.85rem;opacity:0.8;max-width:74ch;margin:8px 0 0">'
+    '呢個表每一行都係<b>逐單</b>統計：n、勝率、每單平均淨回報。上游報告原本仲有'
+    '一欄「Total」，但嗰欄係將每一單嘅百分比<b>直接相加</b>（T+10 嗰行就係 120 單 × '
+    '+1.63%），<b>唔係組合回報</b> —— 同下面「風險指標」一節被撤回嗰個數字係同一種'
+    '東西。所以本站唔發表嗰一欄：<b>每單 ≠ 組合</b>，而呢個窗口嘅風險管理組合回報'
+    '冇一個可以引用嘅數字。</p>') if headline_tbl else ''}
   {('<h2 style="margin-top: var(--sp-5);">HSI 熊市日影響</h2>' + bear_tbl) if bear_tbl else ''}
   {('<h2 style="margin-top: var(--sp-5);">Sig score 分桶</h2>' + sig_tbl) if sig_tbl else ''}
 </div>

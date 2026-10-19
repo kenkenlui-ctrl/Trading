@@ -84,3 +84,35 @@ JP 在 0.10% 成本下：v2 +18.03%，等權 +15.97%，差距 +2.06pp。
 - [ ] 方法論頁無自相矛盾
 - [ ] /us200/ 無 SELL_R1 / BREAK_SHORT
 - [ ] /backtest 只有一個權威 T+10 數字
+
+---
+
+## 執行結果，2026-10-20
+
+### 五項修正其實已經落地
+2026-10-19 嗰次 build 已經做咗呢份 spec 要求嘅五項修正，而且**線上同本 repo 嘅 `public/` 逐 byte 一致**（`llms.txt`、`methodology.html`、`/us200/`、`/jp200/`、`/backtest/` 全部抽落嚟比過）。所以今次唔係「再改一次」，係**驗證 + 補上守住佢嘅嘢**。
+
+### 呢份 spec 嘅數字快照過期咗 —— 唔好照住改
+開頭「權威數字」表係 `data/hk_retest_summary.json` **2026-10-17 23:43** 版嘅快照。嗰個檔喺 **2026-10-18 16:12 重跑過**，US／JP 嘅數字微調咗：
+
+| 市場 | spec 快照（10-17） | 現時 artifact（10-18 16:12） |
+|------|------------------|----------------------|
+| US v2 / 等權 / 差距 | 26.02% / 24.63% / **+1.38pp** | 25.59% / 24.63% / **+0.96pp** |
+| US 2016–20 / 2021–26 | +3.72pp / −2.04pp | +3.72pp / **−2.39pp** |
+| JP v2 / 等權 / 差距 | 15.48% / 15.97% / **−0.50pp** | 15.63% / 15.97% / **−0.34pp** |
+| JP 2016–20 / 2021–26 | −9.15pp / +5.10pp | −8.98pp / **+5.09pp** |
+| 每單（US / JP） | 60.2% n=2,992 / 65.8% n=2,193 | 60.3% n=2,982 / 65.5% n=2,187 |
+
+驗收標準寫嘅係「llms.txt 所有數字與 `hk_retest_summary.json` 一致」，而站上而家嘅數字**就係現時 artifact 嘅值**（llms.txt 由 `perf_figures` 生成，per-trade 由 `data/ab_close_hold.json` 生成）。**如果照呢份 spec 嘅數字改落去，會令站同 artifact 唔一致 —— 唔好咁做。** 呢個係 spec 嘅意圖，唔係 spec 嘅數字快照。
+
+### 額外揾到同修正咗兩項（spec 冇提，同一類問題）
+1. **`/backtest` Headline 表嘅「Total」欄**。嗰欄係 `sum(逐筆 return_pct)`：T+10 嗰行 120 單 × +1.63% = **+195.3%**，同站上四段之下就撤回咗嘅 **+44.02%** 係同一種數（逐筆百分比相加，唔係組合回報），但佢仍然掛喺「Headline（淨回報）」標題下面。已移除該欄，頁面留低原因。
+2. **OG 圖**（`/og-image.png`，社交分享 / link preview 用）。生成器仍然印住 **+3.05%**（10-18 已撤回）同過期嘅 **+0.38%**（artifact 係 +0.76%）。已改成全部由 artifact 讀出（`data/monthly_backtest/latest.md` 同 `data/ab_close_hold.json`），**讀唔到 source 就直接報錯，唔會靜靜跌返手打 literal**；順帶修好中文字型（舊圖係豆腐格）。
+
+### 新增 gate
+`scripts/self_test.py` 嘅 `t_p0_site_figures_match_the_artifact`，將四條驗收標準變成可執行檢查。關鍵係佢**唔係**「頁面要包含呢啲數」，而係**「頁面講嘅每一個差距都必須係 artifact 入面有嘅值」** —— 後者先捉得到多出嚟嗰個錯數。
+
+九個真實竄改（改實際檔案，唔係改 local copy）全部捉到：llms.txt 數字被改 / 舊 literal 返嚟 / 方法論頁多咗一個假差距 / 「0.2 個百分點」返嚟 / 「50–54%」返嚟 / us200 多咗一行 SELL_R1 / backtest 回復 Total 欄 / 回復 +814.07% / OG 生成器回復 +3.05%。
+
+### 測試
+`self_test` 348/348、`edge_alpha_selftests` 19/19、`edge_alpha_c_selftests` 63/63、`sprint2` 61/61、`sprint3` 20/20。**未 deploy**（contract：Undercover 先驗）。
