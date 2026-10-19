@@ -2965,6 +2965,119 @@ def t_closed_decisions_are_recorded_and_enforced() -> None:
            "the control for this gate does not discriminate")
 
 
+def t_the_ordering_table_is_derived_from_the_artifacts() -> None:
+    """The no-gate / coin-flip / gate ordering is a positive claim, so its
+    numbers are checked against the artifacts that produced them.
+
+    Two failure modes are being guarded, both of which have already happened in
+    this project. First, a figure quoted in conversation (14.21 / 14.42 for the
+    no-gate arm) turned out to exist in no artifact at all. Second, the same
+    class of drift happened with the axis A percentiles, where the document
+    carried 38% / 1% against a measured 46.3 / 0.0.
+
+    The document deliberately quotes the unreproducible pair in a note explaining
+    why it was rejected. That is the trap this gate has to avoid: a whole-document
+    substring search would find the true figure in that note and pass even if the
+    table itself had been edited to the fabricated value. So the check is
+    anchored to the table ROW, and the MUST-FAIL control proves it.
+    """
+    import json as _json
+
+    MINUS = "\u2212"
+
+    def n(v, d=2):
+        return f"{v:+.{d}f}".replace("-", MINUS)
+
+    spec = REPO / "docs" / "sprint-2-crossed-randomization-prereg-2026-10-19.md"
+    rep1 = REPO / "reports" / "signal_search_s1_us_placebo.json"
+    rep2 = REPO / "reports" / "signal_search_s2_us_axis_b.json"
+    if not (spec.exists() and rep1.exists() and rep2.exists()):
+        record("the ordering table is present and artifact-derived", False,
+               f"missing inputs: spec={spec.exists()} s1={rep1.exists()} "
+               f"axis_b={rep2.exists()}")
+        return
+
+    s1 = _json.loads(rep1.read_text(encoding="utf-8"))
+    s2 = _json.loads(rep2.read_text(encoding="utf-8"))
+
+    def var(label):
+        for v in s1["variations"]:
+            if v.get("label") == label:
+                return v
+        return None
+
+    base, nogate = var("base"), var("s1_20|stop_3x|hold_10|none|closehold")
+    if base is None or nogate is None:
+        record("the ordering table is present and artifact-derived", False,
+               "could not locate the base / regime=none variations in the "
+               "Sprint 1 placebo report")
+        return
+
+    cb = s2["gate"]["windows"]["2016-2020"]["null_mean_pp"]
+    c2 = s2["gate"]["windows"]["2021-2026"]["null_mean_pp"]
+
+    expected = {
+        "real MA200 gate":
+            f"| real MA200 gate | {n(base['windows']['2016-2020']['gap_pp'])} | "
+            f"{n(base['windows']['2021-2026']['gap_pp'])} | "
+            f"{base['trades']:,} | {base['avg_exposure_pct']:.1f}% |",
+        "coin-flip the gate (deployment-matched)":
+            f"| coin-flip the gate (deployment-matched) | {n(cb)} | {n(c2)} | "
+            f"{s2['null']['trades_mean']:,.0f} | "
+            f"{s2['null']['exposure_mean_pct']:.1f}% |",
+        "no gate at all":
+            f"| no gate at all | "
+            f"{n(nogate['windows']['2016-2020']['gap_pp'])} | "
+            f"{n(nogate['windows']['2021-2026']['gap_pp'])} | "
+            f"{nogate['trades']:,} | {nogate['avg_exposure_pct']:.1f}% |",
+    }
+
+    lines = spec.read_text(encoding="utf-8").splitlines()
+    rows = {}
+    for ln in lines:
+        for key in expected:
+            if ln.startswith("| " + key + " |"):
+                rows[key] = ln
+
+    for key, want in expected.items():
+        record(f"the ordering table row '{key.split()[0]}' matches the artifact",
+               rows.get(key) == want,
+               f"table row is {rows.get(key)!r}; the artifacts give {want!r}")
+
+    # The discount is only honest if the multiple is the measured one.
+    ratio = nogate["trades"] / base["trades"]
+    flat = "\n".join(lines)
+    record("the no-gate discount cites the measured deployment multiple",
+           f"{ratio:.1f}x" in flat and "carries a discount" in flat,
+           f"the document must state the {ratio:.1f}x deployment multiple and "
+           f"that the row cannot serve as counter-evidence")
+
+    record("Sprint 2 is closed and no further randomization is planned",
+           "## Sprint 2, closed" in flat
+           and "No further randomization is planned" in flat,
+           "Sprint 2 ran all three axes; without a closure statement the next "
+           "reader cannot tell a finished family from an open one")
+
+    # ---- MUST-FAIL controls ---------------------------------------------
+    # Control 1: the anchor must not be satisfiable by the fabricated figure
+    # that the document quotes while rejecting it.
+    fabricated = expected["no gate at all"].replace(
+        n(nogate["windows"]["2021-2026"]["gap_pp"]), n(14.42))
+    record("MUST-FAIL a fabricated no-gate figure is rejected",
+           fabricated != expected["no gate at all"] and fabricated not in lines
+           and "14.21 / 14.42" in flat,
+           "the check must anchor to the table row; if a whole-document search "
+           "passes on the discrepancy note, a wrong table would go unnoticed")
+
+    # Control 2: a correct-looking row with a wrong trade count must fail.
+    bad_trades = expected["real MA200 gate"].replace(
+        f"{base['trades']:,}", f"{base['trades'] + 1:,}")
+    record("MUST-FAIL a one-trade error in the deployment column is rejected",
+           bad_trades != expected["real MA200 gate"] and bad_trades not in lines,
+           "the deployment columns are part of the claim and must be checked, "
+           "not just the return figures")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--json", action="store_true")
@@ -2994,7 +3107,8 @@ def main() -> int:
                t_close_confirmation_placebo_holds_up,
                t_no_unrendered_template_placeholders,
                t_no_script_carries_the_defective_ew_benchmark,
-               t_closed_decisions_are_recorded_and_enforced):
+               t_closed_decisions_are_recorded_and_enforced,
+               t_the_ordering_table_is_derived_from_the_artifacts):
         print(f"\n{fn.__doc__.splitlines()[0] if fn.__doc__ else fn.__name__}")
         try:
             fn()

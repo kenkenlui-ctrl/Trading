@@ -318,6 +318,47 @@ both windows. **The gate is a large drag that costs the strategy most of what
 it has in the later period, and removing it does not turn the strategy into
 something that beats its own null.**
 
+### The ordering, stated as a positive claim
+
+The correction above is retrospective. The finding, on its own terms:
+
+| regime treatment | 2016-20 gap_pp | 2021-26 gap_pp | trades | exposure |
+|---|---|---|---|---|
+| real MA200 gate | +2.42 | −3.86 | 5,261 | 76.9% |
+| coin-flip the gate (deployment-matched) | +3.42 | +3.56 | 5,261 | 78.2% |
+| no gate at all | +16.51 | +18.92 | 12,885 | 84.5% |
+
+`no gate > coin-flip > real gate` in both sub-periods. Stated as a positive
+claim: **the MA200 regime filter is the worst of the three options, not an
+inert one.** It does not merely fail to help. Against a coin-flip applied to
+the same signal pool it loses 7.42pp/yr in 2021-2026 (z −2.98, percentile 0.0),
+and that comparison is clean: 5,261 trades on both arms, exposure 76.9% against
+78.2%.
+
+Two readings were pre-committed, and the run picks between them:
+
+- **Case 1 — confirmed.** The coin-flip null lands *between* base and the
+  no-gate arm (+3.42 / +3.56 against +2.42 / −3.86). The gate is not
+  anti-selective; it is simply less good than randomising itself, and far less
+  good than not gating at all.
+- **Case 2 — not what happened.** The coin-flip landed above the no-gate arm,
+  which would have made the gate protective.
+
+Because case 1 held, the protective prose is not withdrawn. It is superseded by
+a stronger claim, which is the one above.
+
+> **The no-gate row carries a discount and cannot serve as the
+> counter-evidence.** It deploys 12,885 trades at 84.5% exposure against base's
+> 5,261 at 76.9% — 2.4x the capital. Its placebo-adjusted net is +6.00 / +1.62
+> against a Sprint 1 null that never recorded trades or exposure, so it cannot be
+> checked against Sprint 2's deployment criterion. Reading "no gate wins" off
+> this row would repeat the exact error this document corrects.
+>
+> A figure quoted in discussion as 14.21 / 14.42 for the no-gate arm appears in
+> no artifact; the measured values are +16.51 / +18.92 as tabulated above.
+> Recorded so the discrepancy is not later rediscovered and mistaken for a fresh
+> finding.
+
 ### The three axes together
 
 | axis | what was randomized | worst z | verdict |
@@ -336,3 +377,44 @@ HK −4.36pp/yr, JP −0.34pp/yr at 0.25% cost).
 Nothing on the site changes as a result — the published figures already carry
 "no portfolio excess return". What is new is the sharper claim: the edge is not
 hiding in a component that was simply untested.
+
+---
+
+## Sprint 2, closed
+
+All three axes ran at 300 trials and all three failed. Reading 1 was the
+pre-committed case that applied. The family is answered:
+
+| axis | what was randomized | worst z | verdict |
+|---|---|---|---|
+| C — entry timing | which session | −4.65 | FAIL |
+| A — stock selection | which name | −3.79 | FAIL |
+| B — regime gate | whether to apply it | −2.98 | FAIL |
+
+**No further randomization is planned.** Repeating this family at higher trial
+counts would refine a percentile already at 0.0 in the later sub-period; it
+would not change a decision. Axis B closes with the gate identified as actively
+harmful rather than inert, and the correct next question is a different one.
+
+What survives, stated plainly:
+
+- The **per-trade fill edge is real** — close-confirmation placebo, four cells,
+  z 8.9–13.2, all four nulls with non-zero spread, 4/4 passing. It is measured
+  per trade and survives on its own terms.
+- The **portfolio does not express it**. Published HK/US/JP excess is US
+  +0.96pp/yr, HK −4.36pp/yr, JP −0.34pp/yr at 0.25% cost — and the
+  randomization shows that is not for want of testing the components.
+- The **gate is worth removing or replacing**, which is a real operational
+  finding even though it is not an edge finding.
+
+The next step is **not** another null. It is a deployment-matched test of
+no-gate v2 against a naive universe equal-weight benchmark
+(`docs/sprint-3-deployment-matched-benchmark-prereg-2026-10-19.md`) — a
+comparison against a real benchmark, not a randomization. The remaining open
+thread is the second vehicle for the per-trade edge: at 10 slots and a 10-day
+hold there is not enough capital deployed for a genuine per-trade advantage to
+appear in the portfolio (z 8.9–13.2 per trade goes negative at portfolio
+level).
+
+All Sprint 2 flags remain OFF; no production flag was moved at any point in
+this work.
