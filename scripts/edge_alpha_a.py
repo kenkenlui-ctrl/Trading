@@ -52,6 +52,7 @@ REPO = Path("/Users/kenken/dev/dsa-hk")
 SPEC = "docs/edge-to-alpha-prereg-spec-2026-10-19.md"
 Z_CRIT = 1.96
 THRESHOLD_PP = 1.0          # the spec's +1.0pp/yr
+EXPOSURE_VOID_PP = 1.0      # Amendment B: arms differing by >1pp are VOID
 W = ("2016-2020", "2021-2026")
 # The decision rule uses the two sub-periods above. The full sample is
 # reported alongside so the new vehicle can be compared with the
@@ -131,10 +132,19 @@ def score(gap_real: dict, null_gaps: dict) -> dict:
     return out
 
 
-def classify(gaps: dict, sc: dict) -> str:
-    """Amendment B: the spec's rule, then what the placebo makes of it."""
+def classify(gaps: dict, sc: dict, expo_gap: dict | None = None) -> str:
+    """Amendment B: the spec's rule, then what the placebo makes of it.
+
+    The VOID branch has TWO halves in the amendment: a null with no spread,
+    and arms whose exposure differs by more than 1pp. The second half used to
+    be measured and reported but never fed into this function, so a run with a
+    2pp exposure gap would still have been classified SELECTION_REAL or
+    SELECTION_LUCKY. It is wired in now, and the reason is reported with it.
+    """
     clears = all(gaps[w] >= THRESHOLD_PP for w in W)
     if any(sc[w]["void"] for w in W):
+        return "VOID"
+    if expo_gap is not None and any(abs(expo_gap[w]) > EXPOSURE_VOID_PP for w in W):
         return "VOID"
     if not clears:
         return "SELECTION_DEAD"
@@ -228,10 +238,15 @@ def main() -> int:
     null_on, tr_on, ex_on = placebo_for(arm1_basket, a.trials, a.seed)
     null_ng, tr_ng, ex_ng = placebo_for(arm1ng_basket, a.trials, a.seed + 1)
 
+    expo_arm2 = {w: expo_after_ramp(c_arm2, w, a.hold) for w in W}
+
     def arm_report(curve, name, null_gaps, tr, ex, other):
         gaps = {w: cagr_of(curve, w) - cagr_of(other, w) for w in W}
         sc = score(gaps, null_gaps)
         m = cf.metrics(curve)
+        my_expo = {w: expo_after_ramp(curve, w, a.hold) for w in W}
+        gap_expo = {w: round(abs(my_expo[w] - expo_arm2[w]), 3) for w in W}
+        cls = classify(gaps, sc, gap_expo)
         return {
             "arm": name,
             "cagr_pct": {w: round(cagr_of(curve, w), 3) for w in W},
@@ -242,7 +257,20 @@ def main() -> int:
             "gap_vs_arm2_pp": {w: round(gaps[w], 3) for w in W},
             "null": sc,
             "clears_threshold": all(gaps[w] >= THRESHOLD_PP for w in W),
-            "classification": classify(gaps, sc),
+            "classification": cls,
+            "exposure_gap_vs_arm2_pp": gap_expo,
+            "classification_reason": (
+                "the arms' exposure differs by more than "
+                f"{EXPOSURE_VOID_PP}pp, so Amendment B makes the cell VOID"
+                if cls == "VOID" else
+                "the arms' exposure matches within "
+                f"{EXPOSURE_VOID_PP}pp, so the VOID branch does not apply"
+                if any(sc[w]["void"] for w in W) else
+                "the threshold was not cleared in both sub-periods"
+                if cls == "SELECTION_DEAD" else
+                "the threshold was cleared and the placebo was beaten"
+                if cls == "SELECTION_REAL" else
+                "the threshold was cleared but the placebo was not beaten"),
             "null_trades_mean": round(float(np.mean(tr)), 1) if tr else None,
             "null_exposure_mean_pct": round(float(np.mean(ex)), 3) if ex else None,
         }
@@ -250,8 +278,92 @@ def main() -> int:
     rep_arm1 = arm_report(c_arm1, "arm1_v2_screen", null_on, tr_on, ex_on, c_arm2)
     rep_ng = arm_report(c_arm1ng, "arm1_nogate", null_ng, tr_ng, ex_ng, c_arm2)
 
-    expo_gap = {w: round(abs(rep_arm1["exposure_pct_after_ramp"][w]
-                            - arm2_expo(c_arm2, w, a.hold)), 3) for w in W}
+    # ---- firing-day decomposition (POST-HOC DIAGNOSTIC) -------------------
+    # Amendment A2's fallback means arm 1 holds the UNIVERSE on every session
+    # where the screen has no opinion, so the headline gap is a blend of the
+    # screen's own days and the universe's. That blend hides the question a
+    # reader actually wants answered: on the days the screen DOES have an
+    # opinion, does it beat random picks of the same count?
+    #
+    # Three extra arms answer it, all through the SAME engine and the SAME
+    # sessions, each holding cash on the sessions where the screen is silent:
+    #   firing_screen    the screen's picks on its own days
+    #   firing_universe  the universe on those same days
+    #   firing_placebo   random names of the same count, on those same days
+    # The three have the same cohort structure and the same exposure, so the
+    # comparison is matched, and the placebo is the same size as the screen.
+    #
+    # THIS IS A POST-HOC DIAGNOSTIC. It was not in the pre-registration, it
+    # has no threshold of its own, and it does not change the verdict above.
+    # It is reported because the pre-registered rule applies to the BLENDED
+    # arm, and "a real edge that the fallback diluted below the threshold" is
+    # a reading of the result that a reader is entitled to see tested.
+    firing_days = {d for d, names in sel_on.items() if names}
+    fd_screen_basket = {d: list(sel_on.get(d, [])) for d in cal}
+    fd_univ_basket = {d: (list(universe.get(d, [])) if d in firing_days else [])
+                      for d in cal}
+    print(f"firing-day diagnostic: {len(firing_days)} of {len(cal)} sessions "
+          f"have a screen selection "
+          f"({len(firing_days) / len(cal) * 100:.1f}%)")
+    c_fd_screen = run(fd_screen_basket)
+    c_fd_univ = run(fd_univ_basket)
+
+    fd_null_gaps = {w: [] for w in W}
+    fd_trades = []
+    fd_rng = np.random.default_rng(a.seed + 7)
+    for _ in range(a.trials):
+        pb = {}
+        for d in cal:
+            names = sel_on.get(d, [])
+            pool = universe.get(d, [])
+            if d not in firing_days or not names or not pool:
+                pb[d] = []
+                continue
+            k = min(len(names), len(pool))
+            pick = fd_rng.choice(len(pool), size=k, replace=False)
+            pb[d] = [pool[i] for i in pick]
+        c = run(pb)
+        fd_trades.append(float(c["filled"].sum()))
+        for w in W:
+            fd_null_gaps[w].append(cagr_of(c, w) - cagr_of(c_fd_univ, w))
+    fd_gaps = {w: cagr_of(c_fd_screen, w) - cagr_of(c_fd_univ, w) for w in W}
+    fd_sc = score(fd_gaps, fd_null_gaps)
+    n_picks = [len(sel_on[d]) for d in firing_days]
+    firing_decomposition = {
+        "status": "POST-HOC DIAGNOSTIC — not part of the pre-registered "
+                  "decision rule, it has no threshold of its own, and it does "
+                  "not change the verdict",
+        "question": "on the sessions where the screen has an opinion, does it "
+                    "beat random names of the same count?",
+        "construction": "three arms through the same engine on the same "
+                        "sessions, each holding cash on the sessions where the "
+                        "screen is silent: the screen's picks, the universe on "
+                        "those same days, and random names of the same count",
+        "firing_sessions": len(firing_days),
+        "total_sessions": len(cal),
+        "firing_fraction": round(len(firing_days) / len(cal), 4),
+        "mean_names_per_firing_session": round(float(np.mean(n_picks)), 3),
+        "cagr_pct": {
+            "screen_on_its_own_days": {w: round(cagr_of(c_fd_screen, w), 3) for w in W},
+            "universe_on_the_same_days": {w: round(cagr_of(c_fd_univ, w), 3) for w in W},
+        },
+        "exposure_pct": {
+            "screen_on_its_own_days": {w: round(expo_after_ramp(c_fd_screen, w, a.hold), 3)
+                                        for w in W},
+            "universe_on_the_same_days": {w: round(expo_after_ramp(c_fd_univ, w, a.hold), 3)
+                                          for w in W},
+        },
+        "gap_pp": {w: round(fd_gaps[w], 3) for w in W},
+        "null": fd_sc,
+        "null_trades_mean": round(float(np.mean(fd_trades)), 1) if fd_trades else None,
+        "reading": ("the screen's picks beat random names of the same count "
+                    "on the sessions where it has an opinion"
+                    if all(fd_sc[w]["beats_null"] for w in W) else
+                    "the screen's picks do NOT beat random names of the same "
+                    "count on the sessions where it has an opinion"),
+    }
+
+    expo_gap = rep_arm1["exposure_gap_vs_arm2_pp"]
     out = {
         "spec": SPEC,
         "amendments": "A (construction) and B (outcome readings)",
@@ -281,6 +393,7 @@ def main() -> int:
         "arm1": rep_arm1,
         "arm1_nogate": rep_ng,
         "exposure_gap_arm1_vs_arm2_pp": expo_gap,
+        "firing_day_decomposition": firing_decomposition,
         "full_sample": {
             "note": "not part of the decision rule; reported so this vehicle can "
                     "be compared with the site's published full-sample figures",

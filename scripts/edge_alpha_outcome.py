@@ -28,6 +28,9 @@ def para(t):
 
 def main() -> int:
     a = json.loads((R / "reports/edge_alpha_a_us.json").read_text())
+    ab = json.loads((R / "data/ab_close_hold.json").read_text())
+    zs = sorted(c["z"] for cell in ab["placebo"]["cells"].values()
+                for c in cell.values())
     lag = json.loads((R / "reports/edge_alpha_a_us_lag1.json").read_text())
     au = json.loads((R / "reports/edge_alpha_audit_us.json").read_text())
     W = ("2016-2020", "2021-2026")
@@ -61,7 +64,8 @@ def main() -> int:
       f"{n(a['arm1']['gap_vs_arm2_pp']['2021-2026'])}** | "
       f"**{n(a['arm1_nogate']['gap_vs_arm2_pp']['2016-2020'])} / "
       f"{n(a['arm1_nogate']['gap_vs_arm2_pp']['2021-2026'])}** |")
-    P(f"| clears +1.0pp/yr in both windows | — | "
+    thr = a["config"]["threshold_pp"]
+    P(f"| clears +{thr:.1f}pp/yr in both windows | — | "
       f"**{a['arm1']['clears_threshold']}** | "
       f"**{a['arm1_nogate']['clears_threshold']}** |")
     P(f"| beats its placebo null | — | "
@@ -90,11 +94,57 @@ def main() -> int:
     P("### The pre-registered decision"); P("")
     P(para(f"**{a['verdict']}** for the spec's arm, and "
            f"**{a['verdict_secondary_nogate']}** for the no-gate arm. Neither "
-           f"arm clears the +1.0pp/yr threshold in both sub-periods, so "
+           f"arm clears the +{thr:.1f}pp/yr threshold in both sub-periods, so "
            f"Amendment B's SELECTION_LUCKY branch does not apply either — that "
            f"branch requires the threshold to be cleared first. The verdict does "
            f"not depend on the placebo: the screen fails the spec's own rule "
            f"before the placebo is consulted.")); P("")
+    fd = a.get("firing_day_decomposition")
+    if fd:
+        P("### What the fallback hides"); P("")
+        P(para(f"**{fd['status']}.** The question it asks is this: does the "
+               f"screen beat random names of the same count on the sessions "
+               f"where it has an opinion? The pre-registered rule applies to "
+               f"the BLENDED arm, so this is a diagnostic on top of it, "
+               f"reported because \"a real edge that the fallback diluted "
+               f"below the threshold\" is a reading of the result a reader is "
+               f"entitled to see tested.")); P("")
+        P(para(f"The screen has an opinion on {fd['firing_sessions']} of "
+               f"{fd['total_sessions']} sessions "
+               f"({fd['firing_fraction'] * 100:.1f}%), picking "
+               f"{fd['mean_names_per_firing_session']:.1f} names on average. On "
+               f"those sessions alone — cash on the rest, the same engine, the "
+               f"same cohorts, the same exposure "
+               f"({fd['exposure_pct']['screen_on_its_own_days']['2016-2020']:.2f}% "
+               f"against the universe's "
+               f"{fd['exposure_pct']['universe_on_the_same_days']['2016-2020']:.2f}% "
+               f"in 2016-20) — the screen's picks compound at "
+               f"{fd['cagr_pct']['screen_on_its_own_days']['2016-2020']:.2f}% "
+               f"against the universe's "
+               f"{fd['cagr_pct']['universe_on_the_same_days']['2016-2020']:.2f}% on "
+               f"the same days in 2016-20, a gap of "
+               f"{n(fd['gap_pp']['2016-2020'])}pp/yr; and "
+               f"{n(fd['gap_pp']['2021-2026'])}pp/yr in 2021-26.")); P("")
+        P("| window | screen on its own days | universe on the same days | gap | "
+          "null (random, same count) | z | percentile |")
+        P("|---|---|---|---|---|---|---|")
+        for w in W:
+            v = fd["null"][w]
+            P(f"| {w} | {fd['cagr_pct']['screen_on_its_own_days'][w]:.2f}% | "
+              f"{fd['cagr_pct']['universe_on_the_same_days'][w]:.2f}% | "
+              f"**{n(v['gap_pp'])}** | {n(v['null_mean_pp'])} "
+              f"(sd {v['null_sd_pp']:.3f}) | {n(v['z'])} | "
+              f"{v['null_percentile']}% |")
+        P("")
+        P(para(f"**{fd['reading'].capitalize()}.** The random draw of the same "
+               f"size on the same days scores "
+               f"{n(fd['null']['2016-2020']['null_mean_pp'])} in 2016-20 and "
+               f"{n(fd['null']['2021-2026']['null_mean_pp'])} in 2021-26, and "
+               f"neither window reaches |z| = {a['config']['z_crit']}. So the "
+               f"screen does not beat random picks of the same count even on "
+               f"the days it has an opinion, which means the headline gap is "
+               f"not a real edge being diluted by the fallback. That closes "
+               f"the alternative reading this diagnostic was run to close.")); P("")
     P("### The fill-lag sensitivity"); P("")
     P(para(f"Amendment A4 requires the same signals filled at the next "
            f"session's close to be reported. It changes nothing: the lag-1 run "
@@ -118,11 +168,12 @@ def main() -> int:
            f"({', '.join(f'{s:.3f}' for s in sds)}), so every cell is a "
            f"measurement rather than a shrug."))
     P(para(f"- **No look ahead**: the independent audit "
-           f"(`scripts/edge_alpha_audit.py`) passes {len(au['checks']) - au['failed']}"
-           f"/{len(au['checks'])} checks, including truncating the whole "
-           f"universe at {len(au['cutoffs'])} dates with no change to any "
-           f"selection at or before the cut, and corrupting every bar on "
-           f"{au['shock_date']} with no change to any earlier selection."))
+           f"(`scripts/edge_alpha_audit.py`) passes "
+           f"{len(au['checks']) - au['failed']}"
+           f"/{len(au['checks'])} checks. What it covers: "
+           + "; ".join(au["scope"]) + "."))
+    P(para(f"- **What the audit does not cover**, so the claim is not read as "
+           f"more than it is: " + "; ".join(au["not_covered"]) + "."))
     P(para(f"- **Glitch mask coverage**: the repository's glitch mask contains "
            f"no symbol from the US universe, so it removes "
            f"{a['universe']['glitch_name_days_removed']} name-days here and is "
@@ -146,13 +197,18 @@ def main() -> int:
     P(para("**Direction B is not authorised.** **Direction D is triggered**: the "
            "v2 real-money plan stops. In this repository that means no flag to "
            "turn off — every Sprint 2 flag is OFF and no production flag was "
-           "moved at any point — and it means the site's stated 30-day "
-           "paper-trade-then-real-money framing, which is a public position "
-           "rather than a deployed plan, is now contradicted by the evidence."))
+           "moved at any point — and it means the site's own beginner FAQ, "
+           "which tells a reader to paper-trade for 30 days and only start "
+           "real money at a hit rate of at least 50% and a profit factor of "
+           "at least 1.5, is now contradicted by the evidence. That guidance "
+           "is a public position rather than a deployed plan, but it is the "
+           "position this evidence contradicts, and the site is where the "
+           "contradiction lands."))
     P("")
-    P(para("**What is not refuted.** The per-trade close-hold edge (four cells, "
-           "z 8.9-13.2, all powered) was measured per trade, in the limit-fill "
-           "vehicle, and Direction A does not touch it. A real per-trade "
+    P(para(f"**What is not refuted.** The per-trade close-hold edge (four "
+           f"cells, z {zs[0]:.1f}-{zs[-1]:.1f}, all powered) was measured per "
+           f"trade, in the limit-fill "
+           f"vehicle, and Direction A does not touch it. A real per-trade "
            "advantage that neither a 10-slot book nor a fully-invested "
            "equal-weight portfolio can express is a third possibility, and it "
            "is the one thing this programme has not yet tested.")); P("")
@@ -167,9 +223,17 @@ def main() -> int:
 
     p = R / "docs/edge-to-alpha-prereg-spec-2026-10-19.md"
     t = p.read_text(encoding="utf-8")
-    anchor = "# Amendment C — Direction C's dimensions, defined before implementation"
-    assert t.count(anchor) == 1
-    t = t.replace(anchor, "\n".join(L) + "\n---\n\n" + anchor)
+    # Re-runnable: an earlier run's outcome is removed before the new one is
+    # written, so a corrected generator never leaves two outcomes in the file.
+    marker = "## Direction A — outcome"
+    amd = "# Amendment C — Direction C's dimensions, defined before implementation"
+    if marker in t:
+        i = t.index(marker)
+        j = t.index(amd)
+        assert i < j, "the Direction A outcome has to sit before Amendment C"
+        t = t[:i] + t[j:]
+    assert t.count(amd) == 1
+    t = t.replace(amd, "\n".join(L) + "\n---\n\n" + amd)
     p.write_text(t, encoding="utf-8")
     print(f"Direction A outcome written into the spec; {len(t.splitlines())} lines")
     return 0

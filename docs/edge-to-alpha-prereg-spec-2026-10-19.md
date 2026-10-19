@@ -195,6 +195,35 @@ Amendment B's SELECTION_LUCKY branch does not apply either — that branch
 requires the threshold to be cleared first. The verdict does not depend on the
 placebo: the screen fails the spec's own rule before the placebo is consulted.
 
+### What the fallback hides
+
+**POST-HOC DIAGNOSTIC — not part of the pre-registered decision rule, it has no
+threshold of its own, and it does not change the verdict.** The question it
+asks is this: does the screen beat random names of the same count on the
+sessions where it has an opinion? The pre-registered rule applies to the
+BLENDED arm, so this is a diagnostic on top of it, reported because "a real
+edge that the fallback diluted below the threshold" is a reading of the result
+a reader is entitled to see tested.
+
+The screen has an opinion on 1393 of 2534 sessions (55.0%), picking 3.8 names
+on average. On those sessions alone — cash on the rest, the same engine, the
+same cohorts, the same exposure (46.92% against the universe's 46.92% in
+2016-20) — the screen's picks compound at 6.80% against the universe's 4.14% on
+the same days in 2016-20, a gap of +2.66pp/yr; and −4.83pp/yr in 2021-26.
+
+| window | screen on its own days | universe on the same days | gap | null (random, same count) | z | percentile |
+|---|---|---|---|---|---|---|
+| 2016-2020 | 6.80% | 4.14% | **+2.66** | −0.12 (sd 2.206) | +1.26 | 90.3% |
+| 2021-2026 | 5.38% | 10.21% | **−4.83** | −0.30 (sd 2.776) | −1.63 | 4.3% |
+
+**The screen's picks do not beat random names of the same count on the sessions
+where it has an opinion.** The random draw of the same size on the same days
+scores −0.12 in 2016-20 and −0.30 in 2021-26, and neither window reaches |z| =
+1.96. So the screen does not beat random picks of the same count even on the
+days it has an opinion, which means the headline gap is not a real edge being
+diluted by the fallback. That closes the alternative reading this diagnostic
+was run to close.
+
 ### The fill-lag sensitivity
 
 Amendment A4 requires the same signals filled at the next session's close to be
@@ -211,9 +240,19 @@ deployment, so the gap is not an exposure artefact.
 - **No cell is void**: all four placebo nulls have non-zero spread (2.508,
 2.950, 2.319, 2.910), so every cell is a measurement rather than a shrug.
 - **No look ahead**: the independent audit (`scripts/edge_alpha_audit.py`)
-passes 9/9 checks, including truncating the whole universe at 5 dates with no
-change to any selection at or before the cut, and corrupting every bar on
-2024-03-22 with no change to any earlier selection.
+passes 14/14 checks. What it covers: the screen's selections are unchanged when
+the data is truncated at a date (the market filter is truncated with it);
+corrupting a far-future bar changes nothing before it; the S1 level on date t
+equals min(low[t-20..t-1]); the market filter at t is recomputed from an index
+truncated at t-1 and comes out the same; the portfolio's equity curve is
+unchanged when the whole pipeline is rebuilt on data truncated at a date; each
+of those checks is paired with a power check, so a filter or a screen that
+never moves cannot make them vacuous.
+- **What the audit does not cover**, so the claim is not read as more than it
+is: the screen's feature definitions (a feature that is shifted by the wrong
+amount can still be self-consistent); the prefix and shock tests are what cover
+the composed pipeline; the fill LAG's execution semantics, which the engine
+self-test suite covers rather than this audit.
 - **Glitch mask coverage**: the repository's glitch mask contains no symbol
 from the US universe, so it removes 0 name-days here and is a no-op for this
 market. The same is true of the shipped close-hold A/B. Saying "glitch applied"
@@ -233,9 +272,11 @@ holding the same universe. So the shortfall is the selection, not the plumbing.
 **Direction B is not authorised.** **Direction D is triggered**: the v2
 real-money plan stops. In this repository that means no flag to turn off —
 every Sprint 2 flag is OFF and no production flag was moved at any point — and
-it means the site's stated 30-day paper-trade-then-real-money framing, which is
-a public position rather than a deployed plan, is now contradicted by the
-evidence.
+it means the site's own beginner FAQ, which tells a reader to paper-trade for
+30 days and only start real money at a hit rate of at least 50% and a profit
+factor of at least 1.5, is now contradicted by the evidence. That guidance is a
+public position rather than a deployed plan, but it is the position this
+evidence contradicts, and the site is where the contradiction lands.
 
 **What is not refuted.** The per-trade close-hold edge (four cells, z 8.9-13.2,
 all powered) was measured per trade, in the limit-fill vehicle, and Direction A
@@ -329,3 +370,167 @@ chance of one of them looking good by luck is not small — that is exactly
 what the FDR correction is for, and it is why the primary metric is Sharpe
 rather than CAGR, and why the correction is applied across all 16 cells
 rather than within each dimension.
+
+---
+
+## Direction C — outcome, 2026-10-19
+
+16 cells, one dimension moved at a time from the baseline `risk1pct / max10 /
+t10 / cap60`. US, 2016-09-01 to 2026-10-01, 179 names, 2534 sessions, cost
+0.25% round trip. Scored on pooled out-of-sample monthly returns: 122 months,
+Sharpe primary, CAGR secondary. p-values from a 12-month block bootstrap, 2000
+resamples, seed 20261019, adjusted across all 16 cells by Benjamini-Hochberg at
+q = 0.10.
+
+### The grid
+
+| cell | what it moves | Sharpe | vs base | CAGR | vs base | exposure | p | q | verdict |
+|---|---|---|---|---|---|---|---|---|---|
+| `baseline` | the baseline itself | 1.0296 | +0.0000 | 18.25% | +0.00 | 53.89% | 1.0000 | 1.0000 | void (same as baseline) |
+| `C1_risk1pct` | the baseline itself | 1.0296 | +0.0000 | 18.25% | +0.00 | 53.89% | 1.0000 | 1.0000 | void (same as baseline) |
+| `C1_equal` | C1 sizing: equal weighting | 1.0298 | +0.0002 | 18.25% | +0.00 | 53.89% | 0.4768 | 0.6935 | favours the cell, not significant |
+| `C1_kelly` | C1 sizing: each name's own Kelly fraction | 1.0111 | −0.0185 | 17.16% | −1.09 | 50.15% | 0.0465 | 0.1062 | worse, not significant |
+| `C1_volscaled` | C1 sizing: 1/ATR% weighting | 1.0566 | +0.0270 | 18.80% | +0.55 | 53.76% | 0.1374 | 0.2443 | favours the cell, not significant |
+| `C2_max10` | the baseline itself | 1.0296 | +0.0000 | 18.25% | +0.00 | 53.89% | 1.0000 | 1.0000 | void (same as baseline) |
+| `C2_max5` | C2 concentration: 5 names | 0.7508 | −0.2788 | 6.39% | −11.86 | 27.60% | 0.0070 | 0.0360 | significantly WORSE |
+| `C2_max20` | C2 concentration: 20 names | 1.0020 | −0.0276 | 16.12% | −2.13 | 54.80% | 0.1774 | 0.2839 | worse, not significant |
+| `C2_unlimited` | C2 concentration: no name cap | 0.8816 | −0.1480 | 8.91% | −9.34 | 60.02% | 0.0610 | 0.1219 | worse, not significant |
+| `C3_t10` | the baseline itself | 1.0296 | +0.0000 | 18.25% | +0.00 | 53.89% | 1.0000 | 1.0000 | void (same as baseline) |
+| `C3_t5` | C3 holding: 5-session hold | 0.5265 | −0.5031 | 7.00% | −11.25 | 55.67% | 0.0215 | 0.0573 | significantly WORSE |
+| `C3_t20` | C3 holding: 20-session hold | 1.0273 | −0.0023 | 8.94% | −9.31 | 26.86% | 0.0140 | 0.0448 | significantly WORSE |
+| `C3_trailing` | C3 holding: 2x ATR% trailing exit | 0.7692 | −0.2604 | 4.22% | −14.03 | 21.53% | 0.0025 | 0.0200 | significantly WORSE |
+| `C4_cap60` | the baseline itself | 1.0296 | +0.0000 | 18.25% | +0.00 | 53.89% | 1.0000 | 1.0000 | void (same as baseline) |
+| `C4_uncapped` | C4 allocation: 100% of the book in equities | 1.0161 | −0.0135 | 29.89% | +11.64 | 89.64% | 0.0020 | 0.0200 | significantly WORSE |
+| `C4_riskparity` | C4 allocation: vol-targeted capital scale | 0.9972 | −0.0324 | 26.76% | +8.51 | 80.98% | 0.0090 | 0.0360 | significantly WORSE |
+
+The baseline cell is `risk1pct / max10 / t10 / cap60`: pooled OOS Sharpe
+1.0296, CAGR 18.25%, max drawdown −23.97%, mean exposure 53.89%. Five of the
+sixteen entries ARE the baseline configuration (the reference cell plus each
+dimension's own baseline level), so their difference series has zero spread and
+they are void, not p = 0. The other 11 each move exactly one dimension, which
+the harness asserts rather than trusts.
+
+### The verdict
+
+**None of the 16 cells is significant after Benjamini-Hochberg at q=0.1 while
+also favouring the cell on the primary metric (pooled OOS monthly Sharpe). The
+baseline cell (risk1pct/max10/t10/cap60) has a pooled OOS Sharpe of 1.030 and a
+CAGR of 18.25% over 122 pooled OOS months, at a mean exposure of 53.9%. The
+closest call is C1_volscaled: it favours the cell on Sharpe (1.057 vs 1.030)
+but its adjusted q of 0.244 is above 0.1. 5 of the 16 cells are void (identical
+to the baseline, so the difference series has zero spread) and carry no
+verdict.  The cells that ARE significantly different from the baseline are all
+worse on Sharpe: C2_max5 (q=0.036, Sharpe 0.751 vs 1.030), C3_t5 (q=0.057,
+Sharpe 0.526 vs 1.030), C3_t20 (q=0.045, Sharpe 1.027 vs 1.030), C3_trailing
+(q=0.020, Sharpe 0.769 vs 1.030), C4_uncapped (q=0.020, Sharpe 1.016 vs 1.030),
+C4_riskparity (q=0.036, Sharpe 0.997 vs 1.030). On this evidence no change of
+portfolio construction beats the baseline once the false-discovery correction
+is applied. Amendment C's caveat applies: no Direction C result is a v2
+recommendation unless Direction A has returned SELECTION_REAL, and Direction A
+is not part of this run.**
+
+No cell clears q = 0.10 while favouring itself on Sharpe: 0 of 16 are
+significant on the primary metric, and every one of them is on the WRONG side
+of it. The closest call in the cell's favour is `C1_volscaled` at Sharpe 1.0566
+against 1.0296, but its adjusted q of 0.2443 is far above the threshold. The 6
+cells that ARE significantly different from the baseline are all worse on
+Sharpe: `C2_max5` (q 0.0360, Sharpe 0.7508), `C3_t5` (q 0.0573, Sharpe 0.5265),
+`C3_t20` (q 0.0448, Sharpe 1.0273), `C3_trailing` (q 0.0200, Sharpe 0.7692),
+`C4_uncapped` (q 0.0200, Sharpe 1.0161), `C4_riskparity` (q 0.0360, Sharpe
+0.9972).
+
+### Three things this grid did measure
+
+**1. The sizing rule v2 uses is doing nothing.** Replacing the ATR-proportional
+weight with a flat equal weight changes the pooled Sharpe by +0.0002 and the
+CAGR by +0.00pp — inside the noise, and not significant (p 0.4768). The only
+sizing level that moves Sharpe at all is `volscaled`, and it moves it by
++0.0270 with q 0.2443, which is a look, not a finding. So whatever v2's
+per-position sizing is worth, it is worth about nothing at the portfolio level,
+in either direction.
+
+**2. The 60% cap is a risk-budget lever, and it is the only knob with a large
+effect.** `C4_uncapped` runs at 89.64% mean exposure instead of 53.89%, and
+compounds at 29.89% instead of 18.25% — +11.64pp/yr more — while Sharpe moves
+−0.0135 (1.0161 against 1.0296) and the drawdown widens from −23.97% to
+−37.24%. `C4_riskparity` is the same trade with the scaling done dynamically
+(80.98% exposure, 26.76% CAGR, Sharpe 0.9972) and is slightly worse again. The
+pre-registered primary metric is Sharpe, so neither qualifies as significant;
+but this is the grid's one real finding, and it is a fact about capital
+deployment, not about signal quality. More capital in the same strategy is more
+return and more drawdown, and the Sharpe barely notices.
+
+**3. Half of the significantly-worse cells are capital-deployment effects, not
+signal effects, and the two kinds have to be read apart.** Sharpe is invariant
+to how much capital a portfolio deploys, so a cell can show a large CAGR
+difference and a flat Sharpe simply by holding less or more of the book.
+Splitting the 6 significant cells on the Sharpe delta (threshold 0.05):
+
+- **Deployment effects** (Sharpe within 0.05 of the baseline, so the return stream is the same and only the capital deployed changed): `C3_t20` (Sharpe −0.0023, CAGR −9.31pp, exposure 26.86% against 53.89%), `C4_uncapped` (Sharpe −0.0135, CAGR +11.64pp, exposure 89.64% against 53.89%), `C4_riskparity` (Sharpe −0.0324, CAGR +8.51pp, exposure 80.98% against 53.89%).
+- **Genuine degradations** (Sharpe materially down): `C2_max5` (Sharpe −0.2788, CAGR −11.86pp, exposure 27.60%), `C3_t5` (Sharpe −0.5031, CAGR −11.25pp, exposure 55.67%), `C3_trailing` (Sharpe −0.2604, CAGR −14.03pp, exposure 21.53%).
+
+`C3_t20` is the purest case of the first kind: lengthening the hold to 20
+sessions leaves the book unable to fill (exposure 26.86% against 53.89%)
+because a cohort's capital is 1/hold of the book, so its CAGR falls by 9.31pp
+while its Sharpe moves −0.0023 — nothing. Its q of 0.0448 says "these two
+portfolios behave differently"; it does NOT say "a 20-session hold is a worse
+signal". `C3_t5` is the cleanest of the second kind: a 5-session hold instead
+of 10 costs 0.5031 of Sharpe while its exposure actually RISES to 55.67%, so
+nothing about capital deployment explains it. The name cap and the hold length
+are not independent dimensions — the cap applies across all cohorts while a
+cohort's capital is 1/hold of the book — which is why per-cell exposure, names
+held and fills per session are reported alongside the Sharpe.
+
+### Two limits on what this grid can say
+
+**The bidirectional walk-forward does not double the evidence on a contiguous
+sample.** The forward chain and the backward chain enumerate the SAME 99
+windows in opposite order, and their union covers all 122 months of the sample
+— so the "pooled OOS" series is the sample's own monthly return series, and the
+122 months are NOT held-out data. The word "out-of-sample" here means "scored
+on rolling windows rather than on the whole curve", which is a statement about
+the scoring, not about unseen data. Only two levels have any fitted parameter
+at all — `kelly` and `riskparity` — and both are strictly past-only by
+construction, with prefix-consistency checks in the self-test suite that
+rebuild the market truncated at three dates and confirm nothing at or before
+the cut moves.
+
+**The Kelly level is largely inert, so its result is not a verdict on Kelly.**
+Of the 201,603 name-day weights, 159,563 (79%) fall back to equal weight
+because the name has fewer than 20 prior signals — mostly on the
+universe-fallback days, where the names have short signal histories. The cell
+is therefore mostly the `equal` cell. Where Kelly weights do apply they cost a
+little: Sharpe −0.0185, CAGR −1.09pp, q 0.1062 — just above the threshold, so
+not significant either. Read it as "adaptive per-name sizing did not help
+here", not as a clean test of the Kelly idea.
+
+### What this means
+
+Direction C asked whether a better-built portfolio could rescue v2. It cannot.
+Eleven single-dimension changes to the construction (the other five grid
+entries are the baseline configuration itself), each scored out-of-sample and
+corrected for multiple testing, produce nothing that beats the baseline — and
+half of the cells that differ significantly do so because of how much capital
+they deploy, not because of what they select.
+
+**Amendment C's caveat is binding here.** C assumed the per-trade edge is real
+AND that Direction A would find selection edge. Direction A returned
+SELECTION_DEAD, so no Direction C result is a v2 recommendation, and this grid
+is an optimisation of noise for v2's purposes. It is worth having run, for the
+reason the pre-registration gave: a portfolio-construction result that only
+looks good when the screen is dead is itself worth knowing, and now we know it
+does not look good even then.
+
+The Direction C run itself does not read Direction A's output — the verdict
+quoted above is the Direction C artifact's own statement, written when it ran.
+The caveat is applied HERE, in this pre-registration, using the Direction A
+result recorded in the Direction A outcome above.
+
+**The one fact worth carrying forward is not a recommendation either.**
+`C4_uncapped` is a measured description of the baseline's own risk budget: at
+full deployment the same strategy compounds 11.64pp/yr faster with the Sharpe
+essentially unchanged (1.0161 against 1.0296) and a much deeper drawdown
+(−37.24% against −23.97%). Whether that trade is worth making is a risk
+decision about the book, not a claim about v2's edge — and it is only relevant
+if there is a v2 edge to deploy, which Direction A says there is not.
+

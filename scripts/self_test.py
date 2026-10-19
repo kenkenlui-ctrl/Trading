@@ -3321,36 +3321,32 @@ def t_edge_to_alpha_is_recorded_and_artifact_derived() -> None:
         return
 
     # ---- the pre-registration must be sealed ------------------------------
-    record("Amendment A fixes the construction the spec did not specify",
-           "Amendment A" in flat and "falls back to the whole universe" in flat
-           and "No stop in either arm" in flat,
-           "the cohort structure, the empty-session fallback and the removal of "
-           "the stop are judgement calls that can each move the answer")
-    record("Amendment A records the fill-lag sensitivity as mandatory",
-           "fill_lag" in flat and "sensitivity" in flat,
-           "a same-close fill is not executable in the strict sense, so the "
-           "one-session-lagged variant has to be reported")
-    record("Amendment B pre-commits a reading for each outcome",
-           "SELECTION_REAL" in flat and "SELECTION_LUCKY" in flat
-           and "SELECTION_DEAD" in flat and "VOID" in flat,
-           "a pre-registration with three possible outcomes and no rule for "
-           "each is a back door; Sprint 2's axis B proved the point")
-    record("Amendment B distinguishes a real edge from a lucky one",
-           "does NOT beat its own placebo null" in flat,
-           "a threshold rule that passes while its placebo fails is exactly the "
-           "failure mode this project has guarded against since Sprint 1")
-    record("Amendment B discloses the prior it was written under",
-           "Disclosure" in flat and "Sprint 3 already found" in flat,
-           "the reader must be able to see that the prior pointed one way")
-    record("Amendment C defines every Direction C level before implementation",
-           "Amendment C" in flat and "Benjamini-Hochberg" in flat
-           and "Sharpe is primary" in flat,
-           "a sizing rule that is not spelled out is not a level, it is a "
-           "suggestion")
-    record("Amendment C states what C may not do",
-           "must not do" in flat and "optimisation of noise" in flat,
-           "Direction C is moot for v2 if the selection is dead, and that has to "
-           "be written before the result is known, not after")
+    def amendment_checks(text):
+        """The sealing checks, factored so the controls can re-evaluate them."""
+        res = []
+        res.append(("Amendment A" in text and "falls back to the whole universe" in text
+                    and "No stop in either arm" in text,
+                    "Amendment A fixes the construction the spec did not specify"))
+        res.append(("fill_lag" in text and "sensitivity" in text,
+                    "Amendment A records the fill-lag sensitivity as mandatory"))
+        res.append(("SELECTION_REAL" in text and "SELECTION_LUCKY" in text
+                    and "SELECTION_DEAD" in text and "VOID" in text,
+                    "Amendment B pre-commits a reading for each outcome"))
+        res.append(("does NOT beat its own placebo null" in text,
+                    "Amendment B distinguishes a real edge from a lucky one"))
+        res.append(("Disclosure" in text and "Sprint 3 already found" in text,
+                    "Amendment B discloses the prior it was written under"))
+        res.append(("Amendment C" in text and "Benjamini-Hochberg" in text
+                    and "Sharpe is primary" in text,
+                    "Amendment C defines every Direction C level before implementation"))
+        res.append(("must not do" in text and "optimisation of noise" in text,
+                    "Amendment C states what C may not do"))
+        return res
+
+    for ok, msg in amendment_checks(flat):
+        record(msg, ok,
+               "the pre-registration does not carry the commitment the gate is "
+               "checking for")
 
     # ---- the outcome must be the one the run produced ---------------------
     if not (rep_p.exists() and lag_p.exists() and aud_p.exists()):
@@ -3361,28 +3357,169 @@ def t_edge_to_alpha_is_recorded_and_artifact_derived() -> None:
     d = _json.loads(rep_p.read_text(encoding="utf-8"))
     lag = _json.loads(lag_p.read_text(encoding="utf-8"))
     au = _json.loads(aud_p.read_text(encoding="utf-8"))
+    W = ("2016-2020", "2021-2026")
 
-    record("the documented Direction A verdict matches the report",
-           d["verdict"] in flat and d["verdict_secondary_nogate"] in flat,
-           f"the report says {d['verdict']!r} / {d['verdict_secondary_nogate']!r}")
-    for w in ("2016-2020", "2021-2026"):
-        gap = d["arm1"]["gap_vs_arm2_pp"][w]
-        s = f"{gap:+.2f}".replace("-", "\u2212")
-        record(f"the documented 2016-20 gap for {w} matches the report",
-               s in flat, f"expected {s} in the outcome table")
-    lz = f"{lag['verdict']}"
-    record("the outcome reports the fill-lag sensitivity's verdict",
-           lz in flat, f"the lag-1 run returned {lz!r}")
-    record("the outcome states the full-sample comparison with the published figures",
-           "Full sample" in flat and "17.01" in flat,
-           "the new vehicle has to be reconciled with the site's published "
-           "full-sample numbers, which measure a different execution")
+    # ---- the report must be internally consistent -------------------------
+    # These run against the artifact, not the prose, so a hand-edited report
+    # cannot satisfy them: the gap has to be the difference of the two CAGRs,
+    # the z has to be the gap against the null, and the classification has to
+    # be what the pre-registered rule produces from the numbers.
+    record("the reported gaps are the difference of the two arms' CAGRs",
+           all(abs(d["arm1"]["gap_vs_arm2_pp"][w]
+                   - (d["arm1"]["cagr_pct"][w] - d["arm2_universe"]["cagr_pct"][w]))
+               < 0.02 for w in W),
+           f"gaps {d['arm1']['gap_vs_arm2_pp']} against the CAGR difference")
+    record("the reported z-scores follow from the gaps and the nulls",
+           all(abs(d[arm]["null"][w]["z"]
+                   - (d[arm]["null"][w]["gap_pp"] - d[arm]["null"][w]["null_mean_pp"])
+                   / d[arm]["null"][w]["null_sd_pp"]) < 0.02
+               for arm in ("arm1", "arm1_nogate") for w in W),
+           "a z that is not (gap - null_mean) / null_sd is not the run's z")
+    thr = d["config"]["threshold_pp"]
+    record("the classification is what the pre-registered rule produces",
+           d["arm1"]["classification"] == (
+               "SELECTION_DEAD" if not d["arm1"]["clears_threshold"]
+               else ("SELECTION_REAL" if d["arm1"]["null"][W[0]]["beats_null"]
+                     and d["arm1"]["null"][W[1]]["beats_null"]
+                     else "SELECTION_LUCKY")),
+           f"the report says {d['arm1']['classification']!r} but the numbers "
+           f"imply something else")
+    record("the two arms are exposure-matched",
+           all(abs(v) < 1.0 for v in d["exposure_gap_arm1_vs_arm2_pp"].values()),
+           f"exposure gap {d['exposure_gap_arm1_vs_arm2_pp']}")
+
+    # ---- the documented outcome must be the artifact ------------------------
+    def doc_checks(text):
+        """The predicate, factored so the controls can re-evaluate it.
+
+        The checks run on the Direction A outcome SECTION. Two things leak
+        into the whole document and would satisfy a check for the wrong
+        reason: the token "SELECTION_REAL" appears in Amendment B's list of
+        readings, and "+1.0pp/yr" appears in the pre-registration's own rule.
+        A verdict check that passes on the token alone cannot tell a correct
+        outcome from a flipped one.
+        """
+        res = []
+        i = text.find("## Direction A — outcome")
+        if i < 0:
+            return [(False, "the Direction A outcome is in the pre-registration")]
+        section = text[i:]
+        j = section.find("# Amendment C")
+        if j > 0:
+            section = section[:j]
+        # The decision is pinned as the whole sentence, not as the token.
+        # A check for "SELECTION_DEAD" alone is satisfied by the fill-lag
+        # paragraph's mention of the same verdict, so a flipped headline
+        # would still pass.
+        res.append((f"**{d['verdict']}** for the spec's arm, and "
+                    f"**{d['verdict_secondary_nogate']}** for the no-gate arm"
+                    in section,
+                    "the documented Direction A verdict matches the report"))
+        # The threshold has to be checked where the DECISION is stated, not
+        # merely somewhere in the section: a table row label also contains it,
+        # so a headline threshold that had been loosened would still satisfy a
+        # looser check.
+        res.append((f"clears the +{thr:.1f}pp/yr threshold" in section,
+                    "the documented decision threshold matches the report"))
+        res.append((f"| clears +{thr:.1f}pp/yr in both windows |" in section,
+                    "the outcome's threshold row label matches the report"))
+        # The table carries one row per metric with the three arms side by
+        # side, so the whole value triple is checked: a single value on its
+        # own is far too weak, because "0.96" appears in several places.
+        wl = {"2016-2020": "2016-20", "2021-2026": "2021-26"}
+        for w in W:
+            res.append((f"{d['arm2_universe']['cagr_pct'][w]:.2f}% | "
+                        f"{d['arm1']['cagr_pct'][w]:.2f}% | "
+                        f"{d['arm1_nogate']['cagr_pct'][w]:.2f}%" in section,
+                        f"the documented CAGR row for {wl[w]} matches the report"))
+            res.append((f"{d['arm2_universe']['sharpe'][w]:.2f} | "
+                        f"{d['arm1']['sharpe'][w]:.2f} | "
+                        f"{d['arm1_nogate']['sharpe'][w]:.2f}" in section,
+                        f"the documented Sharpe row for {wl[w]} matches the report"))
+        for arm, rep in (("arm 1", d["arm1"]), ("arm 1, no gate", d["arm1_nogate"])):
+            g = rep["gap_vs_arm2_pp"]
+            res.append((f"**{g[W[0]]:+.2f}".replace("-", "\u2212")
+                        + f" / {g[W[1]]:+.2f}".replace("-", "\u2212") + "**" in section,
+                        f"the documented headline gap for {arm} matches the report"))
+        for arm, rep in (("arm 1", d["arm1"]), ("arm 1, no gate", d["arm1_nogate"])):
+            for w in W:
+                v = rep["null"][w]
+                res.append((f"{v['null_mean_pp']:+.2f}".replace("-", "\u2212")
+                            + f" (sd {v['null_sd_pp']:.3f}) | "
+                            + f"{v['z']:+.2f}".replace("-", "\u2212")
+                            + f" | {v['null_percentile']}%" in section,
+                            f"the documented placebo row for {arm} {wl[w]} matches "
+                            f"the report"))
+        res.append((f"{d['exposure_gap_arm1_vs_arm2_pp'][W[0]]:.3f}pp" in section
+                    and f"{d['exposure_gap_arm1_vs_arm2_pp'][W[1]]:.3f}pp" in section,
+                    "the documented exposure gaps match the report"))
+        res.append((f"{d['full_sample']['arm2_cagr_pct']:.2f}" in section
+                    and f"{d['full_sample']['arm1_cagr_pct']:.2f}" in section,
+                    "the documented full-sample figures match the report"))
+        res.append(("no symbol from the US universe" in section,
+                    "the outcome records that the glitch mask has no US coverage"))
+        fd = d.get("firing_day_decomposition")
+        if fd:
+            res.append(("What the fallback hides" in section,
+                        "the outcome discloses the firing-day decomposition"))
+            for w in W:
+                v = fd["null"][w]
+                row = (f"| {fd['cagr_pct']['screen_on_its_own_days'][w]:.2f}% | "
+                       f"{fd['cagr_pct']['universe_on_the_same_days'][w]:.2f}% | "
+                       f"**{fd['gap_pp'][w]:+.2f}".replace("-", "\u2212") + "** | "
+                       f"{v['null_mean_pp']:+.2f}".replace("-", "\u2212")
+                       + f" (sd {v['null_sd_pp']:.3f}) | "
+                       + f"{v['z']:+.2f}".replace("-", "\u2212")
+                       + f" | {v['null_percentile']}% |")
+                res.append((row in section,
+                            f"the documented firing-day row for {w} matches the report"))
+            res.append((fd["reading"][:40].lower() in section.lower(),
+                        "the outcome states what the firing-day diagnostic found"))
+        res.append((au["scope"][0][:40] in section,
+                    "the outcome states what the no-look-ahead audit covers"))
+        res.append((au["not_covered"][0][:40] in section,
+                    "the outcome states what the no-look-ahead audit does not "
+                    "cover"))
+        return res
+
+    for ok, msg in doc_checks(flat):
+        record(msg, ok, "the Direction A outcome in the pre-registration does "
+                        "not match reports/edge_alpha_a_us.json")
+
+    # ---- the things the outcome asserts about the repo itself -------------
+    site_p = REPO / "scripts" / "build_static.py"
+    if site_p.exists():
+        site = site_p.read_text(encoding="utf-8", errors="replace")
+        record("the outcome's claim about the site's paper-trade guidance is "
+               "still true",
+               "paper account 行 30 日" in site and "real money" in site
+               and "paper-trade" in flat,
+               "the site's beginner FAQ no longer contains the guidance the "
+               "outcome says the evidence contradicts")
+    harness_p = REPO / "scripts" / "edge_alpha_a.py"
+    if harness_p.exists():
+        h = harness_p.read_text(encoding="utf-8")
+        record("the VOID rule's exposure half is implemented, not only measured",
+               "EXPOSURE_VOID_PP" in h and "expo_gap" in h
+               and "classification_reason" in h,
+               "Amendment B makes a cell VOID when the arms' exposure differs "
+               "by more than 1pp; that has to be wired into the classifier, "
+               "not just reported next to it")
+    record("each arm reports the exposure gap the VOID rule is applied to",
+           all("exposure_gap_vs_arm2_pp" in d[a] for a in ("arm1", "arm1_nogate")),
+           "the classifier's VOID branch needs the exposure gap per arm")
 
     # ---- validity evidence -----------------------------------------------
     record("the no-look-ahead audit passed",
            au.get("verdict") == "PASS" and au.get("failed") == 0,
            f"the audit reports {au.get('verdict')} with {au.get('failed')} "
            f"failed checks")
+    record("the audit ran every check it claims to have run",
+           len(au.get("checks", [])) >= 9
+           and all(c.get("pass") for c in au.get("checks", []))
+           and len({c.get("check") for c in au.get("checks", [])}) == len(au.get("checks", [])),
+           f"the audit artifact carries {len(au.get('checks', []))} check records, "
+           f"all passing: {all(c.get('pass') for c in au.get('checks', []))}")
     record("the audit covered the whole universe at several cutoffs",
            len(au.get("cutoffs", [])) >= 3 and au.get("universe_names", 0) > 100,
            "a prefix check on a handful of symbols proves little")
@@ -3390,15 +3527,15 @@ def t_edge_to_alpha_is_recorded_and_artifact_derived() -> None:
            all(v["has_power"] for arm in (d["arm1"], d["arm1_nogate"])
                for v in arm["null"].values()),
            "a zero-spread null is a void cell, not a measurement")
-    record("the two arms are exposure-matched",
-           all(abs(v) < 1.0 for v in d["exposure_gap_arm1_vs_arm2_pp"].values()),
-           f"exposure gap {d['exposure_gap_arm1_vs_arm2_pp']}")
-    record("the outcome records that the glitch mask has no US coverage",
-           "no symbol from the US universe" in flat,
-           "saying 'glitch applied' would imply a protection that is not there")
+    record("the outcome reports the fill-lag sensitivity's verdict",
+           lag["verdict"] in flat, f"the lag-1 run returned {lag['verdict']!r}")
+    record("the outcome states the full-sample comparison with the published figures",
+           "Full sample" in flat and f"{d['full_sample']['arm2_cagr_pct']:.2f}" in flat,
+           "the new vehicle has to be reconciled with the site's published "
+           "full-sample numbers, which measure a different execution")
 
     # ---- the suites exist -------------------------------------------------
-    suite = REPO / "scripts" / "edge_alpha_selftests.py"
+    suite = REPO / "scripts/edge_alpha_selftests.py"
     if suite.exists():
         st = suite.read_text(encoding="utf-8")
         record("the engine self-test suite covers the no-look-ahead prefix check",
@@ -3413,15 +3550,219 @@ def t_edge_to_alpha_is_recorded_and_artifact_derived() -> None:
         record("the engine self-test suite exists", False,
                "scripts/edge_alpha_selftests.py is missing")
 
-    # ---- MUST-FAIL ---------------------------------------------------------
-    loosened = flat.replace("+1.0pp/yr", "+0.1pp/yr")
-    record("MUST-FAIL a loosened decision threshold is rejected",
-           loosened != flat and "+1.0pp/yr" not in loosened,
-           "the control for this gate does not discriminate")
-    dropped = flat.replace("SELECTION_LUCKY", "SELECTION_MAYBE")
-    record("MUST-FAIL a dropped outcome reading is rejected",
-           dropped != flat and "SELECTION_LUCKY" not in dropped,
-           "the control for this gate does not discriminate")
+    # ---- MUST-FAIL: re-evaluate the same predicate on mutated text --------
+    # The controls here used to assert that a mutated COPY of the document
+    # differed from the original, which proves only that str.replace works:
+    # the gate itself was never run on the corrupted text, so 8 of 12
+    # tampered documents passed. The controls now re-evaluate doc_checks on
+    # the mutation, and the same shape is used in the Direction C gate.
+    def mutate(s, a, b):
+        if a not in s:
+            return s
+        return s.replace(a, b)
+
+    controls = [
+        ("a loosened decision threshold",
+         mutate(flat, f"clears the +{thr:.1f}pp/yr threshold",
+                "clears the +0.1pp/yr threshold")),
+        ("a dropped outcome reading",
+         mutate(flat, "SELECTION_LUCKY", "SELECTION_MAYBE")),
+        ("a rewritten arm CAGR",
+         mutate(flat, f"{d['arm1']['cagr_pct'][W[0]]:.2f}%",
+                f"{d['arm1']['cagr_pct'][W[0]] + 79.3:.2f}%")),
+        ("a rewritten placebo null",
+         mutate(flat, f"{d['arm1']['null'][W[0]]['null_sd_pp']:.3f}",
+                f"{d['arm1']['null'][W[0]]['null_sd_pp'] * 3:.3f}")),
+    ]
+    def all_checks(text):
+        """Every predicate this gate applies, for the controls to re-run."""
+        return amendment_checks(text) + doc_checks(text)
+
+    for label, mutated in controls:
+        res = all_checks(mutated)
+        if mutated == flat:
+            detail = ("the document no longer contains the pristine phrase this "
+                      "control mutates, so the control cannot be built")
+        else:
+            detail = ("the control for this gate does not discriminate: the "
+                      "same predicate still passes on the mutated text")
+        record(f"MUST-FAIL {label} is rejected",
+               mutated != flat and not all(ok for ok, _ in res),
+               detail)
+
+
+def t_edge_to_alpha_c_is_recorded_and_artifact_derived() -> None:
+    """Direction C's grid must be recorded, and every figure in it must be the
+    one the run produced.
+
+    Direction C is a search over 16 configurations scored against a baseline
+    with a false-discovery correction, so the two ways it can go wrong are
+    (a) a number in the write-up that the run did not produce, and (b) a
+    threshold or a rule moved after the fact. Both are checked here against
+    the artifact, not against prose.
+
+    The negative controls re-evaluate the SAME predicate on mutated text
+    rather than asserting that a local copy changed: a copy that differs
+    proves only that str.replace works. The previous Edge→Alpha gate's
+    controls had that weaker shape, and the reason is recorded in the memory
+    note about probes that report on themselves instead of the gate.
+    """
+    import json as _json
+    import re as _re
+
+    spec_p = REPO / "docs" / "edge-to-alpha-prereg-spec-2026-10-19.md"
+    rep_p = REPO / "reports" / "edge_alpha_c_us.json"
+
+    spec = spec_p.read_text(encoding="utf-8") if spec_p.exists() else ""
+    flat = _re.sub(r"\s+", " ", _re.sub(r"^\s*>\s?", "", spec, flags=_re.M))
+    record("the pre-registration exists", bool(spec),
+           "docs/edge-to-alpha-prereg-spec-2026-10-19.md is missing")
+    if not spec:
+        return
+    if not rep_p.exists():
+        record("the Direction C report exists", False,
+               "reports/edge_alpha_c_us.json is missing; the outcome cannot be "
+               "checked against anything")
+        return
+    d = _json.loads(rep_p.read_text(encoding="utf-8"))
+    cells = d["cells"]
+    base = next(c for c in cells if c["cell_id"] == "baseline")
+    base_cfg = base["config"]
+
+    def minus(v, p=2):
+        return f"{v:+.{p}f}".replace("-", "\u2212")
+
+    def row_tail(c):
+        """The numeric part of the outcome's table row for one cell."""
+        return (f"| {c['pooled']['sharpe']:.4f} | "
+                f"{minus(c['sharpe_delta_vs_baseline'], 4)} | "
+                f"{c['pooled']['cagr_pct']:.2f}% | "
+                f"{minus(c['cagr_delta_vs_baseline_pp'])} | "
+                f"{c['exposure_pct']:.2f}% | {c['p_value']:.4f} | "
+                f"{c['bh_q']:.4f} |")
+
+    # ---- the artifact must be internally sound, recomputed from scratch ----
+    p = [c["p_value"] for c in cells]
+    n = len(p)
+    order = sorted(range(n), key=lambda i: p[i])
+    q = [0.0] * n
+    prev = 1.0
+    for rank in range(n - 1, -1, -1):
+        i = order[rank]
+        q[i] = min(prev, p[i] * n / (rank + 1), 1.0)
+        prev = q[i]
+    record("every Benjamini-Hochberg q-value in the report is reproducible",
+           all(abs(q[i] - cells[i]["bh_q"]) < 2e-4 for i in range(n)),
+           f"recomputed {['%.6f' % x for x in q]} against the report's "
+           f"{[c['bh_q'] for c in cells]}")
+    record("the report's significance rule is the pre-registered one",
+           all(c["significant"] == (not c["bootstrap_void"]
+                                    and c["bh_q"] <= d["bootstrap"]["q_threshold"]
+                                    and c["sharpe_delta_vs_baseline"] > 0)
+               for c in cells),
+           "significance must be: not void, adjusted q at or below the "
+           "threshold, and the point estimate favouring the cell on Sharpe")
+    void_ids = {c["cell_id"] for c in cells if c["bootstrap_void"]}
+    base_ids = {c["cell_id"] for c in cells if c["config"] == base_cfg}
+    record("only cells that are the baseline configuration are void",
+           void_ids == base_ids,
+           f"void={sorted(void_ids)} baseline-config={sorted(base_ids)}")
+    record("every non-baseline cell moves exactly one dimension",
+           all(sum(1 for k in base_cfg if c["config"][k] != base_cfg[k]) == 1
+               for c in cells if c["config"] != base_cfg),
+           "a cell that moved two dimensions is not an OFAT cell and its "
+           "difference cannot be attributed to one dimension")
+    record("no cell is significant while favouring itself",
+           not any(c["significant"] for c in cells),
+           "if a cell had passed, the outcome's verdict would have to change")
+    record("the Kelly weights are the minority of the name-day weights",
+           d["kelly_diagnostics"]["name_day_weights_fallen_back_to_equal"]
+           > d["kelly_diagnostics"]["name_day_weights_from_kelly"],
+           "if the fallback were rare, the Kelly cell would be a real test of "
+           "Kelly and the outcome would have to read it as one")
+
+    # ---- the documented outcome must be the artifact ------------------------
+    def doc_checks(text):
+        """The predicate, factored so the controls can re-evaluate it.
+
+        Two scoping decisions matter here, and both were found by actually
+        corrupting the document and watching the gate stay green:
+
+        1. The checks run on the Direction C outcome SECTION, not on the whole
+           pre-registration. "q = 0.10" also appears in Amendment C, so a
+           whole-document check on the threshold is satisfied by the
+           pre-registration alone and says nothing about the outcome.
+        2. The artifact's verdict string is removed before the semantic
+           checks. The outcome quotes that verdict verbatim, and the verdict
+           itself contains the sentence "no Direction C result is a v2
+           recommendation" — so without the removal, deleting the caveat
+           from the prose leaves the check satisfied by the quote, and the
+           gate passes for the wrong reason.
+        """
+        res = []
+        verdict = _re.sub(r"\s+", " ", d["verdict"]).strip()
+        i = text.find("## Direction C — outcome")
+        if i < 0:
+            return [(False, "the Direction C outcome is in the pre-registration")]
+        section = text[i:]
+        prose = section.replace(verdict, " ")
+        res.append((verdict in section,
+                    "the documented Direction C verdict matches the report"))
+        res.append((f"Benjamini-Hochberg at q = {d['bootstrap']['q_threshold']:.2f}"
+                    in prose,
+                    "the documented Benjamini-Hochberg threshold matches the report"))
+        for c in cells:
+            res.append((row_tail(c) in section,
+                        f"the documented numbers for {c['cell_id']} match the report"))
+        res.append((f"{base['pooled']['sharpe']:.4f}" in prose
+                    and f"{base['pooled']['cagr_pct']:.2f}%" in prose,
+                    "the documented baseline metrics match the report"))
+        res.append(("no Direction C result is a v2 recommendation" in prose,
+                    "the outcome states that no Direction C result is a v2 "
+                    "recommendation"))
+        res.append(("SELECTION_DEAD" in prose,
+                    "the outcome names the Direction A verdict that binds C"))
+        res.append(("are NOT held-out data" in prose,
+                    "the outcome discloses that the pooled months are not "
+                    "held-out data"))
+        kd = d["kelly_diagnostics"]
+        tot = kd["name_day_weights_from_kelly"] + kd["name_day_weights_fallen_back_to_equal"]
+        res.append((f"{kd['name_day_weights_fallen_back_to_equal']:,}" in prose
+                    and f"{tot:,}" in prose,
+                    "the outcome discloses the Kelly fallback rate"))
+        return res
+
+    for ok, msg in doc_checks(flat):
+        record(msg, ok, "the Direction C outcome in the pre-registration does "
+                        "not match reports/edge_alpha_c_us.json")
+
+    # ---- MUST-FAIL: re-evaluate the same predicate on mutated text --------
+    def mutate(s, a, b):
+        if a not in s:
+            return s
+        return s.replace(a, b)
+
+    tail0 = row_tail(cells[0])
+    tampered = mutate(flat, tail0, tail0.replace(f"{cells[0]['p_value']:.4f}", "0.9999"))
+    controls = [
+        ("a loosened Benjamini-Hochberg threshold",
+         mutate(flat, f"q = {d['bootstrap']['q_threshold']:.2f}", "q = 0.50")),
+        ("a dropped binding caveat",
+         mutate(flat, "no Direction C result is a v2 recommendation",
+                "every Direction C result is a v2 recommendation")),
+        ("a tampered cell number", tampered),
+    ]
+    for label, mutated in controls:
+        res = doc_checks(mutated)
+        if mutated == flat:
+            detail = ("the document no longer contains the pristine phrase this "
+                      "control mutates, so the control cannot be built")
+        else:
+            detail = ("the control for this gate does not discriminate: the "
+                      "same predicate still passes on the mutated text")
+        record(f"MUST-FAIL {label} is rejected",
+               mutated != flat and not all(ok for ok, _ in res),
+               detail)
 
 
 def main() -> int:
@@ -3457,7 +3798,8 @@ def main() -> int:
                t_the_ordering_table_is_derived_from_the_artifacts,
                t_sprint3_construction_defects_are_recorded,
                t_sprint3_outcome_matches_the_artifact,
-               t_edge_to_alpha_is_recorded_and_artifact_derived):
+               t_edge_to_alpha_is_recorded_and_artifact_derived,
+               t_edge_to_alpha_c_is_recorded_and_artifact_derived):
         print(f"\n{fn.__doc__.splitlines()[0] if fn.__doc__ else fn.__name__}")
         try:
             fn()
