@@ -196,6 +196,22 @@ MARKETS = {
 INCLUDE_HK = False  # measured 2026-10-12: -8.1pp/yr at the 0.25% cost this site assumes (-5.9pp/yr at zero cost)
 
 
+# --- A2: the engine's identity, as the deploy gate will see it ---------------
+#
+# ENGINE_VERSION is a CODE constant on purpose. The version this site is
+# PINNED to lives in config/engine_versions.json, and the two must be able to
+# DISAGREE: if the producer read its own version out of the pin file, the
+# gate's version check could never fail and would be decoration rather than a
+# guard. Bump the constant when the rule set changes; the gate will then
+# refuse to publish until somebody re-pins it deliberately.
+#
+# 2.0.0 = the v2 rule set with the close-hold requirement: stop 3x ATR, no
+# target, 10-session time exit, T-1 close above a rising 200d MA, ATR% < 6%,
+# 20d box < 35%, minimum-lot sizing.
+ENGINE_NAME = "v2_signals"
+ENGINE_VERSION = "2.0.0"
+
+
 def bars_from_public(market: str) -> dict[str, pd.DataFrame]:
     """{safe_ticker: DataFrame(date, open, high, low, close, volume)}"""
     d = REPO / "public" / market / "ohlc"
@@ -404,6 +420,88 @@ def equity_basis(market: str) -> float:
     return EQUITY_DEFAULT.get(market, 100_000.0)
 
 
+def _integrity_kit():
+    """Import the integrity kit lazily, from inside a function.
+
+    Two reasons this is not a module-level import. The sprint2 guardrail
+    requires production code to reach the kit only from inside a function
+    body, so that turning a flag off leaves no import behind. And a
+    module-level import would make the kit's cost unconditional for every
+    caller of this module — including the ones that only want the screening
+    rules and have no business knowing about receipts.
+    """
+    scripts = REPO / "scripts"
+    if str(scripts) not in sys.path:
+        sys.path.insert(0, str(scripts))
+    from integrity import flags, receipts
+    return flags, receipts
+
+
+def integrity_inputs(markets: list[str]) -> list[Path]:
+    """Every file this payload was computed from, including the code that
+    computed it.
+
+    The code files are in the list on purpose. A receipt that hashed only the
+    data would still pass the deploy gate after somebody edited the engine,
+    because the receipt's git_commit is a record of the past, not a check on
+    the present. Hashing the engine source makes "the code on disk right now
+    is the code that built this artefact" something the gate can actually
+    verify.
+    """
+    out: list[Path] = [Path(__file__).resolve()]
+    for m in markets:
+        out.extend(sorted((REPO / "public" / m / "ohlc").glob("*_ohlc.json")))
+    out.extend(sorted((REPO / "scripts" / "v2engine").glob("*.py")))
+    out.append(REPO / "scripts" / "lot_size.py")
+    for p in (REPO / "charts" / "us200" / "us_published.json",
+              REPO / "jp_universe_200.json",
+              _AB_JSON,
+              REPO / "data" / "lot_sizes.json",
+              INDEX_CACHE):
+        if p.exists():
+            out.append(p)
+    return out
+
+
+def integrity_config() -> dict:
+    """The effective configuration this payload was produced under.
+
+    Folded into the receipt's config_hash so a changed parameter shows up as a
+    changed digest, without the hash having to be read against a
+    hand-maintained list of tunables somewhere else.
+    """
+    return {
+        "params": PARAMS,
+        "equity_default": EQUITY_DEFAULT,
+        "close_hold": CLOSE_HOLD,
+        "include_hk": INCLUDE_HK,
+        "markets": MARKETS,
+    }
+
+
+def attach_integrity_receipt(payload: dict, enabled: bool | None = None,
+                              markets: list[str] | None = None) -> dict:
+    """Attach an A2 receipt describing exactly what produced this payload.
+
+    `enabled=None` reads deploy_gate_flag. Passing it explicitly is what the
+    guardrail test uses to prove that a disabled flag attaches NOTHING — a
+    configuration file that says "off" is not evidence that "off" behaves
+    like "off".
+    """
+    if enabled is None:
+        flags, _ = _integrity_kit()
+        enabled = bool(flags.flag("deploy_gate_flag"))
+    if not enabled:
+        return payload
+    _, receipts = _integrity_kit()
+    if markets is None:
+        markets = list((payload.get("rules") or {}).get("markets") or [])
+    receipt = receipts.build_receipt(
+        ENGINE_NAME, ENGINE_VERSION, integrity_inputs(markets),
+        cfg=integrity_config(), repo=REPO)
+    return receipts.attach(payload, receipt)
+
+
 def main() -> None:
     equity = equity_basis("us200")
     for m in ("jp200", "hk200"):
@@ -508,6 +606,11 @@ def main() -> None:
         "count": len(out_rows),
         "signals": out_rows,
     }
+
+    # A2: stamp the receipt BEFORE the file is written. The receipt describes
+    # the inputs this run actually read, so it has to be built here — after
+    # every input has been read — not earlier.
+    payload = attach_integrity_receipt(payload, markets=mkts)
 
     (REPO / "public" / "v2-signals.json").write_text(
         json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8")

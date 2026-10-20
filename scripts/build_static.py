@@ -1263,6 +1263,10 @@ def nav_html(active_path: str) -> str:
         # user's own trade log. Unreachable without a nav entry, and an
         # unreachable honesty page is worse than none.
         ("/track-record/", "Track record", "Track record"),
+        # 2026-10-20: the page that publishes the site's own failed tests.
+        # Same reasoning as Track record above — an honesty page nobody can
+        # reach is worse than not having written it.
+        ("/research/negative-results/", "Negative results", "Negative results"),
         ("/disclaimer/", "Disclaimer", "Disclaimer"),
         ("/privacy.html", "Privacy", "Privacy"),
     ]

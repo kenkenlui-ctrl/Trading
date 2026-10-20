@@ -1,10 +1,16 @@
 # Sprint 2 Operator Runbook — Website/Pipeline Integrity
 
-**Status: all flags OFF. Nothing here runs in production yet.**
+**Status: A2 is LIVE. The other five guards are still OFF.**
 
-This runbook describes what each guard would mean and what the on-call action
-is. The on-call is Kenneth. Nothing in this document is active until a flag is
-turned on, and each flag is approved individually.
+As of 2026-10-20 `deploy_gate_flag` is on: every publish is gated on a
+receipt, a pinned engine version, inputs that have not changed underneath the
+build, and a self-test suite that passes at that moment. A2 is the only guard
+in force. A1 (staleness banner), A3 (fingerprints), B1 (cross-validation), B2
+(restatement tracking) and B3 (gap receipts) are built, tested and switched
+off; nothing in this document is active for them until their flag is turned
+on, and each flag is approved individually.
+
+The on-call is Kenneth.
 
 Turn a flag on (and back off):
 
@@ -46,7 +52,32 @@ nobody reviewed.
 **Never** fix a `STALE` banner by loosening `MAX_AGE_HOURS`. The limit is 36h
 because that is what caught the 2026-10-17 incident.
 
-## A2 — `deploy_gate_flag`
+## A2 — `deploy_gate_flag` — **LIVE since 2026-10-20**
+
+**What runs.** `scripts/deploy_gate.py`, called by `scripts/refresh.sh` as step
+5e — after the self-test gate, before the git commit and the wrangler deploy.
+A non-zero exit stops the publish; there is no `--force` and no warning-only
+mode.
+
+```
+python3 scripts/deploy_gate.py     # exit 0 = publish allowed
+```
+
+**What it checks, in order.**
+
+1. Every artefact about to be published carries a receipt (`public/v2-signals.json`
+   today). No receipt → `missing_receipt`.
+2. The receipt's `engine_version` equals the version this site is **pinned** to
+   in `config/engine_versions.json`. The producer declares its own version as a
+   code constant (`ENGINE_VERSION` in `scripts/build_v2_signals.py`) and the
+   pin lives in a separate file on purpose: if the producer read its own
+   version out of the pin, the check could never fail.
+3. Every file the artefact was built from still hashes to what the receipt
+   recorded. The engine's own source files are in that list, so "the code on
+   disk right now is the code that built this artefact" is verifiable, not
+   assumed.
+4. The site's self-test suite passes, run by the gate itself as a subprocess.
+   The gate does not accept a "the pipeline said it was green" boolean.
 
 **Receipt fields.** One line each:
 
@@ -59,6 +90,14 @@ because that is what caught the 2026-10-17 incident.
 | `config_hash` | digest of the effective config (flags + tunables) |
 | `input_hashes` | `{repo-relative path: sha256}` for every input consumed |
 | `generated_at` | ISO-8601 UTC generation time |
+
+**Reading `git_commit` honestly.** It is the base commit of the working tree
+at generation time, not a claim that the artefact is exactly that commit —
+the daily pipeline regenerates pages and commits afterwards, so the tree is
+normally dirty when the receipt is written. The authoritative record of what
+produced the artefact is `input_hashes`: it pins the byte content of every
+file that fed it, engine source included. A receipt whose commit and hashes
+disagree is a finding, not a formatting quirk.
 
 **Gate failure codes.** One line each:
 
@@ -74,9 +113,31 @@ because that is what caught the 2026-10-17 incident.
 | `version_not_pinned` | no expected version declared for this engine | add it to `expected_versions` |
 | `self_test_failed` | the must-fail suite did not pass | fix the tests first |
 | `crossval_failed` | the two implementations disagreed | see B1 — this is a finding, do not smooth it over |
+| `load_error` | the artefact or the pin could not even be read | incomplete build — nothing to check, so nothing deploys |
 
 **The gate is fail-closed.** Any single failure blocks the whole deploy; there
 is no partial publish and no warning-only severity.
+
+**What the receipt publishes.** The receipt lives inside the artefact it
+describes, so `public/v2-signals.json` — a public file — carries the engine
+name and version, the commit, the config hash, the generation time, and the
+**repo-relative path and sha256 of every input**. That is deliberate: a
+receipt nobody can read is not a receipt. The paths are the site's own asset
+paths plus a handful of local data files; the hashes are of market bar files.
+Nothing secret is disclosed, but the site's internal file layout is visible in
+that JSON and should be treated as public.
+
+**Turning A2 off.** `deploy_gate_flag` off means the gate is not in force and
+the publish proceeds unchecked — that is the flag's whole purpose, and it is an
+operator decision recorded in a committed file. The sprint2 guardrail test
+asserts that exactly one flag is on and that it is this one, so a silent
+flip does not survive the test suite.
+
+**Rebuild after changing the engine.** If you edit anything in the receipt's
+input list — the producer, the engine, a bar file, the universe, the lot
+sizes — the recorded hashes stop matching and the gate refuses to publish.
+That is the point: regenerate `public/v2-signals.json` and the gate goes green
+again.
 
 ## A3 — `fingerprint_flag`
 

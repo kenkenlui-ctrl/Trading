@@ -13,6 +13,7 @@ MOBILE_BOTTOM_NAV = '''
       <a href="/methodology">Methodology · 方法論</a>
       <a href="/methodology.html">Methodology</a>
       <a href="/track-record/">Track record</a>
+      <a href="/research/negative-results/">Negative results</a>
       <a href="/about/">About</a>
       <a href="/disclaimer/">Disclaimer</a>
       <a href="/privacy/">Privacy</a>

@@ -1,22 +1,28 @@
 {
   "sprint": "website/pipeline-integrity-2",
-  "generated_at": "2026-10-17T16:03:31+00:00",
-  "mode": "research_only",
+  "generated_at": "2026-10-20T13:35:14+00:00",
+  "mode": "a2_enabled",
   "flags": {
     "staleness_banner_flag": false,
-    "deploy_gate_flag": false,
+    "deploy_gate_flag": true,
     "fingerprint_flag": false,
     "crossval_flag": false,
     "restatement_flag": false,
     "gap_receipt_flag": false
   },
-  "flags_enabled": [],
-  "production_modified": false,
+  "flags_enabled": [
+    "deploy_gate_flag"
+  ],
+  "production_modified": true,
+  "production_wiring": {
+    "deploy_gate": "scripts/deploy_gate.py (called by refresh.sh before wrangler; non-zero exit stops the deploy)",
+    "producer": "scripts/build_v2_signals.py attaches a receipt to public/v2-signals.json when deploy_gate_flag is on"
+  },
   "totals": {
-    "checks": 60,
-    "passed": 60,
+    "checks": 76,
+    "passed": 76,
     "failed": 0,
-    "must_fail_guards": 10
+    "must_fail_guards": 17
   },
   "items": {
     "A1_staleness_states": {
@@ -80,9 +86,10 @@
       "status": "verified",
       "flag": null,
       "files": [
-        "scripts/sprint2_selftests.py"
+        "scripts/sprint2_selftests.py",
+        "scripts/deploy_gate.py"
       ],
-      "notes": "0 sprint2 identifiers across 9 production build/deploy scripts"
+      "notes": "2026-10-20: A2 is live, so the old 'every flag OFF, zero kit references' invariant was replaced, not dropped. Now: exactly one flag on (deploy_gate_flag); only the four A2-wired files may reach the kit; no module-level kit import in production; flag off means no receipt attached; the gate runs before wrangler."
     }
   },
   "results": [
@@ -119,7 +126,12 @@
     {
       "name": "A1 FRESH renders no banner",
       "ok": true,
-      "detail": "banner must be empty when FRESH"
+      "detail": "banner must be empty when FRESH, got: ''"
+    },
+    {
+      "name": "MUST-FAIL a STALE page does render a banner",
+      "ok": true,
+      "detail": "the banner check cannot distinguish fresh from stale"
     },
     {
       "name": "A1 STALE renders a banner",
@@ -190,6 +202,36 @@
       "name": "MUST-FAIL receipt overwrite refused",
       "ok": true,
       "detail": "payload already carries a '__receipt__'; refusing to overwri"
+    },
+    {
+      "name": "A2 production probe: the artefact to be published exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "A2 production gate: the shipped artefact passes",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "must-fail: A2 production gate blocks a version-drifted receipt",
+      "ok": true,
+      "detail": "v2_signals:version_mismatch"
+    },
+    {
+      "name": "must-fail: A2 production gate blocks an artefact with no receipt",
+      "ok": true,
+      "detail": "v2_signals:missing_receipt"
+    },
+    {
+      "name": "must-fail: A2 production gate blocks when a real input file changed",
+      "ok": true,
+      "detail": "v2_signals:input_drift:data/lot_sizes.json"
+    },
+    {
+      "name": "A2 production probe restored the artefact byte-for-byte",
+      "ok": true,
+      "detail": "the probe left the file it corrupted in a different state"
     },
     {
       "name": "A3 two records appended",
@@ -349,7 +391,7 @@
     {
       "name": "B3 unfilled gap quarantined at next session",
       "ok": true,
-      "detail": "{\"session\": \"2026-10-16\", \"market\": \"us200\", \"symbol\": \"AVB\", \"reason\": \"QUARANTINED\", \"action\": \"QUARANTINE\", \"query_time\": \"2026-10-17T16:03:31+00:00\", \"observed_at\": \"2026-10-17T16:03:31+00:00\", \"rows_returned\": 0}"
+      "detail": "{\"session\": \"2026-10-16\", \"market\": \"us200\", \"symbol\": \"AVB\", \"reason\": \"QUARANTINED\", \"action\": \"QUARANTINE\", \"query_time\": \"2026-10-20T13:35:14+00:00\", \"observed_at\": \"2026-10-20T13:35:14+00:00\", \"rows_returned\": 0}"
     },
     {
       "name": "B3 refilled gap is not quarantined",
@@ -362,9 +404,14 @@
       "detail": "['QUARANTINED']"
     },
     {
-      "name": "all sprint2 flags default OFF",
+      "name": "deploy_gate_flag is the ONLY flag on",
       "ok": true,
-      "detail": "{\"staleness_banner_flag\": false, \"deploy_gate_flag\": false, \"fingerprint_flag\": false, \"crossval_flag\": false, \"restatement_flag\": false, \"gap_receipt_flag\": false}"
+      "detail": "{\"staleness_banner_flag\": false, \"deploy_gate_flag\": true, \"fingerprint_flag\": false, \"crossval_flag\": false, \"restatement_flag\": false, \"gap_receipt_flag\": false}"
+    },
+    {
+      "name": "enabled_flags() agrees with the file",
+      "ok": true,
+      "detail": "['deploy_gate_flag']"
     },
     {
       "name": "flag file exists and is committed-shaped",
@@ -372,19 +419,59 @@
       "detail": "config/integrity_flags.json"
     },
     {
-      "name": "no flag is currently enabled",
-      "ok": true,
-      "detail": ""
-    },
-    {
-      "name": "must-fail: no sprint2 identifier in any build/deploy path",
-      "ok": true,
-      "detail": "0 references across 9 production scripts"
-    },
-    {
       "name": "missing flag config → everything OFF",
       "ok": true,
       "detail": ""
+    },
+    {
+      "name": "must-fail: no sprint2 identifier in any build/deploy path outside the A2 wiring",
+      "ok": true,
+      "detail": "0 references across 7 unwired production scripts"
+    },
+    {
+      "name": "must-fail: the kit is only ever reached from inside a function body",
+      "ok": true,
+      "detail": "0 module-level kit imports in production"
+    },
+    {
+      "name": "deploy gate off → the producer attaches no receipt",
+      "ok": true,
+      "detail": "keys=['x']"
+    },
+    {
+      "name": "deploy gate on → the producer attaches a receipt naming this engine",
+      "ok": true,
+      "detail": "{\"schema\": \"sprint2.receipt/1\", \"engine\": \"v2_signals\", \"engine_version\": \"2.0.0\"}"
+    },
+    {
+      "name": "the pin names this engine at the version the code declares",
+      "ok": true,
+      "detail": "pin=2.0.0 code=2.0.0"
+    },
+    {
+      "name": "refresh.sh calls the A2 deploy gate",
+      "ok": true,
+      "detail": "lines=[351]"
+    },
+    {
+      "name": "must-fail: the A2 gate runs BEFORE the wrangler deploy",
+      "ok": true,
+      "detail": "gate at line [351], deploy at line [438]"
+    },
+    {
+      "name": "must-fail: the ordering check rejects a gate that runs AFTER the deploy",
+      "ok": true,
+      "detail": "moving the gate call after the deploy did not change the verdict, so the check cannot see the difference"
+    },
+    {
+      "name": "must-fail: the module-level import check flags a top-level kit import",
+      "ok": true,
+      "detail": "the checker did not see a top-level kit import"
+    },
+    {
+      "name": "the module-level import check ignores a function-local import",
+      "ok": true,
+      "detail": "the checker flagged a function-local import"
     }
   ]
 }

@@ -49,6 +49,33 @@ PUBLIC = REPO / "public"
 results: list[dict] = []
 
 
+WRITE_CALLS = ("write_text", "write_bytes", "unlink", "mkdir", "rmdir",
+               "remove", "copytree", "rmtree", "move", "truncate")
+
+
+def _statements_writing_public(path: Path) -> list[str]:
+    """Statements in `path` that both mention public/ and perform a write.
+
+    Used to VERIFY a read-only exemption rather than take it on trust. It
+    works on whole statements, so a write whose target is assembled a line
+    away is still caught. It cannot follow a target through a variable into
+    another module, and it does not need to — the scripts it is used on are
+    small and their writes are local.
+    """
+    src = path.read_text(encoding="utf-8")
+    out: list[str] = []
+    for node in ast.walk(ast.parse(src)):
+        if not isinstance(node, ast.stmt):
+            continue
+        seg = ast.get_source_segment(src, node) or ""
+        low = seg.lower()
+        if "public" not in low:
+            continue
+        if any(w + "(" in low for w in WRITE_CALLS) or "open(" in low:
+            out.append(f"line {node.lineno}: {seg.strip()[:80]}")
+    return out
+
+
 def record(name: str, ok: bool, detail: str = "", pass_detail: str = "") -> None:
     """detail explains a FAILURE; pass_detail explains a PASS.
 
@@ -783,11 +810,27 @@ def t_css_cachebuster() -> None:
     # exclusion is the whole safety argument: if self_test ever gained a
     # write, this list must stop exempting it. Keep it an explicit allowlist of
     # known-read-only scripts, never "everything after the gate is fine".
-    READ_ONLY_AFTER_FINALIZE = {"self_test.py"}
+    #
+    # 2026-10-20: deploy_gate.py joins it. A2's gate has to judge the tree
+    # that is about to be published, so it runs after finalize for the same
+    # reason self_test does. Its read-only claim is checked against the source
+    # below rather than taken on trust — an exemption nobody verifies is a
+    # hole with a comment on it.
+    READ_ONLY_AFTER_FINALIZE = {"self_test.py", "deploy_gate.py"}
     writers = [s for s in after if s not in READ_ONLY_AFTER_FINALIZE]
     record("finalize/refresh.sh runs finalize.py and nothing writes public/ after it",
            fin != -1 and not writers,
            f"finalize on line {fin + 1}; scripts still run after it: {writers or after}")
+
+    # The deploy_gate.py exemption, verified rather than asserted: no statement
+    # in that script may both mention public/ and perform a write.
+    dg = (Path(__file__).resolve().parent / "deploy_gate.py")
+    if dg.exists():
+        bad_writes = _statements_writing_public(dg)
+        record("finalize/deploy_gate.py writes nothing under public/",
+               not bad_writes,
+               f"writes under public/: {bad_writes[:3]}" if bad_writes else
+               "every write in deploy_gate.py targets logs/, not public/")
 
 
 def t_no_retired_v1_claims() -> None:
@@ -2666,6 +2709,123 @@ def t_page_date_modified_is_the_data_date() -> None:
            "the ticker page was left corrupted by the control")
 
 
+def t_honest_results_page_matches_the_reports() -> None:
+    """The page that publishes the failures must be exactly what the reports say.
+
+    The site now states, in public, that most of what it tested failed. That
+    claim is only worth anything if the numbers on it are the numbers in the
+    report files — and a page like that is also the single most tempting
+    place to round a z-score or drop an inconvenient row, because nobody
+    checks a page that says "everything failed".
+
+    So the check is a byte-for-byte re-render: the page on disk must equal
+    what the builder produces from the current report JSONs, right now. A
+    hand-edited figure, a stale page after a re-run, and a report that
+    changed without the page being rebuilt all fail the same way.
+
+    The methodology page carries the same ledger, and it is checked against
+    the same module, so the two pages cannot drift apart.
+
+    Two controls: the shipped page is edited and the re-render comparison
+    must reject it, and a report file is edited and the re-render must
+    change with it. Both files are restored afterwards.
+    """
+    import honest_results as H
+
+    page_p = PUBLIC / "research" / "negative-results.html"
+    meth_p = PUBLIC / "methodology.html"
+    sm_p = PUBLIC / "sitemap.xml"
+    missing = [p.name for p in (page_p, meth_p, sm_p) if not p.exists()]
+    record("every file the honest-results gate needs is present", not missing,
+           f"missing: {missing}")
+    if missing:
+        return
+
+    text = page_p.read_text(encoding="utf-8", errors="replace")
+    record("the negative-results page is indexable",
+           'name="robots" content="noindex' not in text.lower(),
+           "the page that publishes the failures is marked noindex")
+    record("the negative-results page is in the sitemap",
+           "/research/negative-results/" in sm_p.read_text(encoding="utf-8"),
+           "the sitemap does not list the page")
+
+    # ---- the page must equal a fresh render from the reports --------------
+    def fresh_render() -> str:
+        import build_honest_results_page as B
+        return B.render()
+
+    try:
+        fresh = fresh_render()
+    except Exception as e:
+        record("the negative-results page can be rebuilt from the reports", False,
+               f"{type(e).__name__}: {e}")
+        return
+    record("the negative-results page can be rebuilt from the reports", True)
+    record("the negative-results page is exactly what the reports produce",
+           fresh == text,
+           "the page on disk differs from a fresh render: a figure was edited "
+           "by hand, or a report changed and the page was not rebuilt")
+
+    # ---- the methodology ledger must carry the same numbers ---------------
+    meth = meth_p.read_text(encoding="utf-8", errors="replace")
+    ledger = H.trial_ledger()
+    total = H.ledger_total()
+    record("the methodology page states the trial-ledger total",
+           f"一共測過 <b>{total}</b> 個設定" in meth,
+           f"the methodology page does not state {total} settings")
+    row_bad = []
+    for r in ledger:
+        for frag in (f"{r['count']} {r['unit']}", r["source"].split(",")[0]):
+            if frag not in meth:
+                row_bad.append(f"{r['name']}: {frag!r}")
+    record("every ledger row on the methodology page matches the reports",
+           not row_bad, f"missing or wrong: {row_bad[:4]}")
+    record("the methodology page links to the negative-results page",
+           "/research/negative-results/" in meth,
+           "the disclosure points nowhere")
+
+    # ---- the site must be able to reach the page --------------------------
+    home = (PUBLIC / "index.html").read_text(encoding="utf-8", errors="replace")
+    record("the home page's nav links to the negative-results page",
+           "/research/negative-results/" in home,
+           "the page exists but the nav cannot reach it")
+
+    # ---- MUST-FAIL: edit the shipped page ---------------------------------
+    good = text
+    try:
+        page_p.write_text(good.replace("SELECTION_DEAD", "SELECTION_ALIVE", 1),
+                          encoding="utf-8")
+        edited = page_p.read_text(encoding="utf-8")
+        record("MUST-FAIL an edited negative-results page is rejected",
+               edited != fresh,
+               "the control for this gate does not discriminate: the same "
+               "predicate still passes on a hand-edited page")
+    finally:
+        page_p.write_text(good, encoding="utf-8")
+    record("the negative-results page is restored after the control",
+           page_p.read_text(encoding="utf-8") == good,
+           "the page was left edited by the control")
+
+    # ---- MUST-FAIL: edit a report and the render must follow --------------
+    rep = REPO / H.SOURCES["s2_axis_a"]
+    good_rep = rep.read_text(encoding="utf-8")
+    try:
+        rep.write_text(good_rep.replace('"z": -3.791', '"z": -1.500', 1),
+                       encoding="utf-8")
+        H._cache.pop("s2_axis_a", None)
+        moved = fresh_render()
+        record("MUST-FAIL a report that changed under the page is rejected",
+               moved != good,
+               "the control for this gate does not discriminate: the render "
+               "does not follow the report")
+    finally:
+        rep.write_text(good_rep, encoding="utf-8")
+        H._cache.pop("s2_axis_a", None)
+    record("the report file is restored after the control",
+           rep.read_text(encoding="utf-8") == good_rep,
+           "the report was left edited by the control")
+
+
 def t_one_action_authority_per_page() -> None:
     """2-into-1 (2026-10-18): the site must have exactly ONE engine that is
     allowed to state an action, and it must be v2.
@@ -4454,6 +4614,84 @@ def t_edge_to_alpha_c_is_recorded_and_artifact_derived() -> None:
                detail)
 
 
+def t_a2_receipt_is_present_and_pinned() -> None:
+    """A2 — the artefact that ships must say where it came from.
+
+    The receipt is the only thing standing between "a number appeared on the
+    site" and "we can prove which engine, which inputs and which rule set
+    produced it". If the receipt goes missing, drifts out of date, or claims a
+    version the site is not pinned to, the site is publishing numbers nobody
+    can trace — on a site whose whole pitch is that its numbers are traceable.
+
+    The check below is the deploy gate's OWN expression, re-run at build time
+    over the artefact that is actually on disk. Same function, same inputs, so
+    a green build and a green deploy cannot disagree about the same file.
+    """
+    from integrity import gate as _GATE   # function-local on purpose: the
+                                          # sprint2 guardrail requires the kit
+                                          # to be reached only from inside a
+                                          # function body.
+
+    sig_p = PUBLIC / "v2-signals.json"
+    pin_p = REPO / "config" / "engine_versions.json"
+    missing = [str(p) for p in (sig_p, pin_p) if not p.exists()]
+    if missing:
+        record("A2: the artefact and the pin both exist", False,
+               f"missing: {missing}")
+        return
+    record("A2: the artefact and the pin both exist", True)
+
+    pinned = json.loads(pin_p.read_text(encoding="utf-8"))
+    payload = json.loads(sig_p.read_text(encoding="utf-8"))
+    engine = "v2_signals"
+    want = pinned.get(engine)
+    record("A2: the pin names this engine", isinstance(want, str) and want != "",
+           f"pin={pinned}")
+
+    fails = _GATE.check_receipt(payload, engine, str(want), repo=REPO)
+    record("A2: the shipped artefact passes the deploy gate's receipt check",
+           not fails, f"failures={fails}")
+
+    r = payload.get("__receipt__") or {}
+    record("A2: the receipt names a real commit",
+           bool(re.fullmatch(r"[0-9a-f]{40}", str(r.get("git_commit") or ""))),
+           f"git_commit={r.get('git_commit')}")
+    record("A2: the receipt records when it was generated",
+           bool(str(r.get("generated_at") or "")),
+           f"generated_at={r.get('generated_at')}")
+    n_in = len(r.get("input_hashes") or {})
+    record("A2: the receipt hashes the inputs, not a token amount",
+           n_in >= 100, f"n_inputs={n_in}")
+    record("A2: the receipt's config hash is a digest",
+           bool(re.fullmatch(r"[0-9a-f]{64}", str(r.get("config_hash") or ""))),
+           f"config_hash={str(r.get('config_hash'))[:16]}...")
+
+    # MUST-FAIL: the same expression that just passed must reject a receipt
+    # whose version no longer matches the pin. Without this, the check above
+    # could be passing because it inspects nothing at all.
+    tampered = dict(payload)
+    tampered["__receipt__"] = {**r, "engine_version": "0.0.0-not-the-pin"}
+    bad = _GATE.check_receipt(tampered, engine, str(want), repo=REPO)
+    record("MUST-FAIL a version-drifted receipt is rejected by the same gate expression",
+           any("version_mismatch" in f for f in bad), f"failures={bad}")
+
+    # MUST-FAIL 2: a receipt whose recorded input hash no longer matches the
+    # file on disk must be rejected. Tampering the receipt proves the gate
+    # reads the receipt; corrupting the FILE proves the gate reads the disk.
+    inh = dict(r.get("input_hashes") or {})
+    if inh:
+        first = sorted(inh)[0]
+        inh[first] = "0" * 64
+        drifted = dict(payload)
+        drifted["__receipt__"] = {**r, "input_hashes": inh}
+        bad2 = _GATE.check_receipt(drifted, engine, str(want), repo=REPO)
+        record("MUST-FAIL a receipt whose input hash no longer matches is rejected",
+               any("input_drift" in f for f in bad2), f"failures={bad2}")
+    else:
+        record("MUST-FAIL a receipt whose input hash no longer matches is rejected",
+               False, "the receipt recorded no inputs, so there was nothing to drift")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--json", action="store_true")
@@ -4480,6 +4718,7 @@ def main() -> int:
                t_og_image_figures_match_the_artifact,
                t_hub_universe_claims_match_the_page,
                t_page_date_modified_is_the_data_date,
+               t_honest_results_page_matches_the_reports,
                t_one_action_authority_per_page,
                t_equity_curve_stats_are_internally_consistent,
                t_no_withdrawn_figures_are_published,
@@ -4492,7 +4731,8 @@ def main() -> int:
                t_sprint3_construction_defects_are_recorded,
                t_sprint3_outcome_matches_the_artifact,
                t_edge_to_alpha_is_recorded_and_artifact_derived,
-               t_edge_to_alpha_c_is_recorded_and_artifact_derived):
+               t_edge_to_alpha_c_is_recorded_and_artifact_derived,
+               t_a2_receipt_is_present_and_pinned):
         print(f"\n{fn.__doc__.splitlines()[0] if fn.__doc__ else fn.__name__}")
         try:
             fn()

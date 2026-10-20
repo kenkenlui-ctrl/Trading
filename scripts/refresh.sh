@@ -261,6 +261,12 @@ python3 scripts/build_insights_radar.py 2>&1 | tail -1
 # writes public/v2-signals.json for build_dashboard.py to render.
 python3 scripts/build_v2_signals.py 2>&1 | tail -2
 python3 scripts/build_backtest_page.py 2>&1 | tail -1
+# /research/negative-results/ — the page that publishes the site's own failed
+# tests. It quotes public/v2-signals.json (the per-trade figures), so it has
+# to be rebuilt AFTER the signals above, or it would carry yesterday's
+# numbers while the rest of the site carries today's. The research reports
+# it also quotes (reports/*.json) are frozen artefacts and do not change.
+python3 scripts/build_honest_results_page.py 2>&1 | tail -1
 # /track-record/ — the measured bar (read from data/control_test.csv) beside the
 # user's own logged trades (data/track_record.json). Writes HTML, so it has to
 # sit before finalize.py below, like every other writer.
@@ -311,12 +317,42 @@ python3 scripts/finalize.py 2>&1 | tail -4
 # "finalize is the last writer" invariant — it IS that invariant.
 echo
 echo "[5d] self-test gate (must be green before deploy)..."
-python3 scripts/self_test.py 2>&1 | tail -6
-if ! python3 scripts/self_test.py >/dev/null 2>&1; then
+# Run ONCE, not twice. This used to run the suite once for the log tail and
+# then again for the exit code — the same 8 seconds of work twice, and a
+# window in which the two runs could see different trees. The log goes to
+# logs/ (gitignored) so a failure can be read after the fact.
+SELFTEST_LOG="logs/selftest.log"
+mkdir -p logs
+if ! python3 scripts/self_test.py >"$SELFTEST_LOG" 2>&1; then
+  tail -20 "$SELFTEST_LOG"
   echo "  ✗ self-test FAILED — refusing to deploy"
   exit 1
 fi
+tail -6 "$SELFTEST_LOG"
 echo "  ✓ self-test green"
+
+# --- Step 5e: A2 deploy gate (fail-closed) ----------------------------------
+# 2026-10-20. The self-test above proves the tree is internally consistent.
+# The A2 gate proves the artefact that is about to be published says WHERE it
+# came from: a receipt naming the engine, the engine version, the commit, the
+# config hash and the hash of every input; that the version matches the pin in
+# config/engine_versions.json; that none of those inputs has changed since;
+# and that the self-test passes right now — it runs the suite itself rather
+# than trusting a boolean handed to it, because a boolean handed to the gate
+# is exactly the kind of thing a broken pipeline hands over.
+#
+# It is a separate step on purpose. A gate that only runs when somebody
+# remembers to run it is not a gate.
+#
+# Fail-closed: a non-zero exit here stops the deploy below. There is no
+# --force and no warning-only mode.
+echo
+echo "[5e] A2 deploy gate (receipts + pinned version + input drift)..."
+if ! python3 scripts/deploy_gate.py; then
+  echo "  ✗ A2 deploy gate FAILED — refusing to deploy"
+  exit 1
+fi
+echo "  ✓ A2 deploy gate green"
 
 # --- Step 6: Git commit + wrangler deploy ---
 # Finder drops .DS_Store into .git/refs/heads/, which git reads as a ref and

@@ -69,8 +69,13 @@ _ITEM_STATUS = {
         "notes": "T-day bar present in input is discarded by date, not by convention"},
     "guardrail_production_untouched": {
         "status": "verified", "flag": None,
-        "files": ["scripts/sprint2_selftests.py"],
-        "notes": "0 sprint2 identifiers across 9 production build/deploy scripts"},
+        "files": ["scripts/sprint2_selftests.py", "scripts/deploy_gate.py"],
+        "notes": ("2026-10-20: A2 is live, so the old 'every flag OFF, zero kit "
+                  "references' invariant was replaced, not dropped. Now: exactly "
+                  "one flag on (deploy_gate_flag); only the four A2-wired files "
+                  "may reach the kit; no module-level kit import in production; "
+                  "flag off means no receipt attached; the gate runs before "
+                  "wrangler.")},
 }
 TMP: Path | None = None
 
@@ -486,37 +491,258 @@ def test_b3_gap_receipts():
 
 
 # ---------------------------------------------------------------- cross-cutting
-def test_flags_off_leaves_production_untouched():
-    print("\nGuardrail — production untouched while flags are OFF")
+# 2026-10-20: Kenneth approved A2 (deploy_gate_flag) to go live, so the old
+# guardrail here — "every flag is OFF and no production script mentions the
+# sprint2 kit at all" — is now deliberately, knowingly false. A guard that has
+# been quietly deleted is worse than one that was replaced, so the replacement
+# is written out in full:
+#
+#   1. exactly ONE flag is on, and it is deploy_gate_flag
+#   2. only the four A2-wired files may reach the kit at all
+#   3. no production file may import the kit at module level
+#   4. with the flag off, the producer attaches NOTHING
+#   5. the deploy step calls the gate BEFORE the deploy it guards
+#
+# Rule 2 is a list, not a shape: a new production file that reaches for the
+# kit without being added to A2_WIRED fails the scan, which is the point.
+PROD_SCRIPTS = ["build_static.py", "build_home.py", "build_v2_signals.py",
+                "build_equity_curves.py", "build_track_record.py",
+                "v2_equity_export.py", "build_dashboard.py", "refresh.sh",
+                "finalize.py", "self_test.py", "deploy_gate.py"]
+A2_WIRED = {"build_v2_signals.py", "refresh.sh", "self_test.py", "deploy_gate.py"}
+KIT_NEEDLES = ("integrity", "sprint2", "deploy_gate_flag",
+               "staleness_banner_flag", "crossval_flag", "restatement_flag",
+               "gap_receipt_flag", "fingerprint_flag", "__receipt__")
+
+
+def _module_level_kit_imports(path: Path) -> list[str]:
+    """Kit imports that sit at module level rather than inside a function."""
+    import ast
+    tree = ast.parse(path.read_text(encoding="utf-8", errors="replace"))
+    hits = []
+    for node in tree.body:
+        if not isinstance(node, (ast.Import, ast.ImportFrom)):
+            continue
+        mod = getattr(node, "module", None) or ""
+        names = [a.name for a in getattr(node, "names", [])]
+        if "integrity" in mod.split(".") or any(
+                n == "integrity" or n.startswith("integrity.") for n in names):
+            hits.append(f"line {node.lineno}: {mod or names}")
+    return hits
+
+
+def _gate_before_deploy(lines: list[str]) -> bool:
+    """True when the A2 gate is invoked before the wrangler deploy, judged on
+    the lines that actually INVOKE them rather than the first textual mention.
+    """
+    gate_at = [i for i, l in enumerate(lines)
+               if "scripts/deploy_gate.py" in l and "python3" in l]
+    deploy_at = [i for i, l in enumerate(lines) if "pages deploy" in l]
+    return bool(gate_at) and bool(deploy_at) and max(gate_at) < min(deploy_at)
+
+
+def test_a2_flag_posture_and_production_wiring():
+    print("\nGuardrail — one flag on, wired narrowly")
     cfg = FLAGS.load_config()
-    record("all sprint2 flags default OFF", not any(cfg.values()),
+    on = sorted(n for n, v in cfg.items() if v)
+    record("deploy_gate_flag is the ONLY flag on", on == ["deploy_gate_flag"],
            json.dumps(cfg))
+    record("enabled_flags() agrees with the file",
+           FLAGS.enabled_flags() == ["deploy_gate_flag"],
+           str(FLAGS.enabled_flags()))
     record("flag file exists and is committed-shaped", FLAGS.CONFIG.exists(),
            str(FLAGS.CONFIG.relative_to(REPO)))
-    record("no flag is currently enabled", FLAGS.enabled_flags() == [])
 
-    # No production builder or deploy script may reference the sprint2 kit.
-    prod = ["build_static.py", "build_home.py", "build_v2_signals.py",
-            "build_equity_curves.py", "build_track_record.py", "v2_equity_export.py",
-            "build_dashboard.py", "refresh.sh", "finalize.py"]
-    needles = ("integrity", "sprint2", "deploy_gate_flag", "staleness_banner_flag",
-               "crossval_flag", "restatement_flag", "gap_receipt_flag",
-               "fingerprint_flag", "__receipt__")
+    # A missing/corrupt flag config must still fail closed to OFF.
+    record("missing flag config → everything OFF",
+           FLAGS._DEFAULTS and not any(FLAGS._DEFAULTS.values()))
+
+    # Rule 2: only the A2-wired files may mention the kit.
     hits = []
-    for name in prod:
+    unwired = 0
+    for name in PROD_SCRIPTS:
+        if name in A2_WIRED:
+            continue
         p = HERE / name
         if not p.exists():
             continue
+        unwired += 1
         txt = p.read_text(encoding="utf-8", errors="replace")
-        for n in needles:
+        for n in KIT_NEEDLES:
             if n in txt:
                 hits.append(f"{name}:{n}")
-    must_fail("no sprint2 identifier in any build/deploy path",
-              not hits, f"hits={hits}" if hits else "0 references across "
-              f"{len([n for n in prod if (HERE / n).exists()])} production scripts")
+    must_fail("no sprint2 identifier in any build/deploy path outside the A2 wiring",
+              not hits, f"hits={hits}" if hits else
+              f"0 references across {unwired} unwired production scripts")
 
-    # A missing/corrupt flag config must fail closed to OFF.
-    record("missing flag config → everything OFF", FLAGS._DEFAULTS and not any(FLAGS._DEFAULTS.values()))
+    # Rule 3: no module-level kit import anywhere in production. A
+    # module-level import survives a flag being turned off and makes the kit's
+    # import cost unconditional.
+    ml = []
+    for name in PROD_SCRIPTS:
+        p = HERE / name
+        if not p.exists() or p.suffix != ".py":
+            continue
+        for h in _module_level_kit_imports(p):
+            ml.append(f"{name}:{h}")
+    must_fail("the kit is only ever reached from inside a function body",
+              not ml, f"module-level imports={ml}" if ml else
+              "0 module-level kit imports in production")
+
+    # Rule 4: behaviour, not just configuration. With the flag off the
+    # producer must attach NOTHING — asserted against the real function, so a
+    # refactor that moves the attach out of the guarded branch fails here
+    # instead of shipping a receipt nobody asked for.
+    try:
+        import build_v2_signals as BVS
+    except SystemExit as e:  # the producer raises if its data source is gone
+        record("the A2 producer module imports", False, f"import failed: {e}")
+        return
+    off = BVS.attach_integrity_receipt({"x": 1}, enabled=False)
+    record("deploy gate off → the producer attaches no receipt",
+           "__receipt__" not in off, f"keys={sorted(off)}")
+    on_payload = BVS.attach_integrity_receipt({"x": 1}, enabled=True)
+    r = on_payload.get("__receipt__")
+    record("deploy gate on → the producer attaches a receipt naming this engine",
+           isinstance(r, dict) and r.get("engine") == BVS.ENGINE_NAME
+           and r.get("engine_version") == BVS.ENGINE_VERSION
+           and r.get("schema") == "sprint2.receipt/1",
+           json.dumps({k: r.get(k) for k in
+                       ("schema", "engine", "engine_version")}) if r else "no receipt")
+
+    # The pin must agree with the producer today, and the two must be
+    # SEPARATE files — a producer that read its own version out of the pin
+    # would make the gate's version check unfailable.
+    pin = REPO / "config" / "engine_versions.json"
+    pinned = json.loads(pin.read_text(encoding="utf-8"))
+    record("the pin names this engine at the version the code declares",
+           pinned.get(BVS.ENGINE_NAME) == BVS.ENGINE_VERSION,
+           f"pin={pinned.get(BVS.ENGINE_NAME)} code={BVS.ENGINE_VERSION}")
+
+    # Rule 5: the deploy step calls the gate BEFORE the deploy it guards.
+    # Line numbers, not the first textual mention: refresh.sh talks about
+    # wrangler in a comment near the top, and a check anchored on the first
+    # mention measures the comment, not the pipeline.
+    rs_lines = (HERE / "refresh.sh").read_text(encoding="utf-8",
+                                                errors="replace").splitlines()
+    gate_at = [i for i, l in enumerate(rs_lines)
+               if "scripts/deploy_gate.py" in l and "python3" in l]
+    deploy_at = [i for i, l in enumerate(rs_lines) if "pages deploy" in l]
+    record("refresh.sh calls the A2 deploy gate", bool(gate_at),
+           f"lines={[i + 1 for i in gate_at]}")
+    must_fail("the A2 gate runs BEFORE the wrangler deploy",
+              _gate_before_deploy(rs_lines),
+              f"gate at line {[i + 1 for i in gate_at]}, "
+              f"deploy at line {[i + 1 for i in deploy_at]}")
+
+    # MUST-FAIL: the ordering check has to have teeth. Move the gate call to
+    # after the deploy in a COPY of refresh.sh and the same expression must
+    # say no — otherwise the check is a comment that says "gate".
+    if gate_at and deploy_at:
+        moved = list(rs_lines)
+        call = moved.pop(max(gate_at))
+        moved.insert(min(deploy_at) + 1, call)
+        must_fail("the ordering check rejects a gate that runs AFTER the deploy",
+                  not _gate_before_deploy(moved),
+                  "moving the gate call after the deploy did not change the "
+                  "verdict, so the check cannot see the difference")
+
+    # MUST-FAIL: the module-level import check has to have teeth too. A file
+    # with a top-level kit import must be flagged; the same import inside a
+    # function must not be. (This check earned its place on 2026-10-20: it
+    # caught deploy_gate.py importing the kit at module level.)
+    with tempfile.TemporaryDirectory() as td:
+        probe = Path(td) / "probe.py"
+        probe.write_text("from integrity import gate as GATE\n", encoding="utf-8")
+        must_fail("the module-level import check flags a top-level kit import",
+                  bool(_module_level_kit_imports(probe)),
+                  "the checker did not see a top-level kit import")
+        probe.write_text("def f():\n    from integrity import gate as GATE\n"
+                         "    return GATE\n", encoding="utf-8")
+        record("the module-level import check ignores a function-local import",
+               not _module_level_kit_imports(probe),
+               "the checker flagged a function-local import")
+
+
+# ---------------------------------------------------------------- A2 production path
+def test_a2_production_gate_blocks():
+    """Prove the gate that actually guards the deploy really blocks.
+
+    The probes in test_a2_gate() exercise the gate FUNCTION on synthetic
+    payloads. These exercise the production ENTRY POINT — the same
+    deploy_gate.evaluate() the deploy step calls — against the artefact that
+    is actually on disk. A control that only proves the arithmetic works on a
+    copy proves nothing about the files the build ships, so these probes
+    corrupt the real files and restore them byte-for-byte.
+    """
+    print("\nA2 — the production deploy gate blocks what it should")
+    import deploy_gate as DG
+
+    sig_p = REPO / "public" / "v2-signals.json"
+    lot_p = REPO / "data" / "lot_sizes.json"
+    if not sig_p.exists():
+        record("A2 production probe: the artefact to be published exists", False,
+               f"{sig_p} is missing")
+        return
+    record("A2 production probe: the artefact to be published exists", True)
+
+    sig_bytes = sig_p.read_bytes()
+    lot_bytes = lot_p.read_bytes() if lot_p.exists() else None
+
+    def gate_now():
+        return DG.evaluate(DG.collect_artefacts(), DG.expected_versions(), True)
+
+    def restore():
+        sig_p.write_bytes(sig_bytes)
+        if lot_bytes is not None:
+            lot_p.write_bytes(lot_bytes)
+
+    try:
+        # Baseline: the artefact that is about to ship passes.
+        r = gate_now()
+        record("A2 production gate: the shipped artefact passes", r.ok, r.reason())
+
+        # MUST-FAIL 1: version drift. The receipt's engine_version is edited
+        # in the REAL file; the gate must refuse.
+        payload = json.loads(sig_bytes.decode("utf-8"))
+        payload["__receipt__"]["engine_version"] = "0.0.0-not-the-pin"
+        sig_p.write_text(json.dumps(payload, ensure_ascii=False, indent=1),
+                         encoding="utf-8")
+        r = gate_now()
+        must_fail("A2 production gate blocks a version-drifted receipt",
+                  not r.ok and any("version_mismatch" in f for f in r.failures),
+                  r.reason())
+
+        # MUST-FAIL 2: no receipt at all.
+        payload = json.loads(sig_bytes.decode("utf-8"))
+        payload.pop("__receipt__", None)
+        sig_p.write_text(json.dumps(payload, ensure_ascii=False, indent=1),
+                         encoding="utf-8")
+        r = gate_now()
+        must_fail("A2 production gate blocks an artefact with no receipt",
+                  not r.ok and any("missing_receipt" in f for f in r.failures),
+                  r.reason())
+
+        # MUST-FAIL 3: an input changed after the artefact was built. This
+        # one corrupts a REAL input file, because a tampered receipt only
+        # proves the gate reads the receipt.
+        restore()
+        if lot_bytes is not None:
+            lot_p.write_bytes(lot_bytes + b"\n")
+            r = gate_now()
+            must_fail("A2 production gate blocks when a real input file changed",
+                      not r.ok and any("input_drift" in f for f in r.failures),
+                      r.reason())
+        else:
+            record("A2 production gate: the input-drift probe had a file to corrupt",
+                   False, "data/lot_sizes.json is missing")
+    finally:
+        restore()
+
+    # The probe must leave the tree exactly as it found it.
+    record("A2 production probe restored the artefact byte-for-byte",
+           sig_p.read_bytes() == sig_bytes,
+           "the probe left the file it corrupted in a different state")
 
 
 def main() -> int:
@@ -528,13 +754,14 @@ def main() -> int:
         TMP = Path(td)
         test_a1_freshness()
         test_a2_gate()
+        test_a2_production_gate_blocks()
         test_a3_fingerprints()
         test_b1_crossval()
         test_b1_no_lookahead()
         test_b1_real_agreement()
         test_b2_restatement()
         test_b3_gap_receipts()
-        test_flags_off_leaves_production_untouched()
+        test_a2_flag_posture_and_production_wiring()
 
     n = len(RESULTS)
     npass = sum(1 for r in RESULTS if r["ok"])
@@ -553,10 +780,19 @@ def main() -> int:
         payload = {
             "sprint": "website/pipeline-integrity-2",
             "generated_at": _dt.datetime.now(_dt.timezone.utc).replace(microsecond=0).isoformat(),
-            "mode": "research_only",
+            "mode": ("a2_enabled" if FLAGS.enabled_flags() else "research_only"),
             "flags": FLAGS.load_config(),
             "flags_enabled": FLAGS.enabled_flags(),
-            "production_modified": False,
+            # True once a guard is actually wired into the publish path. The
+            # old value was hard-coded False, which would have been a lie the
+            # moment the first flag went on.
+            "production_modified": bool(FLAGS.enabled_flags()),
+            "production_wiring": {
+                "deploy_gate": "scripts/deploy_gate.py (called by refresh.sh "
+                               "before wrangler; non-zero exit stops the deploy)",
+                "producer": "scripts/build_v2_signals.py attaches a receipt to "
+                            "public/v2-signals.json when deploy_gate_flag is on",
+            },
             "totals": {"checks": n, "passed": npass, "failed": len(fails),
                        "must_fail_guards": len(must_fails)},
             "items": _ITEM_STATUS,

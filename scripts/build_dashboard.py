@@ -497,6 +497,7 @@ def build_dashboard_page(
       <a href="/insights.html">Insights</a>
       <a href="/methodology.html">Methodology</a>
       <a href="/track-record/">Track record</a>
+      <a href="/research/negative-results/">Negative results</a>
       <a href="/disclaimer/">Disclaimer</a>
       <a href="/privacy.html">Privacy</a>
     '''
@@ -1182,6 +1183,7 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
       <a href="/insights.html">Insights</a>
       <a href="/methodology.html">Methodology</a>
       <a href="/track-record/">Track record</a>
+      <a href="/research/negative-results/">Negative results</a>
       <a href="/disclaimer/">Disclaimer</a>
       <a href="/privacy.html">Privacy</a>
     </div>

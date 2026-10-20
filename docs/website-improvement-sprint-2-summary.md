@@ -2,28 +2,51 @@
 
 ## Verdict first
 
-**All six items (A1–A3, B1–B3) built and verified. 60/60 self-test checks pass,
-including 10 must-fail guards each demonstrated BLOCKING on corrupted input.
-Production untouched: every flag is OFF and 0 sprint2 identifiers exist in any of
-the 9 production build/deploy scripts.**
+**All six items (A1–A3, B1–B3) built and verified. As of 2026-10-20 the A2
+deploy gate is LIVE and the other five flags are still OFF.**
 
-The headline evidence is B1: the independent second implementation agrees with
-the primary on **407 of 407** real bar files — 100.00%, zero disagreements.
+**Update (2026-10-20).** Kenneth approved A2 to go live, so the earlier claim
+in this file — "every flag is OFF and 0 sprint2 identifiers exist in any of
+the 9 production build/deploy scripts" — is no longer true, and is replaced
+rather than quietly deleted. What is true now:
 
-Nothing is enabled. Nothing needs to be before you read this.
+- exactly **one** flag is on: `deploy_gate_flag`. The other five are off.
+- **four** production files may reach the sprint2 kit: `build_v2_signals.py`
+  (attaches the receipt), `deploy_gate.py` (the gate itself), `self_test.py`
+  (verifies the receipt at build time), `refresh.sh` (calls the gate before
+  the deploy). The other seven production scripts contain **zero** sprint2
+  identifiers.
+- the kit is only ever imported **inside a function body** — a module-level
+  import would survive a flag being turned off. The guardrail test caught
+  `deploy_gate.py` doing exactly that on its first run, and it was fixed.
+- with the flag off, the producer attaches **nothing**. Asserted against the
+  real function, not against the config file.
+- `refresh.sh` calls the gate **before** wrangler. Asserted on the lines that
+  invoke them, and a copy of refresh.sh with the gate moved after the deploy
+  is shown to flip the verdict.
+
+The gate is fail-closed: no receipt, a version that no longer matches the
+pin, an input that changed under the build, or a self-test that fails — any
+one of them stops the publish. The gate runs the self-test suite itself
+rather than trusting a boolean handed to it.
+
+**The headline evidence is B1: the independent second implementation agrees
+with the primary on 407 of 407 real bar files — 100.00%, zero disagreements.**
+
+Nothing else is enabled. Nothing needs to be before you read this.
 
 ---
 
 ## What is built
 
-| Item | Status | Flag (all OFF) | Evidence |
+| Item | Status | Flag | Evidence |
 |---|---|---|---|
-| A1 visitor-visible staleness states | done, verified | `staleness_banner_flag` | FRESH/STALE/NOT_RUN/SOURCE_DOWN; the real 58h incident reproduced as STALE |
-| A2 fail-closed deploy gate | done, verified | `deploy_gate_flag` | blocks on version mismatch, missing receipt, tampered receipt, vanished input, failed self-test, crossval disagreement, unpinned engine |
-| A3 process fingerprints | done, verified | `fingerprint_flag` | append-only JSONL; a receipt joins to its producing run |
-| B1 four-gate cross-source validation | done, verified | `crossval_flag` | 407/407 agreement; no-look-ahead probe passes; probe proven to have teeth |
-| B2 restatement tracking | done, verified | `restatement_flag` | NEW_SESSION / UNCHANGED / RESTATEMENT distinguished; blast radius from a declared dependency map |
-| B3 data-gap receipts | done, verified | `gap_receipt_flag` | gap excluded from candidates **and** denominators; gap vs rule rejection split by construction |
+| A1 visitor-visible staleness states | done, verified | `staleness_banner_flag` (OFF) | FRESH/STALE/NOT_RUN/SOURCE_DOWN; the real 58h incident reproduced as STALE |
+| A2 fail-closed deploy gate | done, verified, **LIVE** | `deploy_gate_flag` (ON) | blocks on version mismatch, missing receipt, tampered receipt, vanished input, failed self-test, crossval disagreement, unpinned engine — proved against the artefact that is actually on disk |
+| A3 process fingerprints | done, verified | `fingerprint_flag` (OFF) | append-only JSONL; a receipt joins to its producing run |
+| B1 four-gate cross-source validation | done, verified | `crossval_flag` (OFF) | 407/407 agreement; no-look-ahead probe passes; probe proven to have teeth |
+| B2 restatement tracking | done, verified | `restatement_flag` (OFF) | NEW_SESSION / UNCHANGED / RESTATEMENT distinguished; blast radius from a declared dependency map |
+| B3 data-gap receipts | done, verified | `gap_receipt_flag` (OFF) | gap excluded from candidates **and** denominators; gap vs rule rejection split by construction |
 
 Run it yourself: `python3 scripts/sprint2_selftests.py`
 
@@ -78,10 +101,28 @@ Both are disclosed rather than silently absorbed:
 ## Scope boundaries held
 
 - No change to v2 strategy rules, universes, or published backtest numbers.
-- No production deploy, and no flag turned on.
 - No new data source; no Futu work (P1 stays parked).
 - No fingerprints or receipts backfilled for historical runs.
 - Nothing outside A–C touched; Signal Search Sprint 1 not merged or blocked on.
+
+**Changed on 2026-10-20 (A2 went live).** The A2 gate is now wired into the
+publish path, which is a production change and is recorded here rather than
+absorbed silently:
+
+- `scripts/deploy_gate.py` — the fail-closed entry point, called by
+  `refresh.sh` before wrangler. A non-zero exit stops the publish.
+- `config/engine_versions.json` — the operator's pin. The producer declares
+  its own version as a code constant, so the two can disagree and the check
+  can fail.
+- `scripts/build_v2_signals.py` — attaches a receipt to
+  `public/v2-signals.json` when the flag is on. The signal set is unchanged:
+  the receipt is an added key, and the 166 signals, the screen counts and
+  the setup statistics are byte-identical to the pre-receipt file.
+- `scripts/self_test.py` — checks the receipt at build time, using the
+  deploy gate's own expression.
+- `scripts/sprint2_selftests.py` — the old guardrail was replaced, not
+  deleted; the replacement is written out in full and has teeth of its own.
+- `config/integrity_flags.json` — `deploy_gate_flag` is now `true`.
 
 C1–C3 (website content) were not started: C1's input figures are stale as above,
 and C2/C3 depend on work this sprint does not gate.
@@ -109,9 +150,22 @@ docs/sprint2-selftest-results.json     machine-readable summary
 docs/website-improvement-sprint-2-summary.md   this file
 ```
 
+Added 2026-10-20 when A2 went live:
+
+```
+config/engine_versions.json            the operator's engine-version pin
+scripts/deploy_gate.py                 the fail-closed pre-publish entry point
+```
+
 ## Next decision for Kenneth
 
-Which flag to turn on first. My recommendation is **`deploy_gate_flag`** — it is
-the only guard that would have caught the equal-weight defect before it shipped,
-it needs no change to how the pipeline is invoked, and its failure modes are
-tested against the real inputs in this repo rather than synthetic ones.
+The next flag worth considering is **`crossval_flag`** — B1 already agrees
+with the primary on 407 of 407 real bar files, so turning it on would make
+that agreement a publish condition rather than an offline finding. It needs
+one thing first: the deploy gate currently refuses to publish if
+`crossval_flag` is on, because it does not run B1 itself. Wiring that is a
+small job and it is the natural next step.
+
+`staleness_banner_flag` (A1) is the other candidate: it is the guard that
+would have caught the 58h-stale incident, and the machinery is done and
+tested against that exact incident.

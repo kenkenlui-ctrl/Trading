@@ -504,6 +504,72 @@ def build_faq_json() -> str:
     return json.dumps(qa, ensure_ascii=False, indent=4)
 
 
+def _honest_results_disclosure() -> str:
+    """Section 4.9 — the trial ledger and the two disclosure rules.
+
+    2026-10-20: this page used to state what the site FOUND without saying
+    how many things it had tried first. A reader has no way to weigh a claim
+    that "v2 beats equal weight" without knowing that 58 settings were
+    tested to get there, or that every one of them was scored against a
+    placebo. The ledger and the two rules below are the disclosure that
+    makes the other numbers on this page readable.
+
+    Every count comes from honest_results.py, which reads the report files —
+    the same module the /research/negative-results/ page reads, so the two
+    pages cannot disagree about how much was tried.
+    """
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import honest_results as H
+
+    ledger = H.trial_ledger()
+    total = H.ledger_total()
+    s1 = H.sprint1()
+    s2 = H.sprint2()
+
+    rows = "".join(
+        f'<tr><td>{esc(r["name"])}</td>'
+        f'<td class="r">{r["count"]} {esc(r["unit"])}</td>'
+        f'<td>{esc(r["outcome"])}</td>'
+        f'<td><code>{esc(r["source"])}</code></td></tr>'
+        for r in ledger
+    )
+    return f"""
+  <h2>4.9 試驗台賬同披露規則</h2>
+  <p>上面每一個數字，都要配上「試過幾多個先」同「點解唔係隨機」先讀得明。
+  本站至今一共測過 <b>{total}</b> 個設定，每一項都跑過 placebo（將受測嗰部分
+  隨機化，或者隨機揀同等數量嘅股票），同自己嘅 null 比。完整結果、逐個變體同
+  原始檔案喺 <a href="/research/negative-results/"><b>失敗測試記錄</b></a>。</p>
+
+  <table class="data-table">
+    <thead><tr><th>測試</th><th class="r">數量</th><th>結果</th><th>來源檔</th></tr></thead>
+    <tbody>
+      {rows}
+    </tbody>
+  </table>
+  <p class="text-dim" style="font-size: var(--text-sm)">
+    Sprint 1 嘅 placebo 重跑唔另計：佢係同一批 {s1['n_variations']} 個變體換把尺
+    再評一次（{s1['trials']} trials），冇畀數據多一次「撞運」嘅機會。
+  </p>
+
+  <div class="info-card" style="border-left:3px solid var(--amber);margin:16px 0">
+    <h3>Holdout 紀律</h3>
+    <p>2016–20 同 2021–26 係固定切法，唔會因為結果靚就改。
+    <b>任何新 claim 必須兩個分段同號先可以發佈</b> —— 單邊靚唔算數。
+    Sprint 2 三條軸（{s2['n_axes']} 條，全部 FAIL）就係因為兩段之間隔籬變咗號，
+    或者其中一段直接輸。逐個數字同逐個檔案都喺
+    <a href="/research/negative-results/">失敗測試記錄</a>。</p>
+
+    <h3>Placebo 規則</h3>
+    <p>日後任何策略數字上站之前，<b>必須並排一個 null / placebo 對照</b>，
+    而且 null 要用同一個引擎、同一個 universe、同一個成本模型跑，只把受測嗰部分
+    隨機化。做法見 4.6 嘅對照組測試：把訊號移到隨機交易日，睇差距仲喺唔喺 null
+    上面。<b>冇 placebo 嘅數字，唔上站</b> —— 本頁 4.7 嘅等權對照、4.5 嘅收市確認
+    A/B，全部都係咁做嘅。</p>
+  </div>
+"""
+
+
 def build_body() -> str:
     rows_fix = [
         ("SELL_R1（升到 R1 沽空至 box 中位）",
@@ -1224,6 +1290,8 @@ def build_body() -> str:
     </p>
   </div>
 
+{_honest_results_disclosure()}
+
   <h2>5. 風險管理</h2>
   <ul>
     <li>每單風險 = 權益 1%；單一名義上限 10%；同時最多 10 倉</li>
@@ -1329,6 +1397,19 @@ def main() -> None:
             r"\1\n" + prose_css,
             html, count=1,
         )
+
+    # 2c. Nav refresh. build_static leaves this page alone (it is in the
+    #     hand-edited list), so its nav was last rendered before
+    #     /track-record/ existed: it linked /methodology.html twice and had
+    #     no way to reach the site's other honesty page, let alone the new
+    #     one. The nav block is replaced wholesale with the current one,
+    #     which also picks up the newer theme script.
+    from build_static import nav_html
+    fresh_nav = nav_html("/methodology.html")
+    m_nav = re.search(r'<header class="site-header">.*?</script>\s*', html, flags=re.S)
+    if not m_nav:
+        raise SystemExit("no nav block found")
+    html = html[: m_nav.start()] + fresh_nav + "\n\n" + html[m_nav.end():]
 
     # 3. JSON-LD
     def fix_ld(match: re.Match) -> str:

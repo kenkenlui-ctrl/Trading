@@ -1,11 +1,21 @@
-"""Sprint 2 feature flags — ALL DEFAULT OFF.
+"""Sprint 2 feature flags — all default OFF.
 
 Spec rule: "every item behind a `<feature>_flag` config flag, default OFF. No
 production changes until Kenneth approves each flag."
 
-Nothing in this package may be imported by a production build or deploy path
-while any flag is OFF. `self_test.py` in this package asserts that
-independently — see `test_flags_off_leaves_production_untouched`.
+As of 2026-10-20 one flag is on: `deploy_gate_flag`. The rule that replaced
+the blanket "nothing here may be imported while any flag is OFF" is narrower
+and checkable:
+
+  * a production script may reach this package only when the flag that
+    governs that feature is on, and only for the files the guardrail test
+    lists as wired for it
+  * the import must sit INSIDE a function body. A module-level import
+    survives a flag being turned off and makes the package's import cost
+    unconditional — the guardrail test checks this by AST, and it caught
+    `deploy_gate.py` doing exactly that on its first run
+  * a flag that is off must be behaviourally inert, not merely configured
+    that way: with the flag off the producer attaches no receipt at all
 
 The config file is committed with every flag false on purpose: a missing or
 corrupt config must mean OFF, never ON.
