@@ -3640,6 +3640,81 @@ def t_per_trade_stats_trace_to_source() -> None:
            "the scanner did not flag the n = 2,992 copy that was live on 2026-10-18")
 
 
+def t_methodology_provenance_names_every_source() -> None:
+    """The methodology page must not claim one source for numbers it read
+    from another file.
+
+    2026-10-21 (Kenneth, reading the page outside the repo). The page said
+    "本頁所有美股同日股數字而家係由 data/hk_retest_summary.json 讀出嚟" — but
+    §4's per-trade table (n / win% / avg net per trade / profit factor /
+    clustered t) is a DIFFERENT experiment: it is read from
+    data/ab_close_hold.json, produced by scripts/ab_close_hold.py over the
+    data/bt10y2/ bars. The numbers were right; the provenance sentence was an
+    over-claim.
+
+    It matters more here than elsewhere because the whole pitch of this page is
+    "every figure says where it came from". A wrong provenance sentence is the
+    one kind of error a reader CANNOT catch by eye — the figure looks fine,
+    the file name looks plausible, and only someone who opens both files sees
+    the lie. So the invariant is checked mechanically here.
+
+    The invariant: the page must name EVERY source it uses, and it must not
+    make a blanket claim that one file supplied all of the US/JP numbers.
+    """
+    import re as _re
+
+    meth = PUBLIC / "methodology.html"
+    record("the methodology page exists", meth.exists())
+    if not meth.exists():
+        return
+    text = meth.read_text(encoding="utf-8", errors="replace")
+
+    # The over-claim, and the sentence that replaces it.
+    OVERCLAIM = ("本頁所有美股同日股數字而家係<b>由 "
+                 "<code>data/hk_retest_summary.json</code> 讀出嚟</b>")
+    SCOPED = ("組合層面</b>嘅美股同日股數字而家係<b>由 "
+              "<code>data/hk_retest_summary.json</code> 讀出嚟</b>")
+
+    def provenance_failures(page_text: str) -> list[str]:
+        """Written as an expression so a probe re-evaluates exactly the same
+        thing."""
+        out = []
+        if OVERCLAIM in page_text:
+            out.append("blanket over-claim: one file cannot have supplied "
+                       "every US/JP figure")
+        if SCOPED not in page_text:
+            out.append("the scoped portfolio-level provenance sentence is missing")
+        for needed in ("<code>data/hk_retest_summary.json</code>",
+                       "<code>data/ab_close_hold.json</code>",
+                       "<code>scripts/ab_close_hold.py</code>",
+                       "<code>data/bt10y2/</code>"):
+            if needed not in page_text:
+                out.append(f"unnamed source: {needed}")
+        return out
+
+    bad = provenance_failures(text)
+    record("the methodology page names every source it uses", not bad,
+           f"provenance problems: {bad}")
+
+    # MUST-FAIL: put the over-claim back and the same predicate must reject it.
+    probe = text.replace(SCOPED, OVERCLAIM, 1)
+    bad_probe = provenance_failures(probe)
+    record("MUST-FAIL the blanket over-claim is rejected", bool(bad_probe),
+           f"failures={bad_probe}")
+
+    # MUST-FAIL: drop the per-trade source and it must be caught too.
+    #
+    # Every occurrence, not just the first: the page names that file in the
+    # FAQ and in §4 as well as in the provenance note, so removing one of
+    # them leaves the file named and the check still passes — which is
+    # exactly what the first version of this control did, and exactly why a
+    # control has to be able to fail.
+    probe2 = _re.sub(r"<code>data/ab_close_hold\.json</code>", "（來源略）", text)
+    bad_probe2 = provenance_failures(probe2)
+    record("MUST-FAIL an unnamed per-trade source is rejected", bool(bad_probe2),
+           f"failures={bad_probe2}")
+
+
 PREREG = REPO / "docs" / "close-confirmation-prereg-2026-10-18.md"
 _PREREG_Z = 1.96
 _REQUIRED_CELLS = (("us200", "train"), ("us200", "test"),
@@ -5089,6 +5164,7 @@ def main() -> int:
                t_equity_curve_stats_are_internally_consistent,
                t_no_withdrawn_figures_are_published,
                t_per_trade_stats_trace_to_source,
+               t_methodology_provenance_names_every_source,
                t_close_confirmation_placebo_holds_up,
                t_no_unrendered_template_placeholders,
                t_no_script_carries_the_defective_ew_benchmark,

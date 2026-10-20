@@ -883,9 +883,13 @@ def build_body() -> str:
       <b>{_vs_hold(JP()['gap_mid_pp'])}</b>），所以淨係報好睇嗰個就係自欺。
       分段睇：{_sub_line(JP())}。
       <br><br>
-      本頁所有美股同日股數字而家係<b>由 <code>data/hk_retest_summary.json</code> 讀出嚟</b>，
+      呢頁<b>組合層面</b>嘅美股同日股數字而家係<b>由 <code>data/hk_retest_summary.json</code> 讀出嚟</b>，
       唔再係手打 —— 同一個數字寫兩遍，就一定會有一遍過時。
-      同一個道理，呢頁<b>連方向嘅措辭都係由符號計出嚟</b>：呢個檔案喺 2026-10-18
+      <b>但唔係全頁都係同一個來源</b>：§4 嘅逐單統計（交易筆數、勝率、每單平均淨、
+      利潤因子、日期叢集 t）係另一個實驗，由 <code>data/ab_close_hold.json</code> 讀出
+      （重跑方法見 <code>scripts/ab_close_hold.py</code>，輸入資料在 <code>data/bt10y2/</code>）。
+      兩個來源唔會混為一談 —— 講邊個數出自邊個檔，就講邊個。
+      同一個道理，呢頁<b>連方向嘅措辭都係由符號計出嚟</b>：<code>data/hk_retest_summary.json</code> 喺 2026-10-18
       當日下午重跑過兩次，差距嘅正負號轉咗兩次，所以頁面唔會再自己斷言
       「領先」定「落後」。
     </p>

@@ -147,7 +147,7 @@
 <nav class="nav" aria-label="Primary">
   <a href="/" class="nav-brand"><span class="leek">L</span>eeks <em class="italic">Terminal</em></a>
   <div class="nav-links">
-    <a href="/" class="active">Home</a><a href="/hk200/"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg> HK Signals</a><a href="/us200/"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="vertical-align:-2px" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.6 3 14.4 0 18M12 3c-3 3.6-3 14.4 0 18"/></svg> US Signals</a><a href="/jp200/"><span style="display: inline-block; width: 14px; height: 14px; background: radial-gradient(circle at 50% 50%, #bc002d 30%, #fff 30%); border-radius: 50%; vertical-align: -2px; margin-right: 4px;" title="Japan"></span> JP Signals</a><a href="/compare/">Compare</a><a href="/backtest.html">Backtest</a><a href="/insights.html">Insights</a><a href="/methodology.html" class="active">Methodology</a><a href="/track-record/">Track record</a><a href="/research/negative-results/">Negative results</a><a href="/disclaimer/">Disclaimer</a><a href="/privacy.html">Privacy</a>
+    <a href="/" class="active">Home</a><a href="/hk200/"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg> HK Signals</a><a href="/us200/"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="vertical-align:-2px" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.6 3 14.4 0 18M12 3c-3 3.6-3 14.4 0 18"/></svg> US Signals</a><a href="/jp200/"><span style="display: inline-block; width: 14px; height: 14px; background: radial-gradient(circle at 50% 50%, #bc002d 30%, #fff 30%); border-radius: 50%; vertical-align: -2px; margin-right: 4px;" title="Japan"></span> JP Signals</a><a href="/compare/">Compare</a><a href="/backtest.html">Backtest</a><a href="/insights.html">Insights</a><a href="/methodology.html" class="active">Methodology</a><a href="/track-record/">Track record</a><a href="/research/negative-results/">Negative results</a><a href="/research/selection-dead/">Selection test</a><a href="/disclaimer/">Disclaimer</a><a href="/privacy.html">Privacy</a>
   </div>
   <a class="lang-switch" href="/en/methodology/" title="View in English" aria-label="View in English">EN</a>
   <div class="nav-meta">
@@ -176,6 +176,7 @@
       <a href="/methodology.html">Methodology</a>
       <a href="/track-record/">Track record</a>
       <a href="/research/negative-results/">Negative results</a>
+      <a href="/research/selection-dead/">Selection test</a>
       <a href="/about/">About</a>
       <a href="/disclaimer/">Disclaimer</a>
       <a href="/privacy/">Privacy</a>
@@ -306,9 +307,13 @@ function toggleTheme(){
       <b>領先 +2.1 點/年</b>），所以淨係報好睇嗰個就係自欺。
       分段睇：2016–20 落後 +9.0 點/年、2021–26 領先 +5.1 點/年。
       <br><br>
-      本頁所有美股同日股數字而家係<b>由 <code>data/hk_retest_summary.json</code> 讀出嚟</b>，
+      呢頁<b>組合層面</b>嘅美股同日股數字而家係<b>由 <code>data/hk_retest_summary.json</code> 讀出嚟</b>，
       唔再係手打 —— 同一個數字寫兩遍，就一定會有一遍過時。
-      同一個道理，呢頁<b>連方向嘅措辭都係由符號計出嚟</b>：呢個檔案喺 2026-10-18
+      <b>但唔係全頁都係同一個來源</b>：§4 嘅逐單統計（交易筆數、勝率、每單平均淨、
+      利潤因子、日期叢集 t）係另一個實驗，由 <code>data/ab_close_hold.json</code> 讀出
+      （重跑方法見 <code>scripts/ab_close_hold.py</code>，輸入資料在 <code>data/bt10y2/</code>）。
+      兩個來源唔會混為一談 —— 講邊個數出自邊個檔，就講邊個。
+      同一個道理，呢頁<b>連方向嘅措辭都係由符號計出嚟</b>：<code>data/hk_retest_summary.json</code> 喺 2026-10-18
       當日下午重跑過兩次，差距嘅正負號轉咗兩次，所以頁面唔會再自己斷言
       「領先」定「落後」。
     </p>
