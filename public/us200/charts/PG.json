@@ -3,21 +3,21 @@
   "ticker_user": "PG",
   "name": "Procter & Gamble Company (The)",
   "data_source": "yfinance",
-  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
+  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-16",
-    "O": 157.75,
-    "H": 159.98,
-    "L": 157.56,
-    "C": 159.35,
-    "prev_close": 157.08,
-    "chg_pct": 1.45
+    "date": "2026-10-19",
+    "O": 157.87,
+    "H": 158.49,
+    "L": 157.01,
+    "C": 157.69,
+    "prev_close": 159.35,
+    "chg_pct": -1.04
   },
   "phase": "base_building",
-  "adx": 23.84,
-  "plus_di": 39.9,
-  "minus_di": 10.62,
-  "regime": "dead",
+  "adx": 25.92,
+  "plus_di": 37.31,
+  "minus_di": 11.46,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 167.25 (2026-02-27), trough 138.86 (2026-06-01), box top 159.98 (2026-10-16)",
   "peak": {
@@ -32,68 +32,73 @@
     "top": 159.98,
     "top_date": "2026-10-16",
     "bottom": 138.86,
-    "period": "2026-06-01 to 2026-10-16"
+    "period": "2026-06-01 to 2026-10-19"
   },
-  "drop_from_peak_pct": 4.7,
-  "recovery_from_crash_pct": 14.8,
+  "drop_from_peak_pct": 5.7,
+  "recovery_from_crash_pct": 13.6,
   "supports": [
     {
       "level": 148.0,
       "label": "S1 KEY",
       "touches": 41,
-      "evidence": "tested 41x in base period; 7.1% below current"
+      "evidence": "tested 41x in base period; 6.1% below current"
     },
     {
       "level": 144.0,
       "label": "S2 bottom",
-      "touches": 63,
+      "touches": 62,
       "evidence": "structural bottom, near crash low 138.86"
     }
   ],
   "resistances": [
     {
-      "level": 159.98,
+      "level": 158.49,
       "label": "R1 today high",
-      "evidence": "today's high 159.97999572753906"
+      "evidence": "today's high 158.49000549316406"
+    },
+    {
+      "level": 159.98,
+      "label": "R3 Oct high",
+      "evidence": "box top 159.98, base period high"
     }
   ],
   "position": {
-    "current": 159.35,
-    "in_box_pct": 96.1,
+    "current": 157.69,
+    "in_box_pct": 85.7,
     "nearest_support": "S1 KEY (148.0)",
-    "nearest_resistance": "R1 today high (159.98)"
+    "nearest_resistance": "R1 today high (158.49)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 157.75,
-    "H": 159.98,
-    "L": 157.56,
-    "C": 159.35,
-    "body_pct": 66.1,
-    "upper_wick_pct": 26.0,
-    "lower_wick_pct": 7.9
+    "close_position": "lower_half",
+    "O": 157.87,
+    "H": 158.49,
+    "L": 157.01,
+    "C": 157.69,
+    "body_pct": 12.2,
+    "upper_wick_pct": 41.9,
+    "lower_wick_pct": 45.9
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 148.0 (KEY support)",
-      "then": "still range; watch 159.98 for next test"
+      "then": "still range; watch 158.49 for next test"
     },
     {
       "if": "break 148.0 on close",
@@ -104,8 +109,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 159.98 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 158.49 on close",
+      "then": "short-term bullish; next test 159.98"
+    },
+    {
+      "if": "break 159.98 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -127,15 +136,15 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 159.98,
-    "target_price": 151.69,
-    "stop_price": 163.95,
-    "risk_pct": 2.48,
-    "reward_pct": 5.18,
-    "rr_ratio": 2.09,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 159.98,
     "s1": 143.4,
     "s2": 140.2,
@@ -143,17 +152,17 @@
     "r3": 154.32,
     "s3": 138.86,
     "s4": 137.62,
-    "current_position_pct": 96.2,
-    "notes": "SELL_R1: in box (143-160), entry at R1 160, target mid 152, stop 164 ｜ 52.2 條規則（SELL plan，resistance 159.98）：① 跌到 159.98、收市守住喺 159.98 上面 → 照 BUY 條 plan 做（入場 159.98，止蝕 163.95，目標 151.69）。② 收市跌穿 159.98 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 159.98 上面』。"
+    "current_position_pct": 86.2,
+    "notes": "WAIT_RANGE: in box (143-160), pos 86%, no clear setup"
   },
   "patterns": [
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-10-15",
-      "low": 156.7899932861328,
-      "high": 159.9499969482422,
-      "i": 198
+      "date": "2026-10-19",
+      "low": 157.00999450683594,
+      "high": 158.49000549316406,
+      "i": 199
     },
     {
       "name": "黃昏之星",
@@ -161,7 +170,7 @@
       "date": "2026-10-01",
       "low": 143.39999389648438,
       "high": 145.0,
-      "i": 188
+      "i": 187
     },
     {
       "name": "利好反擊線",
@@ -169,7 +178,7 @@
       "date": "2026-09-11",
       "low": 143.5500030517578,
       "high": 145.49000549316406,
-      "i": 174
+      "i": 173
     },
     {
       "name": "利好身懷六甲",
@@ -177,7 +186,7 @@
       "date": "2026-08-21",
       "low": 142.13999938964844,
       "high": 145.27000427246094,
-      "i": 160
+      "i": 159
     },
     {
       "name": "利好吞噬",
@@ -185,7 +194,7 @@
       "date": "2026-08-12",
       "low": 143.7899932861328,
       "high": 144.94000244140625,
-      "i": 153
+      "i": 152
     }
   ]
 }

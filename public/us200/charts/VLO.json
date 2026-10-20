@@ -3,70 +3,64 @@
   "ticker_user": "VLO",
   "name": "Valero Energy Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
+  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-16",
-    "O": 447.34,
-    "H": 451.98,
-    "L": 439.4,
-    "C": 444.71,
-    "prev_close": 444.06,
-    "chg_pct": 0.15
+    "date": "2026-10-19",
+    "O": 445.76,
+    "H": 456.32,
+    "L": 431.23,
+    "C": 433.31,
+    "prev_close": 444.71,
+    "chg_pct": -2.56
   },
-  "phase": "base_building",
-  "adx": 32.83,
-  "plus_di": 26.6,
-  "minus_di": 13.87,
+  "phase": "range",
+  "adx": 31.91,
+  "plus_di": 23.77,
+  "minus_di": 15.86,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 461.52 (2026-10-14), trough 360.31 (2026-09-04), box top 461.52 (2026-10-14)",
+  "phase_evidence": "Peak 461.52 (2026-10-14), trough 364.96 (2026-09-23), box top 461.52 (2026-10-14)",
   "peak": {
     "date": "2026-10-14",
     "price": 461.52
   },
   "trough": {
-    "date": "2026-09-04",
-    "price": 360.31
+    "date": "2026-09-23",
+    "price": 364.96
   },
   "box": {
     "top": 461.52,
     "top_date": "2026-10-14",
-    "bottom": 360.31,
-    "period": "2026-09-04 to 2026-10-16"
+    "bottom": 364.96,
+    "period": "2026-09-23 to 2026-10-19"
   },
-  "drop_from_peak_pct": 3.6,
-  "recovery_from_crash_pct": 23.4,
+  "drop_from_peak_pct": 6.1,
+  "recovery_from_crash_pct": 18.7,
   "supports": [
     {
-      "level": 428.0,
-      "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 3.8% below current"
-    },
-    {
       "level": 388.0,
-      "label": "S2",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
+      "label": "S1 KEY",
+      "touches": 3,
+      "evidence": "tested 3x in base period; 10.5% below current"
     },
     {
       "level": 384.0,
-      "label": "S3",
-      "touches": 10,
-      "evidence": "mid-base support, tested 10x"
+      "label": "S2",
+      "touches": 8,
+      "evidence": "mid-base support, tested 8x"
     },
     {
-      "level": 360.31,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-09-04, structural bottom"
+      "level": 380.0,
+      "label": "S3 bottom",
+      "touches": 4,
+      "evidence": "structural bottom, near crash low 364.96"
     }
   ],
   "resistances": [
     {
-      "level": 451.98,
+      "level": 456.32,
       "label": "R1 today high",
-      "evidence": "today's high 451.9800109863281"
+      "evidence": "today's high 456.32000732421875"
     },
     {
       "level": 461.52,
@@ -75,23 +69,23 @@
     }
   ],
   "position": {
-    "current": 444.71,
-    "in_box_pct": 83.4,
-    "nearest_support": "S1 KEY (428.0)",
-    "nearest_resistance": "R1 today high (451.98)"
+    "current": 433.31,
+    "in_box_pct": 65.4,
+    "nearest_support": "S1 KEY (388.0)",
+    "nearest_resistance": "R1 today high (456.32)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 447.34,
-    "H": 451.98,
-    "L": 439.4,
-    "C": 444.71,
-    "body_pct": 20.9,
-    "upper_wick_pct": 36.9,
-    "lower_wick_pct": 42.2
+    "O": 445.76,
+    "H": 456.32,
+    "L": 431.23,
+    "C": 433.31,
+    "body_pct": 49.6,
+    "upper_wick_pct": 42.1,
+    "lower_wick_pct": 8.3
   },
   "bias": {
     "short": {
@@ -99,8 +93,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
+      "bias": "neutral",
+      "reason": "no clear direction"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -109,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 428.0 (KEY support)",
-      "then": "still range; watch 451.98 for next test"
+      "if": "hold 388.0 (KEY support)",
+      "then": "still range; watch 456.32 for next test"
     },
     {
-      "if": "break 428.0 on close",
-      "then": "target 388.0 → 384.0 (short-term bearish)"
+      "if": "break 388.0 on close",
+      "then": "target 384.0 → 380.0 (short-term bearish)"
     },
     {
-      "if": "break 360.31 (crash low)",
+      "if": "break 380.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 451.98 on close",
+      "if": "reclaim 456.32 on close",
       "then": "short-term bullish; next test 461.52"
     },
     {
@@ -160,20 +154,20 @@
     "r1": 461.52,
     "s1": 364.96,
     "s2": 291.46,
-    "r2": 416.66,
+    "r2": 419.04,
     "r3": 320.24,
     "s3": 227.25,
-    "s4": 160.97,
-    "current_position_pct": 82.6,
-    "notes": "WAIT_RANGE: in box (365-462), pos 83%, no clear setup"
+    "s4": 162.08,
+    "current_position_pct": 70.8,
+    "notes": "WAIT_RANGE: in box (365-462), pos 71%, no clear setup"
   },
   "patterns": [
     {
-      "name": "黃昏之星",
-      "bias": "bearish",
-      "date": "2026-10-16",
-      "low": 439.3999938964844,
-      "high": 451.9800109863281,
+      "name": "上升三法",
+      "bias": "bullish",
+      "date": "2026-10-19",
+      "low": 431.2300109863281,
+      "high": 456.32000732421875,
       "i": 199
     },
     {
@@ -182,7 +176,7 @@
       "date": "2026-09-14",
       "low": 375.1000061035156,
       "high": 399.760009765625,
-      "i": 175
+      "i": 174
     },
     {
       "name": "烏雲蓋頂",
@@ -190,7 +184,7 @@
       "date": "2026-08-31",
       "low": 351.17999267578125,
       "high": 362.7900085449219,
-      "i": 166
+      "i": 165
     },
     {
       "name": "烏雲蓋頂",
@@ -198,7 +192,7 @@
       "date": "2026-07-09",
       "low": 277.2799987792969,
       "high": 284.2799987792969,
-      "i": 129
+      "i": 128
     },
     {
       "name": "三個白武士",
@@ -206,7 +200,7 @@
       "date": "2026-06-25",
       "low": 240.02000427246094,
       "high": 255.74000549316406,
-      "i": 120
+      "i": 119
     }
   ]
 }

@@ -3,23 +3,23 @@
   "ticker_user": "AMZN",
   "name": "Amazon.com, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
+  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-16",
-    "O": 255.1,
-    "H": 255.54,
-    "L": 248.6,
-    "C": 250.0,
-    "prev_close": 254.76,
-    "chg_pct": -1.87
+    "date": "2026-10-19",
+    "O": 255.25,
+    "H": 263.72,
+    "L": 255.22,
+    "C": 262.45,
+    "prev_close": 250.0,
+    "chg_pct": 4.98
   },
   "phase": "downtrend_active",
-  "adx": 13.26,
-  "plus_di": 18.41,
-  "minus_di": 20.72,
+  "adx": 13.5,
+  "plus_di": 24.62,
+  "minus_di": 17.6,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 287.2 (2026-08-03), trough 244.3 (2026-09-16), box top 263.7 (2026-10-12)",
+  "phase_evidence": "Peak 287.2 (2026-08-03), trough 244.3 (2026-09-16), box top 263.72 (2026-10-19)",
   "peak": {
     "date": "2026-08-03",
     "price": 287.2
@@ -29,86 +29,89 @@
     "price": 244.3
   },
   "box": {
-    "top": 263.7,
-    "top_date": "2026-10-12",
+    "top": 263.72,
+    "top_date": "2026-10-19",
     "bottom": 244.3,
-    "period": "2026-09-16 to 2026-10-16"
+    "period": "2026-09-16 to 2026-10-19"
   },
-  "drop_from_peak_pct": 13.0,
-  "recovery_from_crash_pct": 2.3,
+  "drop_from_peak_pct": 8.6,
+  "recovery_from_crash_pct": 7.4,
   "supports": [
     {
+      "level": 252.0,
+      "label": "S1 KEY",
+      "touches": 21,
+      "evidence": "tested 21x in base period; 4.0% below current"
+    },
+    {
+      "level": 248.0,
+      "label": "S2",
+      "touches": 16,
+      "evidence": "mid-base support, tested 16x"
+    },
+    {
       "level": 244.0,
-      "label": "S1 bottom",
-      "touches": 4,
+      "label": "S3 bottom",
+      "touches": 8,
       "evidence": "structural bottom, near crash low 244.3"
     }
   ],
   "resistances": [
     {
-      "level": 255.54,
+      "level": 263.72,
       "label": "R1 today high",
-      "evidence": "today's high 255.5399932861328"
-    },
-    {
-      "level": 263.7,
-      "label": "R3 Oct high",
-      "evidence": "box top 263.7, base period high"
+      "evidence": "today's high 263.7200012207031"
     }
   ],
   "position": {
-    "current": 250.0,
-    "in_box_pct": 30.5,
-    "nearest_support": "S1 bottom (244.0)",
-    "nearest_resistance": "R1 today high (255.54)"
+    "current": 262.45,
+    "in_box_pct": 93.6,
+    "nearest_support": "S1 KEY (252.0)",
+    "nearest_resistance": "R1 today high (263.72)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 255.1,
-    "H": 255.54,
-    "L": 248.6,
-    "C": 250.0,
-    "body_pct": 73.5,
-    "upper_wick_pct": 6.3,
-    "lower_wick_pct": 20.2
+    "close_position": "upper_half",
+    "O": 255.25,
+    "H": 263.72,
+    "L": 255.22,
+    "C": 262.45,
+    "body_pct": 84.7,
+    "upper_wick_pct": 14.9,
+    "lower_wick_pct": 0.4
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (30% of box)"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "bearish_continuation",
       "reason": "making new lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 244.0 (KEY support)",
-      "then": "still range; watch 255.54 for next test"
+      "if": "hold 252.0 (KEY support)",
+      "then": "still range; watch 263.72 for next test"
     },
     {
-      "if": "break 244.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 252.0 on close",
+      "then": "target 248.0 → 244.0 (short-term bearish)"
     },
     {
       "if": "break 244.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 255.54 on close",
-      "then": "short-term bullish; next test 263.7"
-    },
-    {
-      "if": "break 263.7 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 263.72 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -131,7 +134,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -139,15 +142,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 263.7,
+    "r1": 263.72,
     "s1": 244.73,
     "s2": 226.16,
     "r2": 287.2,
     "r3": 278.56,
     "s3": 225.55,
     "s4": 196.0,
-    "current_position_pct": 27.8,
-    "notes": "WAIT_RANGE: in box (245-264), pos 28%, no clear setup"
+    "current_position_pct": 93.3,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 263.72）：① 跌到 263.72、收市守住喺 263.72 上面 → 照 BUY 條 plan 做（入場 263.72，止蝕 273.69，目標 254.22）。② 收市跌穿 263.72 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 263.72 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
     {
@@ -156,7 +159,7 @@
       "date": "2026-10-12",
       "low": 259.2699890136719,
       "high": 263.70001220703125,
-      "i": 195
+      "i": 194
     },
     {
       "name": "平頭底",
@@ -164,7 +167,7 @@
       "date": "2026-10-02",
       "low": 250.02000427246094,
       "high": 253.55999755859375,
-      "i": 189
+      "i": 188
     },
     {
       "name": "利好反擊線",
@@ -172,7 +175,7 @@
       "date": "2026-09-25",
       "low": 247.17999267578125,
       "high": 250.8800048828125,
-      "i": 184
+      "i": 183
     },
     {
       "name": "刺穿線",
@@ -180,7 +183,7 @@
       "date": "2026-09-10",
       "low": 249.5800018310547,
       "high": 253.14999389648438,
-      "i": 173
+      "i": 172
     },
     {
       "name": "平頭頂",
@@ -188,7 +191,7 @@
       "date": "2026-08-18",
       "low": 257.7300109863281,
       "high": 262.17999267578125,
-      "i": 157
+      "i": 156
     }
   ]
 }

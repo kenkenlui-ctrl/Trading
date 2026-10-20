@@ -2839,6 +2839,25 @@ def t_honest_results_page_matches_the_reports() -> None:
         import build_honest_results_page as B
         return B.render()
 
+    def finalised(rendered: str) -> str:
+        """What the build pipeline actually leaves on disk.
+
+        finalize.py re-stamps every page's T-1 badge to the label that is
+        true for that page (build_static.restamp_t1_badges), so a raw builder
+        render is NOT what ships. The first version of this page rendered
+        "T-1 · 2026-10-20" and shipped "T-1 · 2026-10-20 · US 2026-10-19" —
+        the page was right and the COMPARISON was wrong. The comparison has
+        to run the same pass the pipeline runs, on the real file.
+        """
+        import build_static as bs
+        good = page_p.read_bytes()
+        try:
+            page_p.write_text(rendered, encoding="utf-8")
+            bs.restamp_t1_badges()
+            return page_p.read_text(encoding="utf-8")
+        finally:
+            page_p.write_bytes(good)
+
     try:
         fresh = fresh_render()
     except Exception as e:
@@ -2846,10 +2865,17 @@ def t_honest_results_page_matches_the_reports() -> None:
                f"{type(e).__name__}: {e}")
         return
     record("the negative-results page can be rebuilt from the reports", True)
+
+    try:
+        shipped = finalised(fresh)
+    except Exception as e:
+        record("the negative-results page is exactly what the reports produce",
+               False, f"{type(e).__name__}: {e}")
+        return
     record("the negative-results page is exactly what the reports produce",
-           fresh == text,
-           "the page on disk differs from a fresh render: a figure was edited "
-           "by hand, or a report changed and the page was not rebuilt")
+           shipped == text,
+           "the page on disk differs from what the build produces: a figure was "
+           "edited by hand, or a report changed and the page was not rebuilt")
 
     # ---- the methodology ledger must carry the same numbers ---------------
     meth = meth_p.read_text(encoding="utf-8", errors="replace")
@@ -2876,13 +2902,14 @@ def t_honest_results_page_matches_the_reports() -> None:
            "the page exists but the nav cannot reach it")
 
     # ---- MUST-FAIL: edit the shipped page ---------------------------------
+    # The control runs the SAME comparison the gate runs, on the real file.
     good = text
     try:
         page_p.write_text(good.replace("SELECTION_DEAD", "SELECTION_ALIVE", 1),
                           encoding="utf-8")
         edited = page_p.read_text(encoding="utf-8")
         record("MUST-FAIL an edited negative-results page is rejected",
-               edited != fresh,
+               edited != shipped,
                "the control for this gate does not discriminate: the same "
                "predicate still passes on a hand-edited page")
     finally:
@@ -2898,7 +2925,7 @@ def t_honest_results_page_matches_the_reports() -> None:
         rep.write_text(good_rep.replace('"z": -3.791', '"z": -1.500', 1),
                        encoding="utf-8")
         H._cache.pop("s2_axis_a", None)
-        moved = fresh_render()
+        moved = finalised(fresh_render())
         record("MUST-FAIL a report that changed under the page is rejected",
                moved != good,
                "the control for this gate does not discriminate: the render "

@@ -3,20 +3,20 @@
   "ticker_user": "YUM",
   "name": "Yum! Brands, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
+  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-16",
-    "O": 151.98,
-    "H": 152.42,
-    "L": 149.52,
-    "C": 150.51,
-    "prev_close": 150.83,
-    "chg_pct": -0.21
+    "date": "2026-10-19",
+    "O": 149.49,
+    "H": 150.25,
+    "L": 148.1,
+    "C": 149.83,
+    "prev_close": 150.51,
+    "chg_pct": -0.45
   },
   "phase": "downtrend_active",
-  "adx": 23.44,
-  "plus_di": 34.1,
-  "minus_di": 18.2,
+  "adx": 23.36,
+  "plus_di": 32.21,
+  "minus_di": 20.46,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 170.14 (2026-07-07), trough 134.26 (2026-09-18), box top 152.42 (2026-10-16)",
@@ -32,16 +32,16 @@
     "top": 152.42,
     "top_date": "2026-10-16",
     "bottom": 134.26,
-    "period": "2026-09-18 to 2026-10-16"
+    "period": "2026-09-18 to 2026-10-19"
   },
-  "drop_from_peak_pct": 11.5,
-  "recovery_from_crash_pct": 12.1,
+  "drop_from_peak_pct": 11.9,
+  "recovery_from_crash_pct": 11.6,
   "supports": [
     {
       "level": 144.0,
       "label": "S1 KEY",
       "touches": 11,
-      "evidence": "tested 11x in base period; 4.3% below current"
+      "evidence": "tested 11x in base period; 3.9% below current"
     },
     {
       "level": 140.0,
@@ -58,29 +58,34 @@
   ],
   "resistances": [
     {
-      "level": 152.42,
+      "level": 150.25,
       "label": "R1 today high",
-      "evidence": "today's high 152.4199981689453"
+      "evidence": "today's high 150.25"
+    },
+    {
+      "level": 152.42,
+      "label": "R3 Oct high",
+      "evidence": "box top 152.42, base period high"
     }
   ],
   "position": {
-    "current": 150.51,
-    "in_box_pct": 88.4,
+    "current": 149.83,
+    "in_box_pct": 84.2,
     "nearest_support": "S1 KEY (144.0)",
-    "nearest_resistance": "R1 today high (152.42)"
+    "nearest_resistance": "R1 today high (150.25)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 151.98,
-    "H": 152.42,
-    "L": 149.52,
-    "C": 150.51,
-    "body_pct": 50.7,
-    "upper_wick_pct": 15.2,
-    "lower_wick_pct": 34.1
+    "close_position": "upper_half",
+    "O": 149.49,
+    "H": 150.25,
+    "L": 148.1,
+    "C": 149.83,
+    "body_pct": 15.8,
+    "upper_wick_pct": 19.5,
+    "lower_wick_pct": 64.7
   },
   "bias": {
     "short": {
@@ -99,7 +104,7 @@
   "scenarios": [
     {
       "if": "hold 144.0 (KEY support)",
-      "then": "still range; watch 152.42 for next test"
+      "then": "still range; watch 150.25 for next test"
     },
     {
       "if": "break 144.0 on close",
@@ -110,8 +115,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 152.42 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 150.25 on close",
+      "then": "short-term bullish; next test 152.42"
+    },
+    {
+      "if": "break 152.42 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -137,10 +146,10 @@
     "strategy": "SELL_R1",
     "trigger_price": 152.42,
     "target_price": 143.89,
-    "stop_price": 156.48,
-    "risk_pct": 2.67,
+    "stop_price": 156.6,
+    "risk_pct": 2.74,
     "reward_pct": 5.6,
-    "rr_ratio": 2.1,
+    "rr_ratio": 2.04,
     "phase_match": true,
     "r1": 152.42,
     "s1": 135.35,
@@ -149,8 +158,8 @@
     "r3": 170.14,
     "s3": 144.64,
     "s4": 148.24,
-    "current_position_pct": 88.8,
-    "notes": "SELL_R1: in box (135-152), entry at R1 152, target mid 144, stop 156 ｜ 52.2 條規則（SELL plan，resistance 152.42）：① 跌到 152.42、收市守住喺 152.42 上面 → 照 BUY 條 plan 做（入場 152.42，止蝕 156.48，目標 143.89）。② 收市跌穿 152.42 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 152.42 上面』。"
+    "current_position_pct": 84.8,
+    "notes": "SELL_R1: in box (135-152), entry at R1 152, target mid 144, stop 157 ｜ 52.2 條規則（SELL plan，resistance 152.42）：① 跌到 152.42、收市守住喺 152.42 上面 → 照 BUY 條 plan 做（入場 152.42，止蝕 156.60，目標 143.89）。② 收市跌穿 152.42 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 152.42 上面』。"
   },
   "patterns": [
     {
@@ -159,7 +168,7 @@
       "date": "2026-10-16",
       "low": 149.52000427246094,
       "high": 152.4199981689453,
-      "i": 199
+      "i": 198
     },
     {
       "name": "刺穿線",
@@ -167,7 +176,7 @@
       "date": "2026-09-29",
       "low": 137.02999877929688,
       "high": 138.57000732421875,
-      "i": 186
+      "i": 185
     },
     {
       "name": "黃昏之星",
@@ -175,7 +184,7 @@
       "date": "2026-09-02",
       "low": 150.89999389648438,
       "high": 153.0,
-      "i": 168
+      "i": 167
     },
     {
       "name": "早晨之星",
@@ -183,7 +192,7 @@
       "date": "2026-08-21",
       "low": 149.5800018310547,
       "high": 153.38999938964844,
-      "i": 160
+      "i": 159
     },
     {
       "name": "平頭底",
@@ -191,7 +200,7 @@
       "date": "2026-07-28",
       "low": 149.02999877929688,
       "high": 151.57000732421875,
-      "i": 142
+      "i": 141
     }
   ]
 }

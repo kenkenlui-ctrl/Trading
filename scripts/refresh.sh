@@ -222,6 +222,31 @@ echo
 echo "[4/7] Fetching capital anomalies (⚡ 資金異動, ~4 min)..."
 python3 scripts/fetch_capital_anomaly.py --date "$DATA_DATE" 2>&1 | tail -3 || echo "  capital anomaly fetch (continue anyway)"
 
+# --- Step 4b: Mirror the OHLC series + regenerate the v2 signal set ----------
+# 2026-10-20. These two were in the wrong place, and the wrong place was
+# invisible until the data actually moved.
+#
+# build_dashboard.py copies the refreshed series from charts/<mkt>/ and
+# data/jp200/ into public/<mkt>/ohlc/ as it renders, and it renders each
+# ticker page's v2 block from public/v2-signals.json — which is generated
+# FROM those same files. So the old order was: mirror + render with the
+# PREVIOUS run's signals, then regenerate the signals. On any run where the
+# signal set changed, the 674 ticker pages and the three hub tables shipped a
+# v2 block one session stale, and the hub's SIGNAL-row count disagreed with
+# the file it claims to render.
+#
+# It was never caught because the signal set only changes when the bars
+# change — and the bars had not changed since 2026-10-16. The first run that
+# actually moved the data caught it, in the self-test, which is exactly where
+# a stale publish should be caught.
+#
+# Now: mirror first, generate the signals from the mirrored files, and only
+# then render the pages that quote them.
+echo
+echo "[4b] Mirroring OHLC series + regenerating the v2 signal set..."
+python3 scripts/mirror_ohlc.py 2>&1 | tail -4
+python3 scripts/build_v2_signals.py 2>&1 | tail -2
+
 # --- Step 5: Build dashboards + detail pages ---
 echo
 echo "[5/7] Building dashboards + detail pages..."
@@ -256,10 +281,8 @@ python3 scripts/build_insights_index.py 2>&1 | tail -1
 # top strip and the cards below it are stamped from the same session — they
 # used to disagree (strip 23,972 vs a hand-typed card reading 18,420).
 python3 scripts/build_insights_radar.py 2>&1 | tail -1
-# 2026-10-02: v2 limit-buy plan (primary signal set). Reads our own OHLC from
-# public/<market>/ohlc/*.json, applies the 10-year-audit's rule set, and
-# writes public/v2-signals.json for build_dashboard.py to render.
-python3 scripts/build_v2_signals.py 2>&1 | tail -2
+# The v2 limit-buy plan moved UP to step 4b: it has to exist BEFORE the
+# pages that quote it are rendered, not after. See the note at step 4b.
 python3 scripts/build_backtest_page.py 2>&1 | tail -1
 # /research/negative-results/ — the page that publishes the site's own failed
 # tests. It quotes public/v2-signals.json (the per-trade figures), so it has

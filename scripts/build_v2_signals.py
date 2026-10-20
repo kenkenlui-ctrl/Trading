@@ -337,10 +337,10 @@ def plan(market: str, symbol: str, df: pd.DataFrame, equity: float):
         lot_notional_pct = lot * s1 / equity * 100
         binding = []
         if lot_risk_pct > PARAMS["risk"] * 100:
-            binding.append(f"風險需 {lot_risk_pct:.1f}% 本金（上限 "
+            binding.append(f"風險需 {_pct_against_limit(lot_risk_pct, PARAMS['risk'] * 100)}% 本金（上限 "
                            f"{PARAMS['risk'] * 100:.0f}%）")
         if lot_notional_pct > PARAMS["max_notional"] * 100:
-            binding.append(f"名義需 {lot_notional_pct:.1f}% 本金（上限 "
+            binding.append(f"名義需 {_pct_against_limit(lot_notional_pct, PARAMS['max_notional'] * 100)}% 本金（上限 "
                            f"{PARAMS['max_notional'] * 100:.0f}%）")
         size_note = (f"按 1 手（{lot} 股）計，"
                      + "、".join(binding) + " —— 本日唔落單"
@@ -418,6 +418,27 @@ def equity_basis(market: str) -> float:
                 return v
             print(f"  !! {var}={v} is not positive — falling back")
     return EQUITY_DEFAULT.get(market, 100_000.0)
+
+
+def _pct_against_limit(value: float, limit: float) -> str:
+    """Render a percentage next to the limit it breaches, so the two can never
+    LOOK equal when the value is above the limit.
+
+    1.04% against a 1% limit printed as "1.0%（上限 1%）" — a note that says
+    it needs exactly the limit and exceeds it at the same time. The
+    self-test caught it as self-contradictory on 2026-10-20, the first time
+    a refresh moved the data.
+
+    The precision is the SMALLEST that keeps the printed number strictly
+    above the limit, because a printed number that rounds down to the limit
+    is the same defect one decimal place further out: 1.004% would print as
+    "1.00" and still read as equal to a 1% limit.
+    """
+    for dp in (1, 2, 3):
+        s = f"{value:.{dp}f}"
+        if float(s) > limit:
+            return s
+    return f"{value:.3f}"
 
 
 def _integrity_kit():

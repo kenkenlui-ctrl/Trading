@@ -3,20 +3,20 @@
   "ticker_user": "02382.HK",
   "name": "SUNNY OPTICAL",
   "data_source": "yfinance",
-  "data_range": "2025-12-23 → 2026-10-16 (200 daily bars)",
+  "data_range": "2025-12-24 → 2026-10-20 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-16",
-    "O": 57.7,
-    "H": 58.45,
-    "L": 57.5,
-    "C": 57.7,
-    "prev_close": 57.15,
-    "chg_pct": 0.96
+    "date": "2026-10-20",
+    "O": 56.75,
+    "H": 60.95,
+    "L": 56.75,
+    "C": 60.3,
+    "prev_close": 57.7,
+    "chg_pct": 4.51
   },
-  "phase": "downtrend_recovery",
-  "adx": 23.32,
-  "plus_di": 14.53,
-  "minus_di": 30.58,
+  "phase": "base_building",
+  "adx": 22.67,
+  "plus_di": 20.12,
+  "minus_di": 26.78,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 87.6 (2026-06-01), trough 53.45 (2026-07-17), box top 74.1 (2026-09-01)",
@@ -32,23 +32,29 @@
     "top": 74.1,
     "top_date": "2026-09-01",
     "bottom": 53.45,
-    "period": "2026-07-17 to 2026-10-16"
+    "period": "2026-07-17 to 2026-10-20"
   },
-  "drop_from_peak_pct": 34.1,
-  "recovery_from_crash_pct": 8.0,
+  "drop_from_peak_pct": 31.2,
+  "recovery_from_crash_pct": 12.8,
   "supports": [
     {
+      "level": 60.0,
+      "label": "S1 KEY",
+      "touches": 13,
+      "evidence": "tested 13x in base period; 0.5% below current"
+    },
+    {
       "level": 56.0,
-      "label": "S1 bottom",
-      "touches": 6,
+      "label": "S2 bottom",
+      "touches": 25,
       "evidence": "structural bottom, near crash low 53.45"
     }
   ],
   "resistances": [
     {
-      "level": 58.45,
+      "level": 60.95,
       "label": "R1 today high",
-      "evidence": "today's high 58.45000076293945"
+      "evidence": "today's high 60.95000076293945"
     },
     {
       "level": 74.1,
@@ -57,32 +63,32 @@
     }
   ],
   "position": {
-    "current": 57.7,
-    "in_box_pct": 9.4,
-    "nearest_support": "S1 bottom (56.0)",
-    "nearest_resistance": "R1 today high (58.45)"
+    "current": 60.3,
+    "in_box_pct": 23.8,
+    "nearest_support": "S1 KEY (60.0)",
+    "nearest_resistance": "R1 today high (60.95)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 57.7,
-    "H": 58.45,
-    "L": 57.5,
-    "C": 57.7,
-    "body_pct": 0.0,
-    "upper_wick_pct": 78.9,
-    "lower_wick_pct": 21.1
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 56.75,
+    "H": 60.95,
+    "L": 56.75,
+    "C": 60.3,
+    "body_pct": 84.5,
+    "upper_wick_pct": 15.5,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
       "bias": "defensive",
-      "reason": "near box bottom (9% of box)"
+      "reason": "near box bottom (24% of box)"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": ""
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -91,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 56.0 (KEY support)",
-      "then": "still range; watch 58.45 for next test"
+      "if": "hold 60.0 (KEY support)",
+      "then": "still range; watch 60.95 for next test"
     },
     {
-      "if": "break 56.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 60.0 on close",
+      "then": "target 56.0 → lower (short-term bearish)"
     },
     {
       "if": "break 56.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 58.45 on close",
+      "if": "reclaim 60.95 on close",
       "then": "short-term bullish; next test 74.1"
     },
     {
@@ -130,14 +136,14 @@
     }
   ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 56.6,
-    "target_price": 62.72,
-    "stop_price": 53.32,
-    "risk_pct": 5.8,
-    "reward_pct": 10.82,
-    "rr_ratio": 1.86,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
     "phase_match": true,
     "r1": 68.85,
     "s1": 56.6,
@@ -146,8 +152,8 @@
     "r3": 87.6,
     "s3": 53.45,
     "s4": 51.5,
-    "current_position_pct": 9.0,
-    "notes": "BUY_S1: in box (57-69), entry at S1 57, target mid 63, stop 53 ｜ 52.2 條規則（BUY plan，support 56.60）：① 跌到 56.60、收市守住喺 56.60 上面 → 照 BUY 條 plan 做（入場 56.60，止蝕 53.32，目標 62.72）。② 收市跌穿 56.60 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 56.60 上面』。"
+    "current_position_pct": 30.2,
+    "notes": "WAIT_RANGE: in box (57-69), pos 30%, no clear setup"
   },
   "patterns": [
     {
@@ -156,7 +162,7 @@
       "date": "2026-10-13",
       "low": 56.79999923706055,
       "high": 58.95000076293945,
-      "i": 196
+      "i": 195
     },
     {
       "name": "利好反擊線",
@@ -164,7 +170,7 @@
       "date": "2026-10-06",
       "low": 62.75,
       "high": 64.69999694824219,
-      "i": 191
+      "i": 190
     },
     {
       "name": "錘頭",
@@ -172,7 +178,7 @@
       "date": "2026-09-29",
       "low": 61.400001525878906,
       "high": 63.20000076293945,
-      "i": 187
+      "i": 186
     },
     {
       "name": "三隻烏鴉",
@@ -180,7 +186,7 @@
       "date": "2026-09-17",
       "low": 67.05000305175781,
       "high": 68.80000305175781,
-      "i": 179
+      "i": 178
     },
     {
       "name": "利淡反擊線",
@@ -188,7 +194,7 @@
       "date": "2026-09-03",
       "low": 70.19999694824219,
       "high": 71.69999694824219,
-      "i": 169
+      "i": 168
     }
   ]
 }

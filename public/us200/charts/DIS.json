@@ -3,20 +3,20 @@
   "ticker_user": "DIS",
   "name": "Walt Disney Company (The)",
   "data_source": "yfinance",
-  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
+  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-16",
-    "O": 111.48,
-    "H": 112.69,
-    "L": 110.01,
-    "C": 110.59,
-    "prev_close": 110.68,
-    "chg_pct": -0.08
+    "date": "2026-10-19",
+    "O": 109.4,
+    "H": 110.11,
+    "L": 108.99,
+    "C": 109.59,
+    "prev_close": 110.59,
+    "chg_pct": -0.9
   },
   "phase": "base_building",
-  "adx": 20.35,
-  "plus_di": 37.23,
-  "minus_di": 14.03,
+  "adx": 21.43,
+  "plus_di": 35.19,
+  "minus_di": 16.76,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 116.03 (2026-01-05), trough 92.19 (2026-03-27), box top 112.69 (2026-10-16)",
@@ -32,61 +32,60 @@
     "top": 112.69,
     "top_date": "2026-10-16",
     "bottom": 92.19,
-    "period": "2026-03-27 to 2026-10-16"
+    "period": "2026-03-27 to 2026-10-19"
   },
-  "drop_from_peak_pct": 4.7,
-  "recovery_from_crash_pct": 20.0,
+  "drop_from_peak_pct": 5.6,
+  "recovery_from_crash_pct": 18.9,
   "supports": [
     {
-      "level": 108.0,
-      "label": "S1 KEY",
-      "touches": 23,
-      "evidence": "tested 23x in base period; 2.3% below current"
-    },
-    {
       "level": 104.0,
-      "label": "S2",
-      "touches": 68,
-      "evidence": "mid-base support, tested 68x"
+      "label": "S1 KEY",
+      "touches": 67,
+      "evidence": "tested 67x in base period; 5.1% below current"
     },
     {
       "level": 100.0,
-      "label": "S3",
+      "label": "S2",
       "touches": 37,
       "evidence": "mid-base support, tested 37x"
     },
     {
-      "level": 92.19,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-03-27, structural bottom"
+      "level": 96.0,
+      "label": "S3 bottom",
+      "touches": 33,
+      "evidence": "structural bottom, near crash low 92.19"
     }
   ],
   "resistances": [
     {
-      "level": 112.69,
+      "level": 110.11,
       "label": "R1 today high",
-      "evidence": "today's high 112.69000244140625"
+      "evidence": "today's high 110.11000061035156"
+    },
+    {
+      "level": 112.69,
+      "label": "R3 Oct high",
+      "evidence": "box top 112.69, base period high"
     }
   ],
   "position": {
-    "current": 110.59,
-    "in_box_pct": 89.8,
-    "nearest_support": "S1 KEY (108.0)",
-    "nearest_resistance": "R1 today high (112.69)"
+    "current": 109.59,
+    "in_box_pct": 81.4,
+    "nearest_support": "S1 KEY (104.0)",
+    "nearest_resistance": "R1 today high (110.11)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 111.48,
-    "H": 112.69,
-    "L": 110.01,
-    "C": 110.59,
-    "body_pct": 33.2,
-    "upper_wick_pct": 45.1,
-    "lower_wick_pct": 21.6
+    "close_position": "upper_half",
+    "O": 109.4,
+    "H": 110.11,
+    "L": 108.99,
+    "C": 109.59,
+    "body_pct": 17.0,
+    "upper_wick_pct": 46.4,
+    "lower_wick_pct": 36.6
   },
   "bias": {
     "short": {
@@ -104,20 +103,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 108.0 (KEY support)",
-      "then": "still range; watch 112.69 for next test"
+      "if": "hold 104.0 (KEY support)",
+      "then": "still range; watch 110.11 for next test"
     },
     {
-      "if": "break 108.0 on close",
-      "then": "target 104.0 → 100.0 (short-term bearish)"
+      "if": "break 104.0 on close",
+      "then": "target 100.0 → 96.0 (short-term bearish)"
     },
     {
-      "if": "break 92.19 (crash low)",
+      "if": "break 96.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 112.69 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 110.11 on close",
+      "then": "short-term bullish; next test 112.69"
+    },
+    {
+      "if": "break 112.69 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -143,20 +146,20 @@
     "strategy": "SELL_R1",
     "trigger_price": 112.69,
     "target_price": 106.92,
-    "stop_price": 115.81,
-    "risk_pct": 2.77,
+    "stop_price": 115.91,
+    "risk_pct": 2.86,
     "reward_pct": 5.12,
-    "rr_ratio": 1.85,
+    "rr_ratio": 1.79,
     "phase_match": true,
     "r1": 112.69,
     "s1": 101.15,
-    "s2": 93.0,
+    "s2": 94.46,
     "r2": 111.87,
     "r3": 110.48,
     "s3": 92.49,
     "s4": 92.19,
-    "current_position_pct": 81.8,
-    "notes": "SELL_R1: in box (101-113), entry at R1 113, target mid 107, stop 116 ｜ 52.2 條規則（SELL plan，resistance 112.69）：① 跌到 112.69、收市守住喺 112.69 上面 → 照 BUY 條 plan 做（入場 112.69，止蝕 115.81，目標 106.92）。② 收市跌穿 112.69 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 112.69 上面』。"
+    "current_position_pct": 73.1,
+    "notes": "SELL_R1: in box (101-113), entry at R1 113, target mid 107, stop 116 ｜ 52.2 條規則（SELL plan，resistance 112.69）：① 跌到 112.69、收市守住喺 112.69 上面 → 照 BUY 條 plan 做（入場 112.69，止蝕 115.91，目標 106.92）。② 收市跌穿 112.69 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 112.69 上面』。"
   },
   "patterns": [
     {
@@ -165,7 +168,7 @@
       "date": "2026-10-06",
       "low": 103.29000091552734,
       "high": 104.2699966430664,
-      "i": 191
+      "i": 190
     },
     {
       "name": "利淡吞噬",
@@ -173,7 +176,7 @@
       "date": "2026-09-17",
       "low": 105.31999969482422,
       "high": 107.70999908447266,
-      "i": 178
+      "i": 177
     },
     {
       "name": "烏雲蓋頂",
@@ -181,7 +184,7 @@
       "date": "2026-09-03",
       "low": 106.9000015258789,
       "high": 109.19999694824219,
-      "i": 169
+      "i": 168
     },
     {
       "name": "早晨之星",
@@ -189,7 +192,7 @@
       "date": "2026-07-28",
       "low": 96.97000122070312,
       "high": 99.2300033569336,
-      "i": 142
+      "i": 141
     },
     {
       "name": "利好反擊線",
@@ -197,7 +200,7 @@
       "date": "2026-07-15",
       "low": 96.0999984741211,
       "high": 97.9000015258789,
-      "i": 133
+      "i": 132
     }
   ]
 }

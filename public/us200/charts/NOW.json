@@ -3,20 +3,20 @@
   "ticker_user": "NOW",
   "name": "ServiceNow, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
+  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-16",
-    "O": 151.92,
-    "H": 154.2,
-    "L": 139.94,
-    "C": 141.97,
-    "prev_close": 148.57,
-    "chg_pct": -4.44
+    "date": "2026-10-19",
+    "O": 141.09,
+    "H": 145.48,
+    "L": 140.7,
+    "C": 145.36,
+    "prev_close": 141.97,
+    "chg_pct": 2.39
   },
   "phase": "uptrend",
-  "adx": 21.24,
-  "plus_di": 29.56,
-  "minus_di": 11.77,
+  "adx": 22.8,
+  "plus_di": 28.0,
+  "minus_di": 11.15,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 139.2 (2026-06-01), trough 89.39 (2026-06-25), box top 154.2 (2026-10-16)",
@@ -32,16 +32,16 @@
     "top": 154.2,
     "top_date": "2026-10-16",
     "bottom": 89.39,
-    "period": "2026-06-25 to 2026-10-16"
+    "period": "2026-06-25 to 2026-10-19"
   },
-  "drop_from_peak_pct": -2.0,
-  "recovery_from_crash_pct": 58.8,
+  "drop_from_peak_pct": -4.4,
+  "recovery_from_crash_pct": 62.6,
   "supports": [
     {
       "level": 140.0,
       "label": "S1 KEY",
-      "touches": 10,
-      "evidence": "tested 10x in base period; 1.4% below current"
+      "touches": 21,
+      "evidence": "tested 21x in base period; 3.7% below current"
     },
     {
       "level": 136.0,
@@ -64,34 +64,44 @@
   ],
   "resistances": [
     {
-      "level": 154.2,
+      "level": 145.48,
       "label": "R1 today high",
-      "evidence": "today's high 154.1999969482422"
+      "evidence": "today's high 145.47999572753906"
+    },
+    {
+      "level": 150.0,
+      "label": "R2",
+      "evidence": "mid-box supply, round number 150"
+    },
+    {
+      "level": 154.2,
+      "label": "R3 Oct high",
+      "evidence": "box top 154.2, base period high"
     }
   ],
   "position": {
-    "current": 141.97,
-    "in_box_pct": 81.1,
+    "current": 145.36,
+    "in_box_pct": 86.4,
     "nearest_support": "S1 KEY (140.0)",
-    "nearest_resistance": "R1 today high (154.2)"
+    "nearest_resistance": "R1 today high (145.48)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_reclaim",
     "touched_R1": true,
-    "touched_S1": true,
-    "close_position": "lower_half",
-    "O": 151.92,
-    "H": 154.2,
-    "L": 139.94,
-    "C": 141.97,
-    "body_pct": 69.8,
-    "upper_wick_pct": 16.0,
-    "lower_wick_pct": 14.2
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 141.09,
+    "H": 145.48,
+    "L": 140.7,
+    "C": 145.36,
+    "body_pct": 89.3,
+    "upper_wick_pct": 2.5,
+    "lower_wick_pct": 8.2
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "bullish_continuation",
@@ -105,7 +115,7 @@
   "scenarios": [
     {
       "if": "hold 140.0 (KEY support)",
-      "then": "still range; watch 154.2 for next test"
+      "then": "still range; watch 145.48 for next test"
     },
     {
       "if": "break 140.0 on close",
@@ -116,8 +126,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 154.2 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 145.48 on close",
+      "then": "short-term bullish; next test 150.0"
+    },
+    {
+      "if": "break 154.2 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -150,13 +164,13 @@
     "phase_match": false,
     "r1": 154.2,
     "s1": 126.75,
-    "s2": 94.87,
+    "s2": 100.35,
     "r2": 149.6,
     "r3": 139.2,
     "s3": 85.44,
     "s4": 81.24,
-    "current_position_pct": 55.4,
-    "notes": "WAIT_RANGE: in box (127-154), pos 55%, no clear setup"
+    "current_position_pct": 67.8,
+    "notes": "WAIT_RANGE: in box (127-154), pos 68%, no clear setup"
   },
   "patterns": [
     {
@@ -165,7 +179,7 @@
       "date": "2026-10-09",
       "low": 139.42999267578125,
       "high": 142.47000122070312,
-      "i": 194
+      "i": 193
     },
     {
       "name": "利淡吞噬",
@@ -173,7 +187,7 @@
       "date": "2026-09-24",
       "low": 137.52999877929688,
       "high": 141.0399932861328,
-      "i": 183
+      "i": 182
     },
     {
       "name": "平頭頂",
@@ -181,7 +195,7 @@
       "date": "2026-08-24",
       "low": 127.58999633789062,
       "high": 130.14999389648438,
-      "i": 161
+      "i": 160
     }
   ]
 }

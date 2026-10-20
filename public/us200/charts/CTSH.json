@@ -3,20 +3,20 @@
   "ticker_user": "CTSH",
   "name": "Cognizant Technology Solutions",
   "data_source": "yfinance",
-  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
+  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-16",
-    "O": 66.89,
-    "H": 67.43,
-    "L": 64.66,
-    "C": 66.03,
-    "prev_close": 65.77,
-    "chg_pct": 0.4
+    "date": "2026-10-19",
+    "O": 65.15,
+    "H": 66.84,
+    "L": 65.15,
+    "C": 66.79,
+    "prev_close": 66.03,
+    "chg_pct": 1.15
   },
   "phase": "base_building",
-  "adx": 22.78,
-  "plus_di": 39.13,
-  "minus_di": 14.74,
+  "adx": 24.39,
+  "plus_di": 37.18,
+  "minus_di": 14.0,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 85.93 (2026-01-26), trough 37.08 (2026-06-30), box top 67.43 (2026-10-16)",
@@ -32,16 +32,16 @@
     "top": 67.43,
     "top_date": "2026-10-16",
     "bottom": 37.08,
-    "period": "2026-06-30 to 2026-10-16"
+    "period": "2026-06-30 to 2026-10-19"
   },
-  "drop_from_peak_pct": 23.2,
-  "recovery_from_crash_pct": 78.1,
+  "drop_from_peak_pct": 22.3,
+  "recovery_from_crash_pct": 80.1,
   "supports": [
     {
       "level": 64.0,
       "label": "S1 KEY",
-      "touches": 14,
-      "evidence": "tested 14x in base period; 3.1% below current"
+      "touches": 15,
+      "evidence": "tested 15x in base period; 4.2% below current"
     },
     {
       "level": 60.0,
@@ -64,34 +64,39 @@
   ],
   "resistances": [
     {
-      "level": 67.43,
+      "level": 66.84,
       "label": "R1 today high",
-      "evidence": "today's high 67.43000030517578"
+      "evidence": "today's high 66.83999633789062"
+    },
+    {
+      "level": 67.43,
+      "label": "R3 Oct high",
+      "evidence": "box top 67.43, base period high"
     }
   ],
   "position": {
-    "current": 66.03,
-    "in_box_pct": 95.4,
+    "current": 66.79,
+    "in_box_pct": 97.9,
     "nearest_support": "S1 KEY (64.0)",
-    "nearest_resistance": "R1 today high (67.43)"
+    "nearest_resistance": "R1 today high (66.84)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 66.89,
-    "H": 67.43,
-    "L": 64.66,
-    "C": 66.03,
-    "body_pct": 31.0,
-    "upper_wick_pct": 19.5,
-    "lower_wick_pct": 49.5
+    "close_position": "upper_half",
+    "O": 65.15,
+    "H": 66.84,
+    "L": 65.15,
+    "C": 66.79,
+    "body_pct": 97.0,
+    "upper_wick_pct": 3.0,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -105,7 +110,7 @@
   "scenarios": [
     {
       "if": "hold 64.0 (KEY support)",
-      "then": "still range; watch 67.43 for next test"
+      "then": "still range; watch 66.84 for next test"
     },
     {
       "if": "break 64.0 on close",
@@ -116,8 +121,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 67.43 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 66.84 on close",
+      "then": "short-term bullish; next test 67.43"
+    },
+    {
+      "if": "break 67.43 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -143,20 +152,20 @@
     "strategy": "SELL_R1",
     "trigger_price": 67.43,
     "target_price": 61.07,
-    "stop_price": 71.49,
-    "risk_pct": 6.02,
+    "stop_price": 71.52,
+    "risk_pct": 6.06,
     "reward_pct": 9.44,
-    "rr_ratio": 1.57,
+    "rr_ratio": 1.56,
     "phase_match": true,
     "r1": 67.43,
     "s1": 54.7,
-    "s2": 43.41,
+    "s2": 46.18,
     "r2": 65.42,
     "r3": 57.65,
     "s3": 37.08,
     "s4": 54.26,
-    "current_position_pct": 89.0,
-    "notes": "SELL_R1: in box (55-67), entry at R1 67, target mid 61, stop 71 ｜ 52.2 條規則（SELL plan，resistance 67.43）：① 跌到 67.43、收市守住喺 67.43 上面 → 照 BUY 條 plan 做（入場 67.43，止蝕 71.49，目標 61.07）。② 收市跌穿 67.43 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 67.43 上面』。"
+    "current_position_pct": 95.0,
+    "notes": "SELL_R1: in box (55-67), entry at R1 67, target mid 61, stop 72 ｜ 52.2 條規則（SELL plan，resistance 67.43）：① 跌到 67.43、收市守住喺 67.43 上面 → 照 BUY 條 plan 做（入場 67.43，止蝕 71.52，目標 61.07）。② 收市跌穿 67.43 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 67.43 上面』。"
   },
   "patterns": [
     {
@@ -165,7 +174,7 @@
       "date": "2026-09-28",
       "low": 55.630001068115234,
       "high": 57.400001525878906,
-      "i": 185
+      "i": 184
     },
     {
       "name": "刺穿線",
@@ -173,7 +182,7 @@
       "date": "2026-07-09",
       "low": 41.02000045776367,
       "high": 43.61000061035156,
-      "i": 129
+      "i": 128
     }
   ]
 }

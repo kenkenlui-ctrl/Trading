@@ -3,21 +3,21 @@
   "ticker_user": "WMT",
   "name": "Walmart Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
+  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-16",
-    "O": 118.07,
-    "H": 119.48,
-    "L": 118.07,
-    "C": 118.81,
-    "prev_close": 117.87,
-    "chg_pct": 0.8
+    "date": "2026-10-19",
+    "O": 118.41,
+    "H": 119.28,
+    "L": 118.05,
+    "C": 118.7,
+    "prev_close": 118.81,
+    "chg_pct": -0.09
   },
   "phase": "base_building",
-  "adx": 22.73,
-  "plus_di": 45.45,
-  "minus_di": 12.6,
-  "regime": "dead",
+  "adx": 25.14,
+  "plus_di": 43.76,
+  "minus_di": 12.19,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 135.16 (2026-05-19), trough 102.15 (2026-08-21), box top 121.38 (2026-10-15)",
   "peak": {
@@ -32,16 +32,16 @@
     "top": 121.38,
     "top_date": "2026-10-15",
     "bottom": 102.15,
-    "period": "2026-08-21 to 2026-10-16"
+    "period": "2026-08-21 to 2026-10-19"
   },
-  "drop_from_peak_pct": 12.1,
-  "recovery_from_crash_pct": 16.3,
+  "drop_from_peak_pct": 12.2,
+  "recovery_from_crash_pct": 16.2,
   "supports": [
     {
       "level": 108.0,
       "label": "S1 KEY",
-      "touches": 31,
-      "evidence": "tested 31x in base period; 9.1% below current"
+      "touches": 30,
+      "evidence": "tested 30x in base period; 9.0% below current"
     },
     {
       "level": 104.0,
@@ -52,9 +52,9 @@
   ],
   "resistances": [
     {
-      "level": 119.48,
+      "level": 119.28,
       "label": "R1 today high",
-      "evidence": "today's high 119.4800033569336"
+      "evidence": "today's high 119.27999877929688"
     },
     {
       "level": 121.38,
@@ -63,23 +63,23 @@
     }
   ],
   "position": {
-    "current": 118.81,
-    "in_box_pct": 85.2,
+    "current": 118.7,
+    "in_box_pct": 84.6,
     "nearest_support": "S1 KEY (108.0)",
-    "nearest_resistance": "R1 today high (119.48)"
+    "nearest_resistance": "R1 today high (119.28)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 118.07,
-    "H": 119.48,
-    "L": 118.07,
-    "C": 118.81,
-    "body_pct": 52.5,
-    "upper_wick_pct": 47.5,
-    "lower_wick_pct": 0.0
+    "O": 118.41,
+    "H": 119.28,
+    "L": 118.05,
+    "C": 118.7,
+    "body_pct": 23.6,
+    "upper_wick_pct": 47.2,
+    "lower_wick_pct": 29.3
   },
   "bias": {
     "short": {
@@ -98,7 +98,7 @@
   "scenarios": [
     {
       "if": "hold 108.0 (KEY support)",
-      "then": "still range; watch 119.48 for next test"
+      "then": "still range; watch 119.28 for next test"
     },
     {
       "if": "break 108.0 on close",
@@ -109,7 +109,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 119.48 on close",
+      "if": "reclaim 119.28 on close",
       "then": "short-term bullish; next test 121.38"
     },
     {
@@ -136,15 +136,15 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 121.38,
-    "target_price": 112.38,
-    "stop_price": 125.26,
-    "risk_pct": 3.2,
-    "reward_pct": 7.41,
-    "rr_ratio": 2.32,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 121.38,
     "s1": 103.39,
     "s2": 102.15,
@@ -152,8 +152,8 @@
     "r3": 135.16,
     "s3": 106.79,
     "s4": 109.81,
-    "current_position_pct": 85.7,
-    "notes": "SELL_R1: in box (103-121), entry at R1 121, target mid 112, stop 125 ｜ 52.2 條規則（SELL plan，resistance 121.38）：① 跌到 121.38、收市守住喺 121.38 上面 → 照 BUY 條 plan 做（入場 121.38，止蝕 125.26，目標 112.38）。② 收市跌穿 121.38 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 121.38 上面』。"
+    "current_position_pct": 85.1,
+    "notes": "WAIT_RANGE: in box (103-121), pos 85%, no clear setup"
   },
   "patterns": [
     {
@@ -162,7 +162,7 @@
       "date": "2026-10-15",
       "low": 117.75,
       "high": 121.37999725341797,
-      "i": 198
+      "i": 197
     },
     {
       "name": "早晨之星",
@@ -170,7 +170,7 @@
       "date": "2026-09-01",
       "low": 104.66000366210938,
       "high": 106.63999938964844,
-      "i": 167
+      "i": 166
     },
     {
       "name": "利好反擊線",
@@ -178,7 +178,7 @@
       "date": "2026-08-24",
       "low": 104.0,
       "high": 106.5999984741211,
-      "i": 161
+      "i": 160
     },
     {
       "name": "利淡反擊線",
@@ -186,7 +186,7 @@
       "date": "2026-08-14",
       "low": 114.63999938964844,
       "high": 116.44999694824219,
-      "i": 155
+      "i": 154
     },
     {
       "name": "利好吞噬",
@@ -194,7 +194,7 @@
       "date": "2026-06-12",
       "low": 119.52999877929688,
       "high": 121.61000061035156,
-      "i": 112
+      "i": 111
     }
   ]
 }

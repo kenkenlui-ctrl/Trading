@@ -3,20 +3,20 @@
   "ticker_user": "AXP",
   "name": "American Express Company",
   "data_source": "yfinance",
-  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
+  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-16",
-    "O": 316.26,
-    "H": 319.85,
-    "L": 312.4,
-    "C": 313.59,
-    "prev_close": 313.87,
-    "chg_pct": -0.09
+    "date": "2026-10-19",
+    "O": 312.99,
+    "H": 317.04,
+    "L": 311.23,
+    "C": 316.41,
+    "prev_close": 313.59,
+    "chg_pct": 0.9
   },
   "phase": "base_building",
-  "adx": 24.58,
-  "plus_di": 28.73,
-  "minus_di": 22.72,
+  "adx": 23.43,
+  "plus_di": 26.71,
+  "minus_di": 22.53,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 386.26 (2026-01-06), trough 290.97 (2026-03-20), box top 363.14 (2026-07-16)",
@@ -32,35 +32,35 @@
     "top": 363.14,
     "top_date": "2026-07-16",
     "bottom": 290.97,
-    "period": "2026-03-20 to 2026-10-16"
+    "period": "2026-03-20 to 2026-10-19"
   },
-  "drop_from_peak_pct": 18.8,
-  "recovery_from_crash_pct": 7.8,
+  "drop_from_peak_pct": 18.1,
+  "recovery_from_crash_pct": 8.7,
   "supports": [
     {
-      "level": 304.0,
+      "level": 308.0,
       "label": "S1 KEY",
+      "touches": 17,
+      "evidence": "tested 17x in base period; 2.7% below current"
+    },
+    {
+      "level": 304.0,
+      "label": "S2",
       "touches": 19,
-      "evidence": "tested 19x in base period; 3.1% below current"
+      "evidence": "mid-base support, tested 19x"
     },
     {
       "level": 300.0,
-      "label": "S2",
-      "touches": 16,
-      "evidence": "mid-base support, tested 16x"
-    },
-    {
-      "level": 296.0,
       "label": "S3 bottom",
-      "touches": 7,
+      "touches": 16,
       "evidence": "structural bottom, near crash low 290.97"
     }
   ],
   "resistances": [
     {
-      "level": 319.85,
+      "level": 317.04,
       "label": "R1 today high",
-      "evidence": "today's high 319.8500061035156"
+      "evidence": "today's high 317.0400085449219"
     },
     {
       "level": 363.14,
@@ -69,28 +69,28 @@
     }
   ],
   "position": {
-    "current": 313.59,
-    "in_box_pct": 26.2,
-    "nearest_support": "S1 KEY (304.0)",
-    "nearest_resistance": "R1 today high (319.85)"
+    "current": 316.41,
+    "in_box_pct": 26.0,
+    "nearest_support": "S1 KEY (308.0)",
+    "nearest_resistance": "R1 today high (317.04)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 316.26,
-    "H": 319.85,
-    "L": 312.4,
-    "C": 313.59,
-    "body_pct": 35.8,
-    "upper_wick_pct": 48.2,
-    "lower_wick_pct": 16.0
+    "close_position": "upper_half",
+    "O": 312.99,
+    "H": 317.04,
+    "L": 311.23,
+    "C": 316.41,
+    "body_pct": 58.9,
+    "upper_wick_pct": 10.8,
+    "lower_wick_pct": 30.3
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (26% of box)"
+      "bias": "defensive",
+      "reason": "near box bottom (26% of box)"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -103,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 304.0 (KEY support)",
-      "then": "still range; watch 319.85 for next test"
+      "if": "hold 308.0 (KEY support)",
+      "then": "still range; watch 317.04 for next test"
     },
     {
-      "if": "break 304.0 on close",
-      "then": "target 300.0 → 296.0 (short-term bearish)"
+      "if": "break 308.0 on close",
+      "then": "target 304.0 → 300.0 (short-term bearish)"
     },
     {
-      "if": "break 296.0 (crash low)",
+      "if": "break 300.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 319.85 on close",
+      "if": "reclaim 317.04 on close",
       "then": "short-term bullish; next test 363.14"
     },
     {
@@ -146,10 +146,10 @@
     "strategy": "SELL_R1",
     "trigger_price": 319.85,
     "target_price": 308.53,
-    "stop_price": 328.23,
-    "risk_pct": 2.62,
+    "stop_price": 328.44,
+    "risk_pct": 2.68,
     "reward_pct": 3.54,
-    "rr_ratio": 1.35,
+    "rr_ratio": 1.32,
     "phase_match": true,
     "r1": 319.85,
     "s1": 297.2,
@@ -158,8 +158,8 @@
     "r3": 363.14,
     "s3": 300.03,
     "s4": 290.97,
-    "current_position_pct": 72.4,
-    "notes": "SELL_R1: in box (297-320), entry at R1 320, target mid 309, stop 328 ｜ 52.2 條規則（SELL plan，resistance 319.85）：① 跌到 319.85、收市守住喺 319.85 上面 → 照 BUY 條 plan 做（入場 319.85，止蝕 328.23，目標 308.53）。② 收市跌穿 319.85 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 319.85 上面』。"
+    "current_position_pct": 84.8,
+    "notes": "SELL_R1: in box (297-320), entry at R1 320, target mid 309, stop 328 ｜ 52.2 條規則（SELL plan，resistance 319.85）：① 跌到 319.85、收市守住喺 319.85 上面 → 照 BUY 條 plan 做（入場 319.85，止蝕 328.44，目標 308.53）。② 收市跌穿 319.85 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 319.85 上面』。"
   },
   "patterns": [
     {
@@ -168,7 +168,7 @@
       "date": "2026-10-08",
       "low": 300.4700012207031,
       "high": 308.1000061035156,
-      "i": 193
+      "i": 192
     },
     {
       "name": "刺穿線",
@@ -176,7 +176,7 @@
       "date": "2026-09-10",
       "low": 318.3500061035156,
       "high": 321.95001220703125,
-      "i": 173
+      "i": 172
     },
     {
       "name": "刺穿線",
@@ -184,7 +184,7 @@
       "date": "2026-08-03",
       "low": 340.0,
       "high": 345.1600036621094,
-      "i": 146
+      "i": 145
     },
     {
       "name": "上升三法",
@@ -192,7 +192,7 @@
       "date": "2026-07-01",
       "low": 337.7300109863281,
       "high": 350.5,
-      "i": 124
+      "i": 123
     },
     {
       "name": "利淡反擊線",
@@ -200,7 +200,7 @@
       "date": "2026-06-18",
       "low": 337.9700012207031,
       "high": 348.20001220703125,
-      "i": 116
+      "i": 115
     }
   ]
 }

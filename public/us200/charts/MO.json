@@ -3,20 +3,20 @@
   "ticker_user": "MO",
   "name": "Altria Group, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
+  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-16",
-    "O": 74.5,
-    "H": 75.2,
-    "L": 74.5,
-    "C": 75.11,
-    "prev_close": 73.84,
-    "chg_pct": 1.72
+    "date": "2026-10-19",
+    "O": 74.25,
+    "H": 74.85,
+    "L": 73.68,
+    "C": 74.09,
+    "prev_close": 75.11,
+    "chg_pct": -1.36
   },
-  "phase": "uptrend",
-  "adx": 17.84,
-  "plus_di": 37.3,
-  "minus_di": 14.25,
+  "phase": "base_building",
+  "adx": 18.96,
+  "plus_di": 34.66,
+  "minus_di": 17.3,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 77.06 (2026-07-28), trough 63.92 (2026-08-17), box top 75.74 (2026-10-15)",
@@ -32,16 +32,16 @@
     "top": 75.74,
     "top_date": "2026-10-15",
     "bottom": 63.92,
-    "period": "2026-08-17 to 2026-10-16"
+    "period": "2026-08-17 to 2026-10-19"
   },
-  "drop_from_peak_pct": 2.5,
-  "recovery_from_crash_pct": 17.5,
+  "drop_from_peak_pct": 3.9,
+  "recovery_from_crash_pct": 15.9,
   "supports": [
     {
       "level": 68.0,
       "label": "S1 KEY",
-      "touches": 51,
-      "evidence": "tested 51x in base period; 9.5% below current"
+      "touches": 50,
+      "evidence": "tested 50x in base period; 8.2% below current"
     },
     {
       "level": 63.92,
@@ -52,9 +52,9 @@
   ],
   "resistances": [
     {
-      "level": 75.2,
+      "level": 74.85,
       "label": "R1 today high",
-      "evidence": "today's high 75.19999694824219"
+      "evidence": "rejection at 74.8499984741211 (long upper wick, close weak)"
     },
     {
       "level": 75.74,
@@ -63,42 +63,42 @@
     }
   ],
   "position": {
-    "current": 75.11,
-    "in_box_pct": 94.7,
+    "current": 74.09,
+    "in_box_pct": 86.0,
     "nearest_support": "S1 KEY (68.0)",
-    "nearest_resistance": "R1 today high (75.2)"
+    "nearest_resistance": "R1 today high (74.85)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 74.5,
-    "H": 75.2,
-    "L": 74.5,
-    "C": 75.11,
-    "body_pct": 87.1,
-    "upper_wick_pct": 12.9,
-    "lower_wick_pct": 0.0
+    "close_position": "lower_half",
+    "O": 74.25,
+    "H": 74.85,
+    "L": 73.68,
+    "C": 74.09,
+    "body_pct": 13.7,
+    "upper_wick_pct": 51.3,
+    "lower_wick_pct": 35.0
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bullish_continuation",
-      "reason": "higher highs / higher lows"
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 68.0 (KEY support)",
-      "then": "still range; watch 75.2 for next test"
+      "then": "still range; watch 74.85 for next test"
     },
     {
       "if": "break 68.0 on close",
@@ -109,7 +109,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 75.2 on close",
+      "if": "reclaim 74.85 on close",
       "then": "short-term bullish; next test 75.74"
     },
     {
@@ -136,33 +136,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 75.74,
+    "target_price": 70.76,
+    "stop_price": 78.04,
+    "risk_pct": 3.04,
+    "reward_pct": 6.58,
+    "rr_ratio": 2.16,
+    "phase_match": true,
     "r1": 75.74,
     "s1": 65.78,
     "s2": 63.92,
     "r2": 77.06,
     "r3": 75.28,
-    "s3": 66.82,
+    "s3": 67.4,
     "s4": 54.7,
-    "current_position_pct": 93.7,
-    "notes": "WAIT_RANGE: in box (66-76), pos 94%, no clear setup"
+    "current_position_pct": 83.4,
+    "notes": "SELL_R1: in box (66-76), entry at R1 76, target mid 71, stop 78 ｜ 52.2 條規則（SELL plan，resistance 75.74）：① 跌到 75.74、收市守住喺 75.74 上面 → 照 BUY 條 plan 做（入場 75.74，止蝕 78.04，目標 70.76）。② 收市跌穿 75.74 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 75.74 上面』。"
   },
   "patterns": [
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-10-15",
-      "low": 73.5,
-      "high": 75.73999786376953,
-      "i": 198
+      "date": "2026-10-19",
+      "low": 73.68000030517578,
+      "high": 74.8499984741211,
+      "i": 199
+    },
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-10-13",
+      "low": 71.13999938964844,
+      "high": 72.3499984741211,
+      "i": 195
     },
     {
       "name": "利好反擊線",
@@ -170,15 +178,7 @@
       "date": "2026-09-28",
       "low": 68.68000030517578,
       "high": 69.5999984741211,
-      "i": 185
-    },
-    {
-      "name": "利淡反擊線",
-      "bias": "bearish",
-      "date": "2026-09-03",
-      "low": 69.30000305175781,
-      "high": 70.12000274658203,
-      "i": 169
+      "i": 184
     },
     {
       "name": "利好吞噬",
@@ -186,7 +186,7 @@
       "date": "2026-08-24",
       "low": 66.69999694824219,
       "high": 68.7300033569336,
-      "i": 161
+      "i": 160
     },
     {
       "name": "刺穿線",
@@ -194,7 +194,7 @@
       "date": "2026-08-18",
       "low": 64.62000274658203,
       "high": 65.44999694824219,
-      "i": 157
+      "i": 156
     }
   ]
 }

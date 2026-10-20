@@ -140,17 +140,42 @@ def one(tk: str, safe: str, out_dir: Path, asof: str, days: int, source: str):
     # two cases are distinguishable, and the distinction is exactly the number
     # of bars we removed for having no price: a genuine truncation is not
     # accounted for by nulls, so it is still rejected (400 -> 5 stays rejected).
+    #
+    # 2026-10-20: LENGTH is the wrong axis, and the first refresh that moved
+    # the data proved it. Yahoo's history for four HK names is shorter than
+    # Futu's (02802.HK: 195 bars against 209), so a fetch that was three days
+    # MORE RECENT was rejected as "shorter" and the file never advanced. The
+    # chart header moved to 2026-10-20 while the candles stayed at 2026-10-16
+    # — the "fresh header beside a stale chart" failure this whole step
+    # exists to prevent. What matters is whether the new series EXTENDS the
+    # stored one, not how many bars it has.
+    #
+    # So: a shorter series is rejected only when it is NOT newer. When it IS
+    # newer, the stored history is kept and the vendor's tail is taken — the
+    # file gets longer, never shorter, and it advances.
     path = out_dir / f"{safe}_ohlc.json"
     have = None
+    old_rows: list = []
     if path.exists():
         try:
             old = json.loads(path.read_text(encoding="utf-8"))
-            have = len(old) if isinstance(old, list) else None
+            if isinstance(old, list):
+                old_rows = [b for b in old if isinstance(b, dict) and "date" in b]
+                have = len(old)
         except Exception:
             have = None
     if have is not None and len(rows) < have and (have - len(rows)) > dropped:
-        return False, (f"{tk}: upstream returned only {len(rows)} bars, file has "
-                       f"{have} — kept the longer series{note}")
+        old_last = old_rows[-1]["date"] if old_rows else None
+        if old_last is not None and rows[-1]["date"] <= old_last:
+            return False, (f"{tk}: upstream returned only {len(rows)} bars, file has "
+                           f"{have} — kept the longer series{note}")
+        # Newer but shorter: take the vendor's tail and keep the history we
+        # already have. The vendor wins on any date both series carry, so a
+        # restated bar is still applied.
+        merged = {b["date"]: b for b in old_rows}
+        merged.update({b["date"]: b for b in rows})
+        rows = [merged[d] for d in sorted(merged)]
+        note += f" (took the newer tail, kept {len(old_rows)} bars of history)"
 
     # 2026-10-13: round on write. Upstream float32 values survive a JSON round
     # trip as full float64 noise — 1.7940000295639038 for a 1.794 price, ~15

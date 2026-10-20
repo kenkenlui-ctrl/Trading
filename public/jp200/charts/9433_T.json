@@ -3,21 +3,21 @@
   "ticker_user": "9433.T",
   "name": "KDDI Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
+  "data_range": "2025-12-22 → 2026-10-20 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-16",
-    "O": 2887.0,
-    "H": 2929.5,
-    "L": 2886.5,
-    "C": 2910.0,
-    "prev_close": 2897.5,
-    "chg_pct": 0.4314063848144922
+    "date": "2026-10-20",
+    "O": 2938.0,
+    "H": 2952.0,
+    "L": 2911.5,
+    "C": 2941.5,
+    "prev_close": 2944.0,
+    "chg_pct": -0.08491847826086474
   },
   "phase": "base_building",
-  "adx": 20.15,
-  "plus_di": 16.43,
-  "minus_di": 19.78,
-  "regime": "dead",
+  "adx": 17.98,
+  "plus_di": 19.54,
+  "minus_di": 18.7,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 3121.0 (2026-07-30), trough 2779.0 (2026-08-10), box top 3111.0 (2026-09-17)",
   "peak": {
@@ -32,23 +32,35 @@
     "top": 3111.0,
     "top_date": "2026-09-17",
     "bottom": 2779.0,
-    "period": "2026-08-10 to 2026-10-16"
+    "period": "2026-08-10 to 2026-10-20"
   },
-  "drop_from_peak_pct": 6.8,
-  "recovery_from_crash_pct": 4.7,
+  "drop_from_peak_pct": 5.8,
+  "recovery_from_crash_pct": 5.8,
   "supports": [
     {
-      "level": 2824.0,
-      "label": "S1 bottom",
-      "touches": 0,
+      "level": 2872.0,
+      "label": "S1 KEY",
+      "touches": 5,
+      "evidence": "tested 5x in base period; 2.4% below current"
+    },
+    {
+      "level": 2868.0,
+      "label": "S2",
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
+    },
+    {
+      "level": 2852.0,
+      "label": "S3 bottom",
+      "touches": 3,
       "evidence": "structural bottom, near crash low 2779.0"
     }
   ],
   "resistances": [
     {
-      "level": 2929.5,
+      "level": 2952.0,
       "label": "R1 today high",
-      "evidence": "today's high 2929.5"
+      "evidence": "today's high 2952.0"
     },
     {
       "level": 3111.0,
@@ -57,23 +69,23 @@
     }
   ],
   "position": {
-    "current": 2910.0,
-    "in_box_pct": 30.0,
-    "nearest_support": "S1 bottom (2824.0)",
-    "nearest_resistance": "R1 today high (2929.5)"
+    "current": 2941.5,
+    "in_box_pct": 34.6,
+    "nearest_support": "S1 KEY (2872.0)",
+    "nearest_resistance": "R1 today high (2952.0)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 2887.0,
-    "H": 2929.5,
-    "L": 2886.5,
-    "C": 2910.0,
-    "body_pct": 53.5,
-    "upper_wick_pct": 45.3,
-    "lower_wick_pct": 1.2
+    "O": 2938.0,
+    "H": 2952.0,
+    "L": 2911.5,
+    "C": 2941.5,
+    "body_pct": 8.6,
+    "upper_wick_pct": 25.9,
+    "lower_wick_pct": 65.4
   },
   "bias": {
     "short": {
@@ -91,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 2824.0 (KEY support)",
-      "then": "still range; watch 2929.5 for next test"
+      "if": "hold 2872.0 (KEY support)",
+      "then": "still range; watch 2952.0 for next test"
     },
     {
-      "if": "break 2824.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 2872.0 on close",
+      "then": "target 2868.0 → 2852.0 (short-term bearish)"
     },
     {
-      "if": "break 2824.0 (crash low)",
+      "if": "break 2852.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 2929.5 on close",
+      "if": "reclaim 2952.0 on close",
       "then": "short-term bullish; next test 3111.0"
     },
     {
@@ -130,24 +142,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 2850.5,
-    "target_price": 2980.75,
-    "stop_price": 2783.65,
-    "risk_pct": 2.35,
-    "reward_pct": 4.57,
-    "rr_ratio": 1.95,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
     "phase_match": true,
     "r1": 3111.0,
     "s1": 2850.5,
     "s2": 2779.0,
     "r2": 3121.0,
-    "r3": 2877.5,
+    "r3": 2923.0,
     "s3": 2493.0,
     "s4": 2512.0,
-    "current_position_pct": 22.8,
-    "notes": "BUY_S1: in box (2850-3111), entry at S1 2850, target mid 2981, stop 2784 ｜ 52.2 條規則（BUY plan，support 2850.50）：① 跌到 2850.50、收市守住喺 2850.50 上面 → 照 BUY 條 plan 做（入場 2850.50，止蝕 2783.65，目標 2980.75）。② 收市跌穿 2850.50 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2850.50 上面』。"
+    "current_position_pct": 34.9,
+    "notes": "WAIT_RANGE: in box (2850-3111), pos 35%, no clear setup"
   },
   "patterns": [
     {
@@ -156,7 +168,7 @@
       "date": "2026-10-08",
       "low": 2877.0,
       "high": 2915.0,
-      "i": 194
+      "i": 192
     },
     {
       "name": "烏雲蓋頂",
@@ -164,7 +176,7 @@
       "date": "2026-09-18",
       "low": 3033.0,
       "high": 3098.0,
-      "i": 183
+      "i": 181
     },
     {
       "name": "利好身懷六甲",
@@ -172,7 +184,7 @@
       "date": "2026-08-18",
       "low": 2810.0,
       "high": 2854.0,
-      "i": 160
+      "i": 158
     },
     {
       "name": "平頭頂",
@@ -180,7 +192,7 @@
       "date": "2026-08-05",
       "low": 2808.0,
       "high": 2882.0,
-      "i": 152
+      "i": 150
     },
     {
       "name": "三隻烏鴉",
@@ -188,23 +200,23 @@
       "date": "2026-07-22",
       "low": 2820.0,
       "high": 2880.0,
-      "i": 142
+      "i": 140
     }
   ],
-  "asof": "2026-10-16",
-  "close": 2910.0,
-  "chg_pct": 0.4314063848144922,
+  "asof": "2026-10-20",
+  "close": 2941.5,
+  "chg_pct": -0.08491847826086474,
   "kline": {
-    "type": "neutral",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 2887.0,
-    "H": 2929.5,
-    "L": 2886.5,
-    "C": 2910.0,
-    "body_pct": 53.5,
-    "upper_wick_pct": 45.3,
-    "lower_wick_pct": 1.2
+    "O": 2938.0,
+    "H": 2952.0,
+    "L": 2911.5,
+    "C": 2941.5,
+    "body_pct": 8.6,
+    "upper_wick_pct": 25.9,
+    "lower_wick_pct": 65.4
   }
 }

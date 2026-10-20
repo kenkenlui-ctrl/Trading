@@ -1,28 +1,28 @@
 {
   "ticker": "HK.06693",
   "ticker_user": "06693.HK",
-  "name": "赤峰黃金",
-  "data_source": "futu",
-  "data_range": "2025-12-23 → 2026-10-16 (200 daily bars)",
+  "name": "CHIFENG GOLD",
+  "data_source": "yfinance",
+  "data_range": "2025-12-24 → 2026-10-20 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-16",
-    "O": 34.3,
-    "H": 35.38,
-    "L": 32.9,
-    "C": 34.98,
-    "prev_close": 33.88,
-    "chg_pct": 3.25
+    "date": "2026-10-20",
+    "O": 34.8,
+    "H": 35.28,
+    "L": 33.5,
+    "C": 33.6,
+    "prev_close": 34.98,
+    "chg_pct": -3.95
   },
   "phase": "base_building",
-  "adx": 19.93,
-  "plus_di": 15.33,
-  "minus_di": 21.97,
+  "adx": 19.78,
+  "plus_di": 14.28,
+  "minus_di": 20.47,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 49.53 (2026-01-29), trough 22.28 (2026-06-30), box top 46.88 (2026-08-24)",
+  "phase_evidence": "Peak 49.9 (2026-01-29), trough 22.28 (2026-06-30), box top 46.88 (2026-08-24)",
   "peak": {
     "date": "2026-01-29",
-    "price": 49.53
+    "price": 49.9
   },
   "trough": {
     "date": "2026-06-30",
@@ -32,22 +32,28 @@
     "top": 46.88,
     "top_date": "2026-08-24",
     "bottom": 22.28,
-    "period": "2026-06-30 to 2026-10-16"
+    "period": "2026-06-30 to 2026-10-20"
   },
-  "drop_from_peak_pct": 29.4,
-  "recovery_from_crash_pct": 57.0,
+  "drop_from_peak_pct": 32.7,
+  "recovery_from_crash_pct": 50.8,
   "supports": [
     {
       "level": 32.0,
       "label": "S1 KEY",
-      "touches": 23,
-      "evidence": "tested 23x in base period; 8.5% below current"
+      "touches": 9,
+      "evidence": "tested 9x in base period; 4.8% below current"
     },
     {
       "level": 28.0,
       "label": "S2",
       "touches": 11,
       "evidence": "mid-base support, tested 11x"
+    },
+    {
+      "level": 24.0,
+      "label": "S3",
+      "touches": 6,
+      "evidence": "mid-base support, tested 6x"
     },
     {
       "level": 22.28,
@@ -58,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 35.38,
+      "level": 35.28,
       "label": "R1 today high",
-      "evidence": "today's high 35.38"
+      "evidence": "today's high 35.279998779296875"
     },
     {
       "level": 46.88,
@@ -69,28 +75,28 @@
     }
   ],
   "position": {
-    "current": 34.98,
-    "in_box_pct": 51.6,
+    "current": 33.6,
+    "in_box_pct": 46.0,
     "nearest_support": "S1 KEY (32.0)",
-    "nearest_resistance": "R1 today high (35.38)"
+    "nearest_resistance": "R1 today high (35.28)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 34.3,
-    "H": 35.38,
-    "L": 32.9,
-    "C": 34.98,
-    "body_pct": 27.4,
-    "upper_wick_pct": 16.1,
-    "lower_wick_pct": 56.5
+    "close_position": "lower_half",
+    "O": 34.8,
+    "H": 35.28,
+    "L": 33.5,
+    "C": 33.6,
+    "body_pct": 67.4,
+    "upper_wick_pct": 27.0,
+    "lower_wick_pct": 5.6
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (46% of box)"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -104,18 +110,18 @@
   "scenarios": [
     {
       "if": "hold 32.0 (KEY support)",
-      "then": "still range; watch 35.38 for next test"
+      "then": "still range; watch 35.28 for next test"
     },
     {
       "if": "break 32.0 on close",
-      "then": "target 28.0 → 22.28 (short-term bearish)"
+      "then": "target 28.0 → 24.0 (short-term bearish)"
     },
     {
       "if": "break 22.28 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 35.38 on close",
+      "if": "reclaim 35.28 on close",
       "then": "short-term bullish; next test 46.88"
     },
     {
@@ -143,64 +149,64 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
-    "r1": 38.82,
+    "phase_match": false,
+    "r1": 38.8,
     "s1": 32.9,
-    "s2": 29.58,
+    "s2": 30.78,
     "r2": 46.88,
-    "r3": 45.37,
+    "r3": 45.74,
     "s3": 22.28,
-    "s4": 28.01,
-    "current_position_pct": 35.1,
-    "notes": "WAIT_RANGE: in box (33-39), pos 35%, no clear setup"
+    "s4": 28.38,
+    "current_position_pct": 11.9,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（BUY plan，support 32.90）：① 跌到 32.90、收市守住喺 32.90 上面 → 照 BUY 條 plan 做（入場 32.90，止蝕 30.42，目標 35.85）。② 收市跌穿 32.90 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 32.90 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
     {
       "name": "三個白武士",
       "bias": "bullish",
       "date": "2026-10-16",
-      "low": 32.9,
-      "high": 35.38,
-      "i": 199
+      "low": 32.900001525878906,
+      "high": 35.380001068115234,
+      "i": 198
     },
     {
       "name": "利好吞噬",
       "bias": "bullish",
       "date": "2026-09-18",
-      "low": 37.42,
-      "high": 38.82,
-      "i": 180
+      "low": 37.41999816894531,
+      "high": 38.81999969482422,
+      "i": 179
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-08-24",
-      "low": 43.04,
-      "high": 46.88,
-      "i": 161
+      "low": 43.040000915527344,
+      "high": 46.880001068115234,
+      "i": 160
     },
     {
       "name": "利淡吞噬",
       "bias": "bearish",
       "date": "2026-08-13",
-      "low": 36.24,
-      "high": 39.1,
-      "i": 154
+      "low": 36.2400016784668,
+      "high": 39.099998474121094,
+      "i": 153
     },
     {
       "name": "利好反擊線",
       "bias": "bullish",
       "date": "2026-06-12",
-      "low": 25.26,
-      "high": 28.14,
-      "i": 112
+      "low": 25.260000228881836,
+      "high": 28.139999389648438,
+      "i": 111
     }
   ]
 }

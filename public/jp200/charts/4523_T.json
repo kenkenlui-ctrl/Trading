@@ -3,20 +3,20 @@
   "ticker_user": "4523.T",
   "name": "Eisai Co., Ltd.",
   "data_source": "yfinance",
-  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
+  "data_range": "2025-12-22 → 2026-10-20 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-16",
-    "O": 4900.0,
-    "H": 4955.0,
-    "L": 4867.0,
-    "C": 4920.0,
-    "prev_close": 4868.0,
-    "chg_pct": 1.0682004930156141
+    "date": "2026-10-20",
+    "O": 4915.0,
+    "H": 4982.0,
+    "L": 4905.0,
+    "C": 4982.0,
+    "prev_close": 4937.0,
+    "chg_pct": 0.9114847073121268
   },
   "phase": "base_building",
-  "adx": 16.87,
-  "plus_di": 29.56,
-  "minus_di": 18.54,
+  "adx": 18.42,
+  "plus_di": 29.11,
+  "minus_di": 16.32,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 5243.0 (2026-02-27), trough 3660.0 (2026-06-11), box top 5132.0 (2026-07-30)",
@@ -32,25 +32,25 @@
     "top": 5132.0,
     "top_date": "2026-07-30",
     "bottom": 3660.0,
-    "period": "2026-06-11 to 2026-10-16"
+    "period": "2026-06-11 to 2026-10-20"
   },
-  "drop_from_peak_pct": 6.2,
-  "recovery_from_crash_pct": 34.4,
+  "drop_from_peak_pct": 5.0,
+  "recovery_from_crash_pct": 36.1,
   "supports": [
     {
-      "level": 4752.0,
+      "level": 4832.0,
       "label": "S1 KEY",
+      "touches": 3,
+      "evidence": "tested 3x in base period; 3.0% below current"
+    },
+    {
+      "level": 4752.0,
+      "label": "S2",
       "touches": 7,
-      "evidence": "tested 7x in base period; 3.4% below current"
+      "evidence": "mid-base support, tested 7x"
     },
     {
       "level": 4736.0,
-      "label": "S2",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
-    },
-    {
-      "level": 4720.0,
       "label": "S3",
       "touches": 3,
       "evidence": "mid-base support, tested 3x"
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 4955.0,
+      "level": 4982.0,
       "label": "R1 today high",
-      "evidence": "today's high 4955.0"
+      "evidence": "today's high 4982.0"
     },
     {
       "level": 5132.0,
@@ -75,28 +75,28 @@
     }
   ],
   "position": {
-    "current": 4920.0,
-    "in_box_pct": 85.6,
-    "nearest_support": "S1 KEY (4752.0)",
-    "nearest_resistance": "R1 today high (4955.0)"
+    "current": 4982.0,
+    "in_box_pct": 89.8,
+    "nearest_support": "S1 KEY (4832.0)",
+    "nearest_resistance": "R3 Jul high (5132.0)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 4900.0,
-    "H": 4955.0,
-    "L": 4867.0,
-    "C": 4920.0,
-    "body_pct": 22.7,
-    "upper_wick_pct": 39.8,
-    "lower_wick_pct": 37.5
+    "O": 4915.0,
+    "H": 4982.0,
+    "L": 4905.0,
+    "C": 4982.0,
+    "body_pct": 87.0,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 13.0
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -109,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 4752.0 (KEY support)",
-      "then": "still range; watch 4955.0 for next test"
+      "if": "hold 4832.0 (KEY support)",
+      "then": "still range; watch 4982.0 for next test"
     },
     {
-      "if": "break 4752.0 on close",
-      "then": "target 4736.0 → 4720.0 (short-term bearish)"
+      "if": "break 4832.0 on close",
+      "then": "target 4752.0 → 4736.0 (short-term bearish)"
     },
     {
       "if": "break 3660.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 4955.0 on close",
+      "if": "reclaim 4982.0 on close",
       "then": "short-term bullish; next test 5132.0"
     },
     {
@@ -152,20 +152,20 @@
     "strategy": "SELL_R1",
     "trigger_price": 5003.0,
     "target_price": 4787.0,
-    "stop_price": 5164.36,
-    "risk_pct": 3.23,
+    "stop_price": 5158.58,
+    "risk_pct": 3.11,
     "reward_pct": 4.32,
-    "rr_ratio": 1.34,
+    "rr_ratio": 1.39,
     "phase_match": true,
     "r1": 5003.0,
     "s1": 4571.0,
-    "s2": 4379.0,
+    "s2": 4440.0,
     "r2": 5132.0,
     "r3": 4960.0,
     "s3": 3660.0,
     "s4": 4211.0,
-    "current_position_pct": 80.8,
-    "notes": "SELL_R1: in box (4571-5003), entry at R1 5003, target mid 4787, stop 5164 ｜ 52.2 條規則（SELL plan，resistance 5003.00）：① 跌到 5003.00、收市守住喺 5003.00 上面 → 照 BUY 條 plan 做（入場 5003.00，止蝕 5164.36，目標 4787.00）。② 收市跌穿 5003.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 5003.00 上面』。"
+    "current_position_pct": 95.1,
+    "notes": "SELL_R1: in box (4571-5003), entry at R1 5003, target mid 4787, stop 5159 ｜ 52.2 條規則（SELL plan，resistance 5003.00）：① 跌到 5003.00、收市守住喺 5003.00 上面 → 照 BUY 條 plan 做（入場 5003.00，止蝕 5158.58，目標 4787.00）。② 收市跌穿 5003.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 5003.00 上面』。"
   },
   "patterns": [
     {
@@ -174,7 +174,7 @@
       "date": "2026-10-15",
       "low": 4753.0,
       "high": 4868.0,
-      "i": 198
+      "i": 196
     },
     {
       "name": "平頭頂",
@@ -182,7 +182,7 @@
       "date": "2026-10-02",
       "low": 4700.0,
       "high": 4790.0,
-      "i": 190
+      "i": 188
     },
     {
       "name": "射擊之星",
@@ -190,7 +190,7 @@
       "date": "2026-08-24",
       "low": 4838.0,
       "high": 4954.0,
-      "i": 164
+      "i": 162
     },
     {
       "name": "上升三法",
@@ -198,7 +198,7 @@
       "date": "2026-08-18",
       "low": 4686.0,
       "high": 4825.0,
-      "i": 160
+      "i": 158
     },
     {
       "name": "烏雲蓋頂",
@@ -206,23 +206,23 @@
       "date": "2026-07-15",
       "low": 4238.0,
       "high": 4331.0,
-      "i": 138
+      "i": 136
     }
   ],
-  "asof": "2026-10-16",
-  "close": 4920.0,
-  "chg_pct": 1.0682004930156141,
+  "asof": "2026-10-20",
+  "close": 4982.0,
+  "chg_pct": 0.9114847073121268,
   "kline": {
-    "type": "bullish_hold",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 4900.0,
-    "H": 4955.0,
-    "L": 4867.0,
-    "C": 4920.0,
-    "body_pct": 22.7,
-    "upper_wick_pct": 39.8,
-    "lower_wick_pct": 37.5
+    "O": 4915.0,
+    "H": 4982.0,
+    "L": 4905.0,
+    "C": 4982.0,
+    "body_pct": 87.0,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 13.0
   }
 }

@@ -3,20 +3,20 @@
   "ticker_user": "7270.T",
   "name": "Subaru Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
+  "data_range": "2025-12-22 → 2026-10-20 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-16",
-    "O": 2598.0,
-    "H": 2664.0,
-    "L": 2592.5,
-    "C": 2643.0,
-    "prev_close": 2604.0,
-    "chg_pct": 1.497695852534564
+    "date": "2026-10-20",
+    "O": 2651.5,
+    "H": 2679.0,
+    "L": 2645.0,
+    "C": 2648.0,
+    "prev_close": 2648.0,
+    "chg_pct": 0.0
   },
   "phase": "base_building",
-  "adx": 12.97,
-  "plus_di": 23.11,
-  "minus_di": 20.45,
+  "adx": 12.5,
+  "plus_di": 22.83,
+  "minus_di": 18.45,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 3639.0 (2026-01-14), trough 2247.5 (2026-05-11), box top 2881.5 (2026-07-30)",
@@ -32,16 +32,16 @@
     "top": 2881.5,
     "top_date": "2026-07-30",
     "bottom": 2247.5,
-    "period": "2026-05-11 to 2026-10-16"
+    "period": "2026-05-11 to 2026-10-20"
   },
-  "drop_from_peak_pct": 27.4,
-  "recovery_from_crash_pct": 17.6,
+  "drop_from_peak_pct": 27.2,
+  "recovery_from_crash_pct": 17.8,
   "supports": [
     {
       "level": 2540.0,
       "label": "S1 KEY",
       "touches": 4,
-      "evidence": "tested 4x in base period; 3.9% below current"
+      "evidence": "tested 4x in base period; 4.1% below current"
     },
     {
       "level": 2532.0,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 2664.0,
+      "level": 2679.0,
       "label": "R1 today high",
-      "evidence": "today's high 2664.0"
+      "evidence": "rejection at 2679.0 (long upper wick, close weak)"
     },
     {
       "level": 2881.5,
@@ -75,28 +75,28 @@
     }
   ],
   "position": {
-    "current": 2643.0,
-    "in_box_pct": 62.4,
+    "current": 2648.0,
+    "in_box_pct": 63.2,
     "nearest_support": "S1 KEY (2540.0)",
-    "nearest_resistance": "R1 today high (2664.0)"
+    "nearest_resistance": "R1 today high (2679.0)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 2598.0,
-    "H": 2664.0,
-    "L": 2592.5,
-    "C": 2643.0,
-    "body_pct": 62.9,
-    "upper_wick_pct": 29.4,
-    "lower_wick_pct": 7.7
+    "close_position": "lower_half",
+    "O": 2651.5,
+    "H": 2679.0,
+    "L": 2645.0,
+    "C": 2648.0,
+    "body_pct": 10.3,
+    "upper_wick_pct": 80.9,
+    "lower_wick_pct": 8.8
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -110,7 +110,7 @@
   "scenarios": [
     {
       "if": "hold 2540.0 (KEY support)",
-      "then": "still range; watch 2664.0 for next test"
+      "then": "still range; watch 2679.0 for next test"
     },
     {
       "if": "break 2540.0 on close",
@@ -121,7 +121,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 2664.0 on close",
+      "if": "reclaim 2679.0 on close",
       "then": "short-term bullish; next test 2881.5"
     },
     {
@@ -152,10 +152,10 @@
     "strategy": "SELL_R1",
     "trigger_price": 2690.0,
     "target_price": 2583.0,
-    "stop_price": 2767.75,
-    "risk_pct": 2.89,
+    "stop_price": 2760.09,
+    "risk_pct": 2.61,
     "reward_pct": 3.98,
-    "rr_ratio": 1.38,
+    "rr_ratio": 1.53,
     "phase_match": true,
     "r1": 2690.0,
     "s1": 2476.0,
@@ -164,17 +164,25 @@
     "r3": 2717.5,
     "s3": 2247.5,
     "s4": 2432.5,
-    "current_position_pct": 78.0,
-    "notes": "SELL_R1: in box (2476-2690), entry at R1 2690, target mid 2583, stop 2768 ｜ 52.2 條規則（SELL plan，resistance 2690.00）：① 跌到 2690.00、收市守住喺 2690.00 上面 → 照 BUY 條 plan 做（入場 2690.00，止蝕 2767.75，目標 2583.00）。② 收市跌穿 2690.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2690.00 上面』。"
+    "current_position_pct": 80.4,
+    "notes": "SELL_R1: in box (2476-2690), entry at R1 2690, target mid 2583, stop 2760 ｜ 52.2 條規則（SELL plan，resistance 2690.00）：① 跌到 2690.00、收市守住喺 2690.00 上面 → 照 BUY 條 plan 做（入場 2690.00，止蝕 2760.09，目標 2583.00）。② 收市跌穿 2690.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2690.00 上面』。"
   },
   "patterns": [
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-10-20",
+      "low": 2645.0,
+      "high": 2679.0,
+      "i": 199
+    },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-09-28",
       "low": 2630.0,
       "high": 2673.5,
-      "i": 186
+      "i": 184
     },
     {
       "name": "平頭底",
@@ -182,15 +190,7 @@
       "date": "2026-09-11",
       "low": 2530.0,
       "high": 2626.0,
-      "i": 178
-    },
-    {
-      "name": "利淡反擊線",
-      "bias": "bearish",
-      "date": "2026-08-25",
-      "low": 2611.5,
-      "high": 2658.0,
-      "i": 165
+      "i": 176
     },
     {
       "name": "刺穿線",
@@ -198,7 +198,7 @@
       "date": "2026-08-18",
       "low": 2538.5,
       "high": 2588.5,
-      "i": 160
+      "i": 158
     },
     {
       "name": "上升三法",
@@ -206,23 +206,23 @@
       "date": "2026-08-05",
       "low": 2444.0,
       "high": 2653.5,
-      "i": 152
+      "i": 150
     }
   ],
-  "asof": "2026-10-16",
-  "close": 2643.0,
-  "chg_pct": 1.497695852534564,
+  "asof": "2026-10-20",
+  "close": 2648.0,
+  "chg_pct": 0.0,
   "kline": {
-    "type": "bullish_reclaim",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 2598.0,
-    "H": 2664.0,
-    "L": 2592.5,
-    "C": 2643.0,
-    "body_pct": 62.9,
-    "upper_wick_pct": 29.4,
-    "lower_wick_pct": 7.7
+    "close_position": "lower_half",
+    "O": 2651.5,
+    "H": 2679.0,
+    "L": 2645.0,
+    "C": 2648.0,
+    "body_pct": 10.3,
+    "upper_wick_pct": 80.9,
+    "lower_wick_pct": 8.8
   }
 }

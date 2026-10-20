@@ -3,23 +3,23 @@
   "ticker_user": "3182.T",
   "name": "Oisix Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-18 → 2026-10-16 (200 daily bars)",
+  "data_range": "2025-12-22 → 2026-10-20 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-16",
-    "O": 1670.0,
-    "H": 1683.0,
-    "L": 1642.0,
-    "C": 1652.0,
-    "prev_close": 1661.0,
-    "chg_pct": -0.5418422636965681
+    "date": "2026-10-20",
+    "O": 1675.0,
+    "H": 1680.0,
+    "L": 1655.0,
+    "C": 1674.0,
+    "prev_close": 1677.0,
+    "chg_pct": -0.17889087656529634
   },
-  "phase": "downtrend_active",
-  "adx": 14.27,
-  "plus_di": 23.95,
-  "minus_di": 16.0,
+  "phase": "base_building",
+  "adx": 15.59,
+  "plus_di": 23.11,
+  "minus_di": 14.4,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 1798.0 (2026-08-25), trough 1527.0 (2026-09-11), box top 1691.0 (2026-10-13)",
+  "phase_evidence": "Peak 1798.0 (2026-08-25), trough 1527.0 (2026-09-11), box top 1695.0 (2026-10-19)",
   "peak": {
     "date": "2026-08-25",
     "price": 1798.0
@@ -29,28 +29,28 @@
     "price": 1527.0
   },
   "box": {
-    "top": 1691.0,
-    "top_date": "2026-10-13",
+    "top": 1695.0,
+    "top_date": "2026-10-19",
     "bottom": 1527.0,
-    "period": "2026-09-11 to 2026-10-16"
+    "period": "2026-09-11 to 2026-10-20"
   },
-  "drop_from_peak_pct": 8.1,
-  "recovery_from_crash_pct": 8.2,
+  "drop_from_peak_pct": 6.9,
+  "recovery_from_crash_pct": 9.6,
   "supports": [
     {
-      "level": 1616.0,
+      "level": 1628.0,
       "label": "S1 KEY",
       "touches": 4,
-      "evidence": "tested 4x in base period; 2.2% below current"
+      "evidence": "tested 4x in base period; 2.7% below current"
     },
     {
-      "level": 1612.0,
+      "level": 1624.0,
       "label": "S2",
-      "touches": 3,
-      "evidence": "mid-base support, tested 3x"
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
     },
     {
-      "level": 1608.0,
+      "level": 1616.0,
       "label": "S3",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
@@ -64,29 +64,34 @@
   ],
   "resistances": [
     {
-      "level": 1683.0,
+      "level": 1680.0,
       "label": "R1 today high",
-      "evidence": "today's high 1683.0"
+      "evidence": "today's high 1680.0"
+    },
+    {
+      "level": 1695.0,
+      "label": "R3 Oct high",
+      "evidence": "box top 1695.0, base period high"
     }
   ],
   "position": {
-    "current": 1652.0,
-    "in_box_pct": 80.1,
-    "nearest_support": "S1 KEY (1616.0)",
-    "nearest_resistance": "R1 today high (1683.0)"
+    "current": 1674.0,
+    "in_box_pct": 87.5,
+    "nearest_support": "S1 KEY (1628.0)",
+    "nearest_resistance": "R1 today high (1680.0)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 1670.0,
-    "H": 1683.0,
-    "L": 1642.0,
-    "C": 1652.0,
-    "body_pct": 43.9,
-    "upper_wick_pct": 31.7,
-    "lower_wick_pct": 24.4
+    "close_position": "upper_half",
+    "O": 1675.0,
+    "H": 1680.0,
+    "L": 1655.0,
+    "C": 1674.0,
+    "body_pct": 4.0,
+    "upper_wick_pct": 20.0,
+    "lower_wick_pct": 76.0
   },
   "bias": {
     "short": {
@@ -94,8 +99,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bearish_continuation",
-      "reason": "making new lows"
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -104,20 +109,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 1616.0 (KEY support)",
-      "then": "still range; watch 1683.0 for next test"
+      "if": "hold 1628.0 (KEY support)",
+      "then": "still range; watch 1680.0 for next test"
     },
     {
-      "if": "break 1616.0 on close",
-      "then": "target 1612.0 → 1608.0 (short-term bearish)"
+      "if": "break 1628.0 on close",
+      "then": "target 1624.0 → 1616.0 (short-term bearish)"
     },
     {
       "if": "break 1527.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1683.0 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 1680.0 on close",
+      "then": "short-term bullish; next test 1695.0"
+    },
+    {
+      "if": "break 1695.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -148,15 +157,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 1691.0,
-    "s1": 1592.0,
+    "r1": 1695.0,
+    "s1": 1593.0,
     "s2": 1527.0,
     "r2": 1798.0,
     "r3": 1676.0,
     "s3": 1372.0,
     "s4": 1291.0,
-    "current_position_pct": 60.6,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 1691.00）：① 跌到 1691.00、收市守住喺 1691.00 上面 → 照 BUY 條 plan 做（入場 1691.00，止蝕 1747.48，目標 1641.50）。② 收市跌穿 1691.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1691.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 79.4,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 1695.00）：① 跌到 1695.00、收市守住喺 1695.00 上面 → 照 BUY 條 plan 做（入場 1695.00，止蝕 1751.85，目標 1644.00）。② 收市跌穿 1695.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1695.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
     {
@@ -165,7 +174,7 @@
       "date": "2026-10-16",
       "low": 1642.0,
       "high": 1683.0,
-      "i": 199
+      "i": 197
     },
     {
       "name": "利好反擊線",
@@ -173,7 +182,7 @@
       "date": "2026-10-07",
       "low": 1601.0,
       "high": 1622.0,
-      "i": 193
+      "i": 191
     },
     {
       "name": "平頭底",
@@ -181,7 +190,7 @@
       "date": "2026-09-29",
       "low": 1594.0,
       "high": 1635.0,
-      "i": 187
+      "i": 185
     },
     {
       "name": "利好吞噬",
@@ -189,7 +198,7 @@
       "date": "2026-09-16",
       "low": 1606.0,
       "high": 1632.0,
-      "i": 181
+      "i": 179
     },
     {
       "name": "刺穿線",
@@ -197,23 +206,23 @@
       "date": "2026-09-08",
       "low": 1611.0,
       "high": 1633.0,
-      "i": 175
+      "i": 173
     }
   ],
-  "asof": "2026-10-16",
-  "close": 1652.0,
-  "chg_pct": -0.5418422636965681,
+  "asof": "2026-10-20",
+  "close": 1674.0,
+  "chg_pct": -0.17889087656529634,
   "kline": {
-    "type": "bearish_pullback",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 1670.0,
-    "H": 1683.0,
-    "L": 1642.0,
-    "C": 1652.0,
-    "body_pct": 43.9,
-    "upper_wick_pct": 31.7,
-    "lower_wick_pct": 24.4
+    "close_position": "upper_half",
+    "O": 1675.0,
+    "H": 1680.0,
+    "L": 1655.0,
+    "C": 1674.0,
+    "body_pct": 4.0,
+    "upper_wick_pct": 20.0,
+    "lower_wick_pct": 76.0
   }
 }

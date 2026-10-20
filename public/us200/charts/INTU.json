@@ -3,20 +3,20 @@
   "ticker_user": "INTU",
   "name": "Intuit Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-31 → 2026-10-16 (200 daily bars)",
+  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-16",
-    "O": 334.68,
-    "H": 336.26,
-    "L": 320.86,
-    "C": 325.15,
-    "prev_close": 330.17,
-    "chg_pct": -1.52
+    "date": "2026-10-19",
+    "O": 322.85,
+    "H": 327.19,
+    "L": 317.93,
+    "C": 325.62,
+    "prev_close": 325.15,
+    "chg_pct": 0.14
   },
   "phase": "base_building",
-  "adx": 18.55,
-  "plus_di": 35.36,
-  "minus_di": 18.21,
+  "adx": 19.21,
+  "plus_di": 33.48,
+  "minus_di": 18.92,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 569.38 (2026-01-26), trough 252.84 (2026-06-22), box top 372.98 (2026-08-24)",
@@ -32,28 +32,28 @@
     "top": 372.98,
     "top_date": "2026-08-24",
     "bottom": 252.84,
-    "period": "2026-06-22 to 2026-10-16"
+    "period": "2026-06-22 to 2026-10-19"
   },
-  "drop_from_peak_pct": 42.9,
-  "recovery_from_crash_pct": 28.6,
+  "drop_from_peak_pct": 42.8,
+  "recovery_from_crash_pct": 28.8,
   "supports": [
     {
-      "level": 312.0,
+      "level": 316.0,
       "label": "S1 KEY",
+      "touches": 6,
+      "evidence": "tested 6x in base period; 3.0% below current"
+    },
+    {
+      "level": 312.0,
+      "label": "S2",
       "touches": 11,
-      "evidence": "tested 11x in base period; 4.0% below current"
+      "evidence": "mid-base support, tested 11x"
     },
     {
       "level": 300.0,
-      "label": "S2",
+      "label": "S3",
       "touches": 9,
       "evidence": "mid-base support, tested 9x"
-    },
-    {
-      "level": 280.0,
-      "label": "S3",
-      "touches": 7,
-      "evidence": "mid-base support, tested 7x"
     },
     {
       "level": 252.84,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 336.26,
+      "level": 327.19,
       "label": "R1 today high",
-      "evidence": "today's high 336.260009765625"
+      "evidence": "today's high 327.19000244140625"
     },
     {
       "level": 372.98,
@@ -75,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 325.15,
-    "in_box_pct": 60.2,
-    "nearest_support": "S1 KEY (312.0)",
-    "nearest_resistance": "R1 today high (336.26)"
+    "current": 325.62,
+    "in_box_pct": 60.6,
+    "nearest_support": "S1 KEY (316.0)",
+    "nearest_resistance": "R1 today high (327.19)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 334.68,
-    "H": 336.26,
-    "L": 320.86,
-    "C": 325.15,
-    "body_pct": 61.9,
-    "upper_wick_pct": 10.3,
-    "lower_wick_pct": 27.9
+    "close_position": "upper_half",
+    "O": 322.85,
+    "H": 327.19,
+    "L": 317.93,
+    "C": 325.62,
+    "body_pct": 29.9,
+    "upper_wick_pct": 17.0,
+    "lower_wick_pct": 53.1
   },
   "bias": {
     "short": {
@@ -109,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 312.0 (KEY support)",
-      "then": "still range; watch 336.26 for next test"
+      "if": "hold 316.0 (KEY support)",
+      "then": "still range; watch 327.19 for next test"
     },
     {
-      "if": "break 312.0 on close",
-      "then": "target 300.0 → 280.0 (short-term bearish)"
+      "if": "break 316.0 on close",
+      "then": "target 312.0 → 300.0 (short-term bearish)"
     },
     {
       "if": "break 252.84 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 336.26 on close",
+      "if": "reclaim 327.19 on close",
       "then": "short-term bullish; next test 372.98"
     },
     {
@@ -152,20 +152,20 @@
     "strategy": "SELL_R1",
     "trigger_price": 336.26,
     "target_price": 299.29,
-    "stop_price": 354.13,
-    "risk_pct": 5.32,
+    "stop_price": 354.24,
+    "risk_pct": 5.35,
     "reward_pct": 10.99,
-    "rr_ratio": 2.07,
+    "rr_ratio": 2.06,
     "phase_match": true,
     "r1": 336.26,
     "s1": 262.32,
-    "s2": 286.3,
+    "s2": 295.11,
     "r2": 372.98,
     "r3": 423.99,
     "s3": 252.84,
     "s4": 342.11,
-    "current_position_pct": 85.0,
-    "notes": "SELL_R1: in box (262-336), entry at R1 336, target mid 299, stop 354 ｜ 52.2 條規則（SELL plan，resistance 336.26）：① 跌到 336.26、收市守住喺 336.26 上面 → 照 BUY 條 plan 做（入場 336.26，止蝕 354.13，目標 299.29）。② 收市跌穿 336.26 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 336.26 上面』。"
+    "current_position_pct": 85.6,
+    "notes": "SELL_R1: in box (262-336), entry at R1 336, target mid 299, stop 354 ｜ 52.2 條規則（SELL plan，resistance 336.26）：① 跌到 336.26、收市守住喺 336.26 上面 → 照 BUY 條 plan 做（入場 336.26，止蝕 354.24，目標 299.29）。② 收市跌穿 336.26 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 336.26 上面』。"
   },
   "patterns": [
     {
@@ -174,7 +174,7 @@
       "date": "2026-09-14",
       "low": 329.8800048828125,
       "high": 342.30999755859375,
-      "i": 175
+      "i": 174
     },
     {
       "name": "平頭頂",
@@ -182,7 +182,7 @@
       "date": "2026-07-22",
       "low": 284.0,
       "high": 296.44000244140625,
-      "i": 138
+      "i": 137
     },
     {
       "name": "刺穿線",
@@ -190,7 +190,7 @@
       "date": "2026-06-26",
       "low": 259.3800048828125,
       "high": 271.1199951171875,
-      "i": 121
+      "i": 120
     },
     {
       "name": "利好反擊線",
@@ -198,7 +198,7 @@
       "date": "2026-06-15",
       "low": 276.2099914550781,
       "high": 287.69000244140625,
-      "i": 113
+      "i": 112
     }
   ]
 }
