@@ -93,6 +93,16 @@ def num(v) -> str:
     return f"{int(v):,}"
 
 
+def num1(v) -> str:
+    """One decimal, thousands-separated.
+
+    2026-10-21: the firing-day decomposition reports 3.802 names per firing
+    session. num() truncates that to 3, so both the failure-log page and the
+    Direction A page said "3 stocks a day" for a quantity that is not 3.
+    """
+    return f"{float(v):,.1f}"
+
+
 def frac(v) -> str:
     return f"{float(v) * 100:.1f}%"
 
@@ -355,6 +365,161 @@ def direction_a() -> dict:
         "n_arms_total": sum(r["n_arms"] for r in runs),
         "n_all_dead": sum(1 for r in runs for a in r["arms"]
                           if a["classification"] == "SELECTION_DEAD"),
+    }
+
+
+def _win_label(win: str) -> str:
+    """A window key as the page prints it: 2016-2020 -> 2016–20.
+
+    The label is DERIVED from the key the report uses, so a report that moved
+    its windows moves the label with it.
+    """
+    start, end = win.split("-", 1)
+    return f"{start}–{end[2:]}"
+
+
+def direction_a_detail() -> dict:
+    """Direction A in full — for the page that publishes the test itself.
+
+    The failure-log page summarises Direction A in one table. The dedicated
+    research page needs the whole artefact: every arm, every window, every
+    null reading, the full-sample comparison and the firing-day decomposition,
+    for BOTH fill lags.
+
+    Every figure here is read from reports/edge_alpha_a_us.json and
+    reports/edge_alpha_a_us_lag1.json. The figures the page states in words
+    rather than in a table — the best cell across all eight, the z range of
+    the late window — are computed HERE from the values in those reports, so
+    they cannot drift away from the numbers they describe.
+    """
+    runs = []
+    for key, lag in (("edge_a", 0), ("edge_a_lag1", 1)):
+        d = _load(key)
+        cfg = d["config"]
+        arms = []
+        for arm_key in ("arm1", "arm1_nogate"):
+            arm = d[arm_key]
+            wins = {}
+            for win in arm["gap_vs_arm2_pp"]:
+                null = arm["null"][win]
+                wins[win] = {
+                    "gap_pp": arm["gap_vs_arm2_pp"][win],
+                    "net_pp": null["net_pp"],
+                    "null_mean_pp": null["null_mean_pp"],
+                    "null_sd_pp": null["null_sd_pp"],
+                    "z": null["z"],
+                    "null_percentile": null["null_percentile"],
+                    "beats_null": null.get("beats_null"),
+                    "n": null.get("n"),
+                    "cagr_pct": arm["cagr_pct"][win],
+                    "sharpe": arm["sharpe"][win],
+                    "maxdd_pct": arm.get("maxDD_pct", {}).get(win),
+                    "expo_pct": arm["exposure_pct_after_ramp"][win],
+                    "expo_gap_pp": arm["exposure_gap_vs_arm2_pp"][win],
+                    "clears": arm["gap_vs_arm2_pp"][win] >= cfg["threshold_pp"],
+                }
+            arms.append({
+                "key": arm_key,
+                "arm": arm["arm"],
+                "classification": arm["classification"],
+                "clears_threshold": arm["clears_threshold"],
+                "reason": arm.get("classification_reason", ""),
+                "wins": wins,
+            })
+        fd = d["firing_day_decomposition"]
+        runs.append({
+            "source": SOURCES[key],
+            "fill_lag": lag,
+            "generated_at": d.get("generated_at", ""),
+            "arms": arms,
+            "arm2": {
+                "cagr_pct": d["arm2_universe"]["cagr_pct"],
+                "sharpe": d["arm2_universe"]["sharpe"],
+                "expo_pct": d["arm2_universe"]["exposure_pct_after_ramp"],
+            },
+            "screen": d["screen"],
+            "fd": {
+                "status": fd["status"],
+                "question": fd["question"],
+                "construction": fd["construction"],
+                "reading": fd["reading"],
+                "firing_sessions": fd["firing_sessions"],
+                "total_sessions": fd["total_sessions"],
+                "firing_fraction": fd["firing_fraction"],
+                "mean_names": fd["mean_names_per_firing_session"],
+                "gap_pp": fd["gap_pp"],
+                "null": fd["null"],
+            },
+            "full_sample": d["full_sample"],
+        })
+
+    d0 = _load("edge_a")
+    cfg = d0["config"]
+
+    # Every (arm, window, fill lag) cell, flattened. The page talks about
+    # "eight cells" and about the best one and about the late window's z
+    # range — all three are derived from this list, not typed.
+    cells = []
+    for run in runs:
+        for arm in run["arms"]:
+            for win, w in arm["wins"].items():
+                cells.append({
+                    "fill_lag": run["fill_lag"],
+                    "arm": arm["arm"],
+                    "arm_key": arm["key"],
+                    "window": win,
+                    "window_label": _win_label(win),
+                    "gap_pp": w["gap_pp"],
+                    "z": w["z"],
+                    "null_percentile": w["null_percentile"],
+                    "net_pp": w["net_pp"],
+                    "clears": w["clears"],
+                })
+
+    windows = list(d0["arm1"]["gap_vs_arm2_pp"].keys())
+    late = windows[-1]
+    early = windows[0]
+    late_zs = [c["z"] for c in cells if c["window"] == late]
+    best = max(cells, key=lambda c: c["z"])
+
+    arms_total = sum(len(r["arms"]) for r in runs)
+    return {
+        "spec": d0.get("spec", ""),
+        "amendments": d0.get("amendments", ""),
+        "threshold_pp": cfg["threshold_pp"],
+        "z_crit": cfg["z_crit"],
+        "trials": cfg["trials"],
+        "seed": cfg["seed"],
+        "hold": cfg["hold"],
+        "cost_rt": cfg["cost_rt"],
+        "selection": cfg["selection"],
+        "n_names": d0["universe"]["names"],
+        "n_sessions": d0["universe"]["sessions"],
+        "first": d0["universe"]["first"],
+        "last": d0["universe"]["last"],
+        "windows": windows,
+        "early": early,
+        "late": late,
+        "early_label": _win_label(early),
+        "late_label": _win_label(late),
+        "runs": runs,
+        "n_runs": len(runs),
+        "n_arms_total": arms_total,
+        "n_cells": len(cells),
+        "n_cells_clearing": sum(1 for c in cells if c["clears"]),
+        "n_early_clearing": sum(1 for c in cells
+                                 if c["window"] == early and c["clears"]),
+        "n_late_clearing": sum(1 for c in cells
+                                if c["window"] == late and c["clears"]),
+        "n_dead_arms": sum(1 for r in runs for a in r["arms"]
+                           if a["classification"] == "SELECTION_DEAD"),
+        "best_cell": best,
+        "best_z": best["z"],
+        "late_z_min": min(late_zs),
+        "late_z_max": max(late_zs),
+        "late_reaches_z_crit": any(abs(z) >= cfg["z_crit"] for z in late_zs),
+        "verdict": d0.get("verdict", ""),
+        "verdict_secondary": d0.get("verdict_secondary_nogate", ""),
     }
 
 

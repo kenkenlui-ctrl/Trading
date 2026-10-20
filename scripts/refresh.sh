@@ -290,6 +290,12 @@ python3 scripts/build_backtest_page.py 2>&1 | tail -1
 # numbers while the rest of the site carries today's. The research reports
 # it also quotes (reports/*.json) are frozen artefacts and do not change.
 python3 scripts/build_honest_results_page.py 2>&1 | tail -1
+# /research/selection-dead/ — the Direction A test itself: the question, the
+# design, the pre-registered bar and all eight cells, read from the same two
+# Direction A reports the failure log above quotes. Same rule as the page
+# above: if a source report is missing the build stops rather than shipping a
+# plausible placeholder.
+python3 scripts/build_selection_dead_page.py 2>&1 | tail -1
 # /track-record/ — the measured bar (read from data/control_test.csv) beside the
 # user's own logged trades (data/track_record.json). Writes HTML, so it has to
 # sit before finalize.py below, like every other writer.

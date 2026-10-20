@@ -194,9 +194,13 @@ def build_body() -> str:
     fd = da["runs"][0]
     A("<h3>補充：screen 有意見嗰啲日，仲係冇贏</h3>")
     A(f'<p>{esc(fd["fd_status"])}</p>')
+    A('<p style="font-size:.9rem;opacity:.85">完整測試（問題、設計、'
+      '預先登記門檻、八個 cell、事後診斷、決定）喺 '
+      '<a href="/research/selection-dead/"><b>Direction A 測試記錄</b></a> '
+      '嗰頁。</p>')
     A(f'<p>問題係：screen 開口嗰啲 session（{H.num(fd["firing_sessions"])} / '
       f'{H.num(fd["total_sessions"])} 個，{H.frac(fd["firing_fraction"])}，'
-      f'平均每日 {H.num(fd["mean_names"])} 隻），揀出嚟嗰批係咪好過隨機揀'
+      f'平均每日 {H.num1(fd["mean_names"])} 隻），揀出嚟嗰批係咪好過隨機揀'
       f'同等數量？答案一樣係唔係。gap '
       f'{H.pp(fd["fd_gap_early"])}（2016–20）/ {H.pp(fd["fd_gap_late"])}（2021–26）。</p>')
 

@@ -1267,6 +1267,10 @@ def nav_html(active_path: str) -> str:
         # Same reasoning as Track record above — an honesty page nobody can
         # reach is worse than not having written it.
         ("/research/negative-results/", "Negative results", "Negative results"),
+        # 2026-10-21: the Direction A test itself — the question, the design,
+        # the pre-registered bar and all eight cells. The failure log above
+        # summarises it; this page publishes it.
+        ("/research/selection-dead/", "Selection test", "Selection test"),
         ("/disclaimer/", "Disclaimer", "Disclaimer"),
         ("/privacy.html", "Privacy", "Privacy"),
     ]

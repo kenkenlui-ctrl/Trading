@@ -14,6 +14,7 @@ MOBILE_BOTTOM_NAV = '''
       <a href="/methodology.html">Methodology</a>
       <a href="/track-record/">Track record</a>
       <a href="/research/negative-results/">Negative results</a>
+      <a href="/research/selection-dead/">Selection test</a>
       <a href="/about/">About</a>
       <a href="/disclaimer/">Disclaimer</a>
       <a href="/privacy/">Privacy</a>

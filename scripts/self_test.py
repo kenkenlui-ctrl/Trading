@@ -3033,6 +3033,163 @@ def t_honest_results_page_matches_the_reports() -> None:
            "the report was left edited by the control")
 
 
+def t_selection_dead_page_matches_the_reports() -> None:
+    """/research/selection-dead/ must be exactly what the two Direction A
+    reports produce, and nothing else.
+
+    The page publishes a FAILED test. That makes it the page where a
+    hand-typed figure would do the most damage: a reader who checks one
+    number and finds it wrong has no reason to check the rest, and a page
+    that argues "we publish our failures" while carrying an edited figure is
+    the exact failure mode it claims to fix.
+
+    So this is the same construction as the failure-log page's gate — a
+    byte-for-byte re-render from reports/edge_alpha_a_us.json and
+    reports/edge_alpha_a_us_lag1.json, compared against the shipped file
+    after the same finalisation pass the pipeline runs.
+
+    Three controls, each of which must FAIL:
+      1. a canonical pointing at the redirecting URL form
+      2. a page with one figure edited by hand
+      3. a report edited under the page — the render must follow it
+    """
+    import honest_results as H
+
+    URL = "/research/selection-dead/"
+    page_p = PUBLIC / "research" / "selection-dead" / "index.html"
+    sm_p = PUBLIC / "sitemap.xml"
+    home_p = PUBLIC / "index.html"
+    missing = [str(p.relative_to(PUBLIC)) for p in (page_p, sm_p, home_p)
+               if not p.exists()]
+    record("every file the selection-dead gate needs is present", not missing,
+           f"missing: {missing}")
+    if missing:
+        return
+
+    text = page_p.read_text(encoding="utf-8", errors="replace")
+    sm_text = sm_p.read_text(encoding="utf-8", errors="replace")
+    home_text = home_p.read_text(encoding="utf-8", errors="replace")
+
+    record("the selection-dead page is indexable",
+           'name="robots" content="noindex' not in text.lower(),
+           "the page that publishes the Direction A test is marked noindex")
+    record("the selection-dead page is in the sitemap",
+           f"<loc>https://www.win9you.com{URL}</loc>" in sm_text,
+           "the sitemap does not list the page")
+
+    def url_form_failures(page_text: str, sitemap_text: str, nav_text: str
+                          ) -> list[str]:
+        """The one-URL check, written as an expression so a probe can
+        re-evaluate exactly the same thing."""
+        out = []
+        canon = re.search(r'<link rel="canonical" href="([^"]+)"', page_text)
+        if not canon or canon.group(1) != "https://www.win9you.com" + URL:
+            out.append(f"canonical={canon.group(1) if canon else None}")
+        if f"<loc>https://www.win9you.com{URL}</loc>" not in sitemap_text:
+            out.append("sitemap entry")
+        if f'href="{URL}"' not in nav_text:
+            out.append("nav href")
+        return out
+
+    bad = url_form_failures(text, sm_text, home_text)
+    record("the selection-dead canonical, sitemap entry and nav href agree",
+           not bad, f"they disagree: {bad}")
+    record("the selection-dead page is a directory page",
+           page_p.is_file() and page_p.name == "index.html"
+           and page_p.parent.name == "selection-dead",
+           f"the page is at {page_p.relative_to(PUBLIC)} — a loose .html file "
+           f"is served without the trailing slash, so {URL} would 308")
+
+    probe = re.sub(r'(<link rel="canonical" href=")[^"]+(")',
+                   r'\1https://www.win9you.com/research/selection-dead.html\2',
+                   text, count=1)
+    bad_probe = url_form_failures(probe, sm_text, home_text)
+    record("MUST-FAIL a canonical pointing at the redirecting URL is rejected",
+           bool(bad_probe), f"failures={bad_probe}")
+
+    def fresh_render() -> str:
+        import build_selection_dead_page as B
+        return B.render()
+
+    def finalised(rendered: str) -> str:
+        """What the build pipeline actually leaves on disk — the same
+        finalisation pass the failure-log page's gate runs."""
+        import build_static as bs
+        good = page_p.read_bytes()
+        try:
+            page_p.write_text(rendered, encoding="utf-8")
+            bs.restamp_t1_badges()
+            return page_p.read_text(encoding="utf-8")
+        finally:
+            page_p.write_bytes(good)
+
+    try:
+        fresh = fresh_render()
+    except Exception as e:  # noqa: BLE001
+        record("the selection-dead page can be rebuilt from the reports", False,
+               f"{type(e).__name__}: {e}")
+        return
+    record("the selection-dead page can be rebuilt from the reports", True)
+
+    try:
+        shipped = finalised(fresh)
+    except Exception as e:  # noqa: BLE001
+        record("the selection-dead page is exactly what the reports produce",
+               False, f"{type(e).__name__}: {e}")
+        return
+    record("the selection-dead page is exactly what the reports produce",
+           shipped == text,
+           "the page on disk differs from what the build produces: a figure was "
+           "edited by hand, or a report changed and the page was not rebuilt")
+
+    # ---- the headline figures must be the report's figures ----------------
+    d = H.direction_a_detail()
+    frag_bad = []
+    for frag in (d["verdict"], H.z(d["best_z"]), H.z(d["late_z_min"]),
+                 H.z(d["late_z_max"]), H.z(d["z_crit"]),
+                 H.pp(d["threshold_pp"]), H.num(d["n_sessions"]),
+                 H.num(d["n_names"]), H.num(d["trials"])):
+        if frag not in text:
+            frag_bad.append(frag)
+    record("every headline figure on the page is the report's figure",
+           not frag_bad, f"missing from the page: {frag_bad}")
+
+    # ---- MUST-FAIL: edit the shipped page --------------------------------
+    good_text = text
+    try:
+        page_p.write_text(good_text.replace(d["verdict"], "SELECTION_ALIVE", 1),
+                          encoding="utf-8")
+        edited = page_p.read_text(encoding="utf-8")
+        record("MUST-FAIL an edited selection-dead page is rejected",
+               edited != shipped,
+               "the control for this gate does not discriminate: the same "
+               "predicate still passes on a hand-edited page")
+    finally:
+        page_p.write_text(good_text, encoding="utf-8")
+    record("the selection-dead page is restored after the control",
+           page_p.read_text(encoding="utf-8") == good_text,
+           "the page was left edited by the control")
+
+    # ---- MUST-FAIL: edit a report and the render must follow -------------
+    rep = REPO / H.SOURCES["edge_a"]
+    good_rep = rep.read_text(encoding="utf-8")
+    try:
+        rep.write_text(good_rep.replace('"z": 1.184', '"z": 9.999', 1),
+                       encoding="utf-8")
+        H._cache.pop("edge_a", None)
+        moved = finalised(fresh_render())
+        record("MUST-FAIL a report that changed under the page is rejected",
+               moved != shipped,
+               "the control for this gate does not discriminate: the render "
+               "does not follow the report")
+    finally:
+        rep.write_text(good_rep, encoding="utf-8")
+        H._cache.pop("edge_a", None)
+    record("the Direction A report is restored after the control",
+           rep.read_text(encoding="utf-8") == good_rep,
+           "the report was left edited by the control")
+
+
 def t_one_action_authority_per_page() -> None:
     """2-into-1 (2026-10-18): the site must have exactly ONE engine that is
     allowed to state an action, and it must be v2.
@@ -4927,6 +5084,7 @@ def main() -> int:
                t_hub_universe_claims_match_the_page,
                t_page_date_modified_is_the_data_date,
                t_honest_results_page_matches_the_reports,
+               t_selection_dead_page_matches_the_reports,
                t_one_action_authority_per_page,
                t_equity_curve_stats_are_internally_consistent,
                t_no_withdrawn_figures_are_published,
