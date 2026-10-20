@@ -18,18 +18,22 @@ EXT = {".html"}
 # URL with today's date, so Search Console saw 626 pages all "changed" on every
 # rebuild. Only canonical, indexable, 200-returning pages belong here, and
 # lastmod must be the file's real mtime.
+#
+# The list is written in the SLASH-LESS form and matched against
+# url.rstrip("/"), so it does not have to know which of the two shapes each
+# page is.
 EXCLUDE_URLS = {
-    "/404/",            # the 404 page itself
-    "/wikipedia-draft/",  # noindex, nofollow draft
-    "/compare/",         # noindex
-    "/equity_curve_t_1/", "/equity_curve_t_3/", "/equity_curve_t_10/",
-    "/equity_curve_t10/", "/equity_curve_t1/", "/equity_curve_t3/",
-    "/live-monitor/",    # duplicate of /hk200/ with canonical -> /hk200/
-    "/faq/",             # duplicate of /methodology/
-    "/full-results/",    # 301 -> /methodology
+    "/404",              # the 404 page itself
+    "/wikipedia-draft",  # noindex, nofollow draft
+    "/compare",          # noindex
+    "/equity_curve_t_1", "/equity_curve_t_3", "/equity_curve_t_10",
+    "/equity_curve_t10", "/equity_curve_t1", "/equity_curve_t3",
+    "/live-monitor",     # duplicate of /hk200/ with canonical -> /hk200/
+    "/faq",              # duplicate of /methodology/
+    "/full-results",     # 301 -> /methodology
 }
 # Keep the slash-less form only; the .html / trailing-slash variants 308 away.
-CANONICAL_ALIASES = ("/equity_curve_t_10/",)  # duplicate of equity_curve_t10
+CANONICAL_ALIASES = ("/equity_curve_t_10",)  # duplicate of equity_curve_t10
 
 
 def indexable(html_path: Path) -> bool:
@@ -55,16 +59,27 @@ def walk():
             continue
         if not indexable(p):
             continue
-        # URL form
+        # URL form — it follows the FILE's shape, because that is what decides
+        # the serving URL: a directory index.html is served at /path/ with a
+        # 200, a loose .html file is served at /path with no slash, and
+        # /path/ 308s to it.
+        #
+        # This used to add a trailing slash to EVERY url, so the ~700 entries
+        # derived from .html files pointed at a 308 while the pages' own
+        # canonical tags used the slash-less form: the sitemap and the
+        # canonical disagreed on every .html page on the site. The sitemap
+        # entry is now the canonical — the same string, and the URL that
+        # actually serves the page.
         parts = list(rel.parts)
-        if parts[-1] in {"index.html"}:
+        if parts[-1] == "index.html":
             parts = parts[:-1]
+            url = "/" + "/".join(parts)
+            if not url.endswith("/"):
+                url += "/"
         else:
             parts[-1] = re.sub(r"\.html$", "", parts[-1])
-        url = "/" + "/".join(parts)
-        if not url.endswith("/"):
-            url += "/"
-        if url in EXCLUDE_URLS or url in CANONICAL_ALIASES:
+            url = "/" + "/".join(parts)
+        if url.rstrip("/") in EXCLUDE_URLS or url.rstrip("/") in CANONICAL_ALIASES:
             continue
         out.append((url, p))
     return out

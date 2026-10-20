@@ -362,7 +362,19 @@ bash scripts/git_housekeeping.sh 2>&1 | tail -2
 
 git add -A
 git commit -m "chore: refresh T-1 data ($DATA_DATE)" || echo "  no changes to commit"
-git push origin main 2>&1 | tail -3
+# 2026-10-20: the push used to be unconditional, and it pushed a FIXED branch
+# name — `main` — regardless of which branch the build actually ran on. A
+# refresh executed on a feature branch therefore published a different branch
+# than the one that was built and tested, and the commits it made were never
+# on it. The deploy does not need git: wrangler uploads the staged files.
+#
+# The push is now opt-in (W9_PUSH=1) and pushes the branch that was actually
+# built, so what reaches the remote is what was tested.
+if [ "${W9_PUSH:-0}" = "1" ]; then
+  git push origin "${W9_PUSH_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}" 2>&1 | tail -3
+else
+  echo "  git push skipped (the deploy does not need it; set W9_PUSH=1 to push $(git rev-parse --abbrev-ref HEAD))"
+fi
 
 # 2026-10-01: this repo lives under ~/Documents, which is iCloud-Drive-backed.
 # Uploading straight from ./public made wrangler crawl 6,752 files at ~0.8 files/s

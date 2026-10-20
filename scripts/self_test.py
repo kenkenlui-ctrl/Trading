@@ -550,6 +550,46 @@ def t_sitemap_guard() -> None:
     record("sitemap/single writer", guarded,
            "build_seo.py can still overwrite sitemap.xml")
 
+    # ---- every sitemap URL must BE the page's own canonical -----------------
+    # The builder used to add a trailing slash to every URL, so the ~700
+    # entries derived from .html files pointed at a 308 while the pages' own
+    # canonical tags used the slash-less form. The sitemap and the canonical
+    # disagreed on every .html page on the site, and the sitemap advertised a
+    # URL that was not the one the page said it was. The URL form now follows
+    # the file's shape, so the sitemap entry IS the canonical.
+    def sitemap_canonical_mismatches(sitemap_text: str) -> list[str]:
+        out: list[str] = []
+        for loc in re.findall(r"<loc>([^<]+)</loc>", sitemap_text):
+            path = loc.replace("https://www.win9you.com", "")
+            f = ((PUBLIC / path.lstrip("/") / "index.html")
+                 if path.endswith("/")
+                 else (PUBLIC / (path.lstrip("/") + ".html")))
+            if not f.is_file():
+                out.append(f"{loc}: no file for it")
+                continue
+            head = f.read_text(encoding="utf-8", errors="replace")[:4000]
+            m = re.search(r'<link rel="canonical" href="([^"]+)"', head)
+            if not m:
+                out.append(f"{loc}: the page carries no canonical tag")
+            elif m.group(1) != loc:
+                out.append(f"{loc}: the page's canonical is {m.group(1)}")
+        return out
+
+    bad = sitemap_canonical_mismatches(text)
+    record("sitemap/every URL is the page's own canonical", not bad,
+           f"{len(bad)} disagree: {bad[:3]}")
+
+    # MUST-FAIL: the same expression must reject a sitemap URL that is not
+    # the canonical. A check that can only pass is not a check.
+    cand = [u for u in re.findall(r"<loc>([^<]+)</loc>", text)
+            if not u.endswith("/")]
+    if cand:
+        u = cand[0]
+        probe = text.replace(f"<loc>{u}</loc>", f"<loc>{u}/</loc>", 1)
+        bad_probe = sitemap_canonical_mismatches(probe)
+        record("MUST-FAIL a sitemap URL that is not the canonical is rejected",
+               bool(bad_probe), f"failures={bad_probe[:2]}")
+
 
 # --------------------------------------------------------------------------
 # 7. v2 signals must not be published from stale bars
