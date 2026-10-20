@@ -27,7 +27,21 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import honest_results as H  # noqa: E402
 
 REPO = pathlib.Path("/Users/kenken/dev/dsa-hk")
-OUT = REPO / "public" / "research" / "negative-results.html"
+# A DIRECTORY page, not a loose .html file, and that is a deliberate choice.
+#
+# On this site the serving URL is decided by the file's shape: a directory
+# index.html is served at /path/ (200), a loose .html file is served at /path
+# with no slash (200) and /path/ 308-redirects to it. The canonical tag, the
+# sitemap entry and the nav href all have to agree with whichever form the
+# file takes, or the site points at a redirect and calls it a page.
+#
+# The directory form is the one the rest of the content pages already use
+# (/hk200/, /track-record/, /about/), and it is the one where the canonical,
+# the sitemap entry and the nav href are all the same string that returns
+# 200 with no redirect hop. A loose .html file here would have made the
+# canonical disagree with the sitemap, exactly as /methodology and
+# /backtest do today.
+OUT = REPO / "public" / "research" / "negative-results" / "index.html"
 
 TITLE = "試過，唔 work · 失敗測試記錄 · Leeks Terminal"
 DESC = ("v2 引擎嘅負面驗證結果：Sprint 1、2、3 同 edge-to-alpha 全部冇過關。"

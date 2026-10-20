@@ -2732,7 +2732,7 @@ def t_honest_results_page_matches_the_reports() -> None:
     """
     import honest_results as H
 
-    page_p = PUBLIC / "research" / "negative-results.html"
+    page_p = PUBLIC / "research" / "negative-results" / "index.html"
     meth_p = PUBLIC / "methodology.html"
     sm_p = PUBLIC / "sitemap.xml"
     missing = [p.name for p in (page_p, meth_p, sm_p) if not p.exists()]
@@ -2748,6 +2748,51 @@ def t_honest_results_page_matches_the_reports() -> None:
     record("the negative-results page is in the sitemap",
            "/research/negative-results/" in sm_p.read_text(encoding="utf-8"),
            "the sitemap does not list the page")
+
+    # ---- one URL, said three times ------------------------------------------
+    # The canonical tag, the sitemap entry and the nav href have to be the
+    # SAME string, and it has to be the URL that actually serves the page.
+    # On this site the serving URL depends on the file's shape: a directory
+    # index.html is served at /path/, a loose .html file at /path with no
+    # slash. The first version of this page was a loose .html file with a
+    # directory-style canonical, so the canonical pointed at a 308 and the
+    # nav cost every reader a redirect hop. The page now lives in a
+    # directory, which is what the other content pages do.
+    URL = "/research/negative-results/"
+
+    def url_form_failures(page_text: str, sitemap_text: str, nav_text: str
+                          ) -> list[str]:
+        """The one-URL check, written as an expression so a probe can
+        re-evaluate exactly the same thing."""
+        out = []
+        canon = re.search(r'<link rel="canonical" href="([^"]+)"', page_text)
+        if not canon or canon.group(1) != "https://www.win9you.com" + URL:
+            out.append(f"canonical={canon.group(1) if canon else None}")
+        if f"<loc>https://www.win9you.com{URL}</loc>" not in sitemap_text:
+            out.append("sitemap entry")
+        if f'href="{URL}"' not in nav_text:
+            out.append("nav href")
+        return out
+
+    sm_text = sm_p.read_text(encoding="utf-8", errors="replace")
+    home_nav = (PUBLIC / "index.html").read_text(encoding="utf-8", errors="replace")
+    bad = url_form_failures(text, sm_text, home_nav)
+    record("the canonical, the sitemap entry and the nav href are the same URL",
+           not bad, f"they disagree: {bad}")
+    record("the page is a directory page, so that URL returns 200 directly",
+           page_p.is_file() and page_p.name == "index.html"
+           and page_p.parent.name == "negative-results",
+           f"the page is at {page_p.relative_to(PUBLIC)} — a loose .html file "
+           f"is served without the trailing slash, so the URL above would 308")
+
+    # MUST-FAIL: the same expression must reject a canonical that points at
+    # the redirecting form. A check that can only pass is not a check.
+    probe = re.sub(r'(<link rel="canonical" href=")[^"]+(")',
+                   r'\1https://www.win9you.com/research/negative-results.html\2',
+                   text, count=1)
+    bad_probe = url_form_failures(probe, sm_text, home_nav)
+    record("MUST-FAIL a canonical pointing at the redirecting URL is rejected",
+           bool(bad_probe), f"failures={bad_probe}")
 
     # ---- the page must equal a fresh render from the reports --------------
     def fresh_render() -> str:
