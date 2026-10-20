@@ -2701,6 +2701,13 @@ def t_hub_universe_claims_match_the_page() -> None:
                     f"the {label} hub carries no stale universe claim: {stale}"))
         res.append((len(set(re.findall(r'href="/%s/ticker/([^"]+)"' % d, text))) == n,
                     f"the {label} hub lists {n} ticker links"))
+        # The static row counter. The page's JS rewrites it from TOTAL_ROWS
+        # (the rendered rows) as soon as it runs, so a wrong static value is
+        # the pre-JS fallback — but it is still the number in the HTML, and it
+        # was len(universe) (245 on HK) above a table of 241 rows.
+        m = re.search(r'id="rowCount">(\d+) of (\d+)<', text)
+        res.append((bool(m) and m.group(1) == str(n) and m.group(2) == str(n),
+                    f"the {label} hub's static row counter says {n} of {n}"))
         return res
 
     counts = {}
@@ -2736,6 +2743,9 @@ def t_hub_universe_claims_match_the_page() -> None:
                f"the OG card says {og_total!r}, the homepage says {home_us + home_jp}")
 
     # ---- MUST-FAIL: tamper a REAL hub and re-evaluate ---------------------
+    # Two controls, because the gate now checks two independent claims: the
+    # prose universe size, and the static row counter. Each is doctored on
+    # disk and re-evaluated with the same expression.
     hp = PUBLIC / "hk200" / "index.html"
     good = hp.read_text(encoding="utf-8")
     try:
@@ -2751,6 +2761,25 @@ def t_hub_universe_claims_match_the_page() -> None:
     record("the hub page is restored after the control",
            hp.read_text(encoding="utf-8") == good,
            "the hub page was left corrupted by the control")
+
+    # The row counter is a number, so the prose control above cannot reach it.
+    # Doctor the counter on disk and re-run the same expression.
+    good = hp.read_text(encoding="utf-8")
+    try:
+        hp.write_text(re.sub(r'id="rowCount">(\d+) of (\d+)<',
+                              'id="rowCount">245 of 245<', good, count=1),
+                      encoding="utf-8")
+        on_disk = hp.read_text(encoding="utf-8")
+        red = hub_checks(on_disk, "HK", "hk200", "港股", counts["HK"])
+        record("MUST-FAIL a hub whose row counter contradicts its table is rejected",
+               not all(ok for ok, _ in red),
+               "the control does not discriminate: the same predicate still "
+               "passes on a hub whose row counter names a different size")
+    finally:
+        hp.write_text(good, encoding="utf-8")
+    record("the hub page is restored after the row-counter control",
+           hp.read_text(encoding="utf-8") == good,
+           "the hub page was left corrupted by the row-counter control")
 
 
 def t_page_date_modified_is_the_data_date() -> None:

@@ -485,6 +485,13 @@ def build_dashboard_page(
     title_lede: str,
     hero_meta_extra: str,
     n_names: int,
+    # n_names is the number of rows the page renders, not len(universe).
+    # Four HK names are in hk_universe_200.json but have no data and so no
+    # page, so len(universe) said "245 of 245" above a table of 241 rows.
+    # The page's JS recomputes the row counter from TOTAL_ROWS (the rendered
+    # rows) as soon as it runs, so the static value was only ever the
+    # pre-JS fallback — but a fallback that contradicts the table is a wrong
+    # number on the page for as long as the script has not run.
     color_theme: str = "bull",
 ) -> str:
     nav_links = f'''
@@ -681,7 +688,7 @@ function toggleTheme(){{
       <button type="button" class="filter-chip" data-phase="downtrend_active">Down</button>
       <button type="button" class="filter-chip" data-phase="range">Range</button>
     </div>
-    <label style="margin-left: auto;" id="rowCount">{len(universe)} of {len(universe)}</label>
+    <label style="margin-left: auto;" id="rowCount">{n_names} of {n_names}</label>
     <button type="button" class="filter-chip active" id="signalOnly" data-signal="1" title="只顯示 v2 有入場計劃嘅股">⚡ 只看有訊號</button>
   </div>
 
