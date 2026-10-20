@@ -1775,6 +1775,72 @@ def t_jp_ohlc_has_one_naming_scheme() -> None:
            if not pref else f"{len(pref)} leftover JP_-prefixed files: {pref[:3]}")
 
 
+def t_ohlc_dir_has_no_unpublished_files() -> None:
+    """public/<mkt>/ohlc/ must hold exactly one file per published ticker page.
+
+    2026-10-20. The ohlc/ directories carried 552 files that no page could
+    reach: the 272 legacy "HK_NNNNN_ohlc.json" twins (a Futu-format naming
+    scheme the rest of the pipeline never used), 203 "US_TICKER_ohlc.json"
+    twins, and the leftovers of every universe rotation. canvas-chart.js
+    derives the series URL from the chart URL, so the only filename the site
+    ever fetches is <market>/ohlc/<page-stem>_ohlc.json — everything else is
+    dead weight that still gets committed, hashed into the A2 receipt, and
+    counted by bars_from_public() as if it were live data.
+
+    The cost was not disk. It was arithmetic. bars_freshness() reported
+    "231/239" US series at the modal date because eight untracked files were
+    diluting the denominator, and the receipt hashed 552 files that would
+    never ship, so the integrity record described a larger input set than the
+    site actually serves.
+
+    The rule is "one file per published page", computed the same way the
+    sitemap and the deploy prune compute it: a file is published iff a ticker
+    page exists with that stem.
+    """
+    def _unreachable(mkt: str) -> list[str]:
+        """The one expression this gate is made of, evaluated on disk.
+
+        Returned as a function so the MUST-FAIL probe below can run the
+        SAME expression against a doctored directory. A probe that re-implements
+        the rule is a probe of the probe.
+        """
+        odir = PUBLIC / mkt / "ohlc"
+        if not odir.exists():
+            return []
+        pages = {q.stem for q in (PUBLIC / mkt / "ticker").glob("*.html")}
+        return sorted(p.name for p in odir.glob("*_ohlc.json")
+                      if p.name[: -len("_ohlc.json")] not in pages)
+
+    for mkt in ("hk200", "us200", "jp200"):
+        extra = _unreachable(mkt)
+        odir = PUBLIC / mkt / "ohlc"
+        n = len(list(odir.glob("*_ohlc.json"))) if odir.exists() else 0
+        record(f"ohlc/{mkt} holds only published series",
+               not extra,
+               f"{n} files, one per published page"
+               if not extra else
+               f"{len(extra)} unreachable file(s), e.g. {extra[:3]}")
+
+    # MUST-FAIL: the gate must actually notice a file nobody can reach. The
+    # probe writes a real orphan into the real directory, re-runs the SAME
+    # expression, and removes the file again. A probe that only reasoned about
+    # the rule in the abstract would pass even if the rule were never wired to
+    # the disk.
+    odir = PUBLIC / "jp200" / "ohlc"
+    probe = odir / "ZZ_PROBE_unreachable_ohlc.json"
+    existed = probe.exists()
+    try:
+        probe.write_text("[]")
+        detected = _unreachable("jp200")
+        record("MUST-FAIL an unreachable ohlc file is detected",
+               bool(detected) and probe.name in detected,
+               f"the gate flagged {detected[:2]}" if detected
+               else "the gate did not flag the file it was given")
+    finally:
+        if not existed and probe.exists():
+            probe.unlink()
+
+
 def t_signals_only_come_from_tracked_tickers() -> None:
     """A published signal must belong to a ticker we actually track.
 
@@ -4822,6 +4888,7 @@ def main() -> int:
                t_structured_data_is_present_and_true,
                t_llms_txt_says_which_engine_covers_which_market,
                t_jp_ohlc_has_one_naming_scheme, t_en_tree_is_retired,
+               t_ohlc_dir_has_no_unpublished_files,
                t_signals_only_come_from_tracked_tickers,
                t_every_fetched_asset_is_content_stamped,
                t_equity_curve_pages_are_v2,

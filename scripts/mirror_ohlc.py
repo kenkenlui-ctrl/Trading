@@ -38,20 +38,40 @@ SRC = {
 }
 
 
-def _published_stems(universe_path: Path) -> list[str]:
+def _published_stems(src_dir: Path, universe_path: Path) -> list[str]:
     """The file stems the site actually publishes for this market.
 
-    The universe, not a glob. data/jp200/ still holds 192 files left by a
-    September repair script under a second naming scheme (JP_1332_ohlc.json
-    beside 1332_T_ohlc.json), each holding a truncated 5-bar fetch. A glob
-    copied them into public/jp200/ohlc/, and the self-test caught the
-    directory carrying two schemes again — the same defect that script was
-    written to fix, re-introduced from the other side.
+    Two filters, not one, and the second one is the one that matters.
+
+    1. The universe, not a glob. data/jp200/ still holds 192 files left by a
+       September repair script under a second naming scheme (JP_1332_ohlc.json
+       beside 1332_T_ohlc.json), each holding a truncated 5-bar fetch. A glob
+       copied them into public/jp200/ohlc/, and the self-test caught the
+       directory carrying two schemes again — the same defect that script was
+       written to fix, re-introduced from the other side.
+
+    2. The ticker must also have a chart JSON in the source directory. That
+       is exactly build_dashboard's own test for "this ticker gets a page"
+       (load_ticker_json returns None -> continue). Four HK names sit in
+       hk_universe_200.json but have no chart JSON, so they get no page — and
+       mirroring their series published a file nothing could ever fetch.
+
+    Without filter 2 the mirror copied 552 files that no page could reach:
+    the 272 legacy "HK_NNNNN_ohlc.json" twins, 203 "US_TICKER_ohlc.json"
+    twins, and the leftovers of every universe rotation. The cost was not
+    disk. bars_from_public() globs the directory, so bars_freshness() counted
+    untracked files in its denominator ("231/239" US series at the modal
+    date) and the A2 receipt hashed 552 files that the deploy then pruned.
     """
     if not universe_path.exists():
         return []
     raw = json.loads(universe_path.read_text(encoding="utf-8"))
-    return [str(t).replace(".", "_") for t in raw]
+    out = []
+    for t in raw:
+        stem = str(t).replace(".", "_")
+        if (src_dir / f"{stem}.json").is_file():
+            out.append(stem)
+    return out
 
 
 def main() -> int:
@@ -60,7 +80,7 @@ def main() -> int:
         if not src.is_dir():
             print(f"  !! {mkt}: source dir {src} is missing")
             return 1
-        stems = _published_stems(universe)
+        stems = _published_stems(src, universe)
         if not stems:
             print(f"  !! {mkt}: universe {universe} is missing or empty")
             return 1
@@ -75,6 +95,20 @@ def main() -> int:
             # pipeline reason about "is this file newer than the artefact".
             shutil.copy2(p, dst_dir / p.name)
             n += 1
+
+        # Remove everything this step did not just write. The mirror is the
+        # only thing that knows which files the site can actually fetch, so
+        # it is the only place that can clean up after itself. Leaving the
+        # stale ones behind is how the directory grew to 552 unreachable
+        # files in the first place.
+        keep = {f"{stem}_ohlc.json" for stem in stems}
+        removed = 0
+        for p in sorted(dst_dir.glob("*_ohlc.json")):
+            if p.name not in keep:
+                p.unlink()
+                removed += 1
+        if removed:
+            print(f"  {mkt}: removed {removed} unreachable ohlc file(s)")
         print(f"  {mkt}: mirrored {n}/{len(stems)} ohlc series -> public/{mkt}/ohlc/")
         total += n
     print(f"  mirrored {total} ohlc series in total")
