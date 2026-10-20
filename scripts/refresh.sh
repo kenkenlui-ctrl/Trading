@@ -370,6 +370,29 @@ for m in ("hk200", "jp200", "us200"):
 print(f"  pruned {n} orphan ohlc json")
 PY
 
+# 2026-10-20: drop the DUPLICATE ohlc series that sit at the top level of each
+# market directory (public/<mkt>/<SYMBOL>_ohlc.json) as well as the canonical
+# mirror in public/<mkt>/ohlc/. The site fetches only the /ohlc/ form — the URL
+# is derived by canvas-chart.js from the chart URL, so nothing can ever request
+# the top-level path — but the files are still uploaded: 470 files / 29.3 MB of
+# the 80 MB deploy, for no reader.
+#
+# The files stay in the repo on purpose. patch_hk_jp_ohlc.py writes the
+# top-level form and mirrors it back to the source directory, and
+# test_patterns_on_real_signals.py reads public/hk200/<code>_HK_ohlc.json. This
+# is a DEPLOY exclusion, not a delete: the repo copy is a working file.
+python3 - "$STAGE" <<'PY'
+import glob, os, sys
+stage = sys.argv[1]
+n = 0
+freed = 0
+for m in ("hk200", "jp200", "us200"):
+    for p in glob.glob(f"{stage}/{m}/*_ohlc.json"):
+        freed += os.path.getsize(p)
+        os.remove(p); n += 1
+print(f"  pruned {n} duplicate top-level ohlc json ({freed/1e6:.1f} MB)")
+PY
+
 echo "  staged $(find "$STAGE" -type f | wc -l | tr -d ' ') files"
 
 # The API token can upload but cannot list accounts, so wrangler's account

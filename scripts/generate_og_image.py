@@ -14,6 +14,10 @@ The cards are therefore rendered from:
   - data/monthly_backtest/latest.md — the per-trade averages the /backtest
     page itself publishes
   - data/ab_close_hold.json — the US per-trade out-of-sample win rate
+  - public/v2-signals.json — which markets the engine actually runs, so the
+    universe card is the v2 universe (US + JP) and not the published page
+    count (which also includes HK, where the retired engine still runs)
+  - the published ticker tree — the per-market counts behind that total
 and the generator REFUSES to fall back to a literal when a source is
 missing: a missing artifact should stop the build, not put a stale number
 on the one image nobody re-reads before shipping.
@@ -66,6 +70,37 @@ def _universe_counts() -> dict:
     return counter()
 
 
+def _engine_markets() -> list:
+    """The markets the v2 engine actually runs, from the live signals file.
+
+    public/v2-signals.json carries one market_state entry per market the
+    engine runs. HK is not one of them — the site says so on every HK page
+    and in the homepage's own lede — and every other card on this image is
+    a v2 number (the T+10 average, the US out-of-sample win rate). So the
+    universe card has to be the v2 universe as well. Counting the 241
+    published HK pages here would advertise names the engine never scores,
+    next to numbers the engine produced.
+
+    The list is read, not typed: if the engine ever covers another market,
+    the card follows it.
+    """
+    d = json.loads((REPO / "public" / "v2-signals.json").read_text(encoding="utf-8"))
+    ms = d.get("market_state") or {}
+    out = [k[:2].upper() for k in ms]
+    if not out:
+        raise SystemExit("generate_og_image: v2-signals.json names no markets")
+    return out
+
+
+def _markets() -> list:
+    """The markets this card covers: the engine's, and published."""
+    counts = _universe_counts()
+    out = [m for m in _engine_markets() if int(counts.get(m, 0)) > 0]
+    if not out:
+        raise SystemExit("generate_og_image: no engine market has a published page")
+    return out
+
+
 def _tagline() -> str:
     """The brand line's market list, from the same counter as the card.
 
@@ -74,7 +109,7 @@ def _tagline() -> str:
     either version, and the market list is a fact about the build, not a
     slogan — so it is counted, not typed.
     """
-    return " + ".join(_universe_counts().keys()) + " 即日鮮 AI 交易決策儀表板"
+    return " + ".join(_markets()) + " 即日鮮 AI 交易決策儀表板"
 
 
 def _cards() -> list:
@@ -84,11 +119,12 @@ def _cards() -> list:
     if not t10 or not t1:
         raise SystemExit("generate_og_image: the Headline table lost a horizon")
     counts = _universe_counts()
-    total = sum(int(counts.get(k, 0)) for k in ("HK", "US", "JP"))
+    markets = _markets()
+    total = sum(int(counts.get(m, 0)) for m in markets)
     if total <= 0:
         raise SystemExit("generate_og_image: no published ticker pages found")
     return [
-        (str(total), " · ".join(counts.keys()), "#e8eaf0"),
+        (str(total), " · ".join(markets), "#e8eaf0"),
         (t10["avg"], "T+10 avg/trade", "#10b981"),
         (t1["avg"], "T+1 avg/trade", DIM),
         (_oos_win_pct(), "US win rate, OOS", DIM),
@@ -107,6 +143,7 @@ def _write_figures(cards: list) -> None:
     out.write_text(json.dumps({
         "generated_at": datetime.now().isoformat(timespec="seconds"),
         "universe_ticker_pages": _universe_counts(),
+        "markets": _markets(),
         "tagline": _tagline(),
         "cards": [{"big": big, "sub": sub} for big, sub, _ in cards],
     }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

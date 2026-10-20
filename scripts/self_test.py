@@ -2194,14 +2194,21 @@ def t_p0_site_figures_match_the_artifact() -> None:
 
 def t_og_image_figures_match_the_artifact() -> None:
     """The OG image must carry the site's numbers, and card 1 must name the
-    three markets the site actually covers.
+    markets the engine actually runs.
 
     The card used to say "200+200 HK + US universe" — a hardcoded brand line
     that was wrong twice over. The site publishes 241 HK, 232 US and 201 JP
-    ticker pages (674 in total), and the engine's own markets are US + JP, so
-    "HK + US" described an universe the site does not run. The card is also
-    the one asset that gets scraped into other people's pages, so a wrong
-    number on it outlives the page it came from.
+    ticker pages, and the v2 engine's own markets are US + JP, so "HK + US"
+    described an universe the site does not run.
+
+    The card then carried a count of all three markets (674) while every
+    other number on the same image is a v2 number. Beside them it read as
+    "674 names are scored by the engine" — and 241 of them are HK, where
+    the retired engine still runs and the site says so on every page. The
+    card is the v2 universe: 433 = 232 US + 201 JP, the same figure the
+    homepage's own lede states. The card is also the one asset that gets
+    scraped into other people's pages, so a wrong number on it outlives
+    the page it came from.
 
     A PNG's pixels cannot be read by a test, so the generator writes down the
     figures it rendered, next to the image, in public/og-image.figures.json.
@@ -2216,21 +2223,23 @@ def t_og_image_figures_match_the_artifact() -> None:
     artifacts and against the published tree. The sidecar is then required
     to record exactly those cards.
 
-    All three controls run against the REAL files: the sidecar is written
+    All four controls run against the REAL files: the sidecar is written
     back with a wrong count, the generator's str(total) is replaced with a
-    typed sum, and a universe figure is appended to the generator as text.
-    The same predicates are re-evaluated on what is on disk, and every file
-    is restored and re-checked afterwards. A control that only proves the
-    arithmetic works on a copy proves nothing about the files the build
-    ships.
+    typed sum, a brand line that drops a market is injected, and a universe
+    figure is appended to the generator as text. The same predicates are
+    re-evaluated on what is on disk, and every file is restored and
+    re-checked afterwards. A control that only proves the arithmetic works
+    on a copy proves nothing about the files the build ships.
     """
     sidecar_p = PUBLIC / "og-image.figures.json"
     gen_p = REPO / "scripts" / "generate_og_image.py"
     md_p = REPO / "data" / "monthly_backtest" / "latest.md"
     ab_p = REPO / "data" / "ab_close_hold.json"
+    sig_p = PUBLIC / "v2-signals.json"
     png_p = PUBLIC / "og-image.png"
 
-    missing = [p.name for p in (sidecar_p, gen_p, md_p, ab_p, png_p) if not p.exists()]
+    missing = [p.name for p in (sidecar_p, gen_p, md_p, ab_p, sig_p, png_p)
+               if not p.exists()]
     record("every file the OG-image gate needs is present", not missing,
            f"missing: {missing}")
     if missing:
@@ -2243,7 +2252,11 @@ def t_og_image_figures_match_the_artifact() -> None:
     for mkt in ("hk200", "us200", "jp200"):
         d = PUBLIC / mkt / "ticker"
         tree[mkt[:2].upper()] = len(list(d.glob("*.html"))) if d.is_dir() else 0
-    total = sum(tree.get(k, 0) for k in ("HK", "US", "JP"))
+
+    # --- the markets the engine runs, read from the live signals file -------
+    sig = json.loads(sig_p.read_text(encoding="utf-8"))
+    engine_markets = [k[:2].upper() for k in (sig.get("market_state") or {})]
+    total = sum(tree.get(m, 0) for m in engine_markets)
     banned_nums = {total, *tree.values()}
 
     # --- the artifacts the other three cards quote -------------------------
@@ -2274,7 +2287,7 @@ def t_og_image_figures_match_the_artifact() -> None:
         Every card's big value is TEXT, so it must be a string: a card that
         printed a computed integer instead of the rendered string would be
         rendered by PIL just the same, and the check that the number is the
-        tree's would pass on 674 while the image says "674" only by luck of
+        tree's would pass on 433 while the image says "433" only by luck of
         the draw call. Requiring str keeps the check on what is painted.
         """
         res = []
@@ -2284,9 +2297,9 @@ def t_og_image_figures_match_the_artifact() -> None:
             return res
         big, sub = cards[0][0], cards[0][1]
         res.append((isinstance(big, str) and big == str(total),
-                    f"card 1 prints the total published pages: {big!r} vs {total}"))
-        res.append((all(m in sub for m in ("HK", "US", "JP")),
-                    f"card 1 names HK, US and JP: {sub!r}"))
+                    f"card 1 prints the engine universe's total: {big!r} vs {total}"))
+        res.append((markets_in(sub) == set(engine_markets),
+                    f"card 1 names exactly the engine's markets: {sub!r} vs {engine_markets}"))
         res.append(("200+200" not in str(big) and "200+200" not in str(sub),
                     f"card 1 does not carry the retired '200+200' claim: {big!r} {sub!r}"))
         t10 = (hl.get("T+10 (10-day swing)") or {}).get("avg")
@@ -2407,6 +2420,9 @@ def t_og_image_figures_match_the_artifact() -> None:
     record("the OG image's sidecar universe counts are the published tree's",
            (fig.get("universe_ticker_pages") or {}) == tree,
            f"sidecar {fig.get('universe_ticker_pages')} vs tree {tree}")
+    record("the OG image's sidecar records the markets the generator used",
+           (fig.get("markets") or []) == engine_markets,
+           f"sidecar {fig.get('markets')} vs engine {engine_markets}")
     record("the OG image's sidecar records the brand line the generator printed",
            fig.get("tagline") == tagline,
            f"sidecar {fig.get('tagline')!r} vs generator {tagline!r}")
@@ -2435,17 +2451,19 @@ def t_og_image_figures_match_the_artifact() -> None:
            "the sidecar was left corrupted by the control")
 
     # ---- MUST-FAIL: type the universe into the REAL generator -------------
-    # str(total) -> 241 + 232 + 201: the card still adds up, so only a check
-    # on the source can tell a counted number from a typed one.
+    # str(total) -> str(232 + 201): the card still prints the RIGHT number, so
+    # the card check still passes and only a check on the SOURCE can tell a
+    # counted number from a typed one. A control that also broke the number
+    # would prove nothing about the source scan.
     try:
         assert gen_txt.count("(str(total),") == 1
-        gen_p.write_text(gen_txt.replace("(str(total),", "(241 + 232 + 201,"),
+        gen_p.write_text(gen_txt.replace("(str(total),", "(str(232 + 201),"),
                          encoding="utf-8")
         tampered = gen_p.read_text(encoding="utf-8")
         red_cards = card_checks(load_cards(tampered)["cards"])
         red_src = source_checks(tampered)
         record("MUST-FAIL a typed universe total in the generator is rejected",
-               not all(ok for ok, _ in red_cards) and not all(ok for ok, _ in red_src),
+               all(ok for ok, _ in red_cards) and not all(ok for ok, _ in red_src),
                "the control for this gate does not discriminate: the same "
                "predicate still passes on a generator that types the number")
     finally:
@@ -2456,7 +2474,7 @@ def t_og_image_figures_match_the_artifact() -> None:
 
     # ---- MUST-FAIL: let the brand line drop a market ----------------------
     try:
-        needle = '" + ".join(_universe_counts().keys())'
+        needle = '" + ".join(_markets())'
         assert gen_txt.count(needle) == 1
         gen_p.write_text(gen_txt.replace(needle, '"HK + US"'), encoding="utf-8")
         tampered = gen_p.read_text(encoding="utf-8")
@@ -2485,6 +2503,167 @@ def t_og_image_figures_match_the_artifact() -> None:
     record("the generator is restored after the text control",
            gen_p.read_text(encoding="utf-8") == gen_txt,
            "the generator was left corrupted by the control")
+
+
+def t_hub_universe_claims_match_the_page() -> None:
+    """A hub page must quote the number of names it actually lists.
+
+    Each of the three hubs used to say "200" in four places at once — the
+    <title>, the og:title, the kicker and the FAQPage schema — while the
+    table under them listed 241 HK, 232 US and 201 JP names. On the HK hub
+    the hero meta added a third number, "Universe: 245 HK names", taken
+    from len(universe) — four names with no data and so no page — for a
+    table of 241 rows. Three numbers for one set, on the pages that carry
+    the most SEO weight on the site, and the first thing a visitor looks
+    at to find out what the site covers.
+
+    The count is now derived from the rows the page renders, so it cannot
+    drift. This gate makes sure the built page agrees with the tree it was
+    built from, that the homepage's own v2 universe line agrees with the
+    two hubs the engine runs, and that no "200" claim survives on the three
+    pages.
+    """
+    MARKETS = (("HK", "hk200", "港股"), ("US", "us200", "美股"), ("JP", "jp200", "日股"))
+    missing = [d for _, d, _ in MARKETS if not (PUBLIC / d / "index.html").exists()]
+    record("every hub page the universe-count gate needs is present",
+           not missing, f"missing: {missing}")
+    if missing:
+        return
+
+    def hub_checks(text: str, code: str, d: str, label: str, n: int) -> list:
+        """The predicate, factored so the control can re-evaluate it."""
+        res = []
+        res.append((f"{label} {n} · Leeks Terminal" in text,
+                    f"the {label} hub's title says {label} {n}"))
+        res.append((f'property="og:title" content="{label} {n} · Leeks Terminal"' in text,
+                    f"the {label} hub's og:title says {label} {n}"))
+        res.append((f'<div class="kicker">{code} · {n} names</div>' in text,
+                    f"the {label} hub's kicker says {code} · {n} names"))
+        res.append((f"Universe: <b>{n} {code} names</b>" in text,
+                    f"the {label} hub's hero says the universe is {n} names"))
+        res.append((f'"{label} {n} 點樣揀？"' in text,
+                    f"the {label} hub's FAQ names {n}"))
+        res.append((f"{n} 隻" in text,
+                    f"the {label} hub's FAQ quotes {n} 隻"))
+        stale = [s for s in (f"{label} 200", f"{code} · 200 names",
+                             f"{label} 200 點樣揀", "200 隻", "5-day 平均成交額")
+                 if s in text]
+        res.append((not stale,
+                    f"the {label} hub carries no stale universe claim: {stale}"))
+        res.append((len(set(re.findall(r'href="/%s/ticker/([^"]+)"' % d, text))) == n,
+                    f"the {label} hub lists {n} ticker links"))
+        return res
+
+    counts = {}
+    for code, d, label in MARKETS:
+        text = (PUBLIC / d / "index.html").read_text(encoding="utf-8", errors="replace")
+        n = len(set(re.findall(r'href="/%s/ticker/([^"]+)"' % d, text)))
+        counts[code] = n
+        for ok, msg in hub_checks(text, code, d, label, n):
+            record(msg, ok, "the hub pages quote a universe size they do not list")
+
+    # The homepage states the v2 universe in its own lede and badge. The two
+    # hubs the engine runs must agree with it, and the OG card's total must
+    # be the same sum — three places, one number.
+    home = (PUBLIC / "index.html").read_text(encoding="utf-8", errors="replace")
+    m = re.search(r"<b>(\d+) 隻美股、(\d+) 隻日股</b>", home)
+    if not m:
+        record("the homepage states its v2 universe", False,
+               "the homepage's lede no longer carries the 'N 隻美股、M 隻日股' line")
+        return
+    home_us, home_jp = int(m.group(1)), int(m.group(2))
+    record("the homepage's v2 universe matches the US and JP hubs",
+           home_us == counts["US"] and home_jp == counts["JP"],
+           f"homepage {home_us} US / {home_jp} JP vs hubs {counts['US']} / {counts['JP']}")
+    record("the homepage's v2 badge matches its own lede",
+           f"{home_us} US + {home_jp} JP 行 v2" in home,
+           f"the badge does not say {home_us} US + {home_jp} JP 行 v2")
+    sidecar = PUBLIC / "og-image.figures.json"
+    if sidecar.exists():
+        fig = json.loads(sidecar.read_text(encoding="utf-8"))
+        og_total = (fig.get("cards") or [{}])[0].get("big")
+        record("the OG image's universe total is the homepage's v2 universe",
+               og_total == str(home_us + home_jp),
+               f"the OG card says {og_total!r}, the homepage says {home_us + home_jp}")
+
+    # ---- MUST-FAIL: tamper a REAL hub and re-evaluate ---------------------
+    hp = PUBLIC / "hk200" / "index.html"
+    good = hp.read_text(encoding="utf-8")
+    try:
+        hp.write_text(good.replace("港股 241", "港股 200", 1), encoding="utf-8")
+        on_disk = hp.read_text(encoding="utf-8")
+        red = hub_checks(on_disk, "HK", "hk200", "港股", counts["HK"])
+        record("MUST-FAIL a hub that quotes the wrong universe size is rejected",
+               not all(ok for ok, _ in red),
+               "the control for this gate does not discriminate: the same "
+               "predicate still passes on a hub quoting the wrong size")
+    finally:
+        hp.write_text(good, encoding="utf-8")
+    record("the hub page is restored after the control",
+           hp.read_text(encoding="utf-8") == good,
+           "the hub page was left corrupted by the control")
+
+
+def t_page_date_modified_is_the_data_date() -> None:
+    """A page's JSON-LD dateModified must be the date of its own data.
+
+    The ticker pages' dateModified came from t_minus_1() — the last weekday
+    on the calendar — while the page's data date came from data_asof(), the
+    date the bars actually end on. The two agree only on the day a build
+    happens to run right after the close. Rebuild on any other day and the
+    structured data claims a freshness the numbers do not have: the
+    2026-10-20 build stamped every ticker page dateModified 2026-10-19
+    while their bars end 2026-10-16.
+
+    t_minus_1()'s own docstring names this failure — "building on
+    2026-10-02 against 2026-09-29 bars produced a page that claimed 'T-1
+    09-30' while every number was 09-29" — and the fix then was a manual
+    LEAKS_ASOF override. The default has to be the data's own date: one
+    page, one date.
+    """
+    pages = []
+    for d in ("hk200", "us200", "jp200"):
+        pages += sorted((PUBLIC / d / "ticker").glob("*.html"))
+    record("ticker pages are present for the dateModified gate", bool(pages),
+           "no ticker pages found")
+    if not pages:
+        return
+
+    def page_checks(text: str) -> bool:
+        """True when the page's data date and its dateModified agree."""
+        t1 = re.search(r"T-1 · (\d{4}-\d{2}-\d{2})", text)
+        dm = re.search(r'"dateModified": "(\d{4}-\d{2}-\d{2})"', text)
+        if not t1 or not dm:
+            return False
+        return t1.group(1) == dm.group(1)
+
+    bad = []
+    for p in pages:
+        text = p.read_text(encoding="utf-8", errors="replace")
+        if not page_checks(text):
+            t1 = re.search(r"T-1 · (\d{4}-\d{2}-\d{2})", text)
+            dm = re.search(r'"dateModified": "(\d{4}-\d{2}-\d{2})"', text)
+            bad.append(f"{p.name}: {t1.group(1) if t1 else '?'} vs "
+                       f"{dm.group(1) if dm else '?'}")
+    record("every ticker page's dateModified is its own data date",
+           not bad, f"{len(bad)} of {len(pages)} pages disagree: {bad[:3]}")
+
+    # ---- MUST-FAIL: stamp a REAL page with the wrong date -----------------
+    target = next((p for p in pages if "/us200/" in str(p)), pages[0])
+    good = target.read_text(encoding="utf-8")
+    try:
+        target.write_text(good.replace('"dateModified": "', '"dateModified": "1999-01-01", "x": "', 1),
+                          encoding="utf-8")
+        on_disk = target.read_text(encoding="utf-8")
+        record("MUST-FAIL a page whose dateModified is not its data date is rejected",
+               not page_checks(on_disk),
+               "the control for this gate does not discriminate: the same "
+               "predicate still passes on a page with a wrong dateModified")
+    finally:
+        target.write_text(good, encoding="utf-8")
+    record("the ticker page is restored after the control",
+           target.read_text(encoding="utf-8") == good,
+           "the ticker page was left corrupted by the control")
 
 
 def t_one_action_authority_per_page() -> None:
@@ -4299,6 +4478,8 @@ def main() -> int:
                t_homepage_perf_figures_trace_to_source,
                t_p0_site_figures_match_the_artifact,
                t_og_image_figures_match_the_artifact,
+               t_hub_universe_claims_match_the_page,
+               t_page_date_modified_is_the_data_date,
                t_one_action_authority_per_page,
                t_equity_curve_stats_are_internally_consistent,
                t_no_withdrawn_figures_are_published,

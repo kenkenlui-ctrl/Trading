@@ -484,6 +484,7 @@ def build_dashboard_page(
     title_main: str,
     title_lede: str,
     hero_meta_extra: str,
+    n_names: int,
     color_theme: str = "bull",
 ) -> str:
     nav_links = f'''
@@ -501,13 +502,18 @@ def build_dashboard_page(
     '''
 
     canon_url = f"https://www.win9you.com/{market.lower()}200/"
+    # The FAQ quotes the universe size, so it cannot be a literal. __N__ is
+    # replaced with the number of rows the page actually lists — the same
+    # number the title, the kicker and the hero meta carry. It used to be
+    # the string "200", which was true for none of the three hubs: the
+    # pages list 241 HK, 232 US and 201 JP names.
     faq_block = ""
     if market == "HK":
         faq_block = """,
     {
       "@type": "FAQPage",
       "mainEntity": [
-        {"@type": "Question", "name": "港股 200 點樣揀？", "acceptedAnswer": {"@type": "Answer", "text": "用 5-day 平均成交額排序頭 200 隻，全部 T-1 收市 data，每日 refresh。"}},
+        {"@type": "Question", "name": "港股 __N__ 點樣揀？", "acceptedAnswer": {"@type": "Answer", "text": "用 20 日平均成交額排序頭 __N__ 隻，全部 T-1 收市 data，每日 refresh。"}},
         {"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {"@type": "Answer", "text": "價格行為分析框架（phase + S/R ladder + 情境），由 T-1 OHLC 純 Python deterministic 計算。行動計劃統一由 v2 引擎提供；舊版四個策略（SELL_R1 / BUY_S1 / BREAK_LONG / BREAK_SHORT）於 2016–2026 回測並無正期望值，已於 2026-10-18 從頁面移除。"}},
         {"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {"@type": "Answer", "text": "已扣 Futu 免佣 + 0.25% round-trip (HK)，純 signal + backtest 結果。"}}
       ]
@@ -517,7 +523,7 @@ def build_dashboard_page(
     {
       "@type": "FAQPage",
       "mainEntity": [
-        {"@type": "Question", "name": "美股 200 點樣揀？", "acceptedAnswer": {"@type": "Answer", "text": "用 5-day 平均成交額排序頭 200 隻，全部 T-1 收市 data，每日 refresh。"}},
+        {"@type": "Question", "name": "美股 __N__ 點樣揀？", "acceptedAnswer": {"@type": "Answer", "text": "用 20 日平均成交額排序頭 __N__ 隻，全部 T-1 收市 data，每日 refresh。"}},
         {"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {"@type": "Answer", "text": "價格行為分析框架（phase + S/R ladder + 情境），由 T-1 OHLC 純 Python deterministic 計算。行動計劃統一由 v2 引擎提供；舊版四個策略已於 2016–2026 回測證明並無正期望值，於 2026-10-18 從頁面移除。"}},
         {"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {"@type": "Answer", "text": "已扣 0.05% round-trip (US)，Futu 免佣。"}}
       ]
@@ -527,11 +533,12 @@ def build_dashboard_page(
     {
       "@type": "FAQPage",
       "mainEntity": [
-        {"@type": "Question", "name": "日股 200 點樣揀？", "acceptedAnswer": {"@type": "Answer", "text": "由 Topix Core30 + Large70 開始，yfinance verify 流通量，200 隻全部 T-1 收市 data。"}},
+        {"@type": "Question", "name": "日股 __N__ 點樣揀？", "acceptedAnswer": {"@type": "Answer", "text": "由 Topix Core30 + Large70 開始，yfinance verify 流通量，__N__ 隻全部 T-1 收市 data。"}},
         {"@type": "Question", "name": "信號邊度嚟？", "acceptedAnswer": {"@type": "Answer", "text": "價格行為分析框架（phase + S/R ladder + 情境）。行動計劃統一由 v2 引擎提供；舊版四個策略已於 2016–2026 回測證明並無正期望值，於 2026-10-18 從頁面移除。"}},
         {"@type": "Question", "name": "成本幾多？", "acceptedAnswer": {"@type": "Answer", "text": "已扣 0.05% round-trip (JP)，Futu 免佣。"}}
       ]
     }"""
+    faq_block = faq_block.replace("__N__", str(n_names))
 
     # 2026-10-02: this is an f-string, so every *literal* JSON brace must stay
     # doubled ({{ / }}); only the interpolation expressions below are single.
@@ -1059,7 +1066,15 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
     desc_parts.append(f"T-{1}收市數據 · 教育用途非投資建議")
     meta_desc = " · ".join(desc_parts)
 
-    t1_iso = t_minus_1().isoformat()
+    # 2026-10-20: the JSON-LD dateModified used the CALENDAR-derived
+    # t_minus_1(), while the page's own data date is the BARS-derived
+    # data_asof(). The two agree only on the day the build happens to run
+    # right after the close. Rebuilding on any other day stamped a
+    # dateModified the data does not cover — the exact failure t_minus_1()'s
+    # own docstring warns about, which is why LEAKS_ASOF was added as a
+    # manual escape hatch. The default must be the data date, not the
+    # calendar: one page, one date.
+    t1_iso = _t1
     # 2026-10-18 (2-into-1 + a real bug fix). This headline used to carry the
     # RETIRED v1 engine's verdict into structured data, where a search engine or
     # an AI reader sees "Action Plan (WAIT)" with no indication of which engine
@@ -1347,8 +1362,8 @@ def build_for_market(market: str):
         out_index = PUBLIC / "hk200" / "index.html"
         ticker_dir = PUBLIC / "hk200" / "ticker"
         market_name = "HK"
-        title_kicker = "HK · 200 names"
-        title_lede = "港股 200 by 5-day 平均成交額排序。港股 <b>未納入 v2</b>，所以呢頁冇港股入場計劃 —— 舊版引擎嘅 BUY/SELL/WAIT 行動建議已於 2026-10-18 全站移除。表內係價格行為分析（Phase）同 T-1 收市價。回測口徑：HK 0.25% round-trip 成本。"
+        title_kicker = "HK · __N__ names"
+        title_lede = "港股 __N__ by 20 日平均成交額排序。港股 <b>未納入 v2</b>，所以呢頁冇港股入場計劃 —— 舊版引擎嘅 BUY/SELL/WAIT 行動建議已於 2026-10-18 全站移除。表內係價格行為分析（Phase）同 T-1 收市價。回測口徑：HK 0.25% round-trip 成本。"
     elif market == "JP":
         universe = []
         jp_univ = REPO / "jp_universe_200.json"
@@ -1359,8 +1374,8 @@ def build_for_market(market: str):
         out_index = PUBLIC / "jp200" / "index.html"
         ticker_dir = PUBLIC / "jp200" / "ticker"
         market_name = "JP"
-        title_kicker = "JP · 200 names"
-        title_lede = "日股 200 (Topix Core30 + Large70) by 5-day 平均成交額排序。v2 係本站<b>唯一</b>嘅行動權威：跌到 20 日低位 S1 掛限價單、收市企穩先算成交、止損 3×ATR、第 10 個交易日離場。舊版四個策略已於 2026-10-18 移除。T-1 收市 data，回測口徑 0.05% round-trip 成本。"
+        title_kicker = "JP · __N__ names"
+        title_lede = "日股 __N__ (Topix Core30 + Large70 起步) by 20 日平均成交額排序。v2 係本站<b>唯一</b>嘅行動權威：跌到 20 日低位 S1 掛限價單、收市企穩先算成交、止損 3×ATR、第 10 個交易日離場。舊版四個策略已於 2026-10-18 移除。T-1 收市 data，回測口徑 0.05% round-trip 成本。"
     else:
         universe = []
         if US_PUBLISHED.exists():
@@ -1374,8 +1389,8 @@ def build_for_market(market: str):
         out_index = PUBLIC / "us200" / "index.html"
         ticker_dir = PUBLIC / "us200" / "ticker"
         market_name = "US"
-        title_kicker = "US · 200 names"
-        title_lede = "美股 200 by 5-day 平均成交額排序。v2 係本站<b>唯一</b>嘅行動權威：跌到 20 日低位 S1 掛限價單、收市企穩先算成交、止損 3×ATR、第 10 個交易日離場。舊版四個策略已於 2026-10-18 移除。T-1 收市 data，回測口徑 US 0.05% round-trip 成本。"
+        title_kicker = "US · __N__ names"
+        title_lede = "美股 __N__ by 20 日平均成交額排序。v2 係本站<b>唯一</b>嘅行動權威：跌到 20 日低位 S1 掛限價單、收市企穩先算成交、止損 3×ATR、第 10 個交易日離場。舊版四個策略已於 2026-10-18 移除。T-1 收市 data，回測口徑 US 0.05% round-trip 成本。"
 
     if not universe:
         print(f"⚠ {market}: empty universe, skip")
@@ -1535,25 +1550,27 @@ def build_for_market(market: str):
 
     print(f"  {len(rows)} tickers with JSON, {chart_copied} charts copied, {len(detail_pages)} detail pages")
 
-    # Hero meta
+    # Hero meta. The universe size quoted here is the number of rows the page
+    # actually lists, not len(universe): four HK names are in
+    # hk_universe_200.json but have no data and so no page. The hero used to
+    # say 245 while the table under it listed 241 — two numbers for one set.
+    n = len(rows)
+    title_kicker = title_kicker.replace("__N__", str(n))
+    title_lede = title_lede.replace("__N__", str(n))
+
     phase_str = f"Down {phase_counts.get('downtrend_active', 0)} · Base {phase_counts.get('base_building', 0)} · Recov {phase_counts.get('downtrend_recovery', 0)} · Up {phase_counts.get('uptrend', 0)}"
     reg_color = "var(--bear)" if phase_counts.get("downtrend_active", 0) > phase_counts.get("uptrend", 0) * 5 else "var(--amber)"
 
     hero_meta_extra = f'''
-      <span>Universe: <b>{len(universe)} {market} names</b></span>
+      <span>Universe: <b>{n} {market} names</b></span>
       <span>T-1 data: <b>{data_asof(market)}</b></span>
       <span>Updated: <b>{datetime.now().strftime('%H:%M HKT')}</b></span>
       <span>Regime: <b style="color: {reg_color};">{phase_str}</b></span>
     '''
 
     # Build dashboard
-    title_main = f"{market} 200"
-    if market == "HK":
-        title_main = "港股 200"
-    elif market == "JP":
-        title_main = "日股 200"
-    else:
-        title_main = "美股 200"
+    label = {"HK": "港股", "US": "美股", "JP": "日股"}[market]
+    title_main = f"{label} {n}"
 
     html = build_dashboard_page(
         market=market_name,
@@ -1563,6 +1580,7 @@ def build_for_market(market: str):
         title_main=title_main,
         title_lede=title_lede,
         hero_meta_extra=hero_meta_extra,
+        n_names=n,
     )
     out_index.write_text(html, encoding="utf-8")
     print(f"  → {out_index} ({out_index.stat().st_size:,} bytes)")
