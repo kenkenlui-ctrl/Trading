@@ -3,23 +3,23 @@
   "ticker_user": "RTX",
   "name": "RTX Corporation",
   "data_source": "yfinance",
-  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
+  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-19",
-    "O": 192.0,
-    "H": 193.9,
-    "L": 190.38,
-    "C": 192.11,
-    "prev_close": 193.92,
-    "chg_pct": -0.93
+    "date": "2026-10-23",
+    "O": 192.55,
+    "H": 193.74,
+    "L": 189.28,
+    "C": 191.01,
+    "prev_close": 194.71,
+    "chg_pct": -1.9
   },
   "phase": "downtrend_active",
-  "adx": 41.51,
-  "plus_di": 21.37,
-  "minus_di": 23.73,
+  "adx": 32.36,
+  "plus_di": 18.08,
+  "minus_di": 17.8,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 226.88 (2026-08-10), trough 179.02 (2026-10-08), box top 194.32 (2026-10-16)",
+  "phase_evidence": "Peak 226.88 (2026-08-10), trough 179.02 (2026-10-08), box top 197.0 (2026-10-20)",
   "peak": {
     "date": "2026-08-10",
     "price": 226.88
@@ -29,58 +29,57 @@
     "price": 179.02
   },
   "box": {
-    "top": 194.32,
-    "top_date": "2026-10-16",
+    "top": 197.0,
+    "top_date": "2026-10-20",
     "bottom": 179.02,
-    "period": "2026-10-08 to 2026-10-19"
+    "period": "2026-10-08 to 2026-10-23"
   },
-  "drop_from_peak_pct": 15.3,
-  "recovery_from_crash_pct": 7.3,
+  "drop_from_peak_pct": 15.8,
+  "recovery_from_crash_pct": 6.7,
   "supports": [
     {
-      "level": 188.0,
-      "label": "S1 KEY",
-      "touches": 10,
-      "evidence": "tested 10x in base period; 2.1% below current"
-    },
-    {
       "level": 184.0,
-      "label": "S2",
-      "touches": 18,
-      "evidence": "mid-base support, tested 18x"
+      "label": "S1 KEY",
+      "touches": 13,
+      "evidence": "tested 13x in base period; 3.7% below current"
     },
     {
       "level": 180.0,
-      "label": "S3 bottom",
-      "touches": 6,
+      "label": "S2 bottom",
+      "touches": 5,
       "evidence": "structural bottom, near crash low 179.02"
     }
   ],
   "resistances": [
     {
-      "level": 193.9,
+      "level": 193.74,
       "label": "R1 today high",
-      "evidence": "today's high 193.89999389648438"
+      "evidence": "today's high 193.74000549316406"
+    },
+    {
+      "level": 197.0,
+      "label": "R3 Oct high",
+      "evidence": "box top 197.0, base period high"
     }
   ],
   "position": {
-    "current": 192.11,
-    "in_box_pct": 87.1,
-    "nearest_support": "S1 KEY (188.0)",
-    "nearest_resistance": "R1 today high (193.9)"
+    "current": 191.01,
+    "in_box_pct": 64.8,
+    "nearest_support": "S1 KEY (184.0)",
+    "nearest_resistance": "R1 today high (193.74)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 192.0,
-    "H": 193.9,
-    "L": 190.38,
-    "C": 192.11,
-    "body_pct": 3.1,
-    "upper_wick_pct": 50.9,
-    "lower_wick_pct": 46.0
+    "O": 192.55,
+    "H": 193.74,
+    "L": 189.28,
+    "C": 191.01,
+    "body_pct": 34.5,
+    "upper_wick_pct": 26.7,
+    "lower_wick_pct": 38.8
   },
   "bias": {
     "short": {
@@ -98,20 +97,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 188.0 (KEY support)",
-      "then": "still range; watch 193.9 for next test"
+      "if": "hold 184.0 (KEY support)",
+      "then": "still range; watch 193.74 for next test"
     },
     {
-      "if": "break 188.0 on close",
-      "then": "target 184.0 → 180.0 (short-term bearish)"
+      "if": "break 184.0 on close",
+      "then": "target 180.0 → lower (short-term bearish)"
     },
     {
       "if": "break 180.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 193.9 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 193.74 on close",
+      "then": "short-term bullish; next test 197.0"
+    },
+    {
+      "if": "break 197.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -142,24 +145,32 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 195.07,
+    "r1": 197.0,
     "s1": 179.02,
-    "s2": 191.18,
+    "s2": 187.04,
     "r2": 226.88,
-    "r3": 214.89,
+    "r3": 221.34,
     "s3": 170.78,
     "s4": 171.63,
-    "current_position_pct": 81.6,
-    "notes": "WAIT_RANGE: in box (179-195), pos 82%, no clear setup"
+    "current_position_pct": 66.7,
+    "notes": "WAIT_RANGE: in box (179-197), pos 67%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-10-23",
+      "low": 189.27999877929688,
+      "high": 193.74000549316406,
+      "i": 199
+    },
     {
       "name": "三個白武士",
       "bias": "bullish",
       "date": "2026-10-06",
       "low": 182.41000366210938,
       "high": 184.60000610351562,
-      "i": 190
+      "i": 186
     },
     {
       "name": "刺穿線",
@@ -167,7 +178,7 @@
       "date": "2026-09-25",
       "low": 187.55999755859375,
       "high": 189.5800018310547,
-      "i": 183
+      "i": 179
     },
     {
       "name": "上升三法",
@@ -175,23 +186,15 @@
       "date": "2026-08-25",
       "low": 207.44000244140625,
       "high": 210.64999389648438,
-      "i": 161
-    },
-    {
-      "name": "烏雲蓋頂",
-      "bias": "bearish",
-      "date": "2026-08-19",
-      "low": 220.22000122070312,
-      "high": 226.41000366210938,
       "i": 157
     },
     {
-      "name": "黃昏之星",
+      "name": "利淡吞噬",
       "bias": "bearish",
-      "date": "2026-07-30",
-      "low": 209.38999938964844,
-      "high": 214.63999938964844,
-      "i": 143
+      "date": "2026-08-17",
+      "low": 221.60000610351562,
+      "high": 224.61000061035156,
+      "i": 151
     }
   ]
 }

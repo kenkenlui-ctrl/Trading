@@ -3,23 +3,23 @@
   "ticker_user": "UPS",
   "name": "United Parcel Service, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
+  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-19",
-    "O": 97.25,
-    "H": 97.69,
-    "L": 96.77,
-    "C": 97.46,
-    "prev_close": 97.48,
-    "chg_pct": -0.02
+    "date": "2026-10-23",
+    "O": 100.9,
+    "H": 101.58,
+    "L": 99.08,
+    "C": 101.06,
+    "prev_close": 101.52,
+    "chg_pct": -0.45
   },
   "phase": "downtrend_active",
-  "adx": 33.57,
-  "plus_di": 24.02,
-  "minus_di": 19.38,
+  "adx": 33.24,
+  "plus_di": 29.36,
+  "minus_di": 13.46,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 122.41 (2026-02-12), trough 91.56 (2026-10-05), box top 99.75 (2026-10-16)",
+  "phase_evidence": "Peak 122.41 (2026-02-12), trough 91.56 (2026-10-05), box top 101.97 (2026-10-22)",
   "peak": {
     "date": "2026-02-12",
     "price": 122.41
@@ -29,57 +29,58 @@
     "price": 91.56
   },
   "box": {
-    "top": 99.75,
-    "top_date": "2026-10-16",
+    "top": 101.97,
+    "top_date": "2026-10-22",
     "bottom": 91.56,
-    "period": "2026-10-05 to 2026-10-19"
+    "period": "2026-10-05 to 2026-10-23"
   },
-  "drop_from_peak_pct": 20.4,
-  "recovery_from_crash_pct": 6.4,
+  "drop_from_peak_pct": 17.4,
+  "recovery_from_crash_pct": 10.4,
   "supports": [
     {
-      "level": 96.0,
+      "level": 100.0,
       "label": "S1 KEY",
       "touches": 6,
-      "evidence": "tested 6x in base period; 1.5% below current"
+      "evidence": "tested 6x in base period; 1.0% below current"
+    },
+    {
+      "level": 96.0,
+      "label": "S2",
+      "touches": 15,
+      "evidence": "mid-base support, tested 15x"
     },
     {
       "level": 92.0,
-      "label": "S2 bottom",
+      "label": "S3 bottom",
       "touches": 19,
       "evidence": "structural bottom, near crash low 91.56"
     }
   ],
   "resistances": [
     {
-      "level": 97.69,
+      "level": 101.58,
       "label": "R1 today high",
-      "evidence": "today's high 97.69000244140625"
-    },
-    {
-      "level": 99.75,
-      "label": "R3 Oct high",
-      "evidence": "box top 99.75, base period high"
+      "evidence": "today's high 101.58000183105469"
     }
   ],
   "position": {
-    "current": 97.46,
-    "in_box_pct": 70.5,
-    "nearest_support": "S1 KEY (96.0)",
-    "nearest_resistance": "R1 today high (97.69)"
+    "current": 101.06,
+    "in_box_pct": 94.6,
+    "nearest_support": "S1 KEY (100.0)",
+    "nearest_resistance": "R1 today high (101.58)"
   },
   "kline_today": {
     "type": "bullish_hold",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 97.25,
-    "H": 97.69,
-    "L": 96.77,
-    "C": 97.46,
-    "body_pct": 22.8,
-    "upper_wick_pct": 25.0,
-    "lower_wick_pct": 52.2
+    "O": 100.9,
+    "H": 101.58,
+    "L": 99.08,
+    "C": 101.06,
+    "body_pct": 6.4,
+    "upper_wick_pct": 20.8,
+    "lower_wick_pct": 72.8
   },
   "bias": {
     "short": {
@@ -91,30 +92,26 @@
       "reason": "making new lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 96.0 (KEY support)",
-      "then": "still range; watch 97.69 for next test"
+      "if": "hold 100.0 (KEY support)",
+      "then": "still range; watch 101.58 for next test"
     },
     {
-      "if": "break 96.0 on close",
-      "then": "target 92.0 → lower (short-term bearish)"
+      "if": "break 100.0 on close",
+      "then": "target 96.0 → 92.0 (short-term bearish)"
     },
     {
       "if": "break 92.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 97.69 on close",
-      "then": "short-term bullish; next test 99.75"
-    },
-    {
-      "if": "break 99.75 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 101.58 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -145,15 +142,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 99.75,
+    "r1": 101.97,
     "s1": 91.56,
-    "s2": 94.23,
-    "r2": 114.87,
+    "s2": 91.63,
+    "r2": 109.42,
     "r3": 118.42,
     "s3": 93.86,
     "s4": 94.06,
-    "current_position_pct": 72.0,
-    "notes": "WAIT_RANGE: in box (92-100), pos 72%, no clear setup"
+    "current_position_pct": 91.3,
+    "notes": "WAIT_RANGE: in box (92-102), pos 91%, no clear setup"
   },
   "patterns": [
     {
@@ -162,7 +159,7 @@
       "date": "2026-10-14",
       "low": 94.2300033569336,
       "high": 95.81999969482422,
-      "i": 196
+      "i": 192
     },
     {
       "name": "平頭底",
@@ -170,7 +167,7 @@
       "date": "2026-10-01",
       "low": 93.33999633789062,
       "high": 94.44999694824219,
-      "i": 187
+      "i": 183
     },
     {
       "name": "早晨之星",
@@ -178,7 +175,7 @@
       "date": "2026-08-26",
       "low": 104.55000305175781,
       "high": 107.11000061035156,
-      "i": 162
+      "i": 158
     },
     {
       "name": "利好身懷六甲",
@@ -186,7 +183,7 @@
       "date": "2026-08-03",
       "low": 105.05999755859375,
       "high": 107.3499984741211,
-      "i": 145
+      "i": 141
     },
     {
       "name": "利淡吞噬",
@@ -194,7 +191,7 @@
       "date": "2026-07-27",
       "low": 112.37000274658203,
       "high": 114.87000274658203,
-      "i": 140
+      "i": 136
     }
   ]
 }

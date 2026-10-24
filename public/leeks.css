@@ -749,6 +749,26 @@ section h2 .em { font-style: italic; color: var(--blue); font-variation-settings
 .info-card dt { color: var(--dim); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; font-size: var(--text-xs); }
 .info-card dd { font-family: var(--font-mono); text-align: right; }
 
+/* Sprint 2 A1 — the data-freshness banner.
+   Rendered by integrity/freshness.py when a market's data is behind that
+   market's latest closed session. It has to read as an alarm, not as a
+   footnote: the numbers below it are still visible, so the reader must not
+   be able to miss that they are old. */
+.sprint2-banner {
+  display: block;
+  padding: var(--sp-4);
+  border-left: 4px solid var(--amber);
+  background: var(--panel);
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--fg);
+}
+.sprint2-banner--stale { border-left-color: var(--amber); }
+.sprint2-banner[data-state="NOT_RUN"],
+.sprint2-banner[data-state="SOURCE_DOWN"] { border-left-color: var(--bear); }
+.sprint2-banner b { font-weight: 700; }
+
 .phase-block {
   padding: var(--sp-3) var(--sp-4);
   background: var(--bg-2);

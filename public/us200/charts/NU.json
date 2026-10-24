@@ -3,20 +3,20 @@
   "ticker_user": "NU",
   "name": "Nu Holdings Ltd.",
   "data_source": "yfinance",
-  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
+  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-19",
-    "O": 14.72,
-    "H": 14.92,
-    "L": 14.36,
-    "C": 14.51,
-    "prev_close": 14.56,
-    "chg_pct": -0.34
+    "date": "2026-10-23",
+    "O": 14.69,
+    "H": 15.25,
+    "L": 14.57,
+    "C": 15.16,
+    "prev_close": 14.73,
+    "chg_pct": 2.92
   },
   "phase": "base_building",
-  "adx": 18.97,
-  "plus_di": 25.15,
-  "minus_di": 28.71,
+  "adx": 14.94,
+  "plus_di": 25.7,
+  "minus_di": 25.67,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 18.98 (2026-01-29), trough 11.2 (2026-06-03), box top 16.22 (2026-08-14)",
@@ -32,16 +32,22 @@
     "top": 16.22,
     "top_date": "2026-08-14",
     "bottom": 11.2,
-    "period": "2026-06-03 to 2026-10-19"
+    "period": "2026-06-03 to 2026-10-23"
   },
-  "drop_from_peak_pct": 23.6,
-  "recovery_from_crash_pct": 29.6,
+  "drop_from_peak_pct": 20.1,
+  "recovery_from_crash_pct": 35.4,
   "supports": [
     {
-      "level": 12.0,
+      "level": 16.0,
       "label": "S1 KEY",
+      "touches": 44,
+      "evidence": "tested 44x in base period; -5.5% below current"
+    },
+    {
+      "level": 12.0,
+      "label": "S2",
       "touches": 66,
-      "evidence": "tested 66x in base period; 17.3% below current"
+      "evidence": "mid-base support, tested 66x"
     },
     {
       "level": 11.2,
@@ -52,9 +58,9 @@
   ],
   "resistances": [
     {
-      "level": 14.92,
+      "level": 15.25,
       "label": "R1 today high",
-      "evidence": "today's high 14.920000076293945"
+      "evidence": "today's high 15.25"
     },
     {
       "level": 16.22,
@@ -63,23 +69,23 @@
     }
   ],
   "position": {
-    "current": 14.51,
-    "in_box_pct": 65.9,
-    "nearest_support": "S1 KEY (12.0)",
-    "nearest_resistance": "R1 today high (14.92)"
+    "current": 15.16,
+    "in_box_pct": 78.9,
+    "nearest_support": "S1 KEY (16.0)",
+    "nearest_resistance": "R1 today high (15.25)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 14.72,
-    "H": 14.92,
-    "L": 14.36,
-    "C": 14.51,
-    "body_pct": 37.5,
-    "upper_wick_pct": 35.7,
-    "lower_wick_pct": 26.8
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 14.69,
+    "H": 15.25,
+    "L": 14.57,
+    "C": 15.16,
+    "body_pct": 68.4,
+    "upper_wick_pct": 13.2,
+    "lower_wick_pct": 18.4
   },
   "bias": {
     "short": {
@@ -97,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 12.0 (KEY support)",
-      "then": "still range; watch 14.92 for next test"
+      "if": "hold 16.0 (KEY support)",
+      "then": "still range; watch 15.25 for next test"
     },
     {
-      "if": "break 12.0 on close",
-      "then": "target 11.2 → lower (short-term bearish)"
+      "if": "break 16.0 on close",
+      "then": "target 12.0 → 11.2 (short-term bearish)"
     },
     {
       "if": "break 11.2 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 14.92 on close",
+      "if": "reclaim 15.25 on close",
       "then": "short-term bullish; next test 16.22"
     },
     {
@@ -136,33 +142,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 16.19,
+    "target_price": 14.16,
+    "stop_price": 17.08,
+    "risk_pct": 5.47,
+    "reward_pct": 12.54,
+    "rr_ratio": 2.29,
     "phase_match": true,
     "r1": 16.19,
     "s1": 12.13,
-    "s2": 13.37,
+    "s2": 13.36,
     "r2": 16.22,
-    "r3": 14.66,
+    "r3": 14.85,
     "s3": 11.2,
     "s4": 13.41,
-    "current_position_pct": 58.6,
-    "notes": "WAIT_RANGE: in box (12-16), pos 59%, no clear setup"
+    "current_position_pct": 74.6,
+    "notes": "SELL_R1: in box (12-16), entry at R1 16, target mid 14, stop 17 ｜ 52.2 條規則（SELL plan，resistance 16.19）：① 跌到 16.19、收市守住喺 16.19 上面 → 照 BUY 條 plan 做（入場 16.19，止蝕 17.08，目標 14.16）。② 收市跌穿 16.19 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 16.19 上面』。"
   },
   "patterns": [
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-10-22",
+      "low": 14.630000114440918,
+      "high": 15.0649995803833,
+      "i": 198
+    },
     {
       "name": "黃昏之星",
       "bias": "bearish",
       "date": "2026-10-14",
       "low": 14.765000343322754,
       "high": 15.4399995803833,
-      "i": 196
+      "i": 192
     },
     {
       "name": "刺穿線",
@@ -170,7 +184,7 @@
       "date": "2026-09-29",
       "low": 12.270000457763672,
       "high": 12.5,
-      "i": 185
+      "i": 181
     },
     {
       "name": "利淡反擊線",
@@ -178,7 +192,7 @@
       "date": "2026-08-27",
       "low": 14.710000038146973,
       "high": 15.256999969482422,
-      "i": 163
+      "i": 159
     },
     {
       "name": "烏雲蓋頂",
@@ -186,15 +200,7 @@
       "date": "2026-08-20",
       "low": 14.140000343322754,
       "high": 14.789999961853027,
-      "i": 158
-    },
-    {
-      "name": "利淡吞噬",
-      "bias": "bearish",
-      "date": "2026-07-31",
-      "low": 14.234999656677246,
-      "high": 14.574999809265137,
-      "i": 144
+      "i": 154
     }
   ]
 }

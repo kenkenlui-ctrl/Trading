@@ -3,20 +3,20 @@
   "ticker_user": "6857.T",
   "name": "Advantest Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-22 → 2026-10-20 (200 daily bars)",
+  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-20",
-    "O": 34450.0,
-    "H": 35090.0,
-    "L": 33690.0,
-    "C": 33870.0,
-    "prev_close": 34450.0,
-    "chg_pct": -1.6835994194484782
+    "date": "2026-10-23",
+    "O": 30480.0,
+    "H": 32610.0,
+    "L": 30030.0,
+    "C": 32340.0,
+    "prev_close": 32370.0,
+    "chg_pct": -0.0926784059314234
   },
   "phase": "base_building",
-  "adx": 23.41,
-  "plus_di": 23.7,
-  "minus_di": 33.1,
+  "adx": 22.95,
+  "plus_di": 20.44,
+  "minus_di": 38.37,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 35940.0 (2026-06-25), trough 24135.0 (2026-07-29), box top 41990.0 (2026-10-07)",
@@ -32,13 +32,13 @@
     "top": 41990.0,
     "top_date": "2026-10-07",
     "bottom": 24135.0,
-    "period": "2026-07-29 to 2026-10-20"
+    "period": "2026-07-29 to 2026-10-23"
   },
-  "drop_from_peak_pct": 5.8,
-  "recovery_from_crash_pct": 40.3,
+  "drop_from_peak_pct": 10.0,
+  "recovery_from_crash_pct": 34.0,
   "supports": [
     {
-      "level": 32852.0,
+      "level": 31368.0,
       "label": "S1 KEY",
       "touches": 0,
       "evidence": "structural level near current; 3.0% below current"
@@ -52,9 +52,9 @@
   ],
   "resistances": [
     {
-      "level": 35090.0,
+      "level": 32610.0,
       "label": "R1 today high",
-      "evidence": "today's high 35090.0"
+      "evidence": "today's high 32610.0"
     },
     {
       "level": 41990.0,
@@ -63,23 +63,23 @@
     }
   ],
   "position": {
-    "current": 33870.0,
-    "in_box_pct": 54.5,
-    "nearest_support": "S1 KEY (32852.0)",
-    "nearest_resistance": "R1 today high (35090.0)"
+    "current": 32340.0,
+    "in_box_pct": 46.0,
+    "nearest_support": "S1 KEY (31368.0)",
+    "nearest_resistance": "R1 today high (32610.0)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 34450.0,
-    "H": 35090.0,
-    "L": 33690.0,
-    "C": 33870.0,
-    "body_pct": 41.4,
-    "upper_wick_pct": 45.7,
-    "lower_wick_pct": 12.9
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 30480.0,
+    "H": 32610.0,
+    "L": 30030.0,
+    "C": 32340.0,
+    "body_pct": 72.1,
+    "upper_wick_pct": 10.5,
+    "lower_wick_pct": 17.4
   },
   "bias": {
     "short": {
@@ -97,11 +97,11 @@
   },
   "scenarios": [
     {
-      "if": "hold 32852.0 (KEY support)",
-      "then": "still range; watch 35090.0 for next test"
+      "if": "hold 31368.0 (KEY support)",
+      "then": "still range; watch 32610.0 for next test"
     },
     {
-      "if": "break 32852.0 on close",
+      "if": "break 31368.0 on close",
       "then": "target 24135.0 → lower (short-term bearish)"
     },
     {
@@ -109,7 +109,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 35090.0 on close",
+      "if": "reclaim 32610.0 on close",
       "then": "short-term bullish; next test 41990.0"
     },
     {
@@ -137,23 +137,23 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_VOLATILE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
+    "phase_match": false,
     "r1": 41990.0,
-    "s1": 30000.0,
+    "s1": 30030.0,
     "s2": 24135.0,
     "r2": 38730.0,
     "r3": 35940.0,
     "s3": 24150.0,
     "s4": 19540.0,
-    "current_position_pct": 32.3,
-    "notes": "WAIT_RANGE: in box (30000-41990), pos 32%, no clear setup"
+    "current_position_pct": 19.3,
+    "notes": "WAIT_VOLATILE: ATR14 7.1% / box width 37% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
   },
   "patterns": [
     {
@@ -162,7 +162,7 @@
       "date": "2026-10-16",
       "low": 34050.0,
       "high": 35610.0,
-      "i": 197
+      "i": 194
     },
     {
       "name": "利淡吞噬",
@@ -170,7 +170,7 @@
       "date": "2026-09-30",
       "low": 33880.0,
       "high": 34920.0,
-      "i": 186
+      "i": 183
     },
     {
       "name": "刺穿線",
@@ -178,7 +178,7 @@
       "date": "2026-09-16",
       "low": 29835.0,
       "high": 30720.0,
-      "i": 179
+      "i": 176
     },
     {
       "name": "倒錘頭",
@@ -186,7 +186,7 @@
       "date": "2026-09-10",
       "low": 32470.0,
       "high": 33920.0,
-      "i": 175
+      "i": 172
     },
     {
       "name": "烏雲蓋頂",
@@ -194,23 +194,23 @@
       "date": "2026-08-18",
       "low": 35800.0,
       "high": 37590.0,
-      "i": 158
+      "i": 155
     }
   ],
-  "asof": "2026-10-20",
-  "close": 33870.0,
-  "chg_pct": -1.6835994194484782,
+  "asof": "2026-10-23",
+  "close": 32340.0,
+  "chg_pct": -0.0926784059314234,
   "kline": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 34450.0,
-    "H": 35090.0,
-    "L": 33690.0,
-    "C": 33870.0,
-    "body_pct": 41.4,
-    "upper_wick_pct": 45.7,
-    "lower_wick_pct": 12.9
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 30480.0,
+    "H": 32610.0,
+    "L": 30030.0,
+    "C": 32340.0,
+    "body_pct": 72.1,
+    "upper_wick_pct": 10.5,
+    "lower_wick_pct": 17.4
   }
 }

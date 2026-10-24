@@ -3,21 +3,21 @@
   "ticker_user": "4151.T",
   "name": "Kyowa Kirin Co., Ltd.",
   "data_source": "yfinance",
-  "data_range": "2025-12-22 → 2026-10-20 (200 daily bars)",
+  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-20",
-    "O": 2322.5,
-    "H": 2374.0,
-    "L": 2322.5,
-    "C": 2374.0,
-    "prev_close": 2328.0,
-    "chg_pct": 1.9759450171821236
+    "date": "2026-10-23",
+    "O": 2452.5,
+    "H": 2463.5,
+    "L": 2412.5,
+    "C": 2412.5,
+    "prev_close": 2413.5,
+    "chg_pct": -0.041433602651752555
   },
   "phase": "base_building",
-  "adx": 22.82,
-  "plus_di": 26.53,
-  "minus_di": 17.88,
-  "regime": "dead",
+  "adx": 25.14,
+  "plus_di": 33.71,
+  "minus_di": 14.62,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 2912.0 (2026-02-27), trough 2109.0 (2026-03-05), box top 2751.0 (2026-07-07)",
   "peak": {
@@ -32,25 +32,25 @@
     "top": 2751.0,
     "top_date": "2026-07-07",
     "bottom": 2109.0,
-    "period": "2026-03-05 to 2026-10-20"
+    "period": "2026-03-05 to 2026-10-23"
   },
-  "drop_from_peak_pct": 18.5,
-  "recovery_from_crash_pct": 12.6,
+  "drop_from_peak_pct": 17.2,
+  "recovery_from_crash_pct": 14.4,
   "supports": [
     {
-      "level": 2324.0,
+      "level": 2336.0,
       "label": "S1 KEY",
       "touches": 4,
-      "evidence": "tested 4x in base period; 2.1% below current"
+      "evidence": "tested 4x in base period; 3.2% below current"
     },
     {
-      "level": 2312.0,
+      "level": 2324.0,
       "label": "S2",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
     },
     {
-      "level": 2304.0,
+      "level": 2312.0,
       "label": "S3",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 2374.0,
+      "level": 2463.5,
       "label": "R1 today high",
-      "evidence": "today's high 2374.0"
+      "evidence": "today's high 2463.5"
     },
     {
       "level": 2751.0,
@@ -75,28 +75,28 @@
     }
   ],
   "position": {
-    "current": 2374.0,
-    "in_box_pct": 41.3,
-    "nearest_support": "S1 KEY (2324.0)",
-    "nearest_resistance": "R3 Jul high (2751.0)"
+    "current": 2412.5,
+    "in_box_pct": 47.3,
+    "nearest_support": "S1 KEY (2336.0)",
+    "nearest_resistance": "R1 today high (2463.5)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
-    "touched_S1": true,
-    "close_position": "upper_half",
-    "O": 2322.5,
-    "H": 2374.0,
-    "L": 2322.5,
-    "C": 2374.0,
-    "body_pct": 100.0,
-    "upper_wick_pct": 0.0,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 2452.5,
+    "H": 2463.5,
+    "L": 2412.5,
+    "C": 2412.5,
+    "body_pct": 78.4,
+    "upper_wick_pct": 21.6,
     "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (47% of box)"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -109,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 2324.0 (KEY support)",
-      "then": "still range; watch 2374.0 for next test"
+      "if": "hold 2336.0 (KEY support)",
+      "then": "still range; watch 2463.5 for next test"
     },
     {
-      "if": "break 2324.0 on close",
-      "then": "target 2312.0 → 2304.0 (short-term bearish)"
+      "if": "break 2336.0 on close",
+      "then": "target 2324.0 → 2312.0 (short-term bearish)"
     },
     {
       "if": "break 2109.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 2374.0 on close",
+      "if": "reclaim 2463.5 on close",
       "then": "short-term bullish; next test 2751.0"
     },
     {
@@ -148,33 +148,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 2374.0,
-    "target_price": 2287.0,
-    "stop_price": 2443.59,
-    "risk_pct": 2.93,
-    "reward_pct": 3.66,
-    "rr_ratio": 1.25,
-    "phase_match": true,
-    "r1": 2374.0,
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 2463.5,
     "s1": 2200.0,
     "s2": 2156.5,
     "r2": 2715.5,
     "r3": 2751.0,
     "s3": 2154.5,
     "s4": 2109.0,
-    "current_position_pct": 100.0,
-    "notes": "SELL_R1: in box (2200-2374), entry at R1 2374, target mid 2287, stop 2444 ｜ 52.2 條規則（SELL plan，resistance 2374.00）：① 跌到 2374.00、收市守住喺 2374.00 上面 → 照 BUY 條 plan 做（入場 2374.00，止蝕 2443.59，目標 2287.00）。② 收市跌穿 2374.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2374.00 上面』。"
+    "current_position_pct": 80.6,
+    "notes": "WAIT_RANGE: in box (2200-2464), pos 81%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-10-23",
+      "low": 2412.5,
+      "high": 2463.5,
+      "i": 199
+    },
     {
       "name": "早晨之星",
       "bias": "bullish",
       "date": "2026-10-14",
       "low": 2216.5,
       "high": 2260.5,
-      "i": 195
+      "i": 192
     },
     {
       "name": "下降三法",
@@ -182,7 +190,7 @@
       "date": "2026-10-01",
       "low": 2244.0,
       "high": 2303.0,
-      "i": 187
+      "i": 184
     },
     {
       "name": "吊頸",
@@ -190,7 +198,7 @@
       "date": "2026-08-21",
       "low": 2556.5,
       "high": 2615.0,
-      "i": 161
+      "i": 158
     },
     {
       "name": "利好反擊線",
@@ -198,31 +206,23 @@
       "date": "2026-08-06",
       "low": 2450.0,
       "high": 2534.0,
-      "i": 151
-    },
-    {
-      "name": "烏雲蓋頂",
-      "bias": "bearish",
-      "date": "2026-07-22",
-      "low": 2617.0,
-      "high": 2655.5,
-      "i": 140
+      "i": 148
     }
   ],
-  "asof": "2026-10-20",
-  "close": 2374.0,
-  "chg_pct": 1.9759450171821236,
+  "asof": "2026-10-23",
+  "close": 2412.5,
+  "chg_pct": -0.041433602651752555,
   "kline": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
-    "touched_S1": true,
-    "close_position": "upper_half",
-    "O": 2322.5,
-    "H": 2374.0,
-    "L": 2322.5,
-    "C": 2374.0,
-    "body_pct": 100.0,
-    "upper_wick_pct": 0.0,
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 2452.5,
+    "H": 2463.5,
+    "L": 2412.5,
+    "C": 2412.5,
+    "body_pct": 78.4,
+    "upper_wick_pct": 21.6,
     "lower_wick_pct": 0.0
   }
 }

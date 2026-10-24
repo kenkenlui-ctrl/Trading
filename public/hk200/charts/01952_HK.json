@@ -3,23 +3,23 @@
   "ticker_user": "01952.HK",
   "name": "EVEREST MED",
   "data_source": "yfinance",
-  "data_range": "2025-12-24 → 2026-10-20 (200 daily bars)",
+  "data_range": "2025-12-31 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-20",
-    "O": 32.96,
-    "H": 34.2,
-    "L": 31.84,
-    "C": 33.8,
-    "prev_close": 32.36,
-    "chg_pct": 4.45
+    "date": "2026-10-23",
+    "O": 31.96,
+    "H": 32.12,
+    "L": 29.6,
+    "C": 30.64,
+    "prev_close": 33.98,
+    "chg_pct": -9.83
   },
   "phase": "downtrend_active",
-  "adx": 27.75,
-  "plus_di": 26.51,
-  "minus_di": 12.73,
+  "adx": 27.66,
+  "plus_di": 25.31,
+  "minus_di": 22.59,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 45.04 (2026-08-20), trough 25.7 (2026-09-16), box top 34.22 (2026-10-16)",
+  "phase_evidence": "Peak 45.04 (2026-08-20), trough 25.7 (2026-09-16), box top 36.8 (2026-10-21)",
   "peak": {
     "date": "2026-08-20",
     "price": 45.04
@@ -29,25 +29,19 @@
     "price": 25.7
   },
   "box": {
-    "top": 34.22,
-    "top_date": "2026-10-16",
+    "top": 36.8,
+    "top_date": "2026-10-21",
     "bottom": 25.7,
-    "period": "2026-09-16 to 2026-10-20"
+    "period": "2026-09-16 to 2026-10-23"
   },
-  "drop_from_peak_pct": 25.0,
-  "recovery_from_crash_pct": 31.5,
+  "drop_from_peak_pct": 32.0,
+  "recovery_from_crash_pct": 19.2,
   "supports": [
     {
-      "level": 32.0,
-      "label": "S1 KEY",
-      "touches": 15,
-      "evidence": "tested 15x in base period; 5.3% below current"
-    },
-    {
       "level": 28.0,
-      "label": "S2",
-      "touches": 34,
-      "evidence": "mid-base support, tested 34x"
+      "label": "S1 KEY",
+      "touches": 36,
+      "evidence": "tested 36x in base period; 8.6% below current"
     },
     {
       "level": 25.7,
@@ -58,60 +52,69 @@
   ],
   "resistances": [
     {
-      "level": 34.2,
+      "level": 32.12,
       "label": "R1 today high",
-      "evidence": "today's high 34.20000076293945"
+      "evidence": "today's high 32.119998931884766"
+    },
+    {
+      "level": 36.8,
+      "label": "R3 Oct high",
+      "evidence": "box top 36.8, base period high"
     }
   ],
   "position": {
-    "current": 33.8,
-    "in_box_pct": 95.3,
-    "nearest_support": "S1 KEY (32.0)",
-    "nearest_resistance": "R1 today high (34.2)"
+    "current": 30.64,
+    "in_box_pct": 44.5,
+    "nearest_support": "S1 KEY (28.0)",
+    "nearest_resistance": "R1 today high (32.12)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
-    "touched_S1": true,
-    "close_position": "upper_half",
-    "O": 32.96,
-    "H": 34.2,
-    "L": 31.84,
-    "C": 33.8,
-    "body_pct": 35.6,
-    "upper_wick_pct": 16.9,
-    "lower_wick_pct": 47.5
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 31.96,
+    "H": 32.12,
+    "L": 29.6,
+    "C": 30.64,
+    "body_pct": 52.4,
+    "upper_wick_pct": 6.3,
+    "lower_wick_pct": 41.3
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (44% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
       "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 32.0 (KEY support)",
-      "then": "still range; watch 34.2 for next test"
+      "if": "hold 28.0 (KEY support)",
+      "then": "still range; watch 32.12 for next test"
     },
     {
-      "if": "break 32.0 on close",
-      "then": "target 28.0 → 25.7 (short-term bearish)"
+      "if": "break 28.0 on close",
+      "then": "target 25.7 → lower (short-term bearish)"
     },
     {
       "if": "break 25.7 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 34.2 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 32.12 on close",
+      "then": "short-term bullish; next test 36.8"
+    },
+    {
+      "if": "break 36.8 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -134,7 +137,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_VOLATILE",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -142,15 +145,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 34.22,
+    "r1": 36.8,
     "s1": 26.96,
     "s2": 23.52,
     "r2": 45.04,
-    "r3": 36.02,
+    "r3": 35.1,
     "s3": 22.7,
     "s4": 31.7,
-    "current_position_pct": 94.2,
-    "notes": "WAIT_VOLATILE: ATR14 6.7% / box width 21% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
+    "current_position_pct": 37.4,
+    "notes": "WAIT_RANGE: in box (27-37), pos 37%, no clear setup"
   },
   "patterns": [
     {
@@ -159,7 +162,7 @@
       "date": "2026-10-06",
       "low": 28.84000015258789,
       "high": 30.0,
-      "i": 190
+      "i": 187
     },
     {
       "name": "利好吞噬",
@@ -167,7 +170,7 @@
       "date": "2026-09-30",
       "low": 28.020000457763672,
       "high": 30.479999542236328,
-      "i": 187
+      "i": 184
     },
     {
       "name": "利淡吞噬",
@@ -175,7 +178,7 @@
       "date": "2026-09-02",
       "low": 32.18000030517578,
       "high": 35.560001373291016,
-      "i": 167
+      "i": 164
     },
     {
       "name": "烏雲蓋頂",
@@ -183,7 +186,7 @@
       "date": "2026-08-26",
       "low": 37.70000076293945,
       "high": 41.29999923706055,
-      "i": 162
+      "i": 159
     },
     {
       "name": "利好反擊線",
@@ -191,7 +194,7 @@
       "date": "2026-07-31",
       "low": 24.799999237060547,
       "high": 25.65999984741211,
-      "i": 144
+      "i": 141
     }
   ]
 }

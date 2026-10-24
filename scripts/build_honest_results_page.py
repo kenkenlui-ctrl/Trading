@@ -112,6 +112,9 @@ def build_body() -> str:
       f"{H.z(min(v['worst_z'] for v in s1['variations']))}）。</li>")
     A(f"<li><b>組合砌法冇得救。</b>{dc['n_cells']} 個 cell（sizing / "
       f"concentration / holding / allocation）冇一個過 BH q=0.10 而自己著數。</li>")
+    A("<li><b>本地波動率（VIX／VHSI）都做唔到 regime filter</b> —— "
+      "完整測試記錄見 <a href=\"/research/vix-regime.html\">"
+      "<b>VIX regime 研究頁</b></a>（noindex 研究記錄）。</li>")
     A("</ul>")
     A("<p><b>v2 嘅真錢部署計劃已停。</b>網站繼續運作，公開嘅數字以本頁同 "
       "<a href=\"/methodology.html\">方法論</a> 為準。</p>")

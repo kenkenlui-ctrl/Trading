@@ -3,23 +3,23 @@
   "ticker_user": "ROST",
   "name": "Ross Stores, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
+  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-19",
-    "O": 237.15,
-    "H": 240.21,
-    "L": 236.1,
-    "C": 238.66,
-    "prev_close": 236.89,
-    "chg_pct": 0.75
+    "date": "2026-10-23",
+    "O": 234.33,
+    "H": 235.29,
+    "L": 228.22,
+    "C": 229.3,
+    "prev_close": 236.67,
+    "chg_pct": -3.11
   },
-  "phase": "range",
-  "adx": 18.16,
-  "plus_di": 26.45,
-  "minus_di": 15.57,
+  "phase": "downtrend_active",
+  "adx": 17.62,
+  "plus_di": 21.08,
+  "minus_di": 22.22,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 257.0 (2026-08-03), trough 220.1 (2026-10-09), box top 241.23 (2026-10-16)",
+  "phase_evidence": "Peak 257.0 (2026-08-03), trough 220.1 (2026-10-09), box top 241.49 (2026-10-20)",
   "peak": {
     "date": "2026-08-03",
     "price": 257.0
@@ -29,89 +29,92 @@
     "price": 220.1
   },
   "box": {
-    "top": 241.23,
-    "top_date": "2026-10-16",
+    "top": 241.49,
+    "top_date": "2026-10-20",
     "bottom": 220.1,
-    "period": "2026-10-09 to 2026-10-19"
+    "period": "2026-10-09 to 2026-10-23"
   },
-  "drop_from_peak_pct": 7.1,
-  "recovery_from_crash_pct": 8.4,
+  "drop_from_peak_pct": 10.8,
+  "recovery_from_crash_pct": 4.2,
   "supports": [
     {
-      "level": 232.0,
-      "label": "S1 KEY",
-      "touches": 20,
-      "evidence": "tested 20x in base period; 2.8% below current"
-    },
-    {
-      "level": 228.0,
-      "label": "S2",
-      "touches": 15,
-      "evidence": "mid-base support, tested 15x"
-    },
-    {
       "level": 224.0,
-      "label": "S3 bottom",
-      "touches": 24,
+      "label": "S1 KEY",
+      "touches": 5,
+      "evidence": "tested 5x in base period; 2.3% below current"
+    },
+    {
+      "level": 220.0,
+      "label": "S2 bottom",
+      "touches": 5,
       "evidence": "structural bottom, near crash low 220.1"
     }
   ],
   "resistances": [
     {
-      "level": 240.21,
+      "level": 235.29,
       "label": "R1 today high",
-      "evidence": "today's high 240.2100067138672"
+      "evidence": "today's high 235.2899932861328"
+    },
+    {
+      "level": 241.49,
+      "label": "R3 Oct high",
+      "evidence": "box top 241.49, base period high"
     }
   ],
   "position": {
-    "current": 238.66,
-    "in_box_pct": 90.4,
-    "nearest_support": "S1 KEY (232.0)",
-    "nearest_resistance": "R1 today high (240.21)"
+    "current": 229.3,
+    "in_box_pct": 43.3,
+    "nearest_support": "S1 KEY (224.0)",
+    "nearest_resistance": "R1 today high (235.29)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 237.15,
-    "H": 240.21,
-    "L": 236.1,
-    "C": 238.66,
-    "body_pct": 36.7,
-    "upper_wick_pct": 37.7,
-    "lower_wick_pct": 25.5
+    "close_position": "lower_half",
+    "O": 234.33,
+    "H": 235.29,
+    "L": 228.22,
+    "C": 229.3,
+    "body_pct": 71.1,
+    "upper_wick_pct": 13.6,
+    "lower_wick_pct": 15.3
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (43% of box)"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": "no clear direction"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 232.0 (KEY support)",
-      "then": "still range; watch 240.21 for next test"
+      "if": "hold 224.0 (KEY support)",
+      "then": "still range; watch 235.29 for next test"
     },
     {
-      "if": "break 232.0 on close",
-      "then": "target 228.0 → 224.0 (short-term bearish)"
+      "if": "break 224.0 on close",
+      "then": "target 220.0 → lower (short-term bearish)"
     },
     {
-      "if": "break 224.0 (crash low)",
+      "if": "break 220.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 240.21 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 235.29 on close",
+      "then": "short-term bullish; next test 241.49"
+    },
+    {
+      "if": "break 241.49 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -133,33 +136,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 241.23,
-    "target_price": 230.67,
-    "stop_price": 249.43,
-    "risk_pct": 3.4,
-    "reward_pct": 4.38,
-    "rr_ratio": 1.29,
-    "phase_match": true,
-    "r1": 241.23,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 241.49,
     "s1": 220.1,
     "s2": 222.15,
     "r2": 257.0,
-    "r3": 242.81,
+    "r3": 255.3,
     "s3": 205.92,
-    "s4": 179.02,
-    "current_position_pct": 87.8,
-    "notes": "SELL_R1: in box (220-241), entry at R1 241, target mid 231, stop 249 ｜ 52.2 條規則（SELL plan，resistance 241.23）：① 跌到 241.23、收市守住喺 241.23 上面 → 照 BUY 條 plan 做（入場 241.23，止蝕 249.43，目標 230.67）。② 收市跌穿 241.23 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 241.23 上面』。"
+    "s4": 184.69,
+    "current_position_pct": 43.0,
+    "notes": "WAIT_RANGE: in box (220-241), pos 43%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-10-23",
+      "low": 228.22000122070312,
+      "high": 235.2899932861328,
+      "i": 199
+    },
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-10-12",
       "low": 220.33999633789062,
       "high": 227.50999450683594,
-      "i": 194
+      "i": 190
     },
     {
       "name": "平頭頂",
@@ -167,7 +178,7 @@
       "date": "2026-10-02",
       "low": 227.66000366210938,
       "high": 236.0,
-      "i": 188
+      "i": 184
     },
     {
       "name": "利好反擊線",
@@ -175,7 +186,7 @@
       "date": "2026-09-11",
       "low": 225.44000244140625,
       "high": 230.97000122070312,
-      "i": 173
+      "i": 169
     },
     {
       "name": "早晨之星",
@@ -183,15 +194,7 @@
       "date": "2026-09-02",
       "low": 228.00999450683594,
       "high": 232.77000427246094,
-      "i": 167
-    },
-    {
-      "name": "利淡反擊線",
-      "bias": "bearish",
-      "date": "2026-08-11",
-      "low": 251.36000061035156,
-      "high": 255.60000610351562,
-      "i": 151
+      "i": 163
     }
   ]
 }

@@ -3,23 +3,23 @@
   "ticker_user": "VRTX",
   "name": "Vertex Pharmaceuticals Incorpor",
   "data_source": "yfinance",
-  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
+  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-19",
-    "O": 500.0,
-    "H": 505.83,
-    "L": 499.5,
-    "C": 501.95,
-    "prev_close": 499.74,
-    "chg_pct": 0.44
+    "date": "2026-10-23",
+    "O": 531.66,
+    "H": 533.08,
+    "L": 522.91,
+    "C": 523.93,
+    "prev_close": 535.17,
+    "chg_pct": -2.1
   },
-  "phase": "downtrend_active",
-  "adx": 21.21,
-  "plus_di": 17.54,
-  "minus_di": 28.23,
-  "regime": "dead",
+  "phase": "range",
+  "adx": 18.75,
+  "plus_di": 27.21,
+  "minus_di": 20.04,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 560.25 (2026-09-03), trough 484.08 (2026-10-13), box top 517.68 (2026-10-15)",
+  "phase_evidence": "Peak 560.25 (2026-09-03), trough 484.08 (2026-10-13), box top 537.81 (2026-10-22)",
   "peak": {
     "date": "2026-09-03",
     "price": 560.25
@@ -29,57 +29,63 @@
     "price": 484.08
   },
   "box": {
-    "top": 517.68,
-    "top_date": "2026-10-15",
+    "top": 537.81,
+    "top_date": "2026-10-22",
     "bottom": 484.08,
-    "period": "2026-10-13 to 2026-10-19"
+    "period": "2026-10-13 to 2026-10-23"
   },
-  "drop_from_peak_pct": 10.4,
-  "recovery_from_crash_pct": 3.7,
+  "drop_from_peak_pct": 6.5,
+  "recovery_from_crash_pct": 8.2,
   "supports": [
     {
-      "level": 484.0,
+      "level": 512.0,
       "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 3.6% below current"
+      "touches": 9,
+      "evidence": "tested 9x in base period; 2.3% below current"
     },
     {
-      "level": 480.0,
-      "label": "S2 bottom",
-      "touches": 3,
+      "level": 508.0,
+      "label": "S2",
+      "touches": 6,
+      "evidence": "mid-base support, tested 6x"
+    },
+    {
+      "level": 504.0,
+      "label": "S3 bottom",
+      "touches": 14,
       "evidence": "structural bottom, near crash low 484.08"
     }
   ],
   "resistances": [
     {
-      "level": 505.83,
+      "level": 533.08,
       "label": "R1 today high",
-      "evidence": "today's high 505.8299865722656"
+      "evidence": "today's high 533.0800170898438"
     },
     {
-      "level": 517.68,
+      "level": 537.81,
       "label": "R3 Oct high",
-      "evidence": "box top 517.68, base period high"
+      "evidence": "box top 537.81, base period high"
     }
   ],
   "position": {
-    "current": 501.95,
-    "in_box_pct": 58.3,
-    "nearest_support": "S1 KEY (484.0)",
-    "nearest_resistance": "R1 today high (505.83)"
+    "current": 523.93,
+    "in_box_pct": 58.9,
+    "nearest_support": "S1 KEY (512.0)",
+    "nearest_resistance": "R1 today high (533.08)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 500.0,
-    "H": 505.83,
-    "L": 499.5,
-    "C": 501.95,
-    "body_pct": 30.8,
-    "upper_wick_pct": 61.3,
-    "lower_wick_pct": 7.9
+    "O": 531.66,
+    "H": 533.08,
+    "L": 522.91,
+    "C": 523.93,
+    "body_pct": 76.0,
+    "upper_wick_pct": 14.0,
+    "lower_wick_pct": 10.0
   },
   "bias": {
     "short": {
@@ -87,8 +93,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bearish_continuation",
-      "reason": "making new lows"
+      "bias": "neutral",
+      "reason": "no clear direction"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -97,23 +103,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 484.0 (KEY support)",
-      "then": "still range; watch 505.83 for next test"
+      "if": "hold 512.0 (KEY support)",
+      "then": "still range; watch 533.08 for next test"
     },
     {
-      "if": "break 484.0 on close",
-      "then": "target 480.0 → lower (short-term bearish)"
+      "if": "break 512.0 on close",
+      "then": "target 508.0 → 504.0 (short-term bearish)"
     },
     {
-      "if": "break 480.0 (crash low)",
+      "if": "break 504.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 505.83 on close",
-      "then": "short-term bullish; next test 517.68"
+      "if": "reclaim 533.08 on close",
+      "then": "short-term bullish; next test 537.81"
     },
     {
-      "if": "break 517.68 (box top)",
+      "if": "break 537.81 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -136,33 +142,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 529.89,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 537.81,
+    "target_price": 510.94,
+    "stop_price": 559.14,
+    "risk_pct": 3.97,
+    "reward_pct": 5.0,
+    "rr_ratio": 1.26,
+    "phase_match": true,
+    "r1": 537.81,
     "s1": 484.08,
     "s2": 465.51,
     "r2": 560.25,
     "r3": 533.67,
     "s3": 412.27,
-    "s4": 425.26,
-    "current_position_pct": 39.0,
-    "notes": "WAIT_RANGE: in box (484-530), pos 39%, no clear setup"
+    "s4": 419.71,
+    "current_position_pct": 74.2,
+    "notes": "SELL_R1: in box (484-538), entry at R1 538, target mid 511, stop 559 ｜ 52.2 條規則（SELL plan，resistance 537.81）：① 跌到 537.81、收市守住喺 537.81 上面 → 照 BUY 條 plan 做（入場 537.81，止蝕 559.14，目標 510.94）。② 收市跌穿 537.81 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 537.81 上面』。"
   },
   "patterns": [
+    {
+      "name": "早晨之星",
+      "bias": "bullish",
+      "date": "2026-10-21",
+      "low": 510.4800109863281,
+      "high": 528.5700073242188,
+      "i": 197
+    },
     {
       "name": "利好反擊線",
       "bias": "bullish",
       "date": "2026-09-24",
       "low": 515.2999877929688,
       "high": 528.989990234375,
-      "i": 182
+      "i": 178
     },
     {
       "name": "利淡反擊線",
@@ -170,7 +184,7 @@
       "date": "2026-09-04",
       "low": 544.47998046875,
       "high": 556.989990234375,
-      "i": 169
+      "i": 165
     },
     {
       "name": "烏雲蓋頂",
@@ -178,7 +192,7 @@
       "date": "2026-08-26",
       "low": 546.239990234375,
       "high": 553.469970703125,
-      "i": 162
+      "i": 158
     },
     {
       "name": "利淡吞噬",
@@ -186,15 +200,7 @@
       "date": "2026-08-12",
       "low": 520.0800170898438,
       "high": 531.219970703125,
-      "i": 152
-    },
-    {
-      "name": "錘頭",
-      "bias": "bullish",
-      "date": "2026-08-04",
-      "low": 465.510009765625,
-      "high": 488.0400085449219,
-      "i": 146
+      "i": 148
     }
   ]
 }

@@ -51,6 +51,13 @@ class Freshness:
     session: str | None
     market: str | None = None
     source_error: str | None = None
+    # 2026-10-25: an optional extra line for the banner. The age limit is not
+    # the only way to be stale: the site's newest input can be younger than
+    # 36h and still be MISSING a session the market has already closed. That
+    # case cannot be expressed by the age number, and the banner must say
+    # which of the two it is — otherwise the reader sees "9.0h old" under a
+    # STALE heading and concludes the limit was not applied.
+    reason: str | None = None
 
     @property
     def is_fresh(self) -> bool:
@@ -59,7 +66,8 @@ class Freshness:
     def as_dict(self) -> dict:
         return {"state": self.state, "asof": self.asof,
                 "age_hours": self.age_hours, "session": self.session,
-                "market": self.market, "source_error": self.source_error}
+                "market": self.market, "source_error": self.source_error,
+                "reason": self.reason}
 
 
 def classify(asof: str | None, session: str, *, now: str | None = None,
@@ -115,18 +123,26 @@ def banner(f: Freshness, lang: str = "zh") -> str:
                         "below are NOT this session's")
         elif f.state == SOURCE_DOWN and f.source_error:
             bits.append(f"vendor error: {f.source_error}")
+        if f.reason:
+            bits.append(f.reason)
         return ('<div class="sprint2-banner sprint2-banner--stale" role="status" '
                 'data-state="%s" data-session="%s">%s</div>'
                 % (f.state, f.session, " · ".join(bits)))
     label, colour = _CN[f.state]
     bits = [f"{label} · {f.market or ''} {f.session}".strip()]
-    if f.state == STALE and f.age_hours is not None:
+    # The age line describes WHY it is stale when the age is the reason. When
+    # a `reason` is present the staleness has another cause (a session the
+    # market closed and we do not have), and printing "9.0h old (limit 36h)"
+    # under a STALE heading reads as a limit that was not applied.
+    if f.state == STALE and f.age_hours is not None and not f.reason:
         bits.append(f"最後輸入 {f.asof}，已過 {f.age_hours:.1f} 小時（上限 "
                     f"{MAX_AGE_HOURS} 小時）")
     elif f.state == NOT_RUN:
         bits.append("今次 session 冇跑出數據，下面嘅數字唔係今次嘅")
     elif f.state == SOURCE_DOWN and f.source_error:
         bits.append(f"數據源錯誤：{f.source_error}")
+    if f.reason:
+        bits.append(f.reason)
     return ('<div class="sprint2-banner sprint2-banner--stale" role="status" '
             'style="border-left:4px solid %s" data-state="%s" data-session="%s">'
             '%s</div>' % (colour, f.state, f.session, " · ".join(bits)))

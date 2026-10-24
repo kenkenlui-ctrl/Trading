@@ -3,20 +3,20 @@
   "ticker_user": "1928.T",
   "name": "Sekisui House, Ltd.",
   "data_source": "yfinance",
-  "data_range": "2025-12-22 → 2026-10-20 (200 daily bars)",
+  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-20",
-    "O": 3427.0,
-    "H": 3441.0,
-    "L": 3396.0,
-    "C": 3423.0,
-    "prev_close": 3428.0,
-    "chg_pct": -0.14585764294049453
+    "date": "2026-10-23",
+    "O": 3519.0,
+    "H": 3570.0,
+    "L": 3484.0,
+    "C": 3504.0,
+    "prev_close": 3450.0,
+    "chg_pct": 1.5652173913043521
   },
   "phase": "base_building",
-  "adx": 9.66,
-  "plus_di": 24.1,
-  "minus_di": 17.21,
+  "adx": 14.39,
+  "plus_di": 36.53,
+  "minus_di": 12.54,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 3832.0 (2026-02-26), trough 3181.0 (2026-06-02), box top 3767.0 (2026-07-29)",
@@ -32,35 +32,41 @@
     "top": 3767.0,
     "top_date": "2026-07-29",
     "bottom": 3181.0,
-    "period": "2026-06-02 to 2026-10-20"
+    "period": "2026-06-02 to 2026-10-23"
   },
-  "drop_from_peak_pct": 10.7,
-  "recovery_from_crash_pct": 7.6,
+  "drop_from_peak_pct": 8.6,
+  "recovery_from_crash_pct": 10.2,
   "supports": [
     {
-      "level": 3352.0,
+      "level": 3420.0,
       "label": "S1 KEY",
-      "touches": 8,
-      "evidence": "tested 8x in base period; 2.1% below current"
+      "touches": 4,
+      "evidence": "tested 4x in base period; 2.4% below current"
     },
     {
-      "level": 3344.0,
+      "level": 3372.0,
       "label": "S2",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 3352.0,
+      "label": "S3",
       "touches": 8,
       "evidence": "mid-base support, tested 8x"
     },
     {
-      "level": 3336.0,
-      "label": "S3 bottom",
-      "touches": 3,
-      "evidence": "structural bottom, near crash low 3181.0"
+      "level": 3181.0,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-06-02, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 3441.0,
+      "level": 3570.0,
       "label": "R1 today high",
-      "evidence": "today's high 3441.0"
+      "evidence": "rejection at 3570.0 (long upper wick, close weak)"
     },
     {
       "level": 3767.0,
@@ -69,28 +75,28 @@
     }
   ],
   "position": {
-    "current": 3423.0,
-    "in_box_pct": 20.2,
-    "nearest_support": "S1 KEY (3352.0)",
-    "nearest_resistance": "R1 today high (3441.0)"
+    "current": 3504.0,
+    "in_box_pct": 55.1,
+    "nearest_support": "S1 KEY (3420.0)",
+    "nearest_resistance": "R1 today high (3570.0)"
   },
   "kline_today": {
     "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 3427.0,
-    "H": 3441.0,
-    "L": 3396.0,
-    "C": 3423.0,
-    "body_pct": 8.9,
-    "upper_wick_pct": 31.1,
-    "lower_wick_pct": 60.0
+    "close_position": "lower_half",
+    "O": 3519.0,
+    "H": 3570.0,
+    "L": 3484.0,
+    "C": 3504.0,
+    "body_pct": 17.4,
+    "upper_wick_pct": 59.3,
+    "lower_wick_pct": 23.3
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (20% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -103,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 3352.0 (KEY support)",
-      "then": "still range; watch 3441.0 for next test"
+      "if": "hold 3420.0 (KEY support)",
+      "then": "still range; watch 3570.0 for next test"
     },
     {
-      "if": "break 3352.0 on close",
-      "then": "target 3344.0 → 3336.0 (short-term bearish)"
+      "if": "break 3420.0 on close",
+      "then": "target 3372.0 → 3352.0 (short-term bearish)"
     },
     {
-      "if": "break 3336.0 (crash low)",
+      "if": "break 3181.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 3441.0 on close",
+      "if": "reclaim 3570.0 on close",
       "then": "short-term bullish; next test 3767.0"
     },
     {
@@ -142,32 +148,32 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 3445.0,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 3570.0,
+    "target_price": 3429.5,
+    "stop_price": 3641.4,
+    "risk_pct": 2.0,
+    "reward_pct": 3.94,
+    "rr_ratio": 1.97,
+    "phase_match": true,
+    "r1": 3570.0,
     "s1": 3289.0,
     "s2": 3276.0,
     "r2": 3767.0,
     "r3": 3599.0,
     "s3": 3181.0,
     "s4": 3358.0,
-    "current_position_pct": 85.9,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 3445.00）：① 跌到 3445.00、收市守住喺 3445.00 上面 → 照 BUY 條 plan 做（入場 3445.00，止蝕 3513.90，目標 3367.00）。② 收市跌穿 3445.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 3445.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 76.5,
+    "notes": "SELL_R1: in box (3289-3570), entry at R1 3570, target mid 3430, stop 3641 ｜ 52.2 條規則（SELL plan，resistance 3570.00）：① 跌到 3570.00、收市守住喺 3570.00 上面 → 照 BUY 條 plan 做（入場 3570.00，止蝕 3641.40，目標 3429.50）。② 收市跌穿 3570.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 3570.00 上面』。"
   },
   "patterns": [
     {
-      "name": "烏雲蓋頂",
+      "name": "利淡吞噬",
       "bias": "bearish",
-      "date": "2026-10-20",
-      "low": 3396.0,
-      "high": 3441.0,
+      "date": "2026-10-23",
+      "low": 3484.0,
+      "high": 3570.0,
       "i": 199
     },
     {
@@ -176,7 +182,7 @@
       "date": "2026-10-09",
       "low": 3338.0,
       "high": 3373.0,
-      "i": 193
+      "i": 190
     },
     {
       "name": "早晨之星",
@@ -184,7 +190,7 @@
       "date": "2026-09-11",
       "low": 3300.0,
       "high": 3361.0,
-      "i": 176
+      "i": 173
     },
     {
       "name": "利好反擊線",
@@ -192,7 +198,7 @@
       "date": "2026-08-06",
       "low": 3343.0,
       "high": 3419.0,
-      "i": 151
+      "i": 148
     },
     {
       "name": "利淡反擊線",
@@ -200,23 +206,23 @@
       "date": "2026-07-21",
       "low": 3545.0,
       "high": 3595.0,
-      "i": 139
+      "i": 136
     }
   ],
-  "asof": "2026-10-20",
-  "close": 3423.0,
-  "chg_pct": -0.14585764294049453,
+  "asof": "2026-10-23",
+  "close": 3504.0,
+  "chg_pct": 1.5652173913043521,
   "kline": {
     "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 3427.0,
-    "H": 3441.0,
-    "L": 3396.0,
-    "C": 3423.0,
-    "body_pct": 8.9,
-    "upper_wick_pct": 31.1,
-    "lower_wick_pct": 60.0
+    "close_position": "lower_half",
+    "O": 3519.0,
+    "H": 3570.0,
+    "L": 3484.0,
+    "C": 3504.0,
+    "body_pct": 17.4,
+    "upper_wick_pct": 59.3,
+    "lower_wick_pct": 23.3
   }
 }

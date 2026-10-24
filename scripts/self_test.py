@@ -3715,6 +3715,233 @@ def t_methodology_provenance_names_every_source() -> None:
            f"failures={bad_probe2}")
 
 
+def t_staleness_states_are_derived_and_fail_loud() -> None:
+    """Sprint 2 A1: the freshness state is derived, and a stale fixture makes
+    the site say so.
+
+    The dispatch's acceptance test, verbatim: "build a deliberately stale
+    fixture and confirm the site says so".
+
+    Why this gate exists at all: on 2026-10-24 the live site was serving four
+    sessions of old data with a badge that said "T-1 · 2026-10-20 · US
+    2026-10-19", and nothing on the page said so. The fix is a banner, and a
+    banner nobody has ever seen fire is decoration. So the four states are
+    driven from fixtures here, and the negative control proves the check
+    discriminates: a state function broken into always-FRESH is caught.
+    """
+    import datetime as _dt
+    import staleness as S
+
+    now = _dt.datetime.now()
+    now_iso = now.astimezone().isoformat(timespec="seconds")
+
+    # The banner must be wired into the pages, not merely implemented.
+    dash = (REPO / "scripts" / "build_dashboard.py").read_text(encoding="utf-8")
+    home = (REPO / "scripts" / "build_home.py").read_text(encoding="utf-8")
+    record("the hub and ticker templates render the staleness banner",
+           dash.count("{_stale_banner}") >= 2,
+           f"build_dashboard.py has {dash.count('{_stale_banner}')} banner slots, expected 2")
+    record("the home page renders the staleness banner",
+           "{_stale_banner}" in home,
+           "build_home.py has no banner slot")
+
+    orig_reference = S.reference
+    orig_data_session = S.data_session
+    orig_flags = S.flags
+
+    def fixture(latest: str, status: str = "ok", checked_at: str = now_iso) -> dict:
+        return {"generated_at": checked_at,
+                "markets": {"hk200": {"latest_closed_session": latest,
+                                       "status": status,
+                                       "checked_at": checked_at,
+                                       "error": "timeout" if status == "source_down" else ""}}}
+
+    def with_fixtures(ref: dict, data_session: str, fn):
+        S.reference = lambda: ref
+        S.data_session = lambda m, _d=data_session: _d
+        S.flags = lambda: {"staleness_banner_flag": True}
+        try:
+            return fn()
+        finally:
+            S.reference = orig_reference
+            S.data_session = orig_data_session
+            S.flags = orig_flags
+
+    def state_with(ref: dict, data_session: str):
+        return with_fixtures(ref, data_session, lambda: S.compute("HK"))
+
+    def claims_fresh(st) -> bool:
+        return getattr(st, "state", None) == S.FRESH
+
+    # 1. the market's latest session is the one we publish -> FRESH, no banner
+    fresh = state_with(fixture("2026-10-23"), "2026-10-23")
+    record("a market whose bars cover the latest closed session is FRESH",
+           claims_fresh(fresh), f"state={getattr(fresh, 'state', None)}")
+    fresh_banner = with_fixtures(fixture("2026-10-23"), "2026-10-23",
+                                 lambda: S.banner_html("HK"))
+    record("a FRESH market renders no banner", fresh_banner == "",
+           f"banner={fresh_banner[:120]}")
+
+    # 2. THE FIXTURE: the market has closed a session we do not have.
+    stale = state_with(fixture("2026-10-23"), "2026-10-20")
+    record("a fixture with older bars than the market's session is STALE",
+           getattr(stale, "state", None) == S.STALE,
+           f"state={getattr(stale, 'state', None)}")
+    record("a stale fixture is NOT claimed to be fresh", not claims_fresh(stale),
+           "the state function reported FRESH for a stale fixture")
+    stale_banner = with_fixtures(fixture("2026-10-23"), "2026-10-20",
+                                 lambda: S.banner_html("HK"))
+    record("the stale banner names the staleness and the two dates",
+           ("2026-10-23" in stale_banner and "2026-10-20" in stale_banner
+            and "資料過期" in stale_banner),
+           f"banner={stale_banner[:200]}")
+
+    # 3. the market's step did not run -> NOT_RUN
+    not_run = state_with({}, "2026-10-23")
+    record("a market with no session record is NOT_RUN",
+           getattr(not_run, "state", None) == S.NOT_RUN,
+           f"state={getattr(not_run, 'state', None)}")
+
+    # 4. the vendor could not be reached -> SOURCE_DOWN, its own message
+    down = state_with(fixture("", status="source_down"), "2026-10-23")
+    record("a market whose vendor was unreachable is SOURCE_DOWN",
+           getattr(down, "state", None) == S.SOURCE_DOWN,
+           f"state={getattr(down, 'state', None)}")
+
+    # 5. the confirmation itself too old to stand behind
+    old_ref = state_with(
+        fixture("2026-10-23",
+                checked_at=(now - _dt.timedelta(hours=40)).astimezone()
+                .isoformat(timespec="seconds")), "2026-10-23")
+    record("a confirmation older than the 36-hour limit is NOT_RUN",
+           getattr(old_ref, "state", None) == S.NOT_RUN,
+           f"state={getattr(old_ref, 'state', None)}")
+
+    # MUST-FAIL control: a state function broken into always-FRESH must be
+    # caught by the same check. If this fails, the check above cannot fail.
+    class Broken:
+        state = S.FRESH
+        asof = "2026-10-20"
+        age_hours = 1.0
+        session = "2026-10-23"
+        reason = None
+    record("MUST-FAIL a state function that always claims FRESH is rejected",
+           claims_fresh(Broken()) and not claims_fresh(stale),
+           "the control for this gate does not discriminate: a broken state "
+           "function would pass the same check")
+
+
+def t_cost_flip_is_derived_from_the_retest_summary() -> None:
+    """Sprint 2 C1: the cost at which the v2-vs-equal-weight gap changes
+    sign must come from data/hk_retest_summary.json, computed at build time.
+
+    The number is only useful if the reader can see its method, so the table
+    carries the three measured legs next to the crossing, and says whether the
+    crossing was interpolated or extrapolated. A tampered artifact must move
+    the computed crossing — otherwise the table is decoration over a constant.
+    """
+    import cost_flip as C
+
+    t = C.table()
+    rows = {(r["market"], r["window"]): r for r in t["rows"]}
+    record("the cost-flip table has a row per market and window",
+           len(rows) == 9, f"rows={len(rows)}")
+
+    summary = C.load()
+    us_full = summary["us"]["portfolio"]["v2_vs_ew_pp"]["cost_0.25%"]["2016-2026"]
+    jp_mid = summary["jp"]["portfolio"]["v2_vs_ew_pp"]["cost_0.10%"]["2016-2026"]
+    jp_high = summary["jp"]["portfolio"]["v2_vs_ew_pp"]["cost_0.25%"]["2016-2026"]
+
+    # the measured legs on the table are the artifact's legs
+    r_us = rows.get(("us", "2016-2026"))
+    r_jp = rows.get(("jp", "2016-2026"))
+    ok_legs = (
+        r_us is not None
+        and abs(dict(r_us["gap_at"])["0.25%"] - us_full["v2_minus_ew_pp"]) < 1e-9
+        and r_jp is not None
+        and abs(dict(r_jp["gap_at"])["0.10%"] - jp_mid["v2_minus_ew_pp"]) < 1e-9
+        and abs(dict(r_jp["gap_at"])["0.25%"] - jp_high["v2_minus_ew_pp"]) < 1e-9
+    )
+    record("every measured leg on the table is the artifact's leg", ok_legs,
+           "the table's legs do not match hk_retest_summary.json")
+
+    # Japan's full-period crossing is bracketed by the two measured legs
+    cr = r_jp["crossing"]
+    record("Japan's full-period crossing lies between the two measured legs",
+           cr["kind"] == "crossed" and 0.0010 < cr["cost"] < 0.0025,
+           f"kind={cr['kind']} cost={cr['cost']}")
+    # the gap really does change sign between those legs
+    record("Japan's gap really changes sign between 0.10% and 0.25%",
+           jp_mid["v2_minus_ew_pp"] > 0 > jp_high["v2_minus_ew_pp"],
+           f"0.10%={jp_mid['v2_minus_ew_pp']} 0.25%={jp_high['v2_minus_ew_pp']}")
+    # the US full-period gap is still positive at the harshest measured cost,
+    # so its crossing is an extrapolation and must be labelled as one
+    cr_us = r_us["crossing"]
+    record("the US full-period crossing is labelled as an extrapolation",
+           cr_us["kind"] == "extrapolated" and "外推" in cr_us["method"],
+           f"kind={cr_us['kind']} method={cr_us['method']}")
+    # a market that is negative even at zero cost must not be given a crossing
+    cr_hk = rows[("hk", "2016-2026")]["crossing"]
+    record("a market that trails at zero cost is reported as never crossing",
+           cr_hk["kind"] == "never" and cr_hk["cost"] is None,
+           f"kind={cr_hk['kind']} cost={cr_hk['cost']}")
+
+    # MUST-FAIL: tamper the artifact and the computed crossing must move
+    tampered = json.loads(json.dumps(summary))
+    blk = tampered["jp"]["portfolio"]["v2_vs_ew_pp"]["cost_0.25%"]["2016-2026"]
+    blk["v2_minus_ew_pp"] = blk["v2_minus_ew_pp"] + 3.0
+    orig_load = C.load
+    try:
+        C.load = lambda: tampered
+        moved = C.table()
+        moved_cr = {(r["market"], r["window"]): r for r in moved["rows"]}[("jp", "2016-2026")]["crossing"]
+        record("MUST-FAIL a tampered retest artifact moves the crossing",
+               moved_cr["cost"] != cr["cost"] or moved_cr["kind"] != cr["kind"],
+               "the control for this gate does not discriminate: the crossing "
+               "does not follow the artifact")
+    finally:
+        C.load = orig_load
+
+
+def t_vix_regime_note_is_a_noindex_research_page() -> None:
+    """The VIX-regime negative result (2026-10-08) is published as a research
+    note: readable, linked from the failure log, and NOT in the sitemap.
+
+    It was removed from the repo on 2026-10-11 when the line was closed. The
+    result itself is worth keeping — a filter that explains nothing is a
+    finding — but it must not look like a live feature, so it is noindex and
+    it is not in the nav.
+    """
+    import re as _re
+
+    page = PUBLIC / "research" / "vix-regime.html"
+    record("the VIX regime research note exists", page.exists(),
+           f"missing: {page.relative_to(PUBLIC)}")
+    if not page.exists():
+        return
+    text = page.read_text(encoding="utf-8", errors="replace")
+    record("the VIX regime note is not indexable",
+           _re.search(r'<meta name="robots" content="[^"]*noindex', text) is not None,
+           "the note is indexable — it must not compete with the live pages")
+    sm = (PUBLIC / "sitemap.xml").read_text(encoding="utf-8", errors="replace")
+    record("the VIX regime note is not in the sitemap",
+           "vix-regime" not in sm,
+           "a noindex research note is listed in the sitemap")
+
+    log = (PUBLIC / "research" / "negative-results" / "index.html")
+    log_text = log.read_text(encoding="utf-8", errors="replace")
+    record("the failure log links to the VIX regime note",
+           'href="/research/vix-regime.html"' in log_text,
+           "the research log does not link the note")
+
+    # MUST-FAIL: remove the link and the same check must reject it
+    stripped = log_text.replace('href="/research/vix-regime.html"', 'href="/research/nope.html"')
+    record("MUST-FAIL a failure log without the link is rejected",
+           'href="/research/vix-regime.html"' not in stripped,
+           "the control for this gate does not discriminate: the link check "
+           "still passes after the link was removed")
+
+
 PREREG = REPO / "docs" / "close-confirmation-prereg-2026-10-18.md"
 _PREREG_Z = 1.96
 _REQUIRED_CELLS = (("us200", "train"), ("us200", "test"),
@@ -5165,6 +5392,9 @@ def main() -> int:
                t_no_withdrawn_figures_are_published,
                t_per_trade_stats_trace_to_source,
                t_methodology_provenance_names_every_source,
+               t_staleness_states_are_derived_and_fail_loud,
+               t_cost_flip_is_derived_from_the_retest_summary,
+               t_vix_regime_note_is_a_noindex_research_page,
                t_close_confirmation_placebo_holds_up,
                t_no_unrendered_template_placeholders,
                t_no_script_carries_the_defective_ew_benchmark,

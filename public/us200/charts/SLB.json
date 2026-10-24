@@ -3,23 +3,23 @@
   "ticker_user": "SLB",
   "name": "SLB Limited",
   "data_source": "yfinance",
-  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
+  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-19",
-    "O": 49.02,
-    "H": 49.33,
-    "L": 48.67,
-    "C": 49.09,
-    "prev_close": 49.5,
-    "chg_pct": -0.83
+    "date": "2026-10-23",
+    "O": 49.96,
+    "H": 53.45,
+    "L": 49.48,
+    "C": 53.06,
+    "prev_close": 49.55,
+    "chg_pct": 7.08
   },
   "phase": "downtrend_active",
-  "adx": 18.98,
-  "plus_di": 20.32,
-  "minus_di": 26.11,
+  "adx": 16.17,
+  "plus_di": 29.71,
+  "minus_di": 21.77,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 60.46 (2026-08-31), trough 47.17 (2026-10-15), box top 59.25 (2026-09-09)",
+  "phase_evidence": "Peak 60.46 (2026-08-31), trough 47.17 (2026-10-15), box top 53.45 (2026-10-23)",
   "peak": {
     "date": "2026-08-31",
     "price": 60.46
@@ -29,86 +29,83 @@
     "price": 47.17
   },
   "box": {
-    "top": 59.25,
-    "top_date": "2026-09-09",
+    "top": 53.45,
+    "top_date": "2026-10-23",
     "bottom": 47.17,
-    "period": "2026-10-15 to 2026-10-19"
+    "period": "2026-10-15 to 2026-10-23"
   },
-  "drop_from_peak_pct": 18.8,
-  "recovery_from_crash_pct": 4.1,
+  "drop_from_peak_pct": 12.2,
+  "recovery_from_crash_pct": 12.5,
   "supports": [
     {
+      "level": 52.0,
+      "label": "S1 KEY",
+      "touches": 23,
+      "evidence": "tested 23x in base period; 2.0% below current"
+    },
+    {
       "level": 48.0,
-      "label": "S1 bottom",
-      "touches": 12,
+      "label": "S2 bottom",
+      "touches": 42,
       "evidence": "structural bottom, near crash low 47.17"
     }
   ],
   "resistances": [
     {
-      "level": 49.33,
+      "level": 53.45,
       "label": "R1 today high",
-      "evidence": "today's high 49.33000183105469"
-    },
-    {
-      "level": 59.25,
-      "label": "R3 Sep high",
-      "evidence": "box top 59.25, base period high"
+      "evidence": "today's high 53.45000076293945"
     }
   ],
   "position": {
-    "current": 49.09,
-    "in_box_pct": 9.7,
-    "nearest_support": "S1 bottom (48.0)",
-    "nearest_resistance": "R1 today high (49.33)"
+    "current": 53.06,
+    "in_box_pct": 92.8,
+    "nearest_support": "S1 KEY (52.0)",
+    "nearest_resistance": "R1 today high (53.45)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 49.02,
-    "H": 49.33,
-    "L": 48.67,
-    "C": 49.09,
-    "body_pct": 10.6,
-    "upper_wick_pct": 36.4,
-    "lower_wick_pct": 53.0
+    "O": 49.96,
+    "H": 53.45,
+    "L": 49.48,
+    "C": 53.06,
+    "body_pct": 78.1,
+    "upper_wick_pct": 9.8,
+    "lower_wick_pct": 12.1
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (10% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
       "reason": "making new lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 48.0 (KEY support)",
-      "then": "still range; watch 49.33 for next test"
+      "if": "hold 52.0 (KEY support)",
+      "then": "still range; watch 53.45 for next test"
     },
     {
-      "if": "break 48.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 52.0 on close",
+      "then": "target 48.0 → lower (short-term bearish)"
     },
     {
       "if": "break 48.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 49.33 on close",
-      "then": "short-term bullish; next test 59.25"
-    },
-    {
-      "if": "break 59.25 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 53.45 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -130,24 +127,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 53.21,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 53.45,
+    "target_price": 50.31,
+    "stop_price": 55.81,
+    "risk_pct": 4.42,
+    "reward_pct": 5.87,
+    "rr_ratio": 1.33,
+    "phase_match": true,
+    "r1": 53.45,
     "s1": 47.17,
     "s2": 48.3,
     "r2": 60.46,
     "r3": 58.82,
     "s3": 44.59,
-    "s4": 38.07,
-    "current_position_pct": 31.8,
-    "notes": "WAIT_RANGE: in box (47-53), pos 32%, no clear setup"
+    "s4": 42.66,
+    "current_position_pct": 93.8,
+    "notes": "SELL_R1: in box (47-53), entry at R1 53, target mid 50, stop 56 ｜ 52.2 條規則（SELL plan，resistance 53.45）：① 跌到 53.45、收市守住喺 53.45 上面 → 照 BUY 條 plan 做（入場 53.45，止蝕 55.81，目標 50.31）。② 收市跌穿 53.45 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 53.45 上面』。"
   },
   "patterns": [
     {
@@ -156,7 +153,7 @@
       "date": "2026-10-16",
       "low": 48.900001525878906,
       "high": 49.77000045776367,
-      "i": 198
+      "i": 194
     },
     {
       "name": "刺穿線",
@@ -164,7 +161,7 @@
       "date": "2026-10-08",
       "low": 48.099998474121094,
       "high": 49.040000915527344,
-      "i": 192
+      "i": 188
     },
     {
       "name": "烏雲蓋頂",
@@ -172,7 +169,7 @@
       "date": "2026-09-03",
       "low": 57.2599983215332,
       "high": 59.36000061035156,
-      "i": 168
+      "i": 164
     },
     {
       "name": "黃昏之星",
@@ -180,7 +177,7 @@
       "date": "2026-08-19",
       "low": 53.060001373291016,
       "high": 54.189998626708984,
-      "i": 157
+      "i": 153
     },
     {
       "name": "上升三法",
@@ -188,7 +185,7 @@
       "date": "2026-07-31",
       "low": 48.369998931884766,
       "high": 49.95000076293945,
-      "i": 144
+      "i": 140
     }
   ]
 }

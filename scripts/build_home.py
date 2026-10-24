@@ -14,6 +14,7 @@ from datetime import datetime, date, timedelta
 from pathlib import Path
 import perf_figures
 from mobile_nav import mobile_bottom_nav
+import staleness
 from build_dashboard import site_label
 import os as _os_i18n
 
@@ -73,6 +74,9 @@ _STRINGS = {
             "日股{JP_VERDICT_MID} <b>{JP_GAP_MID}</b> 點、港股落後 <b>{HK_GAP_MID}</b> 點。"
             "上面 0.25% 係三個市場之中現有數據最苛刻嗰個口徑，兩個成本一齊列，"
             "唔想畀人一句「揀咗個对自己有利嘅成本」。"
+            "<br>"
+            "每個市場嘅差距喺邊個來回成本會變號（美股／日股／港股 × 兩個窗口）："
+            "<a href=\"/methodology.html#cost-flip\"><b>成本敏感度表 →</b></a>"
             "<br><br>"
             "<b style=\"color: var(--amber);\">2026-10-17 修正記錄：以上等權數字之前係錯嘅。</b>"
             "舊基準將每隻股票「當月平均日收益」廣播落嗰個月嘅每一個交易日，"
@@ -111,7 +115,8 @@ _STRINGS = {
             "On the same data at a <b>0.10%</b> round-trip cost: US {US_VERDICT_MID} equal weight by "
             "<b>{US_GAP_MID}</b>pp/yr, Japan {JP_VERDICT_MID} by <b>{JP_GAP_MID}</b>pp/yr, Hong Kong trails "
             "by <b>{HK_GAP_MID}</b>pp/yr. The 0.25% figure above is the harshest cost that exists for all "
-            "three markets; both costs are shown rather than only the one that reads best."
+            "three markets; both costs are shown rather than only the one that reads best. "
+            "<a href=\"/methodology.html#cost-flip\"><b>Cost sensitivity table (where each gap crosses zero) →</b></a>"
             "<br><br>"
             "<b style=\"color: var(--amber);\">Correction log, 2026-10-17: the equal-weight figures above were previously wrong.</b> "
             "The old benchmark broadcast each stock's <i>mean daily return for the month</i> onto every session "
@@ -588,6 +593,13 @@ def build_home_page():
     perf_f = _perf_fmt(perf)
     lede = T_strict("home_lede_zh", HK=counts.get("HK", "?"), US=counts.get("US", "?"),
                     JP=counts.get("JP", "?"), **_perf_fmt(perf))
+    # Sprint 2 A1: cross-market freshness banner. Empty when every market is
+    # fresh (or when the banner flag is off).
+    _stale_banner = staleness.banner_html_all()
+    # ...and the two claims that must not stand unqualified when a market is
+    # behind: the "Live" kicker and the "今日 actionable" heading.
+    _live_label = staleness.live_label()
+    _actionable_note = staleness.actionable_note()
 
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant-HK">
@@ -703,6 +715,7 @@ def build_home_page():
   </nav>
 </header>
 {mobile_bottom_nav("home")}
+{_stale_banner}
 <script>
 function toggleTheme(){{
   const cur = document.documentElement.getAttribute('data-theme') || 'dark';
@@ -728,7 +741,7 @@ function toggleTheme(){{
 <main id="main">
 <div class="page-head">
   <div class="container">
-    <div class="kicker">Leeks Terminal · Live</div>
+    <div class="kicker">Leeks Terminal · {_live_label}</div>
     <h1>Leeks Terminal · <em class="italic">{subtitle}</em></h1>
     <p class="lede">{lede}</p>
     <div class="hero-meta">
@@ -742,7 +755,7 @@ function toggleTheme(){{
 <section>
   <div class="container">
     <div class="section-head">
-      <h2>{T("home_today_actionable")}</h2>
+      <h2>{T("home_today_actionable")}{_actionable_note}</h2>
       <span class="section-meta">{mkt_bits} · 全部只做多 · 入場價 = 20 日低位 S1，要收市企穩先算成交 · <b>冇目標價</b>，第 10 個交易日收市離場 · Updated {datetime.now().strftime('%H:%M HKT')}</span>
     </div>
     <div class="card-grid" style="grid-template-columns: 1fr;">

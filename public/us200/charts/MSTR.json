@@ -3,21 +3,21 @@
   "ticker_user": "MSTR",
   "name": "Strategy Inc",
   "data_source": "yfinance",
-  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
+  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-19",
-    "O": 139.13,
-    "H": 141.1,
-    "L": 135.8,
-    "C": 136.02,
-    "prev_close": 136.83,
-    "chg_pct": -0.59
+    "date": "2026-10-23",
+    "O": 144.43,
+    "H": 152.21,
+    "L": 144.21,
+    "C": 146.01,
+    "prev_close": 145.8,
+    "chg_pct": 0.14
   },
   "phase": "base_building",
-  "adx": 26.56,
-  "plus_di": 18.18,
-  "minus_di": 23.64,
-  "regime": "trend",
+  "adx": 22.6,
+  "plus_di": 23.98,
+  "minus_di": 17.25,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 197.0 (2026-05-11), trough 81.81 (2026-06-26), box top 171.19 (2026-09-22)",
   "peak": {
@@ -32,22 +32,22 @@
     "top": 171.19,
     "top_date": "2026-09-22",
     "bottom": 81.81,
-    "period": "2026-06-26 to 2026-10-19"
+    "period": "2026-06-26 to 2026-10-23"
   },
-  "drop_from_peak_pct": 31.0,
-  "recovery_from_crash_pct": 66.3,
+  "drop_from_peak_pct": 25.9,
+  "recovery_from_crash_pct": 78.5,
   "supports": [
     {
-      "level": 132.0,
+      "level": 136.0,
       "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 3.0% below current"
+      "touches": 10,
+      "evidence": "tested 10x in base period; 6.9% below current"
     },
     {
       "level": 128.0,
       "label": "S2",
-      "touches": 8,
-      "evidence": "mid-base support, tested 8x"
+      "touches": 6,
+      "evidence": "mid-base support, tested 6x"
     },
     {
       "level": 124.0,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 141.1,
+      "level": 152.21,
       "label": "R1 today high",
-      "evidence": "today's high 141.10000610351562"
+      "evidence": "today's high 152.2100067138672"
     },
     {
       "level": 160.0,
@@ -74,34 +74,34 @@
       "evidence": "mid-box supply, round number 160"
     },
     {
-      "level": 165.0,
-      "label": "R4",
-      "evidence": "psychological round number, pre-crash zone 165"
-    },
-    {
       "level": 171.19,
       "label": "R3 Sep high",
       "evidence": "box top 171.19, base period high"
+    },
+    {
+      "level": 180.0,
+      "label": "R4",
+      "evidence": "psychological round number, pre-crash zone 180"
     }
   ],
   "position": {
-    "current": 136.02,
-    "in_box_pct": 60.7,
-    "nearest_support": "S1 KEY (132.0)",
-    "nearest_resistance": "R1 today high (141.1)"
+    "current": 146.01,
+    "in_box_pct": 71.8,
+    "nearest_support": "S1 KEY (136.0)",
+    "nearest_resistance": "R1 today high (152.21)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 139.13,
-    "H": 141.1,
-    "L": 135.8,
-    "C": 136.02,
-    "body_pct": 58.7,
-    "upper_wick_pct": 37.2,
-    "lower_wick_pct": 4.2
+    "O": 144.43,
+    "H": 152.21,
+    "L": 144.21,
+    "C": 146.01,
+    "body_pct": 19.8,
+    "upper_wick_pct": 77.5,
+    "lower_wick_pct": 2.7
   },
   "bias": {
     "short": {
@@ -119,11 +119,11 @@
   },
   "scenarios": [
     {
-      "if": "hold 132.0 (KEY support)",
-      "then": "still range; watch 141.1 for next test"
+      "if": "hold 136.0 (KEY support)",
+      "then": "still range; watch 152.21 for next test"
     },
     {
-      "if": "break 132.0 on close",
+      "if": "break 136.0 on close",
       "then": "target 128.0 → 124.0 (short-term bearish)"
     },
     {
@@ -131,7 +131,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 141.1 on close",
+      "if": "reclaim 152.21 on close",
       "then": "short-term bullish; next test 160.0"
     },
     {
@@ -159,32 +159,40 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_VOLATILE",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 171.19,
-    "s1": 134.11,
+    "phase_match": true,
+    "r1": 170.17,
+    "s1": 133.6,
     "s2": 89.21,
-    "r2": 169.52,
+    "r2": 171.19,
     "r3": 197.0,
     "s3": 81.81,
     "s4": 104.17,
-    "current_position_pct": 5.2,
-    "notes": "WAIT_VOLATILE: ATR14 7.1% / box width 27% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
+    "current_position_pct": 33.9,
+    "notes": "WAIT_RANGE: in box (134-170), pos 34%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "早晨之星",
+      "bias": "bullish",
+      "date": "2026-10-21",
+      "low": 143.92999267578125,
+      "high": 155.69000244140625,
+      "i": 197
+    },
     {
       "name": "上升三法",
       "bias": "bullish",
       "date": "2026-10-08",
       "low": 147.3699951171875,
       "high": 153.6300048828125,
-      "i": 192
+      "i": 188
     },
     {
       "name": "利淡吞噬",
@@ -192,7 +200,7 @@
       "date": "2026-10-02",
       "low": 155.88999938964844,
       "high": 170.1699981689453,
-      "i": 188
+      "i": 184
     },
     {
       "name": "利淡吞噬",
@@ -200,7 +208,7 @@
       "date": "2026-09-01",
       "low": 123.58999633789062,
       "high": 129.89999389648438,
-      "i": 166
+      "i": 162
     },
     {
       "name": "刺穿線",
@@ -208,15 +216,7 @@
       "date": "2026-08-17",
       "low": 93.08000183105469,
       "high": 98.56999969482422,
-      "i": 155
-    },
-    {
-      "name": "利好身懷六甲",
-      "bias": "bullish",
-      "date": "2026-07-30",
-      "low": 94.33000183105469,
-      "high": 98.22000122070312,
-      "i": 143
+      "i": 151
     }
   ]
 }

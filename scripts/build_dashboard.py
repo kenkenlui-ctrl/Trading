@@ -24,6 +24,7 @@ from pathlib import Path
 import sys
 from functools import lru_cache
 from mobile_nav import mobile_bottom_nav, render_v2_block, render_v2_status_for_ticker
+import staleness
 
 
 def t_minus_1() -> date:
@@ -576,6 +577,9 @@ def build_dashboard_page(
 
     _mnav = {"HK": "hk", "US": "us", "JP": "jp"}.get(market, "")
     _t1 = data_asof(market)
+    # Sprint 2 A1: the market's freshness state, derived at build time. Empty
+    # string when the market is fresh (or when the banner flag is off).
+    _stale_banner = staleness.banner_html(market)
     v2_block = render_v2_block(market)
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant-HK">
@@ -629,6 +633,7 @@ def build_dashboard_page(
   </nav>
 </header>
 {mobile_bottom_nav(_mnav)}
+{_stale_banner}
 <script>
 function toggleTheme(){{
   const cur = document.documentElement.getAttribute('data-theme') || 'dark';
@@ -867,6 +872,8 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
     back_url = "/hk200/" if market == "HK" else "/us200/"
     _mnav = {"HK": "hk", "US": "us", "JP": "jp"}.get(market, "")
     _t1 = data_asof(t.get("market", market))
+    # Sprint 2 A1: market-level freshness banner (see scripts/staleness.py).
+    _stale_banner = staleness.banner_html(market)
 
     # 2026-10-06 — fail-closed data-freshness banner.
     #
@@ -1207,6 +1214,7 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
   </nav>
 </header>
 {mobile_bottom_nav(_mnav)}
+{_stale_banner}
 <script>
 function toggleTheme(){{
   const cur = document.documentElement.getAttribute('data-theme') || 'dark';

@@ -124,7 +124,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/fraunces/v38/6NUh8FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0K7iN7hzFUPJH58nib1603gg7S2nfgRYIctxuTBv7Tp05GNyXkb24.woff2">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxTN1OVk6OThhvAWV8.woff2">
 <link rel="stylesheet" href="/static/fonts-local.css">
-<link rel="stylesheet" href="/leeks.css?v=8e02907cb6">
+<link rel="stylesheet" href="/leeks.css?v=800f38b5de">
 <style>
 .method-prose td { white-space: normal; overflow: visible; text-overflow: clip; vertical-align: top; }
 </style>
@@ -152,7 +152,7 @@
   <a class="lang-switch" href="/en/methodology/" title="View in English" aria-label="View in English">EN</a>
   <div class="nav-meta">
     <span class="live-dot"></span>
-    T-1 · 2026-10-20 · US 2026-10-19
+    T-1 · 2026-10-23
     <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
       <span class="icon" id="themeIcon">●</span>
       <span id="themeLabel">DARK</span>
@@ -316,6 +316,23 @@ function toggleTheme(){
       同一個道理，呢頁<b>連方向嘅措辭都係由符號計出嚟</b>：<code>data/hk_retest_summary.json</code> 喺 2026-10-18
       當日下午重跑過兩次，差距嘅正負號轉咗兩次，所以頁面唔會再自己斷言
       「領先」定「落後」。
+    </p>
+  </div>
+  <div class="callout" id="cost-flip" style="margin: var(--sp-4) 0; padding: var(--sp-4); border-left: 4px solid var(--amber); background: var(--amber-dim); border-radius: 4px;">
+    <h3 style="margin-top: 0; font-size: var(--text-md);">成本敏感度：差距喺邊個來回成本會變號</h3>
+    <p style="margin: var(--sp-2) 0; font-size: var(--text-sm);">
+      上面每一個差距都係喺一個成本口徑下報嘅。成本一改，正負號可以跟住改 ——
+      所以呢度唔再報一個單一數字，而係報<b>「差距喺邊個成本會穿過零」</b>，
+      連三個市場、兩個窗口一齊列出。全部數字由
+      <code>data/hk_retest_summary.json</code> 讀出；變號點用線性插值（兩個已量度成本之間）
+      或者線性外推（超出已量度範圍）計，方法寫喺表內。
+    </p>
+    <table style="border-collapse:collapse;width:100%;font-size:.88rem;margin:12px 0"><thead><tr><th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)">市場</th><th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)">窗口</th><th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)">0.00% 差距</th><th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)">0.10% 差距</th><th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)">0.25% 差距</th><th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)">變號成本</th><th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)">點計</th></tr></thead><tbody><tr><td><b>美股</b></td><td>2016-2026</td><td><span style="color:var(--bull)">+7.37 pp</span></td><td><span style="color:var(--bull)">+3.94 pp</span></td><td><span style="color:var(--bull)">+0.96 pp</span></td><td><b style="color:var(--amber)">0.298%</b>（外推）</td><td>由 0.10% 同 0.25% 兩個已量度成本線性外推（已超出已量度範圍，只作參考）。</td></tr><tr><td><b>美股</b></td><td>2016-2020</td><td><span style="color:var(--bull)">+8.92 pp</span></td><td><span style="color:var(--bull)">+6.70 pp</span></td><td><span style="color:var(--bull)">+3.72 pp</span></td><td><b style="color:var(--amber)">0.437%</b>（外推）</td><td>由 0.10% 同 0.25% 兩個已量度成本線性外推（已超出已量度範圍，只作參考）。</td></tr><tr><td><b>美股</b></td><td>2021-2026</td><td><span style="color:var(--bull)">+3.61 pp</span></td><td><span style="color:var(--bull)">+0.54 pp</span></td><td><span style="color:var(--bear)">-2.39 pp</span></td><td><b style="color:var(--amber)">0.128%</b></td><td>喺 0.10% 同 0.25% 兩個已量度成本之間線性插值。</td></tr><tr><td><b>日股</b></td><td>2016-2026</td><td><span style="color:var(--bull)">+3.68 pp</span></td><td><span style="color:var(--bull)">+2.12 pp</span></td><td><span style="color:var(--bear)">-0.34 pp</span></td><td><b style="color:var(--amber)">0.229%</b></td><td>喺 0.10% 同 0.25% 兩個已量度成本之間線性插值。</td></tr><tr><td><b>日股</b></td><td>2016-2020</td><td><span style="color:var(--bear)">-6.01 pp</span></td><td><span style="color:var(--bear)">-7.24 pp</span></td><td><span style="color:var(--bear)">-8.98 pp</span></td><td><b>唔會變號</b></td><td>零成本都已經係負數，所以喺任何正成本都唔會變號。</td></tr><tr><td><b>日股</b></td><td>2021-2026</td><td><span style="color:var(--bull)">+9.55 pp</span></td><td><span style="color:var(--bull)">+8.55 pp</span></td><td><span style="color:var(--bull)">+5.09 pp</span></td><td><b style="color:var(--amber)">0.471%</b>（外推）</td><td>由 0.10% 同 0.25% 兩個已量度成本線性外推（已超出已量度範圍，只作參考）。</td></tr><tr><td><b>港股</b></td><td>2016-2026</td><td><span style="color:var(--bear)">-2.49 pp</span></td><td><span style="color:var(--bear)">-3.15 pp</span></td><td><span style="color:var(--bear)">-4.36 pp</span></td><td><b>唔會變號</b></td><td>零成本都已經係負數，所以喺任何正成本都唔會變號。</td></tr><tr><td><b>港股</b></td><td>2016-2020</td><td><span style="color:var(--bear)">-7.04 pp</span></td><td><span style="color:var(--bear)">-7.91 pp</span></td><td><span style="color:var(--bear)">-8.94 pp</span></td><td><b>唔會變號</b></td><td>零成本都已經係負數，所以喺任何正成本都唔會變號。</td></tr><tr><td><b>港股</b></td><td>2021-2026</td><td><span style="color:var(--bull)">+2.84 pp</span></td><td><span style="color:var(--bull)">+1.86 pp</span></td><td><span style="color:var(--bull)">+0.53 pp</span></td><td><b style="color:var(--amber)">0.309%</b>（外推）</td><td>由 0.10% 同 0.25% 兩個已量度成本線性外推（已超出已量度範圍，只作參考）。</td></tr></tbody></table>
+    <p style="margin: var(--sp-2) 0 0; font-size: var(--text-sm);">
+      全期計：美股喺 0.298% 變號（外推）；日股喺 0.229% 變號；港股零成本都仲係負數。
+      <b>注意兩個窗口講緊唔同嘅故事</b> —— 美股 2016–20 段喺任何實測成本都領先，
+      但 2021–26 段喺 0.128%
+      就已經變負。呢個正正係本站唔肯用全期單一數字做結論嘅原因。
     </p>
   </div>
   <div class="callout" style="margin: var(--sp-4) 0; padding: var(--sp-4); border-left: 4px solid var(--red); background: var(--red-dim); border-radius: 4px;">
@@ -1055,7 +1072,7 @@ function toggleTheme(){
   <div class="container">
     <div class="row">
       <div>© 2026 Leeks Terminal · win9you.com · <a href="/methodology">Methodology</a> · <a href="/disclaimer">Disclaimer</a></div>
-      <div class="mono text-dim">T-1 · 2026-10-20 · US 2026-10-19</div>
+      <div class="mono text-dim">T-1 · 2026-10-23</div>
     </div>
   </div>
 </footer>

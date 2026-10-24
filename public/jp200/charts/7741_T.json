@@ -3,23 +3,23 @@
   "ticker_user": "7741.T",
   "name": "HOYA Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-22 → 2026-10-20 (200 daily bars)",
+  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-20",
-    "O": 25855.0,
-    "H": 25990.0,
-    "L": 25405.0,
-    "C": 25990.0,
-    "prev_close": 25580.0,
-    "chg_pct": 1.602814698983579
+    "date": "2026-10-23",
+    "O": 26180.0,
+    "H": 26605.0,
+    "L": 25940.0,
+    "C": 26100.0,
+    "prev_close": 26380.0,
+    "chg_pct": -1.0614101592115288
   },
   "phase": "downtrend_active",
-  "adx": 27.11,
-  "plus_di": 28.56,
-  "minus_di": 12.74,
+  "adx": 30.76,
+  "plus_di": 31.72,
+  "minus_di": 15.33,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 30400.0 (2026-04-15), trough 22165.0 (2026-09-16), box top 25990.0 (2026-10-20)",
+  "phase_evidence": "Peak 30400.0 (2026-04-15), trough 22165.0 (2026-09-16), box top 27180.0 (2026-10-22)",
   "peak": {
     "date": "2026-04-15",
     "price": 30400.0
@@ -29,16 +29,16 @@
     "price": 22165.0
   },
   "box": {
-    "top": 25990.0,
-    "top_date": "2026-10-20",
+    "top": 27180.0,
+    "top_date": "2026-10-22",
     "bottom": 22165.0,
-    "period": "2026-09-16 to 2026-10-20"
+    "period": "2026-09-16 to 2026-10-23"
   },
-  "drop_from_peak_pct": 14.5,
-  "recovery_from_crash_pct": 17.3,
+  "drop_from_peak_pct": 14.1,
+  "recovery_from_crash_pct": 17.8,
   "supports": [
     {
-      "level": 25212.0,
+      "level": 25316.0,
       "label": "S1 KEY",
       "touches": 0,
       "evidence": "structural level near current; 3.0% below current"
@@ -52,29 +52,34 @@
   ],
   "resistances": [
     {
-      "level": 25990.0,
+      "level": 26605.0,
       "label": "R1 today high",
-      "evidence": "today's high 25990.0"
+      "evidence": "rejection at 26605.0 (long upper wick, close weak)"
+    },
+    {
+      "level": 27180.0,
+      "label": "R3 Oct high",
+      "evidence": "box top 27180.0, base period high"
     }
   ],
   "position": {
-    "current": 25990.0,
-    "in_box_pct": 100.0,
-    "nearest_support": "S1 KEY (25212.0)",
-    "nearest_resistance": null
+    "current": 26100.0,
+    "in_box_pct": 78.5,
+    "nearest_support": "S1 KEY (25316.0)",
+    "nearest_resistance": "R1 today high (26605.0)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 25855.0,
-    "H": 25990.0,
-    "L": 25405.0,
-    "C": 25990.0,
-    "body_pct": 23.1,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 76.9
+    "close_position": "lower_half",
+    "O": 26180.0,
+    "H": 26605.0,
+    "L": 25940.0,
+    "C": 26100.0,
+    "body_pct": 12.0,
+    "upper_wick_pct": 63.9,
+    "lower_wick_pct": 24.1
   },
   "bias": {
     "short": {
@@ -86,17 +91,17 @@
       "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 25212.0 (KEY support)",
-      "then": "still range; watch 25990.0 for next test"
+      "if": "hold 25316.0 (KEY support)",
+      "then": "still range; watch 26605.0 for next test"
     },
     {
-      "if": "break 25212.0 on close",
+      "if": "break 25316.0 on close",
       "then": "target 22165.0 → lower (short-term bearish)"
     },
     {
@@ -104,8 +109,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 25990.0 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 26605.0 on close",
+      "then": "short-term bullish; next test 27180.0"
+    },
+    {
+      "if": "break 27180.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -136,24 +145,32 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 25990.0,
-    "s1": 22400.0,
+    "r1": 27180.0,
+    "s1": 22980.0,
     "s2": 22165.0,
     "r2": 26925.0,
     "r3": 29700.0,
     "s3": 23910.0,
     "s4": 23345.0,
-    "current_position_pct": 100.0,
-    "notes": "WAIT_RANGE: in box (22400-25990), pos 100%, no clear setup"
+    "current_position_pct": 74.3,
+    "notes": "WAIT_RANGE: in box (22980-27180), pos 74%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "吊頸",
+      "bias": "bearish",
+      "date": "2026-10-22",
+      "low": 26365.0,
+      "high": 27180.0,
+      "i": 198
+    },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-10-07",
       "low": 25060.0,
       "high": 25365.0,
-      "i": 191
+      "i": 188
     },
     {
       "name": "刺穿線",
@@ -161,7 +178,7 @@
       "date": "2026-09-16",
       "low": 22165.0,
       "high": 22455.0,
-      "i": 179
+      "i": 176
     },
     {
       "name": "早晨之星",
@@ -169,15 +186,7 @@
       "date": "2026-09-01",
       "low": 24435.0,
       "high": 25130.0,
-      "i": 168
-    },
-    {
-      "name": "吊頸",
-      "bias": "bearish",
-      "date": "2026-08-14",
-      "low": 26340.0,
-      "high": 26845.0,
-      "i": 156
+      "i": 165
     },
     {
       "name": "利淡反擊線",
@@ -185,23 +194,23 @@
       "date": "2026-08-06",
       "low": 24950.0,
       "high": 25600.0,
-      "i": 151
+      "i": 148
     }
   ],
-  "asof": "2026-10-20",
-  "close": 25990.0,
-  "chg_pct": 1.602814698983579,
+  "asof": "2026-10-23",
+  "close": 26100.0,
+  "chg_pct": -1.0614101592115288,
   "kline": {
-    "type": "bullish_hold",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 25855.0,
-    "H": 25990.0,
-    "L": 25405.0,
-    "C": 25990.0,
-    "body_pct": 23.1,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 76.9
+    "close_position": "lower_half",
+    "O": 26180.0,
+    "H": 26605.0,
+    "L": 25940.0,
+    "C": 26100.0,
+    "body_pct": 12.0,
+    "upper_wick_pct": 63.9,
+    "lower_wick_pct": 24.1
   }
 }

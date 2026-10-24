@@ -3,52 +3,70 @@
   "ticker_user": "CRWD",
   "name": "CrowdStrike Holdings, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
+  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-19",
-    "O": 234.18,
-    "H": 234.26,
-    "L": 223.95,
-    "C": 228.1,
-    "prev_close": 227.39,
-    "chg_pct": 0.31
+    "date": "2026-10-23",
+    "O": 239.29,
+    "H": 257.91,
+    "L": 234.79,
+    "C": 257.57,
+    "prev_close": 237.94,
+    "chg_pct": 8.25
   },
-  "phase": "downtrend_active",
-  "adx": 22.54,
-  "plus_di": 17.11,
-  "minus_di": 30.03,
-  "regime": "dead",
+  "phase": "base_building",
+  "adx": 19.98,
+  "plus_di": 26.76,
+  "minus_di": 22.33,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 286.99 (2026-10-06), trough 204.27 (2026-09-10), box top 286.99 (2026-10-06)",
+  "phase_evidence": "Peak 286.99 (2026-10-06), trough 216.05 (2026-09-14), box top 286.99 (2026-10-06)",
   "peak": {
     "date": "2026-10-06",
     "price": 286.99
   },
   "trough": {
-    "date": "2026-09-10",
-    "price": 204.27
+    "date": "2026-09-14",
+    "price": 216.05
   },
   "box": {
     "top": 286.99,
     "top_date": "2026-10-06",
-    "bottom": 204.27,
-    "period": "2026-09-10 to 2026-10-19"
+    "bottom": 216.05,
+    "period": "2026-09-14 to 2026-10-23"
   },
-  "drop_from_peak_pct": 20.5,
-  "recovery_from_crash_pct": 11.7,
+  "drop_from_peak_pct": 10.3,
+  "recovery_from_crash_pct": 19.2,
   "supports": [
     {
-      "level": 204.0,
-      "label": "S1 bottom",
-      "touches": 5,
-      "evidence": "structural bottom, near crash low 204.27"
+      "level": 248.0,
+      "label": "S1 KEY",
+      "touches": 6,
+      "evidence": "tested 6x in base period; 3.7% below current"
+    },
+    {
+      "level": 236.0,
+      "label": "S2",
+      "touches": 8,
+      "evidence": "mid-base support, tested 8x"
+    },
+    {
+      "level": 232.0,
+      "label": "S3",
+      "touches": 6,
+      "evidence": "mid-base support, tested 6x"
+    },
+    {
+      "level": 216.05,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-09-14, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 234.26,
+      "level": 257.91,
       "label": "R1 today high",
-      "evidence": "today's high 234.26199340820312"
+      "evidence": "today's high 257.9100036621094"
     },
     {
       "level": 286.99,
@@ -57,32 +75,32 @@
     }
   ],
   "position": {
-    "current": 228.1,
-    "in_box_pct": 29.0,
-    "nearest_support": "S1 bottom (204.0)",
-    "nearest_resistance": "R1 today high (234.26)"
+    "current": 257.57,
+    "in_box_pct": 58.5,
+    "nearest_support": "S1 KEY (248.0)",
+    "nearest_resistance": "R1 today high (257.91)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 234.18,
-    "H": 234.26,
-    "L": 223.95,
-    "C": 228.1,
-    "body_pct": 59.0,
-    "upper_wick_pct": 0.8,
-    "lower_wick_pct": 40.2
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 239.29,
+    "H": 257.91,
+    "L": 234.79,
+    "C": 257.57,
+    "body_pct": 79.1,
+    "upper_wick_pct": 1.5,
+    "lower_wick_pct": 19.5
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (29% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bearish_continuation",
-      "reason": "making new lows"
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -91,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 204.0 (KEY support)",
-      "then": "still range; watch 234.26 for next test"
+      "if": "hold 248.0 (KEY support)",
+      "then": "still range; watch 257.91 for next test"
     },
     {
-      "if": "break 204.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 248.0 on close",
+      "then": "target 236.0 → 232.0 (short-term bearish)"
     },
     {
-      "if": "break 204.0 (crash low)",
+      "if": "break 216.05 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 234.26 on close",
+      "if": "reclaim 257.91 on close",
       "then": "short-term bullish; next test 286.99"
     },
     {
@@ -138,16 +156,16 @@
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": false,
+    "phase_match": true,
     "r1": 286.99,
-    "s1": 223.95,
-    "s2": 174.14,
-    "r2": 250.32,
+    "s1": 221.36,
+    "s2": 181.24,
+    "r2": 263.87,
     "r3": 217.5,
-    "s3": 108.14,
+    "s3": 114.36,
     "s4": 85.68,
-    "current_position_pct": 6.6,
-    "notes": "WAIT_RANGE: in box (224-287), pos 7%, no clear setup"
+    "current_position_pct": 55.2,
+    "notes": "WAIT_RANGE: in box (221-287), pos 55%, no clear setup"
   },
   "patterns": [
     {
@@ -156,7 +174,7 @@
       "date": "2026-10-12",
       "low": 261.2300109863281,
       "high": 276.3900146484375,
-      "i": 194
+      "i": 190
     },
     {
       "name": "烏雲蓋頂",
@@ -164,7 +182,7 @@
       "date": "2026-09-01",
       "low": 212.64999389648438,
       "high": 231.2989959716797,
-      "i": 166
+      "i": 162
     },
     {
       "name": "利好身懷六甲",
@@ -172,7 +190,7 @@
       "date": "2026-08-26",
       "low": 181.24000549316406,
       "high": 191.32000732421875,
-      "i": 162
+      "i": 158
     },
     {
       "name": "刺穿線",
@@ -180,7 +198,7 @@
       "date": "2026-07-30",
       "low": 177.7469940185547,
       "high": 185.4600067138672,
-      "i": 143
+      "i": 139
     },
     {
       "name": "利淡反擊線",
@@ -188,7 +206,7 @@
       "date": "2026-06-22",
       "low": 168.2987518310547,
       "high": 178.0449981689453,
-      "i": 116
+      "i": 112
     }
   ]
 }

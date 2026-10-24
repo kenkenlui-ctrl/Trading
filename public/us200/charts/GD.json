@@ -3,23 +3,23 @@
   "ticker_user": "GD",
   "name": "General Dynamics Corporation",
   "data_source": "yfinance",
-  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
+  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-19",
-    "O": 341.64,
-    "H": 343.57,
-    "L": 340.19,
-    "C": 341.43,
-    "prev_close": 344.23,
-    "chg_pct": -0.81
+    "date": "2026-10-23",
+    "O": 348.04,
+    "H": 350.93,
+    "L": 344.99,
+    "C": 349.36,
+    "prev_close": 350.79,
+    "chg_pct": -0.41
   },
   "phase": "downtrend_active",
-  "adx": 55.03,
-  "plus_di": 14.92,
-  "minus_di": 22.91,
+  "adx": 42.5,
+  "plus_di": 19.19,
+  "minus_di": 17.64,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 400.0 (2026-07-29), trough 322.0 (2026-10-08), box top 344.95 (2026-10-16)",
+  "phase_evidence": "Peak 400.0 (2026-07-29), trough 322.0 (2026-10-08), box top 351.15 (2026-10-22)",
   "peak": {
     "date": "2026-07-29",
     "price": 400.0
@@ -29,52 +29,58 @@
     "price": 322.0
   },
   "box": {
-    "top": 344.95,
-    "top_date": "2026-10-16",
+    "top": 351.15,
+    "top_date": "2026-10-22",
     "bottom": 322.0,
-    "period": "2026-10-08 to 2026-10-19"
+    "period": "2026-10-08 to 2026-10-23"
   },
-  "drop_from_peak_pct": 14.6,
-  "recovery_from_crash_pct": 6.0,
+  "drop_from_peak_pct": 12.7,
+  "recovery_from_crash_pct": 8.5,
   "supports": [
     {
-      "level": 332.0,
+      "level": 340.0,
       "label": "S1 KEY",
-      "touches": 10,
-      "evidence": "tested 10x in base period; 2.8% below current"
+      "touches": 6,
+      "evidence": "tested 6x in base period; 2.7% below current"
     },
     {
-      "level": 328.0,
-      "label": "S2 bottom",
-      "touches": 12,
+      "level": 336.0,
+      "label": "S2",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 332.0,
+      "label": "S3 bottom",
+      "touches": 7,
       "evidence": "structural bottom, near crash low 322.0"
     }
   ],
   "resistances": [
     {
-      "level": 343.57,
+      "level": 350.93,
       "label": "R1 today high",
-      "evidence": "rejection at 343.57000732421875 (long upper wick, close weak)"
+      "evidence": "today's high 350.92999267578125"
     }
   ],
   "position": {
-    "current": 341.43,
-    "in_box_pct": 86.3,
-    "nearest_support": "S1 KEY (332.0)",
-    "nearest_resistance": "R1 today high (343.57)"
+    "current": 349.36,
+    "in_box_pct": 91.7,
+    "nearest_support": "S1 KEY (340.0)",
+    "nearest_resistance": "R1 today high (350.93)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 341.64,
-    "H": 343.57,
-    "L": 340.19,
-    "C": 341.43,
-    "body_pct": 6.2,
-    "upper_wick_pct": 57.1,
-    "lower_wick_pct": 36.7
+    "close_position": "upper_half",
+    "O": 348.04,
+    "H": 350.93,
+    "L": 344.99,
+    "C": 349.36,
+    "body_pct": 22.2,
+    "upper_wick_pct": 26.4,
+    "lower_wick_pct": 51.3
   },
   "bias": {
     "short": {
@@ -86,25 +92,25 @@
       "reason": "making new lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 332.0 (KEY support)",
-      "then": "still range; watch 343.57 for next test"
+      "if": "hold 340.0 (KEY support)",
+      "then": "still range; watch 350.93 for next test"
     },
     {
-      "if": "break 332.0 on close",
-      "then": "target 328.0 → lower (short-term bearish)"
+      "if": "break 340.0 on close",
+      "then": "target 336.0 → 332.0 (short-term bearish)"
     },
     {
-      "if": "break 328.0 (crash low)",
+      "if": "break 332.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 343.57 on close",
+      "if": "reclaim 350.93 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -128,7 +134,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -136,15 +142,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 354.67,
+    "r1": 351.15,
     "s1": 322.0,
-    "s2": 349.84,
-    "r2": 400.0,
-    "r3": 388.12,
+    "s2": 335.0,
+    "r2": 397.2,
+    "r3": 400.0,
     "s3": 333.29,
     "s4": 306.77,
-    "current_position_pct": 59.5,
-    "notes": "WAIT_RANGE: in box (322-355), pos 59%, no clear setup"
+    "current_position_pct": 93.9,
+    "notes": "WAIT_RANGE: in box (322-351), pos 94%, no clear setup"
   },
   "patterns": [
     {
@@ -153,7 +159,7 @@
       "date": "2026-10-14",
       "low": 333.3599853515625,
       "high": 336.2200012207031,
-      "i": 196
+      "i": 192
     },
     {
       "name": "利好吞噬",
@@ -161,7 +167,7 @@
       "date": "2026-10-01",
       "low": 331.0400085449219,
       "high": 334.3800048828125,
-      "i": 187
+      "i": 183
     },
     {
       "name": "利淡吞噬",
@@ -169,7 +175,7 @@
       "date": "2026-08-17",
       "low": 389.7900085449219,
       "high": 394.5199890136719,
-      "i": 155
+      "i": 151
     },
     {
       "name": "烏雲蓋頂",
@@ -177,7 +183,7 @@
       "date": "2026-08-05",
       "low": 381.3500061035156,
       "high": 389.5,
-      "i": 147
+      "i": 143
     },
     {
       "name": "利好反擊線",
@@ -185,7 +191,7 @@
       "date": "2026-06-26",
       "low": 344.3500061035156,
       "high": 350.5799865722656,
-      "i": 120
+      "i": 116
     }
   ]
 }

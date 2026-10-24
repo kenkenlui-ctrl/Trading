@@ -3,21 +3,21 @@
   "ticker_user": "SNOW",
   "name": "Snowflake Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
+  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-19",
-    "O": 314.0,
-    "H": 320.43,
-    "L": 309.8,
-    "C": 315.35,
-    "prev_close": 306.84,
-    "chg_pct": 2.77
+    "date": "2026-10-23",
+    "O": 310.31,
+    "H": 325.62,
+    "L": 310.31,
+    "C": 325.43,
+    "prev_close": 313.96,
+    "chg_pct": 3.65
   },
   "phase": "uptrend",
-  "adx": 21.23,
-  "plus_di": 19.21,
-  "minus_di": 27.45,
-  "regime": "dead",
+  "adx": 19.72,
+  "plus_di": 18.25,
+  "minus_di": 25.92,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 223.05 (2026-01-28), trough 118.3 (2026-04-10), box top 384.56 (2026-09-03)",
   "peak": {
@@ -32,28 +32,28 @@
     "top": 384.56,
     "top_date": "2026-09-03",
     "bottom": 118.3,
-    "period": "2026-04-10 to 2026-10-19"
+    "period": "2026-04-10 to 2026-10-23"
   },
-  "drop_from_peak_pct": -41.4,
-  "recovery_from_crash_pct": 166.6,
+  "drop_from_peak_pct": -45.9,
+  "recovery_from_crash_pct": 175.1,
   "supports": [
     {
-      "level": 304.0,
+      "level": 316.0,
       "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 3.6% below current"
+      "touches": 11,
+      "evidence": "tested 11x in base period; 2.9% below current"
+    },
+    {
+      "level": 308.0,
+      "label": "S2",
+      "touches": 8,
+      "evidence": "mid-base support, tested 8x"
     },
     {
       "level": 260.0,
-      "label": "S2",
+      "label": "S3",
       "touches": 7,
       "evidence": "mid-base support, tested 7x"
-    },
-    {
-      "level": 232.0,
-      "label": "S3",
-      "touches": 5,
-      "evidence": "mid-base support, tested 5x"
     },
     {
       "level": 118.3,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 320.43,
+      "level": 325.62,
       "label": "R1 today high",
-      "evidence": "today's high 320.42999267578125"
+      "evidence": "today's high 325.6199951171875"
     },
     {
       "level": 384.56,
@@ -75,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 315.35,
-    "in_box_pct": 74.0,
-    "nearest_support": "S1 KEY (304.0)",
-    "nearest_resistance": "R1 today high (320.43)"
+    "current": 325.43,
+    "in_box_pct": 77.8,
+    "nearest_support": "S1 KEY (316.0)",
+    "nearest_resistance": "R1 today high (325.62)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 314.0,
-    "H": 320.43,
-    "L": 309.8,
-    "C": 315.35,
-    "body_pct": 12.7,
-    "upper_wick_pct": 47.8,
-    "lower_wick_pct": 39.5
+    "O": 310.31,
+    "H": 325.62,
+    "L": 310.31,
+    "C": 325.43,
+    "body_pct": 98.8,
+    "upper_wick_pct": 1.2,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
@@ -109,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 304.0 (KEY support)",
-      "then": "still range; watch 320.43 for next test"
+      "if": "hold 316.0 (KEY support)",
+      "then": "still range; watch 325.62 for next test"
     },
     {
-      "if": "break 304.0 on close",
-      "then": "target 260.0 → 232.0 (short-term bearish)"
+      "if": "break 316.0 on close",
+      "then": "target 308.0 → 260.0 (short-term bearish)"
     },
     {
       "if": "break 118.3 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 320.43 on close",
+      "if": "reclaim 325.62 on close",
       "then": "short-term bullish; next test 384.56"
     },
     {
@@ -148,33 +148,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 302.24,
-    "target_price": 336.39,
-    "stop_price": 278.23,
-    "risk_pct": 7.94,
-    "reward_pct": 11.3,
-    "rr_ratio": 1.42,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 370.55,
     "s1": 302.24,
-    "s2": 253.59,
+    "s2": 292.63,
     "r2": 384.56,
-    "r3": 284.99,
-    "s3": 133.02,
+    "r3": 298.23,
+    "s3": 136.2,
     "s4": 118.3,
-    "current_position_pct": 19.2,
-    "notes": "BUY_S1: in box (302-371), entry at S1 302, target mid 336, stop 278 ｜ 52.2 條規則（BUY plan，support 302.24）：① 跌到 302.24、收市守住喺 302.24 上面 → 照 BUY 條 plan 做（入場 302.24，止蝕 278.23，目標 336.39）。② 收市跌穿 302.24 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 302.24 上面』。"
+    "current_position_pct": 33.9,
+    "notes": "WAIT_RANGE: in box (302-371), pos 34%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-10-23",
+      "low": 310.30999755859375,
+      "high": 325.6199951171875,
+      "i": 199
+    },
     {
       "name": "利淡反擊線",
       "bias": "bearish",
       "date": "2026-10-05",
       "low": 337.8699951171875,
       "high": 343.0,
-      "i": 189
+      "i": 185
     },
     {
       "name": "烏雲蓋頂",
@@ -182,7 +190,7 @@
       "date": "2026-09-22",
       "low": 333.67999267578125,
       "high": 346.7909851074219,
-      "i": 180
+      "i": 176
     },
     {
       "name": "烏雲蓋頂",
@@ -190,7 +198,7 @@
       "date": "2026-08-18",
       "low": 321.5,
       "high": 334.0,
-      "i": 156
+      "i": 152
     },
     {
       "name": "三隻烏鴉",
@@ -198,15 +206,7 @@
       "date": "2026-07-28",
       "low": 253.58999633789062,
       "high": 277.2099914550781,
-      "i": 141
-    },
-    {
-      "name": "烏雲蓋頂",
-      "bias": "bearish",
-      "date": "2026-06-24",
-      "low": 224.25999450683594,
-      "high": 234.3300018310547,
-      "i": 118
+      "i": 137
     }
   ]
 }

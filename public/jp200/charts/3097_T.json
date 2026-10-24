@@ -3,45 +3,45 @@
   "ticker_user": "3097.T",
   "name": "The Monogatari Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-22 → 2026-10-20 (200 daily bars)",
+  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-20",
-    "O": 6000.0,
-    "H": 6100.0,
-    "L": 5930.0,
-    "C": 6090.0,
-    "prev_close": 5960.0,
-    "chg_pct": 2.181208053691286
+    "date": "2026-10-23",
+    "O": 6030.0,
+    "H": 6200.0,
+    "L": 5980.0,
+    "C": 6020.0,
+    "prev_close": 5930.0,
+    "chg_pct": 1.5177065767284947
   },
-  "phase": "uptrend",
-  "adx": 17.05,
-  "plus_di": 38.44,
-  "minus_di": 16.47,
-  "regime": "range",
+  "phase": "base_building",
+  "adx": 22.66,
+  "plus_di": 39.98,
+  "minus_di": 12.87,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 6100.0 (2026-10-20), trough 5190.0 (2026-09-18), box top 6100.0 (2026-10-20)",
+  "phase_evidence": "Peak 6200.0 (2026-10-23), trough 5190.0 (2026-09-18), box top 6200.0 (2026-10-23)",
   "peak": {
-    "date": "2026-10-20",
-    "price": 6100.0
+    "date": "2026-10-23",
+    "price": 6200.0
   },
   "trough": {
     "date": "2026-09-18",
     "price": 5190.0
   },
   "box": {
-    "top": 6100.0,
-    "top_date": "2026-10-20",
+    "top": 6200.0,
+    "top_date": "2026-10-23",
     "bottom": 5190.0,
-    "period": "2026-09-18 to 2026-10-20"
+    "period": "2026-09-18 to 2026-10-23"
   },
-  "drop_from_peak_pct": 0.2,
-  "recovery_from_crash_pct": 17.3,
+  "drop_from_peak_pct": 2.9,
+  "recovery_from_crash_pct": 16.0,
   "supports": [
     {
       "level": 5440.0,
       "label": "S1 KEY",
       "touches": 6,
-      "evidence": "tested 6x in base period; 10.7% below current"
+      "evidence": "tested 6x in base period; 9.6% below current"
     },
     {
       "level": 5400.0,
@@ -58,29 +58,29 @@
   ],
   "resistances": [
     {
-      "level": 6100.0,
+      "level": 6200.0,
       "label": "R1 today high",
-      "evidence": "today's high 6100.0"
+      "evidence": "rejection at 6200.0 (long upper wick, close weak)"
     }
   ],
   "position": {
-    "current": 6090.0,
-    "in_box_pct": 98.9,
+    "current": 6020.0,
+    "in_box_pct": 81.6,
     "nearest_support": "S1 KEY (5440.0)",
-    "nearest_resistance": "R1 today high (6100.0)"
+    "nearest_resistance": "R1 today high (6200.0)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 6000.0,
-    "H": 6100.0,
-    "L": 5930.0,
-    "C": 6090.0,
-    "body_pct": 52.9,
-    "upper_wick_pct": 5.9,
-    "lower_wick_pct": 41.2
+    "close_position": "lower_half",
+    "O": 6030.0,
+    "H": 6200.0,
+    "L": 5980.0,
+    "C": 6020.0,
+    "body_pct": 4.5,
+    "upper_wick_pct": 77.3,
+    "lower_wick_pct": 18.2
   },
   "bias": {
     "short": {
@@ -88,18 +88,18 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bullish_continuation",
-      "reason": "higher highs / higher lows"
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 5440.0 (KEY support)",
-      "then": "still range; watch 6100.0 for next test"
+      "then": "still range; watch 6200.0 for next test"
     },
     {
       "if": "break 5440.0 on close",
@@ -110,7 +110,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 6100.0 on close",
+      "if": "reclaim 6200.0 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -133,24 +133,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 6100.0,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 6200.0,
+    "target_price": 5695.0,
+    "stop_price": 6465.93,
+    "risk_pct": 4.29,
+    "reward_pct": 8.15,
+    "rr_ratio": 1.9,
+    "phase_match": true,
+    "r1": 6200.0,
     "s1": 5190.0,
-    "s2": 4885.0,
+    "s2": 5010.0,
     "r2": 6010.0,
     "r3": 5270.0,
     "s3": 4145.0,
     "s4": 4070.0,
-    "current_position_pct": 98.9,
-    "notes": "WAIT_RANGE: in box (5190-6100), pos 99%, no clear setup"
+    "current_position_pct": 82.2,
+    "notes": "SELL_R1: in box (5190-6200), entry at R1 6200, target mid 5695, stop 6466 ｜ 52.2 條規則（SELL plan，resistance 6200.00）：① 跌到 6200.00、收市守住喺 6200.00 上面 → 照 BUY 條 plan 做（入場 6200.00，止蝕 6465.93，目標 5695.00）。② 收市跌穿 6200.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 6200.00 上面』。"
   },
   "patterns": [
     {
@@ -159,7 +159,7 @@
       "date": "2026-09-09",
       "low": 5700.0,
       "high": 5860.0,
-      "i": 174
+      "i": 171
     },
     {
       "name": "利淡反擊線",
@@ -167,7 +167,7 @@
       "date": "2026-08-26",
       "low": 5680.0,
       "high": 5750.0,
-      "i": 164
+      "i": 161
     },
     {
       "name": "平頭頂",
@@ -175,23 +175,23 @@
       "date": "2026-07-22",
       "low": 4980.0,
       "high": 5130.0,
-      "i": 140
+      "i": 137
     }
   ],
-  "asof": "2026-10-20",
-  "close": 6090.0,
-  "chg_pct": 2.181208053691286,
+  "asof": "2026-10-23",
+  "close": 6020.0,
+  "chg_pct": 1.5177065767284947,
   "kline": {
-    "type": "neutral",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 6000.0,
-    "H": 6100.0,
-    "L": 5930.0,
-    "C": 6090.0,
-    "body_pct": 52.9,
-    "upper_wick_pct": 5.9,
-    "lower_wick_pct": 41.2
+    "close_position": "lower_half",
+    "O": 6030.0,
+    "H": 6200.0,
+    "L": 5980.0,
+    "C": 6020.0,
+    "body_pct": 4.5,
+    "upper_wick_pct": 77.3,
+    "lower_wick_pct": 18.2
   }
 }

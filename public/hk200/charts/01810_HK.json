@@ -3,26 +3,26 @@
   "ticker_user": "01810.HK",
   "name": "XIAOMI-W",
   "data_source": "yfinance",
-  "data_range": "2025-12-24 → 2026-10-20 (200 daily bars)",
+  "data_range": "2025-12-31 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-20",
-    "O": 26.84,
-    "H": 27.46,
-    "L": 26.56,
-    "C": 27.06,
-    "prev_close": 26.66,
-    "chg_pct": 1.5
+    "date": "2026-10-23",
+    "O": 26.0,
+    "H": 27.4,
+    "L": 25.88,
+    "C": 26.8,
+    "prev_close": 25.8,
+    "chg_pct": 3.88
   },
   "phase": "base_building",
-  "adx": 17.04,
-  "plus_di": 27.18,
-  "minus_di": 14.42,
+  "adx": 18.69,
+  "plus_di": 27.36,
+  "minus_di": 16.13,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 39.48 (2026-01-13), trough 21.3 (2026-06-26), box top 32.4 (2026-07-30)",
+  "phase_evidence": "Peak 37.5 (2026-01-29), trough 21.3 (2026-06-26), box top 32.4 (2026-07-30)",
   "peak": {
-    "date": "2026-01-13",
-    "price": 39.48
+    "date": "2026-01-29",
+    "price": 37.5
   },
   "trough": {
     "date": "2026-06-26",
@@ -32,22 +32,16 @@
     "top": 32.4,
     "top_date": "2026-07-30",
     "bottom": 21.3,
-    "period": "2026-06-26 to 2026-10-20"
+    "period": "2026-06-26 to 2026-10-23"
   },
-  "drop_from_peak_pct": 31.5,
-  "recovery_from_crash_pct": 27.0,
+  "drop_from_peak_pct": 28.5,
+  "recovery_from_crash_pct": 25.8,
   "supports": [
     {
-      "level": 28.0,
-      "label": "S1 KEY",
-      "touches": 20,
-      "evidence": "tested 20x in base period; -3.5% below current"
-    },
-    {
       "level": 24.0,
-      "label": "S2",
-      "touches": 52,
-      "evidence": "mid-base support, tested 52x"
+      "label": "S1 KEY",
+      "touches": 56,
+      "evidence": "tested 56x in base period; 10.4% below current"
     },
     {
       "level": 21.3,
@@ -58,9 +52,9 @@
   ],
   "resistances": [
     {
-      "level": 27.46,
+      "level": 27.4,
       "label": "R1 today high",
-      "evidence": "today's high 27.459999084472656"
+      "evidence": "today's high 27.399999618530273"
     },
     {
       "level": 32.4,
@@ -69,23 +63,23 @@
     }
   ],
   "position": {
-    "current": 27.06,
-    "in_box_pct": 51.9,
-    "nearest_support": "S1 KEY (28.0)",
-    "nearest_resistance": "R1 today high (27.46)"
+    "current": 26.8,
+    "in_box_pct": 49.5,
+    "nearest_support": "S1 KEY (24.0)",
+    "nearest_resistance": "R1 today high (27.4)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 26.84,
-    "H": 27.46,
-    "L": 26.56,
-    "C": 27.06,
-    "body_pct": 24.4,
-    "upper_wick_pct": 44.4,
-    "lower_wick_pct": 31.1
+    "O": 26.0,
+    "H": 27.4,
+    "L": 25.88,
+    "C": 26.8,
+    "body_pct": 52.6,
+    "upper_wick_pct": 39.5,
+    "lower_wick_pct": 7.9
   },
   "bias": {
     "short": {
@@ -103,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 28.0 (KEY support)",
-      "then": "still range; watch 27.46 for next test"
+      "if": "hold 24.0 (KEY support)",
+      "then": "still range; watch 27.4 for next test"
     },
     {
-      "if": "break 28.0 on close",
-      "then": "target 24.0 → 21.3 (short-term bearish)"
+      "if": "break 24.0 on close",
+      "then": "target 21.3 → lower (short-term bearish)"
     },
     {
       "if": "break 21.3 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 27.46 on close",
+      "if": "reclaim 27.4 on close",
       "then": "short-term bullish; next test 32.4"
     },
     {
@@ -142,33 +136,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 28.22,
-    "target_price": 25.9,
-    "stop_price": 30.03,
-    "risk_pct": 6.4,
-    "reward_pct": 8.22,
-    "rr_ratio": 1.28,
-    "phase_match": true,
-    "r1": 28.22,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RR_TOO_THIN",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 27.76,
     "s1": 23.58,
     "s2": 25.22,
     "r2": 32.4,
     "r3": 32.88,
     "s3": 21.3,
-    "s4": 30.26,
-    "current_position_pct": 75.0,
-    "notes": "SELL_R1: in box (24-28), entry at R1 28, target mid 26, stop 30 ｜ 52.2 條規則（SELL plan，resistance 28.22）：① 跌到 28.22、收市守住喺 28.22 上面 → 照 BUY 條 plan 做（入場 28.22，止蝕 30.03，目標 25.90）。② 收市跌穿 28.22 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 28.22 上面』。"
+    "s4": 28.8,
+    "current_position_pct": 77.0,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 27.76）：① 跌到 27.76、收市守住喺 27.76 上面 → 照 BUY 條 plan 做（入場 27.76，止蝕 29.66，目標 25.67）。② 收市跌穿 27.76 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 27.76 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-10-21",
+      "low": 26.540000915527344,
+      "high": 27.760000228881836,
+      "i": 197
+    },
     {
       "name": "早晨之星",
       "bias": "bullish",
       "date": "2026-10-15",
       "low": 25.979999542236328,
       "high": 27.260000228881836,
-      "i": 197
+      "i": 194
     },
     {
       "name": "利好反擊線",
@@ -176,7 +178,7 @@
       "date": "2026-09-18",
       "low": 25.979999542236328,
       "high": 26.65999984741211,
-      "i": 179
+      "i": 176
     },
     {
       "name": "上升三法",
@@ -184,7 +186,7 @@
       "date": "2026-09-11",
       "low": 25.440000534057617,
       "high": 26.65999984741211,
-      "i": 174
+      "i": 171
     },
     {
       "name": "利淡吞噬",
@@ -192,15 +194,7 @@
       "date": "2026-08-31",
       "low": 27.420000076293945,
       "high": 27.959999084472656,
-      "i": 165
-    },
-    {
-      "name": "倒錘頭",
-      "bias": "bullish",
-      "date": "2026-08-19",
-      "low": 26.3799991607666,
-      "high": 28.079999923706055,
-      "i": 157
+      "i": 162
     }
   ]
 }

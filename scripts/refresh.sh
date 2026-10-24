@@ -128,6 +128,21 @@ python3 scripts/update_ohlc.py \
   --asof "$DATA_DATE" --asof-hk "$ASOF_HK" --asof-us "$ASOF_US" --asof-jp "$ASOF_JP" \
   --markets hk,us,jp --workers 4 2>&1 | tail -12
 
+# --- Step 1c: record what each market has most recently closed ---------------
+# 2026-10-25. The site's staleness banner (Sprint 2 A1) needs to know the
+# market's latest CLOSED session, measured independently of the 200 names we
+# publish — otherwise "our bars are current" can only ever be checked against
+# ourselves. The benchmark index closes on the market's own calendar, so its
+# last close date IS the market's last session.
+#
+# This writes data/market_sessions.json, which scripts/staleness.py reads at
+# BUILD time (the build never touches the network). A vendor that cannot be
+# reached is recorded as source_down with the error — never as a stale but
+# plausible date, because that is how a dead pipeline looks like a healthy one.
+echo
+echo "[1c/7] Recording each market's latest closed session..."
+python3 scripts/market_sessions.py 2>&1 | tail -5
+
 # --- Universe lists are NOT regenerated here ------------------------------
 # Owner decision (Kenneth, 2026-10-08): universe regen runs weekly on cloud
 # (Undercover), and the resulting hk_universe_200.json / us_universe_200.json /

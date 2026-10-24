@@ -3,64 +3,64 @@
   "ticker_user": "3028.T",
   "name": "Alpen Co.,Ltd.",
   "data_source": "yfinance",
-  "data_range": "2025-12-22 → 2026-10-20 (200 daily bars)",
+  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-20",
-    "O": 2428.0,
-    "H": 2454.0,
-    "L": 2425.0,
-    "C": 2440.0,
-    "prev_close": 2428.0,
-    "chg_pct": 0.49423393739702615
+    "date": "2026-10-23",
+    "O": 2430.0,
+    "H": 2471.0,
+    "L": 2430.0,
+    "C": 2438.0,
+    "prev_close": 2417.0,
+    "chg_pct": 0.8688456764584185
   },
-  "phase": "range",
-  "adx": 24.75,
-  "plus_di": 37.31,
-  "minus_di": 10.63,
-  "regime": "dead",
+  "phase": "base_building",
+  "adx": 30.57,
+  "plus_di": 38.06,
+  "minus_di": 10.09,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 2493.0 (2026-10-19), trough 2310.0 (2026-10-08), box top 2493.0 (2026-10-19)",
+  "phase_evidence": "Peak 2493.0 (2026-10-19), trough 2270.0 (2026-09-10), box top 2493.0 (2026-10-19)",
   "peak": {
     "date": "2026-10-19",
     "price": 2493.0
   },
   "trough": {
-    "date": "2026-10-08",
-    "price": 2310.0
+    "date": "2026-09-10",
+    "price": 2270.0
   },
   "box": {
     "top": 2493.0,
     "top_date": "2026-10-19",
-    "bottom": 2310.0,
-    "period": "2026-10-08 to 2026-10-20"
+    "bottom": 2270.0,
+    "period": "2026-09-10 to 2026-10-23"
   },
-  "drop_from_peak_pct": 2.1,
-  "recovery_from_crash_pct": 5.6,
+  "drop_from_peak_pct": 2.2,
+  "recovery_from_crash_pct": 7.4,
   "supports": [
     {
-      "level": 2364.0,
-      "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 3.1% below current"
-    },
-    {
       "level": 2332.0,
-      "label": "S2",
-      "touches": 7,
-      "evidence": "mid-base support, tested 7x"
+      "label": "S1 KEY",
+      "touches": 6,
+      "evidence": "tested 6x in base period; 4.3% below current"
     },
     {
       "level": 2328.0,
-      "label": "S3 bottom",
+      "label": "S2",
       "touches": 8,
-      "evidence": "structural bottom, near crash low 2310.0"
+      "evidence": "mid-base support, tested 8x"
+    },
+    {
+      "level": 2320.0,
+      "label": "S3 bottom",
+      "touches": 4,
+      "evidence": "structural bottom, near crash low 2270.0"
     }
   ],
   "resistances": [
     {
-      "level": 2454.0,
+      "level": 2471.0,
       "label": "R1 today high",
-      "evidence": "today's high 2454.0"
+      "evidence": "today's high 2471.0"
     },
     {
       "level": 2493.0,
@@ -69,23 +69,23 @@
     }
   ],
   "position": {
-    "current": 2440.0,
-    "in_box_pct": 67.9,
-    "nearest_support": "S1 KEY (2364.0)",
-    "nearest_resistance": "R1 today high (2454.0)"
+    "current": 2438.0,
+    "in_box_pct": 68.2,
+    "nearest_support": "S1 KEY (2332.0)",
+    "nearest_resistance": "R1 today high (2471.0)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 2428.0,
-    "H": 2454.0,
-    "L": 2425.0,
-    "C": 2440.0,
-    "body_pct": 41.4,
-    "upper_wick_pct": 48.3,
-    "lower_wick_pct": 10.3
+    "close_position": "lower_half",
+    "O": 2430.0,
+    "H": 2471.0,
+    "L": 2430.0,
+    "C": 2438.0,
+    "body_pct": 19.5,
+    "upper_wick_pct": 80.5,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
@@ -93,8 +93,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": "no clear direction"
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -103,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 2364.0 (KEY support)",
-      "then": "still range; watch 2454.0 for next test"
+      "if": "hold 2332.0 (KEY support)",
+      "then": "still range; watch 2471.0 for next test"
     },
     {
-      "if": "break 2364.0 on close",
-      "then": "target 2332.0 → 2328.0 (short-term bearish)"
+      "if": "break 2332.0 on close",
+      "then": "target 2328.0 → 2320.0 (short-term bearish)"
     },
     {
-      "if": "break 2328.0 (crash low)",
+      "if": "break 2320.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 2454.0 on close",
+      "if": "reclaim 2471.0 on close",
       "then": "short-term bullish; next test 2493.0"
     },
     {
@@ -142,33 +142,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 2493.0,
-    "target_price": 2392.0,
-    "stop_price": 2546.64,
-    "risk_pct": 2.15,
-    "reward_pct": 4.05,
-    "rr_ratio": 1.88,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 2493.0,
-    "s1": 2291.0,
+    "s1": 2310.0,
     "s2": 2143.0,
     "r2": 2405.0,
     "r3": 2224.0,
     "s3": 1851.0,
-    "s4": 2001.0,
-    "current_position_pct": 73.8,
-    "notes": "SELL_R1: in box (2291-2493), entry at R1 2493, target mid 2392, stop 2547 ｜ 52.2 條規則（SELL plan，resistance 2493.00）：① 跌到 2493.00、收市守住喺 2493.00 上面 → 照 BUY 條 plan 做（入場 2493.00，止蝕 2546.64，目標 2392.00）。② 收市跌穿 2493.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2493.00 上面』。"
+    "s4": 1979.0,
+    "current_position_pct": 69.9,
+    "notes": "WAIT_RANGE: in box (2310-2493), pos 70%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "利淡吞噬",
+      "bias": "bearish",
+      "date": "2026-10-21",
+      "low": 2422.0,
+      "high": 2449.0,
+      "i": 197
+    },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-10-14",
       "low": 2363.0,
       "high": 2378.0,
-      "i": 195
+      "i": 192
     },
     {
       "name": "上升三法",
@@ -176,7 +184,7 @@
       "date": "2026-10-08",
       "low": 2310.0,
       "high": 2337.0,
-      "i": 192
+      "i": 189
     },
     {
       "name": "利好反擊線",
@@ -184,7 +192,7 @@
       "date": "2026-09-25",
       "low": 2319.0,
       "high": 2345.0,
-      "i": 183
+      "i": 180
     },
     {
       "name": "射擊之星",
@@ -192,31 +200,23 @@
       "date": "2026-09-03",
       "low": 2322.0,
       "high": 2355.0,
-      "i": 170
-    },
-    {
-      "name": "利淡吞噬",
-      "bias": "bearish",
-      "date": "2026-08-21",
-      "low": 2350.0,
-      "high": 2388.0,
-      "i": 161
+      "i": 167
     }
   ],
-  "asof": "2026-10-20",
-  "close": 2440.0,
-  "chg_pct": 0.49423393739702615,
+  "asof": "2026-10-23",
+  "close": 2438.0,
+  "chg_pct": 0.8688456764584185,
   "kline": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 2428.0,
-    "H": 2454.0,
-    "L": 2425.0,
-    "C": 2440.0,
-    "body_pct": 41.4,
-    "upper_wick_pct": 48.3,
-    "lower_wick_pct": 10.3
+    "close_position": "lower_half",
+    "O": 2430.0,
+    "H": 2471.0,
+    "L": 2430.0,
+    "C": 2438.0,
+    "body_pct": 19.5,
+    "upper_wick_pct": 80.5,
+    "lower_wick_pct": 0.0
   }
 }

@@ -3,42 +3,42 @@
   "ticker_user": "2914.T",
   "name": "Japan Tobacco Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-22 → 2026-10-20 (200 daily bars)",
+  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-20",
-    "O": 7471.0,
-    "H": 7545.0,
-    "L": 7463.0,
-    "C": 7518.0,
-    "prev_close": 7491.0,
-    "chg_pct": 0.36043251902282414
+    "date": "2026-10-23",
+    "O": 7580.0,
+    "H": 7705.0,
+    "L": 7511.0,
+    "C": 7539.0,
+    "prev_close": 7481.0,
+    "chg_pct": 0.7752974201310048
   },
-  "phase": "uptrend",
-  "adx": 28.23,
-  "plus_di": 38.37,
-  "minus_di": 11.75,
+  "phase": "range",
+  "adx": 34.04,
+  "plus_di": 38.26,
+  "minus_di": 9.15,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 7617.0 (2026-10-19), trough 6774.0 (2026-10-02), box top 7617.0 (2026-10-19)",
+  "phase_evidence": "Peak 7705.0 (2026-10-23), trough 6774.0 (2026-10-02), box top 7705.0 (2026-10-23)",
   "peak": {
-    "date": "2026-10-19",
-    "price": 7617.0
+    "date": "2026-10-23",
+    "price": 7705.0
   },
   "trough": {
     "date": "2026-10-02",
     "price": 6774.0
   },
   "box": {
-    "top": 7617.0,
-    "top_date": "2026-10-19",
+    "top": 7705.0,
+    "top_date": "2026-10-23",
     "bottom": 6774.0,
-    "period": "2026-10-02 to 2026-10-20"
+    "period": "2026-10-02 to 2026-10-23"
   },
-  "drop_from_peak_pct": 1.3,
-  "recovery_from_crash_pct": 11.0,
+  "drop_from_peak_pct": 2.2,
+  "recovery_from_crash_pct": 11.3,
   "supports": [
     {
-      "level": 7292.0,
+      "level": 7312.0,
       "label": "S1 KEY",
       "touches": 0,
       "evidence": "structural level near current; 3.0% below current"
@@ -52,34 +52,29 @@
   ],
   "resistances": [
     {
-      "level": 7545.0,
+      "level": 7705.0,
       "label": "R1 today high",
-      "evidence": "today's high 7545.0"
-    },
-    {
-      "level": 7617.0,
-      "label": "R3 Oct high",
-      "evidence": "box top 7617.0, base period high"
+      "evidence": "rejection at 7705.0 (long upper wick, close weak)"
     }
   ],
   "position": {
-    "current": 7518.0,
-    "in_box_pct": 88.3,
-    "nearest_support": "S1 KEY (7292.0)",
-    "nearest_resistance": "R1 today high (7545.0)"
+    "current": 7539.0,
+    "in_box_pct": 82.2,
+    "nearest_support": "S1 KEY (7312.0)",
+    "nearest_resistance": "R1 today high (7705.0)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 7471.0,
-    "H": 7545.0,
-    "L": 7463.0,
-    "C": 7518.0,
-    "body_pct": 57.3,
-    "upper_wick_pct": 32.9,
-    "lower_wick_pct": 9.8
+    "close_position": "lower_half",
+    "O": 7580.0,
+    "H": 7705.0,
+    "L": 7511.0,
+    "C": 7539.0,
+    "body_pct": 21.1,
+    "upper_wick_pct": 64.4,
+    "lower_wick_pct": 14.4
   },
   "bias": {
     "short": {
@@ -87,8 +82,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bullish_continuation",
-      "reason": "higher highs / higher lows"
+      "bias": "neutral",
+      "reason": "no clear direction"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -97,11 +92,11 @@
   },
   "scenarios": [
     {
-      "if": "hold 7292.0 (KEY support)",
-      "then": "still range; watch 7545.0 for next test"
+      "if": "hold 7312.0 (KEY support)",
+      "then": "still range; watch 7705.0 for next test"
     },
     {
-      "if": "break 7292.0 on close",
+      "if": "break 7312.0 on close",
       "then": "target 6774.0 → lower (short-term bearish)"
     },
     {
@@ -109,12 +104,8 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 7545.0 on close",
-      "then": "short-term bullish; next test 7617.0"
-    },
-    {
-      "if": "break 7617.0 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 7705.0 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -137,7 +128,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -145,24 +136,32 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 7617.0,
+    "r1": 7705.0,
     "s1": 6774.0,
-    "s2": 6325.0,
+    "s2": 6466.0,
     "r2": 7218.0,
-    "r3": 6474.0,
-    "s3": 5646.0,
+    "r3": 6525.0,
+    "s3": 5696.0,
     "s4": 5451.0,
-    "current_position_pct": 88.3,
-    "notes": "WAIT_RANGE: in box (6774-7617), pos 88%, no clear setup"
+    "current_position_pct": 82.2,
+    "notes": "WAIT_RANGE: in box (6774-7705), pos 82%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-10-22",
+      "low": 7476.0,
+      "high": 7589.0,
+      "i": 198
+    },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-10-08",
       "low": 6892.0,
       "high": 6997.0,
-      "i": 192
+      "i": 189
     },
     {
       "name": "利好反擊線",
@@ -170,7 +169,7 @@
       "date": "2026-09-17",
       "low": 6809.0,
       "high": 6916.0,
-      "i": 180
+      "i": 177
     },
     {
       "name": "上升三法",
@@ -178,39 +177,31 @@
       "date": "2026-09-08",
       "low": 6641.0,
       "high": 6718.0,
-      "i": 173
+      "i": 170
     },
     {
-      "name": "利淡反擊線",
+      "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-08-12",
-      "low": 6984.0,
-      "high": 7187.0,
-      "i": 154
-    },
-    {
-      "name": "平頭頂",
-      "bias": "bearish",
-      "date": "2026-07-23",
-      "low": 6368.0,
-      "high": 6525.0,
-      "i": 141
+      "date": "2026-08-03",
+      "low": 6870.0,
+      "high": 7068.0,
+      "i": 145
     }
   ],
-  "asof": "2026-10-20",
-  "close": 7518.0,
-  "chg_pct": 0.36043251902282414,
+  "asof": "2026-10-23",
+  "close": 7539.0,
+  "chg_pct": 0.7752974201310048,
   "kline": {
-    "type": "neutral",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 7471.0,
-    "H": 7545.0,
-    "L": 7463.0,
-    "C": 7518.0,
-    "body_pct": 57.3,
-    "upper_wick_pct": 32.9,
-    "lower_wick_pct": 9.8
+    "close_position": "lower_half",
+    "O": 7580.0,
+    "H": 7705.0,
+    "L": 7511.0,
+    "C": 7539.0,
+    "body_pct": 21.1,
+    "upper_wick_pct": 64.4,
+    "lower_wick_pct": 14.4
   }
 }

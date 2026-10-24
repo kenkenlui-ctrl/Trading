@@ -3,21 +3,21 @@
   "ticker_user": "6981.T",
   "name": "Murata Manufacturing Co., Ltd.",
   "data_source": "yfinance",
-  "data_range": "2025-12-22 → 2026-10-20 (200 daily bars)",
+  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-20",
-    "O": 6750.0,
-    "H": 6843.0,
-    "L": 6558.0,
-    "C": 6643.0,
-    "prev_close": 6798.0,
-    "chg_pct": -2.2800823771697565
+    "date": "2026-10-23",
+    "O": 5932.0,
+    "H": 6296.0,
+    "L": 5881.0,
+    "C": 6275.0,
+    "prev_close": 6432.0,
+    "chg_pct": -2.440920398009949
   },
-  "phase": "downtrend_recovery",
-  "adx": 23.15,
-  "plus_di": 16.84,
-  "minus_di": 31.79,
-  "regime": "dead",
+  "phase": "downtrend_active",
+  "adx": 25.05,
+  "plus_di": 15.36,
+  "minus_di": 37.2,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 12895.0 (2026-06-22), trough 5861.0 (2026-07-29), box top 8980.0 (2026-10-06)",
   "peak": {
@@ -32,29 +32,23 @@
     "top": 8980.0,
     "top_date": "2026-10-06",
     "bottom": 5861.0,
-    "period": "2026-07-29 to 2026-10-20"
+    "period": "2026-07-29 to 2026-10-23"
   },
-  "drop_from_peak_pct": 48.5,
-  "recovery_from_crash_pct": 13.3,
+  "drop_from_peak_pct": 51.3,
+  "recovery_from_crash_pct": 7.1,
   "supports": [
     {
-      "level": 6444.0,
-      "label": "S1 KEY",
+      "level": 6088.0,
+      "label": "S1 bottom",
       "touches": 0,
-      "evidence": "structural level near current; 3.0% below current"
-    },
-    {
-      "level": 5861.0,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-07-29, structural bottom"
+      "evidence": "structural bottom, near crash low 5861.0"
     }
   ],
   "resistances": [
     {
-      "level": 6843.0,
+      "level": 6296.0,
       "label": "R1 today high",
-      "evidence": "today's high 6843.0"
+      "evidence": "today's high 6296.0"
     },
     {
       "level": 8980.0,
@@ -63,32 +57,32 @@
     }
   ],
   "position": {
-    "current": 6643.0,
-    "in_box_pct": 25.1,
-    "nearest_support": "S1 KEY (6444.0)",
-    "nearest_resistance": "R1 today high (6843.0)"
+    "current": 6275.0,
+    "in_box_pct": 6.5,
+    "nearest_support": "S1 bottom (6088.0)",
+    "nearest_resistance": "R1 today high (6296.0)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 6750.0,
-    "H": 6843.0,
-    "L": 6558.0,
-    "C": 6643.0,
-    "body_pct": 37.5,
-    "upper_wick_pct": 32.6,
-    "lower_wick_pct": 29.8
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 5932.0,
+    "H": 6296.0,
+    "L": 5881.0,
+    "C": 6275.0,
+    "body_pct": 82.7,
+    "upper_wick_pct": 5.1,
+    "lower_wick_pct": 12.3
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (25% of box)"
+      "bias": "defensive",
+      "reason": "near box bottom (6% of box)"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": ""
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -97,19 +91,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 6444.0 (KEY support)",
-      "then": "still range; watch 6843.0 for next test"
+      "if": "hold 6088.0 (KEY support)",
+      "then": "still range; watch 6296.0 for next test"
     },
     {
-      "if": "break 6444.0 on close",
-      "then": "target 5861.0 → lower (short-term bearish)"
+      "if": "break 6088.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 5861.0 (crash low)",
+      "if": "break 6088.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 6843.0 on close",
+      "if": "reclaim 6296.0 on close",
       "then": "short-term bullish; next test 8980.0"
     },
     {
@@ -137,7 +131,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_VOLATILE",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -146,14 +140,14 @@
     "rr_ratio": 0.0,
     "phase_match": false,
     "r1": 8980.0,
-    "s1": 6536.0,
+    "s1": 5881.0,
     "s2": 5861.0,
-    "r2": 8817.0,
+    "r2": 8540.0,
     "r3": 12895.0,
-    "s3": 4672.0,
+    "s3": 4750.0,
     "s4": 2821.5,
-    "current_position_pct": 4.4,
-    "notes": "WAIT_VOLATILE: ATR14 6.6% / box width 37% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
+    "current_position_pct": 12.7,
+    "notes": "WAIT_RANGE: in box (5881-8980), pos 13%, no clear setup"
   },
   "patterns": [
     {
@@ -162,7 +156,7 @@
       "date": "2026-10-07",
       "low": 8536.0,
       "high": 8870.0,
-      "i": 191
+      "i": 188
     },
     {
       "name": "早晨之星",
@@ -170,7 +164,7 @@
       "date": "2026-09-11",
       "low": 7075.0,
       "high": 7400.0,
-      "i": 176
+      "i": 173
     },
     {
       "name": "三個白武士",
@@ -178,7 +172,7 @@
       "date": "2026-08-25",
       "low": 6871.0,
       "high": 7165.0,
-      "i": 163
+      "i": 160
     },
     {
       "name": "刺穿線",
@@ -186,7 +180,7 @@
       "date": "2026-07-14",
       "low": 8469.0,
       "high": 9136.0,
-      "i": 135
+      "i": 132
     },
     {
       "name": "平頭頂",
@@ -194,23 +188,23 @@
       "date": "2026-07-07",
       "low": 9181.0,
       "high": 10380.0,
-      "i": 130
+      "i": 127
     }
   ],
-  "asof": "2026-10-20",
-  "close": 6643.0,
-  "chg_pct": -2.2800823771697565,
+  "asof": "2026-10-23",
+  "close": 6275.0,
+  "chg_pct": -2.440920398009949,
   "kline": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 6750.0,
-    "H": 6843.0,
-    "L": 6558.0,
-    "C": 6643.0,
-    "body_pct": 37.5,
-    "upper_wick_pct": 32.6,
-    "lower_wick_pct": 29.8
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 5932.0,
+    "H": 6296.0,
+    "L": 5881.0,
+    "C": 6275.0,
+    "body_pct": 82.7,
+    "upper_wick_pct": 5.1,
+    "lower_wick_pct": 12.3
   }
 }

@@ -3,20 +3,20 @@
   "ticker_user": "3101.T",
   "name": "Toyobo Co., Ltd.",
   "data_source": "yfinance",
-  "data_range": "2025-12-22 → 2026-10-20 (200 daily bars)",
+  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-20",
-    "O": 1616.0,
-    "H": 1622.0,
-    "L": 1565.0,
-    "C": 1570.0,
-    "prev_close": 1625.0,
-    "chg_pct": -3.384615384615386
+    "date": "2026-10-23",
+    "O": 1525.0,
+    "H": 1545.0,
+    "L": 1479.0,
+    "C": 1538.0,
+    "prev_close": 1554.0,
+    "chg_pct": -1.029601029601035
   },
   "phase": "base_building",
-  "adx": 12.39,
-  "plus_di": 15.04,
-  "minus_di": 24.4,
+  "adx": 17.13,
+  "plus_di": 11.55,
+  "minus_di": 33.78,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 1857.0 (2026-02-27), trough 1270.0 (2026-03-30), box top 1945.0 (2026-06-01)",
@@ -32,16 +32,22 @@
     "top": 1945.0,
     "top_date": "2026-06-01",
     "bottom": 1270.0,
-    "period": "2026-03-30 to 2026-10-20"
+    "period": "2026-03-30 to 2026-10-23"
   },
-  "drop_from_peak_pct": 15.5,
-  "recovery_from_crash_pct": 23.6,
+  "drop_from_peak_pct": 17.2,
+  "recovery_from_crash_pct": 21.1,
   "supports": [
     {
-      "level": 1392.0,
+      "level": 1480.0,
       "label": "S1 KEY",
+      "touches": 3,
+      "evidence": "tested 3x in base period; 3.8% below current"
+    },
+    {
+      "level": 1392.0,
+      "label": "S2",
       "touches": 4,
-      "evidence": "tested 4x in base period; 11.3% below current"
+      "evidence": "mid-base support, tested 4x"
     },
     {
       "level": 1270.0,
@@ -52,9 +58,9 @@
   ],
   "resistances": [
     {
-      "level": 1622.0,
+      "level": 1545.0,
       "label": "R1 today high",
-      "evidence": "today's high 1622.0"
+      "evidence": "today's high 1545.0"
     },
     {
       "level": 1945.0,
@@ -63,28 +69,28 @@
     }
   ],
   "position": {
-    "current": 1570.0,
-    "in_box_pct": 44.4,
-    "nearest_support": "S1 KEY (1392.0)",
-    "nearest_resistance": "R1 today high (1622.0)"
+    "current": 1538.0,
+    "in_box_pct": 39.7,
+    "nearest_support": "S1 KEY (1480.0)",
+    "nearest_resistance": "R1 today high (1545.0)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 1616.0,
-    "H": 1622.0,
-    "L": 1565.0,
-    "C": 1570.0,
-    "body_pct": 80.7,
-    "upper_wick_pct": 10.5,
-    "lower_wick_pct": 8.8
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 1525.0,
+    "H": 1545.0,
+    "L": 1479.0,
+    "C": 1538.0,
+    "body_pct": 19.7,
+    "upper_wick_pct": 10.6,
+    "lower_wick_pct": 69.7
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (44% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -97,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 1392.0 (KEY support)",
-      "then": "still range; watch 1622.0 for next test"
+      "if": "hold 1480.0 (KEY support)",
+      "then": "still range; watch 1545.0 for next test"
     },
     {
-      "if": "break 1392.0 on close",
-      "then": "target 1270.0 → lower (short-term bearish)"
+      "if": "break 1480.0 on close",
+      "then": "target 1392.0 → 1270.0 (short-term bearish)"
     },
     {
       "if": "break 1270.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1622.0 on close",
+      "if": "reclaim 1545.0 on close",
       "then": "short-term bullish; next test 1945.0"
     },
     {
@@ -136,41 +142,49 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
+    "verdict": "BUY",
+    "strategy": "BUY_S1",
+    "trigger_price": 1479.0,
+    "target_price": 1587.0,
+    "stop_price": 1410.59,
+    "risk_pct": 4.63,
+    "reward_pct": 7.3,
+    "rr_ratio": 1.58,
+    "phase_match": true,
     "r1": 1695.0,
-    "s1": 1565.0,
+    "s1": 1479.0,
     "s2": 1437.0,
     "r2": 1805.0,
     "r3": 1945.0,
     "s3": 1357.0,
-    "s4": 1223.0,
-    "current_position_pct": 3.8,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（BUY plan，support 1565.00）：① 跌到 1565.00、收市守住喺 1565.00 上面 → 照 BUY 條 plan 做（入場 1565.00，止蝕 1501.24，目標 1630.00）。② 收市跌穿 1565.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1565.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "s4": 1241.0,
+    "current_position_pct": 27.3,
+    "notes": "BUY_S1: in box (1479-1695), entry at S1 1479, target mid 1587, stop 1411 ｜ 52.2 條規則（BUY plan，support 1479.00）：① 跌到 1479.00、收市守住喺 1479.00 上面 → 照 BUY 條 plan 做（入場 1479.00，止蝕 1410.59，目標 1587.00）。② 收市跌穿 1479.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1479.00 上面』。"
   },
   "patterns": [
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-10-23",
+      "low": 1479.0,
+      "high": 1545.0,
+      "i": 199
+    },
     {
       "name": "黃昏之星",
       "bias": "bearish",
       "date": "2026-09-29",
       "low": 1617.0,
       "high": 1664.0,
-      "i": 185
+      "i": 182
     },
     {
-      "name": "刺穿線",
+      "name": "三個白武士",
       "bias": "bullish",
-      "date": "2026-09-16",
-      "low": 1609.0,
-      "high": 1655.0,
-      "i": 179
+      "date": "2026-09-15",
+      "low": 1593.0,
+      "high": 1625.0,
+      "i": 175
     },
     {
       "name": "上升三法",
@@ -178,7 +192,7 @@
       "date": "2026-09-08",
       "low": 1581.0,
       "high": 1640.0,
-      "i": 173
+      "i": 170
     },
     {
       "name": "利淡反擊線",
@@ -186,31 +200,23 @@
       "date": "2026-08-28",
       "low": 1634.0,
       "high": 1663.0,
-      "i": 166
-    },
-    {
-      "name": "烏雲蓋頂",
-      "bias": "bearish",
-      "date": "2026-06-18",
-      "low": 1772.0,
-      "high": 1826.0,
-      "i": 117
+      "i": 163
     }
   ],
-  "asof": "2026-10-20",
-  "close": 1570.0,
-  "chg_pct": -3.384615384615386,
+  "asof": "2026-10-23",
+  "close": 1538.0,
+  "chg_pct": -1.029601029601035,
   "kline": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 1616.0,
-    "H": 1622.0,
-    "L": 1565.0,
-    "C": 1570.0,
-    "body_pct": 80.7,
-    "upper_wick_pct": 10.5,
-    "lower_wick_pct": 8.8
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 1525.0,
+    "H": 1545.0,
+    "L": 1479.0,
+    "C": 1538.0,
+    "body_pct": 19.7,
+    "upper_wick_pct": 10.6,
+    "lower_wick_pct": 69.7
   }
 }

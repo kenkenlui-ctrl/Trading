@@ -3,23 +3,23 @@
   "ticker_user": "09901.HK",
   "name": "NEW ORIENTAL-S",
   "data_source": "yfinance",
-  "data_range": "2025-12-24 → 2026-10-20 (200 daily bars)",
+  "data_range": "2025-12-31 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-20",
-    "O": 46.86,
-    "H": 48.36,
-    "L": 46.86,
-    "C": 48.18,
-    "prev_close": 48.14,
-    "chg_pct": 0.08
+    "date": "2026-10-23",
+    "O": 45.86,
+    "H": 46.58,
+    "L": 45.02,
+    "C": 46.42,
+    "prev_close": 45.82,
+    "chg_pct": 1.31
   },
   "phase": "base_building",
-  "adx": 18.62,
-  "plus_di": 36.65,
-  "minus_di": 16.29,
+  "adx": 19.91,
+  "plus_di": 31.8,
+  "minus_di": 24.23,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 51.05 (2026-02-04), trough 34.26 (2026-06-22), box top 48.36 (2026-10-20)",
+  "phase_evidence": "Peak 51.05 (2026-02-04), trough 34.26 (2026-06-22), box top 49.56 (2026-10-21)",
   "peak": {
     "date": "2026-02-04",
     "price": 51.05
@@ -29,19 +29,19 @@
     "price": 34.26
   },
   "box": {
-    "top": 48.36,
-    "top_date": "2026-10-20",
+    "top": 49.56,
+    "top_date": "2026-10-21",
     "bottom": 34.26,
-    "period": "2026-06-22 to 2026-10-20"
+    "period": "2026-06-22 to 2026-10-23"
   },
-  "drop_from_peak_pct": 5.6,
-  "recovery_from_crash_pct": 40.6,
+  "drop_from_peak_pct": 9.1,
+  "recovery_from_crash_pct": 35.5,
   "supports": [
     {
       "level": 44.0,
       "label": "S1 KEY",
-      "touches": 75,
-      "evidence": "tested 75x in base period; 8.7% below current"
+      "touches": 70,
+      "evidence": "tested 70x in base period; 5.2% below current"
     },
     {
       "level": 34.26,
@@ -52,48 +52,53 @@
   ],
   "resistances": [
     {
-      "level": 48.36,
+      "level": 46.58,
       "label": "R1 today high",
-      "evidence": "today's high 48.36000061035156"
+      "evidence": "today's high 46.58000183105469"
+    },
+    {
+      "level": 49.56,
+      "label": "R3 Oct high",
+      "evidence": "box top 49.56, base period high"
     }
   ],
   "position": {
-    "current": 48.18,
-    "in_box_pct": 98.7,
+    "current": 46.42,
+    "in_box_pct": 79.5,
     "nearest_support": "S1 KEY (44.0)",
-    "nearest_resistance": "R1 today high (48.36)"
+    "nearest_resistance": "R1 today high (46.58)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 46.86,
-    "H": 48.36,
-    "L": 46.86,
-    "C": 48.18,
-    "body_pct": 88.0,
-    "upper_wick_pct": 12.0,
-    "lower_wick_pct": 0.0
+    "O": 45.86,
+    "H": 46.58,
+    "L": 45.02,
+    "C": 46.42,
+    "body_pct": 35.9,
+    "upper_wick_pct": 10.3,
+    "lower_wick_pct": 53.8
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 44.0 (KEY support)",
-      "then": "still range; watch 48.36 for next test"
+      "then": "still range; watch 46.58 for next test"
     },
     {
       "if": "break 44.0 on close",
@@ -104,8 +109,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 48.36 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 46.58 on close",
+      "then": "short-term bullish; next test 49.56"
+    },
+    {
+      "if": "break 49.56 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -127,24 +136,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 48.36,
-    "target_price": 45.26,
-    "stop_price": 50.08,
-    "risk_pct": 3.57,
-    "reward_pct": 6.41,
-    "rr_ratio": 1.8,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
     "phase_match": true,
-    "r1": 48.36,
-    "s1": 42.16,
-    "s2": 38.6,
+    "r1": 49.56,
+    "s1": 42.54,
+    "s2": 40.02,
     "r2": 47.8,
     "r3": 44.46,
     "s3": 34.26,
     "s4": 40.18,
-    "current_position_pct": 97.1,
-    "notes": "SELL_R1: in box (42-48), entry at R1 48, target mid 45, stop 50 ｜ 52.2 條規則（SELL plan，resistance 48.36）：① 跌到 48.36、收市守住喺 48.36 上面 → 照 BUY 條 plan 做（入場 48.36，止蝕 50.08，目標 45.26）。② 收市跌穿 48.36 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 48.36 上面』。"
+    "current_position_pct": 55.3,
+    "notes": "WAIT_RANGE: in box (43-50), pos 55%, no clear setup"
   },
   "patterns": [
     {
@@ -153,7 +162,7 @@
       "date": "2026-10-15",
       "low": 44.97999954223633,
       "high": 45.7400016784668,
-      "i": 197
+      "i": 194
     },
     {
       "name": "刺穿線",
@@ -161,7 +170,7 @@
       "date": "2026-09-21",
       "low": 42.84000015258789,
       "high": 43.7599983215332,
-      "i": 180
+      "i": 177
     },
     {
       "name": "利好反擊線",
@@ -169,7 +178,7 @@
       "date": "2026-09-14",
       "low": 43.20000076293945,
       "high": 44.400001525878906,
-      "i": 175
+      "i": 172
     },
     {
       "name": "利淡吞噬",
@@ -177,7 +186,7 @@
       "date": "2026-09-07",
       "low": 40.02000045776367,
       "high": 46.119998931884766,
-      "i": 170
+      "i": 167
     },
     {
       "name": "上升三法",
@@ -185,7 +194,7 @@
       "date": "2026-08-17",
       "low": 40.97999954223633,
       "high": 43.2599983215332,
-      "i": 155
+      "i": 152
     }
   ]
 }

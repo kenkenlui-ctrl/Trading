@@ -3,21 +3,21 @@
   "ticker_user": "2983.T",
   "name": "Arr Planner Co., Ltd.",
   "data_source": "yfinance",
-  "data_range": "2025-12-22 → 2026-10-20 (200 daily bars)",
+  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-20",
-    "O": 1537.0,
-    "H": 1537.0,
-    "L": 1496.0,
-    "C": 1497.0,
-    "prev_close": 1545.0,
-    "chg_pct": -3.1067961165048508
+    "date": "2026-10-23",
+    "O": 1526.0,
+    "H": 1534.0,
+    "L": 1487.0,
+    "C": 1520.0,
+    "prev_close": 1533.0,
+    "chg_pct": -0.8480104370515384
   },
   "phase": "base_building",
-  "adx": 24.82,
-  "plus_di": 14.97,
-  "minus_di": 27.47,
-  "regime": "dead",
+  "adx": 25.83,
+  "plus_di": 13.1,
+  "minus_di": 27.17,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 2400.0 (2026-02-16), trough 1327.0 (2026-06-03), box top 1819.0 (2026-09-04)",
   "peak": {
@@ -32,29 +32,35 @@
     "top": 1819.0,
     "top_date": "2026-09-04",
     "bottom": 1327.0,
-    "period": "2026-06-03 to 2026-10-20"
+    "period": "2026-06-03 to 2026-10-23"
   },
-  "drop_from_peak_pct": 37.6,
-  "recovery_from_crash_pct": 12.8,
+  "drop_from_peak_pct": 36.7,
+  "recovery_from_crash_pct": 14.5,
   "supports": [
     {
-      "level": 1408.0,
+      "level": 1488.0,
       "label": "S1 KEY",
       "touches": 3,
-      "evidence": "tested 3x in base period; 5.9% below current"
+      "evidence": "tested 3x in base period; 2.1% below current"
+    },
+    {
+      "level": 1408.0,
+      "label": "S2",
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
     },
     {
       "level": 1392.0,
-      "label": "S2 bottom",
+      "label": "S3 bottom",
       "touches": 3,
       "evidence": "structural bottom, near crash low 1327.0"
     }
   ],
   "resistances": [
     {
-      "level": 1537.0,
+      "level": 1534.0,
       "label": "R1 today high",
-      "evidence": "today's high 1537.0"
+      "evidence": "today's high 1534.0"
     },
     {
       "level": 1819.0,
@@ -63,28 +69,28 @@
     }
   ],
   "position": {
-    "current": 1497.0,
-    "in_box_pct": 24.6,
-    "nearest_support": "S1 KEY (1408.0)",
-    "nearest_resistance": "R1 today high (1537.0)"
+    "current": 1520.0,
+    "in_box_pct": 30.0,
+    "nearest_support": "S1 KEY (1488.0)",
+    "nearest_resistance": "R1 today high (1534.0)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 1537.0,
-    "H": 1537.0,
-    "L": 1496.0,
-    "C": 1497.0,
-    "body_pct": 97.6,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 2.4
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 1526.0,
+    "H": 1534.0,
+    "L": 1487.0,
+    "C": 1520.0,
+    "body_pct": 12.8,
+    "upper_wick_pct": 17.0,
+    "lower_wick_pct": 70.2
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (25% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -97,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 1408.0 (KEY support)",
-      "then": "still range; watch 1537.0 for next test"
+      "if": "hold 1488.0 (KEY support)",
+      "then": "still range; watch 1534.0 for next test"
     },
     {
-      "if": "break 1408.0 on close",
-      "then": "target 1392.0 → lower (short-term bearish)"
+      "if": "break 1488.0 on close",
+      "then": "target 1408.0 → 1392.0 (short-term bearish)"
     },
     {
       "if": "break 1392.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1537.0 on close",
+      "if": "reclaim 1534.0 on close",
       "then": "short-term bullish; next test 1819.0"
     },
     {
@@ -136,33 +142,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 1496.0,
-    "target_price": 1609.5,
-    "stop_price": 1432.08,
-    "risk_pct": 4.27,
-    "reward_pct": 7.59,
-    "rr_ratio": 1.78,
-    "phase_match": true,
-    "r1": 1723.0,
-    "s1": 1496.0,
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 1714.0,
+    "s1": 1487.0,
     "s2": 1394.0,
     "r2": 1819.0,
     "r3": 1607.0,
     "s3": 1327.0,
     "s4": 1379.5,
-    "current_position_pct": 0.4,
-    "notes": "BUY_S1: in box (1496-1723), entry at S1 1496, target mid 1610, stop 1432 ｜ 52.2 條規則（BUY plan，support 1496.00）：① 跌到 1496.00、收市守住喺 1496.00 上面 → 照 BUY 條 plan 做（入場 1496.00，止蝕 1432.08，目標 1609.50）。② 收市跌穿 1496.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1496.00 上面』。"
+    "current_position_pct": 14.5,
+    "notes": "WAIT_RANGE: in box (1487-1714), pos 15%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-10-21",
+      "low": 1512.0,
+      "high": 1542.0,
+      "i": 197
+    },
     {
       "name": "黃昏之星",
       "bias": "bearish",
       "date": "2026-08-26",
       "low": 1636.0,
       "high": 1675.0,
-      "i": 164
+      "i": 161
     },
     {
       "name": "烏雲蓋頂",
@@ -170,7 +184,7 @@
       "date": "2026-07-13",
       "low": 1521.0,
       "high": 1578.0,
-      "i": 134
+      "i": 131
     },
     {
       "name": "倒錘頭",
@@ -178,7 +192,7 @@
       "date": "2026-06-26",
       "low": 1393.0,
       "high": 1450.0,
-      "i": 123
+      "i": 120
     },
     {
       "name": "利好反擊線",
@@ -186,23 +200,23 @@
       "date": "2026-06-18",
       "low": 1394.0,
       "high": 1427.0,
-      "i": 117
+      "i": 114
     }
   ],
-  "asof": "2026-10-20",
-  "close": 1497.0,
-  "chg_pct": -3.1067961165048508,
+  "asof": "2026-10-23",
+  "close": 1520.0,
+  "chg_pct": -0.8480104370515384,
   "kline": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 1537.0,
-    "H": 1537.0,
-    "L": 1496.0,
-    "C": 1497.0,
-    "body_pct": 97.6,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 2.4
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 1526.0,
+    "H": 1534.0,
+    "L": 1487.0,
+    "C": 1520.0,
+    "body_pct": 12.8,
+    "upper_wick_pct": 17.0,
+    "lower_wick_pct": 70.2
   }
 }

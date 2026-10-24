@@ -3,20 +3,20 @@
   "ticker_user": "TT",
   "name": "Trane Technologies plc",
   "data_source": "yfinance",
-  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
+  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-19",
-    "O": 462.96,
-    "H": 466.99,
-    "L": 459.04,
-    "C": 465.04,
-    "prev_close": 458.89,
-    "chg_pct": 1.34
+    "date": "2026-10-23",
+    "O": 444.26,
+    "H": 449.97,
+    "L": 436.99,
+    "C": 444.9,
+    "prev_close": 448.8,
+    "chg_pct": -0.87
   },
-  "phase": "base_building",
-  "adx": 16.58,
-  "plus_di": 18.1,
-  "minus_di": 22.12,
+  "phase": "downtrend_active",
+  "adx": 18.56,
+  "plus_di": 15.39,
+  "minus_di": 32.04,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 505.87 (2026-06-25), trough 413.97 (2026-09-15), box top 484.13 (2026-10-09)",
@@ -32,41 +32,35 @@
     "top": 484.13,
     "top_date": "2026-10-09",
     "bottom": 413.97,
-    "period": "2026-09-15 to 2026-10-19"
+    "period": "2026-09-15 to 2026-10-23"
   },
-  "drop_from_peak_pct": 8.1,
-  "recovery_from_crash_pct": 12.3,
+  "drop_from_peak_pct": 12.1,
+  "recovery_from_crash_pct": 7.5,
   "supports": [
     {
-      "level": 452.0,
+      "level": 432.0,
       "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 2.8% below current"
-    },
-    {
-      "level": 448.0,
-      "label": "S2",
       "touches": 6,
-      "evidence": "mid-base support, tested 6x"
+      "evidence": "tested 6x in base period; 2.9% below current"
     },
     {
-      "level": 444.0,
-      "label": "S3",
-      "touches": 5,
-      "evidence": "mid-base support, tested 5x"
+      "level": 420.0,
+      "label": "S2",
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
     },
     {
-      "level": 413.97,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-09-15, structural bottom"
+      "level": 416.0,
+      "label": "S3 bottom",
+      "touches": 4,
+      "evidence": "structural bottom, near crash low 413.97"
     }
   ],
   "resistances": [
     {
-      "level": 466.99,
+      "level": 449.97,
       "label": "R1 today high",
-      "evidence": "today's high 466.989990234375"
+      "evidence": "today's high 449.9700012207031"
     },
     {
       "level": 484.13,
@@ -75,23 +69,23 @@
     }
   ],
   "position": {
-    "current": 465.04,
-    "in_box_pct": 72.8,
-    "nearest_support": "S1 KEY (452.0)",
-    "nearest_resistance": "R1 today high (466.99)"
+    "current": 444.9,
+    "in_box_pct": 42.4,
+    "nearest_support": "S1 KEY (432.0)",
+    "nearest_resistance": "R1 today high (449.97)"
   },
   "kline_today": {
     "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 462.96,
-    "H": 466.99,
-    "L": 459.04,
-    "C": 465.04,
-    "body_pct": 26.2,
-    "upper_wick_pct": 24.5,
-    "lower_wick_pct": 49.3
+    "O": 444.26,
+    "H": 449.97,
+    "L": 436.99,
+    "C": 444.9,
+    "body_pct": 4.9,
+    "upper_wick_pct": 39.1,
+    "lower_wick_pct": 56.0
   },
   "bias": {
     "short": {
@@ -99,8 +93,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -109,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 452.0 (KEY support)",
-      "then": "still range; watch 466.99 for next test"
+      "if": "hold 432.0 (KEY support)",
+      "then": "still range; watch 449.97 for next test"
     },
     {
-      "if": "break 452.0 on close",
-      "then": "target 448.0 → 444.0 (short-term bearish)"
+      "if": "break 432.0 on close",
+      "then": "target 420.0 → 416.0 (short-term bearish)"
     },
     {
-      "if": "break 413.97 (crash low)",
+      "if": "break 416.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 466.99 on close",
+      "if": "reclaim 449.97 on close",
       "then": "short-term bullish; next test 484.13"
     },
     {
@@ -148,24 +142,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 484.13,
-    "target_price": 457.57,
-    "stop_price": 504.02,
-    "risk_pct": 4.11,
-    "reward_pct": 5.49,
-    "rr_ratio": 1.34,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 484.13,
-    "s1": 431.0,
+    "s1": 436.99,
     "s2": 413.97,
     "r2": 493.71,
     "r3": 505.87,
     "s3": 439.42,
-    "s4": 348.06,
-    "current_position_pct": 64.1,
-    "notes": "SELL_R1: in box (431-484), entry at R1 484, target mid 458, stop 504 ｜ 52.2 條規則（SELL plan，resistance 484.13）：① 跌到 484.13、收市守住喺 484.13 上面 → 照 BUY 條 plan 做（入場 484.13，止蝕 504.02，目標 457.57）。② 收市跌穿 484.13 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 484.13 上面』。"
+    "s4": 372.27,
+    "current_position_pct": 16.8,
+    "notes": "WAIT_RANGE: in box (437-484), pos 17%, no clear setup"
   },
   "patterns": [
     {
@@ -174,7 +168,7 @@
       "date": "2026-10-14",
       "low": 466.5899963378906,
       "high": 482.8999938964844,
-      "i": 196
+      "i": 192
     },
     {
       "name": "烏雲蓋頂",
@@ -182,7 +176,7 @@
       "date": "2026-10-02",
       "low": 456.7300109863281,
       "high": 466.30999755859375,
-      "i": 188
+      "i": 184
     },
     {
       "name": "刺穿線",
@@ -190,7 +184,7 @@
       "date": "2026-09-09",
       "low": 440.0,
       "high": 447.2099914550781,
-      "i": 171
+      "i": 167
     },
     {
       "name": "利淡吞噬",
@@ -198,7 +192,7 @@
       "date": "2026-08-12",
       "low": 478.1600036621094,
       "high": 493.7099914550781,
-      "i": 152
+      "i": 148
     },
     {
       "name": "烏雲蓋頂",
@@ -206,7 +200,7 @@
       "date": "2026-07-07",
       "low": 467.010009765625,
       "high": 484.07000732421875,
-      "i": 126
+      "i": 122
     }
   ]
 }

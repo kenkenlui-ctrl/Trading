@@ -65,6 +65,7 @@ from pathlib import Path
 # contradicting the home page. Imported so the two pages cannot be pointed at
 # different cost legs again — see the JP_COST check below.
 import perf_figures
+import cost_flip
 
 REPO = Path("/Users/kenken/dev/dsa-hk")
 PUB = REPO / "public"
@@ -892,6 +893,23 @@ def build_body() -> str:
       同一個道理，呢頁<b>連方向嘅措辭都係由符號計出嚟</b>：<code>data/hk_retest_summary.json</code> 喺 2026-10-18
       當日下午重跑過兩次，差距嘅正負號轉咗兩次，所以頁面唔會再自己斷言
       「領先」定「落後」。
+    </p>
+  </div>
+  <div class="callout" id="cost-flip" style="margin: var(--sp-4) 0; padding: var(--sp-4); border-left: 4px solid var(--amber); background: var(--amber-dim); border-radius: 4px;">
+    <h3 style="margin-top: 0; font-size: var(--text-md);">成本敏感度：差距喺邊個來回成本會變號</h3>
+    <p style="margin: var(--sp-2) 0; font-size: var(--text-sm);">
+      上面每一個差距都係喺一個成本口徑下報嘅。成本一改，正負號可以跟住改 ——
+      所以呢度唔再報一個單一數字，而係報<b>「差距喺邊個成本會穿過零」</b>，
+      連三個市場、兩個窗口一齊列出。全部數字由
+      <code>data/hk_retest_summary.json</code> 讀出；變號點用線性插值（兩個已量度成本之間）
+      或者線性外推（超出已量度範圍）計，方法寫喺表內。
+    </p>
+    {cost_flip.render_table()}
+    <p style="margin: var(--sp-2) 0 0; font-size: var(--text-sm);">
+      全期計：{cost_flip.flip_sentence()}
+      <b>注意兩個窗口講緊唔同嘅故事</b> —— 美股 2016–20 段喺任何實測成本都領先，
+      但 2021–26 段喺 {cost_flip.flip_cost("us", "late")}
+      就已經變負。呢個正正係本站唔肯用全期單一數字做結論嘅原因。
     </p>
   </div>
   <div class="callout" style="margin: var(--sp-4) 0; padding: var(--sp-4); border-left: 4px solid var(--red); background: var(--red-dim); border-radius: 4px;">

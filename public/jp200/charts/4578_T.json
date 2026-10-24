@@ -3,23 +3,23 @@
   "ticker_user": "4578.T",
   "name": "Otsuka Holdings Co., Ltd.",
   "data_source": "yfinance",
-  "data_range": "2025-12-22 → 2026-10-20 (200 daily bars)",
+  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-20",
-    "O": 12255.0,
-    "H": 12375.0,
-    "L": 12225.0,
-    "C": 12360.0,
-    "prev_close": 12320.0,
-    "chg_pct": 0.32467532467532756
+    "date": "2026-10-23",
+    "O": 12655.0,
+    "H": 12785.0,
+    "L": 12380.0,
+    "C": 12455.0,
+    "prev_close": 12395.0,
+    "chg_pct": 0.48406615570795175
   },
   "phase": "base_building",
-  "adx": 22.4,
-  "plus_di": 30.54,
-  "minus_di": 15.54,
-  "regime": "dead",
+  "adx": 26.48,
+  "plus_di": 36.39,
+  "minus_di": 13.07,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 12795.0 (2026-08-10), trough 10745.0 (2026-09-16), box top 12470.0 (2026-10-16)",
+  "phase_evidence": "Peak 12795.0 (2026-08-10), trough 10745.0 (2026-09-16), box top 12785.0 (2026-10-23)",
   "peak": {
     "date": "2026-08-10",
     "price": 12795.0
@@ -29,19 +29,19 @@
     "price": 10745.0
   },
   "box": {
-    "top": 12470.0,
-    "top_date": "2026-10-16",
+    "top": 12785.0,
+    "top_date": "2026-10-23",
     "bottom": 10745.0,
-    "period": "2026-09-16 to 2026-10-20"
+    "period": "2026-09-16 to 2026-10-23"
   },
-  "drop_from_peak_pct": 3.4,
-  "recovery_from_crash_pct": 15.0,
+  "drop_from_peak_pct": 2.7,
+  "recovery_from_crash_pct": 15.9,
   "supports": [
     {
       "level": 11528.0,
       "label": "S1 KEY",
       "touches": 4,
-      "evidence": "tested 4x in base period; 6.7% below current"
+      "evidence": "tested 4x in base period; 7.4% below current"
     },
     {
       "level": 11088.0,
@@ -52,53 +52,48 @@
   ],
   "resistances": [
     {
-      "level": 12375.0,
+      "level": 12785.0,
       "label": "R1 today high",
-      "evidence": "today's high 12375.0"
-    },
-    {
-      "level": 12470.0,
-      "label": "R3 Oct high",
-      "evidence": "box top 12470.0, base period high"
+      "evidence": "today's high 12785.0"
     }
   ],
   "position": {
-    "current": 12360.0,
-    "in_box_pct": 92.0,
+    "current": 12455.0,
+    "in_box_pct": 80.6,
     "nearest_support": "S1 KEY (11528.0)",
-    "nearest_resistance": "R1 today high (12375.0)"
+    "nearest_resistance": "R1 today high (12785.0)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 12255.0,
-    "H": 12375.0,
-    "L": 12225.0,
-    "C": 12360.0,
-    "body_pct": 70.0,
-    "upper_wick_pct": 10.0,
-    "lower_wick_pct": 20.0
+    "close_position": "lower_half",
+    "O": 12655.0,
+    "H": 12785.0,
+    "L": 12380.0,
+    "C": 12455.0,
+    "body_pct": 49.4,
+    "upper_wick_pct": 32.1,
+    "lower_wick_pct": 18.5
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 11528.0 (KEY support)",
-      "then": "still range; watch 12375.0 for next test"
+      "then": "still range; watch 12785.0 for next test"
     },
     {
       "if": "break 11528.0 on close",
@@ -109,12 +104,8 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 12375.0 on close",
-      "then": "short-term bullish; next test 12470.0"
-    },
-    {
-      "if": "break 12470.0 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 12785.0 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -136,24 +127,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 12470.0,
-    "target_price": 11670.0,
-    "stop_price": 12891.04,
-    "risk_pct": 3.38,
-    "reward_pct": 6.42,
-    "rr_ratio": 1.9,
-    "phase_match": true,
-    "r1": 12470.0,
-    "s1": 10870.0,
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 12785.0,
+    "s1": 11005.0,
     "s2": 10745.0,
     "r2": 12795.0,
     "r3": 11910.0,
     "s3": 10120.0,
     "s4": 8671.0,
-    "current_position_pct": 93.1,
-    "notes": "SELL_R1: in box (10870-12470), entry at R1 12470, target mid 11670, stop 12891 ｜ 52.2 條規則（SELL plan，resistance 12470.00）：① 跌到 12470.00、收市守住喺 12470.00 上面 → 照 BUY 條 plan 做（入場 12470.00，止蝕 12891.04，目標 11670.00）。② 收市跌穿 12470.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 12470.00 上面』。"
+    "current_position_pct": 81.5,
+    "notes": "WAIT_RANGE: in box (11005-12785), pos 81%, no clear setup"
   },
   "patterns": [
     {
@@ -162,7 +153,7 @@
       "date": "2026-10-14",
       "low": 11380.0,
       "high": 11540.0,
-      "i": 195
+      "i": 192
     },
     {
       "name": "刺穿線",
@@ -170,7 +161,7 @@
       "date": "2026-09-17",
       "low": 10930.0,
       "high": 11345.0,
-      "i": 180
+      "i": 177
     },
     {
       "name": "黃昏之星",
@@ -178,7 +169,7 @@
       "date": "2026-09-03",
       "low": 12170.0,
       "high": 12385.0,
-      "i": 170
+      "i": 167
     },
     {
       "name": "射擊之星",
@@ -186,7 +177,7 @@
       "date": "2026-08-28",
       "low": 12120.0,
       "high": 12340.0,
-      "i": 166
+      "i": 163
     },
     {
       "name": "烏雲蓋頂",
@@ -194,23 +185,23 @@
       "date": "2026-08-21",
       "low": 12195.0,
       "high": 12625.0,
-      "i": 161
+      "i": 158
     }
   ],
-  "asof": "2026-10-20",
-  "close": 12360.0,
-  "chg_pct": 0.32467532467532756,
+  "asof": "2026-10-23",
+  "close": 12455.0,
+  "chg_pct": 0.48406615570795175,
   "kline": {
-    "type": "bullish_reclaim",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 12255.0,
-    "H": 12375.0,
-    "L": 12225.0,
-    "C": 12360.0,
-    "body_pct": 70.0,
-    "upper_wick_pct": 10.0,
-    "lower_wick_pct": 20.0
+    "close_position": "lower_half",
+    "O": 12655.0,
+    "H": 12785.0,
+    "L": 12380.0,
+    "C": 12455.0,
+    "body_pct": 49.4,
+    "upper_wick_pct": 32.1,
+    "lower_wick_pct": 18.5
   }
 }

@@ -3,23 +3,23 @@
   "ticker_user": "BSX",
   "name": "Boston Scientific Corporation",
   "data_source": "yfinance",
-  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
+  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-19",
-    "O": 44.01,
-    "H": 45.1,
-    "L": 43.94,
-    "C": 45.05,
-    "prev_close": 44.39,
-    "chg_pct": 1.49
+    "date": "2026-10-23",
+    "O": 45.84,
+    "H": 46.16,
+    "L": 45.22,
+    "C": 45.69,
+    "prev_close": 46.01,
+    "chg_pct": -0.7
   },
   "phase": "downtrend_active",
-  "adx": 17.01,
-  "plus_di": 22.6,
-  "minus_di": 16.69,
+  "adx": 16.24,
+  "plus_di": 23.73,
+  "minus_di": 18.3,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 94.75 (2026-01-26), trough 41.39 (2026-10-08), box top 45.1 (2026-10-19)",
+  "phase_evidence": "Peak 94.75 (2026-01-26), trough 41.39 (2026-10-08), box top 46.16 (2026-10-23)",
   "peak": {
     "date": "2026-01-26",
     "price": 94.75
@@ -29,19 +29,19 @@
     "price": 41.39
   },
   "box": {
-    "top": 45.1,
-    "top_date": "2026-10-19",
+    "top": 46.16,
+    "top_date": "2026-10-23",
     "bottom": 41.39,
-    "period": "2026-10-08 to 2026-10-19"
+    "period": "2026-10-08 to 2026-10-23"
   },
-  "drop_from_peak_pct": 52.5,
-  "recovery_from_crash_pct": 8.8,
+  "drop_from_peak_pct": 51.8,
+  "recovery_from_crash_pct": 10.4,
   "supports": [
     {
       "level": 44.0,
       "label": "S1 KEY",
-      "touches": 45,
-      "evidence": "tested 45x in base period; 2.3% below current"
+      "touches": 31,
+      "evidence": "tested 31x in base period; 3.7% below current"
     },
     {
       "level": 41.39,
@@ -52,29 +52,29 @@
   ],
   "resistances": [
     {
-      "level": 45.1,
+      "level": 46.16,
       "label": "R1 today high",
-      "evidence": "today's high 45.099998474121094"
+      "evidence": "today's high 46.15999984741211"
     }
   ],
   "position": {
-    "current": 45.05,
-    "in_box_pct": 98.7,
+    "current": 45.69,
+    "in_box_pct": 90.1,
     "nearest_support": "S1 KEY (44.0)",
-    "nearest_resistance": "R1 today high (45.1)"
+    "nearest_resistance": "R1 today high (46.16)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_rejection",
     "touched_R1": true,
-    "touched_S1": true,
-    "close_position": "upper_half",
-    "O": 44.01,
-    "H": 45.1,
-    "L": 43.94,
-    "C": 45.05,
-    "body_pct": 89.7,
-    "upper_wick_pct": 4.3,
-    "lower_wick_pct": 6.0
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 45.84,
+    "H": 46.16,
+    "L": 45.22,
+    "C": 45.69,
+    "body_pct": 16.0,
+    "upper_wick_pct": 34.0,
+    "lower_wick_pct": 50.0
   },
   "bias": {
     "short": {
@@ -93,7 +93,7 @@
   "scenarios": [
     {
       "if": "hold 44.0 (KEY support)",
-      "then": "still range; watch 45.1 for next test"
+      "then": "still range; watch 46.16 for next test"
     },
     {
       "if": "break 44.0 on close",
@@ -104,7 +104,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 45.1 on close",
+      "if": "reclaim 46.16 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -129,31 +129,39 @@
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
-    "trigger_price": 45.74,
-    "target_price": 43.57,
-    "stop_price": 47.42,
-    "risk_pct": 3.68,
-    "reward_pct": 4.76,
-    "rr_ratio": 1.29,
+    "trigger_price": 46.16,
+    "target_price": 43.77,
+    "stop_price": 47.94,
+    "risk_pct": 3.86,
+    "reward_pct": 5.17,
+    "rr_ratio": 1.34,
     "phase_match": true,
-    "r1": 45.74,
+    "r1": 46.16,
     "s1": 41.39,
-    "s2": 42.55,
+    "s2": 42.72,
     "r2": 52.99,
     "r3": 58.51,
     "s3": 42.2,
-    "s4": 58.02,
-    "current_position_pct": 84.1,
-    "notes": "SELL_R1: in box (41-46), entry at R1 46, target mid 44, stop 47 ｜ 52.2 條規則（SELL plan，resistance 45.74）：① 跌到 45.74、收市守住喺 45.74 上面 → 照 BUY 條 plan 做（入場 45.74，止蝕 47.42，目標 43.57）。② 收市跌穿 45.74 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 45.74 上面』。"
+    "s4": 56.05,
+    "current_position_pct": 90.1,
+    "notes": "SELL_R1: in box (41-46), entry at R1 46, target mid 44, stop 48 ｜ 52.2 條規則（SELL plan，resistance 46.16）：① 跌到 46.16、收市守住喺 46.16 上面 → 照 BUY 條 plan 做（入場 46.16，止蝕 47.94，目標 43.77）。② 收市跌穿 46.16 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 46.16 上面』。"
   },
   "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-10-23",
+      "low": 45.220001220703125,
+      "high": 46.15999984741211,
+      "i": 199
+    },
     {
       "name": "利好身懷六甲",
       "bias": "bullish",
       "date": "2026-09-28",
       "low": 43.16999816894531,
       "high": 44.150001525878906,
-      "i": 184
+      "i": 180
     },
     {
       "name": "三個白武士",
@@ -161,7 +169,7 @@
       "date": "2026-09-21",
       "low": 42.720001220703125,
       "high": 43.810001373291016,
-      "i": 179
+      "i": 175
     },
     {
       "name": "刺穿線",
@@ -169,23 +177,15 @@
       "date": "2026-09-04",
       "low": 46.83000183105469,
       "high": 48.060001373291016,
-      "i": 169
+      "i": 165
     },
     {
-      "name": "烏雲蓋頂",
+      "name": "利淡吞噬",
       "bias": "bearish",
-      "date": "2026-08-24",
-      "low": 48.77000045776367,
-      "high": 50.380001068115234,
-      "i": 160
-    },
-    {
-      "name": "利淡反擊線",
-      "bias": "bearish",
-      "date": "2026-08-17",
-      "low": 51.2400016784668,
-      "high": 52.06999969482422,
-      "i": 155
+      "date": "2026-08-20",
+      "low": 49.36000061035156,
+      "high": 51.79999923706055,
+      "i": 154
     }
   ]
 }

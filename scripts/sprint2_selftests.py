@@ -545,10 +545,16 @@ def test_a2_flag_posture_and_production_wiring():
     print("\nGuardrail — one flag on, wired narrowly")
     cfg = FLAGS.load_config()
     on = sorted(n for n, v in cfg.items() if v)
-    record("deploy_gate_flag is the ONLY flag on", on == ["deploy_gate_flag"],
+    # 2026-10-25: the website-fix dispatch of 2026-10-23 (approved by
+    # Kenneth) ships Sprint 2 Phase A1, so the staleness banner flag is
+    # approved as well. The guardrail is therefore no longer "exactly one
+    # flag" — it is "exactly the flags Kenneth has approved, and no others",
+    # which is the property that was actually protecting production.
+    APPROVED = sorted(["deploy_gate_flag", "staleness_banner_flag"])
+    record("the only flags on are the ones Kenneth approved", on == APPROVED,
            json.dumps(cfg))
     record("enabled_flags() agrees with the file",
-           FLAGS.enabled_flags() == ["deploy_gate_flag"],
+           sorted(FLAGS.enabled_flags()) == APPROVED,
            str(FLAGS.enabled_flags()))
     record("flag file exists and is committed-shaped", FLAGS.CONFIG.exists(),
            str(FLAGS.CONFIG.relative_to(REPO)))

@@ -3,20 +3,20 @@
   "ticker_user": "GILD",
   "name": "Gilead Sciences, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
+  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-19",
-    "O": 155.39,
-    "H": 157.24,
-    "L": 152.92,
-    "C": 153.07,
-    "prev_close": 156.19,
-    "chg_pct": -2.0
+    "date": "2026-10-23",
+    "O": 156.47,
+    "H": 157.65,
+    "L": 155.76,
+    "C": 156.04,
+    "prev_close": 157.19,
+    "chg_pct": -0.73
   },
   "phase": "range",
-  "adx": 23.48,
-  "plus_di": 31.65,
-  "minus_di": 19.34,
+  "adx": 22.59,
+  "plus_di": 27.84,
+  "minus_di": 18.12,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 160.51 (2026-10-15), trough 142.6 (2026-10-06), box top 160.51 (2026-10-15)",
@@ -32,29 +32,29 @@
     "top": 160.51,
     "top_date": "2026-10-15",
     "bottom": 142.6,
-    "period": "2026-10-06 to 2026-10-19"
+    "period": "2026-10-06 to 2026-10-23"
   },
-  "drop_from_peak_pct": 4.6,
-  "recovery_from_crash_pct": 7.3,
+  "drop_from_peak_pct": 2.8,
+  "recovery_from_crash_pct": 9.4,
   "supports": [
     {
       "level": 148.0,
       "label": "S1 KEY",
       "touches": 19,
-      "evidence": "tested 19x in base period; 3.3% below current"
+      "evidence": "tested 19x in base period; 5.2% below current"
     },
     {
       "level": 144.0,
       "label": "S2 bottom",
-      "touches": 14,
+      "touches": 10,
       "evidence": "structural bottom, near crash low 142.6"
     }
   ],
   "resistances": [
     {
-      "level": 157.24,
+      "level": 157.65,
       "label": "R1 today high",
-      "evidence": "today's high 157.24000549316406"
+      "evidence": "rejection at 157.64999389648438 (long upper wick, close weak)"
     },
     {
       "level": 160.51,
@@ -63,23 +63,23 @@
     }
   ],
   "position": {
-    "current": 153.07,
-    "in_box_pct": 54.9,
+    "current": 156.04,
+    "in_box_pct": 72.9,
     "nearest_support": "S1 KEY (148.0)",
-    "nearest_resistance": "R1 today high (157.24)"
+    "nearest_resistance": "R1 today high (157.65)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 155.39,
-    "H": 157.24,
-    "L": 152.92,
-    "C": 153.07,
-    "body_pct": 53.7,
-    "upper_wick_pct": 42.8,
-    "lower_wick_pct": 3.5
+    "O": 156.47,
+    "H": 157.65,
+    "L": 155.76,
+    "C": 156.04,
+    "body_pct": 22.8,
+    "upper_wick_pct": 62.4,
+    "lower_wick_pct": 14.8
   },
   "bias": {
     "short": {
@@ -98,7 +98,7 @@
   "scenarios": [
     {
       "if": "hold 148.0 (KEY support)",
-      "then": "still range; watch 157.24 for next test"
+      "then": "still range; watch 157.65 for next test"
     },
     {
       "if": "break 148.0 on close",
@@ -109,7 +109,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 157.24 on close",
+      "if": "reclaim 157.65 on close",
       "then": "short-term bullish; next test 160.51"
     },
     {
@@ -136,33 +136,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 160.51,
+    "target_price": 151.56,
+    "stop_price": 166.86,
+    "risk_pct": 3.96,
+    "reward_pct": 5.58,
+    "rr_ratio": 1.41,
     "phase_match": true,
     "r1": 160.51,
     "s1": 142.6,
-    "s2": 128.28,
-    "r2": 153.23,
+    "s2": 128.76,
+    "r2": 154.2,
     "r3": 140.61,
     "s3": 121.39,
-    "s4": 116.88,
-    "current_position_pct": 58.5,
-    "notes": "WAIT_RANGE: in box (143-161), pos 58%, no clear setup"
+    "s4": 119.33,
+    "current_position_pct": 75.0,
+    "notes": "SELL_R1: in box (143-161), entry at R1 161, target mid 152, stop 167 ｜ 52.2 條規則（SELL plan，resistance 160.51）：① 跌到 160.51、收市守住喺 160.51 上面 → 照 BUY 條 plan 做（入場 160.51，止蝕 166.86，目標 151.56）。② 收市跌穿 160.51 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 160.51 上面』。"
   },
   "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-10-23",
+      "low": 155.75999450683594,
+      "high": 157.64999389648438,
+      "i": 199
+    },
     {
       "name": "黃昏之星",
       "bias": "bearish",
       "date": "2026-10-01",
       "low": 147.19000244140625,
       "high": 149.44000244140625,
-      "i": 187
+      "i": 183
     },
     {
       "name": "上升三法",
@@ -170,15 +178,7 @@
       "date": "2026-07-23",
       "low": 127.61000061035156,
       "high": 131.07000732421875,
-      "i": 138
-    },
-    {
-      "name": "烏雲蓋頂",
-      "bias": "bearish",
-      "date": "2026-07-08",
-      "low": 134.0,
-      "high": 137.6999969482422,
-      "i": 127
+      "i": 134
     }
   ]
 }

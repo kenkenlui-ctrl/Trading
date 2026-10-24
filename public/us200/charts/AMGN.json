@@ -3,95 +3,89 @@
   "ticker_user": "AMGN",
   "name": "Amgen Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
+  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-19",
-    "O": 430.36,
-    "H": 434.51,
-    "L": 424.74,
-    "C": 424.94,
-    "prev_close": 432.49,
-    "chg_pct": -1.75
+    "date": "2026-10-23",
+    "O": 444.4,
+    "H": 444.59,
+    "L": 439.07,
+    "C": 439.26,
+    "prev_close": 447.28,
+    "chg_pct": -1.79
   },
-  "phase": "base_building",
-  "adx": 23.53,
-  "plus_di": 33.02,
-  "minus_di": 19.94,
-  "regime": "dead",
+  "phase": "range",
+  "adx": 26.55,
+  "plus_di": 34.41,
+  "minus_di": 14.84,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 447.03 (2026-08-25), trough 374.46 (2026-09-16), box top 441.76 (2026-10-15)",
+  "phase_evidence": "Peak 450.98 (2026-10-22), trough 396.01 (2026-10-06), box top 450.98 (2026-10-22)",
   "peak": {
-    "date": "2026-08-25",
-    "price": 447.03
+    "date": "2026-10-22",
+    "price": 450.98
   },
   "trough": {
-    "date": "2026-09-16",
-    "price": 374.46
+    "date": "2026-10-06",
+    "price": 396.01
   },
   "box": {
-    "top": 441.76,
-    "top_date": "2026-10-15",
-    "bottom": 374.46,
-    "period": "2026-09-16 to 2026-10-19"
+    "top": 450.98,
+    "top_date": "2026-10-22",
+    "bottom": 396.01,
+    "period": "2026-10-06 to 2026-10-23"
   },
-  "drop_from_peak_pct": 4.9,
-  "recovery_from_crash_pct": 13.5,
+  "drop_from_peak_pct": 2.6,
+  "recovery_from_crash_pct": 10.9,
   "supports": [
     {
-      "level": 412.0,
+      "level": 424.0,
       "label": "S1 KEY",
-      "touches": 6,
-      "evidence": "tested 6x in base period; 3.0% below current"
+      "touches": 4,
+      "evidence": "tested 4x in base period; 3.5% below current"
+    },
+    {
+      "level": 412.0,
+      "label": "S2",
+      "touches": 5,
+      "evidence": "mid-base support, tested 5x"
     },
     {
       "level": 404.0,
-      "label": "S2",
-      "touches": 8,
-      "evidence": "mid-base support, tested 8x"
-    },
-    {
-      "level": 400.0,
-      "label": "S3",
-      "touches": 8,
-      "evidence": "mid-base support, tested 8x"
-    },
-    {
-      "level": 374.46,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-09-16, structural bottom"
+      "label": "S3 bottom",
+      "touches": 5,
+      "evidence": "structural bottom, near crash low 396.01"
     }
   ],
   "resistances": [
     {
-      "level": 434.51,
+      "level": 444.59,
       "label": "R1 today high",
-      "evidence": "today's high 434.510009765625"
+      "evidence": "today's high 444.5899963378906"
     },
     {
-      "level": 441.76,
+      "level": 450.98,
       "label": "R3 Oct high",
-      "evidence": "box top 441.76, base period high"
+      "evidence": "box top 450.98, base period high"
     }
   ],
   "position": {
-    "current": 424.94,
-    "in_box_pct": 75.0,
-    "nearest_support": "S1 KEY (412.0)",
-    "nearest_resistance": "R1 today high (434.51)"
+    "current": 439.26,
+    "in_box_pct": 75.1,
+    "nearest_support": "S1 KEY (424.0)",
+    "nearest_resistance": "R1 today high (444.59)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 430.36,
-    "H": 434.51,
-    "L": 424.74,
-    "C": 424.94,
-    "body_pct": 55.5,
-    "upper_wick_pct": 42.5,
-    "lower_wick_pct": 2.0
+    "O": 444.4,
+    "H": 444.59,
+    "L": 439.07,
+    "C": 439.26,
+    "body_pct": 93.1,
+    "upper_wick_pct": 3.4,
+    "lower_wick_pct": 3.4
   },
   "bias": {
     "short": {
@@ -99,8 +93,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
+      "bias": "neutral",
+      "reason": "no clear direction"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -109,23 +103,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 412.0 (KEY support)",
-      "then": "still range; watch 434.51 for next test"
+      "if": "hold 424.0 (KEY support)",
+      "then": "still range; watch 444.59 for next test"
     },
     {
-      "if": "break 412.0 on close",
-      "then": "target 404.0 → 400.0 (short-term bearish)"
+      "if": "break 424.0 on close",
+      "then": "target 412.0 → 404.0 (short-term bearish)"
     },
     {
-      "if": "break 374.46 (crash low)",
+      "if": "break 404.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 434.51 on close",
-      "then": "short-term bullish; next test 441.76"
+      "if": "reclaim 444.59 on close",
+      "then": "short-term bullish; next test 450.98"
     },
     {
-      "if": "break 441.76 (box top)",
+      "if": "break 450.98 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -148,32 +142,32 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 441.76,
-    "target_price": 418.89,
-    "stop_price": 458.23,
-    "risk_pct": 3.73,
-    "reward_pct": 5.18,
-    "rr_ratio": 1.39,
-    "phase_match": true,
-    "r1": 441.76,
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 450.98,
     "s1": 396.01,
-    "s2": 374.4,
+    "s2": 374.46,
     "r2": 447.03,
-    "r3": 379.41,
+    "r3": 398.0,
     "s3": 320.52,
-    "s4": 318.21,
-    "current_position_pct": 63.2,
-    "notes": "SELL_R1: in box (396-442), entry at R1 442, target mid 419, stop 458 ｜ 52.2 條規則（SELL plan，resistance 441.76）：① 跌到 441.76、收市守住喺 441.76 上面 → 照 BUY 條 plan 做（入場 441.76，止蝕 458.23，目標 418.89）。② 收市跌穿 441.76 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 441.76 上面』。"
+    "s4": 319.79,
+    "current_position_pct": 78.7,
+    "notes": "WAIT_RANGE: in box (396-451), pos 79%, no clear setup"
   },
   "patterns": [
     {
-      "name": "黃昏之星",
+      "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-10-19",
-      "low": 424.739990234375,
-      "high": 434.510009765625,
+      "date": "2026-10-23",
+      "low": 439.07000732421875,
+      "high": 444.5899963378906,
       "i": 199
     },
     {
@@ -182,7 +176,15 @@
       "date": "2026-10-13",
       "low": 411.0400085449219,
       "high": 420.3500061035156,
-      "i": 195
+      "i": 191
+    },
+    {
+      "name": "黃昏之星",
+      "bias": "bearish",
+      "date": "2026-10-02",
+      "low": 401.9599914550781,
+      "high": 410.1600036621094,
+      "i": 184
     },
     {
       "name": "烏雲蓋頂",
@@ -190,7 +192,7 @@
       "date": "2026-08-13",
       "low": 415.7799987792969,
       "high": 420.260009765625,
-      "i": 153
+      "i": 149
     },
     {
       "name": "利淡吞噬",
@@ -198,15 +200,7 @@
       "date": "2026-07-22",
       "low": 364.8599853515625,
       "high": 371.0,
-      "i": 137
-    },
-    {
-      "name": "上升三法",
-      "bias": "bullish",
-      "date": "2026-06-18",
-      "low": 334.04998779296875,
-      "high": 345.0,
-      "i": 115
+      "i": 133
     }
   ]
 }

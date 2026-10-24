@@ -3,23 +3,23 @@
   "ticker_user": "BMY",
   "name": "Bristol-Myers Squibb Company",
   "data_source": "yfinance",
-  "data_range": "2026-01-02 → 2026-10-19 (200 daily bars)",
+  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-19",
-    "O": 59.4,
-    "H": 59.87,
-    "L": 58.44,
-    "C": 58.83,
-    "prev_close": 59.75,
-    "chg_pct": -1.54
+    "date": "2026-10-23",
+    "O": 62.66,
+    "H": 62.84,
+    "L": 61.31,
+    "C": 61.48,
+    "prev_close": 63.0,
+    "chg_pct": -2.41
   },
   "phase": "downtrend_active",
-  "adx": 21.08,
-  "plus_di": 22.55,
-  "minus_di": 29.84,
-  "regime": "dead",
+  "adx": 17.93,
+  "plus_di": 28.53,
+  "minus_di": 21.25,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 68.64 (2026-08-19), trough 56.15 (2026-10-13), box top 62.25 (2026-10-15)",
+  "phase_evidence": "Peak 68.64 (2026-08-19), trough 56.15 (2026-10-13), box top 63.59 (2026-10-22)",
   "peak": {
     "date": "2026-08-19",
     "price": 68.64
@@ -29,56 +29,62 @@
     "price": 56.15
   },
   "box": {
-    "top": 62.25,
-    "top_date": "2026-10-15",
+    "top": 63.59,
+    "top_date": "2026-10-22",
     "bottom": 56.15,
-    "period": "2026-10-13 to 2026-10-19"
+    "period": "2026-10-13 to 2026-10-23"
   },
-  "drop_from_peak_pct": 14.3,
-  "recovery_from_crash_pct": 4.8,
+  "drop_from_peak_pct": 10.4,
+  "recovery_from_crash_pct": 9.5,
   "supports": [
     {
+      "level": 60.0,
+      "label": "S1 KEY",
+      "touches": 18,
+      "evidence": "tested 18x in base period; 2.4% below current"
+    },
+    {
       "level": 56.0,
-      "label": "S1 bottom",
+      "label": "S2 bottom",
       "touches": 6,
       "evidence": "structural bottom, near crash low 56.15"
     }
   ],
   "resistances": [
     {
-      "level": 59.87,
+      "level": 62.84,
       "label": "R1 today high",
-      "evidence": "today's high 59.869998931884766"
+      "evidence": "today's high 62.84000015258789"
     },
     {
-      "level": 62.25,
+      "level": 63.59,
       "label": "R3 Oct high",
-      "evidence": "box top 62.25, base period high"
+      "evidence": "box top 63.59, base period high"
     }
   ],
   "position": {
-    "current": 58.83,
-    "in_box_pct": 45.3,
-    "nearest_support": "S1 bottom (56.0)",
-    "nearest_resistance": "R1 today high (59.87)"
+    "current": 61.48,
+    "in_box_pct": 72.2,
+    "nearest_support": "S1 KEY (60.0)",
+    "nearest_resistance": "R1 today high (62.84)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 59.4,
-    "H": 59.87,
-    "L": 58.44,
-    "C": 58.83,
-    "body_pct": 39.9,
-    "upper_wick_pct": 32.9,
-    "lower_wick_pct": 27.3
+    "O": 62.66,
+    "H": 62.84,
+    "L": 61.31,
+    "C": 61.48,
+    "body_pct": 77.1,
+    "upper_wick_pct": 11.8,
+    "lower_wick_pct": 11.1
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (45% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -91,23 +97,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 56.0 (KEY support)",
-      "then": "still range; watch 59.87 for next test"
+      "if": "hold 60.0 (KEY support)",
+      "then": "still range; watch 62.84 for next test"
     },
     {
-      "if": "break 56.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 60.0 on close",
+      "then": "target 56.0 → lower (short-term bearish)"
     },
     {
       "if": "break 56.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 59.87 on close",
-      "then": "short-term bullish; next test 62.25"
+      "if": "reclaim 62.84 on close",
+      "then": "short-term bullish; next test 63.59"
     },
     {
-      "if": "break 62.25 (box top)",
+      "if": "break 63.59 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -130,24 +136,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 64.13,
+    "target_price": 60.14,
+    "stop_price": 67.21,
+    "risk_pct": 4.81,
+    "reward_pct": 6.22,
+    "rr_ratio": 1.29,
+    "phase_match": true,
     "r1": 64.13,
     "s1": 56.15,
-    "s2": 62.19,
+    "s2": 60.6,
     "r2": 68.64,
-    "r3": 62.82,
+    "r3": 65.56,
     "s3": 53.44,
-    "s4": 52.06,
-    "current_position_pct": 33.6,
-    "notes": "WAIT_RANGE: in box (56-64), pos 34%, no clear setup"
+    "s4": 53.55,
+    "current_position_pct": 66.8,
+    "notes": "SELL_R1: in box (56-64), entry at R1 64, target mid 60, stop 67 ｜ 52.2 條規則（SELL plan，resistance 64.13）：① 跌到 64.13、收市守住喺 64.13 上面 → 照 BUY 條 plan 做（入場 64.13，止蝕 67.21，目標 60.14）。② 收市跌穿 64.13 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 64.13 上面』。"
   },
   "patterns": [
     {
@@ -156,7 +162,7 @@
       "date": "2026-10-12",
       "low": 56.720001220703125,
       "high": 60.68000030517578,
-      "i": 194
+      "i": 190
     },
     {
       "name": "刺穿線",
@@ -164,7 +170,7 @@
       "date": "2026-10-06",
       "low": 58.63999938964844,
       "high": 59.599998474121094,
-      "i": 190
+      "i": 186
     },
     {
       "name": "早晨之星",
@@ -172,7 +178,7 @@
       "date": "2026-09-28",
       "low": 62.29999923706055,
       "high": 63.93000030517578,
-      "i": 184
+      "i": 180
     },
     {
       "name": "吊頸",
@@ -180,7 +186,7 @@
       "date": "2026-08-26",
       "low": 67.31999969482422,
       "high": 68.0,
-      "i": 162
+      "i": 158
     },
     {
       "name": "烏雲蓋頂",
@@ -188,7 +194,7 @@
       "date": "2026-07-22",
       "low": 60.560001373291016,
       "high": 61.70000076293945,
-      "i": 137
+      "i": 133
     }
   ]
 }
