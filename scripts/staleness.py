@@ -46,7 +46,7 @@ from __future__ import annotations
 import json
 import pathlib
 import sys
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from integrity import freshness as FR  # noqa: E402
@@ -312,6 +312,73 @@ def banner_html_all() -> str:
         '頁面下面嘅數字係截至上面列出嘅日期，唔係最新。'
         '落單前請以券商或官方 App 嘅報價為準。</p></div></div>'
     )
+
+
+def _next_expected_close(market: str, session_date: str) -> str:
+    """When the NEXT session was due to close, given this session's date.
+
+    Weekday rule only — a trading calendar is not knowable from a session
+    date, and guessing one is how "stale" silently becomes "fresh". The
+    page's client-side check rolls this forward over weekends; a market
+    holiday can therefore flag a session that never happened, which is the
+    safe direction to be wrong in.
+    """
+    if not session_date:
+        return ""
+    try:
+        d = date.fromisoformat(session_date) + timedelta(days=1)
+    except ValueError:
+        return ""
+    while d.weekday() >= 5:          # Saturday, Sunday
+        d += timedelta(days=1)
+    return _session_close_iso(market, d.isoformat())
+
+
+def client_payload(market: str) -> dict | None:
+    """The facts the page needs to judge freshness at REQUEST time.
+
+    The build-time state is frozen into the HTML; a site that sat for four
+    days cannot know that from a banner computed when the data was fresh.
+    So the page carries the dates and the visitor's clock decides.
+    """
+    sess = data_session(market)
+    if not sess:
+        return None
+    return {
+        "market": market,
+        "session": sess,
+        "close": _session_close_iso(market, sess),
+        "next": _next_expected_close(market, sess),
+        "limit": MAX_AGE_HOURS,
+    }
+
+
+def client_payload_all() -> list:
+    out = []
+    for m in ("HK", "US", "JP"):
+        p = client_payload(m)
+        if p:
+            out.append(p)
+    return out
+
+
+def client_meta(markets: list | None = None) -> str:
+    """The <meta name="w9-freshness"> content for a page.
+
+    JSON with single quotes as the attribute delimiter, because the payload
+    contains double quotes.
+    """
+    import json as _json
+
+    if markets is None:
+        payload = client_payload_all()
+    else:
+        payload = [p for p in (client_payload(m) for m in markets) if p]
+    # Valid JSON, double quotes and all — the HTML attribute that carries it
+    # uses single quotes instead. Rewriting the quotes here produced
+    # {'market':'HK'} which JSON.parse rejects, so the page's own check
+    # would have silently done nothing.
+    return _json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
 
 
 def summary_json() -> dict:

@@ -3,23 +3,23 @@
   "ticker_user": "00268.HK",
   "name": "KINGDEE INT'L",
   "data_source": "yfinance",
-  "data_range": "2025-12-31 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-06 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 8.65,
-    "H": 9.48,
-    "L": 8.6,
-    "C": 9.23,
-    "prev_close": 8.6,
-    "chg_pct": 7.33
+    "date": "2026-10-28",
+    "O": 9.0,
+    "H": 9.32,
+    "L": 8.91,
+    "C": 9.14,
+    "prev_close": 9.22,
+    "chg_pct": -0.81
   },
   "phase": "base_building",
-  "adx": 20.82,
-  "plus_di": 37.93,
-  "minus_di": 17.04,
+  "adx": 24.19,
+  "plus_di": 31.74,
+  "minus_di": 15.82,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 11.71 (2026-02-12), trough 5.63 (2026-06-26), box top 9.48 (2026-08-28)",
+  "phase_evidence": "Peak 11.71 (2026-02-12), trough 5.63 (2026-06-26), box top 9.6 (2026-10-27)",
   "peak": {
     "date": "2026-02-12",
     "price": 11.71
@@ -29,19 +29,19 @@
     "price": 5.63
   },
   "box": {
-    "top": 9.48,
-    "top_date": "2026-08-28",
+    "top": 9.6,
+    "top_date": "2026-10-27",
     "bottom": 5.63,
-    "period": "2026-06-26 to 2026-10-23"
+    "period": "2026-06-26 to 2026-10-28"
   },
-  "drop_from_peak_pct": 21.2,
-  "recovery_from_crash_pct": 63.9,
+  "drop_from_peak_pct": 21.9,
+  "recovery_from_crash_pct": 62.3,
   "supports": [
     {
       "level": 8.0,
       "label": "S1 KEY",
-      "touches": 110,
-      "evidence": "tested 110x in base period; 13.3% below current"
+      "touches": 109,
+      "evidence": "tested 109x in base period; 12.5% below current"
     },
     {
       "level": 5.63,
@@ -52,48 +52,53 @@
   ],
   "resistances": [
     {
-      "level": 9.48,
+      "level": 9.32,
       "label": "R1 today high",
-      "evidence": "today's high 9.475000381469727"
+      "evidence": "today's high 9.319999694824219"
+    },
+    {
+      "level": 9.6,
+      "label": "R3 Oct high",
+      "evidence": "box top 9.6, base period high"
     }
   ],
   "position": {
-    "current": 9.23,
-    "in_box_pct": 93.5,
+    "current": 9.14,
+    "in_box_pct": 88.4,
     "nearest_support": "S1 KEY (8.0)",
-    "nearest_resistance": "R1 today high (9.48)"
+    "nearest_resistance": "R1 today high (9.32)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 8.65,
-    "H": 9.48,
-    "L": 8.6,
-    "C": 9.23,
-    "body_pct": 66.1,
-    "upper_wick_pct": 28.2,
-    "lower_wick_pct": 5.7
+    "O": 9.0,
+    "H": 9.32,
+    "L": 8.91,
+    "C": 9.14,
+    "body_pct": 34.6,
+    "upper_wick_pct": 44.4,
+    "lower_wick_pct": 21.0
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 8.0 (KEY support)",
-      "then": "still range; watch 9.48 for next test"
+      "then": "still range; watch 9.32 for next test"
     },
     {
       "if": "break 8.0 on close",
@@ -104,8 +109,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 9.48 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 9.32 on close",
+      "then": "short-term bullish; next test 9.6"
+    },
+    {
+      "if": "break 9.6 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -129,22 +138,22 @@
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
-    "trigger_price": 9.48,
-    "target_price": 8.27,
-    "stop_price": 10.19,
-    "risk_pct": 7.59,
-    "reward_pct": 12.74,
-    "rr_ratio": 1.68,
+    "trigger_price": 9.6,
+    "target_price": 8.33,
+    "stop_price": 10.43,
+    "risk_pct": 8.63,
+    "reward_pct": 13.23,
+    "rr_ratio": 1.53,
     "phase_match": true,
-    "r1": 9.48,
+    "r1": 9.6,
     "s1": 7.06,
-    "s2": 7.18,
+    "s2": 7.17,
     "r2": 9.48,
     "r3": 9.62,
     "s3": 5.63,
     "s4": 7.92,
-    "current_position_pct": 89.9,
-    "notes": "SELL_R1: in box (7-9), entry at R1 9, target mid 8, stop 10 ｜ 52.2 條規則（SELL plan，resistance 9.48）：① 跌到 9.48、收市守住喺 9.48 上面 → 照 BUY 條 plan 做（入場 9.48，止蝕 10.19，目標 8.27）。② 收市跌穿 9.48 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 9.48 上面』。"
+    "current_position_pct": 81.9,
+    "notes": "SELL_R1: in box (7-10), entry at R1 10, target mid 8, stop 10 ｜ 52.2 條規則（SELL plan，resistance 9.60）：① 跌到 9.60、收市守住喺 9.60 上面 → 照 BUY 條 plan 做（入場 9.60，止蝕 10.43，目標 8.33）。② 收市跌穿 9.60 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 9.60 上面』。"
   },
   "patterns": [
     {
@@ -153,7 +162,7 @@
       "date": "2026-10-09",
       "low": 7.139999866485596,
       "high": 7.864999771118164,
-      "i": 190
+      "i": 187
     },
     {
       "name": "上升三法",
@@ -161,7 +170,7 @@
       "date": "2026-09-11",
       "low": 7.315000057220459,
       "high": 7.619999885559082,
-      "i": 171
+      "i": 168
     },
     {
       "name": "烏雲蓋頂",
@@ -169,7 +178,7 @@
       "date": "2026-09-02",
       "low": 8.069999694824219,
       "high": 8.640000343322754,
-      "i": 164
+      "i": 161
     },
     {
       "name": "黃昏之星",
@@ -177,7 +186,7 @@
       "date": "2026-08-13",
       "low": 7.699999809265137,
       "high": 8.21500015258789,
-      "i": 150
+      "i": 147
     },
     {
       "name": "吊頸",
@@ -185,7 +194,7 @@
       "date": "2026-07-17",
       "low": 6.489999771118164,
       "high": 7.099999904632568,
-      "i": 131
+      "i": 128
     }
   ]
 }

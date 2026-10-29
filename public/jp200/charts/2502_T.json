@@ -3,21 +3,21 @@
   "ticker_user": "2502.T",
   "name": "Asahi Group Holdings, Ltd.",
   "data_source": "yfinance",
-  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
+  "data_range": "2025-12-30 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 1700.5,
-    "H": 1728.5,
-    "L": 1677.5,
-    "C": 1679.5,
-    "prev_close": 1676.0,
-    "chg_pct": 0.20883054892602004
+    "date": "2026-10-28",
+    "O": 1625.0,
+    "H": 1634.0,
+    "L": 1594.5,
+    "C": 1604.5,
+    "prev_close": 1674.0,
+    "chg_pct": -4.15173237753883
   },
-  "phase": "range",
-  "adx": 19.25,
-  "plus_di": 33.64,
-  "minus_di": 13.57,
-  "regime": "range",
+  "phase": "downtrend_active",
+  "adx": 20.49,
+  "plus_di": 23.27,
+  "minus_di": 27.08,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 1805.5 (2026-07-29), trough 1540.5 (2026-10-08), box top 1728.5 (2026-10-23)",
   "peak": {
@@ -32,64 +32,57 @@
     "top": 1728.5,
     "top_date": "2026-10-23",
     "bottom": 1540.5,
-    "period": "2026-10-08 to 2026-10-23"
+    "period": "2026-10-08 to 2026-10-28"
   },
-  "drop_from_peak_pct": 7.0,
-  "recovery_from_crash_pct": 9.0,
+  "drop_from_peak_pct": 11.1,
+  "recovery_from_crash_pct": 4.2,
   "supports": [
     {
-      "level": 1608.0,
-      "label": "S1 KEY",
-      "touches": 3,
-      "evidence": "tested 3x in base period; 4.3% below current"
-    },
-    {
-      "level": 1584.0,
-      "label": "S2",
-      "touches": 3,
-      "evidence": "mid-base support, tested 3x"
-    },
-    {
-      "level": 1576.0,
-      "label": "S3 bottom",
-      "touches": 4,
+      "level": 1556.0,
+      "label": "S1 bottom",
+      "touches": 0,
       "evidence": "structural bottom, near crash low 1540.5"
     }
   ],
   "resistances": [
     {
-      "level": 1728.5,
+      "level": 1634.0,
       "label": "R1 today high",
-      "evidence": "rejection at 1728.5 (long upper wick, close weak)"
+      "evidence": "today's high 1634.0"
+    },
+    {
+      "level": 1728.5,
+      "label": "R3 Oct high",
+      "evidence": "box top 1728.5, base period high"
     }
   ],
   "position": {
-    "current": 1679.5,
-    "in_box_pct": 67.9,
-    "nearest_support": "S1 KEY (1608.0)",
-    "nearest_resistance": "R1 today high (1728.5)"
+    "current": 1604.5,
+    "in_box_pct": 28.1,
+    "nearest_support": "S1 bottom (1556.0)",
+    "nearest_resistance": "R1 today high (1634.0)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 1700.5,
-    "H": 1728.5,
-    "L": 1677.5,
-    "C": 1679.5,
-    "body_pct": 41.2,
-    "upper_wick_pct": 54.9,
-    "lower_wick_pct": 3.9
+    "O": 1625.0,
+    "H": 1634.0,
+    "L": 1594.5,
+    "C": 1604.5,
+    "body_pct": 51.9,
+    "upper_wick_pct": 22.8,
+    "lower_wick_pct": 25.3
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (28% of box)"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": "no clear direction"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -98,20 +91,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 1608.0 (KEY support)",
-      "then": "still range; watch 1728.5 for next test"
+      "if": "hold 1556.0 (KEY support)",
+      "then": "still range; watch 1634.0 for next test"
     },
     {
-      "if": "break 1608.0 on close",
-      "then": "target 1584.0 → 1576.0 (short-term bearish)"
+      "if": "break 1556.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 1576.0 (crash low)",
+      "if": "break 1556.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1728.5 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 1634.0 on close",
+      "then": "short-term bullish; next test 1728.5"
+    },
+    {
+      "if": "break 1728.5 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -133,33 +130,33 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 1728.5,
-    "target_price": 1634.5,
-    "stop_price": 1776.19,
-    "risk_pct": 2.76,
-    "reward_pct": 5.44,
-    "rr_ratio": 1.97,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 1728.5,
     "s1": 1540.5,
-    "s2": 1580.0,
-    "r2": 1805.5,
-    "r3": 1709.5,
+    "s2": 1578.5,
+    "r2": 1790.0,
+    "r3": 1805.5,
     "s3": 1452.5,
-    "s4": 1543.0,
-    "current_position_pct": 73.9,
-    "notes": "SELL_R1: in box (1540-1728), entry at R1 1728, target mid 1634, stop 1776 ｜ 52.2 條規則（SELL plan，resistance 1728.50）：① 跌到 1728.50、收市守住喺 1728.50 上面 → 照 BUY 條 plan 做（入場 1728.50，止蝕 1776.19，目標 1634.50）。② 收市跌穿 1728.50 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1728.50 上面』。"
+    "s4": 1531.0,
+    "current_position_pct": 34.0,
+    "notes": "WAIT_RANGE: in box (1540-1728), pos 34%, no clear setup"
   },
   "patterns": [
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-10-21",
-      "low": 1665.5,
-      "high": 1685.0,
-      "i": 197
+      "date": "2026-10-27",
+      "low": 1663.5,
+      "high": 1686.5,
+      "i": 198
     },
     {
       "name": "刺穿線",
@@ -167,7 +164,7 @@
       "date": "2026-10-05",
       "low": 1560.5,
       "high": 1584.5,
-      "i": 186
+      "i": 183
     },
     {
       "name": "倒錘頭",
@@ -175,7 +172,7 @@
       "date": "2026-09-15",
       "low": 1609.0,
       "high": 1634.5,
-      "i": 175
+      "i": 172
     },
     {
       "name": "上升三法",
@@ -183,7 +180,7 @@
       "date": "2026-09-08",
       "low": 1616.0,
       "high": 1633.0,
-      "i": 170
+      "i": 167
     },
     {
       "name": "利淡反擊線",
@@ -191,23 +188,23 @@
       "date": "2026-07-15",
       "low": 1588.0,
       "high": 1614.5,
-      "i": 133
+      "i": 130
     }
   ],
-  "asof": "2026-10-23",
-  "close": 1679.5,
-  "chg_pct": 0.20883054892602004,
+  "asof": "2026-10-28",
+  "close": 1604.5,
+  "chg_pct": -4.15173237753883,
   "kline": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 1700.5,
-    "H": 1728.5,
-    "L": 1677.5,
-    "C": 1679.5,
-    "body_pct": 41.2,
-    "upper_wick_pct": 54.9,
-    "lower_wick_pct": 3.9
+    "O": 1625.0,
+    "H": 1634.0,
+    "L": 1594.5,
+    "C": 1604.5,
+    "body_pct": 51.9,
+    "upper_wick_pct": 22.8,
+    "lower_wick_pct": 25.3
   }
 }

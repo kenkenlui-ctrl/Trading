@@ -3,84 +3,77 @@
   "ticker_user": "WELL",
   "name": "Welltower Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 239.06,
-    "H": 240.65,
-    "L": 235.2,
-    "C": 237.32,
-    "prev_close": 237.4,
-    "chg_pct": -0.03
+    "date": "2026-10-28",
+    "O": 222.81,
+    "H": 228.82,
+    "L": 217.72,
+    "C": 227.2,
+    "prev_close": 226.72,
+    "chg_pct": 0.21
   },
   "phase": "downtrend_active",
-  "adx": 14.32,
-  "plus_di": 23.52,
-  "minus_di": 15.17,
+  "adx": 16.58,
+  "plus_di": 15.75,
+  "minus_di": 31.83,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 255.2 (2026-07-28), trough 220.0 (2026-10-08), box top 240.65 (2026-10-23)",
+  "phase_evidence": "Peak 255.2 (2026-07-28), trough 217.72 (2026-10-28), box top 240.94 (2026-10-26)",
   "peak": {
     "date": "2026-07-28",
     "price": 255.2
   },
   "trough": {
-    "date": "2026-10-08",
-    "price": 220.0
+    "date": "2026-10-28",
+    "price": 217.72
   },
   "box": {
-    "top": 240.65,
-    "top_date": "2026-10-23",
-    "bottom": 220.0,
-    "period": "2026-10-08 to 2026-10-23"
+    "top": 240.94,
+    "top_date": "2026-10-26",
+    "bottom": 217.72,
+    "period": "2026-10-28 to 2026-10-28"
   },
-  "drop_from_peak_pct": 7.0,
-  "recovery_from_crash_pct": 7.9,
+  "drop_from_peak_pct": 11.0,
+  "recovery_from_crash_pct": 4.4,
   "supports": [
     {
-      "level": 232.0,
-      "label": "S1 KEY",
-      "touches": 7,
-      "evidence": "tested 7x in base period; 2.2% below current"
-    },
-    {
-      "level": 228.0,
-      "label": "S2",
-      "touches": 11,
-      "evidence": "mid-base support, tested 11x"
-    },
-    {
-      "level": 224.0,
-      "label": "S3 bottom",
-      "touches": 7,
-      "evidence": "structural bottom, near crash low 220.0"
+      "level": 220.0,
+      "label": "S1 bottom",
+      "touches": 4,
+      "evidence": "structural bottom, near crash low 217.72"
     }
   ],
   "resistances": [
     {
-      "level": 240.65,
+      "level": 228.82,
       "label": "R1 today high",
-      "evidence": "today's high 240.64999389648438"
+      "evidence": "today's high 228.82000732421875"
+    },
+    {
+      "level": 240.94,
+      "label": "R3 Oct high",
+      "evidence": "box top 240.94, base period high"
     }
   ],
   "position": {
-    "current": 237.32,
-    "in_box_pct": 80.0,
-    "nearest_support": "S1 KEY (232.0)",
-    "nearest_resistance": "R1 today high (240.65)"
+    "current": 227.2,
+    "in_box_pct": 34.4,
+    "nearest_support": "S1 bottom (220.0)",
+    "nearest_resistance": "R1 today high (228.82)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 239.06,
-    "H": 240.65,
-    "L": 235.2,
-    "C": 237.32,
-    "body_pct": 31.9,
-    "upper_wick_pct": 29.2,
-    "lower_wick_pct": 38.9
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 222.81,
+    "H": 228.82,
+    "L": 217.72,
+    "C": 227.2,
+    "body_pct": 39.5,
+    "upper_wick_pct": 14.6,
+    "lower_wick_pct": 45.9
   },
   "bias": {
     "short": {
@@ -98,20 +91,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 232.0 (KEY support)",
-      "then": "still range; watch 240.65 for next test"
+      "if": "hold 220.0 (KEY support)",
+      "then": "still range; watch 228.82 for next test"
     },
     {
-      "if": "break 232.0 on close",
-      "then": "target 228.0 → 224.0 (short-term bearish)"
+      "if": "break 220.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 224.0 (crash low)",
+      "if": "break 220.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 240.65 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 228.82 on close",
+      "then": "short-term bullish; next test 240.94"
+    },
+    {
+      "if": "break 240.94 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -133,33 +130,33 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 240.65,
-    "target_price": 230.32,
-    "stop_price": 248.35,
-    "risk_pct": 3.2,
-    "reward_pct": 4.29,
-    "rr_ratio": 1.34,
-    "phase_match": true,
-    "r1": 240.65,
-    "s1": 220.0,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 240.94,
+    "s1": 217.72,
     "s2": 224.97,
     "r2": 243.04,
     "r3": 255.2,
     "s3": 194.67,
     "s4": 181.47,
-    "current_position_pct": 83.9,
-    "notes": "SELL_R1: in box (220-241), entry at R1 241, target mid 230, stop 248 ｜ 52.2 條規則（SELL plan，resistance 240.65）：① 跌到 240.65、收市守住喺 240.65 上面 → 照 BUY 條 plan 做（入場 240.65，止蝕 248.35，目標 230.32）。② 收市跌穿 240.65 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 240.65 上面』。"
+    "current_position_pct": 40.8,
+    "notes": "WAIT_RANGE: in box (218-241), pos 41%, no clear setup"
   },
   "patterns": [
     {
-      "name": "利淡吞噬",
+      "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-10-23",
-      "low": 235.1999969482422,
-      "high": 240.64999389648438,
-      "i": 199
+      "date": "2026-10-27",
+      "low": 224.72999572753906,
+      "high": 237.92999267578125,
+      "i": 198
     },
     {
       "name": "刺穿線",
@@ -167,7 +164,7 @@
       "date": "2026-10-08",
       "low": 220.0,
       "high": 224.75,
-      "i": 188
+      "i": 185
     },
     {
       "name": "三個白武士",
@@ -175,15 +172,7 @@
       "date": "2026-09-24",
       "low": 232.85000610351562,
       "high": 236.97000122070312,
-      "i": 178
-    },
-    {
-      "name": "烏雲蓋頂",
-      "bias": "bearish",
-      "date": "2026-09-04",
-      "low": 235.4499969482422,
-      "high": 241.41000366210938,
-      "i": 165
+      "i": 175
     },
     {
       "name": "烏雲蓋頂",
@@ -191,7 +180,7 @@
       "date": "2026-07-17",
       "low": 242.22999572753906,
       "high": 246.42999267578125,
-      "i": 130
+      "i": 127
     }
   ]
 }

@@ -3,21 +3,21 @@
   "ticker_user": "CDNS",
   "name": "Cadence Design Systems, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 307.57,
-    "H": 318.15,
-    "L": 305.19,
-    "C": 316.49,
-    "prev_close": 309.65,
-    "chg_pct": 2.21
+    "date": "2026-10-28",
+    "O": 341.73,
+    "H": 348.8,
+    "L": 333.3,
+    "C": 342.46,
+    "prev_close": 343.08,
+    "chg_pct": -0.18
   },
   "phase": "downtrend_active",
-  "adx": 22.07,
-  "plus_di": 19.4,
-  "minus_di": 31.92,
-  "regime": "dead",
+  "adx": 19.66,
+  "plus_di": 28.57,
+  "minus_di": 22.6,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 416.69 (2026-06-02), trough 273.07 (2026-09-15), box top 361.91 (2026-10-06)",
   "peak": {
@@ -32,29 +32,41 @@
     "top": 361.91,
     "top_date": "2026-10-06",
     "bottom": 273.07,
-    "period": "2026-09-15 to 2026-10-23"
+    "period": "2026-09-15 to 2026-10-28"
   },
-  "drop_from_peak_pct": 24.0,
-  "recovery_from_crash_pct": 15.9,
+  "drop_from_peak_pct": 17.8,
+  "recovery_from_crash_pct": 25.4,
   "supports": [
     {
-      "level": 304.0,
+      "level": 332.0,
       "label": "S1 KEY",
-      "touches": 6,
-      "evidence": "tested 6x in base period; 3.9% below current"
+      "touches": 4,
+      "evidence": "tested 4x in base period; 3.1% below current"
     },
     {
-      "level": 280.0,
-      "label": "S2 bottom",
-      "touches": 5,
-      "evidence": "structural bottom, near crash low 273.07"
+      "level": 324.0,
+      "label": "S2",
+      "touches": 8,
+      "evidence": "mid-base support, tested 8x"
+    },
+    {
+      "level": 320.0,
+      "label": "S3",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 273.07,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-09-15, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 318.15,
+      "level": 348.8,
       "label": "R1 today high",
-      "evidence": "today's high 318.1499938964844"
+      "evidence": "today's high 348.79998779296875"
     },
     {
       "level": 361.91,
@@ -63,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 316.49,
-    "in_box_pct": 44.5,
-    "nearest_support": "S1 KEY (304.0)",
-    "nearest_resistance": "R1 today high (318.15)"
+    "current": 342.46,
+    "in_box_pct": 78.1,
+    "nearest_support": "S1 KEY (332.0)",
+    "nearest_resistance": "R1 today high (348.8)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 307.57,
-    "H": 318.15,
-    "L": 305.19,
-    "C": 316.49,
-    "body_pct": 68.8,
-    "upper_wick_pct": 12.8,
-    "lower_wick_pct": 18.4
+    "O": 341.73,
+    "H": 348.8,
+    "L": 333.3,
+    "C": 342.46,
+    "body_pct": 4.7,
+    "upper_wick_pct": 40.9,
+    "lower_wick_pct": 54.4
   },
   "bias": {
     "short": {
@@ -97,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 304.0 (KEY support)",
-      "then": "still range; watch 318.15 for next test"
+      "if": "hold 332.0 (KEY support)",
+      "then": "still range; watch 348.8 for next test"
     },
     {
-      "if": "break 304.0 on close",
-      "then": "target 280.0 → lower (short-term bearish)"
+      "if": "break 332.0 on close",
+      "then": "target 324.0 → 320.0 (short-term bearish)"
     },
     {
-      "if": "break 280.0 (crash low)",
+      "if": "break 273.07 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 318.15 on close",
+      "if": "reclaim 348.8 on close",
       "then": "short-term bullish; next test 361.91"
     },
     {
@@ -136,24 +148,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 361.91,
+    "target_price": 333.55,
+    "stop_price": 382.9,
+    "risk_pct": 5.8,
+    "reward_pct": 7.84,
+    "rr_ratio": 1.35,
+    "phase_match": true,
     "r1": 361.91,
     "s1": 305.19,
     "s2": 273.07,
-    "r2": 349.11,
+    "r2": 348.12,
     "r3": 416.69,
     "s3": 320.07,
     "s4": 262.75,
-    "current_position_pct": 19.9,
-    "notes": "WAIT_RANGE: in box (305-362), pos 20%, no clear setup"
+    "current_position_pct": 65.7,
+    "notes": "SELL_R1: in box (305-362), entry at R1 362, target mid 334, stop 383 ｜ 52.2 條規則（SELL plan，resistance 361.91）：① 跌到 361.91、收市守住喺 361.91 上面 → 照 BUY 條 plan 做（入場 361.91，止蝕 382.90，目標 333.55）。② 收市跌穿 361.91 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 361.91 上面』。"
   },
   "patterns": [
     {
@@ -162,7 +174,7 @@
       "date": "2026-10-23",
       "low": 305.19000244140625,
       "high": 318.1499938964844,
-      "i": 199
+      "i": 196
     },
     {
       "name": "烏雲蓋頂",
@@ -170,7 +182,7 @@
       "date": "2026-10-07",
       "low": 353.8399963378906,
       "high": 361.4700012207031,
-      "i": 187
+      "i": 184
     },
     {
       "name": "早晨之星",
@@ -178,7 +190,7 @@
       "date": "2026-09-22",
       "low": 294.0,
       "high": 303.8500061035156,
-      "i": 176
+      "i": 173
     },
     {
       "name": "利好反擊線",
@@ -186,7 +198,7 @@
       "date": "2026-09-10",
       "low": 282.2799987792969,
       "high": 289.1400146484375,
-      "i": 168
+      "i": 165
     },
     {
       "name": "刺穿線",
@@ -194,7 +206,7 @@
       "date": "2026-07-08",
       "low": 366.1199951171875,
       "high": 374.45001220703125,
-      "i": 123
+      "i": 120
     }
   ]
 }

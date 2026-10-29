@@ -68,6 +68,34 @@ import perf_figures
 import cost_flip
 
 REPO = Path("/Users/kenken/dev/dsa-hk")
+
+
+def _build_iso() -> str:
+    """The build stamp, machine-readable.
+
+    It sits next to the visible date so a check can tell a page that this
+    builder produced from a page that some earlier builder produced with a
+    hand-typed date. Without it, "the page says it was updated on 2026-10-16"
+    is indistinguishable from "the page was updated today".
+    """
+    from datetime import datetime
+
+    return datetime.now().astimezone().isoformat(timespec="seconds")
+
+
+def _build_date() -> str:
+    """The date this page was regenerated.
+
+    2026-10-29: this was a hand-typed literal ("2026-10-16") and it
+    stayed 2026-10-16 through the C1 cost-sensitivity table (2026-10-25)
+    and every other edit since, because nothing in the build touched it.
+    A page whose own "last updated" is a literal is a page that lies
+    about being current. It is now the build date, like the home page's
+    "Updated" stamp.
+    """
+    from datetime import datetime
+
+    return datetime.now().strftime("%Y-%m-%d")
 PUB = REPO / "public"
 PAGE = PUB / "methodology.html"
 
@@ -798,7 +826,7 @@ def build_body() -> str:
       <span>Engine: <b>rule-based (Python)</b></span>
       <span>規則版本: <b>v2（只做多）</b></span>
       <span>數據: <b>Yahoo Finance · T-1 OHLC</b></span>
-      <span>最後更新: <b><span id="meth-updated">2026-10-16</span></b></span>
+      <span>最後更新: <b><span id="meth-updated" data-w9-built="{_build_iso()}">{_build_date()}</span></b></span>
     </div>
   </div>
 
@@ -1441,7 +1469,7 @@ def main() -> None:
             if node.get("@type") == "Article":
                 node["headline"] = "Leeks Terminal 訊號方法論 · v2 規則與修正記錄"
                 node["datePublished"] = "2026-08-24"
-                node["dateModified"] = "2026-10-16"
+                node["dateModified"] = _build_date()
             if node.get("@type") == "FAQPage":
                 node["mainEntity"] = [
                     {"@type": "Question", "name": q,

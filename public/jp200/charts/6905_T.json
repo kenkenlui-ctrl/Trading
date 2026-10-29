@@ -3,20 +3,20 @@
   "ticker_user": "6905.T",
   "name": "Cosel Co., Ltd.",
   "data_source": "yfinance",
-  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
+  "data_range": "2025-12-30 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 1280.0,
-    "H": 1291.0,
-    "L": 1248.0,
-    "C": 1287.0,
-    "prev_close": 1303.0,
-    "chg_pct": -1.2279355333844943
+    "date": "2026-10-28",
+    "O": 1317.0,
+    "H": 1319.0,
+    "L": 1300.0,
+    "C": 1311.0,
+    "prev_close": 1287.0,
+    "chg_pct": 1.8648018648018683
   },
   "phase": "base_building",
-  "adx": 21.39,
-  "plus_di": 18.15,
-  "minus_di": 33.55,
+  "adx": 21.88,
+  "plus_di": 20.04,
+  "minus_di": 29.03,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 1657.0 (2026-06-19), trough 1188.0 (2026-07-29), box top 1546.0 (2026-10-05)",
@@ -32,23 +32,29 @@
     "top": 1546.0,
     "top_date": "2026-10-05",
     "bottom": 1188.0,
-    "period": "2026-07-29 to 2026-10-23"
+    "period": "2026-07-29 to 2026-10-28"
   },
-  "drop_from_peak_pct": 22.3,
-  "recovery_from_crash_pct": 8.3,
+  "drop_from_peak_pct": 20.9,
+  "recovery_from_crash_pct": 10.4,
   "supports": [
     {
-      "level": 1248.0,
-      "label": "S1 bottom",
-      "touches": 0,
-      "evidence": "structural bottom, near crash low 1188.0"
+      "level": 1280.0,
+      "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; 2.4% below current"
+    },
+    {
+      "level": 1188.0,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-07-29, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 1291.0,
+      "level": 1319.0,
       "label": "R1 today high",
-      "evidence": "today's high 1291.0"
+      "evidence": "today's high 1319.0"
     },
     {
       "level": 1546.0,
@@ -57,28 +63,28 @@
     }
   ],
   "position": {
-    "current": 1287.0,
-    "in_box_pct": 13.1,
-    "nearest_support": "S1 bottom (1248.0)",
-    "nearest_resistance": "R1 today high (1291.0)"
+    "current": 1311.0,
+    "in_box_pct": 34.4,
+    "nearest_support": "S1 KEY (1280.0)",
+    "nearest_resistance": "R1 today high (1319.0)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_pullback",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 1280.0,
-    "H": 1291.0,
-    "L": 1248.0,
-    "C": 1287.0,
-    "body_pct": 16.3,
-    "upper_wick_pct": 9.3,
-    "lower_wick_pct": 74.4
+    "O": 1317.0,
+    "H": 1319.0,
+    "L": 1300.0,
+    "C": 1311.0,
+    "body_pct": 31.6,
+    "upper_wick_pct": 10.5,
+    "lower_wick_pct": 57.9
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (13% of box)"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (34% of box)"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -91,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 1248.0 (KEY support)",
-      "then": "still range; watch 1291.0 for next test"
+      "if": "hold 1280.0 (KEY support)",
+      "then": "still range; watch 1319.0 for next test"
     },
     {
-      "if": "break 1248.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 1280.0 on close",
+      "then": "target 1188.0 → lower (short-term bearish)"
     },
     {
-      "if": "break 1248.0 (crash low)",
+      "if": "break 1188.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1291.0 on close",
+      "if": "reclaim 1319.0 on close",
       "then": "short-term bullish; next test 1546.0"
     },
     {
@@ -134,20 +140,20 @@
     "strategy": "BUY_S1",
     "trigger_price": 1248.0,
     "target_price": 1397.0,
-    "stop_price": 1178.08,
-    "risk_pct": 5.6,
+    "stop_price": 1186.6,
+    "risk_pct": 4.92,
     "reward_pct": 11.94,
-    "rr_ratio": 2.13,
+    "rr_ratio": 2.43,
     "phase_match": true,
     "r1": 1546.0,
     "s1": 1248.0,
-    "s2": 1188.0,
-    "r2": 1483.0,
+    "s2": 1195.0,
+    "r2": 1518.0,
     "r3": 1657.0,
-    "s3": 1235.0,
+    "s3": 1188.0,
     "s4": 1064.0,
-    "current_position_pct": 13.1,
-    "notes": "BUY_S1: in box (1248-1546), entry at S1 1248, target mid 1397, stop 1178 ｜ 52.2 條規則（BUY plan，support 1248.00）：① 跌到 1248.00、收市守住喺 1248.00 上面 → 照 BUY 條 plan 做（入場 1248.00，止蝕 1178.08，目標 1397.00）。② 收市跌穿 1248.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1248.00 上面』。"
+    "current_position_pct": 21.1,
+    "notes": "BUY_S1: in box (1248-1546), entry at S1 1248, target mid 1397, stop 1187 ｜ 52.2 條規則（BUY plan，support 1248.00）：① 跌到 1248.00、收市守住喺 1248.00 上面 → 照 BUY 條 plan 做（入場 1248.00，止蝕 1186.60，目標 1397.00）。② 收市跌穿 1248.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1248.00 上面』。"
   },
   "patterns": [
     {
@@ -156,7 +162,7 @@
       "date": "2026-10-23",
       "low": 1248.0,
       "high": 1291.0,
-      "i": 199
+      "i": 196
     },
     {
       "name": "利淡反擊線",
@@ -164,7 +170,7 @@
       "date": "2026-10-07",
       "low": 1459.0,
       "high": 1520.0,
-      "i": 188
+      "i": 185
     },
     {
       "name": "三個白武士",
@@ -172,7 +178,7 @@
       "date": "2026-09-15",
       "low": 1274.0,
       "high": 1296.0,
-      "i": 175
+      "i": 172
     },
     {
       "name": "平頭頂",
@@ -180,7 +186,7 @@
       "date": "2026-08-18",
       "low": 1363.0,
       "high": 1393.0,
-      "i": 155
+      "i": 152
     },
     {
       "name": "烏雲蓋頂",
@@ -188,23 +194,23 @@
       "date": "2026-08-12",
       "low": 1318.0,
       "high": 1344.0,
-      "i": 151
+      "i": 148
     }
   ],
-  "asof": "2026-10-23",
-  "close": 1287.0,
-  "chg_pct": -1.2279355333844943,
+  "asof": "2026-10-28",
+  "close": 1311.0,
+  "chg_pct": 1.8648018648018683,
   "kline": {
-    "type": "bullish_hold",
+    "type": "bearish_pullback",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 1280.0,
-    "H": 1291.0,
-    "L": 1248.0,
-    "C": 1287.0,
-    "body_pct": 16.3,
-    "upper_wick_pct": 9.3,
-    "lower_wick_pct": 74.4
+    "O": 1317.0,
+    "H": 1319.0,
+    "L": 1300.0,
+    "C": 1311.0,
+    "body_pct": 31.6,
+    "upper_wick_pct": 10.5,
+    "lower_wick_pct": 57.9
   }
 }

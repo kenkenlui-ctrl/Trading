@@ -3,23 +3,23 @@
   "ticker_user": "01772.HK",
   "name": "GANFENGLITHIUM",
   "data_source": "yfinance",
-  "data_range": "2025-12-31 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-06 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 21.5,
-    "H": 22.7,
-    "L": 21.26,
-    "C": 22.52,
-    "prev_close": 21.74,
-    "chg_pct": 3.59
+    "date": "2026-10-28",
+    "O": 23.7,
+    "H": 24.3,
+    "L": 23.2,
+    "C": 23.32,
+    "prev_close": 23.4,
+    "chg_pct": -0.34
   },
   "phase": "downtrend_active",
-  "adx": 51.06,
-  "plus_di": 6.08,
-  "minus_di": 41.25,
+  "adx": 51.66,
+  "plus_di": 12.74,
+  "minus_di": 34.84,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 91.2 (2026-05-08), trough 21.26 (2026-10-23), box top 36.9 (2026-09-10)",
+  "phase_evidence": "Peak 91.2 (2026-05-08), trough 21.26 (2026-10-23), box top 34.86 (2026-09-21)",
   "peak": {
     "date": "2026-05-08",
     "price": 91.2
@@ -29,26 +29,32 @@
     "price": 21.26
   },
   "box": {
-    "top": 36.9,
-    "top_date": "2026-09-10",
+    "top": 34.86,
+    "top_date": "2026-09-21",
     "bottom": 21.26,
-    "period": "2026-10-23 to 2026-10-23"
+    "period": "2026-10-23 to 2026-10-28"
   },
-  "drop_from_peak_pct": 75.3,
-  "recovery_from_crash_pct": 5.9,
+  "drop_from_peak_pct": 74.4,
+  "recovery_from_crash_pct": 9.7,
   "supports": [
     {
+      "level": 24.0,
+      "label": "S1 KEY",
+      "touches": 6,
+      "evidence": "tested 6x in base period; -2.9% below current"
+    },
+    {
       "level": 20.0,
-      "label": "S1 bottom",
+      "label": "S2 bottom",
       "touches": 4,
       "evidence": "structural bottom, near crash low 21.26"
     }
   ],
   "resistances": [
     {
-      "level": 22.7,
+      "level": 24.3,
       "label": "R1 today high",
-      "evidence": "today's high 22.700000762939453"
+      "evidence": "rejection at 24.299999237060547 (long upper wick, close weak)"
     },
     {
       "level": 30.0,
@@ -56,34 +62,34 @@
       "evidence": "pre-crash supply, top before breakdown"
     },
     {
-      "level": 36.9,
+      "level": 34.86,
       "label": "R3 Sep high",
-      "evidence": "box top 36.9, base period high"
+      "evidence": "box top 34.86, base period high"
     }
   ],
   "position": {
-    "current": 22.52,
-    "in_box_pct": 14.9,
-    "nearest_support": "S1 bottom (20.0)",
-    "nearest_resistance": "R1 today high (22.7)"
+    "current": 23.32,
+    "in_box_pct": 22.3,
+    "nearest_support": "S1 KEY (24.0)",
+    "nearest_resistance": "R1 today high (24.3)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bearish_rejection",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 21.5,
-    "H": 22.7,
-    "L": 21.26,
-    "C": 22.52,
-    "body_pct": 70.8,
-    "upper_wick_pct": 12.5,
-    "lower_wick_pct": 16.7
+    "touched_S1": true,
+    "close_position": "lower_half",
+    "O": 23.7,
+    "H": 24.3,
+    "L": 23.2,
+    "C": 23.32,
+    "body_pct": 34.5,
+    "upper_wick_pct": 54.5,
+    "lower_wick_pct": 10.9
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (15% of box)"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (22% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -96,23 +102,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 20.0 (KEY support)",
-      "then": "still range; watch 22.7 for next test"
+      "if": "hold 24.0 (KEY support)",
+      "then": "still range; watch 24.3 for next test"
     },
     {
-      "if": "break 20.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 24.0 on close",
+      "then": "target 20.0 → lower (short-term bearish)"
     },
     {
       "if": "break 20.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 22.7 on close",
+      "if": "reclaim 24.3 on close",
       "then": "short-term bullish; next test 30.0"
     },
     {
-      "if": "break 36.9 (box top)",
+      "if": "break 34.86 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -144,15 +150,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 32.98,
+    "r1": 31.18,
     "s1": 21.26,
-    "s2": 31.8,
+    "s2": 29.62,
     "r2": 43.78,
     "r3": 91.2,
     "s3": 34.86,
-    "s4": 51.8,
-    "current_position_pct": 10.8,
-    "notes": "WAIT_RANGE: in box (21-33), pos 11%, no clear setup"
+    "s4": 53.2,
+    "current_position_pct": 20.8,
+    "notes": "WAIT_RANGE: in box (21-31), pos 21%, no clear setup"
   },
   "patterns": [
     {
@@ -161,7 +167,7 @@
       "date": "2026-10-05",
       "low": 29.559999465942383,
       "high": 30.18000030517578,
-      "i": 186
+      "i": 183
     },
     {
       "name": "利好吞噬",
@@ -169,7 +175,7 @@
       "date": "2026-09-18",
       "low": 33.34000015258789,
       "high": 34.31999969482422,
-      "i": 176
+      "i": 173
     },
     {
       "name": "早晨之星",
@@ -177,7 +183,7 @@
       "date": "2026-08-24",
       "low": 41.65999984741211,
       "high": 43.779998779296875,
-      "i": 157
+      "i": 154
     },
     {
       "name": "刺穿線",
@@ -185,7 +191,7 @@
       "date": "2026-07-16",
       "low": 38.47999954223633,
       "high": 40.900001525878906,
-      "i": 130
+      "i": 127
     },
     {
       "name": "利好身懷六甲",
@@ -193,7 +199,7 @@
       "date": "2026-07-03",
       "low": 48.81999969482422,
       "high": 51.0,
-      "i": 121
+      "i": 118
     }
   ]
 }

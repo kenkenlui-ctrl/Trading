@@ -28,6 +28,31 @@ if [ -z "${W9_REFRESH_LOCK:-}" ]; then
 fi
 echo "refresh lock: fd $W9_REFRESH_LOCK (held via /tmp/w9refresh.lock)"
 
+# --- Build state: know how the LAST build ended, before this one starts -----
+# 2026-10-29. On 10-26/27/28 the site sat on 10-23 data and nothing said so:
+# three nights, no error, no alert. The builds were not failing, they were
+# never attempted — but a failure that is never recorded is invisible, and an
+# invisible failure is indistinguishable from a healthy site. This prints
+# the previous run's outcome in a shape that cannot be scrolled past, and
+# records this run so the NEXT one can do the same.
+echo
+python3 scripts/build_state.py --check-previous || true
+python3 scripts/build_state.py --started
+
+# Any exit from here on is a failed build, and it must be recorded as one.
+_w9_fail_recorded=0
+_w9_on_exit() {
+  rc=$?
+  if [ $rc -ne 0 ] && [ "$_w9_fail_recorded" = "0" ]; then
+    _w9_fail_recorded=1
+    echo
+    echo "!!! refresh.sh FAILED (exit $rc) — recording the reason so the next"
+    echo "!!! build reports it and the site does not look current."
+    python3 scripts/build_state.py --record fail --reason "refresh.sh exited $rc" || true
+  fi
+}
+trap _w9_on_exit EXIT
+
 # Load credentials from .env if present. A real environment variable wins, so
 # CI or a one-off `CLOUDFLARE_API_TOKEN=... ./scripts/refresh.sh` still works.
 if [ -f .env ]; then
@@ -328,6 +353,24 @@ echo
 echo "[7d] Equity curves (v2 render from data/v2_equity_trades.json)..."
 python3 scripts/build_equity_curves.py 2>&1 | tail -6 || echo "  equity curves (continue anyway)"
 
+# --- Step 7e: the OG image ---------------------------------------------------
+# 2026-10-29. The OG card is scraped into other people's pages, and its big
+# number (the v2 universe total) is the one figure that changes whenever the
+# universe turns over. Nothing in the pipeline regenerated it: the image was
+# from 2026-10-20 while the site had moved on, and the self-test caught it
+# only because the sidecar next to the image still said "433".
+#
+# The generator REFUSES to fall back to a literal when an artifact is missing
+# (it raises), so a missing source stops the build instead of painting a
+# plausible stale number. That is the behaviour wanted here — it is why the
+# step is allowed to fail the build rather than being wrapped in "|| continue".
+#
+# It runs after build_dashboard (the published ticker tree is what it counts)
+# and before finalize (it writes public/og-image.png).
+echo
+echo "[7e] OG image (universe total read from the published tree)..."
+python3 scripts/generate_og_image.py 2>&1 | tail -2
+
 # --- Step 7c: final normalisation pass. MUST be the last thing that touches
 # public/ before the commit. build_backtest_page / build_insights_index /
 # build_insights_radar / build_v2_signals all run after build_static.py, and
@@ -496,5 +539,20 @@ export CLOUDFLARE_ACCOUNT_ID="${CLOUDFLARE_ACCOUNT_ID:-569063f557ea8d8f2c3f7d214
   --commit-dirty=true ) 2>&1 | tail -5
 
 echo
+# Record the outcome: the next build (and the page) must be able to
+# see that this one worked, and why it worked.
+_w9_sessions=$(python3 - <<'PY'
+import json, pathlib
+try:
+    d = json.loads(pathlib.Path("data/market_sessions.json").read_text())
+    print(json.dumps({k: v.get("latest_closed_session", "")
+                      for k, v in (d.get("markets") or {}).items()}))
+except Exception:
+    print("{}")
+PY
+)
+_w9_fail_recorded=1
+python3 scripts/build_state.py --record pass --sessions "$_w9_sessions" || true
+
 echo "=== Done at $(date '+%Y-%m-%d %H:%M:%S') ==="
 echo "Live: https://www.win9you.com/"

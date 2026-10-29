@@ -3,21 +3,21 @@
   "ticker_user": "ORLY",
   "name": "O'Reilly Automotive, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 91.82,
-    "H": 92.41,
-    "L": 89.89,
-    "C": 89.92,
-    "prev_close": 92.0,
-    "chg_pct": -2.26
+    "date": "2026-10-28",
+    "O": 89.17,
+    "H": 90.44,
+    "L": 88.62,
+    "C": 90.44,
+    "prev_close": 89.82,
+    "chg_pct": 0.69
   },
   "phase": "downtrend_active",
-  "adx": 24.04,
-  "plus_di": 32.74,
-  "minus_di": 12.82,
-  "regime": "dead",
+  "adx": 26.11,
+  "plus_di": 26.33,
+  "minus_di": 14.98,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 102.11 (2026-01-26), trough 82.59 (2026-07-15), box top 94.12 (2026-08-05)",
   "peak": {
@@ -32,23 +32,29 @@
     "top": 94.12,
     "top_date": "2026-08-05",
     "bottom": 82.59,
-    "period": "2026-07-15 to 2026-10-23"
+    "period": "2026-07-15 to 2026-10-28"
   },
-  "drop_from_peak_pct": 11.9,
-  "recovery_from_crash_pct": 8.9,
+  "drop_from_peak_pct": 11.4,
+  "recovery_from_crash_pct": 9.5,
   "supports": [
     {
+      "level": 88.0,
+      "label": "S1 KEY",
+      "touches": 25,
+      "evidence": "tested 25x in base period; 2.7% below current"
+    },
+    {
       "level": 84.0,
-      "label": "S1 bottom",
-      "touches": 54,
+      "label": "S2 bottom",
+      "touches": 52,
       "evidence": "structural bottom, near crash low 82.59"
     }
   ],
   "resistances": [
     {
-      "level": 92.41,
+      "level": 90.44,
       "label": "R1 today high",
-      "evidence": "today's high 92.41000366210938"
+      "evidence": "today's high 90.44000244140625"
     },
     {
       "level": 94.12,
@@ -57,28 +63,28 @@
     }
   ],
   "position": {
-    "current": 89.92,
-    "in_box_pct": 58.5,
-    "nearest_support": "S1 bottom (84.0)",
-    "nearest_resistance": "R1 today high (92.41)"
+    "current": 90.44,
+    "in_box_pct": 63.6,
+    "nearest_support": "S1 KEY (88.0)",
+    "nearest_resistance": "R3 Aug high (94.12)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 91.82,
-    "H": 92.41,
-    "L": 89.89,
-    "C": 89.92,
-    "body_pct": 75.4,
-    "upper_wick_pct": 23.4,
-    "lower_wick_pct": 1.2
+    "close_position": "upper_half",
+    "O": 89.17,
+    "H": 90.44,
+    "L": 88.62,
+    "C": 90.44,
+    "body_pct": 69.8,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 30.2
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -91,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 84.0 (KEY support)",
-      "then": "still range; watch 92.41 for next test"
+      "if": "hold 88.0 (KEY support)",
+      "then": "still range; watch 90.44 for next test"
     },
     {
-      "if": "break 84.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 88.0 on close",
+      "then": "target 84.0 → lower (short-term bearish)"
     },
     {
       "if": "break 84.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 92.41 on close",
+      "if": "reclaim 90.44 on close",
       "then": "short-term bullish; next test 94.12"
     },
     {
@@ -130,41 +136,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 92.41,
-    "target_price": 87.71,
-    "stop_price": 95.24,
-    "risk_pct": 3.06,
-    "reward_pct": 5.09,
-    "rr_ratio": 1.66,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 92.41,
     "s1": 83.01,
     "s2": 82.83,
     "r2": 94.12,
-    "r3": 95.67,
+    "r3": 95.11,
     "s3": 82.59,
     "s4": 86.77,
-    "current_position_pct": 73.5,
-    "notes": "SELL_R1: in box (83-92), entry at R1 92, target mid 88, stop 95 ｜ 52.2 條規則（SELL plan，resistance 92.41）：① 跌到 92.41、收市守住喺 92.41 上面 → 照 BUY 條 plan 做（入場 92.41，止蝕 95.24，目標 87.71）。② 收市跌穿 92.41 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 92.41 上面』。"
+    "current_position_pct": 79.0,
+    "notes": "WAIT_RANGE: in box (83-92), pos 79%, no clear setup"
   },
   "patterns": [
     {
-      "name": "烏雲蓋頂",
+      "name": "利淡吞噬",
       "bias": "bearish",
-      "date": "2026-10-23",
-      "low": 89.88999938964844,
-      "high": 92.41000366210938,
-      "i": 199
+      "date": "2026-10-27",
+      "low": 89.44000244140625,
+      "high": 90.87999725341797,
+      "i": 198
     },
     {
-      "name": "利淡吞噬",
+      "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-10-15",
       "low": 88.2300033569336,
       "high": 89.9800033569336,
-      "i": 193
+      "i": 190
     },
     {
       "name": "刺穿線",
@@ -172,7 +178,7 @@
       "date": "2026-10-08",
       "low": 84.58999633789062,
       "high": 86.68000030517578,
-      "i": 188
+      "i": 185
     },
     {
       "name": "利好反擊線",
@@ -180,7 +186,7 @@
       "date": "2026-09-28",
       "low": 85.5999984741211,
       "high": 87.0199966430664,
-      "i": 180
+      "i": 177
     },
     {
       "name": "烏雲蓋頂",
@@ -188,7 +194,7 @@
       "date": "2026-08-14",
       "low": 90.8499984741211,
       "high": 92.44999694824219,
-      "i": 150
+      "i": 147
     }
   ]
 }

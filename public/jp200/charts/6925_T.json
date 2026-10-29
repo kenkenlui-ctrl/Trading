@@ -3,20 +3,20 @@
   "ticker_user": "6925.T",
   "name": "Ushio Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
+  "data_range": "2025-12-30 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 3225.0,
-    "H": 3297.0,
-    "L": 3095.0,
-    "C": 3292.0,
-    "prev_close": 3365.0,
-    "chg_pct": -2.169390787518577
+    "date": "2026-10-28",
+    "O": 3456.0,
+    "H": 3467.0,
+    "L": 3357.0,
+    "C": 3399.0,
+    "prev_close": 3354.0,
+    "chg_pct": 1.341681574239706
   },
   "phase": "downtrend_active",
-  "adx": 26.43,
-  "plus_di": 11.69,
-  "minus_di": 43.43,
+  "adx": 30.17,
+  "plus_di": 17.91,
+  "minus_di": 37.24,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 5164.0 (2026-07-01), trough 3095.0 (2026-10-23), box top 4380.0 (2026-10-07)",
@@ -32,23 +32,29 @@
     "top": 4380.0,
     "top_date": "2026-10-07",
     "bottom": 3095.0,
-    "period": "2026-10-23 to 2026-10-23"
+    "period": "2026-10-23 to 2026-10-28"
   },
-  "drop_from_peak_pct": 36.3,
-  "recovery_from_crash_pct": 6.4,
+  "drop_from_peak_pct": 34.2,
+  "recovery_from_crash_pct": 9.8,
   "supports": [
     {
-      "level": 3192.0,
-      "label": "S1 bottom",
+      "level": 3296.0,
+      "label": "S1 KEY",
       "touches": 0,
-      "evidence": "structural bottom, near crash low 3095.0"
+      "evidence": "structural level near current; 3.0% below current"
+    },
+    {
+      "level": 3095.0,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-10-23, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 3297.0,
+      "level": 3467.0,
       "label": "R1 today high",
-      "evidence": "today's high 3297.0"
+      "evidence": "today's high 3467.0"
     },
     {
       "level": 4380.0,
@@ -57,28 +63,28 @@
     }
   ],
   "position": {
-    "current": 3292.0,
-    "in_box_pct": 8.4,
-    "nearest_support": "S1 bottom (3192.0)",
-    "nearest_resistance": "R1 today high (3297.0)"
+    "current": 3399.0,
+    "in_box_pct": 23.7,
+    "nearest_support": "S1 KEY (3296.0)",
+    "nearest_resistance": "R1 today high (3467.0)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_pullback",
     "touched_R1": true,
-    "touched_S1": true,
-    "close_position": "upper_half",
-    "O": 3225.0,
-    "H": 3297.0,
-    "L": 3095.0,
-    "C": 3292.0,
-    "body_pct": 33.2,
-    "upper_wick_pct": 2.5,
-    "lower_wick_pct": 64.4
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 3456.0,
+    "H": 3467.0,
+    "L": 3357.0,
+    "C": 3399.0,
+    "body_pct": 51.8,
+    "upper_wick_pct": 10.0,
+    "lower_wick_pct": 38.2
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (8% of box)"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (24% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -91,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 3192.0 (KEY support)",
-      "then": "still range; watch 3297.0 for next test"
+      "if": "hold 3296.0 (KEY support)",
+      "then": "still range; watch 3467.0 for next test"
     },
     {
-      "if": "break 3192.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 3296.0 on close",
+      "then": "target 3095.0 → lower (short-term bearish)"
     },
     {
-      "if": "break 3192.0 (crash low)",
+      "if": "break 3095.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 3297.0 on close",
+      "if": "reclaim 3467.0 on close",
       "then": "short-term bullish; next test 4380.0"
     },
     {
@@ -144,19 +150,27 @@
     "s2": 3405.0,
     "r2": 4437.0,
     "r3": 5164.0,
-    "s3": 3071.0,
-    "s4": 2485.0,
-    "current_position_pct": 15.3,
-    "notes": "WAIT_RANGE: in box (3095-4380), pos 15%, no clear setup"
+    "s3": 3095.0,
+    "s4": 2505.0,
+    "current_position_pct": 23.7,
+    "notes": "WAIT_RANGE: in box (3095-4380), pos 24%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "利好吞噬",
+      "bias": "bullish",
+      "date": "2026-10-27",
+      "low": 3307.0,
+      "high": 3385.0,
+      "i": 198
+    },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-10-13",
       "low": 4092.0,
       "high": 4258.0,
-      "i": 191
+      "i": 188
     },
     {
       "name": "上升三法",
@@ -164,7 +178,7 @@
       "date": "2026-08-19",
       "low": 3750.0,
       "high": 3947.0,
-      "i": 156
+      "i": 153
     },
     {
       "name": "烏雲蓋頂",
@@ -172,23 +186,23 @@
       "date": "2026-06-23",
       "low": 4523.0,
       "high": 4840.0,
-      "i": 117
+      "i": 114
     }
   ],
-  "asof": "2026-10-23",
-  "close": 3292.0,
-  "chg_pct": -2.169390787518577,
+  "asof": "2026-10-28",
+  "close": 3399.0,
+  "chg_pct": 1.341681574239706,
   "kline": {
-    "type": "bullish_hold",
+    "type": "bearish_pullback",
     "touched_R1": true,
-    "touched_S1": true,
-    "close_position": "upper_half",
-    "O": 3225.0,
-    "H": 3297.0,
-    "L": 3095.0,
-    "C": 3292.0,
-    "body_pct": 33.2,
-    "upper_wick_pct": 2.5,
-    "lower_wick_pct": 64.4
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 3456.0,
+    "H": 3467.0,
+    "L": 3357.0,
+    "C": 3399.0,
+    "body_pct": 51.8,
+    "upper_wick_pct": 10.0,
+    "lower_wick_pct": 38.2
   }
 }

@@ -3,20 +3,20 @@
   "ticker_user": "02423.HK",
   "name": "BEKE-W",
   "data_source": "yfinance",
-  "data_range": "2025-12-31 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-06 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 44.98,
-    "H": 45.22,
-    "L": 44.4,
-    "C": 44.92,
-    "prev_close": 44.4,
-    "chg_pct": 1.17
+    "date": "2026-10-28",
+    "O": 45.94,
+    "H": 46.32,
+    "L": 45.64,
+    "C": 46.14,
+    "prev_close": 45.54,
+    "chg_pct": 1.32
   },
   "phase": "base_building",
-  "adx": 21.6,
-  "plus_di": 26.0,
-  "minus_di": 20.02,
+  "adx": 21.79,
+  "plus_di": 26.62,
+  "minus_di": 16.68,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 52.6 (2026-01-29), trough 35.38 (2026-06-26), box top 49.66 (2026-08-31)",
@@ -32,22 +32,16 @@
     "top": 49.66,
     "top_date": "2026-08-31",
     "bottom": 35.38,
-    "period": "2026-06-26 to 2026-10-23"
+    "period": "2026-06-26 to 2026-10-28"
   },
-  "drop_from_peak_pct": 14.6,
-  "recovery_from_crash_pct": 27.0,
+  "drop_from_peak_pct": 12.3,
+  "recovery_from_crash_pct": 30.4,
   "supports": [
     {
       "level": 44.0,
       "label": "S1 KEY",
-      "touches": 48,
-      "evidence": "tested 48x in base period; 2.0% below current"
-    },
-    {
-      "level": 40.0,
-      "label": "S2",
-      "touches": 20,
-      "evidence": "mid-base support, tested 20x"
+      "touches": 68,
+      "evidence": "tested 68x in base period; 4.6% below current"
     },
     {
       "level": 35.38,
@@ -58,9 +52,9 @@
   ],
   "resistances": [
     {
-      "level": 45.22,
+      "level": 46.32,
       "label": "R1 today high",
-      "evidence": "today's high 45.220001220703125"
+      "evidence": "today's high 46.31999969482422"
     },
     {
       "level": 49.66,
@@ -69,23 +63,23 @@
     }
   ],
   "position": {
-    "current": 44.92,
-    "in_box_pct": 66.8,
+    "current": 46.14,
+    "in_box_pct": 75.4,
     "nearest_support": "S1 KEY (44.0)",
-    "nearest_resistance": "R1 today high (45.22)"
+    "nearest_resistance": "R1 today high (46.32)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 44.98,
-    "H": 45.22,
-    "L": 44.4,
-    "C": 44.92,
-    "body_pct": 7.3,
-    "upper_wick_pct": 29.3,
-    "lower_wick_pct": 63.4
+    "O": 45.94,
+    "H": 46.32,
+    "L": 45.64,
+    "C": 46.14,
+    "body_pct": 29.4,
+    "upper_wick_pct": 26.5,
+    "lower_wick_pct": 44.1
   },
   "bias": {
     "short": {
@@ -104,18 +98,18 @@
   "scenarios": [
     {
       "if": "hold 44.0 (KEY support)",
-      "then": "still range; watch 45.22 for next test"
+      "then": "still range; watch 46.32 for next test"
     },
     {
       "if": "break 44.0 on close",
-      "then": "target 40.0 → 35.38 (short-term bearish)"
+      "then": "target 35.38 → lower (short-term bearish)"
     },
     {
       "if": "break 35.38 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 45.22 on close",
+      "if": "reclaim 46.32 on close",
       "then": "short-term bullish; next test 49.66"
     },
     {
@@ -143,23 +137,23 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
+    "phase_match": false,
     "r1": 48.46,
-    "s1": 42.46,
+    "s1": 42.48,
     "s2": 41.56,
     "r2": 49.66,
     "r3": 50.5,
     "s3": 35.38,
     "s4": 36.8,
-    "current_position_pct": 41.0,
-    "notes": "WAIT_RANGE: in box (42-48), pos 41%, no clear setup"
+    "current_position_pct": 61.2,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 48.46）：① 跌到 48.46、收市守住喺 48.46 上面 → 照 BUY 條 plan 做（入場 48.46，止蝕 50.95，目標 45.47）。② 收市跌穿 48.46 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 48.46 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
     {
@@ -168,7 +162,7 @@
       "date": "2026-10-20",
       "low": 45.70000076293945,
       "high": 47.380001068115234,
-      "i": 196
+      "i": 193
     },
     {
       "name": "利淡吞噬",
@@ -176,7 +170,7 @@
       "date": "2026-10-14",
       "low": 45.5,
       "high": 46.380001068115234,
-      "i": 193
+      "i": 190
     },
     {
       "name": "利好吞噬",
@@ -184,7 +178,7 @@
       "date": "2026-09-23",
       "low": 42.7599983215332,
       "high": 44.2400016784668,
-      "i": 179
+      "i": 176
     },
     {
       "name": "黃昏之星",
@@ -192,7 +186,7 @@
       "date": "2026-08-17",
       "low": 43.900001525878906,
       "high": 45.02000045776367,
-      "i": 152
+      "i": 149
     },
     {
       "name": "三隻烏鴉",
@@ -200,7 +194,7 @@
       "date": "2026-08-03",
       "low": 43.720001220703125,
       "high": 44.720001220703125,
-      "i": 142
+      "i": 139
     }
   ]
 }

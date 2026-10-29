@@ -3,20 +3,20 @@
   "ticker_user": "6988.T",
   "name": "Nitto Denko Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
+  "data_range": "2025-12-30 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 3733.0,
-    "H": 3737.0,
-    "L": 3558.0,
-    "C": 3568.0,
-    "prev_close": 3709.0,
-    "chg_pct": -3.801563763817739
+    "date": "2026-10-28",
+    "O": 3436.0,
+    "H": 3481.0,
+    "L": 3371.0,
+    "C": 3388.0,
+    "prev_close": 3600.0,
+    "chg_pct": -5.8888888888888875
   },
   "phase": "base_building",
-  "adx": 22.06,
-  "plus_di": 26.24,
-  "minus_di": 23.05,
+  "adx": 20.46,
+  "plus_di": 21.46,
+  "minus_di": 34.24,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 3834.0 (2026-01-15), trough 2882.5 (2026-06-11), box top 3737.0 (2026-10-23)",
@@ -32,28 +32,28 @@
     "top": 3737.0,
     "top_date": "2026-10-23",
     "bottom": 2882.5,
-    "period": "2026-06-11 to 2026-10-23"
+    "period": "2026-06-11 to 2026-10-28"
   },
-  "drop_from_peak_pct": 6.9,
-  "recovery_from_crash_pct": 23.8,
+  "drop_from_peak_pct": 11.6,
+  "recovery_from_crash_pct": 17.5,
   "supports": [
     {
-      "level": 3472.0,
+      "level": 3272.0,
       "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 2.7% below current"
+      "touches": 3,
+      "evidence": "tested 3x in base period; 3.4% below current"
     },
     {
-      "level": 3456.0,
+      "level": 3256.0,
       "label": "S2",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
     },
     {
-      "level": 3352.0,
+      "level": 3180.0,
       "label": "S3",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
     },
     {
       "level": 2882.5,
@@ -64,29 +64,34 @@
   ],
   "resistances": [
     {
-      "level": 3737.0,
+      "level": 3481.0,
       "label": "R1 today high",
-      "evidence": "today's high 3737.0"
+      "evidence": "today's high 3481.0"
+    },
+    {
+      "level": 3737.0,
+      "label": "R3 Oct high",
+      "evidence": "box top 3737.0, base period high"
     }
   ],
   "position": {
-    "current": 3568.0,
-    "in_box_pct": 80.2,
-    "nearest_support": "S1 KEY (3472.0)",
-    "nearest_resistance": "R1 today high (3737.0)"
+    "current": 3388.0,
+    "in_box_pct": 59.2,
+    "nearest_support": "S1 KEY (3272.0)",
+    "nearest_resistance": "R1 today high (3481.0)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 3733.0,
-    "H": 3737.0,
-    "L": 3558.0,
-    "C": 3568.0,
-    "body_pct": 92.2,
-    "upper_wick_pct": 2.2,
-    "lower_wick_pct": 5.6
+    "O": 3436.0,
+    "H": 3481.0,
+    "L": 3371.0,
+    "C": 3388.0,
+    "body_pct": 43.6,
+    "upper_wick_pct": 40.9,
+    "lower_wick_pct": 15.5
   },
   "bias": {
     "short": {
@@ -104,20 +109,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 3472.0 (KEY support)",
-      "then": "still range; watch 3737.0 for next test"
+      "if": "hold 3272.0 (KEY support)",
+      "then": "still range; watch 3481.0 for next test"
     },
     {
-      "if": "break 3472.0 on close",
-      "then": "target 3456.0 → 3352.0 (short-term bearish)"
+      "if": "break 3272.0 on close",
+      "then": "target 3256.0 → 3180.0 (short-term bearish)"
     },
     {
       "if": "break 2882.5 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 3737.0 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 3481.0 on close",
+      "then": "short-term bullish; next test 3737.0"
+    },
+    {
+      "if": "break 3737.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -139,33 +148,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
+    "verdict": "BUY",
+    "strategy": "BUY_S1",
+    "trigger_price": 3371.0,
+    "target_price": 3554.0,
+    "stop_price": 3233.91,
+    "risk_pct": 4.07,
+    "reward_pct": 5.43,
+    "rr_ratio": 1.33,
     "phase_match": true,
     "r1": 3737.0,
-    "s1": 3420.0,
+    "s1": 3371.0,
     "s2": 3115.0,
-    "r2": 3630.0,
-    "r3": 3367.0,
+    "r2": 3626.0,
+    "r3": 3630.0,
     "s3": 2882.5,
-    "s4": 2952.5,
-    "current_position_pct": 46.7,
-    "notes": "WAIT_RANGE: in box (3420-3737), pos 47%, no clear setup"
+    "s4": 2915.0,
+    "current_position_pct": 4.6,
+    "notes": "BUY_S1: in box (3371-3737), entry at S1 3371, target mid 3554, stop 3234 ｜ 52.2 條規則（BUY plan，support 3371.00）：① 跌到 3371.00、收市守住喺 3371.00 上面 → 照 BUY 條 plan 做（入場 3371.00，止蝕 3233.91，目標 3554.00）。② 收市跌穿 3371.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 3371.00 上面』。"
   },
   "patterns": [
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-10-28",
+      "low": 3371.0,
+      "high": 3481.0,
+      "i": 199
+    },
     {
       "name": "早晨之星",
       "bias": "bullish",
       "date": "2026-09-11",
       "low": 3126.0,
       "high": 3222.0,
-      "i": 173
+      "i": 170
     },
     {
       "name": "刺穿線",
@@ -173,15 +190,7 @@
       "date": "2026-08-26",
       "low": 3347.0,
       "high": 3419.0,
-      "i": 161
-    },
-    {
-      "name": "利淡反擊線",
-      "bias": "bearish",
-      "date": "2026-07-29",
-      "low": 3483.0,
-      "high": 3630.0,
-      "i": 142
+      "i": 158
     },
     {
       "name": "烏雲蓋頂",
@@ -189,23 +198,23 @@
       "date": "2026-07-15",
       "low": 3279.0,
       "high": 3367.0,
-      "i": 133
+      "i": 130
     }
   ],
-  "asof": "2026-10-23",
-  "close": 3568.0,
-  "chg_pct": -3.801563763817739,
+  "asof": "2026-10-28",
+  "close": 3388.0,
+  "chg_pct": -5.8888888888888875,
   "kline": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 3733.0,
-    "H": 3737.0,
-    "L": 3558.0,
-    "C": 3568.0,
-    "body_pct": 92.2,
-    "upper_wick_pct": 2.2,
-    "lower_wick_pct": 5.6
+    "O": 3436.0,
+    "H": 3481.0,
+    "L": 3371.0,
+    "C": 3388.0,
+    "body_pct": 43.6,
+    "upper_wick_pct": 40.9,
+    "lower_wick_pct": 15.5
   }
 }

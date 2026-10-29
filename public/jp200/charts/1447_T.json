@@ -3,20 +3,20 @@
   "ticker_user": "1447.T",
   "name": "SAAF Holdings Co.,Ltd.",
   "data_source": "yfinance",
-  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
+  "data_range": "2025-12-30 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 333.0,
-    "H": 333.0,
-    "L": 311.0,
-    "C": 318.0,
-    "prev_close": 326.0,
-    "chg_pct": -2.4539877300613466
+    "date": "2026-10-28",
+    "O": 316.0,
+    "H": 323.0,
+    "L": 312.0,
+    "C": 315.0,
+    "prev_close": 316.0,
+    "chg_pct": -0.31645569620253333
   },
   "phase": "base_building",
-  "adx": 18.14,
-  "plus_di": 23.01,
-  "minus_di": 22.87,
+  "adx": 14.83,
+  "plus_di": 20.2,
+  "minus_di": 20.85,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 475.0 (2026-02-12), trough 251.0 (2026-06-25), box top 441.0 (2026-07-08)",
@@ -32,22 +32,16 @@
     "top": 441.0,
     "top_date": "2026-07-08",
     "bottom": 251.0,
-    "period": "2026-06-25 to 2026-10-23"
+    "period": "2026-06-25 to 2026-10-28"
   },
-  "drop_from_peak_pct": 33.1,
-  "recovery_from_crash_pct": 26.7,
+  "drop_from_peak_pct": 33.7,
+  "recovery_from_crash_pct": 25.5,
   "supports": [
     {
-      "level": 312.0,
-      "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 1.9% below current"
-    },
-    {
       "level": 304.0,
-      "label": "S2",
+      "label": "S1 KEY",
       "touches": 6,
-      "evidence": "mid-base support, tested 6x"
+      "evidence": "tested 6x in base period; 3.5% below current"
     },
     {
       "level": 251.0,
@@ -58,9 +52,9 @@
   ],
   "resistances": [
     {
-      "level": 333.0,
+      "level": 323.0,
       "label": "R1 today high",
-      "evidence": "today's high 333.0"
+      "evidence": "rejection at 323.0 (long upper wick, close weak)"
     },
     {
       "level": 441.0,
@@ -69,28 +63,28 @@
     }
   ],
   "position": {
-    "current": 318.0,
-    "in_box_pct": 35.3,
-    "nearest_support": "S1 KEY (312.0)",
-    "nearest_resistance": "R1 today high (333.0)"
+    "current": 315.0,
+    "in_box_pct": 33.7,
+    "nearest_support": "S1 KEY (304.0)",
+    "nearest_resistance": "R1 today high (323.0)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_rejection",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "lower_half",
-    "O": 333.0,
-    "H": 333.0,
-    "L": 311.0,
-    "C": 318.0,
-    "body_pct": 68.2,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 31.8
+    "O": 316.0,
+    "H": 323.0,
+    "L": 312.0,
+    "C": 315.0,
+    "body_pct": 9.1,
+    "upper_wick_pct": 63.6,
+    "lower_wick_pct": 27.3
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (34% of box)"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -103,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 312.0 (KEY support)",
-      "then": "still range; watch 333.0 for next test"
+      "if": "hold 304.0 (KEY support)",
+      "then": "still range; watch 323.0 for next test"
     },
     {
-      "if": "break 312.0 on close",
-      "then": "target 304.0 → 251.0 (short-term bearish)"
+      "if": "break 304.0 on close",
+      "then": "target 251.0 → lower (short-term bearish)"
     },
     {
       "if": "break 251.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 333.0 on close",
+      "if": "reclaim 323.0 on close",
       "then": "short-term bullish; next test 441.0"
     },
     {
@@ -146,10 +140,10 @@
     "strategy": "BUY_S1",
     "trigger_price": 309.0,
     "target_price": 344.5,
-    "stop_price": 282.66,
-    "risk_pct": 8.52,
+    "stop_price": 282.09,
+    "risk_pct": 8.71,
     "reward_pct": 11.49,
-    "rr_ratio": 1.35,
+    "rr_ratio": 1.32,
     "phase_match": true,
     "r1": 380.0,
     "s1": 309.0,
@@ -157,9 +151,9 @@
     "r2": 432.0,
     "r3": 441.0,
     "s3": 251.0,
-    "s4": 254.0,
-    "current_position_pct": 12.7,
-    "notes": "BUY_S1: in box (309-380), entry at S1 309, target mid 344, stop 283 ｜ 52.2 條規則（BUY plan，support 309.00）：① 跌到 309.00、收市守住喺 309.00 上面 → 照 BUY 條 plan 做（入場 309.00，止蝕 282.66，目標 344.50）。② 收市跌穿 309.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 309.00 上面』。"
+    "s4": 263.0,
+    "current_position_pct": 8.5,
+    "notes": "BUY_S1: in box (309-380), entry at S1 309, target mid 344, stop 282 ｜ 52.2 條規則（BUY plan，support 309.00）：① 跌到 309.00、收市守住喺 309.00 上面 → 照 BUY 條 plan 做（入場 309.00，止蝕 282.09，目標 344.50）。② 收市跌穿 309.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 309.00 上面』。"
   },
   "patterns": [
     {
@@ -168,7 +162,7 @@
       "date": "2026-10-13",
       "low": 337.0,
       "high": 380.0,
-      "i": 191
+      "i": 188
     },
     {
       "name": "倒錘頭",
@@ -176,7 +170,7 @@
       "date": "2026-09-28",
       "low": 319.0,
       "high": 335.0,
-      "i": 181
+      "i": 178
     },
     {
       "name": "三個白武士",
@@ -184,7 +178,7 @@
       "date": "2026-09-14",
       "low": 349.0,
       "high": 364.0,
-      "i": 174
+      "i": 171
     },
     {
       "name": "利淡吞噬",
@@ -192,7 +186,7 @@
       "date": "2026-09-02",
       "low": 412.0,
       "high": 422.0,
-      "i": 166
+      "i": 163
     },
     {
       "name": "平頭頂",
@@ -200,23 +194,23 @@
       "date": "2026-08-25",
       "low": 398.0,
       "high": 406.0,
-      "i": 160
+      "i": 157
     }
   ],
-  "asof": "2026-10-23",
-  "close": 318.0,
-  "chg_pct": -2.4539877300613466,
+  "asof": "2026-10-28",
+  "close": 315.0,
+  "chg_pct": -0.31645569620253333,
   "kline": {
-    "type": "neutral",
+    "type": "bearish_rejection",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "lower_half",
-    "O": 333.0,
-    "H": 333.0,
-    "L": 311.0,
-    "C": 318.0,
-    "body_pct": 68.2,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 31.8
+    "O": 316.0,
+    "H": 323.0,
+    "L": 312.0,
+    "C": 315.0,
+    "body_pct": 9.1,
+    "upper_wick_pct": 63.6,
+    "lower_wick_pct": 27.3
   }
 }

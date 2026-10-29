@@ -3,20 +3,20 @@
   "ticker_user": "VRT",
   "name": "Vertiv Holdings, LLC",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 191.6,
-    "H": 196.73,
-    "L": 187.24,
-    "C": 194.32,
-    "prev_close": 195.59,
-    "chg_pct": -0.65
+    "date": "2026-10-28",
+    "O": 243.0,
+    "H": 245.31,
+    "L": 228.81,
+    "C": 242.94,
+    "prev_close": 208.56,
+    "chg_pct": 16.48
   },
   "phase": "downtrend_active",
-  "adx": 28.04,
-  "plus_di": 15.31,
-  "minus_di": 41.77,
+  "adx": 27.19,
+  "plus_di": 36.05,
+  "minus_di": 29.91,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 379.93 (2026-05-14), trough 187.24 (2026-10-23), box top 258.1 (2026-10-05)",
@@ -32,28 +32,41 @@
     "top": 258.1,
     "top_date": "2026-10-05",
     "bottom": 187.24,
-    "period": "2026-10-23 to 2026-10-23"
+    "period": "2026-10-23 to 2026-10-28"
   },
-  "drop_from_peak_pct": 48.9,
-  "recovery_from_crash_pct": 3.8,
+  "drop_from_peak_pct": 36.1,
+  "recovery_from_crash_pct": 29.7,
   "supports": [
     {
-      "level": 188.0,
-      "label": "S1 bottom",
-      "touches": 0,
-      "evidence": "structural bottom, near crash low 187.24"
+      "level": 236.0,
+      "label": "S1 KEY",
+      "touches": 3,
+      "evidence": "tested 3x in base period; 2.9% below current"
+    },
+    {
+      "level": 232.0,
+      "label": "S2",
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
+    },
+    {
+      "level": 228.0,
+      "label": "S3",
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
+    },
+    {
+      "level": 187.24,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-10-23, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 196.73,
+      "level": 245.31,
       "label": "R1 today high",
-      "evidence": "today's high 196.72999572753906"
-    },
-    {
-      "level": 200.0,
-      "label": "R2",
-      "evidence": "mid-box supply, round number 200"
+      "evidence": "today's high 245.30999755859375"
     },
     {
       "level": 258.1,
@@ -62,28 +75,28 @@
     }
   ],
   "position": {
-    "current": 194.32,
-    "in_box_pct": 9.0,
-    "nearest_support": "S1 bottom (188.0)",
-    "nearest_resistance": "R1 today high (196.73)"
+    "current": 242.94,
+    "in_box_pct": 78.6,
+    "nearest_support": "S1 KEY (236.0)",
+    "nearest_resistance": "R1 today high (245.31)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": true,
     "close_position": "upper_half",
-    "O": 191.6,
-    "H": 196.73,
-    "L": 187.24,
-    "C": 194.32,
-    "body_pct": 28.7,
-    "upper_wick_pct": 25.4,
-    "lower_wick_pct": 45.9
+    "O": 243.0,
+    "H": 245.31,
+    "L": 228.81,
+    "C": 242.94,
+    "body_pct": 0.4,
+    "upper_wick_pct": 14.0,
+    "lower_wick_pct": 85.6
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (9% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -96,20 +109,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 188.0 (KEY support)",
-      "then": "still range; watch 196.73 for next test"
+      "if": "hold 236.0 (KEY support)",
+      "then": "still range; watch 245.31 for next test"
     },
     {
-      "if": "break 188.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 236.0 on close",
+      "then": "target 232.0 → 228.0 (short-term bearish)"
     },
     {
-      "if": "break 188.0 (crash low)",
+      "if": "break 187.24 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 196.73 on close",
-      "then": "short-term bullish; next test 200.0"
+      "if": "reclaim 245.31 on close",
+      "then": "short-term bullish; next test 258.1"
     },
     {
       "if": "break 258.1 (box top)",
@@ -136,7 +149,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -150,9 +163,9 @@
     "r2": 300.3,
     "r3": 379.93,
     "s3": 220.92,
-    "s4": 158.77,
-    "current_position_pct": 10.0,
-    "notes": "WAIT_RANGE: in box (187-258), pos 10%, no clear setup"
+    "s4": 167.6,
+    "current_position_pct": 78.6,
+    "notes": "WAIT_RANGE: in box (187-258), pos 79%, no clear setup"
   },
   "patterns": [
     {
@@ -161,7 +174,7 @@
       "date": "2026-10-15",
       "low": 204.3800048828125,
       "high": 215.36000061035156,
-      "i": 193
+      "i": 190
     },
     {
       "name": "下降三法",
@@ -169,7 +182,7 @@
       "date": "2026-09-04",
       "low": 271.20001220703125,
       "high": 280.989990234375,
-      "i": 165
+      "i": 162
     },
     {
       "name": "黃昏之星",
@@ -177,7 +190,7 @@
       "date": "2026-08-19",
       "low": 256.1099853515625,
       "high": 275.54998779296875,
-      "i": 153
+      "i": 150
     },
     {
       "name": "上升三法",
@@ -185,7 +198,7 @@
       "date": "2026-06-29",
       "low": 294.29998779296875,
       "high": 309.20001220703125,
-      "i": 117
+      "i": 114
     }
   ]
 }

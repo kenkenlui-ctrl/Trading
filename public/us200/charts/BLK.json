@@ -3,23 +3,23 @@
   "ticker_user": "BLK",
   "name": "BlackRock, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 1124.97,
-    "H": 1132.96,
-    "L": 1105.47,
-    "C": 1118.25,
-    "prev_close": 1137.29,
-    "chg_pct": -1.67
+    "date": "2026-10-28",
+    "O": 1146.77,
+    "H": 1162.13,
+    "L": 1143.0,
+    "C": 1157.88,
+    "prev_close": 1136.05,
+    "chg_pct": 1.92
   },
   "phase": "base_building",
-  "adx": 19.24,
-  "plus_di": 24.76,
-  "minus_di": 19.5,
+  "adx": 19.2,
+  "plus_di": 28.9,
+  "minus_di": 16.4,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 1187.17 (2026-08-27), trough 1017.46 (2026-09-16), box top 1159.99 (2026-10-22)",
+  "phase_evidence": "Peak 1187.17 (2026-08-27), trough 1017.46 (2026-09-16), box top 1162.13 (2026-10-28)",
   "peak": {
     "date": "2026-08-27",
     "price": 1187.17
@@ -29,63 +29,58 @@
     "price": 1017.46
   },
   "box": {
-    "top": 1159.99,
-    "top_date": "2026-10-22",
+    "top": 1162.13,
+    "top_date": "2026-10-28",
     "bottom": 1017.46,
-    "period": "2026-09-16 to 2026-10-23"
+    "period": "2026-09-16 to 2026-10-28"
   },
-  "drop_from_peak_pct": 5.8,
-  "recovery_from_crash_pct": 9.9,
+  "drop_from_peak_pct": 2.5,
+  "recovery_from_crash_pct": 13.8,
   "supports": [
     {
-      "level": 1068.0,
+      "level": 1120.0,
       "label": "S1 KEY",
+      "touches": 8,
+      "evidence": "tested 8x in base period; 3.3% below current"
+    },
+    {
+      "level": 1068.0,
+      "label": "S2",
       "touches": 6,
-      "evidence": "tested 6x in base period; 4.5% below current"
+      "evidence": "mid-base support, tested 6x"
     },
     {
       "level": 1064.0,
-      "label": "S2",
-      "touches": 12,
-      "evidence": "mid-base support, tested 12x"
-    },
-    {
-      "level": 1060.0,
       "label": "S3 bottom",
-      "touches": 4,
+      "touches": 12,
       "evidence": "structural bottom, near crash low 1017.46"
     }
   ],
   "resistances": [
     {
-      "level": 1132.96,
+      "level": 1162.13,
       "label": "R1 today high",
-      "evidence": "today's high 1132.9599609375"
-    },
-    {
-      "level": 1159.99,
-      "label": "R3 Oct high",
-      "evidence": "box top 1159.99, base period high"
+      "evidence": "today's high 1162.1300048828125"
     }
   ],
   "position": {
-    "current": 1118.25,
-    "in_box_pct": 58.3,
-    "nearest_support": "S1 KEY (1068.0)",
-    "nearest_resistance": "R1 today high (1132.96)"
+    "current": 1157.88,
+    "in_box_pct": 95.7,
+    "nearest_support": "S1 KEY (1120.0)",
+    "nearest_resistance": "R1 today high (1162.13)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 1124.97,
-    "H": 1132.96,
-    "L": 1105.47,
-    "C": 1118.25,
-    "body_pct": 24.4,
-    "upper_wick_pct": 29.1,
-    "lower_wick_pct": 46.5
+    "close_position": "upper_half",
+    "O": 1146.77,
+    "H": 1162.13,
+    "L": 1143.0,
+    "C": 1157.88,
+    "body_pct": 58.1,
+    "upper_wick_pct": 22.2,
+    "lower_wick_pct": 19.7
   },
   "bias": {
     "short": {
@@ -97,30 +92,26 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 1068.0 (KEY support)",
-      "then": "still range; watch 1132.96 for next test"
+      "if": "hold 1120.0 (KEY support)",
+      "then": "still range; watch 1162.13 for next test"
     },
     {
-      "if": "break 1068.0 on close",
-      "then": "target 1064.0 → 1060.0 (short-term bearish)"
+      "if": "break 1120.0 on close",
+      "then": "target 1068.0 → 1064.0 (short-term bearish)"
     },
     {
-      "if": "break 1060.0 (crash low)",
+      "if": "break 1064.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1132.96 on close",
-      "then": "short-term bullish; next test 1159.99"
-    },
-    {
-      "if": "break 1159.99 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 1162.13 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -144,22 +135,22 @@
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
-    "trigger_price": 1159.99,
-    "target_price": 1100.21,
-    "stop_price": 1202.27,
-    "risk_pct": 3.64,
-    "reward_pct": 5.15,
-    "rr_ratio": 1.41,
+    "trigger_price": 1162.13,
+    "target_price": 1101.28,
+    "stop_price": 1203.05,
+    "risk_pct": 3.52,
+    "reward_pct": 5.24,
+    "rr_ratio": 1.49,
     "phase_match": true,
-    "r1": 1159.99,
+    "r1": 1162.13,
     "s1": 1040.42,
     "s2": 1017.46,
     "r2": 1187.17,
-    "r3": 1125.0,
+    "r3": 1150.3,
     "s3": 947.21,
     "s4": 917.39,
-    "current_position_pct": 65.1,
-    "notes": "SELL_R1: in box (1040-1160), entry at R1 1160, target mid 1100, stop 1202 ｜ 52.2 條規則（SELL plan，resistance 1159.99）：① 跌到 1159.99、收市守住喺 1159.99 上面 → 照 BUY 條 plan 做（入場 1159.99，止蝕 1202.27，目標 1100.21）。② 收市跌穿 1159.99 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1159.99 上面』。"
+    "current_position_pct": 96.5,
+    "notes": "SELL_R1: in box (1040-1162), entry at R1 1162, target mid 1101, stop 1203 ｜ 52.2 條規則（SELL plan，resistance 1162.13）：① 跌到 1162.13、收市守住喺 1162.13 上面 → 照 BUY 條 plan 做（入場 1162.13，止蝕 1203.05，目標 1101.28）。② 收市跌穿 1162.13 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1162.13 上面』。"
   },
   "patterns": [
     {
@@ -168,7 +159,7 @@
       "date": "2026-10-22",
       "low": 1132.3699951171875,
       "high": 1159.989990234375,
-      "i": 198
+      "i": 195
     },
     {
       "name": "利好身懷六甲",
@@ -176,7 +167,7 @@
       "date": "2026-10-05",
       "low": 1040.4200439453125,
       "high": 1074.449951171875,
-      "i": 185
+      "i": 182
     },
     {
       "name": "倒錘頭",
@@ -184,7 +175,7 @@
       "date": "2026-09-25",
       "low": 1066.530029296875,
       "high": 1087.8299560546875,
-      "i": 179
+      "i": 176
     },
     {
       "name": "利淡反擊線",
@@ -192,7 +183,7 @@
       "date": "2026-08-27",
       "low": 1161.9000244140625,
       "high": 1187.1700439453125,
-      "i": 159
+      "i": 156
     },
     {
       "name": "利淡吞噬",
@@ -200,7 +191,7 @@
       "date": "2026-08-19",
       "low": 1155.0999755859375,
       "high": 1181.6800537109375,
-      "i": 153
+      "i": 150
     }
   ]
 }

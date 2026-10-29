@@ -3,20 +3,20 @@
   "ticker_user": "REGN",
   "name": "Regeneron Pharmaceuticals, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 819.09,
-    "H": 819.09,
-    "L": 801.22,
-    "C": 805.02,
-    "prev_close": 819.09,
-    "chg_pct": -1.72
+    "date": "2026-10-28",
+    "O": 807.06,
+    "H": 821.16,
+    "L": 802.2,
+    "C": 813.27,
+    "prev_close": 816.1,
+    "chg_pct": -0.35
   },
   "phase": "range",
-  "adx": 21.23,
-  "plus_di": 28.85,
-  "minus_di": 14.55,
+  "adx": 22.82,
+  "plus_di": 25.79,
+  "minus_di": 13.5,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 859.34 (2026-09-03), trough 722.02 (2026-10-05), box top 825.52 (2026-10-22)",
@@ -32,35 +32,41 @@
     "top": 825.52,
     "top_date": "2026-10-22",
     "bottom": 722.02,
-    "period": "2026-10-05 to 2026-10-23"
+    "period": "2026-10-05 to 2026-10-28"
   },
-  "drop_from_peak_pct": 6.3,
-  "recovery_from_crash_pct": 11.5,
+  "drop_from_peak_pct": 5.4,
+  "recovery_from_crash_pct": 12.6,
   "supports": [
     {
-      "level": 780.0,
+      "level": 792.0,
       "label": "S1 KEY",
-      "touches": 5,
-      "evidence": "tested 5x in base period; 3.1% below current"
+      "touches": 4,
+      "evidence": "tested 4x in base period; 2.6% below current"
     },
     {
-      "level": 744.0,
+      "level": 788.0,
       "label": "S2",
       "touches": 5,
       "evidence": "mid-base support, tested 5x"
     },
     {
-      "level": 728.0,
-      "label": "S3 bottom",
+      "level": 780.0,
+      "label": "S3",
       "touches": 4,
-      "evidence": "structural bottom, near crash low 722.02"
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 722.02,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-10-05, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 819.09,
+      "level": 821.16,
       "label": "R1 today high",
-      "evidence": "today's high 819.0900268554688"
+      "evidence": "today's high 821.1599731445312"
     },
     {
       "level": 825.52,
@@ -69,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 805.02,
-    "in_box_pct": 79.0,
-    "nearest_support": "S1 KEY (780.0)",
-    "nearest_resistance": "R1 today high (819.09)"
+    "current": 813.27,
+    "in_box_pct": 88.2,
+    "nearest_support": "S1 KEY (792.0)",
+    "nearest_resistance": "R1 today high (821.16)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 819.09,
-    "H": 819.09,
-    "L": 801.22,
-    "C": 805.02,
-    "body_pct": 78.7,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 21.3
+    "close_position": "upper_half",
+    "O": 807.06,
+    "H": 821.16,
+    "L": 802.2,
+    "C": 813.27,
+    "body_pct": 32.8,
+    "upper_wick_pct": 41.6,
+    "lower_wick_pct": 25.6
   },
   "bias": {
     "short": {
@@ -103,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 780.0 (KEY support)",
-      "then": "still range; watch 819.09 for next test"
+      "if": "hold 792.0 (KEY support)",
+      "then": "still range; watch 821.16 for next test"
     },
     {
-      "if": "break 780.0 on close",
-      "then": "target 744.0 → 728.0 (short-term bearish)"
+      "if": "break 792.0 on close",
+      "then": "target 788.0 → 780.0 (short-term bearish)"
     },
     {
-      "if": "break 728.0 (crash low)",
+      "if": "break 722.02 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 819.09 on close",
+      "if": "reclaim 821.16 on close",
       "then": "short-term bullish; next test 825.52"
     },
     {
@@ -146,20 +152,20 @@
     "strategy": "SELL_R1",
     "trigger_price": 825.52,
     "target_price": 773.77,
-    "stop_price": 858.35,
-    "risk_pct": 3.98,
+    "stop_price": 857.71,
+    "risk_pct": 3.9,
     "reward_pct": 6.27,
-    "rr_ratio": 1.58,
+    "rr_ratio": 1.61,
     "phase_match": true,
     "r1": 825.52,
     "s1": 722.02,
-    "s2": 724.79,
+    "s2": 741.83,
     "r2": 859.34,
-    "r3": 740.0,
+    "r3": 772.75,
     "s3": 591.52,
     "s4": 668.85,
-    "current_position_pct": 80.2,
-    "notes": "SELL_R1: in box (722-826), entry at R1 826, target mid 774, stop 858 ｜ 52.2 條規則（SELL plan，resistance 825.52）：① 跌到 825.52、收市守住喺 825.52 上面 → 照 BUY 條 plan 做（入場 825.52，止蝕 858.35，目標 773.77）。② 收市跌穿 825.52 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 825.52 上面』。"
+    "current_position_pct": 88.2,
+    "notes": "SELL_R1: in box (722-826), entry at R1 826, target mid 774, stop 858 ｜ 52.2 條規則（SELL plan，resistance 825.52）：① 跌到 825.52、收市守住喺 825.52 上面 → 照 BUY 條 plan 做（入場 825.52，止蝕 857.71，目標 773.77）。② 收市跌穿 825.52 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 825.52 上面』。"
   },
   "patterns": [
     {
@@ -168,7 +174,7 @@
       "date": "2026-10-23",
       "low": 801.219970703125,
       "high": 819.0900268554688,
-      "i": 199
+      "i": 196
     },
     {
       "name": "利好吞噬",
@@ -176,7 +182,7 @@
       "date": "2026-10-09",
       "low": 732.8300170898438,
       "high": 751.27001953125,
-      "i": 189
+      "i": 186
     },
     {
       "name": "利好反擊線",
@@ -184,7 +190,7 @@
       "date": "2026-09-30",
       "low": 742.9400024414062,
       "high": 763.719970703125,
-      "i": 182
+      "i": 179
     },
     {
       "name": "刺穿線",
@@ -192,7 +198,7 @@
       "date": "2026-09-21",
       "low": 779.9600219726562,
       "high": 801.4400024414062,
-      "i": 175
+      "i": 172
     },
     {
       "name": "利淡吞噬",
@@ -200,7 +206,7 @@
       "date": "2026-08-26",
       "low": 814.7000122070312,
       "high": 831.6699829101562,
-      "i": 158
+      "i": 155
     }
   ]
 }

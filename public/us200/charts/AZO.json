@@ -3,21 +3,21 @@
   "ticker_user": "AZO",
   "name": "AutoZone, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 3250.95,
-    "H": 3267.51,
-    "L": 3200.76,
-    "C": 3200.76,
-    "prev_close": 3270.7,
-    "chg_pct": -2.14
+    "date": "2026-10-28",
+    "O": 3133.98,
+    "H": 3180.93,
+    "L": 3126.61,
+    "C": 3156.76,
+    "prev_close": 3143.16,
+    "chg_pct": 0.43
   },
   "phase": "downtrend_active",
-  "adx": 23.21,
-  "plus_di": 37.74,
-  "minus_di": 11.3,
-  "regime": "dead",
+  "adx": 25.65,
+  "plus_di": 30.39,
+  "minus_di": 15.01,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 3887.03 (2026-02-13), trough 2730.65 (2026-10-05), box top 3277.41 (2026-10-22)",
   "peak": {
@@ -32,49 +32,48 @@
     "top": 3277.41,
     "top_date": "2026-10-22",
     "bottom": 2730.65,
-    "period": "2026-10-05 to 2026-10-23"
+    "period": "2026-10-05 to 2026-10-28"
   },
-  "drop_from_peak_pct": 17.7,
-  "recovery_from_crash_pct": 17.2,
+  "drop_from_peak_pct": 18.8,
+  "recovery_from_crash_pct": 15.6,
   "supports": [
     {
-      "level": 2848.0,
-      "label": "S1 KEY",
-      "touches": 3,
-      "evidence": "tested 3x in base period; 11.0% below current"
-    },
-    {
       "level": 2840.0,
-      "label": "S2 bottom",
+      "label": "S1 bottom",
       "touches": 3,
       "evidence": "structural bottom, near crash low 2730.65"
     }
   ],
   "resistances": [
     {
-      "level": 3267.51,
+      "level": 3180.93,
       "label": "R1 today high",
-      "evidence": "today's high 3267.510009765625"
+      "evidence": "today's high 3180.929931640625"
+    },
+    {
+      "level": 3277.41,
+      "label": "R3 Oct high",
+      "evidence": "box top 3277.41, base period high"
     }
   ],
   "position": {
-    "current": 3200.76,
-    "in_box_pct": 84.4,
-    "nearest_support": "S1 KEY (2848.0)",
-    "nearest_resistance": "R1 today high (3267.51)"
+    "current": 3156.76,
+    "in_box_pct": 72.4,
+    "nearest_support": "S1 bottom (2840.0)",
+    "nearest_resistance": "R1 today high (3180.93)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 3250.95,
-    "H": 3267.51,
-    "L": 3200.76,
-    "C": 3200.76,
-    "body_pct": 75.2,
-    "upper_wick_pct": 24.8,
-    "lower_wick_pct": 0.0
+    "close_position": "upper_half",
+    "O": 3133.98,
+    "H": 3180.93,
+    "L": 3126.61,
+    "C": 3156.76,
+    "body_pct": 41.9,
+    "upper_wick_pct": 44.5,
+    "lower_wick_pct": 13.6
   },
   "bias": {
     "short": {
@@ -92,20 +91,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 2848.0 (KEY support)",
-      "then": "still range; watch 3267.51 for next test"
+      "if": "hold 2840.0 (KEY support)",
+      "then": "still range; watch 3180.93 for next test"
     },
     {
-      "if": "break 2848.0 on close",
-      "then": "target 2840.0 → lower (short-term bearish)"
+      "if": "break 2840.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
       "if": "break 2840.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 3267.51 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 3180.93 on close",
+      "then": "short-term bullish; next test 3277.41"
+    },
+    {
+      "if": "break 3277.41 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -127,24 +130,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 3277.41,
-    "target_price": 3004.03,
-    "stop_price": 3396.61,
-    "risk_pct": 3.64,
-    "reward_pct": 8.34,
-    "rr_ratio": 2.29,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 3277.41,
     "s1": 2730.65,
     "s2": 2764.88,
     "r2": 3160.0,
-    "r3": 3600.0,
+    "r3": 3561.16,
     "s3": 2902.2,
     "s4": 3281.23,
-    "current_position_pct": 86.0,
-    "notes": "SELL_R1: in box (2731-3277), entry at R1 3277, target mid 3004, stop 3397 ｜ 52.2 條規則（SELL plan，resistance 3277.41）：① 跌到 3277.41、收市守住喺 3277.41 上面 → 照 BUY 條 plan 做（入場 3277.41，止蝕 3396.61，目標 3004.03）。② 收市跌穿 3277.41 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 3277.41 上面』。"
+    "current_position_pct": 77.9,
+    "notes": "WAIT_RANGE: in box (2731-3277), pos 78%, no clear setup"
   },
   "patterns": [
     {
@@ -153,7 +156,7 @@
       "date": "2026-09-22",
       "low": 2844.800048828125,
       "high": 2999.300048828125,
-      "i": 176
+      "i": 173
     },
     {
       "name": "利好反擊線",
@@ -161,7 +164,7 @@
       "date": "2026-08-18",
       "low": 3021.090087890625,
       "high": 3127.10009765625,
-      "i": 152
+      "i": 149
     },
     {
       "name": "刺穿線",
@@ -169,7 +172,7 @@
       "date": "2026-07-10",
       "low": 2978.0,
       "high": 3074.989990234375,
-      "i": 125
+      "i": 122
     }
   ]
 }

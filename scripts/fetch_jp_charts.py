@@ -107,7 +107,20 @@ def process_one(code: str, asof: str | None = None) -> tuple[str, bool]:
         # 200-bar frame silently took JP v2 signals from 91 to 0 — the file
         # looked fine, the page just went empty. The historical series on this
         # project has always been 400 bars; keep it that way.
-        df = fetch_jp_ohlc(code, days=400)
+        #
+        # 2026-10-29: THIS CALL WAS MISSING THE `asof` TRIM, and it shipped a
+        # split-brain market. The first fetch (line 82) trims to asof, so the
+        # analysis ran on a CLOSED session; this one did not, so it kept the
+        # session Yahoo had in progress. On 2026-10-29 (JP open, 12:30 JST) the
+        # hand-built `last_bar` was stamped 2026-10-29 with a partial bar while
+        # the OHLC series and the v2 signals were on 2026-10-28 — the published
+        # chart rendered a different session than the plan computed from it,
+        # and the badge claimed a session the signals had never seen.
+        #
+        # The trim belongs here: this frame is what writes `last_bar`, `close`,
+        # `chg_pct` and the published series, so an untrimmed frame publishes a
+        # session that has not closed.
+        df = fetch_jp_ohlc(code, days=400, asof=asof)
         if df is None or len(df) == 0:
             df = None
         close = float(df["close"].iloc[-1]) if df is not None and len(df) else 0.0

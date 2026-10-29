@@ -3,20 +3,20 @@
   "ticker_user": "3092.T",
   "name": "ZOZO, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
+  "data_range": "2025-12-30 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 1265.0,
-    "H": 1289.5,
-    "L": 1256.0,
-    "C": 1260.5,
-    "prev_close": 1228.5,
-    "chg_pct": 2.604802604802603
+    "date": "2026-10-28",
+    "O": 1189.0,
+    "H": 1202.5,
+    "L": 1175.0,
+    "C": 1175.0,
+    "prev_close": 1200.5,
+    "chg_pct": -2.1241149521032954
   },
   "phase": "base_building",
-  "adx": 25.86,
-  "plus_di": 47.82,
-  "minus_di": 12.57,
+  "adx": 25.67,
+  "plus_di": 34.65,
+  "minus_di": 28.02,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 1353.5 (2026-01-13), trough 974.5 (2026-05-29), box top 1289.5 (2026-10-23)",
@@ -32,28 +32,28 @@
     "top": 1289.5,
     "top_date": "2026-10-23",
     "bottom": 974.5,
-    "period": "2026-05-29 to 2026-10-23"
+    "period": "2026-05-29 to 2026-10-28"
   },
-  "drop_from_peak_pct": 6.9,
-  "recovery_from_crash_pct": 29.3,
+  "drop_from_peak_pct": 13.2,
+  "recovery_from_crash_pct": 20.6,
   "supports": [
     {
-      "level": 1152.0,
-      "label": "S1 KEY",
-      "touches": 8,
-      "evidence": "tested 8x in base period; 8.6% below current"
-    },
-    {
       "level": 1144.0,
-      "label": "S2",
+      "label": "S1 KEY",
       "touches": 10,
-      "evidence": "mid-base support, tested 10x"
+      "evidence": "tested 10x in base period; 2.6% below current"
     },
     {
-      "level": 1128.0,
+      "level": 1136.0,
+      "label": "S2",
+      "touches": 5,
+      "evidence": "mid-base support, tested 5x"
+    },
+    {
+      "level": 1132.0,
       "label": "S3",
-      "touches": 10,
-      "evidence": "mid-base support, tested 10x"
+      "touches": 5,
+      "evidence": "mid-base support, tested 5x"
     },
     {
       "level": 974.5,
@@ -64,29 +64,34 @@
   ],
   "resistances": [
     {
-      "level": 1289.5,
+      "level": 1202.5,
       "label": "R1 today high",
-      "evidence": "rejection at 1289.5 (long upper wick, close weak)"
+      "evidence": "today's high 1202.5"
+    },
+    {
+      "level": 1289.5,
+      "label": "R3 Oct high",
+      "evidence": "box top 1289.5, base period high"
     }
   ],
   "position": {
-    "current": 1260.5,
-    "in_box_pct": 90.8,
-    "nearest_support": "S1 KEY (1152.0)",
-    "nearest_resistance": "R1 today high (1289.5)"
+    "current": 1175.0,
+    "in_box_pct": 63.7,
+    "nearest_support": "S1 KEY (1144.0)",
+    "nearest_resistance": "R1 today high (1202.5)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 1265.0,
-    "H": 1289.5,
-    "L": 1256.0,
-    "C": 1260.5,
-    "body_pct": 13.4,
-    "upper_wick_pct": 73.1,
-    "lower_wick_pct": 13.4
+    "O": 1189.0,
+    "H": 1202.5,
+    "L": 1175.0,
+    "C": 1175.0,
+    "body_pct": 50.9,
+    "upper_wick_pct": 49.1,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
@@ -98,26 +103,30 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 1152.0 (KEY support)",
-      "then": "still range; watch 1289.5 for next test"
+      "if": "hold 1144.0 (KEY support)",
+      "then": "still range; watch 1202.5 for next test"
     },
     {
-      "if": "break 1152.0 on close",
-      "then": "target 1144.0 → 1128.0 (short-term bearish)"
+      "if": "break 1144.0 on close",
+      "then": "target 1136.0 → 1132.0 (short-term bearish)"
     },
     {
       "if": "break 974.5 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1289.5 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 1202.5 on close",
+      "then": "short-term bullish; next test 1289.5"
+    },
+    {
+      "if": "break 1289.5 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -140,31 +149,31 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": false,
+    "phase_match": true,
     "r1": 1289.5,
     "s1": 1060.5,
-    "s2": 1087.5,
-    "r2": 1242.0,
-    "r3": 1211.0,
+    "s2": 1080.5,
+    "r2": 1227.0,
+    "r3": 1242.0,
     "s3": 974.5,
-    "s4": 1050.0,
-    "current_position_pct": 87.3,
-    "notes": "WAIT_RANGE: in box (1060-1290), pos 87%, no clear setup"
+    "s4": 1020.0,
+    "current_position_pct": 50.0,
+    "notes": "WAIT_RANGE: in box (1060-1290), pos 50%, no clear setup"
   },
   "patterns": [
     {
-      "name": "烏雲蓋頂",
-      "bias": "bearish",
-      "date": "2026-10-23",
-      "low": 1256.0,
-      "high": 1289.5,
+      "name": "上升三法",
+      "bias": "bullish",
+      "date": "2026-10-28",
+      "low": 1175.0,
+      "high": 1202.5,
       "i": 199
     },
     {
@@ -173,7 +182,7 @@
       "date": "2026-10-06",
       "low": 1090.0,
       "high": 1110.0,
-      "i": 187
+      "i": 184
     },
     {
       "name": "利淡反擊線",
@@ -181,7 +190,7 @@
       "date": "2026-09-24",
       "low": 1128.5,
       "high": 1158.0,
-      "i": 179
+      "i": 176
     },
     {
       "name": "刺穿線",
@@ -189,7 +198,7 @@
       "date": "2026-09-10",
       "low": 1087.5,
       "high": 1108.0,
-      "i": 172
+      "i": 169
     },
     {
       "name": "上升三法",
@@ -197,23 +206,23 @@
       "date": "2026-07-24",
       "low": 1102.5,
       "high": 1126.0,
-      "i": 139
+      "i": 136
     }
   ],
-  "asof": "2026-10-23",
-  "close": 1260.5,
-  "chg_pct": 2.604802604802603,
+  "asof": "2026-10-28",
+  "close": 1175.0,
+  "chg_pct": -2.1241149521032954,
   "kline": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 1265.0,
-    "H": 1289.5,
-    "L": 1256.0,
-    "C": 1260.5,
-    "body_pct": 13.4,
-    "upper_wick_pct": 73.1,
-    "lower_wick_pct": 13.4
+    "O": 1189.0,
+    "H": 1202.5,
+    "L": 1175.0,
+    "C": 1175.0,
+    "body_pct": 50.9,
+    "upper_wick_pct": 49.1,
+    "lower_wick_pct": 0.0
   }
 }

@@ -3,23 +3,23 @@
   "ticker_user": "ARM",
   "name": "Arm Holdings plc",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 210.67,
-    "H": 215.05,
-    "L": 208.5,
-    "C": 210.33,
-    "prev_close": 210.1,
-    "chg_pct": 0.11
+    "date": "2026-10-28",
+    "O": 231.0,
+    "H": 237.88,
+    "L": 228.1,
+    "C": 235.9,
+    "prev_close": 226.6,
+    "chg_pct": 4.1
   },
   "phase": "downtrend_active",
-  "adx": 25.7,
-  "plus_di": 14.7,
-  "minus_di": 35.75,
+  "adx": 25.03,
+  "plus_di": 22.97,
+  "minus_di": 30.49,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 452.7 (2026-06-18), trough 208.3 (2026-10-22), box top 336.98 (2026-09-23)",
+  "phase_evidence": "Peak 452.7 (2026-06-18), trough 208.3 (2026-10-22), box top 237.88 (2026-10-28)",
   "peak": {
     "date": "2026-06-18",
     "price": 452.7
@@ -29,61 +29,68 @@
     "price": 208.3
   },
   "box": {
-    "top": 336.98,
-    "top_date": "2026-09-23",
+    "top": 237.88,
+    "top_date": "2026-10-28",
     "bottom": 208.3,
-    "period": "2026-10-22 to 2026-10-23"
+    "period": "2026-10-22 to 2026-10-28"
   },
-  "drop_from_peak_pct": 53.5,
-  "recovery_from_crash_pct": 1.0,
+  "drop_from_peak_pct": 47.9,
+  "recovery_from_crash_pct": 13.3,
   "supports": [
     {
-      "level": 204.0,
-      "label": "S1 bottom",
-      "touches": 0,
+      "level": 228.0,
+      "label": "S1 KEY",
+      "touches": 10,
+      "evidence": "tested 10x in base period; 3.3% below current"
+    },
+    {
+      "level": 224.0,
+      "label": "S2",
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
+    },
+    {
+      "level": 208.0,
+      "label": "S3 bottom",
+      "touches": 4,
       "evidence": "structural bottom, near crash low 208.3"
     }
   ],
   "resistances": [
     {
-      "level": 215.05,
+      "level": 237.88,
       "label": "R1 today high",
-      "evidence": "rejection at 215.0500030517578 (long upper wick, close weak)"
+      "evidence": "today's high 237.8800048828125"
     },
     {
       "level": 320.0,
       "label": "R5",
       "evidence": "pre-crash supply, top before breakdown"
-    },
-    {
-      "level": 336.98,
-      "label": "R3 Sep high",
-      "evidence": "box top 336.98, base period high"
     }
   ],
   "position": {
-    "current": 210.33,
-    "in_box_pct": 4.8,
-    "nearest_support": "S1 bottom (204.0)",
-    "nearest_resistance": "R1 today high (215.05)"
+    "current": 235.9,
+    "in_box_pct": 24.9,
+    "nearest_support": "S1 KEY (228.0)",
+    "nearest_resistance": "R1 today high (237.88)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 210.67,
-    "H": 215.05,
-    "L": 208.5,
-    "C": 210.33,
-    "body_pct": 5.2,
-    "upper_wick_pct": 66.9,
-    "lower_wick_pct": 27.9
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 231.0,
+    "H": 237.88,
+    "L": 228.1,
+    "C": 235.9,
+    "body_pct": 50.1,
+    "upper_wick_pct": 20.2,
+    "lower_wick_pct": 29.7
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (5% of box)"
+      "bias": "defensive",
+      "reason": "near box bottom (25% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -96,24 +103,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 204.0 (KEY support)",
-      "then": "still range; watch 215.05 for next test"
+      "if": "hold 228.0 (KEY support)",
+      "then": "still range; watch 237.88 for next test"
     },
     {
-      "if": "break 204.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 228.0 on close",
+      "then": "target 224.0 → 208.0 (short-term bearish)"
     },
     {
-      "if": "break 204.0 (crash low)",
+      "if": "break 208.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 215.05 on close",
+      "if": "reclaim 237.88 on close",
       "then": "short-term bullish; next test 320.0"
-    },
-    {
-      "if": "break 336.98 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -146,22 +149,30 @@
     "phase_match": false,
     "r1": 318.36,
     "s1": 208.3,
-    "s2": 219.39,
+    "s2": 225.46,
     "r2": 336.98,
     "r3": 452.7,
     "s3": 200.89,
     "s4": 100.02,
-    "current_position_pct": 1.8,
-    "notes": "WAIT_RANGE: in box (208-318), pos 2%, no clear setup"
+    "current_position_pct": 25.1,
+    "notes": "WAIT_RANGE: in box (208-318), pos 25%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "早晨之星",
+      "bias": "bullish",
+      "date": "2026-10-27",
+      "low": 222.0,
+      "high": 227.8300018310547,
+      "i": 198
+    },
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-10-15",
       "low": 226.5399932861328,
       "high": 245.8699951171875,
-      "i": 193
+      "i": 190
     },
     {
       "name": "烏雲蓋頂",
@@ -169,7 +180,7 @@
       "date": "2026-10-05",
       "low": 299.79998779296875,
       "high": 311.0,
-      "i": 185
+      "i": 182
     },
     {
       "name": "下降三法",
@@ -177,7 +188,7 @@
       "date": "2026-09-04",
       "low": 247.50999450683594,
       "high": 255.69000244140625,
-      "i": 165
+      "i": 162
     },
     {
       "name": "早晨之星",
@@ -185,15 +196,7 @@
       "date": "2026-08-05",
       "low": 268.6199951171875,
       "high": 281.5899963378906,
-      "i": 143
-    },
-    {
-      "name": "三個白武士",
-      "bias": "bullish",
-      "date": "2026-07-24",
-      "low": 258.42999267578125,
-      "high": 288.989990234375,
-      "i": 135
+      "i": 140
     }
   ]
 }

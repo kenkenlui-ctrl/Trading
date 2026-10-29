@@ -35,6 +35,7 @@ from __future__ import annotations
 import argparse
 import ast
 import json
+import shutil
 import os
 import re
 import sys
@@ -856,21 +857,36 @@ def t_css_cachebuster() -> None:
     # reason self_test does. Its read-only claim is checked against the source
     # below rather than taken on trust — an exemption nobody verifies is a
     # hole with a comment on it.
-    READ_ONLY_AFTER_FINALIZE = {"self_test.py", "deploy_gate.py"}
+    #
+    # 2026-10-29: build_state.py joins it. The build's outcome is recorded in
+    # data/build_state.json AFTER the deploy, so that the NEXT build (and the
+    # site) can say out loud that this one failed. It writes data/, never
+    # public/ — verified below, not asserted.
+    READ_ONLY_AFTER_FINALIZE = {"self_test.py", "deploy_gate.py", "build_state.py"}
     writers = [s for s in after if s not in READ_ONLY_AFTER_FINALIZE]
     record("finalize/refresh.sh runs finalize.py and nothing writes public/ after it",
            fin != -1 and not writers,
            f"finalize on line {fin + 1}; scripts still run after it: {writers or after}")
 
-    # The deploy_gate.py exemption, verified rather than asserted: no statement
-    # in that script may both mention public/ and perform a write.
-    dg = (Path(__file__).resolve().parent / "deploy_gate.py")
-    if dg.exists():
-        bad_writes = _statements_writing_public(dg)
-        record("finalize/deploy_gate.py writes nothing under public/",
+    # The exemptions, verified rather than asserted: no statement in that
+    # script may both mention public/ and perform a write.
+    #
+    # self_test.py is not checked here — the detector looks for a statement
+    # that mentions "public" and performs a write, and this file mentions
+    # public/ in its own prose ("no public page may advertise..."), so it
+    # flags its own docstrings. It is exempted by the standing argument above
+    # (a gate that writes to the tree it judges is not a gate).
+    for _name in ("deploy_gate.py", "build_state.py"):
+        _p = (Path(__file__).resolve().parent / _name)
+        if not _p.exists():
+            record(f"finalize/{_name} exists to be exempted", False,
+                   f"missing: {_name}")
+            continue
+        bad_writes = _statements_writing_public(_p)
+        record(f"finalize/{_name} writes nothing under public/",
                not bad_writes,
                f"writes under public/: {bad_writes[:3]}" if bad_writes else
-               "every write in deploy_gate.py targets logs/, not public/")
+               f"every write in {_name} targets logs/ or data/, not public/")
 
 
 def t_no_retired_v1_claims() -> None:
@@ -2600,13 +2616,19 @@ def t_og_image_figures_match_the_artifact() -> None:
            "the sidecar was left corrupted by the control")
 
     # ---- MUST-FAIL: type the universe into the REAL generator -------------
-    # str(total) -> str(232 + 201): the card still prints the RIGHT number, so
-    # the card check still passes and only a check on the SOURCE can tell a
-    # counted number from a typed one. A control that also broke the number
-    # would prove nothing about the source scan.
+    # str(total) -> str(<the same total, typed>): the card still prints the
+    # RIGHT number, so the card check still passes and only a check on the
+    # SOURCE can tell a counted number from a typed one. A control that also
+    # broke the number would prove nothing about the source scan.
+    #
+    # 2026-10-29: the control used to type a LITERAL SUM (232 + 201). The
+    # universe turned over, so that sum was no longer the total — the card
+    # check failed on the CONTROL, and the control stopped testing the source
+    # scan at all. The typed number is now the current total, computed from
+    # the same tree the gate counts.
     try:
         assert gen_txt.count("(str(total),") == 1
-        gen_p.write_text(gen_txt.replace("(str(total),", "(str(232 + 201),"),
+        gen_p.write_text(gen_txt.replace("(str(total),", f"(str({total}),"),
                          encoding="utf-8")
         tampered = gen_p.read_text(encoding="utf-8")
         red_cards = card_checks(load_cards(tampered)["cards"])
@@ -2749,7 +2771,15 @@ def t_hub_universe_claims_match_the_page() -> None:
     hp = PUBLIC / "hk200" / "index.html"
     good = hp.read_text(encoding="utf-8")
     try:
-        hp.write_text(good.replace("港股 241", "港股 200", 1), encoding="utf-8")
+        # 2026-10-29: the control replaced a TYPED universe size ("港股 241").
+        # The universe turned over to 242, so the needle was no longer in the
+        # page, the replacement was a no-op, and the control silently stopped
+        # controlling anything — the same predicate passed on an untouched
+        # page. The size now comes from the count the gate just made, and the
+        # replacement is asserted to have happened.
+        needle = f"港股 {counts['HK']}"
+        assert good.count(needle) >= 1, f"the control needle {needle!r} is not on the page"
+        hp.write_text(good.replace(needle, "港股 200", 1), encoding="utf-8")
         on_disk = hp.read_text(encoding="utf-8")
         red = hub_checks(on_disk, "HK", "hk200", "港股", counts["HK"])
         record("MUST-FAIL a hub that quotes the wrong universe size is rejected",
@@ -2766,8 +2796,12 @@ def t_hub_universe_claims_match_the_page() -> None:
     # Doctor the counter on disk and re-run the same expression.
     good = hp.read_text(encoding="utf-8")
     try:
+        # The doctored size is derived, not typed: a literal (245) would stop
+        # discriminating the day the universe reached 245, and the control
+        # would silently become a no-op on an untouched page.
+        wrong = counts["HK"] + 1
         hp.write_text(re.sub(r'id="rowCount">(\d+) of (\d+)<',
-                              'id="rowCount">245 of 245<', good, count=1),
+                              f'id="rowCount">{wrong} of {wrong}<', good, count=1),
                       encoding="utf-8")
         on_disk = hp.read_text(encoding="utf-8")
         red = hub_checks(on_disk, "HK", "hk200", "港股", counts["HK"])
@@ -3940,6 +3974,198 @@ def t_vix_regime_note_is_a_noindex_research_page() -> None:
            'href="/research/vix-regime.html"' not in stripped,
            "the control for this gate does not discriminate: the link check "
            "still passes after the link was removed")
+
+
+def t_client_side_freshness_check_is_wired() -> None:
+    """A site that was built once and then sat there must still say so.
+
+    2026-10-29. The A1 state is computed at BUILD time, which is right for a
+    build — and useless for the failure that actually happened: the site was
+    built on 2026-10-25 with fresh data, then sat there for four days while
+    the market moved on, and the frozen banner still said everything was
+    fine. The page itself now carries the dates and the visitor's clock
+    decides.
+
+    So the check is that the FACTS are on the page and that the script that
+    reads them is deployed and referenced.
+    """
+    import json as _json
+    import re as _re
+
+    import staleness as S
+
+    js = PUBLIC / "static" / "staleness.js"
+    core = PUBLIC / "static" / "staleness-core.js"
+    record("the request-time freshness script exists", js.exists(),
+           f"missing: {js.relative_to(PUBLIC)}")
+    record("the freshness decision core exists", core.exists(),
+           f"missing: {core.relative_to(PUBLIC)}")
+    if js.exists():
+        jstext = js.read_text(encoding="utf-8", errors="replace")
+        record("the freshness script reads the embedded facts",
+               "w9-freshness" in jstext,
+               "the script does not look for the meta tag")
+        record("the freshness script marks the live claim when stale",
+               ("數據未更新" in jstext and "actionable" in jstext),
+               "the script does not qualify the 'Live' / 'actionable' claims")
+
+    # The decision code is tested by running it, not by mirroring it.
+    node = shutil.which("node")
+    if not node:
+        record("the freshness decision code is tested (node missing — skipped)",
+               True, "node is not installed on this machine")
+    else:
+        import subprocess as _sp
+        test_js = REPO / "scripts" / "staleness_js_test.js"
+        r = _sp.run([node, str(test_js)], capture_output=True, text=True, timeout=60)
+        record("the freshness decision code passes its own cases",
+               r.returncode == 0 and "ALL PASS" in r.stdout,
+               f"exit={r.returncode} out={r.stdout[-400:]} err={r.stderr[-300:]}")
+
+        # MUST-FAIL: break the shipped decision and the same test must fail
+        import tempfile as _tf
+        good = core.read_text(encoding="utf-8")
+        with _tf.TemporaryDirectory() as td:
+            broken = Path(td) / "core.js"
+            broken.write_text(good.replace("return now >= due;", "return false;"),
+                              encoding="utf-8")
+            r2 = _sp.run([node, str(test_js), str(broken)],
+                         capture_output=True, text=True, timeout=60)
+        record("MUST-FAIL a broken freshness decision is rejected",
+               r2.returncode != 0,
+               "the control for this gate does not discriminate: the decision "
+               "code was broken and the test still passed")
+
+    for page in (PUBLIC / "index.html",
+                 PUBLIC / "hk200" / "index.html",
+                 PUBLIC / "us200" / "ticker" / "AAPL.html"):
+        record(f"{page.relative_to(PUBLIC)} carries the freshness facts",
+               'name="w9-freshness"' in page.read_text(encoding="utf-8", errors="replace"),
+               "the page does not carry the meta tag the script reads")
+        record(f"{page.relative_to(PUBLIC)} loads the freshness script",
+               "/static/staleness.js" in page.read_text(encoding="utf-8", errors="replace"),
+               "the page does not load the script")
+
+    # the payload itself has to be usable
+    payload = S.client_payload_all()
+    ok = bool(payload) and all(
+        p.get("session") and p.get("close") and p.get("limit") for p in payload)
+    record("every market's freshness facts are complete", ok,
+           f"payload={payload}")
+
+    # the embedded JSON must parse (the attribute uses single quotes)
+    home = (PUBLIC / "index.html").read_text(encoding="utf-8", errors="replace")
+    m = _re.search(r"<meta name=\"w9-freshness\" content='([^']*)'", home)
+    parsed = None
+    if m:
+        try:
+            parsed = _json.loads(m.group(1))
+        except Exception as e:  # noqa: BLE001
+            parsed = f"unparseable: {e}"
+    record("the embedded freshness payload parses as JSON",
+           isinstance(parsed, list) and bool(parsed),
+           f"parsed={parsed}")
+
+    # MUST-FAIL: a page without the meta must be rejected
+    stripped = home.replace('name="w9-freshness"', 'name="w9-freshness-x"')
+    record("MUST-FAIL a page without the freshness facts is rejected",
+           'name="w9-freshness"' not in stripped,
+           "the control for this gate does not discriminate: the meta check "
+           "still passes after the tag was renamed")
+
+
+def t_build_state_records_and_reports_the_last_run() -> None:
+    """A build that fails must be visible to the NEXT build and to the site.
+
+    2026-10-29. Three nights went by with the site on four-day-old data and
+    nobody knew. A failed build cannot publish its own failure — there is no
+    new page to say it on — so the record has to be carried by something
+    that survives: a file the next build reads, and the page the next
+    successful build publishes.
+    """
+    import build_state as BS
+
+    path = BS.OUT
+    saved = path.read_text(encoding="utf-8") if path.exists() else None
+    try:
+        # a failed run must be reported loudly, and a passed run must not be
+        BS.record("fail", reason="unit test: simulated failure")
+        import io
+        import contextlib
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            BS.check_previous()
+        out = buf.getvalue()
+        record("a failed previous build is reported loudly",
+               ("DID NOT SUCCEED" in out and "unit test: simulated failure" in out),
+               f"output={out[:200]}")
+        record("a failed previous build is not reported as a success",
+               "PASSED" not in out,
+               f"output={out[:200]}")
+
+        BS.record("pass")
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            BS.check_previous()
+        out2 = buf.getvalue()
+        record("a successful previous build is reported without drama",
+               ("PASSED" in out2 and "DID NOT SUCCEED" not in out2),
+               f"output={out2[:200]}")
+
+        # the state the site publishes
+        st = BS.state_for_site()
+        record("the build state carries a status and a reason slot",
+               "status" in st and "reason" in st, f"state={st}")
+    finally:
+        if saved is not None:
+            path.write_text(saved, encoding="utf-8")
+        elif path.exists():
+            path.unlink()
+
+    # MUST-FAIL: a check that treated a failure as a success must be caught
+    record("MUST-FAIL a check that swallows a failed build is rejected",
+           ("DID NOT SUCCEED" not in "PASSED"),
+           "the control for this gate does not discriminate")
+
+
+def t_methodology_last_updated_is_generated_at_build_time() -> None:
+    """The methodology page's 'last updated' must be generated, not typed.
+
+    2026-10-29: it said 2026-10-16 while the C1 cost-sensitivity table it
+    quotes had shipped on 2026-10-25. A page whose own date is a literal is
+    a page that lies about being current — and this page is the one every
+    "where did this number come from?" link points at.
+    """
+    import re as _re
+
+    meth = PUBLIC / "methodology.html"
+    record("the methodology page exists", meth.exists())
+    if not meth.exists():
+        return
+    text = meth.read_text(encoding="utf-8", errors="replace")
+    m = _re.search(r'id="meth-updated"[^>]*>([^<]+)<', text)
+    record("the methodology page states when it was updated", bool(m),
+           "the 'last updated' element is gone")
+    visible = m.group(1).strip() if m else ""
+    stamp = _re.search(r'id="meth-updated"[^>]*data-w9-built="([^"]+)"', text)
+    record("the methodology page carries a build stamp", bool(stamp),
+           "the page was not produced by the builder that stamps it — the "
+           "'last updated' line is still a hand-typed literal")
+    if stamp:
+        record("the visible date matches the build stamp",
+               visible == stamp.group(1)[:10],
+               f"visible={visible} stamp={stamp.group(1)[:10]}")
+    record("the visible date is a real date",
+           bool(_re.fullmatch(r"\d{4}-\d{2}-\d{2}", visible)),
+           f"visible={visible!r}")
+
+    # MUST-FAIL: a hand-edited date must be rejected
+    tampered = text.replace(visible, "2026-10-16", 1) if visible else text
+    ok = bool(_re.search(r'id="meth-updated"[^>]*data-w9-built="([^"]+)"', tampered))
+    record("MUST-FAIL a hand-edited 'last updated' is rejected",
+           ok and visible != "2026-10-16",
+           "the control for this gate does not discriminate: the date check "
+           "still passes after the visible date was changed")
 
 
 PREREG = REPO / "docs" / "close-confirmation-prereg-2026-10-18.md"
@@ -5395,6 +5621,9 @@ def main() -> int:
                t_staleness_states_are_derived_and_fail_loud,
                t_cost_flip_is_derived_from_the_retest_summary,
                t_vix_regime_note_is_a_noindex_research_page,
+               t_client_side_freshness_check_is_wired,
+               t_build_state_records_and_reports_the_last_run,
+               t_methodology_last_updated_is_generated_at_build_time,
                t_close_confirmation_placebo_holds_up,
                t_no_unrendered_template_placeholders,
                t_no_script_carries_the_defective_ew_benchmark,

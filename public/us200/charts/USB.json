@@ -3,23 +3,23 @@
   "ticker_user": "USB",
   "name": "U.S. Bancorp",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 59.48,
-    "H": 59.81,
-    "L": 58.99,
-    "C": 59.58,
-    "prev_close": 60.02,
-    "chg_pct": -0.73
+    "date": "2026-10-28",
+    "O": 59.85,
+    "H": 59.97,
+    "L": 59.19,
+    "C": 59.6,
+    "prev_close": 59.74,
+    "chg_pct": -0.23
   },
   "phase": "downtrend_active",
-  "adx": 26.74,
-  "plus_di": 24.71,
-  "minus_di": 21.73,
-  "regime": "trend",
+  "adx": 23.5,
+  "plus_di": 24.5,
+  "minus_di": 20.67,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 66.08 (2026-08-17), trough 55.63 (2026-10-08), box top 60.03 (2026-10-22)",
+  "phase_evidence": "Peak 66.08 (2026-08-17), trough 55.63 (2026-10-08), box top 60.49 (2026-10-26)",
   "peak": {
     "date": "2026-08-17",
     "price": 66.08
@@ -29,10 +29,10 @@
     "price": 55.63
   },
   "box": {
-    "top": 60.03,
-    "top_date": "2026-10-22",
+    "top": 60.49,
+    "top_date": "2026-10-26",
     "bottom": 55.63,
-    "period": "2026-10-08 to 2026-10-23"
+    "period": "2026-10-08 to 2026-10-28"
   },
   "drop_from_peak_pct": 9.8,
   "recovery_from_crash_pct": 7.1,
@@ -46,29 +46,34 @@
   ],
   "resistances": [
     {
-      "level": 59.81,
+      "level": 59.97,
       "label": "R1 today high",
-      "evidence": "today's high 59.810001373291016"
+      "evidence": "today's high 59.970001220703125"
+    },
+    {
+      "level": 60.49,
+      "label": "R3 Oct high",
+      "evidence": "box top 60.49, base period high"
     }
   ],
   "position": {
-    "current": 59.58,
-    "in_box_pct": 94.0,
+    "current": 59.6,
+    "in_box_pct": 80.2,
     "nearest_support": "S1 bottom (56.0)",
-    "nearest_resistance": "R1 today high (59.81)"
+    "nearest_resistance": "R1 today high (59.97)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 59.48,
-    "H": 59.81,
-    "L": 58.99,
-    "C": 59.58,
-    "body_pct": 12.2,
-    "upper_wick_pct": 28.0,
-    "lower_wick_pct": 59.8
+    "O": 59.85,
+    "H": 59.97,
+    "L": 59.19,
+    "C": 59.6,
+    "body_pct": 32.1,
+    "upper_wick_pct": 15.4,
+    "lower_wick_pct": 52.6
   },
   "bias": {
     "short": {
@@ -80,14 +85,14 @@
       "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 56.0 (KEY support)",
-      "then": "still range; watch 59.81 for next test"
+      "then": "still range; watch 59.97 for next test"
     },
     {
       "if": "break 56.0 on close",
@@ -98,8 +103,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 59.81 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 59.97 on close",
+      "then": "short-term bullish; next test 60.49"
+    },
+    {
+      "if": "break 60.49 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -121,33 +130,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 60.03,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 60.49,
+    "target_price": 58.06,
+    "stop_price": 62.18,
+    "risk_pct": 2.8,
+    "reward_pct": 4.02,
+    "rr_ratio": 1.44,
+    "phase_match": true,
+    "r1": 60.49,
     "s1": 55.63,
-    "s2": 57.95,
+    "s2": 57.56,
     "r2": 66.08,
-    "r3": 64.84,
+    "r3": 64.85,
     "s3": 52.33,
     "s4": 50.32,
-    "current_position_pct": 89.8,
-    "notes": "WAIT_RANGE: in box (56-60), pos 90%, no clear setup"
+    "current_position_pct": 81.7,
+    "notes": "SELL_R1: in box (56-60), entry at R1 60, target mid 58, stop 62 ｜ 52.2 條規則（SELL plan，resistance 60.49）：① 跌到 60.49、收市守住喺 60.49 上面 → 照 BUY 條 plan 做（入場 60.49，止蝕 62.18，目標 58.06）。② 收市跌穿 60.49 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 60.49 上面』。"
   },
   "patterns": [
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-10-27",
+      "low": 59.20000076293945,
+      "high": 60.209999084472656,
+      "i": 198
+    },
     {
       "name": "利好身懷六甲",
       "bias": "bullish",
       "date": "2026-10-14",
       "low": 55.70000076293945,
       "high": 56.349998474121094,
-      "i": 192
+      "i": 189
     },
     {
       "name": "早晨之星",
@@ -155,31 +172,23 @@
       "date": "2026-09-03",
       "low": 62.81999969482422,
       "high": 63.709999084472656,
-      "i": 164
+      "i": 161
     },
     {
-      "name": "利淡反擊線",
+      "name": "三隻烏鴉",
       "bias": "bearish",
-      "date": "2026-08-06",
-      "low": 63.630001068115234,
-      "high": 65.0199966430664,
-      "i": 144
+      "date": "2026-08-03",
+      "low": 63.09000015258789,
+      "high": 63.959999084472656,
+      "i": 138
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-07-29",
-      "low": 62.61000061035156,
-      "high": 64.29000091552734,
-      "i": 138
-    },
-    {
-      "name": "利淡吞噬",
-      "bias": "bearish",
-      "date": "2026-07-10",
-      "low": 62.13999938964844,
-      "high": 62.75,
-      "i": 125
+      "date": "2026-07-27",
+      "low": 63.220001220703125,
+      "high": 64.66999816894531,
+      "i": 133
     }
   ]
 }

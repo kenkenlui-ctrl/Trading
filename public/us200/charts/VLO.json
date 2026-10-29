@@ -3,21 +3,21 @@
   "ticker_user": "VLO",
   "name": "Valero Energy Corporation",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 428.98,
-    "H": 430.72,
-    "L": 416.56,
-    "C": 419.28,
-    "prev_close": 426.28,
-    "chg_pct": -1.64
+    "date": "2026-10-28",
+    "O": 390.33,
+    "H": 394.8,
+    "L": 380.74,
+    "C": 388.48,
+    "prev_close": 387.34,
+    "chg_pct": 0.29
   },
-  "phase": "range",
-  "adx": 26.24,
-  "plus_di": 18.81,
-  "minus_di": 16.63,
-  "regime": "trend",
+  "phase": "downtrend_active",
+  "adx": 24.88,
+  "plus_di": 15.66,
+  "minus_di": 25.73,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 461.52 (2026-10-14), trough 364.96 (2026-09-23), box top 461.52 (2026-10-14)",
   "peak": {
@@ -32,35 +32,23 @@
     "top": 461.52,
     "top_date": "2026-10-14",
     "bottom": 364.96,
-    "period": "2026-09-23 to 2026-10-23"
+    "period": "2026-09-23 to 2026-10-28"
   },
-  "drop_from_peak_pct": 9.2,
-  "recovery_from_crash_pct": 14.9,
+  "drop_from_peak_pct": 15.8,
+  "recovery_from_crash_pct": 6.4,
   "supports": [
     {
-      "level": 388.0,
-      "label": "S1 KEY",
-      "touches": 3,
-      "evidence": "tested 3x in base period; 7.5% below current"
-    },
-    {
-      "level": 384.0,
-      "label": "S2",
-      "touches": 6,
-      "evidence": "mid-base support, tested 6x"
-    },
-    {
-      "level": 380.0,
-      "label": "S3 bottom",
-      "touches": 3,
+      "level": 372.0,
+      "label": "S1 bottom",
+      "touches": 4,
       "evidence": "structural bottom, near crash low 364.96"
     }
   ],
   "resistances": [
     {
-      "level": 430.72,
+      "level": 394.8,
       "label": "R1 today high",
-      "evidence": "today's high 430.7200012207031"
+      "evidence": "today's high 394.79998779296875"
     },
     {
       "level": 461.52,
@@ -69,32 +57,32 @@
     }
   ],
   "position": {
-    "current": 419.28,
-    "in_box_pct": 48.2,
-    "nearest_support": "S1 KEY (388.0)",
-    "nearest_resistance": "R1 today high (430.72)"
+    "current": 388.48,
+    "in_box_pct": 18.4,
+    "nearest_support": "S1 bottom (372.0)",
+    "nearest_resistance": "R1 today high (394.8)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 428.98,
-    "H": 430.72,
-    "L": 416.56,
-    "C": 419.28,
-    "body_pct": 68.5,
-    "upper_wick_pct": 12.3,
-    "lower_wick_pct": 19.2
+    "close_position": "upper_half",
+    "O": 390.33,
+    "H": 394.8,
+    "L": 380.74,
+    "C": 388.48,
+    "body_pct": 13.2,
+    "upper_wick_pct": 31.8,
+    "lower_wick_pct": 55.0
   },
   "bias": {
     "short": {
       "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (48% of box)"
+      "reason": "rejection at R1 + near support (18% of box)"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": "no clear direction"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -103,19 +91,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 388.0 (KEY support)",
-      "then": "still range; watch 430.72 for next test"
+      "if": "hold 372.0 (KEY support)",
+      "then": "still range; watch 394.8 for next test"
     },
     {
-      "if": "break 388.0 on close",
-      "then": "target 384.0 → 380.0 (short-term bearish)"
+      "if": "break 372.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 380.0 (crash low)",
+      "if": "break 372.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 430.72 on close",
+      "if": "reclaim 394.8 on close",
       "then": "short-term bullish; next test 461.52"
     },
     {
@@ -150,16 +138,16 @@
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
+    "phase_match": false,
     "r1": 461.52,
-    "s1": 379.57,
+    "s1": 380.74,
     "s2": 291.46,
     "r2": 419.04,
     "r3": 320.24,
-    "s3": 227.25,
+    "s3": 232.72,
     "s4": 176.5,
-    "current_position_pct": 48.5,
-    "notes": "WAIT_RANGE: in box (380-462), pos 48%, no clear setup"
+    "current_position_pct": 9.6,
+    "notes": "WAIT_RANGE: in box (381-462), pos 10%, no clear setup"
   },
   "patterns": [
     {
@@ -168,7 +156,7 @@
       "date": "2026-10-22",
       "low": 416.4100036621094,
       "high": 439.54998779296875,
-      "i": 198
+      "i": 195
     },
     {
       "name": "黃昏之星",
@@ -176,7 +164,7 @@
       "date": "2026-10-16",
       "low": 439.3999938964844,
       "high": 451.9800109863281,
-      "i": 194
+      "i": 191
     },
     {
       "name": "利淡吞噬",
@@ -184,7 +172,7 @@
       "date": "2026-09-14",
       "low": 375.1000061035156,
       "high": 399.760009765625,
-      "i": 170
+      "i": 167
     },
     {
       "name": "烏雲蓋頂",
@@ -192,7 +180,7 @@
       "date": "2026-07-09",
       "low": 277.2799987792969,
       "high": 284.2799987792969,
-      "i": 124
+      "i": 121
     },
     {
       "name": "三個白武士",
@@ -200,7 +188,7 @@
       "date": "2026-06-25",
       "low": 240.02000427246094,
       "high": 255.74000549316406,
-      "i": 115
+      "i": 112
     }
   ]
 }

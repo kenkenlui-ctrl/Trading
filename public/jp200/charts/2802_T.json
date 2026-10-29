@@ -3,20 +3,20 @@
   "ticker_user": "2802.T",
   "name": "Ajinomoto Co., Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
+  "data_range": "2025-12-30 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 4972.0,
-    "H": 5064.0,
-    "L": 4922.0,
-    "C": 5064.0,
-    "prev_close": 5046.0,
-    "chg_pct": 0.356718192627814
+    "date": "2026-10-28",
+    "O": 5196.0,
+    "H": 5257.0,
+    "L": 5111.0,
+    "C": 5129.0,
+    "prev_close": 5110.0,
+    "chg_pct": 0.37181996086106395
   },
   "phase": "downtrend_active",
-  "adx": 14.06,
-  "plus_di": 18.67,
-  "minus_di": 30.08,
+  "adx": 13.32,
+  "plus_di": 23.54,
+  "minus_di": 24.43,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 6340.0 (2026-07-06), trough 4721.0 (2026-07-30), box top 5754.0 (2026-08-17)",
@@ -32,23 +32,29 @@
     "top": 5754.0,
     "top_date": "2026-08-17",
     "bottom": 4721.0,
-    "period": "2026-07-30 to 2026-10-23"
+    "period": "2026-07-30 to 2026-10-28"
   },
-  "drop_from_peak_pct": 20.1,
-  "recovery_from_crash_pct": 7.3,
+  "drop_from_peak_pct": 19.1,
+  "recovery_from_crash_pct": 8.6,
   "supports": [
     {
-      "level": 4912.0,
-      "label": "S1 bottom",
+      "level": 4976.0,
+      "label": "S1 KEY",
       "touches": 0,
-      "evidence": "structural bottom, near crash low 4721.0"
+      "evidence": "structural level near current; 3.0% below current"
+    },
+    {
+      "level": 4721.0,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-07-30, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 5064.0,
+      "level": 5257.0,
       "label": "R1 today high",
-      "evidence": "today's high 5064.0"
+      "evidence": "today's high 5257.0"
     },
     {
       "level": 5754.0,
@@ -57,28 +63,28 @@
     }
   ],
   "position": {
-    "current": 5064.0,
-    "in_box_pct": 18.1,
-    "nearest_support": "S1 bottom (4912.0)",
-    "nearest_resistance": "R3 Aug high (5754.0)"
+    "current": 5129.0,
+    "in_box_pct": 39.5,
+    "nearest_support": "S1 KEY (4976.0)",
+    "nearest_resistance": "R1 today high (5257.0)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 4972.0,
-    "H": 5064.0,
-    "L": 4922.0,
-    "C": 5064.0,
-    "body_pct": 64.8,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 35.2
+    "close_position": "lower_half",
+    "O": 5196.0,
+    "H": 5257.0,
+    "L": 5111.0,
+    "C": 5129.0,
+    "body_pct": 45.9,
+    "upper_wick_pct": 41.8,
+    "lower_wick_pct": 12.3
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (18% of box)"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (40% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -91,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 4912.0 (KEY support)",
-      "then": "still range; watch 5064.0 for next test"
+      "if": "hold 4976.0 (KEY support)",
+      "then": "still range; watch 5257.0 for next test"
     },
     {
-      "if": "break 4912.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 4976.0 on close",
+      "then": "target 4721.0 → lower (short-term bearish)"
     },
     {
-      "if": "break 4912.0 (crash low)",
+      "if": "break 4721.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 5064.0 on close",
+      "if": "reclaim 5257.0 on close",
       "then": "short-term bullish; next test 5754.0"
     },
     {
@@ -146,17 +152,25 @@
     "r3": 6340.0,
     "s3": 4674.0,
     "s4": 3270.0,
-    "current_position_pct": 25.4,
-    "notes": "WAIT_RANGE: in box (4922-5482), pos 25%, no clear setup"
+    "current_position_pct": 37.0,
+    "notes": "WAIT_RANGE: in box (4922-5482), pos 37%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "利好吞噬",
+      "bias": "bullish",
+      "date": "2026-10-27",
+      "low": 5070.0,
+      "high": 5182.0,
+      "i": 198
+    },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-10-15",
       "low": 5203.0,
       "high": 5317.0,
-      "i": 193
+      "i": 190
     },
     {
       "name": "吊頸",
@@ -164,47 +178,39 @@
       "date": "2026-10-08",
       "low": 5256.0,
       "high": 5351.0,
-      "i": 189
-    },
-    {
-      "name": "利好吞噬",
-      "bias": "bullish",
-      "date": "2026-09-29",
-      "low": 4931.0,
-      "high": 5005.0,
-      "i": 182
+      "i": 186
     },
     {
       "name": "刺穿線",
       "bias": "bullish",
-      "date": "2026-09-16",
-      "low": 4823.0,
-      "high": 4888.0,
-      "i": 176
+      "date": "2026-09-29",
+      "low": 4931.0,
+      "high": 5005.0,
+      "i": 179
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-08-14",
-      "low": 5529.0,
-      "high": 5733.0,
-      "i": 153
+      "date": "2026-08-18",
+      "low": 5443.0,
+      "high": 5663.0,
+      "i": 152
     }
   ],
-  "asof": "2026-10-23",
-  "close": 5064.0,
-  "chg_pct": 0.356718192627814,
+  "asof": "2026-10-28",
+  "close": 5129.0,
+  "chg_pct": 0.37181996086106395,
   "kline": {
-    "type": "bullish_reclaim",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 4972.0,
-    "H": 5064.0,
-    "L": 4922.0,
-    "C": 5064.0,
-    "body_pct": 64.8,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 35.2
+    "close_position": "lower_half",
+    "O": 5196.0,
+    "H": 5257.0,
+    "L": 5111.0,
+    "C": 5129.0,
+    "body_pct": 45.9,
+    "upper_wick_pct": 41.8,
+    "lower_wick_pct": 12.3
   }
 }

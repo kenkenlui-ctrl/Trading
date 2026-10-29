@@ -3,23 +3,23 @@
   "ticker_user": "TXN",
   "name": "Texas Instruments Incorporated",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 277.87,
-    "H": 286.2,
-    "L": 276.27,
-    "C": 284.69,
-    "prev_close": 279.5,
-    "chg_pct": 1.86
+    "date": "2026-10-28",
+    "O": 308.79,
+    "H": 310.0,
+    "L": 304.99,
+    "C": 309.83,
+    "prev_close": 308.91,
+    "chg_pct": 0.3
   },
   "phase": "base_building",
-  "adx": 13.74,
-  "plus_di": 18.06,
-  "minus_di": 14.42,
+  "adx": 19.32,
+  "plus_di": 30.44,
+  "minus_di": 11.32,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 334.03 (2026-06-22), trough 248.13 (2026-09-03), box top 298.75 (2026-10-06)",
+  "phase_evidence": "Peak 334.03 (2026-06-22), trough 248.13 (2026-09-03), box top 310.0 (2026-10-28)",
   "peak": {
     "date": "2026-06-22",
     "price": 334.03
@@ -29,28 +29,28 @@
     "price": 248.13
   },
   "box": {
-    "top": 298.75,
-    "top_date": "2026-10-06",
+    "top": 310.0,
+    "top_date": "2026-10-28",
     "bottom": 248.13,
-    "period": "2026-09-03 to 2026-10-23"
+    "period": "2026-09-03 to 2026-10-28"
   },
-  "drop_from_peak_pct": 14.8,
-  "recovery_from_crash_pct": 14.7,
+  "drop_from_peak_pct": 7.2,
+  "recovery_from_crash_pct": 24.9,
   "supports": [
     {
-      "level": 276.0,
+      "level": 280.0,
       "label": "S1 KEY",
+      "touches": 10,
+      "evidence": "tested 10x in base period; 9.6% below current"
+    },
+    {
+      "level": 276.0,
+      "label": "S2",
       "touches": 12,
-      "evidence": "tested 12x in base period; 3.1% below current"
+      "evidence": "mid-base support, tested 12x"
     },
     {
       "level": 272.0,
-      "label": "S2",
-      "touches": 8,
-      "evidence": "mid-base support, tested 8x"
-    },
-    {
-      "level": 268.0,
       "label": "S3",
       "touches": 8,
       "evidence": "mid-base support, tested 8x"
@@ -64,34 +64,29 @@
   ],
   "resistances": [
     {
-      "level": 286.2,
+      "level": 310.0,
       "label": "R1 today high",
-      "evidence": "today's high 286.20001220703125"
-    },
-    {
-      "level": 298.75,
-      "label": "R3 Oct high",
-      "evidence": "box top 298.75, base period high"
+      "evidence": "today's high 310.0"
     }
   ],
   "position": {
-    "current": 284.69,
-    "in_box_pct": 72.2,
-    "nearest_support": "S1 KEY (276.0)",
-    "nearest_resistance": "R1 today high (286.2)"
+    "current": 309.83,
+    "in_box_pct": 99.7,
+    "nearest_support": "S1 KEY (280.0)",
+    "nearest_resistance": "R1 today high (310.0)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_hold",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 277.87,
-    "H": 286.2,
-    "L": 276.27,
-    "C": 284.69,
-    "body_pct": 68.7,
-    "upper_wick_pct": 15.2,
-    "lower_wick_pct": 16.1
+    "O": 308.79,
+    "H": 310.0,
+    "L": 304.99,
+    "C": 309.83,
+    "body_pct": 20.8,
+    "upper_wick_pct": 3.4,
+    "lower_wick_pct": 75.8
   },
   "bias": {
     "short": {
@@ -103,30 +98,26 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 276.0 (KEY support)",
-      "then": "still range; watch 286.2 for next test"
+      "if": "hold 280.0 (KEY support)",
+      "then": "still range; watch 310.0 for next test"
     },
     {
-      "if": "break 276.0 on close",
-      "then": "target 272.0 → 268.0 (short-term bearish)"
+      "if": "break 280.0 on close",
+      "then": "target 276.0 → 272.0 (short-term bearish)"
     },
     {
       "if": "break 248.13 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 286.2 on close",
-      "then": "short-term bullish; next test 298.75"
-    },
-    {
-      "if": "break 298.75 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 310.0 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -148,24 +139,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 310.0,
+    "target_price": 291.01,
+    "stop_price": 325.03,
+    "risk_pct": 4.85,
+    "reward_pct": 6.13,
+    "rr_ratio": 1.26,
     "phase_match": true,
-    "r1": 298.75,
+    "r1": 310.0,
     "s1": 272.01,
     "s2": 248.13,
     "r2": 289.62,
     "r3": 334.03,
-    "s3": 268.76,
-    "s4": 182.55,
-    "current_position_pct": 47.4,
-    "notes": "WAIT_RANGE: in box (272-299), pos 47%, no clear setup"
+    "s3": 264.74,
+    "s4": 184.9,
+    "current_position_pct": 99.6,
+    "notes": "SELL_R1: in box (272-310), entry at R1 310, target mid 291, stop 325 ｜ 52.2 條規則（SELL plan，resistance 310.00）：① 跌到 310.00、收市守住喺 310.00 上面 → 照 BUY 條 plan 做（入場 310.00，止蝕 325.03，目標 291.01）。② 收市跌穿 310.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 310.00 上面』。"
   },
   "patterns": [
     {
@@ -174,7 +165,7 @@
       "date": "2026-10-21",
       "low": 277.3699951171875,
       "high": 289.30999755859375,
-      "i": 197
+      "i": 194
     },
     {
       "name": "早晨之星",
@@ -182,7 +173,7 @@
       "date": "2026-08-17",
       "low": 279.0,
       "high": 286.2099914550781,
-      "i": 151
+      "i": 148
     },
     {
       "name": "利好反擊線",
@@ -190,7 +181,7 @@
       "date": "2026-08-07",
       "low": 280.9700012207031,
       "high": 286.1700134277344,
-      "i": 145
+      "i": 142
     },
     {
       "name": "利好身懷六甲",
@@ -198,7 +189,7 @@
       "date": "2026-07-30",
       "low": 274.3500061035156,
       "high": 283.5799865722656,
-      "i": 139
+      "i": 136
     },
     {
       "name": "上升三法",
@@ -206,7 +197,7 @@
       "date": "2026-07-17",
       "low": 279.2300109863281,
       "high": 289.25,
-      "i": 130
+      "i": 127
     }
   ]
 }

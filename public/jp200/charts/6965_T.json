@@ -3,20 +3,20 @@
   "ticker_user": "6965.T",
   "name": "Hamamatsu Photonics K.K.",
   "data_source": "yfinance",
-  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
+  "data_range": "2025-12-30 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 2025.0,
-    "H": 2075.0,
-    "L": 1971.0,
-    "C": 2074.0,
-    "prev_close": 2086.5,
-    "chg_pct": -0.5990893841361089
+    "date": "2026-10-28",
+    "O": 2221.0,
+    "H": 2239.5,
+    "L": 2197.0,
+    "C": 2219.5,
+    "prev_close": 2154.0,
+    "chg_pct": 3.0408542246982417
   },
   "phase": "downtrend_active",
-  "adx": 21.65,
-  "plus_di": 12.16,
-  "minus_di": 37.86,
+  "adx": 23.11,
+  "plus_di": 23.04,
+  "minus_di": 30.79,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 3100.0 (2026-05-25), trough 1971.0 (2026-10-23), box top 2539.0 (2026-10-07)",
@@ -32,23 +32,29 @@
     "top": 2539.0,
     "top_date": "2026-10-07",
     "bottom": 1971.0,
-    "period": "2026-10-23 to 2026-10-23"
+    "period": "2026-10-23 to 2026-10-28"
   },
-  "drop_from_peak_pct": 33.1,
-  "recovery_from_crash_pct": 5.2,
+  "drop_from_peak_pct": 28.4,
+  "recovery_from_crash_pct": 12.6,
   "supports": [
     {
-      "level": 2012.0,
-      "label": "S1 bottom",
-      "touches": 0,
-      "evidence": "structural bottom, near crash low 1971.0"
+      "level": 2128.0,
+      "label": "S1 KEY",
+      "touches": 3,
+      "evidence": "tested 3x in base period; 4.1% below current"
+    },
+    {
+      "level": 1971.0,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-10-23, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 2075.0,
+      "level": 2239.5,
       "label": "R1 today high",
-      "evidence": "today's high 2075.0"
+      "evidence": "today's high 2239.5"
     },
     {
       "level": 2539.0,
@@ -57,28 +63,28 @@
     }
   ],
   "position": {
-    "current": 2074.0,
-    "in_box_pct": 11.8,
-    "nearest_support": "S1 bottom (2012.0)",
-    "nearest_resistance": "R1 today high (2075.0)"
+    "current": 2219.5,
+    "in_box_pct": 43.8,
+    "nearest_support": "S1 KEY (2128.0)",
+    "nearest_resistance": "R1 today high (2239.5)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_rejection",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 2025.0,
-    "H": 2075.0,
-    "L": 1971.0,
-    "C": 2074.0,
-    "body_pct": 47.1,
-    "upper_wick_pct": 1.0,
-    "lower_wick_pct": 51.9
+    "O": 2221.0,
+    "H": 2239.5,
+    "L": 2197.0,
+    "C": 2219.5,
+    "body_pct": 3.5,
+    "upper_wick_pct": 43.5,
+    "lower_wick_pct": 52.9
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (12% of box)"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (44% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -91,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 2012.0 (KEY support)",
-      "then": "still range; watch 2075.0 for next test"
+      "if": "hold 2128.0 (KEY support)",
+      "then": "still range; watch 2239.5 for next test"
     },
     {
-      "if": "break 2012.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 2128.0 on close",
+      "then": "target 1971.0 → lower (short-term bearish)"
     },
     {
-      "if": "break 2012.0 (crash low)",
+      "if": "break 1971.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 2075.0 on close",
+      "if": "reclaim 2239.5 on close",
       "then": "short-term bullish; next test 2539.0"
     },
     {
@@ -141,22 +147,30 @@
     "phase_match": false,
     "r1": 2539.0,
     "s1": 1971.0,
-    "s2": 2100.5,
+    "s2": 2129.0,
     "r2": 2646.5,
     "r3": 3100.0,
-    "s3": 1935.0,
+    "s3": 1988.0,
     "s4": 1619.5,
-    "current_position_pct": 18.1,
-    "notes": "WAIT_RANGE: in box (1971-2539), pos 18%, no clear setup"
+    "current_position_pct": 43.8,
+    "notes": "WAIT_RANGE: in box (1971-2539), pos 44%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-10-27",
+      "low": 2127.0,
+      "high": 2168.0,
+      "i": 198
+    },
     {
       "name": "上升三法",
       "bias": "bullish",
       "date": "2026-10-19",
       "low": 2115.0,
       "high": 2169.5,
-      "i": 195
+      "i": 192
     },
     {
       "name": "黃昏之星",
@@ -164,7 +178,7 @@
       "date": "2026-10-08",
       "low": 2368.0,
       "high": 2459.0,
-      "i": 189
+      "i": 186
     },
     {
       "name": "三個白武士",
@@ -172,15 +186,7 @@
       "date": "2026-09-15",
       "low": 2134.5,
       "high": 2192.5,
-      "i": 175
-    },
-    {
-      "name": "刺穿線",
-      "bias": "bullish",
-      "date": "2026-09-09",
-      "low": 2220.0,
-      "high": 2260.5,
-      "i": 171
+      "i": 172
     },
     {
       "name": "利好身懷六甲",
@@ -188,23 +194,23 @@
       "date": "2026-08-31",
       "low": 2298.0,
       "high": 2372.0,
-      "i": 164
+      "i": 161
     }
   ],
-  "asof": "2026-10-23",
-  "close": 2074.0,
-  "chg_pct": -0.5990893841361089,
+  "asof": "2026-10-28",
+  "close": 2219.5,
+  "chg_pct": 3.0408542246982417,
   "kline": {
-    "type": "neutral",
+    "type": "bearish_rejection",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 2025.0,
-    "H": 2075.0,
-    "L": 1971.0,
-    "C": 2074.0,
-    "body_pct": 47.1,
-    "upper_wick_pct": 1.0,
-    "lower_wick_pct": 51.9
+    "O": 2221.0,
+    "H": 2239.5,
+    "L": 2197.0,
+    "C": 2219.5,
+    "body_pct": 3.5,
+    "upper_wick_pct": 43.5,
+    "lower_wick_pct": 52.9
   }
 }

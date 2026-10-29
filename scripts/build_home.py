@@ -15,6 +15,7 @@ from pathlib import Path
 import perf_figures
 from mobile_nav import mobile_bottom_nav
 import staleness
+import build_state
 from build_dashboard import site_label
 import os as _os_i18n
 
@@ -236,6 +237,25 @@ def t_minus_1(market: str | None = None) -> date:
 
 REPO = Path("/Users/kenken/dev/dsa-hk")
 PUBLIC = REPO / "public"
+
+
+def _jsver(name: str) -> str:
+    """Cache-buster for the freshness scripts (same one-hash-one-URL rule as
+    the stylesheet: a visitor who loaded the page before the script changed
+    would otherwise keep running the old check).
+
+    ONE HASH PER FILE, not one hash for the pair: the content-stamp rule is
+    sha1 of the file the URL actually points at, so a combined digest stamps
+    both URLs with a value neither of them has — and the asset gate then
+    rejects every page that loads them.
+    """
+    import hashlib
+    from pathlib import Path
+    try:
+        p = Path(__file__).resolve().parent.parent / "public" / "static" / name
+        return hashlib.sha1(p.read_bytes()).hexdigest()[:8]
+    except Exception:
+        return "0"
 
 
 def _cssver() -> str:
@@ -599,6 +619,17 @@ def build_home_page():
     # ...and the two claims that must not stand unqualified when a market is
     # behind: the "Live" kicker and the "今日 actionable" heading.
     _live_label = staleness.live_label()
+    _fresh_meta = staleness.client_meta()
+    # The last build's outcome, published. A failed build cannot publish
+    # its own failure, so the NEXT successful build carries the reason
+    # forward and the page says it out loud.
+    _bs = build_state.state_for_site()
+    if _bs.get("status") in ("fail", "running") and _bs.get("reason"):
+        _last_build_html = (
+            f'<span style="color:var(--amber)">⚠ 上次 build 未成功：'
+            f'{_bs["reason"]}</span>')
+    else:
+        _last_build_html = ""
     _actionable_note = staleness.actionable_note()
 
     return f"""<!DOCTYPE html>
@@ -676,6 +707,9 @@ def build_home_page():
 </script>
 <link rel="stylesheet" href="/static/fonts-local.css">
 <link rel="stylesheet" href="/leeks.css?v={_cssver()}">
+<meta name="w9-freshness" content='{_fresh_meta}'>
+<script src="/static/staleness-core.js?v={_jsver('staleness-core.js')}" defer></script>
+<script src="/static/staleness.js?v={_jsver('staleness.js')}" defer></script>
 <script>
 (function(){{
   const t = localStorage.getItem('leeks-theme') || 'dark';
@@ -749,6 +783,7 @@ function toggleTheme(){{
       <span>{counts.get("US", "?")} US + {counts.get("JP", "?")} JP 行 v2</span>
       <span>{n_v2} 個 v2 訊號 · 全部只做多 · 無目標價</span>
       <span>Updated {datetime.now().strftime('%H:%M HKT')}</span>
+      {_last_build_html}
     </div>
   </div>
 </div>

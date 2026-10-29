@@ -3,20 +3,20 @@
   "ticker_user": "UNH",
   "name": "UnitedHealth Group Incorporated",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 424.3,
-    "H": 425.25,
-    "L": 416.37,
-    "C": 418.09,
-    "prev_close": 424.98,
-    "chg_pct": -1.62
+    "date": "2026-10-28",
+    "O": 407.0,
+    "H": 416.19,
+    "L": 405.0,
+    "C": 407.1,
+    "prev_close": 410.39,
+    "chg_pct": -0.8
   },
-  "phase": "range",
-  "adx": 35.47,
-  "plus_di": 31.43,
-  "minus_di": 9.91,
+  "phase": "downtrend_active",
+  "adx": 34.74,
+  "plus_di": 25.95,
+  "minus_di": 14.81,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 461.62 (2026-07-16), trough 362.6 (2026-10-01), box top 426.55 (2026-10-22)",
@@ -32,55 +32,60 @@
     "top": 426.55,
     "top_date": "2026-10-22",
     "bottom": 362.6,
-    "period": "2026-10-01 to 2026-10-23"
+    "period": "2026-10-01 to 2026-10-28"
   },
-  "drop_from_peak_pct": 9.4,
-  "recovery_from_crash_pct": 15.3,
+  "drop_from_peak_pct": 11.8,
+  "recovery_from_crash_pct": 12.3,
   "supports": [
     {
-      "level": 400.0,
-      "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 4.3% below current"
-    },
-    {
       "level": 372.0,
-      "label": "S2",
-      "touches": 16,
-      "evidence": "mid-base support, tested 16x"
+      "label": "S1 KEY",
+      "touches": 15,
+      "evidence": "tested 15x in base period; 8.6% below current"
     },
     {
       "level": 368.0,
-      "label": "S3 bottom",
+      "label": "S2",
       "touches": 6,
+      "evidence": "mid-base support, tested 6x"
+    },
+    {
+      "level": 364.0,
+      "label": "S3 bottom",
+      "touches": 5,
       "evidence": "structural bottom, near crash low 362.6"
     }
   ],
   "resistances": [
     {
-      "level": 425.25,
+      "level": 416.19,
       "label": "R1 today high",
-      "evidence": "today's high 425.25"
+      "evidence": "today's high 416.19000244140625"
+    },
+    {
+      "level": 426.55,
+      "label": "R3 Oct high",
+      "evidence": "box top 426.55, base period high"
     }
   ],
   "position": {
-    "current": 418.09,
-    "in_box_pct": 87.5,
-    "nearest_support": "S1 KEY (400.0)",
-    "nearest_resistance": "R1 today high (425.25)"
+    "current": 407.1,
+    "in_box_pct": 68.9,
+    "nearest_support": "S1 KEY (372.0)",
+    "nearest_resistance": "R1 today high (416.19)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 424.3,
-    "H": 425.25,
-    "L": 416.37,
-    "C": 418.09,
-    "body_pct": 69.9,
-    "upper_wick_pct": 10.7,
-    "lower_wick_pct": 19.4
+    "O": 407.0,
+    "H": 416.19,
+    "L": 405.0,
+    "C": 407.1,
+    "body_pct": 0.9,
+    "upper_wick_pct": 81.2,
+    "lower_wick_pct": 17.9
   },
   "bias": {
     "short": {
@@ -88,8 +93,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": "no clear direction"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -98,20 +103,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 400.0 (KEY support)",
-      "then": "still range; watch 425.25 for next test"
+      "if": "hold 372.0 (KEY support)",
+      "then": "still range; watch 416.19 for next test"
     },
     {
-      "if": "break 400.0 on close",
-      "then": "target 372.0 → 368.0 (short-term bearish)"
+      "if": "break 372.0 on close",
+      "then": "target 368.0 → 364.0 (short-term bearish)"
     },
     {
-      "if": "break 368.0 (crash low)",
+      "if": "break 364.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 425.25 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 416.19 on close",
+      "then": "short-term bullish; next test 426.55"
+    },
+    {
+      "if": "break 426.55 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -144,13 +153,13 @@
     "phase_match": false,
     "r1": 426.55,
     "s1": 362.6,
-    "s2": 366.0,
-    "r2": 422.81,
+    "s2": 365.72,
+    "r2": 416.97,
     "r3": 461.62,
-    "s3": 358.25,
+    "s3": 371.99,
     "s4": 255.97,
-    "current_position_pct": 86.8,
-    "notes": "WAIT_RANGE: in box (363-427), pos 87%, no clear setup"
+    "current_position_pct": 69.6,
+    "notes": "WAIT_RANGE: in box (363-427), pos 70%, no clear setup"
   },
   "patterns": [
     {
@@ -159,7 +168,7 @@
       "date": "2026-10-23",
       "low": 416.3699951171875,
       "high": 425.25,
-      "i": 199
+      "i": 196
     },
     {
       "name": "刺穿線",
@@ -167,7 +176,7 @@
       "date": "2026-10-09",
       "low": 373.0199890136719,
       "high": 387.5199890136719,
-      "i": 189
+      "i": 186
     },
     {
       "name": "利好吞噬",
@@ -175,7 +184,7 @@
       "date": "2026-08-26",
       "low": 396.010009765625,
       "high": 406.25,
-      "i": 158
+      "i": 155
     },
     {
       "name": "利好身懷六甲",
@@ -183,7 +192,7 @@
       "date": "2026-08-12",
       "low": 400.5,
       "high": 407.20001220703125,
-      "i": 148
+      "i": 145
     },
     {
       "name": "上升三法",
@@ -191,7 +200,7 @@
       "date": "2026-07-28",
       "low": 415.1099853515625,
       "high": 430.4599914550781,
-      "i": 137
+      "i": 134
     }
   ]
 }

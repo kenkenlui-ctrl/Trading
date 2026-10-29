@@ -3,21 +3,21 @@
   "ticker_user": "2503.T",
   "name": "Kirin Holdings Company, Limited",
   "data_source": "yfinance",
-  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
+  "data_range": "2025-12-30 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 3000.0,
-    "H": 3040.0,
-    "L": 2970.0,
-    "C": 2980.5,
-    "prev_close": 2940.0,
-    "chg_pct": 1.3775510204081742
+    "date": "2026-10-28",
+    "O": 2911.5,
+    "H": 2924.0,
+    "L": 2803.5,
+    "C": 2803.5,
+    "prev_close": 2947.5,
+    "chg_pct": -4.885496183206106
   },
-  "phase": "range",
-  "adx": 19.16,
-  "plus_di": 35.16,
-  "minus_di": 13.45,
-  "regime": "range",
+  "phase": "downtrend_active",
+  "adx": 20.16,
+  "plus_di": 24.76,
+  "minus_di": 27.81,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 3161.0 (2026-07-29), trough 2727.0 (2026-10-07), box top 3040.0 (2026-10-23)",
   "peak": {
@@ -32,64 +32,57 @@
     "top": 3040.0,
     "top_date": "2026-10-23",
     "bottom": 2727.0,
-    "period": "2026-10-07 to 2026-10-23"
+    "period": "2026-10-07 to 2026-10-28"
   },
-  "drop_from_peak_pct": 5.7,
-  "recovery_from_crash_pct": 9.3,
+  "drop_from_peak_pct": 11.3,
+  "recovery_from_crash_pct": 2.8,
   "supports": [
     {
-      "level": 2904.0,
-      "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 2.6% below current"
-    },
-    {
-      "level": 2808.0,
-      "label": "S2",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
-    },
-    {
-      "level": 2784.0,
-      "label": "S3 bottom",
-      "touches": 3,
+      "level": 2720.0,
+      "label": "S1 bottom",
+      "touches": 0,
       "evidence": "structural bottom, near crash low 2727.0"
     }
   ],
   "resistances": [
     {
-      "level": 3040.0,
+      "level": 2924.0,
       "label": "R1 today high",
-      "evidence": "rejection at 3040.0 (long upper wick, close weak)"
+      "evidence": "today's high 2924.0"
+    },
+    {
+      "level": 3040.0,
+      "label": "R3 Oct high",
+      "evidence": "box top 3040.0, base period high"
     }
   ],
   "position": {
-    "current": 2980.5,
-    "in_box_pct": 76.8,
-    "nearest_support": "S1 KEY (2904.0)",
-    "nearest_resistance": "R1 today high (3040.0)"
+    "current": 2803.5,
+    "in_box_pct": 26.1,
+    "nearest_support": "S1 bottom (2720.0)",
+    "nearest_resistance": "R1 today high (2924.0)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 3000.0,
-    "H": 3040.0,
-    "L": 2970.0,
-    "C": 2980.5,
-    "body_pct": 27.9,
-    "upper_wick_pct": 57.1,
-    "lower_wick_pct": 15.0
+    "O": 2911.5,
+    "H": 2924.0,
+    "L": 2803.5,
+    "C": 2803.5,
+    "body_pct": 89.6,
+    "upper_wick_pct": 10.4,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (26% of box)"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": "no clear direction"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -98,20 +91,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 2904.0 (KEY support)",
-      "then": "still range; watch 3040.0 for next test"
+      "if": "hold 2720.0 (KEY support)",
+      "then": "still range; watch 2924.0 for next test"
     },
     {
-      "if": "break 2904.0 on close",
-      "then": "target 2808.0 → 2784.0 (short-term bearish)"
+      "if": "break 2720.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 2784.0 (crash low)",
+      "if": "break 2720.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 3040.0 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 2924.0 on close",
+      "then": "short-term bullish; next test 3040.0"
+    },
+    {
+      "if": "break 3040.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -133,33 +130,33 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 3040.0,
-    "target_price": 2883.5,
-    "stop_price": 3126.82,
-    "risk_pct": 2.86,
-    "reward_pct": 5.15,
-    "rr_ratio": 1.8,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 3040.0,
     "s1": 2727.0,
     "s2": 2754.5,
-    "r2": 3161.0,
-    "r3": 2957.5,
+    "r2": 3139.0,
+    "r3": 3161.0,
     "s3": 2456.0,
     "s4": 2315.0,
-    "current_position_pct": 81.0,
-    "notes": "SELL_R1: in box (2727-3040), entry at R1 3040, target mid 2884, stop 3127 ｜ 52.2 條規則（SELL plan，resistance 3040.00）：① 跌到 3040.00、收市守住喺 3040.00 上面 → 照 BUY 條 plan 做（入場 3040.00，止蝕 3126.82，目標 2883.50）。② 收市跌穿 3040.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 3040.00 上面』。"
+    "current_position_pct": 24.4,
+    "notes": "WAIT_RANGE: in box (2727-3040), pos 24%, no clear setup"
   },
   "patterns": [
     {
-      "name": "利淡吞噬",
+      "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-10-23",
-      "low": 2970.0,
-      "high": 3040.0,
-      "i": 199
+      "date": "2026-10-27",
+      "low": 2930.5,
+      "high": 2978.5,
+      "i": 198
     },
     {
       "name": "射擊之星",
@@ -167,7 +164,7 @@
       "date": "2026-08-28",
       "low": 3020.0,
       "high": 3060.0,
-      "i": 163
+      "i": 160
     },
     {
       "name": "利淡反擊線",
@@ -175,7 +172,7 @@
       "date": "2026-08-20",
       "low": 3004.0,
       "high": 3049.0,
-      "i": 157
+      "i": 154
     },
     {
       "name": "利淡反擊線",
@@ -183,31 +180,23 @@
       "date": "2026-07-16",
       "low": 2850.0,
       "high": 2877.5,
-      "i": 134
-    },
-    {
-      "name": "烏雲蓋頂",
-      "bias": "bearish",
-      "date": "2026-06-23",
-      "low": 2773.0,
-      "high": 2807.5,
-      "i": 117
+      "i": 131
     }
   ],
-  "asof": "2026-10-23",
-  "close": 2980.5,
-  "chg_pct": 1.3775510204081742,
+  "asof": "2026-10-28",
+  "close": 2803.5,
+  "chg_pct": -4.885496183206106,
   "kline": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 3000.0,
-    "H": 3040.0,
-    "L": 2970.0,
-    "C": 2980.5,
-    "body_pct": 27.9,
-    "upper_wick_pct": 57.1,
-    "lower_wick_pct": 15.0
+    "O": 2911.5,
+    "H": 2924.0,
+    "L": 2803.5,
+    "C": 2803.5,
+    "body_pct": 89.6,
+    "upper_wick_pct": 10.4,
+    "lower_wick_pct": 0.0
   }
 }

@@ -3,20 +3,20 @@
   "ticker_user": "00300.HK",
   "name": "MIDEA GROUP",
   "data_source": "yfinance",
-  "data_range": "2025-12-31 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-06 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 94.55,
-    "H": 95.15,
-    "L": 93.35,
-    "C": 94.6,
-    "prev_close": 93.6,
-    "chg_pct": 1.07
+    "date": "2026-10-28",
+    "O": 93.25,
+    "H": 93.3,
+    "L": 92.25,
+    "C": 93.15,
+    "prev_close": 93.25,
+    "chg_pct": -0.11
   },
   "phase": "downtrend_active",
-  "adx": 15.02,
-  "plus_di": 21.57,
-  "minus_di": 19.81,
+  "adx": 14.74,
+  "plus_di": 17.95,
+  "minus_di": 25.48,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 101.7 (2026-08-31), trough 90.0 (2026-10-06), box top 95.5 (2026-10-12)",
@@ -32,48 +32,53 @@
     "top": 95.5,
     "top_date": "2026-10-12",
     "bottom": 90.0,
-    "period": "2026-10-06 to 2026-10-23"
+    "period": "2026-10-06 to 2026-10-28"
   },
-  "drop_from_peak_pct": 7.0,
-  "recovery_from_crash_pct": 5.1,
+  "drop_from_peak_pct": 8.4,
+  "recovery_from_crash_pct": 3.5,
   "supports": [
     {
       "level": 92.0,
       "label": "S1 bottom",
-      "touches": 9,
+      "touches": 6,
       "evidence": "structural bottom, near crash low 90.0"
     }
   ],
   "resistances": [
     {
-      "level": 95.15,
+      "level": 93.3,
       "label": "R1 today high",
-      "evidence": "today's high 95.1500015258789"
+      "evidence": "today's high 93.30000305175781"
+    },
+    {
+      "level": 95.5,
+      "label": "R3 Oct high",
+      "evidence": "box top 95.5, base period high"
     }
   ],
   "position": {
-    "current": 94.6,
-    "in_box_pct": 82.5,
+    "current": 93.15,
+    "in_box_pct": 32.9,
     "nearest_support": "S1 bottom (92.0)",
-    "nearest_resistance": "R1 today high (95.15)"
+    "nearest_resistance": "R1 today high (93.3)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 94.55,
-    "H": 95.15,
-    "L": 93.35,
-    "C": 94.6,
-    "body_pct": 2.8,
-    "upper_wick_pct": 30.6,
-    "lower_wick_pct": 66.7
+    "O": 93.25,
+    "H": 93.3,
+    "L": 92.25,
+    "C": 93.15,
+    "body_pct": 9.5,
+    "upper_wick_pct": 4.8,
+    "lower_wick_pct": 85.7
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (33% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -87,7 +92,7 @@
   "scenarios": [
     {
       "if": "hold 92.0 (KEY support)",
-      "then": "still range; watch 95.15 for next test"
+      "then": "still range; watch 93.3 for next test"
     },
     {
       "if": "break 92.0 on close",
@@ -98,8 +103,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 95.15 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 93.3 on close",
+      "then": "short-term bullish; next test 95.5"
+    },
+    {
+      "if": "break 95.5 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -121,24 +130,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 97.0,
-    "target_price": 93.5,
-    "stop_price": 99.61,
-    "risk_pct": 2.7,
-    "reward_pct": 3.61,
-    "rr_ratio": 1.34,
-    "phase_match": true,
-    "r1": 97.0,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 95.5,
     "s1": 90.0,
-    "s2": 94.65,
+    "s2": 94.55,
     "r2": 101.7,
-    "r3": 98.95,
+    "r3": 99.75,
     "s3": 78.1,
     "s4": 77.65,
-    "current_position_pct": 65.7,
-    "notes": "SELL_R1: in box (90-97), entry at R1 97, target mid 94, stop 100 ｜ 52.2 條規則（SELL plan，resistance 97.00）：① 跌到 97.00、收市守住喺 97.00 上面 → 照 BUY 條 plan 做（入場 97.00，止蝕 99.61，目標 93.50）。② 收市跌穿 97.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 97.00 上面』。"
+    "current_position_pct": 57.3,
+    "notes": "WAIT_RANGE: in box (90-96), pos 57%, no clear setup"
   },
   "patterns": [
     {
@@ -147,7 +156,7 @@
       "date": "2026-10-08",
       "low": 90.1500015258789,
       "high": 93.3499984741211,
-      "i": 189
+      "i": 186
     },
     {
       "name": "刺穿線",
@@ -155,7 +164,7 @@
       "date": "2026-09-28",
       "low": 94.55000305175781,
       "high": 96.30000305175781,
-      "i": 182
+      "i": 179
     },
     {
       "name": "烏雲蓋頂",
@@ -163,7 +172,7 @@
       "date": "2026-09-07",
       "low": 99.19999694824219,
       "high": 101.0999984741211,
-      "i": 167
+      "i": 164
     },
     {
       "name": "利淡反擊線",
@@ -171,7 +180,7 @@
       "date": "2026-08-27",
       "low": 97.69999694824219,
       "high": 99.69999694824219,
-      "i": 160
+      "i": 157
     },
     {
       "name": "利淡吞噬",
@@ -179,7 +188,7 @@
       "date": "2026-08-14",
       "low": 95.5999984741211,
       "high": 96.5999984741211,
-      "i": 151
+      "i": 148
     }
   ]
 }

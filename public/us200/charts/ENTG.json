@@ -1,0 +1,209 @@
+{
+  "ticker": "US.ENTG",
+  "ticker_user": "ENTG",
+  "name": "Entegris, Inc.",
+  "data_source": "yfinance",
+  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "last_bar": {
+    "date": "2026-10-28",
+    "O": 153.54,
+    "H": 160.1,
+    "L": 151.51,
+    "C": 159.32,
+    "prev_close": 150.1,
+    "chg_pct": 6.14
+  },
+  "phase": "base_building",
+  "adx": 18.67,
+  "plus_di": 31.39,
+  "minus_di": 27.55,
+  "regime": "range",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 186.94 (2026-06-22), trough 106.91 (2026-07-29), box top 169.63 (2026-10-02)",
+  "peak": {
+    "date": "2026-06-22",
+    "price": 186.94
+  },
+  "trough": {
+    "date": "2026-07-29",
+    "price": 106.91
+  },
+  "box": {
+    "top": 169.63,
+    "top_date": "2026-10-02",
+    "bottom": 106.91,
+    "period": "2026-07-29 to 2026-10-28"
+  },
+  "drop_from_peak_pct": 14.8,
+  "recovery_from_crash_pct": 49.0,
+  "supports": [
+    {
+      "level": 152.0,
+      "label": "S1 KEY",
+      "touches": 10,
+      "evidence": "tested 10x in base period; 4.6% below current"
+    },
+    {
+      "level": 144.0,
+      "label": "S2",
+      "touches": 13,
+      "evidence": "mid-base support, tested 13x"
+    },
+    {
+      "level": 140.0,
+      "label": "S3",
+      "touches": 20,
+      "evidence": "mid-base support, tested 20x"
+    },
+    {
+      "level": 106.91,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-07-29, structural bottom"
+    }
+  ],
+  "resistances": [
+    {
+      "level": 160.1,
+      "label": "R1 today high",
+      "evidence": "today's high 160.10000610351562"
+    },
+    {
+      "level": 165.0,
+      "label": "R2",
+      "evidence": "mid-box supply, round number 165"
+    },
+    {
+      "level": 169.63,
+      "label": "R3 Oct high",
+      "evidence": "box top 169.63, base period high"
+    }
+  ],
+  "position": {
+    "current": 159.32,
+    "in_box_pct": 83.6,
+    "nearest_support": "S1 KEY (152.0)",
+    "nearest_resistance": "R1 today high (160.1)"
+  },
+  "kline_today": {
+    "type": "neutral",
+    "touched_R1": true,
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 153.54,
+    "H": 160.1,
+    "L": 151.51,
+    "C": 159.32,
+    "body_pct": 67.3,
+    "upper_wick_pct": 9.1,
+    "lower_wick_pct": 23.6
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 152.0 (KEY support)",
+      "then": "still range; watch 160.1 for next test"
+    },
+    {
+      "if": "break 152.0 on close",
+      "then": "target 144.0 → 140.0 (short-term bearish)"
+    },
+    {
+      "if": "break 106.91 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 160.1 on close",
+      "then": "short-term bullish; next test 165.0"
+    },
+    {
+      "if": "break 169.63 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
+  "action_plan": {
+    "verdict": "WAIT",
+    "strategy": "WAIT_VOLATILE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 169.63,
+    "s1": 127.01,
+    "s2": 125.78,
+    "r2": 166.2,
+    "r3": 186.94,
+    "s3": 106.91,
+    "s4": 100.19,
+    "current_position_pct": 75.8,
+    "notes": "WAIT_VOLATILE: ATR14 6.1% / box width 27% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
+  },
+  "patterns": [
+    {
+      "name": "平頭底",
+      "bias": "bullish",
+      "date": "2026-10-26",
+      "low": 134.52000427246094,
+      "high": 142.1999969482422,
+      "i": 197
+    },
+    {
+      "name": "平頭頂",
+      "bias": "bearish",
+      "date": "2026-10-12",
+      "low": 157.2899932861328,
+      "high": 163.75,
+      "i": 187
+    },
+    {
+      "name": "錘頭",
+      "bias": "bullish",
+      "date": "2026-09-17",
+      "low": 132.5399932861328,
+      "high": 135.14999389648438,
+      "i": 170
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-08-18",
+      "low": 148.00999450683594,
+      "high": 155.27999877929688,
+      "i": 149
+    }
+  ]
+}

@@ -3,20 +3,20 @@
   "ticker_user": "ICE",
   "name": "Intercontinental Exchange Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 163.25,
-    "H": 164.69,
-    "L": 161.95,
-    "C": 162.74,
-    "prev_close": 163.84,
-    "chg_pct": -0.67
+    "date": "2026-10-28",
+    "O": 154.83,
+    "H": 156.13,
+    "L": 153.9,
+    "C": 155.96,
+    "prev_close": 155.44,
+    "chg_pct": 0.33
   },
   "phase": "base_building",
-  "adx": 15.17,
-  "plus_di": 26.82,
-  "minus_di": 14.4,
+  "adx": 14.34,
+  "plus_di": 21.46,
+  "minus_di": 27.02,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 176.05 (2026-01-29), trough 121.79 (2026-06-29), box top 164.69 (2026-10-23)",
@@ -32,28 +32,28 @@
     "top": 164.69,
     "top_date": "2026-10-23",
     "bottom": 121.79,
-    "period": "2026-06-29 to 2026-10-23"
+    "period": "2026-06-29 to 2026-10-28"
   },
-  "drop_from_peak_pct": 7.6,
-  "recovery_from_crash_pct": 33.6,
+  "drop_from_peak_pct": 11.4,
+  "recovery_from_crash_pct": 28.1,
   "supports": [
     {
-      "level": 156.0,
-      "label": "S1 KEY",
-      "touches": 32,
-      "evidence": "tested 32x in base period; 4.1% below current"
-    },
-    {
       "level": 152.0,
-      "label": "S2",
-      "touches": 33,
-      "evidence": "mid-base support, tested 33x"
+      "label": "S1 KEY",
+      "touches": 28,
+      "evidence": "tested 28x in base period; 2.5% below current"
     },
     {
       "level": 148.0,
-      "label": "S3",
+      "label": "S2",
       "touches": 12,
       "evidence": "mid-base support, tested 12x"
+    },
+    {
+      "level": 140.0,
+      "label": "S3",
+      "touches": 6,
+      "evidence": "mid-base support, tested 6x"
     },
     {
       "level": 121.79,
@@ -64,29 +64,39 @@
   ],
   "resistances": [
     {
-      "level": 164.69,
+      "level": 156.13,
       "label": "R1 today high",
-      "evidence": "rejection at 164.69000244140625 (long upper wick, close weak)"
+      "evidence": "today's high 156.1300048828125"
+    },
+    {
+      "level": 160.0,
+      "label": "R2",
+      "evidence": "mid-box supply, round number 160"
+    },
+    {
+      "level": 164.69,
+      "label": "R3 Oct high",
+      "evidence": "box top 164.69, base period high"
     }
   ],
   "position": {
-    "current": 162.74,
-    "in_box_pct": 95.5,
-    "nearest_support": "S1 KEY (156.0)",
-    "nearest_resistance": "R1 today high (164.69)"
+    "current": 155.96,
+    "in_box_pct": 79.7,
+    "nearest_support": "S1 KEY (152.0)",
+    "nearest_resistance": "R1 today high (156.13)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 163.25,
-    "H": 164.69,
-    "L": 161.95,
-    "C": 162.74,
-    "body_pct": 18.6,
-    "upper_wick_pct": 52.6,
-    "lower_wick_pct": 28.8
+    "close_position": "upper_half",
+    "O": 154.83,
+    "H": 156.13,
+    "L": 153.9,
+    "C": 155.96,
+    "body_pct": 50.7,
+    "upper_wick_pct": 7.6,
+    "lower_wick_pct": 41.7
   },
   "bias": {
     "short": {
@@ -98,26 +108,30 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 156.0 (KEY support)",
-      "then": "still range; watch 164.69 for next test"
+      "if": "hold 152.0 (KEY support)",
+      "then": "still range; watch 156.13 for next test"
     },
     {
-      "if": "break 156.0 on close",
-      "then": "target 152.0 → 148.0 (short-term bearish)"
+      "if": "break 152.0 on close",
+      "then": "target 148.0 → 140.0 (short-term bearish)"
     },
     {
       "if": "break 121.79 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 164.69 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 156.13 on close",
+      "then": "short-term bullish; next test 160.0"
+    },
+    {
+      "if": "break 164.69 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -139,14 +153,14 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 164.69,
-    "target_price": 156.1,
-    "stop_price": 169.66,
-    "risk_pct": 3.02,
-    "reward_pct": 5.22,
-    "rr_ratio": 1.73,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
     "phase_match": true,
     "r1": 164.69,
     "s1": 147.5,
@@ -155,17 +169,17 @@
     "r3": 158.9,
     "s3": 121.79,
     "s4": 144.18,
-    "current_position_pct": 88.7,
-    "notes": "SELL_R1: in box (148-165), entry at R1 165, target mid 156, stop 170 ｜ 52.2 條規則（SELL plan，resistance 164.69）：① 跌到 164.69、收市守住喺 164.69 上面 → 照 BUY 條 plan 做（入場 164.69，止蝕 169.66，目標 156.10）。② 收市跌穿 164.69 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 164.69 上面』。"
+    "current_position_pct": 49.2,
+    "notes": "WAIT_RANGE: in box (148-165), pos 49%, no clear setup"
   },
   "patterns": [
     {
-      "name": "烏雲蓋頂",
+      "name": "黃昏之星",
       "bias": "bearish",
-      "date": "2026-10-23",
-      "low": 161.9499969482422,
-      "high": 164.69000244140625,
-      "i": 199
+      "date": "2026-10-27",
+      "low": 155.2899932861328,
+      "high": 160.41000366210938,
+      "i": 198
     },
     {
       "name": "刺穿線",
@@ -173,7 +187,7 @@
       "date": "2026-10-08",
       "low": 151.77999877929688,
       "high": 155.9600067138672,
-      "i": 188
+      "i": 185
     },
     {
       "name": "上升三法",
@@ -181,7 +195,15 @@
       "date": "2026-09-11",
       "low": 154.9499969482422,
       "high": 158.30999755859375,
-      "i": 169
+      "i": 166
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-09-04",
+      "low": 161.0500030517578,
+      "high": 162.55999755859375,
+      "i": 162
     },
     {
       "name": "烏雲蓋頂",
@@ -189,15 +211,7 @@
       "date": "2026-07-21",
       "low": 138.38999938964844,
       "high": 140.85000610351562,
-      "i": 132
-    },
-    {
-      "name": "利好反擊線",
-      "bias": "bullish",
-      "date": "2026-07-01",
-      "low": 123.61000061035156,
-      "high": 128.6999969482422,
-      "i": 119
+      "i": 129
     }
   ]
 }

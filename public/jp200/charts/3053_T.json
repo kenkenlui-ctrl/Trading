@@ -3,20 +3,20 @@
   "ticker_user": "3053.T",
   "name": "Pepper Food Service Co., Ltd.",
   "data_source": "yfinance",
-  "data_range": "2025-12-25 → 2026-10-23 (200 daily bars)",
+  "data_range": "2025-12-30 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
+    "date": "2026-10-28",
     "O": 205.0,
-    "H": 208.0,
-    "L": 203.0,
-    "C": 207.0,
-    "prev_close": 205.0,
-    "chg_pct": 0.9756097560975618
+    "H": 205.0,
+    "L": 202.0,
+    "C": 202.0,
+    "prev_close": 204.0,
+    "chg_pct": -0.9803921568627416
   },
   "phase": "downtrend_active",
-  "adx": 25.35,
-  "plus_di": 19.2,
-  "minus_di": 8.4,
+  "adx": 25.33,
+  "plus_di": 15.57,
+  "minus_di": 10.58,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 220.0 (2026-08-17), trough 196.0 (2026-10-08), box top 208.0 (2026-10-23)",
@@ -32,43 +32,48 @@
     "top": 208.0,
     "top_date": "2026-10-23",
     "bottom": 196.0,
-    "period": "2026-10-08 to 2026-10-23"
+    "period": "2026-10-08 to 2026-10-28"
   },
-  "drop_from_peak_pct": 5.9,
-  "recovery_from_crash_pct": 5.6,
+  "drop_from_peak_pct": 8.2,
+  "recovery_from_crash_pct": 3.1,
   "supports": [
     {
-      "level": 200.0,
+      "level": 196.0,
       "label": "S1 bottom",
-      "touches": 26,
+      "touches": 7,
       "evidence": "structural bottom, near crash low 196.0"
     }
   ],
   "resistances": [
     {
-      "level": 208.0,
+      "level": 205.0,
       "label": "R1 today high",
-      "evidence": "today's high 208.0"
+      "evidence": "today's high 205.0"
+    },
+    {
+      "level": 208.0,
+      "label": "R3 Oct high",
+      "evidence": "box top 208.0, base period high"
     }
   ],
   "position": {
-    "current": 207.0,
-    "in_box_pct": 87.5,
-    "nearest_support": "S1 bottom (200.0)",
-    "nearest_resistance": "R1 today high (208.0)"
+    "current": 202.0,
+    "in_box_pct": 50.0,
+    "nearest_support": "S1 bottom (196.0)",
+    "nearest_resistance": "R1 today high (205.0)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
+    "close_position": "lower_half",
     "O": 205.0,
-    "H": 208.0,
-    "L": 203.0,
-    "C": 207.0,
-    "body_pct": 40.0,
-    "upper_wick_pct": 20.0,
-    "lower_wick_pct": 40.0
+    "H": 205.0,
+    "L": 202.0,
+    "C": 202.0,
+    "body_pct": 100.0,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
@@ -86,20 +91,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 200.0 (KEY support)",
-      "then": "still range; watch 208.0 for next test"
+      "if": "hold 196.0 (KEY support)",
+      "then": "still range; watch 205.0 for next test"
     },
     {
-      "if": "break 200.0 on close",
+      "if": "break 196.0 on close",
       "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 200.0 (crash low)",
+      "if": "break 196.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 208.0 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 205.0 on close",
+      "then": "short-term bullish; next test 208.0"
+    },
+    {
+      "if": "break 208.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -122,7 +131,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -132,22 +141,30 @@
     "phase_match": false,
     "r1": 208.0,
     "s1": 196.0,
-    "s2": 182.0,
+    "s2": 184.0,
     "r2": 220.0,
     "r3": 206.0,
     "s3": 177.0,
     "s4": 166.0,
-    "current_position_pct": 91.7,
-    "notes": "WAIT_RANGE: in box (196-208), pos 92%, no clear setup"
+    "current_position_pct": 50.0,
+    "notes": "WAIT_RANGE: in box (196-208), pos 50%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-10-26",
+      "low": 204.0,
+      "high": 207.0,
+      "i": 197
+    },
     {
       "name": "平頭頂",
       "bias": "bearish",
       "date": "2026-10-20",
       "low": 202.0,
       "high": 206.0,
-      "i": 196
+      "i": 193
     },
     {
       "name": "平頭底",
@@ -155,7 +172,7 @@
       "date": "2026-10-13",
       "low": 199.0,
       "high": 202.0,
-      "i": 191
+      "i": 188
     },
     {
       "name": "倒錘頭",
@@ -163,7 +180,7 @@
       "date": "2026-09-24",
       "low": 200.0,
       "high": 204.0,
-      "i": 179
+      "i": 176
     },
     {
       "name": "吊頸",
@@ -171,31 +188,23 @@
       "date": "2026-09-02",
       "low": 199.0,
       "high": 204.0,
-      "i": 166
-    },
-    {
-      "name": "烏雲蓋頂",
-      "bias": "bearish",
-      "date": "2026-08-26",
-      "low": 209.0,
-      "high": 212.0,
-      "i": 161
+      "i": 163
     }
   ],
-  "asof": "2026-10-23",
-  "close": 207.0,
-  "chg_pct": 0.9756097560975618,
+  "asof": "2026-10-28",
+  "close": 202.0,
+  "chg_pct": -0.9803921568627416,
   "kline": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
+    "close_position": "lower_half",
     "O": 205.0,
-    "H": 208.0,
-    "L": 203.0,
-    "C": 207.0,
-    "body_pct": 40.0,
-    "upper_wick_pct": 20.0,
-    "lower_wick_pct": 40.0
+    "H": 205.0,
+    "L": 202.0,
+    "C": 202.0,
+    "body_pct": 100.0,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 0.0
   }
 }

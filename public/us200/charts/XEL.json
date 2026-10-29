@@ -3,20 +3,20 @@
   "ticker_user": "XEL",
   "name": "Xcel Energy Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 78.74,
-    "H": 79.04,
-    "L": 77.48,
-    "C": 78.05,
-    "prev_close": 78.9,
-    "chg_pct": -1.08
+    "date": "2026-10-28",
+    "O": 78.22,
+    "H": 78.38,
+    "L": 76.97,
+    "C": 77.18,
+    "prev_close": 78.14,
+    "chg_pct": -1.23
   },
-  "phase": "range",
-  "adx": 29.84,
-  "plus_di": 30.9,
-  "minus_di": 11.28,
+  "phase": "base_building",
+  "adx": 31.93,
+  "plus_di": 25.73,
+  "minus_di": 12.39,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 84.23 (2026-02-26), trough 68.72 (2026-09-25), box top 79.17 (2026-10-22)",
@@ -32,22 +32,22 @@
     "top": 79.17,
     "top_date": "2026-10-22",
     "bottom": 68.72,
-    "period": "2026-09-25 to 2026-10-23"
+    "period": "2026-09-25 to 2026-10-28"
   },
-  "drop_from_peak_pct": 7.3,
-  "recovery_from_crash_pct": 13.6,
+  "drop_from_peak_pct": 8.4,
+  "recovery_from_crash_pct": 12.3,
   "supports": [
     {
       "level": 76.0,
       "label": "S1 KEY",
-      "touches": 11,
-      "evidence": "tested 11x in base period; 2.6% below current"
+      "touches": 10,
+      "evidence": "tested 10x in base period; 1.5% below current"
     },
     {
       "level": 72.0,
       "label": "S2",
-      "touches": 25,
-      "evidence": "mid-base support, tested 25x"
+      "touches": 23,
+      "evidence": "mid-base support, tested 23x"
     },
     {
       "level": 68.0,
@@ -58,29 +58,34 @@
   ],
   "resistances": [
     {
-      "level": 79.04,
+      "level": 78.38,
       "label": "R1 today high",
-      "evidence": "today's high 79.04000091552734"
+      "evidence": "today's high 78.37999725341797"
+    },
+    {
+      "level": 79.17,
+      "label": "R3 Oct high",
+      "evidence": "box top 79.17, base period high"
     }
   ],
   "position": {
-    "current": 78.05,
-    "in_box_pct": 91.0,
+    "current": 77.18,
+    "in_box_pct": 82.2,
     "nearest_support": "S1 KEY (76.0)",
-    "nearest_resistance": "R1 today high (79.04)"
+    "nearest_resistance": "R1 today high (78.38)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 78.74,
-    "H": 79.04,
-    "L": 77.48,
-    "C": 78.05,
-    "body_pct": 44.2,
-    "upper_wick_pct": 19.2,
-    "lower_wick_pct": 36.5
+    "O": 78.22,
+    "H": 78.38,
+    "L": 76.97,
+    "C": 77.18,
+    "body_pct": 73.8,
+    "upper_wick_pct": 11.3,
+    "lower_wick_pct": 14.9
   },
   "bias": {
     "short": {
@@ -88,18 +93,18 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": "no clear direction"
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 76.0 (KEY support)",
-      "then": "still range; watch 79.04 for next test"
+      "then": "still range; watch 78.38 for next test"
     },
     {
       "if": "break 76.0 on close",
@@ -110,8 +115,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 79.04 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 78.38 on close",
+      "then": "short-term bullish; next test 79.17"
+    },
+    {
+      "if": "break 79.17 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -143,23 +152,31 @@
     "rr_ratio": 0.0,
     "phase_match": false,
     "r1": 79.17,
-    "s1": 68.75,
+    "s1": 69.5,
     "s2": 68.72,
     "r2": 80.81,
     "r3": 82.88,
     "s3": 76.16,
-    "s4": 73.1,
-    "current_position_pct": 89.3,
-    "notes": "WAIT_RANGE: in box (69-79), pos 89%, no clear setup"
+    "s4": 73.79,
+    "current_position_pct": 79.4,
+    "notes": "WAIT_RANGE: in box (70-79), pos 79%, no clear setup"
   },
   "patterns": [
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-10-23",
-      "low": 77.4800033569336,
-      "high": 79.04000091552734,
+      "date": "2026-10-28",
+      "low": 76.97000122070312,
+      "high": 78.37999725341797,
       "i": 199
+    },
+    {
+      "name": "利淡吞噬",
+      "bias": "bearish",
+      "date": "2026-10-19",
+      "low": 74.83999633789062,
+      "high": 76.43000030517578,
+      "i": 192
     },
     {
       "name": "利好反擊線",
@@ -167,7 +184,7 @@
       "date": "2026-10-02",
       "low": 71.08000183105469,
       "high": 71.88999938964844,
-      "i": 184
+      "i": 181
     },
     {
       "name": "刺穿線",
@@ -175,7 +192,7 @@
       "date": "2026-09-08",
       "low": 75.45999908447266,
       "high": 77.0,
-      "i": 166
+      "i": 163
     },
     {
       "name": "利好身懷六甲",
@@ -183,15 +200,7 @@
       "date": "2026-08-31",
       "low": 75.05999755859375,
       "high": 76.12000274658203,
-      "i": 161
-    },
-    {
-      "name": "平頭頂",
-      "bias": "bearish",
-      "date": "2026-08-21",
-      "low": 76.19999694824219,
-      "high": 79.4800033569336,
-      "i": 155
+      "i": 158
     }
   ]
 }

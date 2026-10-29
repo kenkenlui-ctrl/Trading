@@ -36,30 +36,54 @@ from datetime import datetime
 REPO = pathlib.Path(__file__).resolve().parents[1]
 OUT = REPO / "data" / "market_sessions.json"
 
-# market -> (index ticker, label, source)
+# market -> (index ticker, label, source, timezone, close hour)
 MARKETS = {
-    "hk200": ("^HSI", "Hang Seng Index", "yfinance"),
-    "us200": ("^GSPC", "S&P 500", "yfinance"),
-    "jp200": ("^N225", "Nikkei 225", "yfinance"),
+    "hk200": ("^HSI", "Hang Seng Index", "yfinance", "Asia/Hong_Kong", 16),
+    "us200": ("^GSPC", "S&P 500", "yfinance", "America/New_York", 16),
+    "jp200": ("^N225", "Nikkei 225", "yfinance", "Asia/Tokyo", 15),
 }
 
 
-def _last_close(index_ticker: str) -> str:
-    """The index's most recent close date, as YYYY-MM-DD."""
+def _last_close(index_ticker: str, market: str) -> str:
+    """The index's most recent CLOSED session, as YYYY-MM-DD.
+
+    2026-10-29: this returned TODAY's date while the market was still open.
+    The vendor publishes an in-progress daily bar for the session in
+    progress, so "the last bar" is not "the last CLOSED session" — and the
+    difference is a false STALE banner on the site every morning, for a
+    market that has not opened yet.
+
+    So: if the newest bar is dated today in the market's own timezone and
+    the close has not happened yet, that bar is today's unfinished session
+    and the last closed session is the one before it.
+    """
     import yfinance as yf
 
     df = yf.Ticker(index_ticker).history(period="10d", auto_adjust=False)
     if df is None or len(df) == 0:
         raise RuntimeError(f"no bars returned for {index_ticker}")
-    return str(df.index[-1].date())[:10]
+    dates = [str(d.date()) for d in df.index]
+
+    tzname, close_hour = MARKETS[market][3], MARKETS[market][4]
+    try:
+        from zoneinfo import ZoneInfo
+        now_local = datetime.now(ZoneInfo(tzname))
+    except Exception:
+        now_local = datetime.now()
+    today_local = now_local.date().isoformat()
+    if dates and dates[-1] == today_local and now_local.hour < close_hour:
+        dates = dates[:-1]
+    if not dates:
+        raise RuntimeError(f"no completed session found for {index_ticker}")
+    return dates[-1]
 
 
 def collect() -> dict:
     now = datetime.now().astimezone()
     markets: dict = {}
-    for key, (ticker, label, source) in MARKETS.items():
+    for key, (ticker, label, source, _tz, _close) in MARKETS.items():
         try:
-            sess = _last_close(ticker)
+            sess = _last_close(ticker, key)
             markets[key] = {
                 "latest_closed_session": sess,
                 "status": "ok",

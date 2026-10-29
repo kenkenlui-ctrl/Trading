@@ -3,64 +3,64 @@
   "ticker_user": "MSFT",
   "name": "Microsoft Corporation",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 517.75,
-    "H": 525.77,
-    "L": 515.7,
-    "C": 524.51,
-    "prev_close": 521.08,
-    "chg_pct": 0.66
+    "date": "2026-10-28",
+    "O": 531.82,
+    "H": 535.0,
+    "L": 526.14,
+    "C": 531.01,
+    "prev_close": 531.33,
+    "chg_pct": -0.06
   },
   "phase": "base_building",
-  "adx": 28.96,
-  "plus_di": 19.55,
-  "minus_di": 21.09,
-  "regime": "trend",
+  "adx": 24.75,
+  "plus_di": 21.51,
+  "minus_di": 19.09,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 551.15 (2026-10-13), trough 487.23 (2026-09-16), box top 551.15 (2026-10-13)",
+  "phase_evidence": "Peak 551.15 (2026-10-13), trough 491.1 (2026-09-18), box top 551.15 (2026-10-13)",
   "peak": {
     "date": "2026-10-13",
     "price": 551.15
   },
   "trough": {
-    "date": "2026-09-16",
-    "price": 487.23
+    "date": "2026-09-18",
+    "price": 491.1
   },
   "box": {
     "top": 551.15,
     "top_date": "2026-10-13",
-    "bottom": 487.23,
-    "period": "2026-09-16 to 2026-10-23"
+    "bottom": 491.1,
+    "period": "2026-09-18 to 2026-10-28"
   },
-  "drop_from_peak_pct": 4.8,
-  "recovery_from_crash_pct": 7.7,
+  "drop_from_peak_pct": 3.7,
+  "recovery_from_crash_pct": 8.1,
   "supports": [
     {
-      "level": 512.0,
+      "level": 520.0,
       "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; 2.1% below current"
+    },
+    {
+      "level": 512.0,
+      "label": "S2",
       "touches": 6,
-      "evidence": "tested 6x in base period; 2.4% below current"
+      "evidence": "mid-base support, tested 6x"
     },
     {
       "level": 504.0,
-      "label": "S2",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
-    },
-    {
-      "level": 496.0,
       "label": "S3 bottom",
-      "touches": 6,
-      "evidence": "structural bottom, near crash low 487.23"
+      "touches": 4,
+      "evidence": "structural bottom, near crash low 491.1"
     }
   ],
   "resistances": [
     {
-      "level": 525.77,
+      "level": 535.0,
       "label": "R1 today high",
-      "evidence": "today's high 525.77001953125"
+      "evidence": "today's high 535.0"
     },
     {
       "level": 551.15,
@@ -69,28 +69,28 @@
     }
   ],
   "position": {
-    "current": 524.51,
-    "in_box_pct": 51.7,
-    "nearest_support": "S1 KEY (512.0)",
-    "nearest_resistance": "R1 today high (525.77)"
+    "current": 531.01,
+    "in_box_pct": 57.3,
+    "nearest_support": "S1 KEY (520.0)",
+    "nearest_resistance": "R1 today high (535.0)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 517.75,
-    "H": 525.77,
-    "L": 515.7,
-    "C": 524.51,
-    "body_pct": 67.1,
-    "upper_wick_pct": 12.5,
-    "lower_wick_pct": 20.4
+    "O": 531.82,
+    "H": 535.0,
+    "L": 526.14,
+    "C": 531.01,
+    "body_pct": 9.1,
+    "upper_wick_pct": 35.9,
+    "lower_wick_pct": 55.0
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -103,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 512.0 (KEY support)",
-      "then": "still range; watch 525.77 for next test"
+      "if": "hold 520.0 (KEY support)",
+      "then": "still range; watch 535.0 for next test"
     },
     {
-      "if": "break 512.0 on close",
-      "then": "target 504.0 → 496.0 (short-term bearish)"
+      "if": "break 520.0 on close",
+      "then": "target 512.0 → 504.0 (short-term bearish)"
     },
     {
-      "if": "break 496.0 (crash low)",
+      "if": "break 504.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 525.77 on close",
+      "if": "reclaim 535.0 on close",
       "then": "short-term bullish; next test 551.15"
     },
     {
@@ -152,39 +152,47 @@
     "rr_ratio": 0.0,
     "phase_match": true,
     "r1": 551.15,
-    "s1": 502.22,
-    "s2": 449.33,
-    "r2": 519.4,
-    "r3": 466.32,
+    "s1": 512.17,
+    "s2": 477.15,
+    "r2": 519.83,
+    "r3": 499.44,
     "s3": 349.2,
     "s4": 356.28,
-    "current_position_pct": 45.6,
-    "notes": "WAIT_RANGE: in box (502-551), pos 46%, no clear setup"
+    "current_position_pct": 48.3,
+    "notes": "WAIT_RANGE: in box (512-551), pos 48%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-10-28",
+      "low": 526.1400146484375,
+      "high": 535.0,
+      "i": 199
+    },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-10-20",
       "low": 525.8400268554688,
       "high": 534.2100219726562,
-      "i": 196
+      "i": 193
     },
     {
-      "name": "利淡反擊線",
+      "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-10-02",
-      "low": 513.6599731445312,
-      "high": 522.5,
-      "i": 184
+      "date": "2026-09-15",
+      "low": 495.5400085449219,
+      "high": 505.8999938964844,
+      "i": 168
     },
     {
-      "name": "利淡反擊線",
+      "name": "利淡吞噬",
       "bias": "bearish",
-      "date": "2026-08-17",
-      "low": 478.4100036621094,
-      "high": 492.6600036621094,
-      "i": 151
+      "date": "2026-08-14",
+      "low": 493.9200134277344,
+      "high": 500.010009765625,
+      "i": 147
     },
     {
       "name": "上升三法",
@@ -192,15 +200,7 @@
       "date": "2026-07-27",
       "low": 387.989990234375,
       "high": 394.20001220703125,
-      "i": 136
-    },
-    {
-      "name": "刺穿線",
-      "bias": "bullish",
-      "date": "2026-06-23",
-      "low": 370.6700134277344,
-      "high": 377.2200012207031,
-      "i": 113
+      "i": 133
     }
   ]
 }

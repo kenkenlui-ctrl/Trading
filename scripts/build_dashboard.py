@@ -209,6 +209,27 @@ REPO = Path("/Users/kenken/dev/dsa-hk")
 PUBLIC = REPO / "public"
 
 
+def _jsver(name: str) -> str:
+    """Cache-buster for the freshness scripts (same one-hash-one-URL rule as
+    the stylesheet: a visitor who loaded the page before the script changed
+    would otherwise keep running the old check).
+
+    ONE HASH PER FILE, not one hash for the pair: the content-stamp rule is
+    sha1 of the file the URL actually points at, so a combined digest stamps
+    both URLs with a value neither of them has — and the asset gate then
+    rejects every page that loads them.
+    """
+    import hashlib
+    from pathlib import Path
+    try:
+        p = Path(__file__).resolve().parent.parent / "public" / "static" / name
+        return hashlib.sha1(p.read_bytes()).hexdigest()[:8]
+    except Exception:
+        return "0"
+    except Exception:
+        return "0"
+
+
 def _cssver() -> str:
     """Cache-buster shared by every builder.
 
@@ -580,6 +601,11 @@ def build_dashboard_page(
     # Sprint 2 A1: the market's freshness state, derived at build time. Empty
     # string when the market is fresh (or when the banner flag is off).
     _stale_banner = staleness.banner_html(market)
+    # Sprint 2 A1: the facts the page needs to judge freshness at
+    # REQUEST time. The build-time banner above is frozen into the
+    # HTML; this is what catches a site that was built once and then
+    # sat there while the market moved on.
+    _fresh_meta = staleness.client_meta([market])
     v2_block = render_v2_block(market)
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant-HK">
@@ -610,6 +636,9 @@ def build_dashboard_page(
 </script>
 <link rel="stylesheet" href="/static/fonts-local.css">
 <link rel="stylesheet" href="/leeks.css?v={_cssver()}">
+<meta name="w9-freshness" content='{_fresh_meta}'>
+<script src="/static/staleness-core.js?v={_jsver('staleness-core.js')}" defer></script>
+<script src="/static/staleness.js?v={_jsver('staleness.js')}" defer></script>
 <script>
 (function(){{
   const t = localStorage.getItem('leeks-theme') || 'dark';
@@ -874,6 +903,7 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
     _t1 = data_asof(t.get("market", market))
     # Sprint 2 A1: market-level freshness banner (see scripts/staleness.py).
     _stale_banner = staleness.banner_html(market)
+    _fresh_meta = staleness.client_meta([market])
 
     # 2026-10-06 — fail-closed data-freshness banner.
     #
@@ -1177,6 +1207,9 @@ def render_detail_page(t: dict, prev_row: dict | None = None, next_row: dict | N
 </script>
 <link rel="stylesheet" href="/static/fonts-local.css">
 <link rel="stylesheet" href="/leeks.css?v={_cssver()}">
+<meta name="w9-freshness" content='{_fresh_meta}'>
+<script src="/static/staleness-core.js?v={_jsver('staleness-core.js')}" defer></script>
+<script src="/static/staleness.js?v={_jsver('staleness.js')}" defer></script>
 <script>
 (function(){{
   const t = localStorage.getItem('leeks-theme') || 'dark';

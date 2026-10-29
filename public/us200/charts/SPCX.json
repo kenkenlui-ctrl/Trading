@@ -3,20 +3,20 @@
   "ticker_user": "SPCX",
   "name": "Space Exploration Technologies",
   "data_source": "yfinance",
-  "data_range": "2026-06-12 → 2026-10-23 (93 daily bars)",
+  "data_range": "2026-06-12 → 2026-10-28 (96 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 147.93,
-    "H": 149.75,
-    "L": 144.09,
-    "C": 147.49,
-    "prev_close": 144.75,
-    "chg_pct": 1.89
+    "date": "2026-10-28",
+    "O": 147.37,
+    "H": 148.2,
+    "L": 142.13,
+    "C": 145.23,
+    "prev_close": 148.58,
+    "chg_pct": -2.25
   },
   "phase": "base_building",
-  "adx": 19.84,
-  "plus_di": 27.62,
-  "minus_di": 32.33,
+  "adx": 17.51,
+  "plus_di": 24.91,
+  "minus_di": 31.75,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 172.4 (2026-06-30), trough 104.83 (2026-08-03), box top 176.42 (2026-10-06)",
@@ -32,28 +32,28 @@
     "top": 176.42,
     "top_date": "2026-10-06",
     "bottom": 104.83,
-    "period": "2026-08-03 to 2026-10-23"
+    "period": "2026-08-03 to 2026-10-28"
   },
-  "drop_from_peak_pct": 14.4,
-  "recovery_from_crash_pct": 40.7,
+  "drop_from_peak_pct": 15.8,
+  "recovery_from_crash_pct": 38.5,
   "supports": [
     {
-      "level": 144.0,
-      "label": "S1 KEY",
-      "touches": 12,
-      "evidence": "tested 12x in base period; 2.4% below current"
-    },
-    {
       "level": 140.0,
-      "label": "S2",
+      "label": "S1 KEY",
       "touches": 10,
-      "evidence": "mid-base support, tested 10x"
+      "evidence": "tested 10x in base period; 3.6% below current"
     },
     {
       "level": 136.0,
-      "label": "S3",
+      "label": "S2",
       "touches": 6,
       "evidence": "mid-base support, tested 6x"
+    },
+    {
+      "level": 132.0,
+      "label": "S3",
+      "touches": 5,
+      "evidence": "mid-base support, tested 5x"
     },
     {
       "level": 104.83,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 149.75,
+      "level": 148.2,
       "label": "R1 today high",
-      "evidence": "today's high 149.75"
+      "evidence": "today's high 148.1999969482422"
     },
     {
       "level": 170.0,
@@ -80,23 +80,23 @@
     }
   ],
   "position": {
-    "current": 147.49,
-    "in_box_pct": 59.6,
-    "nearest_support": "S1 KEY (144.0)",
-    "nearest_resistance": "R1 today high (149.75)"
+    "current": 145.23,
+    "in_box_pct": 56.4,
+    "nearest_support": "S1 KEY (140.0)",
+    "nearest_resistance": "R1 today high (148.2)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 147.93,
-    "H": 149.75,
-    "L": 144.09,
-    "C": 147.49,
-    "body_pct": 7.8,
-    "upper_wick_pct": 32.2,
-    "lower_wick_pct": 60.1
+    "O": 147.37,
+    "H": 148.2,
+    "L": 142.13,
+    "C": 145.23,
+    "body_pct": 35.3,
+    "upper_wick_pct": 13.7,
+    "lower_wick_pct": 51.1
   },
   "bias": {
     "short": {
@@ -114,19 +114,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 144.0 (KEY support)",
-      "then": "still range; watch 149.75 for next test"
+      "if": "hold 140.0 (KEY support)",
+      "then": "still range; watch 148.2 for next test"
     },
     {
-      "if": "break 144.0 on close",
-      "then": "target 140.0 → 136.0 (short-term bearish)"
+      "if": "break 140.0 on close",
+      "then": "target 136.0 → 132.0 (short-term bearish)"
     },
     {
       "if": "break 104.83 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 149.75 on close",
+      "if": "reclaim 148.2 on close",
       "then": "short-term bullish; next test 170.0"
     },
     {
@@ -157,20 +157,20 @@
     "strategy": "BUY_S1",
     "trigger_price": 140.66,
     "target_price": 158.54,
-    "stop_price": 129.24,
-    "risk_pct": 8.12,
+    "stop_price": 129.31,
+    "risk_pct": 8.07,
     "reward_pct": 12.71,
     "rr_ratio": 1.57,
     "phase_match": true,
     "r1": 176.42,
     "s1": 140.66,
-    "s2": 104.83,
+    "s2": 105.11,
     "r2": 158.13,
     "r3": 225.64,
-    "s3": 107.01,
-    "s4": 107.01,
-    "current_position_pct": 19.1,
-    "notes": "BUY_S1: in box (141-176), entry at S1 141, target mid 159, stop 129 ｜ 52.2 條規則（BUY plan，support 140.66）：① 跌到 140.66、收市守住喺 140.66 上面 → 照 BUY 條 plan 做（入場 140.66，止蝕 129.24，目標 158.54）。② 收市跌穿 140.66 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 140.66 上面』。"
+    "s3": 104.83,
+    "s4": 104.83,
+    "current_position_pct": 12.8,
+    "notes": "BUY_S1: in box (141-176), entry at S1 141, target mid 159, stop 129 ｜ 52.2 條規則（BUY plan，support 140.66）：① 跌到 140.66、收市守住喺 140.66 上面 → 照 BUY 條 plan 做（入場 140.66，止蝕 129.31，目標 158.54）。② 收市跌穿 140.66 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 140.66 上面』。"
   },
   "patterns": [
     {

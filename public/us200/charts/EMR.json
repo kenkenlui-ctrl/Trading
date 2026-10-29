@@ -3,89 +3,84 @@
   "ticker_user": "EMR",
   "name": "Emerson Electric Company",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 158.46,
-    "H": 162.72,
-    "L": 156.8,
-    "C": 161.59,
-    "prev_close": 160.29,
-    "chg_pct": 0.81
+    "date": "2026-10-28",
+    "O": 168.42,
+    "H": 168.62,
+    "L": 166.49,
+    "C": 167.71,
+    "prev_close": 166.27,
+    "chg_pct": 0.87
   },
-  "phase": "base_building",
-  "adx": 11.76,
-  "plus_di": 20.5,
-  "minus_di": 27.32,
+  "phase": "uptrend",
+  "adx": 10.73,
+  "plus_di": 26.85,
+  "minus_di": 23.11,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 166.35 (2026-08-12), trough 144.4 (2026-09-16), box top 165.24 (2026-10-06)",
+  "phase_evidence": "Peak 168.62 (2026-10-28), trough 144.4 (2026-09-16), box top 168.62 (2026-10-28)",
   "peak": {
-    "date": "2026-08-12",
-    "price": 166.35
+    "date": "2026-10-28",
+    "price": 168.62
   },
   "trough": {
     "date": "2026-09-16",
     "price": 144.4
   },
   "box": {
-    "top": 165.24,
-    "top_date": "2026-10-06",
+    "top": 168.62,
+    "top_date": "2026-10-28",
     "bottom": 144.4,
-    "period": "2026-09-16 to 2026-10-23"
+    "period": "2026-09-16 to 2026-10-28"
   },
-  "drop_from_peak_pct": 2.9,
-  "recovery_from_crash_pct": 11.9,
+  "drop_from_peak_pct": 0.5,
+  "recovery_from_crash_pct": 16.1,
   "supports": [
     {
-      "level": 156.0,
+      "level": 160.0,
       "label": "S1 KEY",
+      "touches": 24,
+      "evidence": "tested 24x in base period; 4.6% below current"
+    },
+    {
+      "level": 156.0,
+      "label": "S2",
       "touches": 20,
-      "evidence": "tested 20x in base period; 3.5% below current"
+      "evidence": "mid-base support, tested 20x"
     },
     {
       "level": 152.0,
-      "label": "S2",
-      "touches": 8,
-      "evidence": "mid-base support, tested 8x"
-    },
-    {
-      "level": 148.0,
       "label": "S3 bottom",
-      "touches": 7,
+      "touches": 8,
       "evidence": "structural bottom, near crash low 144.4"
     }
   ],
   "resistances": [
     {
-      "level": 162.72,
+      "level": 168.62,
       "label": "R1 today high",
-      "evidence": "today's high 162.72000122070312"
-    },
-    {
-      "level": 165.24,
-      "label": "R3 Oct high",
-      "evidence": "box top 165.24, base period high"
+      "evidence": "today's high 168.6199951171875"
     }
   ],
   "position": {
-    "current": 161.59,
-    "in_box_pct": 78.8,
-    "nearest_support": "S1 KEY (156.0)",
-    "nearest_resistance": "R1 today high (162.72)"
+    "current": 167.71,
+    "in_box_pct": 94.5,
+    "nearest_support": "S1 KEY (160.0)",
+    "nearest_resistance": "R1 today high (168.62)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 158.46,
-    "H": 162.72,
-    "L": 156.8,
-    "C": 161.59,
-    "body_pct": 52.9,
-    "upper_wick_pct": 19.1,
-    "lower_wick_pct": 28.0
+    "O": 168.42,
+    "H": 168.62,
+    "L": 166.49,
+    "C": 167.71,
+    "body_pct": 33.3,
+    "upper_wick_pct": 9.4,
+    "lower_wick_pct": 57.3
   },
   "bias": {
     "short": {
@@ -93,34 +88,30 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 156.0 (KEY support)",
-      "then": "still range; watch 162.72 for next test"
+      "if": "hold 160.0 (KEY support)",
+      "then": "still range; watch 168.62 for next test"
     },
     {
-      "if": "break 156.0 on close",
-      "then": "target 152.0 → 148.0 (short-term bearish)"
+      "if": "break 160.0 on close",
+      "then": "target 156.0 → 152.0 (short-term bearish)"
     },
     {
-      "if": "break 148.0 (crash low)",
+      "if": "break 152.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 162.72 on close",
-      "then": "short-term bullish; next test 165.24"
-    },
-    {
-      "if": "break 165.24 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 168.62 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -143,7 +134,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -151,24 +142,32 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 165.24,
+    "r1": 168.62,
     "s1": 153.1,
     "s2": 144.4,
     "r2": 166.35,
-    "r3": 152.88,
+    "r3": 159.48,
     "s3": 128.13,
     "s4": 122.64,
-    "current_position_pct": 69.9,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 165.24）：① 跌到 165.24、收市守住喺 165.24 上面 → 照 BUY 條 plan 做（入場 165.24，止蝕 172.03，目標 159.17）。② 收市跌穿 165.24 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 165.24 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 94.1,
+    "notes": "WAIT_RANGE: in box (153-169), pos 94%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-10-28",
+      "low": 166.49000549316406,
+      "high": 168.6199951171875,
+      "i": 199
+    },
     {
       "name": "上升三法",
       "bias": "bullish",
       "date": "2026-09-02",
       "low": 146.35000610351562,
       "high": 150.60000610351562,
-      "i": 163
+      "i": 160
     },
     {
       "name": "刺穿線",
@@ -176,15 +175,7 @@
       "date": "2026-07-21",
       "low": 136.05999755859375,
       "high": 140.33999633789062,
-      "i": 132
-    },
-    {
-      "name": "利淡反擊線",
-      "bias": "bearish",
-      "date": "2026-06-18",
-      "low": 150.0800018310547,
-      "high": 152.8800048828125,
-      "i": 111
+      "i": 129
     }
   ]
 }

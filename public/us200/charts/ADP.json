@@ -3,20 +3,20 @@
   "ticker_user": "ADP",
   "name": "Automatic Data Processing, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 306.99,
-    "H": 309.4,
-    "L": 300.88,
-    "C": 304.16,
-    "prev_close": 307.94,
-    "chg_pct": -1.23
+    "date": "2026-10-28",
+    "O": 289.45,
+    "H": 290.11,
+    "L": 282.73,
+    "C": 285.37,
+    "prev_close": 293.11,
+    "chg_pct": -2.64
   },
-  "phase": "uptrend",
-  "adx": 33.42,
-  "plus_di": 43.73,
-  "minus_di": 8.71,
+  "phase": "range",
+  "adx": 33.75,
+  "plus_di": 32.16,
+  "minus_di": 24.41,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 309.4 (2026-10-23), trough 255.96 (2026-10-05), box top 309.4 (2026-10-23)",
@@ -32,92 +32,95 @@
     "top": 309.4,
     "top_date": "2026-10-23",
     "bottom": 255.96,
-    "period": "2026-10-05 to 2026-10-23"
+    "period": "2026-10-05 to 2026-10-28"
   },
-  "drop_from_peak_pct": 1.7,
-  "recovery_from_crash_pct": 18.8,
+  "drop_from_peak_pct": 7.8,
+  "recovery_from_crash_pct": 11.5,
   "supports": [
     {
-      "level": 284.0,
-      "label": "S1 KEY",
-      "touches": 6,
-      "evidence": "tested 6x in base period; 6.6% below current"
-    },
-    {
       "level": 276.0,
-      "label": "S2",
+      "label": "S1 KEY",
       "touches": 4,
-      "evidence": "mid-base support, tested 4x"
+      "evidence": "tested 4x in base period; 3.3% below current"
     },
     {
       "level": 272.0,
-      "label": "S3",
-      "touches": 8,
-      "evidence": "mid-base support, tested 8x"
+      "label": "S2",
+      "touches": 5,
+      "evidence": "mid-base support, tested 5x"
     },
     {
-      "level": 255.96,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-10-05, structural bottom"
+      "level": 264.0,
+      "label": "S3 bottom",
+      "touches": 5,
+      "evidence": "structural bottom, near crash low 255.96"
     }
   ],
   "resistances": [
     {
-      "level": 309.4,
+      "level": 290.11,
       "label": "R1 today high",
-      "evidence": "today's high 309.3999938964844"
+      "evidence": "today's high 290.1099853515625"
+    },
+    {
+      "level": 309.4,
+      "label": "R3 Oct high",
+      "evidence": "box top 309.4, base period high"
     }
   ],
   "position": {
-    "current": 304.16,
-    "in_box_pct": 90.2,
-    "nearest_support": "S1 KEY (284.0)",
-    "nearest_resistance": "R1 today high (309.4)"
+    "current": 285.37,
+    "in_box_pct": 47.1,
+    "nearest_support": "S1 KEY (276.0)",
+    "nearest_resistance": "R1 today high (290.11)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 306.99,
-    "H": 309.4,
-    "L": 300.88,
-    "C": 304.16,
-    "body_pct": 33.2,
-    "upper_wick_pct": 28.3,
-    "lower_wick_pct": 38.5
+    "O": 289.45,
+    "H": 290.11,
+    "L": 282.73,
+    "C": 285.37,
+    "body_pct": 55.3,
+    "upper_wick_pct": 8.9,
+    "lower_wick_pct": 35.8
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (47% of box)"
     },
     "mid": {
-      "bias": "bullish_continuation",
-      "reason": "higher highs / higher lows"
+      "bias": "neutral",
+      "reason": "no clear direction"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 284.0 (KEY support)",
-      "then": "still range; watch 309.4 for next test"
+      "if": "hold 276.0 (KEY support)",
+      "then": "still range; watch 290.11 for next test"
     },
     {
-      "if": "break 284.0 on close",
-      "then": "target 276.0 → 272.0 (short-term bearish)"
+      "if": "break 276.0 on close",
+      "then": "target 272.0 → 264.0 (short-term bearish)"
     },
     {
-      "if": "break 255.96 (crash low)",
+      "if": "break 264.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 309.4 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 290.11 on close",
+      "then": "short-term bullish; next test 309.4"
+    },
+    {
+      "if": "break 309.4 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -147,25 +150,33 @@
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": false,
+    "phase_match": true,
     "r1": 309.4,
     "s1": 255.96,
-    "s2": 258.99,
+    "s2": 257.74,
     "r2": 288.0,
     "r3": 280.59,
     "s3": 204.56,
     "s4": 188.16,
-    "current_position_pct": 90.2,
-    "notes": "WAIT_RANGE: in box (256-309), pos 90%, no clear setup"
+    "current_position_pct": 55.0,
+    "notes": "WAIT_RANGE: in box (256-309), pos 55%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "上升三法",
+      "bias": "bullish",
+      "date": "2026-10-28",
+      "low": 282.7300109863281,
+      "high": 290.1099853515625,
+      "i": 199
+    },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-10-19",
       "low": 285.2799987792969,
       "high": 288.5400085449219,
-      "i": 195
+      "i": 192
     },
     {
       "name": "利好身懷六甲",
@@ -173,7 +184,7 @@
       "date": "2026-10-05",
       "low": 255.9600067138672,
       "high": 260.7799987792969,
-      "i": 185
+      "i": 182
     },
     {
       "name": "利好反擊線",
@@ -181,7 +192,7 @@
       "date": "2026-09-28",
       "low": 259.29998779296875,
       "high": 264.8699951171875,
-      "i": 180
+      "i": 177
     },
     {
       "name": "刺穿線",
@@ -189,15 +200,7 @@
       "date": "2026-09-21",
       "low": 267.8999938964844,
       "high": 271.9100036621094,
-      "i": 175
-    },
-    {
-      "name": "早晨之星",
-      "bias": "bullish",
-      "date": "2026-09-14",
-      "low": 271.0799865722656,
-      "high": 277.2699890136719,
-      "i": 170
+      "i": 172
     }
   ]
 }

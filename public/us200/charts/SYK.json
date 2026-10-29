@@ -3,21 +3,21 @@
   "ticker_user": "SYK",
   "name": "Stryker Corporation",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 305.01,
-    "H": 309.57,
-    "L": 305.0,
-    "C": 307.15,
-    "prev_close": 307.08,
-    "chg_pct": 0.02
+    "date": "2026-10-28",
+    "O": 297.52,
+    "H": 305.29,
+    "L": 297.0,
+    "C": 304.0,
+    "prev_close": 301.42,
+    "chg_pct": 0.86
   },
   "phase": "downtrend_active",
-  "adx": 20.71,
-  "plus_di": 26.79,
-  "minus_di": 17.37,
-  "regime": "dead",
+  "adx": 18.12,
+  "plus_di": 22.09,
+  "minus_di": 20.78,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 389.33 (2026-03-02), trough 267.0 (2026-09-11), box top 309.68 (2026-10-22)",
   "peak": {
@@ -32,74 +32,79 @@
     "top": 309.68,
     "top_date": "2026-10-22",
     "bottom": 267.0,
-    "period": "2026-09-11 to 2026-10-23"
+    "period": "2026-09-11 to 2026-10-28"
   },
-  "drop_from_peak_pct": 21.1,
-  "recovery_from_crash_pct": 15.0,
+  "drop_from_peak_pct": 21.9,
+  "recovery_from_crash_pct": 13.9,
   "supports": [
     {
       "level": 292.0,
       "label": "S1 KEY",
       "touches": 6,
-      "evidence": "tested 6x in base period; 4.9% below current"
+      "evidence": "tested 6x in base period; 3.9% below current"
     },
     {
       "level": 280.0,
       "label": "S2",
-      "touches": 10,
-      "evidence": "mid-base support, tested 10x"
+      "touches": 8,
+      "evidence": "mid-base support, tested 8x"
     },
     {
       "level": 276.0,
       "label": "S3 bottom",
-      "touches": 18,
+      "touches": 17,
       "evidence": "structural bottom, near crash low 267.0"
     }
   ],
   "resistances": [
     {
-      "level": 309.57,
+      "level": 305.29,
       "label": "R1 today high",
-      "evidence": "today's high 309.57000732421875"
+      "evidence": "today's high 305.2900085449219"
+    },
+    {
+      "level": 309.68,
+      "label": "R3 Oct high",
+      "evidence": "box top 309.68, base period high"
     }
   ],
   "position": {
-    "current": 307.15,
-    "in_box_pct": 92.8,
+    "current": 304.0,
+    "in_box_pct": 83.1,
     "nearest_support": "S1 KEY (292.0)",
-    "nearest_resistance": "R1 today high (309.57)"
+    "nearest_resistance": "R1 today high (305.29)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 305.01,
-    "H": 309.57,
-    "L": 305.0,
-    "C": 307.15,
-    "body_pct": 46.8,
-    "upper_wick_pct": 53.0,
-    "lower_wick_pct": 0.2
+    "close_position": "upper_half",
+    "O": 297.52,
+    "H": 305.29,
+    "L": 297.0,
+    "C": 304.0,
+    "body_pct": 78.2,
+    "upper_wick_pct": 15.6,
+    "lower_wick_pct": 6.3
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "bearish_continuation",
       "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 292.0 (KEY support)",
-      "then": "still range; watch 309.57 for next test"
+      "then": "still range; watch 305.29 for next test"
     },
     {
       "if": "break 292.0 on close",
@@ -110,8 +115,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 309.57 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 305.29 on close",
+      "then": "short-term bullish; next test 309.68"
+    },
+    {
+      "if": "break 309.68 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -136,21 +145,21 @@
     "verdict": "SELL",
     "strategy": "SELL_R1",
     "trigger_price": 309.68,
-    "target_price": 290.39,
-    "stop_price": 322.32,
-    "risk_pct": 4.08,
-    "reward_pct": 6.23,
-    "rr_ratio": 1.53,
+    "target_price": 290.44,
+    "stop_price": 322.38,
+    "risk_pct": 4.1,
+    "reward_pct": 6.21,
+    "rr_ratio": 1.51,
     "phase_match": true,
     "r1": 309.68,
-    "s1": 271.1,
+    "s1": 271.21,
     "s2": 267.0,
     "r2": 349.77,
     "r3": 352.49,
     "s3": 281.0,
-    "s4": 290.22,
-    "current_position_pct": 93.4,
-    "notes": "SELL_R1: in box (271-310), entry at R1 310, target mid 290, stop 322 ｜ 52.2 條規則（SELL plan，resistance 309.68）：① 跌到 309.68、收市守住喺 309.68 上面 → 照 BUY 條 plan 做（入場 309.68，止蝕 322.32，目標 290.39）。② 收市跌穿 309.68 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 309.68 上面』。"
+    "s4": 289.91,
+    "current_position_pct": 85.2,
+    "notes": "SELL_R1: in box (271-310), entry at R1 310, target mid 290, stop 322 ｜ 52.2 條規則（SELL plan，resistance 309.68）：① 跌到 309.68、收市守住喺 309.68 上面 → 照 BUY 條 plan 做（入場 309.68，止蝕 322.38，目標 290.44）。② 收市跌穿 309.68 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 309.68 上面』。"
   },
   "patterns": [
     {
@@ -159,7 +168,7 @@
       "date": "2026-09-16",
       "low": 279.8800048828125,
       "high": 290.510009765625,
-      "i": 172
+      "i": 169
     },
     {
       "name": "刺穿線",
@@ -167,7 +176,7 @@
       "date": "2026-08-28",
       "low": 322.1199951171875,
       "high": 332.7200012207031,
-      "i": 160
+      "i": 157
     },
     {
       "name": "上升三法",
@@ -175,7 +184,7 @@
       "date": "2026-08-19",
       "low": 331.0,
       "high": 343.8999938964844,
-      "i": 153
+      "i": 150
     },
     {
       "name": "烏雲蓋頂",
@@ -183,7 +192,7 @@
       "date": "2026-08-06",
       "low": 334.239990234375,
       "high": 343.8699951171875,
-      "i": 144
+      "i": 141
     },
     {
       "name": "平頭頂",
@@ -191,7 +200,7 @@
       "date": "2026-07-30",
       "low": 344.3999938964844,
       "high": 351.489990234375,
-      "i": 139
+      "i": 136
     }
   ]
 }
