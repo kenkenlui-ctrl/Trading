@@ -3,20 +3,20 @@
   "ticker_user": "BLK",
   "name": "BlackRock, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-29",
-    "O": 1170.0,
-    "H": 1182.61,
-    "L": 1165.29,
-    "C": 1176.24,
-    "prev_close": 1157.88,
-    "chg_pct": 1.59
+    "date": "2026-10-30",
+    "O": 1165.15,
+    "H": 1169.04,
+    "L": 1136.9,
+    "C": 1147.54,
+    "prev_close": 1176.24,
+    "chg_pct": -2.44
   },
-  "phase": "uptrend",
-  "adx": 20.42,
-  "plus_di": 32.67,
-  "minus_di": 15.25,
+  "phase": "base_building",
+  "adx": 20.07,
+  "plus_di": 29.17,
+  "minus_di": 21.34,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 1187.17 (2026-08-27), trough 1017.46 (2026-09-16), box top 1182.61 (2026-10-29)",
@@ -32,16 +32,16 @@
     "top": 1182.61,
     "top_date": "2026-10-29",
     "bottom": 1017.46,
-    "period": "2026-09-16 to 2026-10-29"
+    "period": "2026-09-16 to 2026-10-30"
   },
-  "drop_from_peak_pct": 0.9,
-  "recovery_from_crash_pct": 15.6,
+  "drop_from_peak_pct": 3.3,
+  "recovery_from_crash_pct": 12.8,
   "supports": [
     {
       "level": 1120.0,
       "label": "S1 KEY",
       "touches": 8,
-      "evidence": "tested 8x in base period; 4.8% below current"
+      "evidence": "tested 8x in base period; 2.4% below current"
     },
     {
       "level": 1068.0,
@@ -58,29 +58,34 @@
   ],
   "resistances": [
     {
-      "level": 1182.61,
+      "level": 1169.04,
       "label": "R1 today high",
-      "evidence": "today's high 1182.6099853515625"
+      "evidence": "today's high 1169.0400390625"
+    },
+    {
+      "level": 1182.61,
+      "label": "R3 Oct high",
+      "evidence": "box top 1182.61, base period high"
     }
   ],
   "position": {
-    "current": 1176.24,
-    "in_box_pct": 94.6,
+    "current": 1147.54,
+    "in_box_pct": 70.4,
     "nearest_support": "S1 KEY (1120.0)",
-    "nearest_resistance": "R1 today high (1182.61)"
+    "nearest_resistance": "R1 today high (1169.04)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 1170.0,
-    "H": 1182.61,
-    "L": 1165.29,
-    "C": 1176.24,
-    "body_pct": 36.0,
-    "upper_wick_pct": 36.8,
-    "lower_wick_pct": 27.2
+    "close_position": "lower_half",
+    "O": 1165.15,
+    "H": 1169.04,
+    "L": 1136.9,
+    "C": 1147.54,
+    "body_pct": 54.8,
+    "upper_wick_pct": 12.1,
+    "lower_wick_pct": 33.1
   },
   "bias": {
     "short": {
@@ -88,18 +93,18 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bullish_continuation",
-      "reason": "higher highs / higher lows"
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 1120.0 (KEY support)",
-      "then": "still range; watch 1182.61 for next test"
+      "then": "still range; watch 1169.04 for next test"
     },
     {
       "if": "break 1120.0 on close",
@@ -110,8 +115,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1182.61 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 1169.04 on close",
+      "then": "short-term bullish; next test 1182.61"
+    },
+    {
+      "if": "break 1182.61 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -133,15 +142,15 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 1182.61,
+    "target_price": 1111.52,
+    "stop_price": 1227.96,
+    "risk_pct": 3.83,
+    "reward_pct": 6.01,
+    "rr_ratio": 1.57,
+    "phase_match": true,
     "r1": 1182.61,
     "s1": 1040.42,
     "s2": 1017.46,
@@ -149,8 +158,8 @@
     "r3": 1150.3,
     "s3": 947.21,
     "s4": 917.39,
-    "current_position_pct": 95.5,
-    "notes": "WAIT_RANGE: in box (1040-1183), pos 96%, no clear setup"
+    "current_position_pct": 75.3,
+    "notes": "SELL_R1: in box (1040-1183), entry at R1 1183, target mid 1112, stop 1228 ｜ 52.2 條規則（SELL plan，resistance 1182.61）：① 跌到 1182.61、收市守住喺 1182.61 上面 → 照 BUY 條 plan 做（入場 1182.61，止蝕 1227.96，目標 1111.52）。② 收市跌穿 1182.61 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1182.61 上面』。"
   },
   "patterns": [
     {

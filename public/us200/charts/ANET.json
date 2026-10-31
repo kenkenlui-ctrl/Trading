@@ -3,99 +3,87 @@
   "ticker_user": "ANET",
   "name": "Arista Networks, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-29",
-    "O": 183.5,
-    "H": 187.38,
-    "L": 182.65,
-    "C": 184.22,
-    "prev_close": 186.72,
-    "chg_pct": -1.34
+    "date": "2026-10-30",
+    "O": 173.57,
+    "H": 174.99,
+    "L": 166.86,
+    "C": 168.86,
+    "prev_close": 184.22,
+    "chg_pct": -8.34
   },
   "phase": "downtrend_active",
-  "adx": 23.81,
-  "plus_di": 22.56,
-  "minus_di": 28.57,
+  "adx": 24.36,
+  "plus_di": 19.43,
+  "minus_di": 37.23,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 217.41 (2026-10-09), trough 168.24 (2026-10-23), box top 191.11 (2026-10-28)",
+  "phase_evidence": "Peak 217.41 (2026-10-09), trough 166.86 (2026-10-30), box top 217.41 (2026-10-09)",
   "peak": {
     "date": "2026-10-09",
     "price": 217.41
   },
   "trough": {
-    "date": "2026-10-23",
-    "price": 168.24
+    "date": "2026-10-30",
+    "price": 166.86
   },
   "box": {
-    "top": 191.11,
-    "top_date": "2026-10-28",
-    "bottom": 168.24,
-    "period": "2026-10-23 to 2026-10-29"
+    "top": 217.41,
+    "top_date": "2026-10-09",
+    "bottom": 166.86,
+    "period": "2026-10-30 to 2026-10-30"
   },
-  "drop_from_peak_pct": 15.3,
-  "recovery_from_crash_pct": 9.5,
+  "drop_from_peak_pct": 22.3,
+  "recovery_from_crash_pct": 1.2,
   "supports": [
     {
-      "level": 180.0,
-      "label": "S1 KEY",
-      "touches": 6,
-      "evidence": "tested 6x in base period; 2.3% below current"
-    },
-    {
-      "level": 176.0,
-      "label": "S2",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
-    },
-    {
-      "level": 168.0,
-      "label": "S3 bottom",
-      "touches": 4,
-      "evidence": "structural bottom, near crash low 168.24"
+      "level": 164.0,
+      "label": "S1 bottom",
+      "touches": 0,
+      "evidence": "structural bottom, near crash low 166.86"
     }
   ],
   "resistances": [
     {
-      "level": 187.38,
+      "level": 174.99,
       "label": "R1 today high",
-      "evidence": "today's high 187.375"
+      "evidence": "today's high 174.99000549316406"
     },
     {
-      "level": 191.11,
+      "level": 200.0,
+      "label": "R2",
+      "evidence": "mid-box supply, round number 200"
+    },
+    {
+      "level": 217.41,
       "label": "R3 Oct high",
-      "evidence": "box top 191.11, base period high"
-    },
-    {
-      "level": 215.0,
-      "label": "R5",
-      "evidence": "pre-crash supply, top before breakdown"
+      "evidence": "box top 217.41, base period high"
     }
   ],
   "position": {
-    "current": 184.22,
-    "in_box_pct": 70.2,
-    "nearest_support": "S1 KEY (180.0)",
-    "nearest_resistance": "R1 today high (187.38)"
+    "current": 168.86,
+    "in_box_pct": 9.1,
+    "nearest_support": "S1 bottom (164.0)",
+    "nearest_resistance": "R1 today high (174.99)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 183.5,
-    "H": 187.38,
-    "L": 182.65,
-    "C": 184.22,
-    "body_pct": 15.2,
-    "upper_wick_pct": 66.8,
-    "lower_wick_pct": 18.0
+    "O": 173.57,
+    "H": 174.99,
+    "L": 166.86,
+    "C": 168.86,
+    "body_pct": 57.9,
+    "upper_wick_pct": 17.5,
+    "lower_wick_pct": 24.6
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (9% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -108,23 +96,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 180.0 (KEY support)",
-      "then": "still range; watch 187.38 for next test"
+      "if": "hold 164.0 (KEY support)",
+      "then": "still range; watch 174.99 for next test"
     },
     {
-      "if": "break 180.0 on close",
-      "then": "target 176.0 → 168.0 (short-term bearish)"
+      "if": "break 164.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 168.0 (crash low)",
+      "if": "break 164.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 187.38 on close",
-      "then": "short-term bullish; next test 191.11"
+      "if": "reclaim 174.99 on close",
+      "then": "short-term bullish; next test 200.0"
     },
     {
-      "if": "break 191.11 (box top)",
+      "if": "break 217.41 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -157,14 +145,14 @@
     "rr_ratio": 0.0,
     "phase_match": false,
     "r1": 217.41,
-    "s1": 168.24,
+    "s1": 166.86,
     "s2": 181.27,
     "r2": 212.0,
     "r3": 214.89,
-    "s3": 135.13,
+    "s3": 135.37,
     "s4": 115.42,
-    "current_position_pct": 32.5,
-    "notes": "WAIT_RANGE: in box (168-217), pos 32%, no clear setup"
+    "current_position_pct": 4.0,
+    "notes": "WAIT_RANGE: in box (167-217), pos 4%, no clear setup"
   },
   "patterns": [
     {

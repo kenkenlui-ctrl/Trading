@@ -3,20 +3,20 @@
   "ticker_user": "MS",
   "name": "Morgan Stanley",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-29",
-    "O": 192.37,
-    "H": 193.06,
-    "L": 189.59,
-    "C": 190.0,
-    "prev_close": 190.13,
-    "chg_pct": -0.07
+    "date": "2026-10-30",
+    "O": 185.85,
+    "H": 186.99,
+    "L": 182.19,
+    "C": 184.3,
+    "prev_close": 190.0,
+    "chg_pct": -3.0
   },
   "phase": "downtrend_active",
-  "adx": 32.95,
-  "plus_di": 24.68,
-  "minus_di": 25.13,
+  "adx": 31.98,
+  "plus_di": 22.02,
+  "minus_di": 32.63,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 232.25 (2026-07-15), trough 176.44 (2026-10-14), box top 193.06 (2026-10-29)",
@@ -32,60 +32,64 @@
     "top": 193.06,
     "top_date": "2026-10-29",
     "bottom": 176.44,
-    "period": "2026-10-14 to 2026-10-29"
+    "period": "2026-10-14 to 2026-10-30"
   },
-  "drop_from_peak_pct": 18.2,
-  "recovery_from_crash_pct": 7.7,
+  "drop_from_peak_pct": 20.6,
+  "recovery_from_crash_pct": 4.5,
   "supports": [
     {
-      "level": 184.0,
+      "level": 180.0,
       "label": "S1 KEY",
       "touches": 6,
-      "evidence": "tested 6x in base period; 3.2% below current"
-    },
-    {
-      "level": 180.0,
-      "label": "S2",
-      "touches": 10,
-      "evidence": "mid-base support, tested 10x"
+      "evidence": "tested 6x in base period; 2.3% below current"
     },
     {
       "level": 176.0,
-      "label": "S3 bottom",
+      "label": "S2 bottom",
       "touches": 6,
       "evidence": "structural bottom, near crash low 176.44"
     }
   ],
   "resistances": [
     {
-      "level": 193.06,
+      "level": 186.99,
       "label": "R1 today high",
-      "evidence": "today's high 193.05999755859375"
+      "evidence": "today's high 186.99000549316406"
+    },
+    {
+      "level": 190.0,
+      "label": "R2",
+      "evidence": "mid-box supply, round number 190"
+    },
+    {
+      "level": 193.06,
+      "label": "R3 Oct high",
+      "evidence": "box top 193.06, base period high"
     }
   ],
   "position": {
-    "current": 190.0,
-    "in_box_pct": 82.1,
-    "nearest_support": "S1 KEY (184.0)",
-    "nearest_resistance": "R1 today high (193.06)"
+    "current": 184.3,
+    "in_box_pct": 48.7,
+    "nearest_support": "S1 KEY (180.0)",
+    "nearest_resistance": "R1 today high (186.99)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 192.37,
-    "H": 193.06,
-    "L": 189.59,
-    "C": 190.0,
-    "body_pct": 68.3,
-    "upper_wick_pct": 19.9,
-    "lower_wick_pct": 11.8
+    "O": 185.85,
+    "H": 186.99,
+    "L": 182.19,
+    "C": 184.3,
+    "body_pct": 32.3,
+    "upper_wick_pct": 23.7,
+    "lower_wick_pct": 44.0
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (49% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -98,20 +102,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 184.0 (KEY support)",
-      "then": "still range; watch 193.06 for next test"
+      "if": "hold 180.0 (KEY support)",
+      "then": "still range; watch 186.99 for next test"
     },
     {
-      "if": "break 184.0 on close",
-      "then": "target 180.0 → 176.0 (short-term bearish)"
+      "if": "break 180.0 on close",
+      "then": "target 176.0 → lower (short-term bearish)"
     },
     {
       "if": "break 176.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 193.06 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 186.99 on close",
+      "then": "short-term bullish; next test 190.0"
+    },
+    {
+      "if": "break 193.06 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -134,7 +142,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -149,8 +157,8 @@
     "r3": 232.25,
     "s3": 186.45,
     "s4": 152.8,
-    "current_position_pct": 80.4,
-    "notes": "WAIT_RANGE: in box (176-193), pos 80%, no clear setup"
+    "current_position_pct": 46.6,
+    "notes": "WAIT_RANGE: in box (176-193), pos 47%, no clear setup"
   },
   "patterns": [
     {

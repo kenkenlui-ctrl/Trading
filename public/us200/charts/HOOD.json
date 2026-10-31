@@ -3,52 +3,57 @@
   "ticker_user": "HOOD",
   "name": "Robinhood Markets, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-29",
-    "O": 89.82,
-    "H": 92.43,
-    "L": 88.95,
-    "C": 91.59,
-    "prev_close": 91.43,
-    "chg_pct": 0.17
+    "date": "2026-10-30",
+    "O": 85.21,
+    "H": 85.28,
+    "L": 82.0,
+    "C": 84.99,
+    "prev_close": 91.59,
+    "chg_pct": -7.21
   },
-  "phase": "base_building",
-  "adx": 24.19,
-  "plus_di": 14.43,
-  "minus_di": 33.26,
-  "regime": "dead",
+  "phase": "downtrend_active",
+  "adx": 26.04,
+  "plus_di": 12.64,
+  "minus_di": 38.11,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 120.05 (2026-07-02), trough 83.68 (2026-07-31), box top 126.74 (2026-09-23)",
+  "phase_evidence": "Peak 126.74 (2026-09-23), trough 82.0 (2026-10-30), box top 126.74 (2026-09-23)",
   "peak": {
-    "date": "2026-07-02",
-    "price": 120.05
+    "date": "2026-09-23",
+    "price": 126.74
   },
   "trough": {
-    "date": "2026-07-31",
-    "price": 83.68
+    "date": "2026-10-30",
+    "price": 82.0
   },
   "box": {
     "top": 126.74,
     "top_date": "2026-09-23",
-    "bottom": 83.68,
-    "period": "2026-07-31 to 2026-10-29"
+    "bottom": 82.0,
+    "period": "2026-10-30 to 2026-10-30"
   },
-  "drop_from_peak_pct": 23.7,
-  "recovery_from_crash_pct": 9.5,
+  "drop_from_peak_pct": 32.9,
+  "recovery_from_crash_pct": 3.6,
   "supports": [
     {
-      "level": 88.0,
+      "level": 84.0,
       "label": "S1 bottom",
-      "touches": 4,
-      "evidence": "structural bottom, near crash low 83.68"
+      "touches": 0,
+      "evidence": "structural bottom, near crash low 82.0"
     }
   ],
   "resistances": [
     {
-      "level": 92.43,
+      "level": 85.28,
       "label": "R1 today high",
-      "evidence": "today's high 92.43499755859375"
+      "evidence": "today's high 85.27999877929688"
+    },
+    {
+      "level": 110.0,
+      "label": "R5",
+      "evidence": "pre-crash supply, top before breakdown"
     },
     {
       "level": 120.0,
@@ -62,32 +67,32 @@
     }
   ],
   "position": {
-    "current": 91.59,
-    "in_box_pct": 9.3,
-    "nearest_support": "S1 bottom (88.0)",
-    "nearest_resistance": "R1 today high (92.43)"
+    "current": 84.99,
+    "in_box_pct": 2.3,
+    "nearest_support": "S1 bottom (84.0)",
+    "nearest_resistance": "R1 today high (85.28)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 89.82,
-    "H": 92.43,
-    "L": 88.95,
-    "C": 91.59,
-    "body_pct": 50.8,
-    "upper_wick_pct": 24.2,
-    "lower_wick_pct": 25.0
+    "O": 85.21,
+    "H": 85.28,
+    "L": 82.0,
+    "C": 84.99,
+    "body_pct": 6.7,
+    "upper_wick_pct": 2.1,
+    "lower_wick_pct": 91.2
   },
   "bias": {
     "short": {
       "bias": "defensive",
-      "reason": "near box bottom (9% of box)"
+      "reason": "near box bottom (2% of box)"
     },
     "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -96,20 +101,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 88.0 (KEY support)",
-      "then": "still range; watch 92.43 for next test"
+      "if": "hold 84.0 (KEY support)",
+      "then": "still range; watch 85.28 for next test"
     },
     {
-      "if": "break 88.0 on close",
+      "if": "break 84.0 on close",
       "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 88.0 (crash low)",
+      "if": "break 84.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 92.43 on close",
-      "then": "short-term bullish; next test 120.0"
+      "if": "reclaim 85.28 on close",
+      "then": "short-term bullish; next test 110.0"
     },
     {
       "if": "break 126.74 (box top)",
@@ -135,24 +140,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 88.95,
-    "target_price": 104.16,
-    "stop_price": 81.25,
-    "risk_pct": 8.65,
-    "reward_pct": 17.11,
-    "rr_ratio": 1.98,
-    "phase_match": true,
-    "r1": 119.38,
-    "s1": 88.95,
-    "s2": 90.21,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 116.25,
+    "s1": 82.0,
+    "s2": 91.44,
     "r2": 126.74,
     "r3": 120.05,
     "s3": 73.18,
     "s4": 63.51,
     "current_position_pct": 8.7,
-    "notes": "BUY_S1: in box (89-119), entry at S1 89, target mid 104, stop 81 ｜ 52.2 條規則（BUY plan，support 88.95）：① 跌到 88.95、收市守住喺 88.95 上面 → 照 BUY 條 plan 做（入場 88.95，止蝕 81.25，目標 104.16）。② 收市跌穿 88.95 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 88.95 上面』。"
+    "notes": "WAIT_RANGE: in box (82-116), pos 9%, no clear setup"
   },
   "patterns": [
     {

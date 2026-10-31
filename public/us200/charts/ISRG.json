@@ -3,20 +3,20 @@
   "ticker_user": "ISRG",
   "name": "Intuitive Surgical, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-29",
-    "O": 447.85,
-    "H": 450.4,
-    "L": 443.48,
-    "C": 448.76,
-    "prev_close": 444.18,
-    "chg_pct": 1.03
+    "date": "2026-10-30",
+    "O": 453.6,
+    "H": 453.6,
+    "L": 431.19,
+    "C": 432.01,
+    "prev_close": 448.76,
+    "chg_pct": -3.73
   },
   "phase": "base_building",
-  "adx": 13.33,
-  "plus_di": 24.79,
-  "minus_di": 24.4,
+  "adx": 13.3,
+  "plus_di": 21.73,
+  "minus_di": 28.15,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 491.15 (2026-04-22), trough 328.57 (2026-07-23), box top 458.88 (2026-10-26)",
@@ -32,16 +32,16 @@
     "top": 458.88,
     "top_date": "2026-10-26",
     "bottom": 328.57,
-    "period": "2026-07-23 to 2026-10-29"
+    "period": "2026-07-23 to 2026-10-30"
   },
-  "drop_from_peak_pct": 8.6,
-  "recovery_from_crash_pct": 36.6,
+  "drop_from_peak_pct": 12.0,
+  "recovery_from_crash_pct": 31.5,
   "supports": [
     {
       "level": 416.0,
       "label": "S1 KEY",
       "touches": 6,
-      "evidence": "tested 6x in base period; 7.3% below current"
+      "evidence": "tested 6x in base period; 3.7% below current"
     },
     {
       "level": 400.0,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 450.4,
+      "level": 453.6,
       "label": "R1 today high",
-      "evidence": "today's high 450.3999938964844"
+      "evidence": "today's high 453.6000061035156"
     },
     {
       "level": 458.88,
@@ -75,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 448.76,
-    "in_box_pct": 92.2,
+    "current": 432.01,
+    "in_box_pct": 79.4,
     "nearest_support": "S1 KEY (416.0)",
-    "nearest_resistance": "R1 today high (450.4)"
+    "nearest_resistance": "R1 today high (453.6)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 447.85,
-    "H": 450.4,
-    "L": 443.48,
-    "C": 448.76,
-    "body_pct": 13.2,
-    "upper_wick_pct": 23.7,
-    "lower_wick_pct": 63.2
+    "close_position": "lower_half",
+    "O": 453.6,
+    "H": 453.6,
+    "L": 431.19,
+    "C": 432.01,
+    "body_pct": 96.3,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 3.7
   },
   "bias": {
     "short": {
@@ -103,14 +103,14 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 416.0 (KEY support)",
-      "then": "still range; watch 450.4 for next test"
+      "then": "still range; watch 453.6 for next test"
     },
     {
       "if": "break 416.0 on close",
@@ -121,7 +121,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 450.4 on close",
+      "if": "reclaim 453.6 on close",
       "then": "short-term bullish; next test 458.88"
     },
     {
@@ -152,10 +152,10 @@
     "strategy": "SELL_R1",
     "trigger_price": 458.88,
     "target_price": 423.99,
-    "stop_price": 478.47,
-    "risk_pct": 4.27,
+    "stop_price": 480.84,
+    "risk_pct": 4.79,
     "reward_pct": 7.6,
-    "rr_ratio": 1.78,
+    "rr_ratio": 1.59,
     "phase_match": true,
     "r1": 458.88,
     "s1": 389.11,
@@ -163,9 +163,9 @@
     "r2": 416.51,
     "r3": 449.77,
     "s3": 328.57,
-    "s4": 441.98,
-    "current_position_pct": 85.5,
-    "notes": "SELL_R1: in box (389-459), entry at R1 459, target mid 424, stop 478 ｜ 52.2 條規則（SELL plan，resistance 458.88）：① 跌到 458.88、收市守住喺 458.88 上面 → 照 BUY 條 plan 做（入場 458.88，止蝕 478.47，目標 423.99）。② 收市跌穿 458.88 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 458.88 上面』。"
+    "s4": 417.74,
+    "current_position_pct": 61.5,
+    "notes": "SELL_R1: in box (389-459), entry at R1 459, target mid 424, stop 481 ｜ 52.2 條規則（SELL plan，resistance 458.88）：① 跌到 458.88、收市守住喺 458.88 上面 → 照 BUY 條 plan 做（入場 458.88，止蝕 480.84，目標 423.99）。② 收市跌穿 458.88 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 458.88 上面』。"
   },
   "patterns": [
     {

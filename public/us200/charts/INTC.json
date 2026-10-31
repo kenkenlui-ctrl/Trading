@@ -3,58 +3,52 @@
   "ticker_user": "INTC",
   "name": "Intel Corporation",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-29",
-    "O": 92.97,
-    "H": 93.5,
-    "L": 90.84,
-    "C": 92.07,
-    "prev_close": 95.53,
-    "chg_pct": -3.62
+    "date": "2026-10-30",
+    "O": 68.36,
+    "H": 68.77,
+    "L": 63.2,
+    "C": 65.76,
+    "prev_close": 92.07,
+    "chg_pct": -28.58
   },
-  "phase": "base_building",
-  "adx": 25.23,
-  "plus_di": 20.07,
-  "minus_di": 31.1,
+  "phase": "downtrend_active",
+  "adx": 27.43,
+  "plus_di": 14.13,
+  "minus_di": 50.22,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 142.35 (2026-06-30), trough 81.79 (2026-07-29), box top 127.44 (2026-09-24)",
+  "phase_evidence": "Peak 142.35 (2026-06-30), trough 63.2 (2026-10-30), box top 127.44 (2026-09-24)",
   "peak": {
     "date": "2026-06-30",
     "price": 142.35
   },
   "trough": {
-    "date": "2026-07-29",
-    "price": 81.79
+    "date": "2026-10-30",
+    "price": 63.2
   },
   "box": {
     "top": 127.44,
     "top_date": "2026-09-24",
-    "bottom": 81.79,
-    "period": "2026-07-29 to 2026-10-29"
+    "bottom": 63.2,
+    "period": "2026-10-30 to 2026-10-30"
   },
-  "drop_from_peak_pct": 35.3,
-  "recovery_from_crash_pct": 12.6,
+  "drop_from_peak_pct": 53.8,
+  "recovery_from_crash_pct": 4.1,
   "supports": [
     {
-      "level": 88.0,
-      "label": "S1 KEY",
-      "touches": 14,
-      "evidence": "tested 14x in base period; 4.4% below current"
-    },
-    {
-      "level": 84.0,
-      "label": "S2 bottom",
-      "touches": 9,
-      "evidence": "structural bottom, near crash low 81.79"
+      "level": 64.0,
+      "label": "S1 bottom",
+      "touches": 0,
+      "evidence": "structural bottom, near crash low 63.2"
     }
   ],
   "resistances": [
     {
-      "level": 93.5,
+      "level": 68.77,
       "label": "R1 today high",
-      "evidence": "today's high 93.5"
+      "evidence": "today's high 68.7699966430664"
     },
     {
       "level": 120.0,
@@ -68,32 +62,32 @@
     }
   ],
   "position": {
-    "current": 92.07,
-    "in_box_pct": 18.6,
-    "nearest_support": "S1 KEY (88.0)",
-    "nearest_resistance": "R1 today high (93.5)"
+    "current": 65.76,
+    "in_box_pct": 2.8,
+    "nearest_support": "S1 bottom (64.0)",
+    "nearest_resistance": "R1 today high (68.77)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "lower_half",
-    "O": 92.97,
-    "H": 93.5,
-    "L": 90.84,
-    "C": 92.07,
-    "body_pct": 33.8,
-    "upper_wick_pct": 19.9,
-    "lower_wick_pct": 46.2
+    "O": 68.36,
+    "H": 68.77,
+    "L": 63.2,
+    "C": 65.76,
+    "body_pct": 46.7,
+    "upper_wick_pct": 7.4,
+    "lower_wick_pct": 46.0
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (19% of box)"
+      "bias": "defensive",
+      "reason": "near box bottom (3% of box)"
     },
     "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -102,19 +96,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 88.0 (KEY support)",
-      "then": "still range; watch 93.5 for next test"
+      "if": "hold 64.0 (KEY support)",
+      "then": "still range; watch 68.77 for next test"
     },
     {
-      "if": "break 88.0 on close",
-      "then": "target 84.0 → lower (short-term bearish)"
+      "if": "break 64.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 84.0 (crash low)",
+      "if": "break 64.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 93.5 on close",
+      "if": "reclaim 68.77 on close",
       "then": "short-term bullish; next test 120.0"
     },
     {
@@ -142,7 +136,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_VOLATILE",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -150,15 +144,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 126.0,
-    "s1": 84.65,
+    "r1": 118.2,
+    "s1": 63.2,
     "s2": 85.14,
     "r2": 127.44,
     "r3": 142.35,
     "s3": 81.79,
     "s4": 40.63,
-    "current_position_pct": 17.9,
-    "notes": "WAIT_VOLATILE: ATR14 5.5% / box width 45% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
+    "current_position_pct": 4.7,
+    "notes": "WAIT_RANGE: in box (63-118), pos 5%, no clear setup"
   },
   "patterns": [
     {

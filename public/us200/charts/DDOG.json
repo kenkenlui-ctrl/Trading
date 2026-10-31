@@ -3,21 +3,21 @@
   "ticker_user": "DDOG",
   "name": "Datadog, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-29",
-    "O": 269.55,
-    "H": 274.66,
-    "L": 260.56,
-    "C": 265.84,
-    "prev_close": 278.41,
-    "chg_pct": -4.51
+    "date": "2026-10-30",
+    "O": 253.62,
+    "H": 253.87,
+    "L": 228.57,
+    "C": 235.27,
+    "prev_close": 265.84,
+    "chg_pct": -11.5
   },
   "phase": "base_building",
-  "adx": 19.51,
-  "plus_di": 22.81,
-  "minus_di": 23.97,
-  "regime": "range",
+  "adx": 20.18,
+  "plus_di": 18.99,
+  "minus_di": 34.34,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 292.72 (2026-08-05), trough 203.24 (2026-09-08), box top 300.68 (2026-10-12)",
   "peak": {
@@ -32,28 +32,22 @@
     "top": 300.68,
     "top_date": "2026-10-12",
     "bottom": 203.24,
-    "period": "2026-09-08 to 2026-10-29"
+    "period": "2026-09-08 to 2026-10-30"
   },
-  "drop_from_peak_pct": 9.2,
-  "recovery_from_crash_pct": 30.8,
+  "drop_from_peak_pct": 19.6,
+  "recovery_from_crash_pct": 15.8,
   "supports": [
     {
-      "level": 260.0,
+      "level": 228.0,
       "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 2.2% below current"
+      "touches": 7,
+      "evidence": "tested 7x in base period; 3.1% below current"
     },
     {
-      "level": 256.0,
+      "level": 220.0,
       "label": "S2",
-      "touches": 10,
-      "evidence": "mid-base support, tested 10x"
-    },
-    {
-      "level": 248.0,
-      "label": "S3",
-      "touches": 4,
-      "evidence": "mid-base support, tested 4x"
+      "touches": 3,
+      "evidence": "mid-base support, tested 3x"
     },
     {
       "level": 203.24,
@@ -64,9 +58,9 @@
   ],
   "resistances": [
     {
-      "level": 274.66,
+      "level": 253.87,
       "label": "R1 today high",
-      "evidence": "today's high 274.6600036621094"
+      "evidence": "today's high 253.8699951171875"
     },
     {
       "level": 300.68,
@@ -75,28 +69,28 @@
     }
   ],
   "position": {
-    "current": 265.84,
-    "in_box_pct": 64.2,
-    "nearest_support": "S1 KEY (260.0)",
-    "nearest_resistance": "R1 today high (274.66)"
+    "current": 235.27,
+    "in_box_pct": 32.9,
+    "nearest_support": "S1 KEY (228.0)",
+    "nearest_resistance": "R1 today high (253.87)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 269.55,
-    "H": 274.66,
-    "L": 260.56,
-    "C": 265.84,
-    "body_pct": 26.3,
-    "upper_wick_pct": 36.2,
-    "lower_wick_pct": 37.4
+    "O": 253.62,
+    "H": 253.87,
+    "L": 228.57,
+    "C": 235.27,
+    "body_pct": 72.5,
+    "upper_wick_pct": 1.0,
+    "lower_wick_pct": 26.5
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (33% of box)"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -109,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 260.0 (KEY support)",
-      "then": "still range; watch 274.66 for next test"
+      "if": "hold 228.0 (KEY support)",
+      "then": "still range; watch 253.87 for next test"
     },
     {
-      "if": "break 260.0 on close",
-      "then": "target 256.0 → 248.0 (short-term bearish)"
+      "if": "break 228.0 on close",
+      "then": "target 220.0 → 203.24 (short-term bearish)"
     },
     {
       "if": "break 203.24 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 274.66 on close",
+      "if": "reclaim 253.87 on close",
       "then": "short-term bullish; next test 300.68"
     },
     {
@@ -149,23 +143,23 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_VOLATILE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
+    "phase_match": false,
     "r1": 300.68,
-    "s1": 243.63,
+    "s1": 228.57,
     "s2": 203.24,
-    "r2": 280.7,
+    "r2": 282.0,
     "r3": 292.72,
-    "s3": 193.16,
+    "s3": 195.01,
     "s4": 98.01,
-    "current_position_pct": 38.9,
-    "notes": "WAIT_RANGE: in box (244-301), pos 39%, no clear setup"
+    "current_position_pct": 9.3,
+    "notes": "WAIT_VOLATILE: ATR14 7.4% / box width 31% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
   },
   "patterns": [
     {

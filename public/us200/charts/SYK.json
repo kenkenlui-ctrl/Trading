@@ -3,20 +3,20 @@
   "ticker_user": "SYK",
   "name": "Stryker Corporation",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-29",
-    "O": 306.99,
-    "H": 312.8,
-    "L": 305.87,
-    "C": 311.75,
-    "prev_close": 304.0,
-    "chg_pct": 2.55
+    "date": "2026-10-30",
+    "O": 287.97,
+    "H": 299.17,
+    "L": 282.18,
+    "C": 291.86,
+    "prev_close": 311.75,
+    "chg_pct": -6.38
   },
   "phase": "downtrend_active",
-  "adx": 18.03,
-  "plus_di": 26.96,
-  "minus_di": 19.18,
+  "adx": 18.26,
+  "plus_di": 21.09,
+  "minus_di": 32.46,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 389.33 (2026-03-02), trough 267.0 (2026-09-11), box top 312.8 (2026-10-29)",
@@ -32,86 +32,95 @@
     "top": 312.8,
     "top_date": "2026-10-29",
     "bottom": 267.0,
-    "period": "2026-09-11 to 2026-10-29"
+    "period": "2026-09-11 to 2026-10-30"
   },
-  "drop_from_peak_pct": 19.9,
-  "recovery_from_crash_pct": 16.8,
+  "drop_from_peak_pct": 25.0,
+  "recovery_from_crash_pct": 9.3,
   "supports": [
     {
-      "level": 300.0,
-      "label": "S1 KEY",
-      "touches": 8,
-      "evidence": "tested 8x in base period; 3.8% below current"
-    },
-    {
-      "level": 292.0,
-      "label": "S2",
-      "touches": 6,
-      "evidence": "mid-base support, tested 6x"
-    },
-    {
       "level": 280.0,
-      "label": "S3 bottom",
+      "label": "S1 KEY",
       "touches": 7,
+      "evidence": "tested 7x in base period; 4.1% below current"
+    },
+    {
+      "level": 276.0,
+      "label": "S2",
+      "touches": 16,
+      "evidence": "mid-base support, tested 16x"
+    },
+    {
+      "level": 272.0,
+      "label": "S3 bottom",
+      "touches": 14,
       "evidence": "structural bottom, near crash low 267.0"
     }
   ],
   "resistances": [
     {
-      "level": 312.8,
+      "level": 299.17,
       "label": "R1 today high",
-      "evidence": "today's high 312.79998779296875"
+      "evidence": "today's high 299.1700134277344"
+    },
+    {
+      "level": 312.8,
+      "label": "R3 Oct high",
+      "evidence": "box top 312.8, base period high"
     }
   ],
   "position": {
-    "current": 311.75,
-    "in_box_pct": 96.8,
-    "nearest_support": "S1 KEY (300.0)",
-    "nearest_resistance": "R1 today high (312.8)"
+    "current": 291.86,
+    "in_box_pct": 48.7,
+    "nearest_support": "S1 KEY (280.0)",
+    "nearest_resistance": "R1 today high (299.17)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 306.99,
-    "H": 312.8,
-    "L": 305.87,
-    "C": 311.75,
-    "body_pct": 68.7,
-    "upper_wick_pct": 15.2,
-    "lower_wick_pct": 16.2
+    "O": 287.97,
+    "H": 299.17,
+    "L": 282.18,
+    "C": 291.86,
+    "body_pct": 22.9,
+    "upper_wick_pct": 43.0,
+    "lower_wick_pct": 34.1
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
       "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 300.0 (KEY support)",
-      "then": "still range; watch 312.8 for next test"
+      "if": "hold 280.0 (KEY support)",
+      "then": "still range; watch 299.17 for next test"
     },
     {
-      "if": "break 300.0 on close",
-      "then": "target 292.0 → 280.0 (short-term bearish)"
+      "if": "break 280.0 on close",
+      "then": "target 276.0 → 272.0 (short-term bearish)"
     },
     {
-      "if": "break 280.0 (crash low)",
+      "if": "break 272.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 312.8 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 299.17 on close",
+      "then": "short-term bullish; next test 312.8"
+    },
+    {
+      "if": "break 312.8 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -133,24 +142,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 312.8,
-    "target_price": 292.0,
-    "stop_price": 325.71,
-    "risk_pct": 4.13,
-    "reward_pct": 6.65,
-    "rr_ratio": 1.61,
-    "phase_match": true,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
     "r1": 312.8,
-    "s1": 271.21,
+    "s1": 271.67,
     "s2": 267.0,
     "r2": 349.77,
     "r3": 352.49,
-    "s3": 281.0,
-    "s4": 284.95,
-    "current_position_pct": 97.5,
-    "notes": "SELL_R1: in box (271-313), entry at R1 313, target mid 292, stop 326 ｜ 52.2 條規則（SELL plan，resistance 312.80）：① 跌到 312.80、收市守住喺 312.80 上面 → 照 BUY 條 plan 做（入場 312.80，止蝕 325.71，目標 292.00）。② 收市跌穿 312.80 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 312.80 上面』。"
+    "s3": 284.75,
+    "s4": 281.0,
+    "current_position_pct": 49.1,
+    "notes": "WAIT_RANGE: in box (272-313), pos 49%, no clear setup"
   },
   "patterns": [
     {

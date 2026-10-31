@@ -3,94 +3,82 @@
   "ticker_user": "NTAP",
   "name": "NetApp, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-29",
-    "O": 221.0,
-    "H": 226.94,
-    "L": 216.67,
-    "C": 218.42,
-    "prev_close": 223.66,
-    "chg_pct": -2.34
+    "date": "2026-10-30",
+    "O": 205.57,
+    "H": 209.58,
+    "L": 195.58,
+    "C": 199.18,
+    "prev_close": 218.42,
+    "chg_pct": -8.81
   },
   "phase": "downtrend_active",
-  "adx": 19.65,
-  "plus_di": 26.05,
-  "minus_di": 25.31,
-  "regime": "range",
+  "adx": 20.04,
+  "plus_di": 21.78,
+  "minus_di": 36.3,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 240.87 (2026-10-13), trough 202.56 (2026-10-20), box top 231.56 (2026-10-27)",
+  "phase_evidence": "Peak 240.87 (2026-10-13), trough 190.89 (2026-09-22), box top 240.87 (2026-10-13)",
   "peak": {
     "date": "2026-10-13",
     "price": 240.87
   },
   "trough": {
-    "date": "2026-10-20",
-    "price": 202.56
+    "date": "2026-09-22",
+    "price": 190.89
   },
   "box": {
-    "top": 231.56,
-    "top_date": "2026-10-27",
-    "bottom": 202.56,
-    "period": "2026-10-20 to 2026-10-29"
+    "top": 240.87,
+    "top_date": "2026-10-13",
+    "bottom": 190.89,
+    "period": "2026-09-22 to 2026-10-30"
   },
-  "drop_from_peak_pct": 9.3,
-  "recovery_from_crash_pct": 7.8,
+  "drop_from_peak_pct": 17.3,
+  "recovery_from_crash_pct": 4.3,
   "supports": [
     {
-      "level": 204.0,
-      "label": "S1 KEY",
-      "touches": 10,
-      "evidence": "tested 10x in base period; 6.6% below current"
-    },
-    {
-      "level": 200.0,
-      "label": "S2",
-      "touches": 7,
-      "evidence": "mid-base support, tested 7x"
-    },
-    {
       "level": 192.0,
-      "label": "S3 bottom",
-      "touches": 12,
-      "evidence": "structural bottom, near crash low 202.56"
+      "label": "S1 bottom",
+      "touches": 6,
+      "evidence": "structural bottom, near crash low 190.89"
     }
   ],
   "resistances": [
     {
-      "level": 226.94,
+      "level": 209.58,
       "label": "R1 today high",
-      "evidence": "rejection at 226.94000244140625 (long upper wick, close weak)"
+      "evidence": "today's high 209.5800018310547"
     },
     {
-      "level": 231.56,
+      "level": 240.87,
       "label": "R3 Oct high",
-      "evidence": "box top 231.56, base period high"
+      "evidence": "box top 240.87, base period high"
     }
   ],
   "position": {
-    "current": 218.42,
-    "in_box_pct": 66.8,
-    "nearest_support": "S1 KEY (204.0)",
-    "nearest_resistance": "R1 today high (226.94)"
+    "current": 199.18,
+    "in_box_pct": 14.7,
+    "nearest_support": "S1 bottom (192.0)",
+    "nearest_resistance": "R1 today high (209.58)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 221.0,
-    "H": 226.94,
-    "L": 216.67,
-    "C": 218.42,
-    "body_pct": 25.1,
-    "upper_wick_pct": 57.8,
-    "lower_wick_pct": 17.0
+    "O": 205.57,
+    "H": 209.58,
+    "L": 195.58,
+    "C": 199.18,
+    "body_pct": 45.6,
+    "upper_wick_pct": 28.6,
+    "lower_wick_pct": 25.7
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (15% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -103,23 +91,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 204.0 (KEY support)",
-      "then": "still range; watch 226.94 for next test"
+      "if": "hold 192.0 (KEY support)",
+      "then": "still range; watch 209.58 for next test"
     },
     {
-      "if": "break 204.0 on close",
-      "then": "target 200.0 → 192.0 (short-term bearish)"
+      "if": "break 192.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
       "if": "break 192.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 226.94 on close",
-      "then": "short-term bullish; next test 231.56"
+      "if": "reclaim 209.58 on close",
+      "then": "short-term bullish; next test 240.87"
     },
     {
-      "if": "break 231.56 (box top)",
+      "if": "break 240.87 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -152,14 +140,14 @@
     "rr_ratio": 0.0,
     "phase_match": false,
     "r1": 240.87,
-    "s1": 202.56,
+    "s1": 195.58,
     "s2": 161.0,
-    "r2": 216.81,
+    "r2": 231.9,
     "r3": 195.7,
     "s3": 113.9,
     "s4": 93.69,
-    "current_position_pct": 41.4,
-    "notes": "WAIT_RANGE: in box (203-241), pos 41%, no clear setup"
+    "current_position_pct": 7.9,
+    "notes": "WAIT_RANGE: in box (196-241), pos 8%, no clear setup"
   },
   "patterns": [
     {

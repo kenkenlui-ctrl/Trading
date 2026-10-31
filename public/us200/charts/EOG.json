@@ -3,89 +3,90 @@
   "ticker_user": "EOG",
   "name": "EOG Resources, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-29",
-    "O": 161.84,
-    "H": 162.35,
-    "L": 159.64,
-    "C": 162.22,
-    "prev_close": 160.92,
-    "chg_pct": 0.81
+    "date": "2026-10-30",
+    "O": 164.2,
+    "H": 165.93,
+    "L": 162.96,
+    "C": 165.54,
+    "prev_close": 162.22,
+    "chg_pct": 2.05
   },
-  "phase": "range",
-  "adx": 25.4,
-  "plus_di": 24.78,
-  "minus_di": 15.38,
+  "phase": "uptrend",
+  "adx": 26.12,
+  "plus_di": 29.99,
+  "minus_di": 14.27,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 165.11 (2026-10-23), trough 158.87 (2026-10-23), box top 165.11 (2026-10-23)",
+  "phase_evidence": "Peak 165.93 (2026-10-30), trough 137.35 (2026-09-30), box top 165.93 (2026-10-30)",
   "peak": {
-    "date": "2026-10-23",
-    "price": 165.11
+    "date": "2026-10-30",
+    "price": 165.93
   },
   "trough": {
-    "date": "2026-10-23",
-    "price": 158.87
+    "date": "2026-09-30",
+    "price": 137.35
   },
   "box": {
-    "top": 165.11,
-    "top_date": "2026-10-23",
-    "bottom": 158.87,
-    "period": "2026-10-23 to 2026-10-29"
+    "top": 165.93,
+    "top_date": "2026-10-30",
+    "bottom": 137.35,
+    "period": "2026-09-30 to 2026-10-30"
   },
-  "drop_from_peak_pct": 1.8,
-  "recovery_from_crash_pct": 2.1,
+  "drop_from_peak_pct": 0.2,
+  "recovery_from_crash_pct": 20.5,
   "supports": [
     {
-      "level": 156.0,
+      "level": 160.0,
       "label": "S1 KEY",
+      "touches": 10,
+      "evidence": "tested 10x in base period; 3.3% below current"
+    },
+    {
+      "level": 156.0,
+      "label": "S2",
       "touches": 8,
-      "evidence": "tested 8x in base period; 3.8% below current"
+      "evidence": "mid-base support, tested 8x"
     },
     {
       "level": 152.0,
-      "label": "S2",
-      "touches": 10,
-      "evidence": "mid-base support, tested 10x"
+      "label": "S3",
+      "touches": 8,
+      "evidence": "mid-base support, tested 8x"
     },
     {
-      "level": 148.0,
-      "label": "S3 bottom",
-      "touches": 14,
-      "evidence": "structural bottom, near crash low 158.87"
+      "level": 137.35,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-09-30, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 162.35,
+      "level": 165.93,
       "label": "R1 today high",
-      "evidence": "today's high 162.35000610351562"
-    },
-    {
-      "level": 165.11,
-      "label": "R3 Oct high",
-      "evidence": "box top 165.11, base period high"
+      "evidence": "today's high 165.92999267578125"
     }
   ],
   "position": {
-    "current": 162.22,
-    "in_box_pct": 83.1,
-    "nearest_support": "S1 KEY (156.0)",
-    "nearest_resistance": "R1 today high (162.35)"
+    "current": 165.54,
+    "in_box_pct": 98.6,
+    "nearest_support": "S1 KEY (160.0)",
+    "nearest_resistance": "R1 today high (165.93)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 161.84,
-    "H": 162.35,
-    "L": 159.64,
-    "C": 162.22,
-    "body_pct": 14.0,
-    "upper_wick_pct": 4.8,
-    "lower_wick_pct": 81.2
+    "O": 164.2,
+    "H": 165.93,
+    "L": 162.96,
+    "C": 165.54,
+    "body_pct": 45.1,
+    "upper_wick_pct": 13.1,
+    "lower_wick_pct": 41.8
   },
   "bias": {
     "short": {
@@ -93,34 +94,30 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": "no clear direction"
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 156.0 (KEY support)",
-      "then": "still range; watch 162.35 for next test"
+      "if": "hold 160.0 (KEY support)",
+      "then": "still range; watch 165.93 for next test"
     },
     {
-      "if": "break 156.0 on close",
-      "then": "target 152.0 → 148.0 (short-term bearish)"
+      "if": "break 160.0 on close",
+      "then": "target 156.0 → 152.0 (short-term bearish)"
     },
     {
-      "if": "break 148.0 (crash low)",
+      "if": "break 137.35 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 162.35 on close",
-      "then": "short-term bullish; next test 165.11"
-    },
-    {
-      "if": "break 165.11 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 165.93 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -143,7 +140,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -151,15 +148,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 165.11,
-    "s1": 139.46,
+    "r1": 165.93,
+    "s1": 140.04,
     "s2": 133.45,
     "r2": 154.16,
     "r3": 148.69,
     "s3": 127.3,
     "s4": 104.27,
-    "current_position_pct": 88.7,
-    "notes": "WAIT_RANGE: in box (139-165), pos 89%, no clear setup"
+    "current_position_pct": 98.5,
+    "notes": "WAIT_RANGE: in box (140-166), pos 98%, no clear setup"
   },
   "patterns": [
     {

@@ -3,20 +3,20 @@
   "ticker_user": "ADP",
   "name": "Automatic Data Processing, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-29",
-    "O": 289.67,
-    "H": 289.89,
-    "L": 283.58,
-    "C": 286.08,
-    "prev_close": 285.37,
-    "chg_pct": 0.25
+    "date": "2026-10-30",
+    "O": 293.2,
+    "H": 297.76,
+    "L": 292.0,
+    "C": 293.84,
+    "prev_close": 286.08,
+    "chg_pct": 2.71
   },
   "phase": "range",
-  "adx": 32.32,
-  "plus_di": 30.04,
-  "minus_di": 22.8,
+  "adx": 31.87,
+  "plus_di": 34.38,
+  "minus_di": 20.15,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 309.4 (2026-10-23), trough 255.96 (2026-10-05), box top 309.4 (2026-10-23)",
@@ -32,35 +32,41 @@
     "top": 309.4,
     "top_date": "2026-10-23",
     "bottom": 255.96,
-    "period": "2026-10-05 to 2026-10-29"
+    "period": "2026-10-05 to 2026-10-30"
   },
-  "drop_from_peak_pct": 7.5,
-  "recovery_from_crash_pct": 11.8,
+  "drop_from_peak_pct": 5.0,
+  "recovery_from_crash_pct": 14.8,
   "supports": [
     {
-      "level": 276.0,
+      "level": 284.0,
       "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 3.5% below current"
+      "touches": 10,
+      "evidence": "tested 10x in base period; 3.3% below current"
     },
     {
-      "level": 272.0,
+      "level": 276.0,
       "label": "S2",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
     },
     {
-      "level": 264.0,
-      "label": "S3 bottom",
-      "touches": 5,
-      "evidence": "structural bottom, near crash low 255.96"
+      "level": 272.0,
+      "label": "S3",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 255.96,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-10-05, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 289.89,
+      "level": 297.76,
       "label": "R1 today high",
-      "evidence": "today's high 289.8900146484375"
+      "evidence": "today's high 297.760009765625"
     },
     {
       "level": 309.4,
@@ -69,28 +75,28 @@
     }
   ],
   "position": {
-    "current": 286.08,
-    "in_box_pct": 48.6,
-    "nearest_support": "S1 KEY (276.0)",
-    "nearest_resistance": "R1 today high (289.89)"
+    "current": 293.84,
+    "in_box_pct": 70.9,
+    "nearest_support": "S1 KEY (284.0)",
+    "nearest_resistance": "R1 today high (297.76)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 289.67,
-    "H": 289.89,
-    "L": 283.58,
-    "C": 286.08,
-    "body_pct": 56.9,
-    "upper_wick_pct": 3.5,
-    "lower_wick_pct": 39.6
+    "O": 293.2,
+    "H": 297.76,
+    "L": 292.0,
+    "C": 293.84,
+    "body_pct": 11.1,
+    "upper_wick_pct": 68.1,
+    "lower_wick_pct": 20.8
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (49% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral",
@@ -103,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 276.0 (KEY support)",
-      "then": "still range; watch 289.89 for next test"
+      "if": "hold 284.0 (KEY support)",
+      "then": "still range; watch 297.76 for next test"
     },
     {
-      "if": "break 276.0 on close",
-      "then": "target 272.0 → 264.0 (short-term bearish)"
+      "if": "break 284.0 on close",
+      "then": "target 276.0 → 272.0 (short-term bearish)"
     },
     {
-      "if": "break 264.0 (crash low)",
+      "if": "break 255.96 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 289.89 on close",
+      "if": "reclaim 297.76 on close",
       "then": "short-term bullish; next test 309.4"
     },
     {
@@ -143,23 +149,23 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
+    "phase_match": false,
     "r1": 309.4,
     "s1": 255.96,
-    "s2": 257.74,
+    "s2": 256.51,
     "r2": 288.0,
     "r3": 280.59,
     "s3": 204.56,
     "s4": 188.16,
-    "current_position_pct": 56.4,
-    "notes": "WAIT_RANGE: in box (256-309), pos 56%, no clear setup"
+    "current_position_pct": 70.9,
+    "notes": "WAIT_RANGE: in box (256-309), pos 71%, no clear setup"
   },
   "patterns": [
     {
