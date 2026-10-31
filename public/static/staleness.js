@@ -55,7 +55,43 @@
 
   if (!stale.length) return;
 
+  /* ---- the two claims that must not stand alone ---------------------- */
+  /* The "今日 actionable" heading. The source renders the data date into a
+   * .w9-fresh-note span, so the claim is never unqualified in the shipped
+   * bytes; when the data is behind, that span is replaced with the market
+   * list. Writing to the span (rather than to the h2's textContent) keeps the
+   * <em> the heading is built around.
+   */
+  var parts = stale.map(function (f) {
+    return (LABEL[f.market] || f.market) + '數據截至 ' + f.session;
+  }).join('；');
+  var heads = document.querySelectorAll('h2');
+  for (var i = 0; i < heads.length; i++) {
+    var h = heads[i];
+    if (!h.textContent || !/actionable/i.test(h.textContent)) continue;
+    if (/未更新/.test(h.textContent)) break;   // the server already said so
+    var note = h.querySelector('.w9-fresh-note');
+    if (note) {
+      note.textContent = '（' + parts + '，未更新）';
+    } else {
+      h.textContent = h.textContent.replace(/\s*$/, '') +
+        '（' + parts + '，未更新）';
+    }
+    break;
+  }
+
   /* ---- the banner ---------------------------------------------------- */
+  /* Only if the server did not already render one.
+   *
+   * The server renders the banner when the BUILD-TIME state was stale. The
+   * client exists for the case the server cannot see: the site was built
+   * while the data was current and then sat there. When both are stale at
+   * once — which is what a build that published a market one session behind
+   * looks like — two banners say the same thing in two slightly different
+   * sentences, stacked on top of each other.
+   */
+  if (/數據新鮮度提示/.test(document.body.innerHTML)) return;
+
   var rows = stale.map(function (f) {
     var name = LABEL[f.market] || f.market;
     var why = f.reason === 'session-missed'
@@ -83,30 +119,5 @@
   } else {
     var hdr = document.querySelector('header');
     if (hdr && hdr.parentNode) hdr.parentNode.insertBefore(banner, hdr.nextSibling);
-  }
-
-  /* ---- the two claims that must not stand alone ---------------------- */
-  /* The "今日 actionable" heading. The source renders the data date into a
-   * .w9-fresh-note span, so the claim is never unqualified in the shipped
-   * bytes; when the data is behind, that span is replaced with the market
-   * list. Writing to the span (rather than to the h2's textContent) keeps the
-   * <em> the heading is built around.
-   */
-  var parts = stale.map(function (f) {
-    return (LABEL[f.market] || f.market) + '數據截至 ' + f.session;
-  }).join('；');
-  var heads = document.querySelectorAll('h2');
-  for (var i = 0; i < heads.length; i++) {
-    var h = heads[i];
-    if (!h.textContent || !/actionable/i.test(h.textContent)) continue;
-    if (/未更新/.test(h.textContent)) break;   // the server already said so
-    var note = h.querySelector('.w9-fresh-note');
-    if (note) {
-      note.textContent = '（' + parts + '，未更新）';
-    } else {
-      h.textContent = h.textContent.replace(/\s*$/, '') +
-        '（' + parts + '，未更新）';
-    }
-    break;
   }
 })();
