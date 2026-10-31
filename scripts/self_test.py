@@ -4073,6 +4073,42 @@ def t_client_side_freshness_check_is_wired() -> None:
            "the control for this gate does not discriminate: the meta check "
            "still passes after the tag was renamed")
 
+    # 2026-10-31. The request-time check was working, and the page still
+    # shipped the literal word "Live" in its source. A build-time state is
+    # FROZEN: the site was built on 2026-10-29 with fresh data and sat there
+    # until 2026-10-31, so the source claimed "Live" three sessions later —
+    # to every reader who does not run the page's script (a crawler, a
+    # link-preview scraper, a text fetcher, a reader with JS off) and to
+    # anyone who opens view-source. Kenneth checked the source on 2026-10-31
+    # and saw "Live" with no notice.
+    #
+    # So the SOURCE states the session its data covers, and the browser earns
+    # the word "Live". The gate is that the shipped bytes never assert it.
+    _km = _re.search(r'<div class="kicker">(.*?)</div>', home, _re.S)
+    _kicker = _km.group(1) if _km else ""
+    record("the shipped source does not assert 'Live'",
+           bool(_kicker) and "Live" not in _kicker,
+           f"kicker = {_kicker.strip()!r}")
+    record("the shipped source states the session its data covers",
+           bool(_kicker) and "數據截至" in _kicker,
+           f"kicker = {_kicker.strip()!r}")
+    record("the shipped source marks the claim the browser may upgrade",
+           'class="w9-fresh-claim"' in home,
+           "the .w9-fresh-claim span is missing")
+    # MUST-FAIL: the same predicate, re-evaluated on a source that claims Live.
+    #
+    # The check above is "the shipped source does not assert 'Live'". The
+    # control has to show that the predicate REJECTS a source that does claim
+    # it — so it asserts the predicate is TRUE on the tampered source (the
+    # main check would fail on it). Asserting the predicate still passes
+    # would prove nothing: it passes on ANY source, tampered or not.
+    _tainted = _re.sub(r'(<span class="w9-fresh-claim"[^>]*>)[^<]*(</span>)',
+                        r'\1Live\2', _kicker)
+    record("MUST-FAIL a source that asserts 'Live' is rejected",
+           "Live" in _tainted,
+           "the control for this gate does not discriminate: the tampered "
+           "source does not actually claim Live")
+
 
 def t_build_state_records_and_reports_the_last_run() -> None:
     """A build that fails must be visible to the NEXT build and to the site.

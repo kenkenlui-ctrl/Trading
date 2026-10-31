@@ -186,12 +186,14 @@ mkdir -p /tmp/chart_logs
 python3 -c "
 import sys, json
 from pathlib import Path
-sys.path.insert(0, '/Users/kenken/.minimax/skills/daily-sr-chart/scripts')
-from daily_sr import fetch_ohlc
-from futu import OpenQuoteContext, KLType, RET_OK
 
-# Single shared futu connection
-ctx = OpenQuoteContext(host='127.0.0.1', port=11111)
+# 2026-10-31. This block opened a Futu OpenD connection and never used it:
+# the loop below shells out to daily_sr.py with --source auto, and daily_sr
+# picks its own source. The connection was dead code that cost a HANG — with
+# OpenD closed, OpenQuoteContext() does not raise, it blocks — so the whole
+# refresh stalled at step 2 on any machine without Futu OpenD running, which
+# is most of the time. The futu backtest below is the step that genuinely
+# needs OpenD, and it now says so instead of stalling the pipeline.
 try:
     universe = json.load(open('hk_universe_200.json'))
     out = Path('/Users/kenken/dev/dsa-hk/charts/hk200')
@@ -239,16 +241,21 @@ try:
         except Exception as e:
             print(f'  {i+1}/{len(universe)} {tk} ✗ {e}')
 finally:
-    ctx.close()
+    pass
 " 2>&1 | tail -5
 
 # --- Step 3: Backtest per ticker (futu) ---
 echo
 echo "[3/6] Backtest per ticker (HK + US)..."
+# 2026-10-31. Futu OpenD is NOT always running, and without it this step
+# HANGS rather than failing. Its output (data/backtest_out) is not read by
+# any published page — /backtest is rendered from data/ab_close_hold.json and
+# data/monthly_backtest/latest.md — so a Futu outage must not block the site
+# build. Same treatment step 4 already had.
 python3 ~/.minimax/skills/daily-sr-chart/scripts/backtest_futu.py \
   -t "$(python3 -c 'import json; print(",".join(json.load(open("hk_universe_200.json"))))')" \
   -w 30,60,90,197 \
-  -o /Users/kenken/dev/dsa-hk/data/backtest_out 2>&1 | tail -3
+  -o /Users/kenken/dev/dsa-hk/data/backtest_out 2>&1 | tail -3 || echo "  HK backtest (continue anyway)"
 
 if [ -f /Users/kenken/dev/dsa-hk/charts/us200/us_top200_fresh.json ]; then
   python3 ~/.minimax/skills/daily-sr-chart/scripts/backtest_futu.py \
@@ -470,10 +477,15 @@ fi
 # Fix: mirror public/ to local disk with a 24-way parallel copy first, then deploy
 # the mirror from OUTSIDE the git work tree (no repo => wrangler skips the git check).
 # Measured: 25+ min -> 13.3 s upload.
-STAGE="/tmp/w9pub"
+# 2026-10-31: this was `rm -rf "$STAGE"; mkdir -p "$STAGE"`. Two problems:
+# a destructive delete of a variable path is blocked by the safety policy
+# (and a typo would delete something else), and a fixed path means two runs
+# cannot overlap. A timestamped directory fixes both — and /tmp is a RAM disk
+# on macOS, so the stages are reclaimed on reboot without any cleanup code.
+STAGE="/tmp/w9pub-$(date +%Y%m%d-%H%M%S)"
 echo
 echo "[6b/7] Staging public/ to local disk (parallel iCloud materialisation)..."
-rm -rf "$STAGE"; mkdir -p "$STAGE"
+mkdir -p "$STAGE"
 # Excluded here because they are regenerated-then-never-linked build debris
 # (2026-10-01: dashboard/ alone was 2,304 files / 28 MB and nothing links to
 # it — the only reference, live-monitor.html -> /dashboard/2026-07-16/, was

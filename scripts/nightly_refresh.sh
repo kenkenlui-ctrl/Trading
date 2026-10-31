@@ -1,5 +1,13 @@
 #!/bin/bash
-# nightly_refresh.sh — the scheduled build that was missing.
+# nightly_refresh.sh — the build, run BY HAND.
+#
+# 2026-10-31. Kenneth's decision: there is NO scheduler. The build is manual
+# — "you call it, I run it" (his rule of 2026-10-05, restated on 2026-10-31).
+# The launchd agent that used to sit in ~/Library/LaunchAgents has been
+# unloaded and removed, so nothing here can fire on its own. This file is the
+# tool to run when he asks for a refresh: it works out whether the site is
+# actually behind, refuses to fetch when it is not, and then runs the whole
+# pipeline — fetch, build, self-test, A2 deploy gate, deploy.
 #
 # WHY THIS FILE EXISTS
 #   On 2026-10-22/23 and again on 2026-10-26/27/28 the site sat on old data
@@ -7,7 +15,7 @@
 #   The launchd scheduler ran an analysis job and a chanlun scan, the sync
 #   job committed the repo, and nothing in the machine ever built the site.
 #
-#   Two things then had to be true for this to be safe to schedule:
+#   Two things then had to be true for this to be safe to run unattended:
 #
 #   1. It has to survive a laptop that is closed and asleep. The machine
 #      sleeps from roughly 18:00 with the lid shut and runs on battery, so a
@@ -71,26 +79,22 @@ echo
 log "asking the vendor what each market has closed..."
 python3 scripts/market_sessions.py 2>&1 | tee -a "$LOG"
 
-# --- are we behind? --------------------------------------------------------
-# The vendor's latest closed session against the session our published bars
-# actually end on. A market that has closed a session we do not have is a
-# market that needs a rebuild.
-eval "$(python3 - <<'PY'
-import json, pathlib, sys
-sys.path.insert(0, "scripts")
-import staleness as S
-
-ref = S.reference().get("markets") or {}
-behind = []
-for m in ("HK", "US", "JP"):
-    key = S.MARKET_DIR[m]
-    latest = str((ref.get(key) or {}).get("latest_closed_session") or "")[:10]
-    ours = S.data_session(m)
-    if latest and ours and ours < latest:
-        behind.append(m)
-print(f'BEHIND="{",".join(behind)}"')
-PY
-)"
+# --- are we behind, and what should we fetch? ------------------------------
+# One line from scripts/nightly_dates.py:
+#   behind|ASOF_HK|ASOF_US|ASOF_JP|DATA_DATE
+#
+# 2026-10-31: this used to be an `eval "$(python3 - <<'PY' ... )"` with the
+# Python embedded in a heredoc. Bash does not treat a heredoc body as opaque
+# while it scans for the closing `)` of a command substitution: it stopped at
+# the first UNBALANCED `)` in the Python source, so the substitution was cut
+# in half and DATA_DATE came out as the string " jp) if d] or [])". The build
+# then fetched with a garbage cap — on a real overnight run — and the failure
+# looked like a data problem instead of a shell problem.
+#
+# A separate file has no brackets in the command substitution, so there is
+# nothing for bash to misread. Never embed a script with unbalanced brackets
+# in a heredoc inside $( ... ).
+IFS='|' read -r BEHIND ASOF_HK ASOF_US ASOF_JP DATA_DATE <<< "$(python3 scripts/nightly_dates.py)"
 
 if [ -z "${BEHIND:-}" ]; then
   log "already current — nothing to publish"
@@ -100,23 +104,9 @@ fi
 log "behind the market's latest closed session: ${BEHIND}"
 
 # --- the dates to fetch ----------------------------------------------------
-# One per market, read from the vendor's own answer. DATA_DATE (the generic
-# cap) is the latest of the three.
-eval "$(python3 - <<'PY'
-import pathlib, sys
-sys.path.insert(0, "scripts")
-import staleness as S
-
-ref = S.reference().get("markets") or {}
-def sess(m):
-    return str((ref.get(S.MARKET_DIR[m]) or {}).get("latest_closed_session") or "")[:10]
-hk, us, jp = sess("HK"), sess("US"), sess("JP")
-print(f'ASOF_HK="{hk}"')
-print(f'ASOF_US="{us}"')
-print(f'ASOF_JP="{jp}"')
-print(f'DATA_DATE="{max([d for d in (hk, us, jp) if d] or [""])}"')
-PY
-)"
+# Already read above, in one line, from the vendor's own answer: one session
+# per market (the three do not share a trading calendar) and DATA_DATE as the
+# generic cap.
 
 if [ -z "${ASOF_HK:-}" ] || [ -z "${ASOF_US:-}" ] || [ -z "${ASOF_JP:-}" ]; then
   log "!!! the vendor did not report a closed session for every market — refusing to guess"

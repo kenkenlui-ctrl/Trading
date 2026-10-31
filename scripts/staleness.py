@@ -245,20 +245,35 @@ def affected_markets() -> list[str]:
     return [m for m in ("HK", "US", "JP") if compute(m).state != FRESH]
 
 
-def live_label(fresh: str = "Live", stale: str = "數據未更新") -> str:
-    """The 'Live' claim on the home page, qualified when a market is behind.
+def source_claim(session_label: str = "") -> str:
+    """What the SHIPPED HTML is allowed to say about its own freshness.
 
-    The dispatch is explicit: when a market's data is older than that
-    market's latest closed session, the page must not present the signals as
-    "Live" or "今日 actionable" without the stale flag attached. So the word
-    itself changes — a banner BELOW the claim is not enough, because the
-    claim is what a reader skims.
+    The dispatch is explicit: when a market's data is older than that market's
+    latest closed session, the page must not present the signals as "Live" or
+    "今日 actionable" without the stale flag attached. So the word itself
+    changes — a banner BELOW the claim is not enough, because the claim is
+    what a reader skims.
+
+    2026-10-31: this used to return the literal word "Live" whenever the
+    BUILD-TIME state was fresh, and the word was written into the HTML. But
+    a build-time state is frozen: the site was built on 2026-10-29 with fresh
+    data and sat there until 2026-10-31, so the shipped source still claimed
+    "Live" three sessions later. The request-time check caught it in a
+    browser, and the source kept claiming it to everyone who does not run
+    JavaScript — a crawler, a link-preview scraper, a text fetcher, a reader
+    with JS off, and "view source". Kenneth checked the source on 2026-10-31
+    and saw "Live" with no notice, and he was right to.
+
+    So the SOURCE states the one thing it knows for certain — the session its
+    data covers — and the visitor's clock decides whether that may be called
+    "Live". A page that cannot run the script says the DATE, which is true,
+    instead of "Live", which might not be.
     """
     if not enabled():
-        return fresh
+        return "Live"
     if affected_markets():
-        return stale
-    return fresh
+        return "數據未更新"
+    return f"數據截至 {session_label}" if session_label else "數據截至 —"
 
 
 def actionable_note() -> str:

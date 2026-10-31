@@ -34,6 +34,25 @@
 
   var LABEL = { HK: '港股', US: '美股', JP: '日股' };
   var stale = window.W9Freshness.decide(facts, Date.now());
+
+  /* ---- the claim the SOURCE may not make for itself --------------------- */
+  /* The shipped HTML says the DATE its data covers, never the word "Live".
+   * The source is what a crawler, a link-preview scraper, a text fetcher, a
+   * non-JS reader and "view source" all see, and none of them run this
+   * script — so a "Live" written into the HTML is a claim the server cannot
+   * keep (its state is frozen at build time) and one that outlives its
+   * truth. Here the visitor's clock earns it: "Live" appears only while the
+   * data really is current.
+   *
+   * If the SERVER already said 未更新 (the build-time state was stale), that
+   * stays: the browser's clock cannot un-stale the data.
+   */
+  var claim = document.querySelector('.w9-fresh-claim');
+  if (claim) {
+    var serverStale = /未更新/.test(claim.textContent || '');
+    claim.textContent = (stale.length || serverStale) ? '數據未更新' : 'Live';
+  }
+
   if (!stale.length) return;
 
   /* ---- the banner ---------------------------------------------------- */
@@ -67,21 +86,27 @@
   }
 
   /* ---- the two claims that must not stand alone ---------------------- */
-  var kicker = document.querySelector('.kicker');
-  if (kicker && /Live/.test(kicker.textContent)) {
-    kicker.textContent = kicker.textContent.replace(/\s*·\s*Live\s*$/, ' · 數據未更新');
-  }
+  /* The "今日 actionable" heading. The source renders the data date into a
+   * .w9-fresh-note span, so the claim is never unqualified in the shipped
+   * bytes; when the data is behind, that span is replaced with the market
+   * list. Writing to the span (rather than to the h2's textContent) keeps the
+   * <em> the heading is built around.
+   */
+  var parts = stale.map(function (f) {
+    return (LABEL[f.market] || f.market) + '數據截至 ' + f.session;
+  }).join('；');
   var heads = document.querySelectorAll('h2');
   for (var i = 0; i < heads.length; i++) {
     var h = heads[i];
-    if (h.textContent && /actionable/i.test(h.textContent) &&
-        !/未更新/.test(h.textContent)) {
-      var parts = stale.map(function (f) {
-        return (LABEL[f.market] || f.market) + '數據截至 ' + f.session;
-      }).join('；');
+    if (!h.textContent || !/actionable/i.test(h.textContent)) continue;
+    if (/未更新/.test(h.textContent)) break;   // the server already said so
+    var note = h.querySelector('.w9-fresh-note');
+    if (note) {
+      note.textContent = '（' + parts + '，未更新）';
+    } else {
       h.textContent = h.textContent.replace(/\s*$/, '') +
         '（' + parts + '，未更新）';
-      break;
     }
+    break;
   }
 })();

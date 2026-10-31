@@ -616,9 +616,26 @@ def build_home_page():
     # Sprint 2 A1: cross-market freshness banner. Empty when every market is
     # fresh (or when the banner flag is off).
     _stale_banner = staleness.banner_html_all()
-    # ...and the two claims that must not stand unqualified when a market is
-    # behind: the "Live" kicker and the "今日 actionable" heading.
-    _live_label = staleness.live_label()
+    # ...and the claim the SOURCE must not make for itself.
+    #
+    # 2026-10-31. This was `_live_label = staleness.live_label()`, which
+    # rendered the literal word "Live" into the shipped HTML whenever the
+    # build-time state was fresh. A build-time state is FROZEN: the site was
+    # built on 2026-10-29 with fresh data and sat there until 2026-10-31, so
+    # the HTML still claimed "Live" three sessions later. The request-time
+    # check caught it in a browser, but the SOURCE kept claiming "Live" —
+    # and the source is what a crawler, a link-preview scraper, a text
+    # fetcher, a non-JS reader and "view source" all see. Kenneth checked
+    # the source on 2026-10-31 and saw "Live" with no notice, and he was
+    # right to.
+    #
+    # So the source states the one thing it knows for certain — the session
+    # its data covers — and the visitor's clock decides whether that may be
+    # called "Live". A page that cannot run the script says the DATE, which
+    # is true, instead of "Live", which might not be. The word "Live" then
+    # exists in the shipped bytes only as something the browser earned.
+    _server_stale = bool(staleness.affected_markets())
+    _claim_text = staleness.source_claim(t1_label)
     _fresh_meta = staleness.client_meta()
     # The last build's outcome, published. A failed build cannot publish
     # its own failure, so the NEXT successful build carries the reason
@@ -631,6 +648,13 @@ def build_home_page():
     else:
         _last_build_html = ""
     _actionable_note = staleness.actionable_note()
+    # The same treatment for the "今日 actionable" heading: the source carries
+    # the data date in a span the browser can replace, so the `<em>` survives
+    # and the source never leaves the claim unqualified.
+    if _server_stale:
+        _note_html = f'<span class="w9-fresh-note">{_actionable_note}</span>'
+    else:
+        _note_html = f'<span class="w9-fresh-note">（數據截至 {t1_label}）</span>'
 
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant-HK">
@@ -775,7 +799,7 @@ function toggleTheme(){{
 <main id="main">
 <div class="page-head">
   <div class="container">
-    <div class="kicker">Leeks Terminal · {_live_label}</div>
+    <div class="kicker">Leeks Terminal · <span class="w9-fresh-claim" data-w9-fresh="數據截至 {t1_label}">{_claim_text}</span></div>
     <h1>Leeks Terminal · <em class="italic">{subtitle}</em></h1>
     <p class="lede">{lede}</p>
     <div class="hero-meta">
@@ -790,7 +814,7 @@ function toggleTheme(){{
 <section>
   <div class="container">
     <div class="section-head">
-      <h2>{T("home_today_actionable")}{_actionable_note}</h2>
+      <h2>{T("home_today_actionable")}{_note_html}</h2>
       <span class="section-meta">{mkt_bits} · 全部只做多 · 入場價 = 20 日低位 S1，要收市企穩先算成交 · <b>冇目標價</b>，第 10 個交易日收市離場 · Updated {datetime.now().strftime('%H:%M HKT')}</span>
     </div>
     <div class="card-grid" style="grid-template-columns: 1fr;">

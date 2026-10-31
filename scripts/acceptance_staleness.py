@@ -77,8 +77,29 @@ def record(ok: bool, name: str, detail: str = "") -> None:
 # ---------------------------------------------------------------------------
 # the two snapshots
 # ---------------------------------------------------------------------------
-OLD_SESSION = "2026-10-23"   # what the site published before this build
-NEW_SESSION = "2026-10-28"   # what this build publishes
+# The OLD session is a documented fixture: 2026-10-23 is what the site was
+# publishing on 2026-10-25, and it is what it was still publishing on
+# 2026-10-29 morning (verified against the live home page). It is history,
+# not a number this script invents.
+OLD_SESSION = "2026-10-23"
+
+# The NEW session is READ OUT of the built page, not typed: the payload the
+# page carries is the snapshot under test.
+def _new_session() -> str:
+    import re as _re
+    home = (PUBLIC / "index.html").read_text(encoding="utf-8", errors="replace")
+    m = _re.search(r"<meta name=\"w9-freshness\" content='([^']*)'", home)
+    if not m:
+        return ""
+    try:
+        facts = json.loads(m.group(1))
+    except Exception:
+        return ""
+    sessions = {str(f.get("session")) for f in facts if f.get("session")}
+    return sorted(sessions)[0] if len(sessions) == 1 else ""
+
+
+NEW_SESSION = _new_session()
 
 
 def old_reference() -> dict:
@@ -126,14 +147,14 @@ def server_layer(now: dt.datetime) -> None:
     old = with_old_snapshot(lambda: {
         "states": {m: S.compute(m, now).state for m in ("HK", "US", "JP")},
         "banner": S.banner_html_all(),
-        "live": S.live_label(),
+        "claim": S.source_claim(NEW_SESSION),
         "actionable": S.actionable_note(),
         "reason": S.compute("HK", now).reason,
     })
     fresh = {
         "states": {m: S.compute(m, now).state for m in ("HK", "US", "JP")},
         "banner": S.banner_html_all(),
-        "live": S.live_label(),
+        "claim": S.source_claim(NEW_SESSION),
         "actionable": S.actionable_note(),
     }
 
@@ -147,9 +168,9 @@ def server_layer(now: dt.datetime) -> None:
     record(OLD_SESSION in old["banner"] and NEW_SESSION in old["banner"],
            "old snapshot: the banner names the data date AND the missed session",
            f"banner={old['banner'][:400]}")
-    record(old["live"] == "數據未更新",
-           "old snapshot: the 'Live' claim is withdrawn",
-           f"live label = {old['live']!r}")
+    record(old["claim"] == "數據未更新",
+           "old snapshot: the source claim is withdrawn",
+           f"source claim = {old['claim']!r}")
     record("未更新" in old["actionable"],
            "old snapshot: the stale flag travels with 今日 actionable",
            f"actionable note = {old['actionable']!r}")
@@ -164,9 +185,12 @@ def server_layer(now: dt.datetime) -> None:
     record(fresh["banner"].strip() == "",
            "new snapshot: no STALE banner",
            "a fresh snapshot still produced a banner")
-    record(fresh["live"] == "Live",
-           "new snapshot: the 'Live' claim is back",
-           f"live label = {fresh['live']!r}")
+    record(fresh["claim"] == f"數據截至 {NEW_SESSION}",
+           "new snapshot: the source states the date, not 'Live'",
+           f"source claim = {fresh['claim']!r}")
+    record("Live" not in fresh["claim"],
+           "new snapshot: the source never asserts 'Live' for itself",
+           f"source claim = {fresh['claim']!r}")
     record(fresh["actionable"] == "",
            "new snapshot: no stale flag on 今日 actionable",
            f"actionable note = {fresh['actionable']!r}")
@@ -197,6 +221,20 @@ def client_layer(build_moment: dt.datetime) -> None:
     record(bool(fresh_facts),
            "the built homepage carries the freshness facts",
            "the meta tag is empty")
+
+    # The claim is the browser's to earn: the script must be the only thing
+    # that can write "Live", and it must write "數據未更新" instead when the
+    # data is behind.
+    js = PUBLIC / "static" / "staleness.js"
+    if js.exists():
+        jstext = js.read_text(encoding="utf-8", errors="replace")
+        record("w9-fresh-claim" in jstext and "'Live'" in jstext
+               and "數據未更新" in jstext,
+               "the shipped script owns the 'Live' claim",
+               "the script does not write the claim")
+    else:
+        record(False, "the shipped script owns the 'Live' claim",
+               "public/static/staleness.js is missing")
 
     # OLD payload: the same shape, the session the site used to publish.
     old_facts = []
@@ -264,6 +302,40 @@ def page_layer() -> None:
                f"{name}: shows no stale banner",
                "a stale banner is baked into a fresh page")
 
+    # The claim the SOURCE makes.
+    #
+    # 2026-10-31: the source rendered the literal word "Live" whenever the
+    # build-time state was fresh. The build-time state is FROZEN, so the
+    # shipped HTML claimed "Live" for as long as the page sat there — and
+    # the source is what every non-JS reader (a crawler, a link-preview
+    # scraper, a text fetcher, "view source") sees. The page may not assert
+    # "Live" for itself; the browser earns it.
+    home = (PUBLIC / "index.html").read_text(encoding="utf-8", errors="replace")
+    m = re.search(r'<div class="kicker">(.*?)</div>', home, re.S)
+    kicker = m.group(1) if m else ""
+    record(bool(kicker) and "Live" not in kicker,
+           "the shipped source does not assert 'Live'",
+           f"kicker = {kicker.strip()!r}")
+    record(bool(kicker) and "數據截至" in kicker,
+           "the shipped source states the session its data covers",
+           f"kicker = {kicker.strip()!r}")
+    record('class="w9-fresh-claim"' in home,
+           "the shipped source marks the claim the browser may upgrade",
+           "the .w9-fresh-claim span is missing")
+    # MUST-FAIL: the same predicate, re-evaluated on a source that says "Live"
+    #
+    # The check above is "the source does not claim Live". The control has to
+    # show that this predicate REJECTS a source that does claim it — so the
+    # control asserts the predicate is TRUE on the tampered source (i.e. the
+    # main check would fail on it). Asserting the predicate still passes
+    # would prove nothing: it would pass on ANY source, tampered or not.
+    tainted = re.sub(r'(<span class="w9-fresh-claim"[^>]*>)[^<]*(</span>)',
+                     r'\1Live\2', kicker)
+    record("Live" in tainted,
+           "MUST-FAIL a source that asserts 'Live' is rejected",
+           "the control does not discriminate: the tampered source does not "
+           "actually claim Live, so the check would not have rejected it")
+
 
 # ---------------------------------------------------------------------------
 def main() -> int:
@@ -277,6 +349,11 @@ def main() -> int:
     print(f"acceptance: old snapshot = {OLD_SESSION}, "
           f"new snapshot = {NEW_SESSION}")
     print(f"evaluated at the build instant: {build_moment.isoformat()}\n")
+
+    if not NEW_SESSION:
+        print("FAIL: the built page carries no single freshness session — "
+              "the payload is missing or the markets disagree")
+        return 1
 
     server_layer(build_moment)
     client_layer(build_moment)
