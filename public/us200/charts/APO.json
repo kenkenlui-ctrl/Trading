@@ -3,20 +3,20 @@
   "ticker_user": "APO",
   "name": "Apollo Global Management, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 114.09,
-    "H": 114.79,
-    "L": 112.4,
-    "C": 113.45,
-    "prev_close": 114.26,
-    "chg_pct": -0.71
+    "date": "2026-10-29",
+    "O": 115.4,
+    "H": 118.72,
+    "L": 114.66,
+    "C": 118.56,
+    "prev_close": 113.45,
+    "chg_pct": 4.5
   },
   "phase": "base_building",
-  "adx": 29.61,
-  "plus_di": 16.27,
-  "minus_di": 21.32,
+  "adx": 28.03,
+  "plus_di": 22.21,
+  "minus_di": 19.15,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 146.25 (2026-01-15), trough 99.56 (2026-03-03), box top 144.33 (2026-08-14)",
@@ -32,35 +32,41 @@
     "top": 144.33,
     "top_date": "2026-08-14",
     "bottom": 99.56,
-    "period": "2026-03-03 to 2026-10-28"
+    "period": "2026-03-03 to 2026-10-29"
   },
-  "drop_from_peak_pct": 22.4,
-  "recovery_from_crash_pct": 14.0,
+  "drop_from_peak_pct": 18.9,
+  "recovery_from_crash_pct": 19.1,
   "supports": [
     {
-      "level": 112.0,
+      "level": 116.0,
       "label": "S1 KEY",
-      "touches": 12,
-      "evidence": "tested 12x in base period; 1.3% below current"
+      "touches": 14,
+      "evidence": "tested 14x in base period; 2.2% below current"
+    },
+    {
+      "level": 112.0,
+      "label": "S2",
+      "touches": 31,
+      "evidence": "mid-base support, tested 31x"
     },
     {
       "level": 108.0,
-      "label": "S2",
+      "label": "S3",
       "touches": 12,
       "evidence": "mid-base support, tested 12x"
     },
     {
-      "level": 104.0,
-      "label": "S3 bottom",
-      "touches": 13,
-      "evidence": "structural bottom, near crash low 99.56"
+      "level": 99.56,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-03-03, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 114.79,
+      "level": 118.72,
       "label": "R1 today high",
-      "evidence": "today's high 114.79000091552734"
+      "evidence": "today's high 118.72000122070312"
     },
     {
       "level": 140.0,
@@ -74,28 +80,28 @@
     }
   ],
   "position": {
-    "current": 113.45,
-    "in_box_pct": 23.4,
-    "nearest_support": "S1 KEY (112.0)",
-    "nearest_resistance": "R1 today high (114.79)"
+    "current": 118.56,
+    "in_box_pct": 42.4,
+    "nearest_support": "S1 KEY (116.0)",
+    "nearest_resistance": "R1 today high (118.72)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 114.09,
-    "H": 114.79,
-    "L": 112.4,
-    "C": 113.45,
-    "body_pct": 26.8,
-    "upper_wick_pct": 29.3,
-    "lower_wick_pct": 43.9
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 115.4,
+    "H": 118.72,
+    "L": 114.66,
+    "C": 118.56,
+    "body_pct": 77.8,
+    "upper_wick_pct": 3.9,
+    "lower_wick_pct": 18.2
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (23% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -108,19 +114,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 112.0 (KEY support)",
-      "then": "still range; watch 114.79 for next test"
+      "if": "hold 116.0 (KEY support)",
+      "then": "still range; watch 118.72 for next test"
     },
     {
-      "if": "break 112.0 on close",
-      "then": "target 108.0 → 104.0 (short-term bearish)"
+      "if": "break 116.0 on close",
+      "then": "target 112.0 → 108.0 (short-term bearish)"
     },
     {
-      "if": "break 104.0 (crash low)",
+      "if": "break 99.56 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 114.79 on close",
+      "if": "reclaim 118.72 on close",
       "then": "short-term bullish; next test 140.0"
     },
     {
@@ -148,23 +154,23 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
+    "phase_match": false,
     "r1": 120.18,
     "s1": 109.91,
-    "s2": 115.42,
+    "s2": 112.1,
     "r2": 144.33,
     "r3": 141.73,
     "s3": 114.03,
     "s4": 99.56,
-    "current_position_pct": 34.5,
-    "notes": "WAIT_RANGE: in box (110-120), pos 34%, no clear setup"
+    "current_position_pct": 84.2,
+    "notes": "WAIT_RANGE: in box (110-120), pos 84%, no clear setup"
   },
   "patterns": [
     {
@@ -173,7 +179,7 @@
       "date": "2026-10-26",
       "low": 114.0,
       "high": 117.16000366210938,
-      "i": 197
+      "i": 195
     },
     {
       "name": "三個白武士",
@@ -181,7 +187,7 @@
       "date": "2026-10-09",
       "low": 114.93000030517578,
       "high": 120.18000030517578,
-      "i": 186
+      "i": 184
     },
     {
       "name": "刺穿線",
@@ -189,7 +195,7 @@
       "date": "2026-09-25",
       "low": 120.25,
       "high": 122.4800033569336,
-      "i": 176
+      "i": 174
     },
     {
       "name": "利淡反擊線",
@@ -197,7 +203,7 @@
       "date": "2026-08-20",
       "low": 129.9499969482422,
       "high": 134.25,
-      "i": 151
+      "i": 149
     },
     {
       "name": "烏雲蓋頂",
@@ -205,7 +211,7 @@
       "date": "2026-08-14",
       "low": 140.47999572753906,
       "high": 144.3300018310547,
-      "i": 147
+      "i": 145
     }
   ]
 }

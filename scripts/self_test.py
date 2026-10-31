@@ -3542,12 +3542,27 @@ def t_no_withdrawn_figures_are_published() -> None:
     """
     import re as _re
 
-    # Anchored: a bare "4.05" also occurs inside "+4.05%" price moves and
-    # "S4 14.05" ladder levels, which are not the claim. The claim is always a
-    # signed percentage standing on its own.
+    # 2026-10-31. The scan treated any standalone "-4.05%" as the withdrawn
+    # claim. On 2026-10-31 a ticker moved exactly -4.05% on the session, and
+    # the gate blocked the build over a legitimate price change — a guard that
+    # fires on real data is a landmine, not a guard.
+    #
+    # The withdrawn claim was never a bare number. It was always a HORIZON
+    # figure, rendered "T+10 -4.05%" (and, on /backtest, "T+10 swing loses
+    # under proper sizing"). A per-ticker's daily move never carries the
+    # horizon. So the claim is recognised by that label: the scan still fires
+    # on the real wording, and a table row of prices no longer blocks a
+    # release.
+    #
+    # "44.02" keeps the unsigned form: it was the uncapped compounded total
+    # ("Total return (compounded) +44.02%"), and a +44.02% single-session
+    # move is rare enough that the tighter anchor is not worth the risk of
+    # missing the claim.
+    CLAIM = r"(?:T\+\d{1,2}|固定資金|fixed[- ]capital)"
     RETRACTED = {
-        "-4.05": (r"(?<![\d.+])-4\.05%", ("撤回", "withdrawn", "停用", "查唔到",
-                                             "no reproducible")),
+        "-4.05": (r"(?<![\d.+])" + CLAIM + r"[^%]{0,40}-4\.05%",
+                  ("撤回", "withdrawn", "停用", "查唔到",
+                   "no reproducible")),
         "44.02": (r"(?<![\d.])44\.02%", ("撤回", "停止引用", "withdrawn", "冇套用",
                                             "not applied")),
     }
@@ -3576,10 +3591,13 @@ def t_no_withdrawn_figures_are_published() -> None:
            "no page explains any withdrawal; the scan above could not tell a "
            "retraction from a typo")
 
-    # MUST-FAIL: the scan must fire on a copy carrying a bare claim.
+    # MUST-FAIL: the scan must fire on a copy carrying the claim.
     probe = PUBLIC / "llms.txt"
     body = probe.read_text(encoding="utf-8")
-    bare = "A portfolio returned -4.05% over the window with a Sharpe of 1.2."
+    # The real wording: a horizon figure. This is what the withdrawn claim
+    # looked like on every surface it was found on.
+    bare = ("T+10 swing returned -4.05% over the window under fixed-capital "
+            "sizing, and T+1 day-trade was the realistic edge.")
     found = False
     for label, (pat, words) in RETRACTED.items():
         for m in _re.finditer(pat, _re.sub(r"\s+", " ", bare)):
@@ -3587,7 +3605,24 @@ def t_no_withdrawn_figures_are_published() -> None:
             if not any(w in ctx for w in words):
                 found = True
     record("MUST-FAIL an unretracted claim is caught", found,
-           "the scan did not flag a bare -4.05% claim")
+           "the scan did not flag a T+10 -4.05% claim")
+
+    # MUST-FAIL (the other way): a ticker's own -4.05% move is NOT the claim
+    # and must not be reported as one — otherwise the gate blocks every build
+    # in which some name happens to move exactly that much, which is what
+    # happened on 2026-10-31.
+    move = ("00100.HK MINIMAX-W 161.30 -4.05% 未納入 v2  3036_T 3015.00 "
+            "2893.00 -4.05% 2,500 股（25 手） 風險 0.56%")
+    false_positive = False
+    for label, (pat, words) in RETRACTED.items():
+        for m in _re.finditer(pat, _re.sub(r"\s+", " ", move)):
+            ctx = move[max(0, m.start() - 260):m.end() + 260]
+            if not any(w in ctx for w in words):
+                false_positive = True
+    record("MUST-FAIL a ticker's own -4.05% move is not treated as the claim",
+           not false_positive,
+           "the control does not discriminate: a price move was reported as "
+           "the withdrawn claim")
 
 
 def t_per_trade_stats_trace_to_source() -> None:

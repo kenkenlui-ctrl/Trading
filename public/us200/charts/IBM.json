@@ -3,23 +3,23 @@
   "ticker_user": "IBM",
   "name": "International Business Machines",
   "data_source": "yfinance",
-  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 248.49,
-    "H": 253.85,
-    "L": 247.67,
-    "C": 253.22,
-    "prev_close": 250.25,
-    "chg_pct": 1.19
+    "date": "2026-10-29",
+    "O": 249.27,
+    "H": 258.33,
+    "L": 247.8,
+    "C": 258.28,
+    "prev_close": 253.22,
+    "chg_pct": 2.0
   },
   "phase": "base_building",
-  "adx": 24.78,
-  "plus_di": 27.5,
-  "minus_di": 12.27,
-  "regime": "dead",
+  "adx": 26.23,
+  "plus_di": 29.04,
+  "minus_di": 11.01,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 332.46 (2026-06-02), trough 199.19 (2026-07-23), box top 256.3 (2026-10-22)",
+  "phase_evidence": "Peak 332.46 (2026-06-02), trough 199.19 (2026-07-23), box top 258.33 (2026-10-29)",
   "peak": {
     "date": "2026-06-02",
     "price": 332.46
@@ -29,19 +29,19 @@
     "price": 199.19
   },
   "box": {
-    "top": 256.3,
-    "top_date": "2026-10-22",
+    "top": 258.33,
+    "top_date": "2026-10-29",
     "bottom": 199.19,
-    "period": "2026-07-23 to 2026-10-28"
+    "period": "2026-07-23 to 2026-10-29"
   },
-  "drop_from_peak_pct": 23.8,
-  "recovery_from_crash_pct": 27.1,
+  "drop_from_peak_pct": 22.3,
+  "recovery_from_crash_pct": 29.7,
   "supports": [
     {
-      "level": 236.0,
+      "level": 248.0,
       "label": "S1 KEY",
       "touches": 9,
-      "evidence": "tested 9x in base period; 6.8% below current"
+      "evidence": "tested 9x in base period; 4.0% below current"
     },
     {
       "level": 232.0,
@@ -64,14 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 253.85,
+      "level": 258.33,
       "label": "R1 today high",
-      "evidence": "today's high 253.85000610351562"
-    },
-    {
-      "level": 256.3,
-      "label": "R3 Oct high",
-      "evidence": "box top 256.3, base period high"
+      "evidence": "today's high 258.3299865722656"
     },
     {
       "level": 310.0,
@@ -80,45 +75,45 @@
     }
   ],
   "position": {
-    "current": 253.22,
-    "in_box_pct": 94.6,
-    "nearest_support": "S1 KEY (236.0)",
-    "nearest_resistance": "R1 today high (253.85)"
+    "current": 258.28,
+    "in_box_pct": 53.3,
+    "nearest_support": "S1 KEY (248.0)",
+    "nearest_resistance": "R1 today high (258.33)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 248.49,
-    "H": 253.85,
-    "L": 247.67,
-    "C": 253.22,
-    "body_pct": 76.5,
-    "upper_wick_pct": 10.2,
-    "lower_wick_pct": 13.3
+    "O": 249.27,
+    "H": 258.33,
+    "L": 247.8,
+    "C": 258.28,
+    "body_pct": 85.6,
+    "upper_wick_pct": 0.5,
+    "lower_wick_pct": 14.0
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 236.0 (KEY support)",
-      "then": "still range; watch 253.85 for next test"
+      "if": "hold 248.0 (KEY support)",
+      "then": "still range; watch 258.33 for next test"
     },
     {
-      "if": "break 236.0 on close",
+      "if": "break 248.0 on close",
       "then": "target 232.0 → 228.0 (short-term bearish)"
     },
     {
@@ -126,12 +121,8 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 253.85 on close",
-      "then": "short-term bullish; next test 256.3"
-    },
-    {
-      "if": "break 256.3 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 258.33 on close",
+      "then": "short-term bullish; next test 310.0"
     }
   ],
   "common_misjudgments": [
@@ -153,24 +144,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 256.3,
-    "target_price": 237.05,
-    "stop_price": 267.43,
-    "risk_pct": 4.34,
-    "reward_pct": 7.51,
-    "rr_ratio": 1.73,
-    "phase_match": true,
-    "r1": 256.3,
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 258.33,
     "s1": 217.8,
     "s2": 218.6,
     "r2": 251.82,
     "r3": 332.46,
     "s3": 199.19,
     "s4": 220.72,
-    "current_position_pct": 92.0,
-    "notes": "SELL_R1: in box (218-256), entry at R1 256, target mid 237, stop 267 ｜ 52.2 條規則（SELL plan，resistance 256.30）：① 跌到 256.30、收市守住喺 256.30 上面 → 照 BUY 條 plan 做（入場 256.30，止蝕 267.43，目標 237.05）。② 收市跌穿 256.30 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 256.30 上面』。"
+    "current_position_pct": 99.9,
+    "notes": "WAIT_RANGE: in box (218-258), pos 100%, no clear setup"
   },
   "patterns": [
     {
@@ -179,7 +170,7 @@
       "date": "2026-10-16",
       "low": 230.25,
       "high": 236.97999572753906,
-      "i": 191
+      "i": 189
     },
     {
       "name": "利好吞噬",
@@ -187,7 +178,7 @@
       "date": "2026-07-20",
       "low": 208.82000732421875,
       "high": 216.27999877929688,
-      "i": 128
+      "i": 126
     },
     {
       "name": "利好身懷六甲",
@@ -195,7 +186,7 @@
       "date": "2026-06-26",
       "low": 258.2799987792969,
       "high": 273.1400146484375,
-      "i": 113
+      "i": 111
     }
   ]
 }

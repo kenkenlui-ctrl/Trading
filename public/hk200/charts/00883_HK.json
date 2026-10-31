@@ -3,20 +3,20 @@
   "ticker_user": "00883.HK",
   "name": "CNOOC",
   "data_source": "yfinance",
-  "data_range": "2026-01-06 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-08 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
+    "date": "2026-10-30",
     "O": 24.08,
-    "H": 24.14,
-    "L": 23.52,
-    "C": 24.02,
-    "prev_close": 24.2,
-    "chg_pct": -0.74
+    "H": 24.8,
+    "L": 23.94,
+    "C": 24.7,
+    "prev_close": 24.0,
+    "chg_pct": 2.92
   },
   "phase": "base_building",
-  "adx": 13.62,
-  "plus_di": 19.51,
-  "minus_di": 21.06,
+  "adx": 12.96,
+  "plus_di": 23.53,
+  "minus_di": 18.11,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 30.98 (2026-03-23), trough 19.92 (2026-07-02), box top 26.0 (2026-09-08)",
@@ -32,16 +32,16 @@
     "top": 26.0,
     "top_date": "2026-09-08",
     "bottom": 19.92,
-    "period": "2026-07-02 to 2026-10-28"
+    "period": "2026-07-02 to 2026-10-30"
   },
-  "drop_from_peak_pct": 22.5,
-  "recovery_from_crash_pct": 20.6,
+  "drop_from_peak_pct": 20.3,
+  "recovery_from_crash_pct": 24.0,
   "supports": [
     {
       "level": 24.0,
       "label": "S1 KEY",
-      "touches": 54,
-      "evidence": "tested 54x in base period; 0.1% below current"
+      "touches": 87,
+      "evidence": "tested 87x in base period; 2.8% below current"
     },
     {
       "level": 19.92,
@@ -52,9 +52,9 @@
   ],
   "resistances": [
     {
-      "level": 24.14,
+      "level": 24.8,
       "label": "R1 today high",
-      "evidence": "today's high 24.139999389648438"
+      "evidence": "today's high 24.799999237060547"
     },
     {
       "level": 26.0,
@@ -63,10 +63,10 @@
     }
   ],
   "position": {
-    "current": 24.02,
-    "in_box_pct": 67.4,
+    "current": 24.7,
+    "in_box_pct": 78.6,
     "nearest_support": "S1 KEY (24.0)",
-    "nearest_resistance": "R1 today high (24.14)"
+    "nearest_resistance": "R1 today high (24.8)"
   },
   "kline_today": {
     "type": "neutral",
@@ -74,12 +74,12 @@
     "touched_S1": true,
     "close_position": "upper_half",
     "O": 24.08,
-    "H": 24.14,
-    "L": 23.52,
-    "C": 24.02,
-    "body_pct": 9.7,
-    "upper_wick_pct": 9.7,
-    "lower_wick_pct": 80.6
+    "H": 24.8,
+    "L": 23.94,
+    "C": 24.7,
+    "body_pct": 72.1,
+    "upper_wick_pct": 11.6,
+    "lower_wick_pct": 16.3
   },
   "bias": {
     "short": {
@@ -98,7 +98,7 @@
   "scenarios": [
     {
       "if": "hold 24.0 (KEY support)",
-      "then": "still range; watch 24.14 for next test"
+      "then": "still range; watch 24.8 for next test"
     },
     {
       "if": "break 24.0 on close",
@@ -109,7 +109,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 24.14 on close",
+      "if": "reclaim 24.8 on close",
       "then": "short-term bullish; next test 26.0"
     },
     {
@@ -137,14 +137,14 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
+    "phase_match": false,
     "r1": 24.94,
     "s1": 22.84,
     "s2": 22.52,
@@ -152,8 +152,8 @@
     "r3": 28.28,
     "s3": 19.92,
     "s4": 20.54,
-    "current_position_pct": 56.2,
-    "notes": "WAIT_RANGE: in box (23-25), pos 56%, no clear setup"
+    "current_position_pct": 88.6,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 24.94）：① 跌到 24.94、收市守住喺 24.94 上面 → 照 BUY 條 plan 做（入場 24.94，止蝕 26.04，目標 23.89）。② 收市跌穿 24.94 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 24.94 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
     {
@@ -162,7 +162,7 @@
       "date": "2026-10-27",
       "low": 23.700000762939453,
       "high": 24.219999313354492,
-      "i": 198
+      "i": 196
     },
     {
       "name": "倒錘頭",
@@ -170,7 +170,7 @@
       "date": "2026-10-08",
       "low": 23.6200008392334,
       "high": 24.399999618530273,
-      "i": 186
+      "i": 184
     },
     {
       "name": "刺穿線",
@@ -178,7 +178,7 @@
       "date": "2026-09-28",
       "low": 23.520000457763672,
       "high": 24.139999389648438,
-      "i": 179
+      "i": 177
     },
     {
       "name": "上升三法",
@@ -186,7 +186,7 @@
       "date": "2026-09-15",
       "low": 24.260000228881836,
       "high": 24.719999313354492,
-      "i": 170
+      "i": 168
     },
     {
       "name": "烏雲蓋頂",
@@ -194,7 +194,7 @@
       "date": "2026-09-09",
       "low": 25.68000030517578,
       "high": 26.0,
-      "i": 166
+      "i": 164
     }
   ]
 }

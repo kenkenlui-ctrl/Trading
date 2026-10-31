@@ -3,20 +3,20 @@
   "ticker_user": "SHW",
   "name": "Sherwin-Williams Company (The)",
   "data_source": "yfinance",
-  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 323.72,
-    "H": 325.16,
-    "L": 318.63,
-    "C": 320.8,
-    "prev_close": 326.01,
-    "chg_pct": -1.6
+    "date": "2026-10-29",
+    "O": 328.75,
+    "H": 330.21,
+    "L": 323.01,
+    "C": 330.1,
+    "prev_close": 320.8,
+    "chg_pct": 2.9
   },
   "phase": "base_building",
-  "adx": 19.91,
-  "plus_di": 22.61,
-  "minus_di": 28.27,
+  "adx": 18.66,
+  "plus_di": 24.93,
+  "minus_di": 26.15,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 377.77 (2026-02-13), trough 289.86 (2026-06-02), box top 372.16 (2026-08-07)",
@@ -32,35 +32,41 @@
     "top": 372.16,
     "top_date": "2026-08-07",
     "bottom": 289.86,
-    "period": "2026-06-02 to 2026-10-28"
+    "period": "2026-06-02 to 2026-10-29"
   },
-  "drop_from_peak_pct": 15.1,
-  "recovery_from_crash_pct": 10.7,
+  "drop_from_peak_pct": 12.6,
+  "recovery_from_crash_pct": 13.9,
   "supports": [
     {
-      "level": 312.0,
+      "level": 324.0,
       "label": "S1 KEY",
-      "touches": 10,
-      "evidence": "tested 10x in base period; 2.7% below current"
+      "touches": 9,
+      "evidence": "tested 9x in base period; 1.8% below current"
     },
     {
-      "level": 304.0,
+      "level": 320.0,
       "label": "S2",
-      "touches": 3,
-      "evidence": "mid-base support, tested 3x"
+      "touches": 25,
+      "evidence": "mid-base support, tested 25x"
     },
     {
-      "level": 300.0,
-      "label": "S3 bottom",
-      "touches": 3,
-      "evidence": "structural bottom, near crash low 289.86"
+      "level": 316.0,
+      "label": "S3",
+      "touches": 15,
+      "evidence": "mid-base support, tested 15x"
+    },
+    {
+      "level": 289.86,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-06-02, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 325.16,
+      "level": 330.21,
       "label": "R1 today high",
-      "evidence": "today's high 325.1600036621094"
+      "evidence": "today's high 330.2099914550781"
     },
     {
       "level": 372.16,
@@ -69,28 +75,28 @@
     }
   ],
   "position": {
-    "current": 320.8,
-    "in_box_pct": 28.8,
-    "nearest_support": "S1 KEY (312.0)",
-    "nearest_resistance": "R1 today high (325.16)"
+    "current": 330.1,
+    "in_box_pct": 48.9,
+    "nearest_support": "S1 KEY (324.0)",
+    "nearest_resistance": "R1 today high (330.21)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 323.72,
-    "H": 325.16,
-    "L": 318.63,
-    "C": 320.8,
-    "body_pct": 44.7,
-    "upper_wick_pct": 22.1,
-    "lower_wick_pct": 33.2
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 328.75,
+    "H": 330.21,
+    "L": 323.01,
+    "C": 330.1,
+    "body_pct": 18.8,
+    "upper_wick_pct": 1.5,
+    "lower_wick_pct": 79.7
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (29% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -103,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 312.0 (KEY support)",
-      "then": "still range; watch 325.16 for next test"
+      "if": "hold 324.0 (KEY support)",
+      "then": "still range; watch 330.21 for next test"
     },
     {
-      "if": "break 312.0 on close",
-      "then": "target 304.0 → 300.0 (short-term bearish)"
+      "if": "break 324.0 on close",
+      "then": "target 320.0 → 316.0 (short-term bearish)"
     },
     {
-      "if": "break 300.0 (crash low)",
+      "if": "break 289.86 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 325.16 on close",
+      "if": "reclaim 330.21 on close",
       "then": "short-term bullish; next test 372.16"
     },
     {
@@ -142,24 +148,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 311.12,
-    "target_price": 328.65,
-    "stop_price": 298.16,
-    "risk_pct": 4.16,
-    "reward_pct": 5.64,
-    "rr_ratio": 1.35,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
     "phase_match": true,
     "r1": 346.19,
     "s1": 311.12,
-    "s2": 314.38,
+    "s2": 313.26,
     "r2": 372.16,
-    "r3": 364.49,
+    "r3": 369.76,
     "s3": 289.86,
     "s4": 301.58,
-    "current_position_pct": 27.6,
-    "notes": "BUY_S1: in box (311-346), entry at S1 311, target mid 329, stop 298 ｜ 52.2 條規則（BUY plan，support 311.12）：① 跌到 311.12、收市守住喺 311.12 上面 → 照 BUY 條 plan 做（入場 311.12，止蝕 298.16，目標 328.65）。② 收市跌穿 311.12 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 311.12 上面』。"
+    "current_position_pct": 54.1,
+    "notes": "WAIT_RANGE: in box (311-346), pos 54%, no clear setup"
   },
   "patterns": [
     {
@@ -168,7 +174,7 @@
       "date": "2026-10-23",
       "low": 335.8999938964844,
       "high": 342.57000732421875,
-      "i": 196
+      "i": 194
     },
     {
       "name": "利好反擊線",
@@ -176,7 +182,7 @@
       "date": "2026-10-13",
       "low": 318.9700012207031,
       "high": 324.1199951171875,
-      "i": 188
+      "i": 186
     },
     {
       "name": "刺穿線",
@@ -184,7 +190,7 @@
       "date": "2026-09-25",
       "low": 320.510009765625,
       "high": 330.1300048828125,
-      "i": 176
+      "i": 174
     },
     {
       "name": "利好身懷六甲",
@@ -192,7 +198,7 @@
       "date": "2026-08-24",
       "low": 345.1400146484375,
       "high": 350.3900146484375,
-      "i": 153
+      "i": 151
     },
     {
       "name": "利淡吞噬",
@@ -200,7 +206,7 @@
       "date": "2026-08-10",
       "low": 361.1499938964844,
       "high": 368.32000732421875,
-      "i": 143
+      "i": 141
     }
   ]
 }

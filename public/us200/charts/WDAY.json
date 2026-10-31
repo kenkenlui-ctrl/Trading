@@ -3,20 +3,20 @@
   "ticker_user": "WDAY",
   "name": "Workday, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 202.83,
-    "H": 207.13,
-    "L": 201.45,
-    "C": 204.36,
-    "prev_close": 205.46,
-    "chg_pct": -0.54
+    "date": "2026-10-29",
+    "O": 196.69,
+    "H": 200.08,
+    "L": 190.72,
+    "C": 195.46,
+    "prev_close": 204.36,
+    "chg_pct": -4.36
   },
   "phase": "base_building",
-  "adx": 29.97,
-  "plus_di": 27.76,
-  "minus_di": 12.81,
+  "adx": 28.23,
+  "plus_di": 24.09,
+  "minus_di": 21.52,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 227.49 (2026-08-13), trough 174.6 (2026-08-13), box top 227.49 (2026-08-13)",
@@ -32,28 +32,22 @@
     "top": 227.49,
     "top_date": "2026-08-13",
     "bottom": 174.6,
-    "period": "2026-08-13 to 2026-10-28"
+    "period": "2026-08-13 to 2026-10-29"
   },
-  "drop_from_peak_pct": 10.2,
-  "recovery_from_crash_pct": 17.0,
+  "drop_from_peak_pct": 14.1,
+  "recovery_from_crash_pct": 11.9,
   "supports": [
     {
-      "level": 196.0,
-      "label": "S1 KEY",
-      "touches": 9,
-      "evidence": "tested 9x in base period; 4.1% below current"
-    },
-    {
-      "level": 192.0,
-      "label": "S2",
-      "touches": 9,
-      "evidence": "mid-base support, tested 9x"
-    },
-    {
       "level": 188.0,
-      "label": "S3",
+      "label": "S1 KEY",
       "touches": 23,
-      "evidence": "mid-base support, tested 23x"
+      "evidence": "tested 23x in base period; 3.8% below current"
+    },
+    {
+      "level": 184.0,
+      "label": "S2",
+      "touches": 25,
+      "evidence": "mid-base support, tested 25x"
     },
     {
       "level": 174.6,
@@ -64,9 +58,9 @@
   ],
   "resistances": [
     {
-      "level": 207.13,
+      "level": 200.08,
       "label": "R1 today high",
-      "evidence": "today's high 207.1300048828125"
+      "evidence": "today's high 200.0800018310547"
     },
     {
       "level": 227.49,
@@ -75,28 +69,28 @@
     }
   ],
   "position": {
-    "current": 204.36,
-    "in_box_pct": 56.3,
-    "nearest_support": "S1 KEY (196.0)",
-    "nearest_resistance": "R1 today high (207.13)"
+    "current": 195.46,
+    "in_box_pct": 39.4,
+    "nearest_support": "S1 KEY (188.0)",
+    "nearest_resistance": "R1 today high (200.08)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 202.83,
-    "H": 207.13,
-    "L": 201.45,
-    "C": 204.36,
-    "body_pct": 26.9,
-    "upper_wick_pct": 48.8,
-    "lower_wick_pct": 24.3
+    "O": 196.69,
+    "H": 200.08,
+    "L": 190.72,
+    "C": 195.46,
+    "body_pct": 13.1,
+    "upper_wick_pct": 36.2,
+    "lower_wick_pct": 50.6
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (39% of box)"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -109,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 196.0 (KEY support)",
-      "then": "still range; watch 207.13 for next test"
+      "if": "hold 188.0 (KEY support)",
+      "then": "still range; watch 200.08 for next test"
     },
     {
-      "if": "break 196.0 on close",
-      "then": "target 192.0 → 188.0 (short-term bearish)"
+      "if": "break 188.0 on close",
+      "then": "target 184.0 → 174.6 (short-term bearish)"
     },
     {
       "if": "break 174.6 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 207.13 on close",
+      "if": "reclaim 200.08 on close",
       "then": "short-term bullish; next test 227.49"
     },
     {
@@ -149,23 +143,23 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": false,
+    "phase_match": true,
     "r1": 212.91,
     "s1": 182.61,
     "s2": 163.05,
     "r2": 227.49,
-    "r3": 172.15,
+    "r3": 174.0,
     "s3": 111.5,
     "s4": 110.36,
-    "current_position_pct": 71.8,
-    "notes": "WAIT_RANGE: in box (183-213), pos 72%, no clear setup"
+    "current_position_pct": 42.4,
+    "notes": "WAIT_RANGE: in box (183-213), pos 42%, no clear setup"
   },
   "patterns": [
     {
@@ -174,7 +168,7 @@
       "date": "2026-08-31",
       "low": 196.60000610351562,
       "high": 203.63999938964844,
-      "i": 158
+      "i": 156
     },
     {
       "name": "黃昏之星",
@@ -182,7 +176,7 @@
       "date": "2026-07-23",
       "low": 127.11000061035156,
       "high": 136.3300018310547,
-      "i": 131
+      "i": 129
     },
     {
       "name": "刺穿線",
@@ -190,7 +184,7 @@
       "date": "2026-06-26",
       "low": 115.05000305175781,
       "high": 125.20999908447266,
-      "i": 113
+      "i": 111
     }
   ]
 }

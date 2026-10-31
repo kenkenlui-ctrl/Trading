@@ -3,20 +3,20 @@
   "ticker_user": "V",
   "name": "Visa Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 395.25,
-    "H": 404.69,
-    "L": 394.0,
-    "C": 400.6,
-    "prev_close": 401.86,
-    "chg_pct": -0.31
+    "date": "2026-10-29",
+    "O": 404.88,
+    "H": 412.13,
+    "L": 403.72,
+    "C": 410.54,
+    "prev_close": 400.6,
+    "chg_pct": 2.48
   },
-  "phase": "range",
-  "adx": 32.94,
-  "plus_di": 27.62,
-  "minus_di": 19.91,
+  "phase": "uptrend",
+  "adx": 32.62,
+  "plus_di": 31.8,
+  "minus_di": 17.66,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 414.6 (2026-10-22), trough 356.75 (2026-10-02), box top 414.6 (2026-10-22)",
@@ -32,35 +32,41 @@
     "top": 414.6,
     "top_date": "2026-10-22",
     "bottom": 356.75,
-    "period": "2026-10-02 to 2026-10-28"
+    "period": "2026-10-02 to 2026-10-29"
   },
-  "drop_from_peak_pct": 3.4,
-  "recovery_from_crash_pct": 12.3,
+  "drop_from_peak_pct": 1.0,
+  "recovery_from_crash_pct": 15.1,
   "supports": [
     {
-      "level": 368.0,
+      "level": 400.0,
       "label": "S1 KEY",
-      "touches": 8,
-      "evidence": "tested 8x in base period; 8.1% below current"
+      "touches": 4,
+      "evidence": "tested 4x in base period; 2.6% below current"
     },
     {
-      "level": 360.0,
+      "level": 396.0,
       "label": "S2",
-      "touches": 6,
-      "evidence": "mid-base support, tested 6x"
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
     },
     {
-      "level": 356.0,
-      "label": "S3 bottom",
-      "touches": 3,
-      "evidence": "structural bottom, near crash low 356.75"
+      "level": 392.0,
+      "label": "S3",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 356.75,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-10-02, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 404.69,
+      "level": 412.13,
       "label": "R1 today high",
-      "evidence": "today's high 404.69000244140625"
+      "evidence": "today's high 412.1300048828125"
     },
     {
       "level": 414.6,
@@ -69,53 +75,53 @@
     }
   ],
   "position": {
-    "current": 400.6,
-    "in_box_pct": 76.1,
-    "nearest_support": "S1 KEY (368.0)",
-    "nearest_resistance": "R1 today high (404.69)"
+    "current": 410.54,
+    "in_box_pct": 93.0,
+    "nearest_support": "S1 KEY (400.0)",
+    "nearest_resistance": "R1 today high (412.13)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 395.25,
-    "H": 404.69,
-    "L": 394.0,
-    "C": 400.6,
-    "body_pct": 50.0,
-    "upper_wick_pct": 38.3,
-    "lower_wick_pct": 11.7
+    "O": 404.88,
+    "H": 412.13,
+    "L": 403.72,
+    "C": 410.54,
+    "body_pct": 67.3,
+    "upper_wick_pct": 18.9,
+    "lower_wick_pct": 13.8
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": "no clear direction"
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 368.0 (KEY support)",
-      "then": "still range; watch 404.69 for next test"
+      "if": "hold 400.0 (KEY support)",
+      "then": "still range; watch 412.13 for next test"
     },
     {
-      "if": "break 368.0 on close",
-      "then": "target 360.0 → 356.0 (short-term bearish)"
+      "if": "break 400.0 on close",
+      "then": "target 396.0 → 392.0 (short-term bearish)"
     },
     {
-      "if": "break 356.0 (crash low)",
+      "if": "break 356.75 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 404.69 on close",
+      "if": "reclaim 412.13 on close",
       "then": "short-term bullish; next test 414.6"
     },
     {
@@ -143,7 +149,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -153,13 +159,13 @@
     "phase_match": false,
     "r1": 414.6,
     "s1": 356.75,
-    "s2": 358.05,
+    "s2": 357.36,
     "r2": 385.57,
     "r3": 373.97,
     "s3": 309.0,
     "s4": 293.89,
-    "current_position_pct": 75.8,
-    "notes": "WAIT_RANGE: in box (357-415), pos 76%, no clear setup"
+    "current_position_pct": 93.0,
+    "notes": "WAIT_RANGE: in box (357-415), pos 93%, no clear setup"
   },
   "patterns": [
     {
@@ -168,7 +174,7 @@
       "date": "2026-10-02",
       "low": 356.75,
       "high": 361.3800048828125,
-      "i": 181
+      "i": 179
     },
     {
       "name": "早晨之星",
@@ -176,7 +182,7 @@
       "date": "2026-09-25",
       "low": 363.7900085449219,
       "high": 368.3299865722656,
-      "i": 176
+      "i": 174
     },
     {
       "name": "利淡吞噬",
@@ -184,7 +190,7 @@
       "date": "2026-09-03",
       "low": 376.8599853515625,
       "high": 382.2099914550781,
-      "i": 161
+      "i": 159
     },
     {
       "name": "利淡反擊線",
@@ -192,7 +198,7 @@
       "date": "2026-08-27",
       "low": 378.5,
       "high": 381.7699890136719,
-      "i": 156
+      "i": 154
     },
     {
       "name": "吊頸",
@@ -200,7 +206,7 @@
       "date": "2026-08-17",
       "low": 358.5199890136719,
       "high": 363.55999755859375,
-      "i": 148
+      "i": 146
     }
   ]
 }

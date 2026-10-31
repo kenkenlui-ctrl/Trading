@@ -3,23 +3,23 @@
   "ticker_user": "MMM",
   "name": "3M Company",
   "data_source": "yfinance",
-  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 172.67,
-    "H": 173.29,
-    "L": 171.46,
-    "C": 172.8,
-    "prev_close": 171.58,
-    "chg_pct": 0.71
+    "date": "2026-10-29",
+    "O": 175.0,
+    "H": 177.63,
+    "L": 174.25,
+    "C": 177.36,
+    "prev_close": 172.8,
+    "chg_pct": 2.64
   },
   "phase": "range",
-  "adx": 24.98,
-  "plus_di": 22.34,
-  "minus_di": 17.03,
-  "regime": "dead",
+  "adx": 25.29,
+  "plus_di": 28.36,
+  "minus_di": 15.51,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 184.9 (2026-07-28), trough 159.21 (2026-10-12), box top 176.18 (2026-10-22)",
+  "phase_evidence": "Peak 184.9 (2026-07-28), trough 159.21 (2026-10-12), box top 177.63 (2026-10-29)",
   "peak": {
     "date": "2026-07-28",
     "price": 184.9
@@ -29,98 +29,89 @@
     "price": 159.21
   },
   "box": {
-    "top": 176.18,
-    "top_date": "2026-10-22",
+    "top": 177.63,
+    "top_date": "2026-10-29",
     "bottom": 159.21,
-    "period": "2026-10-12 to 2026-10-28"
+    "period": "2026-10-12 to 2026-10-29"
   },
-  "drop_from_peak_pct": 6.5,
-  "recovery_from_crash_pct": 8.5,
+  "drop_from_peak_pct": 4.1,
+  "recovery_from_crash_pct": 11.4,
   "supports": [
     {
-      "level": 168.0,
+      "level": 172.0,
       "label": "S1 KEY",
+      "touches": 10,
+      "evidence": "tested 10x in base period; 3.0% below current"
+    },
+    {
+      "level": 168.0,
+      "label": "S2",
       "touches": 7,
-      "evidence": "tested 7x in base period; 2.8% below current"
+      "evidence": "mid-base support, tested 7x"
     },
     {
       "level": 164.0,
-      "label": "S2",
-      "touches": 14,
-      "evidence": "mid-base support, tested 14x"
-    },
-    {
-      "level": 160.0,
       "label": "S3 bottom",
-      "touches": 12,
+      "touches": 13,
       "evidence": "structural bottom, near crash low 159.21"
     }
   ],
   "resistances": [
     {
-      "level": 173.29,
+      "level": 177.63,
       "label": "R1 today high",
-      "evidence": "today's high 173.2899932861328"
-    },
-    {
-      "level": 176.18,
-      "label": "R3 Oct high",
-      "evidence": "box top 176.18, base period high"
+      "evidence": "today's high 177.6300048828125"
     }
   ],
   "position": {
-    "current": 172.8,
-    "in_box_pct": 79.1,
-    "nearest_support": "S1 KEY (168.0)",
-    "nearest_resistance": "R1 today high (173.29)"
+    "current": 177.36,
+    "in_box_pct": 98.0,
+    "nearest_support": "S1 KEY (172.0)",
+    "nearest_resistance": "R1 today high (177.63)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 172.67,
-    "H": 173.29,
-    "L": 171.46,
-    "C": 172.8,
-    "body_pct": 7.1,
-    "upper_wick_pct": 26.8,
-    "lower_wick_pct": 66.1
+    "O": 175.0,
+    "H": 177.63,
+    "L": 174.25,
+    "C": 177.36,
+    "body_pct": 69.8,
+    "upper_wick_pct": 8.0,
+    "lower_wick_pct": 22.2
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "neutral",
       "reason": "no clear direction"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 168.0 (KEY support)",
-      "then": "still range; watch 173.29 for next test"
+      "if": "hold 172.0 (KEY support)",
+      "then": "still range; watch 177.63 for next test"
     },
     {
-      "if": "break 168.0 on close",
-      "then": "target 164.0 → 160.0 (short-term bearish)"
+      "if": "break 172.0 on close",
+      "then": "target 168.0 → 164.0 (short-term bearish)"
     },
     {
-      "if": "break 160.0 (crash low)",
+      "if": "break 164.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 173.29 on close",
-      "then": "short-term bullish; next test 176.18"
-    },
-    {
-      "if": "break 176.18 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 177.63 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -142,24 +133,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 176.18,
-    "target_price": 167.69,
-    "stop_price": 182.34,
-    "risk_pct": 3.5,
-    "reward_pct": 4.82,
-    "rr_ratio": 1.38,
-    "phase_match": true,
-    "r1": 176.18,
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 177.63,
     "s1": 159.21,
     "s2": 160.27,
     "r2": 184.69,
     "r3": 184.9,
     "s3": 142.02,
     "s4": 139.34,
-    "current_position_pct": 80.1,
-    "notes": "SELL_R1: in box (159-176), entry at R1 176, target mid 168, stop 182 ｜ 52.2 條規則（SELL plan，resistance 176.18）：① 跌到 176.18、收市守住喺 176.18 上面 → 照 BUY 條 plan 做（入場 176.18，止蝕 182.34，目標 167.69）。② 收市跌穿 176.18 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 176.18 上面』。"
+    "current_position_pct": 98.5,
+    "notes": "WAIT_RANGE: in box (159-178), pos 99%, no clear setup"
   },
   "patterns": [
     {
@@ -168,7 +159,7 @@
       "date": "2026-10-12",
       "low": 159.2100067138672,
       "high": 162.55999755859375,
-      "i": 187
+      "i": 185
     },
     {
       "name": "利淡反擊線",
@@ -176,7 +167,7 @@
       "date": "2026-08-26",
       "low": 178.5399932861328,
       "high": 180.6699981689453,
-      "i": 155
+      "i": 153
     },
     {
       "name": "利淡吞噬",
@@ -184,7 +175,7 @@
       "date": "2026-08-19",
       "low": 179.89999389648438,
       "high": 183.42999267578125,
-      "i": 150
+      "i": 148
     },
     {
       "name": "平頭頂",
@@ -192,7 +183,7 @@
       "date": "2026-08-13",
       "low": 180.49000549316406,
       "high": 184.69000244140625,
-      "i": 146
+      "i": 144
     },
     {
       "name": "三隻烏鴉",
@@ -200,7 +191,7 @@
       "date": "2026-08-04",
       "low": 176.60000610351562,
       "high": 181.6699981689453,
-      "i": 139
+      "i": 137
     }
   ]
 }

@@ -3,21 +3,21 @@
   "ticker_user": "PYPL",
   "name": "PayPal Holdings, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 55.37,
-    "H": 56.69,
-    "L": 55.36,
-    "C": 56.55,
-    "prev_close": 56.09,
-    "chg_pct": 0.82
+    "date": "2026-10-29",
+    "O": 56.26,
+    "H": 57.71,
+    "L": 56.12,
+    "C": 56.95,
+    "prev_close": 56.55,
+    "chg_pct": 0.71
   },
-  "phase": "downtrend_active",
-  "adx": 20.04,
-  "plus_di": 21.97,
-  "minus_di": 22.99,
-  "regime": "dead",
+  "phase": "base_building",
+  "adx": 19.26,
+  "plus_di": 25.37,
+  "minus_di": 21.14,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 62.73 (2026-08-20), trough 50.8 (2026-09-10), box top 57.95 (2026-10-21)",
   "peak": {
@@ -32,54 +32,49 @@
     "top": 57.95,
     "top_date": "2026-10-21",
     "bottom": 50.8,
-    "period": "2026-09-10 to 2026-10-28"
+    "period": "2026-09-10 to 2026-10-29"
   },
-  "drop_from_peak_pct": 9.9,
-  "recovery_from_crash_pct": 11.3,
+  "drop_from_peak_pct": 9.2,
+  "recovery_from_crash_pct": 12.1,
   "supports": [
     {
       "level": 56.0,
       "label": "S1 KEY",
-      "touches": 18,
-      "evidence": "tested 18x in base period; 1.0% below current"
+      "touches": 20,
+      "evidence": "tested 20x in base period; 1.7% below current"
     },
     {
       "level": 52.0,
       "label": "S2 bottom",
-      "touches": 33,
+      "touches": 32,
       "evidence": "structural bottom, near crash low 50.8"
     }
   ],
   "resistances": [
     {
-      "level": 56.69,
+      "level": 57.71,
       "label": "R1 today high",
-      "evidence": "today's high 56.685001373291016"
-    },
-    {
-      "level": 57.95,
-      "label": "R3 Oct high",
-      "evidence": "box top 57.95, base period high"
+      "evidence": "today's high 57.709999084472656"
     }
   ],
   "position": {
-    "current": 56.55,
-    "in_box_pct": 76.5,
+    "current": 56.95,
+    "in_box_pct": 86.7,
     "nearest_support": "S1 KEY (56.0)",
-    "nearest_resistance": "R1 today high (56.69)"
+    "nearest_resistance": "R1 today high (57.71)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 55.37,
-    "H": 56.69,
-    "L": 55.36,
-    "C": 56.55,
-    "body_pct": 89.1,
-    "upper_wick_pct": 10.2,
-    "lower_wick_pct": 0.8
+    "O": 56.26,
+    "H": 57.71,
+    "L": 56.12,
+    "C": 56.95,
+    "body_pct": 43.3,
+    "upper_wick_pct": 47.6,
+    "lower_wick_pct": 9.1
   },
   "bias": {
     "short": {
@@ -87,8 +82,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bearish_continuation",
-      "reason": "making new lows"
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -98,7 +93,7 @@
   "scenarios": [
     {
       "if": "hold 56.0 (KEY support)",
-      "then": "still range; watch 56.69 for next test"
+      "then": "still range; watch 57.71 for next test"
     },
     {
       "if": "break 56.0 on close",
@@ -109,12 +104,8 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 56.69 on close",
-      "then": "short-term bullish; next test 57.95"
-    },
-    {
-      "if": "break 57.95 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 57.71 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -140,10 +131,10 @@
     "strategy": "SELL_R1",
     "trigger_price": 57.95,
     "target_price": 55.19,
-    "stop_price": 59.89,
-    "risk_pct": 3.36,
+    "stop_price": 59.95,
+    "risk_pct": 3.45,
     "reward_pct": 4.76,
-    "rr_ratio": 1.42,
+    "rr_ratio": 1.38,
     "phase_match": true,
     "r1": 57.95,
     "s1": 52.43,
@@ -152,8 +143,8 @@
     "r3": 59.47,
     "s3": 40.2,
     "s4": 38.46,
-    "current_position_pct": 74.6,
-    "notes": "SELL_R1: in box (52-58), entry at R1 58, target mid 55, stop 60 ｜ 52.2 條規則（SELL plan，resistance 57.95）：① 跌到 57.95、收市守住喺 57.95 上面 → 照 BUY 條 plan 做（入場 57.95，止蝕 59.89，目標 55.19）。② 收市跌穿 57.95 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 57.95 上面』。"
+    "current_position_pct": 81.9,
+    "notes": "SELL_R1: in box (52-58), entry at R1 58, target mid 55, stop 60 ｜ 52.2 條規則（SELL plan，resistance 57.95）：① 跌到 57.95、收市守住喺 57.95 上面 → 照 BUY 條 plan 做（入場 57.95，止蝕 59.95，目標 55.19）。② 收市跌穿 57.95 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 57.95 上面』。"
   },
   "patterns": [
     {
@@ -162,7 +153,7 @@
       "date": "2026-09-03",
       "low": 54.0099983215332,
       "high": 56.959999084472656,
-      "i": 161
+      "i": 159
     },
     {
       "name": "烏雲蓋頂",
@@ -170,7 +161,7 @@
       "date": "2026-08-07",
       "low": 58.810001373291016,
       "high": 59.9900016784668,
-      "i": 142
+      "i": 140
     },
     {
       "name": "利淡反擊線",
@@ -178,7 +169,7 @@
       "date": "2026-07-27",
       "low": 55.47999954223633,
       "high": 56.584999084472656,
-      "i": 133
+      "i": 131
     },
     {
       "name": "平頭頂",
@@ -186,7 +177,7 @@
       "date": "2026-07-21",
       "low": 55.0,
       "high": 56.90999984741211,
-      "i": 129
+      "i": 127
     }
   ]
 }

@@ -3,20 +3,20 @@
   "ticker_user": "PANW",
   "name": "Palo Alto Networks, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 401.6,
-    "H": 406.88,
-    "L": 393.49,
-    "C": 394.49,
-    "prev_close": 401.7,
-    "chg_pct": -1.79
+    "date": "2026-10-29",
+    "O": 368.83,
+    "H": 389.62,
+    "L": 367.5,
+    "C": 380.57,
+    "prev_close": 394.49,
+    "chg_pct": -3.53
   },
-  "phase": "range",
-  "adx": 17.41,
-  "plus_di": 30.59,
-  "minus_di": 21.68,
+  "phase": "downtrend_active",
+  "adx": 16.4,
+  "plus_di": 27.44,
+  "minus_di": 29.35,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 432.33 (2026-10-06), trough 334.75 (2026-10-20), box top 406.88 (2026-10-28)",
@@ -32,28 +32,28 @@
     "top": 406.88,
     "top_date": "2026-10-28",
     "bottom": 334.75,
-    "period": "2026-10-20 to 2026-10-28"
+    "period": "2026-10-20 to 2026-10-29"
   },
-  "drop_from_peak_pct": 8.8,
-  "recovery_from_crash_pct": 17.8,
+  "drop_from_peak_pct": 12.0,
+  "recovery_from_crash_pct": 13.7,
   "supports": [
     {
-      "level": 376.0,
-      "label": "S1 KEY",
-      "touches": 6,
-      "evidence": "tested 6x in base period; 4.7% below current"
-    },
-    {
-      "level": 372.0,
-      "label": "S2",
-      "touches": 5,
-      "evidence": "mid-base support, tested 5x"
-    },
-    {
       "level": 368.0,
+      "label": "S1 KEY",
+      "touches": 8,
+      "evidence": "tested 8x in base period; 3.3% below current"
+    },
+    {
+      "level": 360.0,
+      "label": "S2",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 356.0,
       "label": "S3",
-      "touches": 6,
-      "evidence": "mid-base support, tested 6x"
+      "touches": 7,
+      "evidence": "mid-base support, tested 7x"
     },
     {
       "level": 334.75,
@@ -64,29 +64,34 @@
   ],
   "resistances": [
     {
-      "level": 406.88,
+      "level": 389.62,
       "label": "R1 today high",
-      "evidence": "today's high 406.8800048828125"
+      "evidence": "today's high 389.6199951171875"
+    },
+    {
+      "level": 406.88,
+      "label": "R3 Oct high",
+      "evidence": "box top 406.88, base period high"
     }
   ],
   "position": {
-    "current": 394.49,
-    "in_box_pct": 82.8,
-    "nearest_support": "S1 KEY (376.0)",
-    "nearest_resistance": "R1 today high (406.88)"
+    "current": 380.57,
+    "in_box_pct": 63.5,
+    "nearest_support": "S1 KEY (368.0)",
+    "nearest_resistance": "R1 today high (389.62)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 401.6,
-    "H": 406.88,
-    "L": 393.49,
-    "C": 394.49,
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 368.83,
+    "H": 389.62,
+    "L": 367.5,
+    "C": 380.57,
     "body_pct": 53.1,
-    "upper_wick_pct": 39.4,
-    "lower_wick_pct": 7.5
+    "upper_wick_pct": 40.9,
+    "lower_wick_pct": 6.0
   },
   "bias": {
     "short": {
@@ -94,8 +99,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": "no clear direction"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -104,20 +109,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 376.0 (KEY support)",
-      "then": "still range; watch 406.88 for next test"
+      "if": "hold 368.0 (KEY support)",
+      "then": "still range; watch 389.62 for next test"
     },
     {
-      "if": "break 376.0 on close",
-      "then": "target 372.0 → 368.0 (short-term bearish)"
+      "if": "break 368.0 on close",
+      "then": "target 360.0 → 356.0 (short-term bearish)"
     },
     {
       "if": "break 334.75 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 406.88 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 389.62 on close",
+      "then": "short-term bullish; next test 406.88"
+    },
+    {
+      "if": "break 406.88 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -147,16 +156,16 @@
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
+    "phase_match": false,
     "r1": 432.33,
     "s1": 334.75,
     "s2": 321.39,
     "r2": 404.69,
-    "r3": 368.8,
-    "s3": 193.43,
+    "r3": 376.98,
+    "s3": 205.65,
     "s4": 139.57,
-    "current_position_pct": 61.2,
-    "notes": "WAIT_RANGE: in box (335-432), pos 61%, no clear setup"
+    "current_position_pct": 47.0,
+    "notes": "WAIT_RANGE: in box (335-432), pos 47%, no clear setup"
   },
   "patterns": [
     {
@@ -165,7 +174,7 @@
       "date": "2026-10-12",
       "low": 397.7099914550781,
       "high": 421.4800109863281,
-      "i": 187
+      "i": 185
     },
     {
       "name": "利淡吞噬",
@@ -173,7 +182,7 @@
       "date": "2026-09-22",
       "low": 363.5799865722656,
       "high": 377.9100036621094,
-      "i": 173
+      "i": 171
     },
     {
       "name": "刺穿線",
@@ -181,7 +190,7 @@
       "date": "2026-09-14",
       "low": 340.25,
       "high": 378.6000061035156,
-      "i": 167
+      "i": 165
     },
     {
       "name": "錘頭",
@@ -189,7 +198,7 @@
       "date": "2026-09-08",
       "low": 325.32000732421875,
       "high": 339.3999938964844,
-      "i": 163
+      "i": 161
     },
     {
       "name": "利好反擊線",
@@ -197,7 +206,7 @@
       "date": "2026-08-27",
       "low": 356.6600036621094,
       "high": 387.3299865722656,
-      "i": 156
+      "i": 154
     }
   ]
 }

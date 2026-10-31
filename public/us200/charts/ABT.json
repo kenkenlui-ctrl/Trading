@@ -3,26 +3,26 @@
   "ticker_user": "ABT",
   "name": "Abbott Laboratories",
   "data_source": "yfinance",
-  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 101.82,
-    "H": 103.93,
-    "L": 101.54,
-    "C": 102.64,
-    "prev_close": 103.1,
-    "chg_pct": -0.45
+    "date": "2026-10-29",
+    "O": 103.79,
+    "H": 104.65,
+    "L": 103.0,
+    "C": 104.57,
+    "prev_close": 102.64,
+    "chg_pct": 1.88
   },
   "phase": "base_building",
-  "adx": 19.14,
-  "plus_di": 17.18,
-  "minus_di": 22.42,
+  "adx": 18.34,
+  "plus_di": 18.16,
+  "minus_di": 21.25,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 125.09 (2026-01-14), trough 81.97 (2026-05-11), box top 117.34 (2026-08-24)",
+  "phase_evidence": "Peak 124.42 (2026-01-15), trough 81.97 (2026-05-11), box top 117.34 (2026-08-24)",
   "peak": {
-    "date": "2026-01-14",
-    "price": 125.09
+    "date": "2026-01-15",
+    "price": 124.42
   },
   "trough": {
     "date": "2026-05-11",
@@ -32,16 +32,16 @@
     "top": 117.34,
     "top_date": "2026-08-24",
     "bottom": 81.97,
-    "period": "2026-05-11 to 2026-10-28"
+    "period": "2026-05-11 to 2026-10-29"
   },
-  "drop_from_peak_pct": 17.9,
-  "recovery_from_crash_pct": 25.2,
+  "drop_from_peak_pct": 16.0,
+  "recovery_from_crash_pct": 27.6,
   "supports": [
     {
       "level": 100.0,
       "label": "S1 KEY",
-      "touches": 21,
-      "evidence": "tested 21x in base period; 2.6% below current"
+      "touches": 42,
+      "evidence": "tested 42x in base period; 4.4% below current"
     },
     {
       "level": 96.0,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 103.93,
+      "level": 104.65,
       "label": "R1 today high",
-      "evidence": "today's high 103.93000030517578"
+      "evidence": "today's high 104.6500015258789"
     },
     {
       "level": 117.34,
@@ -75,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 102.64,
-    "in_box_pct": 58.4,
+    "current": 104.57,
+    "in_box_pct": 63.9,
     "nearest_support": "S1 KEY (100.0)",
-    "nearest_resistance": "R1 today high (103.93)"
+    "nearest_resistance": "R1 today high (104.65)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 101.82,
-    "H": 103.93,
-    "L": 101.54,
-    "C": 102.64,
-    "body_pct": 34.3,
-    "upper_wick_pct": 54.0,
-    "lower_wick_pct": 11.7
+    "close_position": "upper_half",
+    "O": 103.79,
+    "H": 104.65,
+    "L": 103.0,
+    "C": 104.57,
+    "body_pct": 47.3,
+    "upper_wick_pct": 4.8,
+    "lower_wick_pct": 47.9
   },
   "bias": {
     "short": {
@@ -110,7 +110,7 @@
   "scenarios": [
     {
       "if": "hold 100.0 (KEY support)",
-      "then": "still range; watch 103.93 for next test"
+      "then": "still range; watch 104.65 for next test"
     },
     {
       "if": "break 100.0 on close",
@@ -121,7 +121,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 103.93 on close",
+      "if": "reclaim 104.65 on close",
       "then": "short-term bullish; next test 117.34"
     },
     {
@@ -152,20 +152,20 @@
     "strategy": "SELL_R1",
     "trigger_price": 106.35,
     "target_price": 100.7,
-    "stop_price": 111.01,
-    "risk_pct": 4.38,
+    "stop_price": 110.91,
+    "risk_pct": 4.29,
     "reward_pct": 5.31,
-    "rr_ratio": 1.21,
+    "rr_ratio": 1.24,
     "phase_match": true,
     "r1": 106.35,
     "s1": 95.06,
-    "s2": 98.72,
+    "s2": 96.54,
     "r2": 117.34,
     "r3": 110.04,
     "s3": 81.97,
-    "s4": 86.15,
-    "current_position_pct": 67.1,
-    "notes": "SELL_R1: in box (95-106), entry at R1 106, target mid 101, stop 111 ｜ 52.2 條規則（SELL plan，resistance 106.35）：① 跌到 106.35、收市守住喺 106.35 上面 → 照 BUY 條 plan 做（入場 106.35，止蝕 111.01，目標 100.70）。② 收市跌穿 106.35 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 106.35 上面』。"
+    "s4": 84.08,
+    "current_position_pct": 84.2,
+    "notes": "SELL_R1: in box (95-106), entry at R1 106, target mid 101, stop 111 ｜ 52.2 條規則（SELL plan，resistance 106.35）：① 跌到 106.35、收市守住喺 106.35 上面 → 照 BUY 條 plan 做（入場 106.35，止蝕 110.91，目標 100.70）。② 收市跌穿 106.35 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 106.35 上面』。"
   },
   "patterns": [
     {
@@ -174,7 +174,7 @@
       "date": "2026-09-29",
       "low": 99.4800033569336,
       "high": 101.06999969482422,
-      "i": 178
+      "i": 176
     },
     {
       "name": "刺穿線",
@@ -182,7 +182,7 @@
       "date": "2026-09-04",
       "low": 107.36000061035156,
       "high": 110.01000213623047,
-      "i": 162
+      "i": 160
     },
     {
       "name": "烏雲蓋頂",
@@ -190,7 +190,7 @@
       "date": "2026-07-23",
       "low": 100.06999969482422,
       "high": 101.9000015258789,
-      "i": 131
+      "i": 129
     },
     {
       "name": "平頭頂",
@@ -198,7 +198,7 @@
       "date": "2026-07-13",
       "low": 91.63999938964844,
       "high": 94.0999984741211,
-      "i": 123
+      "i": 121
     },
     {
       "name": "黃昏之星",
@@ -206,7 +206,7 @@
       "date": "2026-06-30",
       "low": 90.61000061035156,
       "high": 93.29000091552734,
-      "i": 115
+      "i": 113
     }
   ]
 }

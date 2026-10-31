@@ -3,26 +3,26 @@
   "ticker_user": "2935.T",
   "name": "Pickles Holdings Co.,Ltd.",
   "data_source": "yfinance",
-  "data_range": "2025-12-30 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-06 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 1136.0,
-    "H": 1149.0,
-    "L": 1113.0,
-    "C": 1113.0,
-    "prev_close": 1138.0,
-    "chg_pct": -2.196836555360282
+    "date": "2026-10-30",
+    "O": 1120.0,
+    "H": 1128.0,
+    "L": 1114.0,
+    "C": 1128.0,
+    "prev_close": 1127.0,
+    "chg_pct": 0.08873114463177068
   },
   "phase": "base_building",
-  "adx": 23.48,
-  "plus_di": 12.52,
-  "minus_di": 32.12,
-  "regime": "dead",
+  "adx": 27.06,
+  "plus_di": 10.81,
+  "minus_di": 31.31,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 1345.0 (2025-12-30), trough 1067.0 (2026-06-02), box top 1219.0 (2026-09-15)",
+  "phase_evidence": "Peak 1320.0 (2026-01-06), trough 1067.0 (2026-06-02), box top 1219.0 (2026-09-15)",
   "peak": {
-    "date": "2025-12-30",
-    "price": 1345.0
+    "date": "2026-01-06",
+    "price": 1320.0
   },
   "trough": {
     "date": "2026-06-02",
@@ -32,23 +32,35 @@
     "top": 1219.0,
     "top_date": "2026-09-15",
     "bottom": 1067.0,
-    "period": "2026-06-02 to 2026-10-28"
+    "period": "2026-06-02 to 2026-10-30"
   },
-  "drop_from_peak_pct": 17.2,
-  "recovery_from_crash_pct": 4.3,
+  "drop_from_peak_pct": 14.5,
+  "recovery_from_crash_pct": 5.7,
   "supports": [
     {
-      "level": 1072.0,
-      "label": "S1 bottom",
+      "level": 1104.0,
+      "label": "S1 KEY",
       "touches": 3,
+      "evidence": "tested 3x in base period; 2.1% below current"
+    },
+    {
+      "level": 1100.0,
+      "label": "S2",
+      "touches": 7,
+      "evidence": "mid-base support, tested 7x"
+    },
+    {
+      "level": 1096.0,
+      "label": "S3 bottom",
+      "touches": 4,
       "evidence": "structural bottom, near crash low 1067.0"
     }
   ],
   "resistances": [
     {
-      "level": 1149.0,
+      "level": 1128.0,
       "label": "R1 today high",
-      "evidence": "today's high 1149.0"
+      "evidence": "today's high 1128.0"
     },
     {
       "level": 1219.0,
@@ -57,28 +69,28 @@
     }
   ],
   "position": {
-    "current": 1113.0,
-    "in_box_pct": 27.9,
-    "nearest_support": "S1 bottom (1072.0)",
-    "nearest_resistance": "R1 today high (1149.0)"
+    "current": 1128.0,
+    "in_box_pct": 26.0,
+    "nearest_support": "S1 KEY (1104.0)",
+    "nearest_resistance": "R3 Sep high (1219.0)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 1136.0,
-    "H": 1149.0,
-    "L": 1113.0,
-    "C": 1113.0,
-    "body_pct": 63.9,
-    "upper_wick_pct": 36.1,
-    "lower_wick_pct": 0.0
+    "close_position": "upper_half",
+    "O": 1120.0,
+    "H": 1128.0,
+    "L": 1114.0,
+    "C": 1128.0,
+    "body_pct": 57.1,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 42.9
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (28% of box)"
+      "bias": "defensive",
+      "reason": "near box bottom (26% of box)"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -91,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 1072.0 (KEY support)",
-      "then": "still range; watch 1149.0 for next test"
+      "if": "hold 1104.0 (KEY support)",
+      "then": "still range; watch 1128.0 for next test"
     },
     {
-      "if": "break 1072.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 1104.0 on close",
+      "then": "target 1100.0 → 1096.0 (short-term bearish)"
     },
     {
-      "if": "break 1072.0 (crash low)",
+      "if": "break 1096.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1149.0 on close",
+      "if": "reclaim 1128.0 on close",
       "then": "short-term bullish; next test 1219.0"
     },
     {
@@ -130,24 +142,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 1113.0,
-    "target_price": 1157.5,
-    "stop_price": 1090.74,
-    "risk_pct": 2.0,
-    "reward_pct": 4.0,
-    "rr_ratio": 2.0,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
     "phase_match": true,
-    "r1": 1202.0,
-    "s1": 1113.0,
+    "r1": 1173.0,
+    "s1": 1102.0,
     "s2": 1114.0,
     "r2": 1219.0,
     "r3": 1182.0,
     "s3": 1067.0,
     "s4": 1088.0,
-    "current_position_pct": 0.0,
-    "notes": "BUY_S1: in box (1113-1202), entry at S1 1113, target mid 1158, stop 1091 ｜ 52.2 條規則（BUY plan，support 1113.00）：① 跌到 1113.00、收市守住喺 1113.00 上面 → 照 BUY 條 plan 做（入場 1113.00，止蝕 1090.74，目標 1157.50）。② 收市跌穿 1113.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1113.00 上面』。"
+    "current_position_pct": 36.6,
+    "notes": "WAIT_RANGE: in box (1102-1173), pos 37%, no clear setup"
   },
   "patterns": [
     {
@@ -156,7 +168,7 @@
       "date": "2026-10-19",
       "low": 1163.0,
       "high": 1173.0,
-      "i": 192
+      "i": 190
     },
     {
       "name": "利好反擊線",
@@ -164,7 +176,7 @@
       "date": "2026-10-13",
       "low": 1153.0,
       "high": 1169.0,
-      "i": 188
+      "i": 186
     },
     {
       "name": "利淡反擊線",
@@ -172,7 +184,7 @@
       "date": "2026-09-24",
       "low": 1204.0,
       "high": 1219.0,
-      "i": 176
+      "i": 174
     },
     {
       "name": "烏雲蓋頂",
@@ -180,7 +192,7 @@
       "date": "2026-09-18",
       "low": 1206.0,
       "high": 1216.0,
-      "i": 175
+      "i": 173
     },
     {
       "name": "平頭頂",
@@ -188,23 +200,23 @@
       "date": "2026-09-08",
       "low": 1197.0,
       "high": 1205.0,
-      "i": 167
+      "i": 165
     }
   ],
-  "asof": "2026-10-28",
-  "close": 1113.0,
-  "chg_pct": -2.196836555360282,
+  "asof": "2026-10-30",
+  "close": 1128.0,
+  "chg_pct": 0.08873114463177068,
   "kline": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 1136.0,
-    "H": 1149.0,
-    "L": 1113.0,
-    "C": 1113.0,
-    "body_pct": 63.9,
-    "upper_wick_pct": 36.1,
-    "lower_wick_pct": 0.0
+    "close_position": "upper_half",
+    "O": 1120.0,
+    "H": 1128.0,
+    "L": 1114.0,
+    "C": 1128.0,
+    "body_pct": 57.1,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 42.9
   }
 }

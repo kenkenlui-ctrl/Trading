@@ -3,77 +3,78 @@
   "ticker_user": "02319.HK",
   "name": "MENGNIU DAIRY",
   "data_source": "yfinance",
-  "data_range": "2025-12-31 → 2026-10-23 (200 daily bars)",
+  "data_range": "2026-01-08 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-23",
-    "O": 18.34,
-    "H": 18.78,
-    "L": 18.25,
-    "C": 18.63,
-    "prev_close": 18.12,
-    "chg_pct": 2.81
+    "date": "2026-10-30",
+    "O": 18.49,
+    "H": 19.93,
+    "L": 18.2,
+    "C": 19.86,
+    "prev_close": 18.15,
+    "chg_pct": 9.42
   },
-  "phase": "range",
-  "adx": 19.24,
-  "plus_di": 25.2,
-  "minus_di": 19.27,
+  "phase": "uptrend",
+  "adx": 17.62,
+  "plus_di": 36.37,
+  "minus_di": 17.97,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 19.67 (2026-07-30), trough 16.85 (2026-10-05), box top 19.2 (2026-10-20)",
+  "phase_evidence": "Peak 19.93 (2026-10-30), trough 16.85 (2026-10-05), box top 19.93 (2026-10-30)",
   "peak": {
-    "date": "2026-07-30",
-    "price": 19.67
+    "date": "2026-10-30",
+    "price": 19.93
   },
   "trough": {
     "date": "2026-10-05",
     "price": 16.85
   },
   "box": {
-    "top": 19.2,
-    "top_date": "2026-10-20",
+    "top": 19.93,
+    "top_date": "2026-10-30",
     "bottom": 16.85,
-    "period": "2026-10-05 to 2026-10-23"
+    "period": "2026-10-05 to 2026-10-30"
   },
-  "drop_from_peak_pct": 5.3,
-  "recovery_from_crash_pct": 10.6,
+  "drop_from_peak_pct": 0.4,
+  "recovery_from_crash_pct": 17.9,
   "supports": [
     {
+      "level": 20.0,
+      "label": "S1 KEY",
+      "touches": 18,
+      "evidence": "tested 18x in base period; -0.7% below current"
+    },
+    {
       "level": 16.0,
-      "label": "S1 bottom",
-      "touches": 30,
+      "label": "S2 bottom",
+      "touches": 31,
       "evidence": "structural bottom, near crash low 16.85"
     }
   ],
   "resistances": [
     {
-      "level": 18.78,
+      "level": 19.93,
       "label": "R1 today high",
-      "evidence": "today's high 18.780000686645508"
-    },
-    {
-      "level": 19.2,
-      "label": "R3 Oct high",
-      "evidence": "box top 19.2, base period high"
+      "evidence": "today's high 19.93000030517578"
     }
   ],
   "position": {
-    "current": 18.63,
-    "in_box_pct": 82.2,
-    "nearest_support": "S1 bottom (16.0)",
-    "nearest_resistance": "R1 today high (18.78)"
+    "current": 19.86,
+    "in_box_pct": 98.2,
+    "nearest_support": "S1 KEY (20.0)",
+    "nearest_resistance": "R1 today high (19.93)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 18.34,
-    "H": 18.78,
-    "L": 18.25,
-    "C": 18.63,
-    "body_pct": 54.7,
-    "upper_wick_pct": 28.3,
-    "lower_wick_pct": 17.0
+    "O": 18.49,
+    "H": 19.93,
+    "L": 18.2,
+    "C": 19.86,
+    "body_pct": 79.2,
+    "upper_wick_pct": 4.0,
+    "lower_wick_pct": 16.8
   },
   "bias": {
     "short": {
@@ -81,34 +82,30 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": "no clear direction"
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 16.0 (KEY support)",
-      "then": "still range; watch 18.78 for next test"
+      "if": "hold 20.0 (KEY support)",
+      "then": "still range; watch 19.93 for next test"
     },
     {
-      "if": "break 16.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 20.0 on close",
+      "then": "target 16.0 → lower (short-term bearish)"
     },
     {
       "if": "break 16.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 18.78 on close",
-      "then": "short-term bullish; next test 19.2"
-    },
-    {
-      "if": "break 19.2 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 19.93 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -130,24 +127,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 19.2,
-    "target_price": 18.03,
-    "stop_price": 19.98,
-    "risk_pct": 4.08,
-    "reward_pct": 6.12,
-    "rr_ratio": 1.5,
-    "phase_match": true,
-    "r1": 19.2,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 19.93,
     "s1": 16.85,
-    "s2": 17.51,
-    "r2": 19.67,
-    "r3": 19.4,
+    "s2": 17.34,
+    "r2": 19.66,
+    "r3": 19.67,
     "s3": 15.33,
     "s4": 14.73,
-    "current_position_pct": 75.7,
-    "notes": "SELL_R1: in box (17-19), entry at R1 19, target mid 18, stop 20 ｜ 52.2 條規則（SELL plan，resistance 19.20）：① 跌到 19.20、收市守住喺 19.20 上面 → 照 BUY 條 plan 做（入場 19.20，止蝕 19.98，目標 18.03）。② 收市跌穿 19.20 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 19.20 上面』。"
+    "current_position_pct": 97.7,
+    "notes": "WAIT_RANGE: in box (17-20), pos 98%, no clear setup"
   },
   "patterns": [
     {
@@ -156,7 +153,7 @@
       "date": "2026-10-21",
       "low": 18.3799991607666,
       "high": 19.010000228881836,
-      "i": 197
+      "i": 192
     },
     {
       "name": "早晨之星",
@@ -164,7 +161,7 @@
       "date": "2026-10-09",
       "low": 17.549999237060547,
       "high": 18.31999969482422,
-      "i": 190
+      "i": 185
     },
     {
       "name": "利好反擊線",
@@ -172,7 +169,7 @@
       "date": "2026-10-02",
       "low": 17.079999923706055,
       "high": 17.6299991607666,
-      "i": 185
+      "i": 180
     },
     {
       "name": "刺穿線",
@@ -180,7 +177,7 @@
       "date": "2026-09-23",
       "low": 17.68000030517578,
       "high": 18.0,
-      "i": 179
+      "i": 174
     },
     {
       "name": "上升三法",
@@ -188,7 +185,7 @@
       "date": "2026-08-28",
       "low": 18.079999923706055,
       "high": 18.979999542236328,
-      "i": 161
+      "i": 156
     }
   ]
 }

@@ -3,20 +3,20 @@
   "ticker_user": "HLT",
   "name": "Hilton Worldwide Holdings Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 341.45,
-    "H": 352.24,
-    "L": 341.45,
-    "C": 349.63,
-    "prev_close": 344.65,
-    "chg_pct": 1.44
+    "date": "2026-10-29",
+    "O": 355.21,
+    "H": 359.46,
+    "L": 352.25,
+    "C": 356.93,
+    "prev_close": 349.63,
+    "chg_pct": 2.09
   },
-  "phase": "base_building",
-  "adx": 38.56,
-  "plus_di": 34.23,
-  "minus_di": 21.12,
+  "phase": "uptrend",
+  "adx": 38.09,
+  "plus_di": 37.53,
+  "minus_di": 19.35,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 364.5 (2026-10-21), trough 302.11 (2026-09-18), box top 364.5 (2026-10-21)",
@@ -32,35 +32,41 @@
     "top": 364.5,
     "top_date": "2026-10-21",
     "bottom": 302.11,
-    "period": "2026-09-18 to 2026-10-28"
+    "period": "2026-09-18 to 2026-10-29"
   },
-  "drop_from_peak_pct": 4.1,
-  "recovery_from_crash_pct": 15.7,
+  "drop_from_peak_pct": 2.1,
+  "recovery_from_crash_pct": 18.1,
   "supports": [
     {
-      "level": 324.0,
+      "level": 348.0,
       "label": "S1 KEY",
+      "touches": 6,
+      "evidence": "tested 6x in base period; 2.5% below current"
+    },
+    {
+      "level": 324.0,
+      "label": "S2",
       "touches": 8,
-      "evidence": "tested 8x in base period; 7.3% below current"
+      "evidence": "mid-base support, tested 8x"
     },
     {
       "level": 320.0,
-      "label": "S2",
+      "label": "S3",
       "touches": 6,
       "evidence": "mid-base support, tested 6x"
     },
     {
-      "level": 316.0,
-      "label": "S3 bottom",
-      "touches": 8,
-      "evidence": "structural bottom, near crash low 302.11"
+      "level": 302.11,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-09-18, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 352.24,
+      "level": 359.46,
       "label": "R1 today high",
-      "evidence": "today's high 352.239990234375"
+      "evidence": "today's high 359.4599914550781"
     },
     {
       "level": 364.5,
@@ -69,32 +75,32 @@
     }
   ],
   "position": {
-    "current": 349.63,
-    "in_box_pct": 69.3,
-    "nearest_support": "S1 KEY (324.0)",
-    "nearest_resistance": "R1 today high (352.24)"
+    "current": 356.93,
+    "in_box_pct": 87.9,
+    "nearest_support": "S1 KEY (348.0)",
+    "nearest_resistance": "R1 today high (359.46)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 341.45,
-    "H": 352.24,
-    "L": 341.45,
-    "C": 349.63,
-    "body_pct": 75.8,
-    "upper_wick_pct": 24.2,
-    "lower_wick_pct": 0.0
+    "O": 355.21,
+    "H": 359.46,
+    "L": 352.25,
+    "C": 356.93,
+    "body_pct": 23.9,
+    "upper_wick_pct": 35.1,
+    "lower_wick_pct": 41.1
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -103,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 324.0 (KEY support)",
-      "then": "still range; watch 352.24 for next test"
+      "if": "hold 348.0 (KEY support)",
+      "then": "still range; watch 359.46 for next test"
     },
     {
-      "if": "break 324.0 on close",
-      "then": "target 320.0 → 316.0 (short-term bearish)"
+      "if": "break 348.0 on close",
+      "then": "target 324.0 → 320.0 (short-term bearish)"
     },
     {
-      "if": "break 316.0 (crash low)",
+      "if": "break 302.11 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 352.24 on close",
+      "if": "reclaim 359.46 on close",
       "then": "short-term bullish; next test 364.5"
     },
     {
@@ -143,7 +149,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -152,14 +158,14 @@
     "rr_ratio": 0.0,
     "phase_match": false,
     "r1": 364.5,
-    "s1": 313.67,
+    "s1": 316.04,
     "s2": 300.0,
     "r2": 335.8,
     "r3": 358.0,
     "s3": 308.76,
     "s4": 287.69,
-    "current_position_pct": 70.7,
-    "notes": "WAIT_RANGE: in box (314-364), pos 71%, no clear setup"
+    "current_position_pct": 84.4,
+    "notes": "WAIT_RANGE: in box (316-364), pos 84%, no clear setup"
   },
   "patterns": [
     {
@@ -168,7 +174,7 @@
       "date": "2026-10-16",
       "low": 344.1000061035156,
       "high": 350.9100036621094,
-      "i": 191
+      "i": 189
     },
     {
       "name": "黃昏之星",
@@ -176,7 +182,7 @@
       "date": "2026-10-01",
       "low": 313.6700134277344,
       "high": 319.1499938964844,
-      "i": 180
+      "i": 178
     },
     {
       "name": "平頭底",
@@ -184,7 +190,7 @@
       "date": "2026-09-14",
       "low": 305.8599853515625,
       "high": 311.3900146484375,
-      "i": 167
+      "i": 165
     },
     {
       "name": "利淡吞噬",
@@ -192,7 +198,7 @@
       "date": "2026-08-27",
       "low": 325.3699951171875,
       "high": 332.1499938964844,
-      "i": 156
+      "i": 154
     },
     {
       "name": "利淡反擊線",
@@ -200,7 +206,7 @@
       "date": "2026-06-25",
       "low": 339.8800048828125,
       "high": 348.2300109863281,
-      "i": 112
+      "i": 110
     }
   ]
 }

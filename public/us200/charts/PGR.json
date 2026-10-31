@@ -3,23 +3,23 @@
   "ticker_user": "PGR",
   "name": "Progressive Corporation (The)",
   "data_source": "yfinance",
-  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 224.45,
-    "H": 226.63,
-    "L": 224.3,
-    "C": 225.66,
-    "prev_close": 225.6,
-    "chg_pct": 0.03
+    "date": "2026-10-29",
+    "O": 228.43,
+    "H": 230.34,
+    "L": 227.35,
+    "C": 230.18,
+    "prev_close": 225.66,
+    "chg_pct": 2.0
   },
   "phase": "base_building",
-  "adx": 14.16,
-  "plus_di": 28.31,
-  "minus_di": 22.95,
+  "adx": 14.54,
+  "plus_di": 31.71,
+  "minus_di": 21.42,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 239.38 (2026-07-07), trough 200.96 (2026-09-24), box top 230.28 (2026-10-23)",
+  "phase_evidence": "Peak 239.38 (2026-07-07), trough 200.96 (2026-09-24), box top 230.34 (2026-10-29)",
   "peak": {
     "date": "2026-07-07",
     "price": 239.38
@@ -29,31 +29,31 @@
     "price": 200.96
   },
   "box": {
-    "top": 230.28,
-    "top_date": "2026-10-23",
+    "top": 230.34,
+    "top_date": "2026-10-29",
     "bottom": 200.96,
-    "period": "2026-09-24 to 2026-10-28"
+    "period": "2026-09-24 to 2026-10-29"
   },
-  "drop_from_peak_pct": 5.7,
-  "recovery_from_crash_pct": 12.3,
+  "drop_from_peak_pct": 3.8,
+  "recovery_from_crash_pct": 14.5,
   "supports": [
     {
-      "level": 220.0,
+      "level": 224.0,
       "label": "S1 KEY",
+      "touches": 6,
+      "evidence": "tested 6x in base period; 2.7% below current"
+    },
+    {
+      "level": 220.0,
+      "label": "S2",
       "touches": 8,
-      "evidence": "tested 8x in base period; 2.5% below current"
+      "evidence": "mid-base support, tested 8x"
     },
     {
       "level": 216.0,
-      "label": "S2",
-      "touches": 7,
-      "evidence": "mid-base support, tested 7x"
-    },
-    {
-      "level": 212.0,
       "label": "S3",
-      "touches": 10,
-      "evidence": "mid-base support, tested 10x"
+      "touches": 6,
+      "evidence": "mid-base support, tested 6x"
     },
     {
       "level": 200.96,
@@ -64,34 +64,29 @@
   ],
   "resistances": [
     {
-      "level": 226.63,
+      "level": 230.34,
       "label": "R1 today high",
-      "evidence": "today's high 226.6300048828125"
-    },
-    {
-      "level": 230.28,
-      "label": "R3 Oct high",
-      "evidence": "box top 230.28, base period high"
+      "evidence": "today's high 230.33999633789062"
     }
   ],
   "position": {
-    "current": 225.66,
-    "in_box_pct": 84.2,
-    "nearest_support": "S1 KEY (220.0)",
-    "nearest_resistance": "R1 today high (226.63)"
+    "current": 230.18,
+    "in_box_pct": 99.5,
+    "nearest_support": "S1 KEY (224.0)",
+    "nearest_resistance": "R1 today high (230.34)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 224.45,
-    "H": 226.63,
-    "L": 224.3,
-    "C": 225.66,
-    "body_pct": 51.9,
-    "upper_wick_pct": 41.6,
-    "lower_wick_pct": 6.4
+    "O": 228.43,
+    "H": 230.34,
+    "L": 227.35,
+    "C": 230.18,
+    "body_pct": 58.5,
+    "upper_wick_pct": 5.4,
+    "lower_wick_pct": 36.1
   },
   "bias": {
     "short": {
@@ -103,30 +98,26 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 220.0 (KEY support)",
-      "then": "still range; watch 226.63 for next test"
+      "if": "hold 224.0 (KEY support)",
+      "then": "still range; watch 230.34 for next test"
     },
     {
-      "if": "break 220.0 on close",
-      "then": "target 216.0 → 212.0 (short-term bearish)"
+      "if": "break 224.0 on close",
+      "then": "target 220.0 → 216.0 (short-term bearish)"
     },
     {
       "if": "break 200.96 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 226.63 on close",
-      "then": "short-term bullish; next test 230.28"
-    },
-    {
-      "if": "break 230.28 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 230.34 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -150,22 +141,22 @@
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
-    "trigger_price": 230.28,
-    "target_price": 215.65,
-    "stop_price": 239.09,
-    "risk_pct": 3.82,
-    "reward_pct": 6.35,
+    "trigger_price": 230.34,
+    "target_price": 215.68,
+    "stop_price": 239.16,
+    "risk_pct": 3.83,
+    "reward_pct": 6.36,
     "rr_ratio": 1.66,
     "phase_match": true,
-    "r1": 230.28,
+    "r1": 230.34,
     "s1": 201.02,
     "s2": 200.96,
     "r2": 225.45,
     "r3": 239.38,
     "s3": 189.2,
-    "s4": 192.02,
-    "current_position_pct": 84.2,
-    "notes": "SELL_R1: in box (201-230), entry at R1 230, target mid 216, stop 239 ｜ 52.2 條規則（SELL plan，resistance 230.28）：① 跌到 230.28、收市守住喺 230.28 上面 → 照 BUY 條 plan 做（入場 230.28，止蝕 239.09，目標 215.65）。② 收市跌穿 230.28 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 230.28 上面』。"
+    "s4": 191.75,
+    "current_position_pct": 99.5,
+    "notes": "SELL_R1: in box (201-230), entry at R1 230, target mid 216, stop 239 ｜ 52.2 條規則（SELL plan，resistance 230.34）：① 跌到 230.34、收市守住喺 230.34 上面 → 照 BUY 條 plan 做（入場 230.34，止蝕 239.16，目標 215.68）。② 收市跌穿 230.34 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 230.34 上面』。"
   },
   "patterns": [
     {
@@ -174,7 +165,7 @@
       "date": "2026-10-27",
       "low": 223.8300018310547,
       "high": 228.8300018310547,
-      "i": 198
+      "i": 196
     },
     {
       "name": "刺穿線",
@@ -182,7 +173,7 @@
       "date": "2026-10-01",
       "low": 207.4199981689453,
       "high": 211.32000732421875,
-      "i": 180
+      "i": 178
     },
     {
       "name": "利淡吞噬",
@@ -190,7 +181,7 @@
       "date": "2026-08-31",
       "low": 216.4600067138672,
       "high": 219.13999938964844,
-      "i": 158
+      "i": 156
     },
     {
       "name": "早晨之星",
@@ -198,7 +189,7 @@
       "date": "2026-08-20",
       "low": 217.55999755859375,
       "high": 223.8000030517578,
-      "i": 151
+      "i": 149
     },
     {
       "name": "利好反擊線",
@@ -206,7 +197,7 @@
       "date": "2026-08-05",
       "low": 210.97000122070312,
       "high": 213.9499969482422,
-      "i": 140
+      "i": 138
     }
   ]
 }

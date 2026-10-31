@@ -3,20 +3,20 @@
   "ticker_user": "EBAY",
   "name": "eBay Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 118.43,
-    "H": 119.07,
-    "L": 115.76,
-    "C": 118.02,
-    "prev_close": 117.83,
-    "chg_pct": 0.16
+    "date": "2026-10-29",
+    "O": 121.96,
+    "H": 124.49,
+    "L": 118.37,
+    "C": 121.19,
+    "prev_close": 118.02,
+    "chg_pct": 2.69
   },
   "phase": "range",
-  "adx": 35.82,
-  "plus_di": 25.87,
-  "minus_di": 14.57,
+  "adx": 36.47,
+  "plus_di": 33.39,
+  "minus_di": 12.68,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 124.59 (2026-10-15), trough 104.61 (2026-09-30), box top 124.59 (2026-10-15)",
@@ -32,65 +32,55 @@
     "top": 124.59,
     "top_date": "2026-10-15",
     "bottom": 104.61,
-    "period": "2026-09-30 to 2026-10-28"
+    "period": "2026-09-30 to 2026-10-29"
   },
-  "drop_from_peak_pct": 5.3,
-  "recovery_from_crash_pct": 12.8,
+  "drop_from_peak_pct": 2.7,
+  "recovery_from_crash_pct": 15.8,
   "supports": [
     {
-      "level": 116.0,
+      "level": 120.0,
       "label": "S1 KEY",
       "touches": 4,
-      "evidence": "tested 4x in base period; 1.7% below current"
+      "evidence": "tested 4x in base period; 1.0% below current"
+    },
+    {
+      "level": 116.0,
+      "label": "S2",
+      "touches": 12,
+      "evidence": "mid-base support, tested 12x"
     },
     {
       "level": 108.0,
-      "label": "S2",
-      "touches": 10,
-      "evidence": "mid-base support, tested 10x"
-    },
-    {
-      "level": 104.0,
       "label": "S3 bottom",
-      "touches": 12,
+      "touches": 9,
       "evidence": "structural bottom, near crash low 104.61"
     }
   ],
   "resistances": [
     {
-      "level": 119.07,
+      "level": 124.49,
       "label": "R1 today high",
-      "evidence": "today's high 119.06999969482422"
-    },
-    {
-      "level": 120.0,
-      "label": "R2",
-      "evidence": "mid-box supply, round number 120"
-    },
-    {
-      "level": 124.59,
-      "label": "R3 Oct high",
-      "evidence": "box top 124.59, base period high"
+      "evidence": "today's high 124.48999786376953"
     }
   ],
   "position": {
-    "current": 118.02,
-    "in_box_pct": 68.1,
-    "nearest_support": "S1 KEY (116.0)",
-    "nearest_resistance": "R1 today high (119.07)"
+    "current": 121.19,
+    "in_box_pct": 80.0,
+    "nearest_support": "S1 KEY (120.0)",
+    "nearest_resistance": "R1 today high (124.49)"
   },
   "kline_today": {
     "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": true,
-    "close_position": "upper_half",
-    "O": 118.43,
-    "H": 119.07,
-    "L": 115.76,
-    "C": 118.02,
-    "body_pct": 12.4,
-    "upper_wick_pct": 19.3,
-    "lower_wick_pct": 68.3
+    "close_position": "lower_half",
+    "O": 121.96,
+    "H": 124.49,
+    "L": 118.37,
+    "C": 121.19,
+    "body_pct": 12.6,
+    "upper_wick_pct": 41.3,
+    "lower_wick_pct": 46.1
   },
   "bias": {
     "short": {
@@ -108,24 +98,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 116.0 (KEY support)",
-      "then": "still range; watch 119.07 for next test"
+      "if": "hold 120.0 (KEY support)",
+      "then": "still range; watch 124.49 for next test"
     },
     {
-      "if": "break 116.0 on close",
-      "then": "target 108.0 → 104.0 (short-term bearish)"
+      "if": "break 120.0 on close",
+      "then": "target 116.0 → 108.0 (short-term bearish)"
     },
     {
-      "if": "break 104.0 (crash low)",
+      "if": "break 108.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 119.07 on close",
-      "then": "short-term bullish; next test 120.0"
-    },
-    {
-      "if": "break 124.59 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 124.49 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -148,32 +134,40 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
+    "phase_match": false,
     "r1": 124.59,
-    "s1": 104.64,
+    "s1": 104.71,
     "s2": 99.85,
     "r2": 115.17,
     "r3": 119.31,
     "s3": 104.88,
     "s4": 78.03,
-    "current_position_pct": 67.1,
-    "notes": "WAIT_RANGE: in box (105-125), pos 67%, no clear setup"
+    "current_position_pct": 82.9,
+    "notes": "WAIT_RANGE: in box (105-125), pos 83%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "三隻烏鴉",
+      "bias": "bearish",
+      "date": "2026-10-29",
+      "low": 118.37000274658203,
+      "high": 124.48999786376953,
+      "i": 198
+    },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-10-16",
       "low": 119.19999694824219,
       "high": 124.08999633789062,
-      "i": 191
+      "i": 189
     },
     {
       "name": "平頭底",
@@ -181,7 +175,7 @@
       "date": "2026-10-06",
       "low": 104.70999908447266,
       "high": 107.25,
-      "i": 183
+      "i": 181
     },
     {
       "name": "利淡反擊線",
@@ -189,7 +183,7 @@
       "date": "2026-09-24",
       "low": 107.5,
       "high": 110.76000213623047,
-      "i": 175
+      "i": 173
     },
     {
       "name": "利好吞噬",
@@ -197,15 +191,7 @@
       "date": "2026-09-01",
       "low": 102.81999969482422,
       "high": 106.29000091552734,
-      "i": 159
-    },
-    {
-      "name": "刺穿線",
-      "bias": "bullish",
-      "date": "2026-08-24",
-      "low": 103.75,
-      "high": 107.37000274658203,
-      "i": 153
+      "i": 157
     }
   ]
 }

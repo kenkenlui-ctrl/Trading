@@ -3,23 +3,23 @@
   "ticker_user": "CMG",
   "name": "Chipotle Mexican Grill, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 28.12,
-    "H": 29.24,
-    "L": 28.07,
-    "C": 28.73,
-    "prev_close": 27.98,
-    "chg_pct": 2.68
+    "date": "2026-10-29",
+    "O": 30.46,
+    "H": 31.54,
+    "L": 29.9,
+    "C": 31.28,
+    "prev_close": 28.73,
+    "chg_pct": 8.88
   },
   "phase": "downtrend_active",
-  "adx": 15.62,
-  "plus_di": 24.59,
-  "minus_di": 27.41,
+  "adx": 15.9,
+  "plus_di": 33.97,
+  "minus_di": 22.92,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 40.41 (2026-02-05), trough 27.31 (2026-10-23), box top 34.27 (2026-09-17)",
+  "phase_evidence": "Peak 40.41 (2026-02-05), trough 27.31 (2026-10-23), box top 31.54 (2026-10-29)",
   "peak": {
     "date": "2026-02-05",
     "price": 40.41
@@ -29,86 +29,83 @@
     "price": 27.31
   },
   "box": {
-    "top": 34.27,
-    "top_date": "2026-09-17",
+    "top": 31.54,
+    "top_date": "2026-10-29",
     "bottom": 27.31,
-    "period": "2026-10-23 to 2026-10-28"
+    "period": "2026-10-23 to 2026-10-29"
   },
-  "drop_from_peak_pct": 28.9,
-  "recovery_from_crash_pct": 5.2,
+  "drop_from_peak_pct": 22.6,
+  "recovery_from_crash_pct": 14.5,
   "supports": [
     {
-      "level": 28.0,
-      "label": "S1 bottom",
+      "level": 32.0,
+      "label": "S1 KEY",
       "touches": 12,
+      "evidence": "tested 12x in base period; -2.3% below current"
+    },
+    {
+      "level": 28.0,
+      "label": "S2 bottom",
+      "touches": 24,
       "evidence": "structural bottom, near crash low 27.31"
     }
   ],
   "resistances": [
     {
-      "level": 29.24,
+      "level": 31.54,
       "label": "R1 today high",
-      "evidence": "today's high 29.239999771118164"
-    },
-    {
-      "level": 34.27,
-      "label": "R3 Sep high",
-      "evidence": "box top 34.27, base period high"
+      "evidence": "today's high 31.540000915527344"
     }
   ],
   "position": {
-    "current": 28.73,
-    "in_box_pct": 11.6,
-    "nearest_support": "S1 bottom (28.0)",
-    "nearest_resistance": "R1 today high (29.24)"
+    "current": 31.28,
+    "in_box_pct": 92.7,
+    "nearest_support": "S1 KEY (32.0)",
+    "nearest_resistance": "R1 today high (31.54)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 28.12,
-    "H": 29.24,
-    "L": 28.07,
-    "C": 28.73,
-    "body_pct": 52.1,
-    "upper_wick_pct": 43.6,
-    "lower_wick_pct": 4.3
+    "O": 30.46,
+    "H": 31.54,
+    "L": 29.9,
+    "C": 31.28,
+    "body_pct": 50.0,
+    "upper_wick_pct": 15.9,
+    "lower_wick_pct": 34.1
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (12% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
       "reason": "making new lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 28.0 (KEY support)",
-      "then": "still range; watch 29.24 for next test"
+      "if": "hold 32.0 (KEY support)",
+      "then": "still range; watch 31.54 for next test"
     },
     {
-      "if": "break 28.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 32.0 on close",
+      "then": "target 28.0 → lower (short-term bearish)"
     },
     {
       "if": "break 28.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 29.24 on close",
-      "then": "short-term bullish; next test 34.27"
-    },
-    {
-      "if": "break 34.27 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 31.54 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -130,15 +127,15 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 33.4,
+    "target_price": 30.36,
+    "stop_price": 35.2,
+    "risk_pct": 5.39,
+    "reward_pct": 9.12,
+    "rr_ratio": 1.69,
+    "phase_match": true,
     "r1": 33.4,
     "s1": 27.31,
     "s2": 31.14,
@@ -146,8 +143,8 @@
     "r3": 39.09,
     "s3": 28.04,
     "s4": 30.6,
-    "current_position_pct": 23.3,
-    "notes": "WAIT_RANGE: in box (27-33), pos 23%, no clear setup"
+    "current_position_pct": 65.2,
+    "notes": "SELL_R1: in box (27-33), entry at R1 33, target mid 30, stop 35 ｜ 52.2 條規則（SELL plan，resistance 33.40）：① 跌到 33.40、收市守住喺 33.40 上面 → 照 BUY 條 plan 做（入場 33.40，止蝕 35.20，目標 30.36）。② 收市跌穿 33.40 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 33.40 上面』。"
   },
   "patterns": [
     {
@@ -156,7 +153,7 @@
       "date": "2026-10-28",
       "low": 28.06999969482422,
       "high": 29.239999771118164,
-      "i": 199
+      "i": 197
     },
     {
       "name": "刺穿線",
@@ -164,7 +161,7 @@
       "date": "2026-10-08",
       "low": 30.459999084472656,
       "high": 33.400001525878906,
-      "i": 185
+      "i": 183
     },
     {
       "name": "烏雲蓋頂",
@@ -172,7 +169,7 @@
       "date": "2026-09-03",
       "low": 37.52000045776367,
       "high": 38.91999816894531,
-      "i": 161
+      "i": 159
     },
     {
       "name": "上升三法",
@@ -180,7 +177,7 @@
       "date": "2026-08-06",
       "low": 33.400001525878906,
       "high": 34.15999984741211,
-      "i": 141
+      "i": 139
     },
     {
       "name": "黃昏之星",
@@ -188,7 +185,7 @@
       "date": "2026-07-07",
       "low": 34.2400016784668,
       "high": 35.380001068115234,
-      "i": 119
+      "i": 117
     }
   ]
 }

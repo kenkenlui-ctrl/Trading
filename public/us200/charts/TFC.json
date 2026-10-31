@@ -1,0 +1,200 @@
+{
+  "ticker": "US.TFC",
+  "ticker_user": "TFC",
+  "name": "Truist Financial Corporation",
+  "data_source": "yfinance",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
+  "last_bar": {
+    "date": "2026-10-29",
+    "O": 49.3,
+    "H": 49.57,
+    "L": 48.84,
+    "C": 49.32,
+    "prev_close": 48.42,
+    "chg_pct": 1.86
+  },
+  "phase": "base_building",
+  "adx": 22.18,
+  "plus_di": 33.92,
+  "minus_di": 21.45,
+  "regime": "dead",
+  "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
+  "phase_evidence": "Peak 56.2 (2026-02-06), trough 43.13 (2026-03-19), box top 54.22 (2026-07-17)",
+  "peak": {
+    "date": "2026-02-06",
+    "price": 56.2
+  },
+  "trough": {
+    "date": "2026-03-19",
+    "price": 43.13
+  },
+  "box": {
+    "top": 54.22,
+    "top_date": "2026-07-17",
+    "bottom": 43.13,
+    "period": "2026-03-19 to 2026-10-29"
+  },
+  "drop_from_peak_pct": 12.2,
+  "recovery_from_crash_pct": 14.4,
+  "supports": [
+    {
+      "level": 48.0,
+      "label": "S1 KEY",
+      "touches": 64,
+      "evidence": "tested 64x in base period; 2.7% below current"
+    },
+    {
+      "level": 44.0,
+      "label": "S2 bottom",
+      "touches": 24,
+      "evidence": "structural bottom, near crash low 43.13"
+    }
+  ],
+  "resistances": [
+    {
+      "level": 49.57,
+      "label": "R1 today high",
+      "evidence": "today's high 49.56999969482422"
+    },
+    {
+      "level": 54.22,
+      "label": "R3 Jul high",
+      "evidence": "box top 54.22, base period high"
+    }
+  ],
+  "position": {
+    "current": 49.32,
+    "in_box_pct": 52.1,
+    "nearest_support": "S1 KEY (48.0)",
+    "nearest_resistance": "R1 today high (49.57)"
+  },
+  "kline_today": {
+    "type": "bullish_hold",
+    "touched_R1": true,
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 49.3,
+    "H": 49.57,
+    "L": 48.84,
+    "C": 49.32,
+    "body_pct": 2.7,
+    "upper_wick_pct": 34.2,
+    "lower_wick_pct": 63.0
+  },
+  "bias": {
+    "short": {
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
+    },
+    "mid": {
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
+    },
+    "long": {
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
+    }
+  },
+  "scenarios": [
+    {
+      "if": "hold 48.0 (KEY support)",
+      "then": "still range; watch 49.57 for next test"
+    },
+    {
+      "if": "break 48.0 on close",
+      "then": "target 44.0 → lower (short-term bearish)"
+    },
+    {
+      "if": "break 44.0 (crash low)",
+      "then": "base invalidation; mid-term bearish"
+    },
+    {
+      "if": "reclaim 49.57 on close",
+      "then": "short-term bullish; next test 54.22"
+    },
+    {
+      "if": "break 54.22 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
+    }
+  ],
+  "common_misjudgments": [
+    {
+      "claim": "跌過好多，所以一定牛",
+      "refute": "超賣可以再超賣；要先有結構轉強（HH/HL 或破箱頂）"
+    },
+    {
+      "claim": "今日陰燭，所以一定破位",
+      "refute": "陰燭在支持之上，只是弱，不是已破"
+    },
+    {
+      "claim": "MACD 綠箭就一定上",
+      "refute": "震盪市指標反覆；以水平位收市確認為優先"
+    },
+    {
+      "claim": "把歷史高位當短線目標",
+      "refute": "路徑依賴，中間有多層供應；分段過關"
+    }
+  ],
+  "action_plan": {
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 49.57,
+    "target_price": 47.32,
+    "stop_price": 50.98,
+    "risk_pct": 2.84,
+    "reward_pct": 4.55,
+    "rr_ratio": 1.6,
+    "phase_match": true,
+    "r1": 49.57,
+    "s1": 45.06,
+    "s2": 45.06,
+    "r2": 53.53,
+    "r3": 54.22,
+    "s3": 46.24,
+    "s4": 43.13,
+    "current_position_pct": 94.5,
+    "notes": "SELL_R1: in box (45-50), entry at R1 50, target mid 47, stop 51 ｜ 52.2 條規則（SELL plan，resistance 49.57）：① 跌到 49.57、收市守住喺 49.57 上面 → 照 BUY 條 plan 做（入場 49.57，止蝕 50.98，目標 47.32）。② 收市跌穿 49.57 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 49.57 上面』。"
+  },
+  "patterns": [
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-10-14",
+      "low": 45.060001373291016,
+      "high": 45.70000076293945,
+      "i": 187
+    },
+    {
+      "name": "利好反擊線",
+      "bias": "bullish",
+      "date": "2026-10-02",
+      "low": 46.209999084472656,
+      "high": 46.72999954223633,
+      "i": 179
+    },
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-08-26",
+      "low": 50.20000076293945,
+      "high": 50.86000061035156,
+      "i": 153
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-08-05",
+      "low": 52.630001068115234,
+      "high": 53.130001068115234,
+      "i": 138
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-07-02",
+      "low": 50.47999954223633,
+      "high": 51.400001525878906,
+      "i": 115
+    }
+  ]
+}

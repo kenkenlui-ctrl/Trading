@@ -3,96 +3,91 @@
   "ticker_user": "01658.HK",
   "name": "PSBC",
   "data_source": "yfinance",
-  "data_range": "2026-01-06 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-08 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
+    "date": "2026-10-30",
     "O": 5.51,
-    "H": 5.53,
-    "L": 5.45,
-    "C": 5.51,
-    "prev_close": 5.51,
-    "chg_pct": -0.18
+    "H": 5.62,
+    "L": 5.5,
+    "C": 5.61,
+    "prev_close": 5.52,
+    "chg_pct": 1.72
   },
-  "phase": "base_building",
-  "adx": 32.58,
-  "plus_di": 18.29,
-  "minus_di": 13.48,
+  "phase": "range",
+  "adx": 32.16,
+  "plus_di": 21.22,
+  "minus_di": 11.54,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 5.69 (2026-10-21), trough 5.3 (2026-09-17), box top 5.69 (2026-10-21)",
+  "phase_evidence": "Peak 5.69 (2026-10-21), trough 5.36 (2026-10-23), box top 5.64 (2026-10-29)",
   "peak": {
     "date": "2026-10-21",
     "price": 5.69
   },
   "trough": {
-    "date": "2026-09-17",
-    "price": 5.3
+    "date": "2026-10-23",
+    "price": 5.36
   },
   "box": {
-    "top": 5.69,
-    "top_date": "2026-10-21",
-    "bottom": 5.3,
-    "period": "2026-09-17 to 2026-10-28"
+    "top": 5.64,
+    "top_date": "2026-10-29",
+    "bottom": 5.36,
+    "period": "2026-10-23 to 2026-10-30"
   },
-  "drop_from_peak_pct": 3.3,
-  "recovery_from_crash_pct": 3.9,
+  "drop_from_peak_pct": 1.3,
+  "recovery_from_crash_pct": 4.7,
   "supports": [
     {
       "level": 4.0,
       "label": "S1 bottom",
-      "touches": 36,
-      "evidence": "structural bottom, near crash low 5.3"
+      "touches": 84,
+      "evidence": "structural bottom, near crash low 5.36"
     }
   ],
   "resistances": [
     {
-      "level": 5.53,
+      "level": 5.62,
       "label": "R1 today high",
-      "evidence": "today's high 5.525000095367432"
-    },
-    {
-      "level": 5.69,
-      "label": "R3 Oct high",
-      "evidence": "box top 5.69, base period high"
+      "evidence": "today's high 5.619999885559082"
     }
   ],
   "position": {
-    "current": 5.51,
-    "in_box_pct": 89.1,
+    "current": 5.61,
+    "in_box_pct": 99.7,
     "nearest_support": "S1 bottom (4.0)",
-    "nearest_resistance": "R1 today high (5.53)"
+    "nearest_resistance": "R1 today high (5.62)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
     "O": 5.51,
-    "H": 5.53,
-    "L": 5.45,
-    "C": 5.51,
-    "body_pct": 6.3,
-    "upper_wick_pct": 18.7,
-    "lower_wick_pct": 75.0
+    "H": 5.62,
+    "L": 5.5,
+    "C": 5.61,
+    "body_pct": 83.3,
+    "upper_wick_pct": 4.2,
+    "lower_wick_pct": 12.5
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
+      "bias": "neutral",
+      "reason": "no clear direction"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 4.0 (KEY support)",
-      "then": "still range; watch 5.53 for next test"
+      "then": "still range; watch 5.62 for next test"
     },
     {
       "if": "break 4.0 on close",
@@ -103,12 +98,8 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 5.53 on close",
-      "then": "short-term bullish; next test 5.69"
-    },
-    {
-      "if": "break 5.69 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 5.62 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -131,14 +122,14 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
+    "phase_match": false,
     "r1": 5.69,
     "s1": 5.3,
     "s2": 4.76,
@@ -146,8 +137,8 @@
     "r3": 5.24,
     "s3": 4.48,
     "s4": 4.78,
-    "current_position_pct": 51.9,
-    "notes": "WAIT_RANGE: in box (5-6), pos 52%, no clear setup"
+    "current_position_pct": 80.5,
+    "notes": "WAIT_RANGE: in box (5-6), pos 81%, no clear setup"
   },
   "patterns": [
     {
@@ -156,7 +147,7 @@
       "date": "2026-10-22",
       "low": 5.485000133514404,
       "high": 5.599999904632568,
-      "i": 195
+      "i": 193
     },
     {
       "name": "平頭頂",
@@ -164,7 +155,7 @@
       "date": "2026-10-16",
       "low": 5.474999904632568,
       "high": 5.585000038146973,
-      "i": 192
+      "i": 190
     },
     {
       "name": "烏雲蓋頂",
@@ -172,7 +163,7 @@
       "date": "2026-10-02",
       "low": 5.364999771118164,
       "high": 5.494999885559082,
-      "i": 182
+      "i": 180
     },
     {
       "name": "利淡吞噬",
@@ -180,7 +171,7 @@
       "date": "2026-09-07",
       "low": 5.34499979019165,
       "high": 5.505000114440918,
-      "i": 164
+      "i": 162
     },
     {
       "name": "利好反擊線",
@@ -188,7 +179,7 @@
       "date": "2026-08-19",
       "low": 4.824999809265137,
       "high": 4.929999828338623,
-      "i": 151
+      "i": 149
     }
   ]
 }

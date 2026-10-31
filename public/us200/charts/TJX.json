@@ -3,20 +3,20 @@
   "ticker_user": "TJX",
   "name": "TJX Companies, Inc. (The)",
   "data_source": "yfinance",
-  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 138.98,
-    "H": 139.85,
-    "L": 138.01,
-    "C": 138.39,
-    "prev_close": 140.2,
-    "chg_pct": -1.29
+    "date": "2026-10-29",
+    "O": 139.93,
+    "H": 141.63,
+    "L": 139.5,
+    "C": 141.39,
+    "prev_close": 138.39,
+    "chg_pct": 2.17
   },
-  "phase": "downtrend_active",
-  "adx": 31.44,
-  "plus_di": 24.76,
-  "minus_di": 27.64,
+  "phase": "base_building",
+  "adx": 29.47,
+  "plus_di": 27.32,
+  "minus_di": 25.3,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 170.0 (2026-06-11), trough 122.78 (2026-09-16), box top 148.57 (2026-10-20)",
@@ -32,29 +32,41 @@
     "top": 148.57,
     "top_date": "2026-10-20",
     "bottom": 122.78,
-    "period": "2026-09-16 to 2026-10-28"
+    "period": "2026-09-16 to 2026-10-29"
   },
-  "drop_from_peak_pct": 18.6,
-  "recovery_from_crash_pct": 12.7,
+  "drop_from_peak_pct": 16.8,
+  "recovery_from_crash_pct": 15.2,
   "supports": [
     {
-      "level": 132.0,
+      "level": 140.0,
       "label": "S1 KEY",
-      "touches": 12,
-      "evidence": "tested 12x in base period; 4.6% below current"
+      "touches": 4,
+      "evidence": "tested 4x in base period; 1.0% below current"
     },
     {
-      "level": 128.0,
-      "label": "S2 bottom",
+      "level": 136.0,
+      "label": "S2",
+      "touches": 8,
+      "evidence": "mid-base support, tested 8x"
+    },
+    {
+      "level": 132.0,
+      "label": "S3",
       "touches": 12,
-      "evidence": "structural bottom, near crash low 122.78"
+      "evidence": "mid-base support, tested 12x"
+    },
+    {
+      "level": 122.78,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-09-16, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 139.85,
+      "level": 141.63,
       "label": "R1 today high",
-      "evidence": "today's high 139.85000610351562"
+      "evidence": "today's high 141.6300048828125"
     },
     {
       "level": 145.0,
@@ -68,23 +80,23 @@
     }
   ],
   "position": {
-    "current": 138.39,
-    "in_box_pct": 50.5,
-    "nearest_support": "S1 KEY (132.0)",
-    "nearest_resistance": "R1 today high (139.85)"
+    "current": 141.39,
+    "in_box_pct": 72.2,
+    "nearest_support": "S1 KEY (140.0)",
+    "nearest_resistance": "R1 today high (141.63)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 138.98,
-    "H": 139.85,
-    "L": 138.01,
-    "C": 138.39,
-    "body_pct": 32.1,
-    "upper_wick_pct": 47.3,
-    "lower_wick_pct": 20.7
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 139.93,
+    "H": 141.63,
+    "L": 139.5,
+    "C": 141.39,
+    "body_pct": 68.5,
+    "upper_wick_pct": 11.3,
+    "lower_wick_pct": 20.2
   },
   "bias": {
     "short": {
@@ -92,8 +104,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bearish_continuation",
-      "reason": "making new lows"
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -102,19 +114,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 132.0 (KEY support)",
-      "then": "still range; watch 139.85 for next test"
+      "if": "hold 140.0 (KEY support)",
+      "then": "still range; watch 141.63 for next test"
     },
     {
-      "if": "break 132.0 on close",
-      "then": "target 128.0 → lower (short-term bearish)"
+      "if": "break 140.0 on close",
+      "then": "target 136.0 → 132.0 (short-term bearish)"
     },
     {
-      "if": "break 128.0 (crash low)",
+      "if": "break 122.78 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 139.85 on close",
+      "if": "reclaim 141.63 on close",
       "then": "short-term bullish; next test 145.0"
     },
     {
@@ -149,41 +161,33 @@
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": false,
+    "phase_match": true,
     "r1": 148.57,
-    "s1": 131.44,
+    "s1": 132.37,
     "s2": 122.78,
     "r2": 162.5,
     "r3": 170.0,
     "s3": 146.14,
     "s4": 145.83,
-    "current_position_pct": 40.6,
-    "notes": "WAIT_RANGE: in box (131-149), pos 41%, no clear setup"
+    "current_position_pct": 55.7,
+    "notes": "WAIT_RANGE: in box (132-149), pos 56%, no clear setup"
   },
   "patterns": [
     {
       "name": "上升三法",
       "bias": "bullish",
-      "date": "2026-10-28",
-      "low": 138.00999450683594,
-      "high": 139.85000610351562,
-      "i": 199
-    },
-    {
-      "name": "利淡反擊線",
-      "bias": "bearish",
-      "date": "2026-10-21",
-      "low": 145.36000061035156,
-      "high": 147.11000061035156,
-      "i": 194
+      "date": "2026-10-29",
+      "low": 139.5,
+      "high": 141.6300048828125,
+      "i": 198
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-10-15",
-      "low": 143.83999633789062,
-      "high": 146.52000427246094,
-      "i": 190
+      "date": "2026-10-23",
+      "low": 144.72999572753906,
+      "high": 147.3800048828125,
+      "i": 194
     },
     {
       "name": "利好反擊線",
@@ -191,7 +195,7 @@
       "date": "2026-09-29",
       "low": 129.77000427246094,
       "high": 134.35000610351562,
-      "i": 178
+      "i": 176
     },
     {
       "name": "早晨之星",
@@ -199,7 +203,15 @@
       "date": "2026-07-16",
       "low": 151.4499969482422,
       "high": 155.27000427246094,
-      "i": 126
+      "i": 124
+    },
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-07-07",
+      "low": 152.47000122070312,
+      "high": 155.74000549316406,
+      "i": 117
     }
   ]
 }

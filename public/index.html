@@ -73,9 +73,9 @@
 </script>
 <link rel="stylesheet" href="/static/fonts-local.css">
 <link rel="stylesheet" href="/leeks.css?v=800f38b5de">
-<meta name="w9-freshness" content='[{"market":"HK","session":"2026-10-28","close":"2026-10-28T16:00:00+08:00","next":"2026-10-29T16:00:00+08:00","limit":36},{"market":"US","session":"2026-10-28","close":"2026-10-29T04:00:00+08:00","next":"2026-10-30T04:00:00+08:00","limit":36},{"market":"JP","session":"2026-10-28","close":"2026-10-28T14:00:00+08:00","next":"2026-10-29T14:00:00+08:00","limit":36}]'>
+<meta name="w9-freshness" content='[{"market":"HK","session":"2026-10-30","close":"2026-10-30T16:00:00+08:00","next":"2026-11-02T16:00:00+08:00","limit":36},{"market":"US","session":"2026-10-29","close":"2026-10-30T04:00:00+08:00","next":"2026-10-31T04:00:00+08:00","limit":36},{"market":"JP","session":"2026-10-30","close":"2026-10-30T14:00:00+08:00","next":"2026-11-02T14:00:00+08:00","limit":36}]'>
 <script src="/static/staleness-core.js?v=04cdfebd" defer></script>
-<script src="/static/staleness.js?v=f2d98f9a" defer></script>
+<script src="/static/staleness.js?v=4d3a1f0b" defer></script>
 <script>
 (function(){
   const t = localStorage.getItem('leeks-theme') || 'dark';
@@ -106,7 +106,7 @@
     <a class="lang-switch" href="/en/" title="View in English" aria-label="View in English">EN</a>
     <div class="nav-meta">
       <span class="live-dot"></span>
-      T-1 · 2026-10-28
+      T-1 · 2026-10-30 · US 2026-10-29
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
         <span class="icon" id="themeIcon">●</span>
         <span id="themeLabel">DARK</span>
@@ -139,7 +139,7 @@
   </details>
 </nav>
 
-
+<div class="container" style="margin:18px 0 0"><div class="info-card" style="border-left:3px solid var(--amber)"><h2 style="margin-top:0;font-size:1rem">⚠ 數據新鮮度提示</h2><ul style="font-size:0.85rem;margin:6px 0 0;padding-left:1.1rem"><li><b>美股</b>：市場最新已收市 session 係 2026-10-30，但本站數據只到 2026-10-29（缺咗 2026-10-30 嘅數據）受影響 session：2026-10-30。</li></ul><p style="font-size:0.8rem;opacity:0.75;margin:8px 0 0">頁面下面嘅數字係截至上面列出嘅日期，唔係最新。落單前請以券商或官方 App 嘅報價為準。</p></div></div>
 <script>
 function toggleTheme(){
   const cur = document.documentElement.getAttribute('data-theme') || 'dark';
@@ -165,76 +165,76 @@ function toggleTheme(){
 <main id="main">
 <div class="page-head">
   <div class="container">
-    <div class="kicker">Leeks Terminal · Live</div>
+    <div class="kicker">Leeks Terminal · <span class="w9-fresh-claim" data-w9-fresh="數據截至 2026-10-30 · US 2026-10-29">數據未更新</span></div>
     <h1>Leeks Terminal · <em class="italic">多週期交易決策儀表板</em></h1>
-    <p class="lede">每晚收市後，對 <b>236 隻美股、201 隻日股</b>計一次行動計劃：入場價、止損位、離場規則。<b>全部數字由 Python 對 T-1 收市 OHLC 確定性計出，零 LLM 幻覺</b>。<br><br>現行規則（v2）：<b>只做多</b>；股價喺自己嘅 200 天線之上兼且 200 天線向上；大市指數都要喺自己嘅 200 天線之上；跌到 20 日低位 S1 掛限價單，<b>而且收市要企穩 S1 先算成交</b>；止損 S1 下方 3 倍 ATR；冇目標價，第 10 個交易日收市離場。<br><br><b style="color: var(--amber);">港股未納入 v2。</b>實測之後港股喺 v2 之下係負數：按 <b>0.25%</b> 來回成本（本頁三個市場統一用呢個口徑，係現有數據入面最苛刻嗰個），2016–26 年化 v2 <b>+11.0%</b>、同一批股票等權持有 <b>+15.4%</b>，即係落後 <b>4.4 個百分點/年</b>；成本收到零（v2 +12.9%）都仲係落後 <b>2.5 點</b>。唔係成本問題，係規則本身喺港股冇效，所以引擎目前只行美股同日股；<a href="/hk200/">/hk200/</a> 顯示嘅仍然係舊版引擎。<br><br><b style="color: var(--amber);">呢個係一個規則，唔係一個保證。</b>每單表現係實測，但<b>每單有優勢 ≠ 跑贏大市</b>。同一批股票純粹等權持有，2016–26 年化：美股 v2 <b>+25.6%</b> vs 等權 <b>+24.6%</b>（跑贏 <b>1.0</b> 點/年）；日股 v2 <b>+15.6%</b> vs 等權 <b>+16.0%</b>（落後 <b>0.3</b> 點/年）。差距喺單一十年窗口內量度，唔係預測。<br><b>而且呢啲差距唔穩定</b> —— 分兩段睇（點/年）：美股 2016–20 <b>+3.7</b>、2021–26 <b>-2.4</b>；日股 <b>-9.0</b>、<b>+5.1</b>；港股 <b>-8.9</b>、<b>+0.5</b>。<b>三個市場全期數字都會變號</b>，代表差額主要由單一大市 regime 決定，<b>唔應該當成一個可持續 alpha 去引用</b>。<br>同一批數字如果用 <b>0.10%</b> 成本：美股跑贏 <b>3.9</b> 點、日股跑贏 <b>2.1</b> 點、港股落後 <b>3.2</b> 點。上面 0.25% 係三個市場之中現有數據最苛刻嗰個口徑，兩個成本一齊列，唔想畀人一句「揀咗個对自己有利嘅成本」。<br>每個市場嘅差距喺邊個來回成本會變號（美股／日股／港股 × 兩個窗口）：<a href="/methodology.html#cost-flip"><b>成本敏感度表 →</b></a><br><br><b style="color: var(--amber);">2026-10-17 修正記錄：以上等權數字之前係錯嘅。</b>舊基準將每隻股票「當月平均日收益」廣播落嗰個月嘅每一個交易日，等於用算術平均代替真實價格路徑，令等權年化虛高 <b>2.0 至 3.7 個百分點</b>（美股 +2.6、日股 +2.0、港股 +3.7），亦即係令規則睇落比實際差。三個市場全部受影響，已改為真實月度再平衡並重跑。<a href="/methodology">完整方法論同修正記錄 →</a></p>
+    <p class="lede">每晚收市後，對 <b>241 隻美股、201 隻日股</b>計一次行動計劃：入場價、止損位、離場規則。<b>全部數字由 Python 對 T-1 收市 OHLC 確定性計出，零 LLM 幻覺</b>。<br><br>現行規則（v2）：<b>只做多</b>；股價喺自己嘅 200 天線之上兼且 200 天線向上；大市指數都要喺自己嘅 200 天線之上；跌到 20 日低位 S1 掛限價單，<b>而且收市要企穩 S1 先算成交</b>；止損 S1 下方 3 倍 ATR；冇目標價，第 10 個交易日收市離場。<br><br><b style="color: var(--amber);">港股未納入 v2。</b>實測之後港股喺 v2 之下係負數：按 <b>0.25%</b> 來回成本（本頁三個市場統一用呢個口徑，係現有數據入面最苛刻嗰個），2016–26 年化 v2 <b>+11.0%</b>、同一批股票等權持有 <b>+15.4%</b>，即係落後 <b>4.4 個百分點/年</b>；成本收到零（v2 +12.9%）都仲係落後 <b>2.5 點</b>。唔係成本問題，係規則本身喺港股冇效，所以引擎目前只行美股同日股；<a href="/hk200/">/hk200/</a> 顯示嘅仍然係舊版引擎。<br><br><b style="color: var(--amber);">呢個係一個規則，唔係一個保證。</b>每單表現係實測，但<b>每單有優勢 ≠ 跑贏大市</b>。同一批股票純粹等權持有，2016–26 年化：美股 v2 <b>+25.6%</b> vs 等權 <b>+24.6%</b>（跑贏 <b>1.0</b> 點/年）；日股 v2 <b>+15.6%</b> vs 等權 <b>+16.0%</b>（落後 <b>0.3</b> 點/年）。差距喺單一十年窗口內量度，唔係預測。<br><b>而且呢啲差距唔穩定</b> —— 分兩段睇（點/年）：美股 2016–20 <b>+3.7</b>、2021–26 <b>-2.4</b>；日股 <b>-9.0</b>、<b>+5.1</b>；港股 <b>-8.9</b>、<b>+0.5</b>。<b>三個市場全期數字都會變號</b>，代表差額主要由單一大市 regime 決定，<b>唔應該當成一個可持續 alpha 去引用</b>。<br>同一批數字如果用 <b>0.10%</b> 成本：美股跑贏 <b>3.9</b> 點、日股跑贏 <b>2.1</b> 點、港股落後 <b>3.2</b> 點。上面 0.25% 係三個市場之中現有數據最苛刻嗰個口徑，兩個成本一齊列，唔想畀人一句「揀咗個对自己有利嘅成本」。<br>每個市場嘅差距喺邊個來回成本會變號（美股／日股／港股 × 兩個窗口）：<a href="/methodology.html#cost-flip"><b>成本敏感度表 →</b></a><br><br><b style="color: var(--amber);">2026-10-17 修正記錄：以上等權數字之前係錯嘅。</b>舊基準將每隻股票「當月平均日收益」廣播落嗰個月嘅每一個交易日，等於用算術平均代替真實價格路徑，令等權年化虛高 <b>2.0 至 3.7 個百分點</b>（美股 +2.6、日股 +2.0、港股 +3.7），亦即係令規則睇落比實際差。三個市場全部受影響，已改為真實月度再平衡並重跑。<a href="/methodology">完整方法論同修正記錄 →</a></p>
     <div class="hero-meta">
-      <span>T-1 數據 · 2026-10-28</span>
-      <span>236 US + 201 JP 行 v2</span>
-      <span>168 個 v2 訊號 · 全部只做多 · 無目標價</span>
-      <span>Updated 11:11 HKT</span>
-      
+      <span>T-1 數據 · 2026-10-30 · US 2026-10-29</span>
+      <span>241 US + 201 JP 行 v2</span>
+      <span>170 個 v2 訊號 · 全部只做多 · 無目標價</span>
+      <span>Updated 09:31 HKT</span>
+      <span style="color:var(--amber)">⚠ 上次 build 未成功：refresh.sh exited 1</span>
     </div>
   </div>
 </div>
 <section>
   <div class="container">
     <div class="section-head">
-      <h2>今日 <em>actionable</em></h2>
-      <span class="section-meta">71 JP200 + 97 US200 · 全部只做多 · 入場價 = 20 日低位 S1，要收市企穩先算成交 · <b>冇目標價</b>，第 10 個交易日收市離場 · Updated 11:11 HKT</span>
+      <h2>今日 <em>actionable</em><span class="w9-fresh-note">（美股數據截至 2026-10-29，未更新）</span></h2>
+      <span class="section-meta">67 JP200 + 103 US200 · 全部只做多 · 入場價 = 20 日低位 S1，要收市企穩先算成交 · <b>冇目標價</b>，第 10 個交易日收市離場 · Updated 09:31 HKT</span>
     </div>
     <div class="card-grid" style="grid-template-columns: 1fr;">
-            <a href="/jp200/ticker/3063_T" class="signal-card bull">
-        <div>
-          <div class="signal-ticker">3063_T <span class="text-dim" style="font-size:0.7em;">JP200</span></div>
-          <div class="signal-name">已到入場位 · v2 只做多 · 入場要企穩 S1</div>
-        </div>
-        <span class="signal-action-large buy">BUY</span>
-        <div class="signal-detail">收 1067.0 · 入場 <b>1067.0</b> · 止損 1019.0 (-4.50%)</div>
-      </a>
-      <a href="/jp200/ticker/9433_T" class="signal-card bull">
-        <div>
-          <div class="signal-ticker">9433_T <span class="text-dim" style="font-size:0.7em;">JP200</span></div>
-          <div class="signal-name">已到入場位 · v2 只做多 · 入場要企穩 S1</div>
-        </div>
-        <span class="signal-action-large buy">BUY</span>
-        <div class="signal-detail">收 2800.5 · 入場 <b>2800.0</b> · 止損 2649.71 (-5.37%)</div>
-      </a>
-      <a href="/jp200/ticker/3028_T" class="signal-card bull">
-        <div>
-          <div class="signal-ticker">3028_T <span class="text-dim" style="font-size:0.7em;">JP200</span></div>
-          <div class="signal-name">已到入場位 · v2 只做多 · 入場要企穩 S1</div>
-        </div>
-        <span class="signal-action-large buy">BUY</span>
-        <div class="signal-detail">收 2293.0 · 入場 <b>2292.0</b> · 止損 2169.91 (-5.33%)</div>
-      </a>
-      <a href="/jp200/ticker/2972_T" class="signal-card bull">
+            <a href="/jp200/ticker/2972_T" class="signal-card bull">
         <div>
           <div class="signal-ticker">2972_T <span class="text-dim" style="font-size:0.7em;">JP200</span></div>
-          <div class="signal-name">距入場 <b>0.24%</b> · v2 只做多 · 入場要企穩 S1</div>
+          <div class="signal-name">距入場 <b>0.08%</b> · v2 只做多 · 入場要企穩 S1</div>
         </div>
         <span class="signal-action-large buy">BUY</span>
-        <div class="signal-detail">收 125000.0 · 入場 <b>124700.0</b> · 止損 124186.95 (-0.41%)</div>
+        <div class="signal-detail">收 124800.0 · 入場 <b>124700.0</b> · 止損 124164.71 (-0.43%)</div>
       </a>
-      <a href="/jp200/ticker/3034_T" class="signal-card bull">
+      <a href="/jp200/ticker/3176_T" class="signal-card bull">
         <div>
-          <div class="signal-ticker">3034_T <span class="text-dim" style="font-size:0.7em;">JP200</span></div>
-          <div class="signal-name">距入場 <b>0.36%</b> · v2 只做多 · 入場要企穩 S1</div>
+          <div class="signal-ticker">3176_T <span class="text-dim" style="font-size:0.7em;">JP200</span></div>
+          <div class="signal-name">距入場 <b>0.61%</b> · v2 只做多 · 入場要企穩 S1</div>
         </div>
         <span class="signal-action-large buy">BUY</span>
-        <div class="signal-detail">收 2236.0 · 入場 <b>2228.0</b> · 止損 2039.04 (-8.48%)</div>
+        <div class="signal-detail">收 1147.0 · 入場 <b>1140.0</b> · 止損 1048.63 (-8.01%)</div>
+      </a>
+      <a href="/jp200/ticker/3075_T" class="signal-card bull">
+        <div>
+          <div class="signal-ticker">3075_T <span class="text-dim" style="font-size:0.7em;">JP200</span></div>
+          <div class="signal-name">距入場 <b>0.65%</b> · v2 只做多 · 入場要企穩 S1</div>
+        </div>
+        <span class="signal-action-large buy">BUY</span>
+        <div class="signal-detail">收 1702.0 · 入場 <b>1691.0</b> · 止損 1656.08 (-2.06%)</div>
       </a>
       <a href="/jp200/ticker/3010_T" class="signal-card bull">
         <div>
           <div class="signal-ticker">3010_T <span class="text-dim" style="font-size:0.7em;">JP200</span></div>
-          <div class="signal-name">距入場 <b>0.53%</b> · v2 只做多 · 入場要企穩 S1</div>
+          <div class="signal-name">距入場 <b>1.05%</b> · v2 只做多 · 入場要企穩 S1</div>
         </div>
         <span class="signal-action-large buy">BUY</span>
-        <div class="signal-detail">收 189.0 · 入場 <b>188.0</b> · 止損 182.03 (-3.17%)</div>
+        <div class="signal-detail">收 190.0 · 入場 <b>188.0</b> · 止損 182.28 (-3.05%)</div>
+      </a>
+      <a href="/us200/ticker/AMZN" class="signal-card bull">
+        <div>
+          <div class="signal-ticker">AMZN <span class="text-dim" style="font-size:0.7em;">US200</span></div>
+          <div class="signal-name">距入場 <b>1.05%</b> · v2 只做多 · 入場要企穩 S1</div>
+        </div>
+        <span class="signal-action-large buy">BUY</span>
+        <div class="signal-detail">收 243.79 · 入場 <b>241.24</b> · 止損 220.46 (-8.61%)</div>
+      </a>
+      <a href="/us200/ticker/NVDA" class="signal-card bull">
+        <div>
+          <div class="signal-ticker">NVDA <span class="text-dim" style="font-size:0.7em;">US200</span></div>
+          <div class="signal-name">距入場 <b>1.63%</b> · v2 只做多 · 入場要企穩 S1</div>
+        </div>
+        <span class="signal-action-large buy">BUY</span>
+        <div class="signal-detail">收 213.66 · 入場 <b>210.18</b> · 止損 192.64 (-8.34%)</div>
       </a>
     </div>
-    <p class="text-dim" style="margin-top: var(--sp-3); font-size: var(--text-sm);">以上 6 個係 168 個訊號中最接近觸發入場位嘅，按距 S1 距離排序。完整名單 → <a href="/us200/">US</a> · <a href="/jp200/">JP</a></p>
-    <p class="text-dim" style="margin-top: var(--sp-3); font-size: var(--text-sm);"><b style="color: var(--amber);">港股未包含喺呢版。</b>v2 引擎目前只行 US 同 JP（71 JP200 + 97 US200）—— 實測港股喺 0.25% 實際成本下 v2 年化 <b>+11.0%</b>、等權持有 <b>+15.4%</b>，落後 <b>4.4 個百分點/年</b>；零成本都仲係落後 2.5 點，所以 <code>INCLUDE_HK=False</code>。<a href="/hk200/">/hk200/</a> 只列價格行為分析，冇行動計劃，亦唔應該當成 v2 訊號用。</p>
+    <p class="text-dim" style="margin-top: var(--sp-3); font-size: var(--text-sm);">以上 6 個係 170 個訊號中最接近觸發入場位嘅，按距 S1 距離排序。完整名單 → <a href="/us200/">US</a> · <a href="/jp200/">JP</a></p>
+    <p class="text-dim" style="margin-top: var(--sp-3); font-size: var(--text-sm);"><b style="color: var(--amber);">港股未包含喺呢版。</b>v2 引擎目前只行 US 同 JP（67 JP200 + 103 US200）—— 實測港股喺 0.25% 實際成本下 v2 年化 <b>+11.0%</b>、等權持有 <b>+15.4%</b>，落後 <b>4.4 個百分點/年</b>；零成本都仲係落後 2.5 點，所以 <code>INCLUDE_HK=False</code>。<a href="/hk200/">/hk200/</a> 只列價格行為分析，冇行動計劃，亦唔應該當成 v2 訊號用。</p>
   </div>
 </section>
 
@@ -242,7 +242,7 @@ function toggleTheme(){
   <div class="container">
     <div class="section-head">
       <h2>Market <em class="italic">regime</em></h2>
-      <span class="section-meta">71 JP200 + 97 US200 · 2026-10-28</span>
+      <span class="section-meta">67 JP200 + 103 US200 · 2026-10-30 · US 2026-10-29</span>
     </div>
     <div class="card-grid card-grid-2">
       <div class="card fade-in fade-in-1">
@@ -256,7 +256,7 @@ function toggleTheme(){
       <div class="card fade-in fade-in-2">
         <h3 class="card-label">今日篩選漏斗</h3>
         <div style="margin-top: var(--sp-4); display: grid; gap: var(--sp-3);">
-          <div class="flex justify-between"><span class="text-dim">ok</span><span class="mono">168</span></div><div class="flex justify-between"><span class="text-dim">not in uptrend</span><span class="mono">245</span></div><div class="flex justify-between"><span class="text-dim">guard rail (ATR/box)</span><span class="mono">23</span></div>
+          <div class="flex justify-between"><span class="text-dim">ok</span><span class="mono">170</span></div><div class="flex justify-between"><span class="text-dim">not in uptrend</span><span class="mono">246</span></div><div class="flex justify-between"><span class="text-dim">guard rail (ATR/box)</span><span class="mono">25</span></div>
         </div>
         <p class="text-dim" style="margin-top: var(--sp-3); font-size: var(--text-xs);">入到 <b>ok</b> 先會成為訊號：股價喺 200 日線之上兼且 200 日線向上，再過 ATR / box 護欄。</p>
       </div>
@@ -292,7 +292,7 @@ function toggleTheme(){
   <div class="container">
     <div class="row">
       <div>© 2026 Leeks Terminal · win9you.com · <a href="/methodology">Methodology</a> · <a href="/disclaimer">Disclaimer</a></div>
-      <div class="mono text-dim">T-1 · 2026-10-28</div>
+      <div class="mono text-dim">T-1 · 2026-10-30 · US 2026-10-29</div>
     </div>
   </div>
 </footer>

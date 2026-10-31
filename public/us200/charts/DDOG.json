@@ -3,21 +3,21 @@
   "ticker_user": "DDOG",
   "name": "Datadog, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 279.84,
-    "H": 285.0,
-    "L": 275.49,
-    "C": 278.41,
-    "prev_close": 280.82,
-    "chg_pct": -0.86
+    "date": "2026-10-29",
+    "O": 269.55,
+    "H": 274.66,
+    "L": 260.56,
+    "C": 265.84,
+    "prev_close": 278.41,
+    "chg_pct": -4.51
   },
   "phase": "base_building",
-  "adx": 20.83,
-  "plus_di": 25.05,
-  "minus_di": 18.1,
-  "regime": "dead",
+  "adx": 19.51,
+  "plus_di": 22.81,
+  "minus_di": 23.97,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 292.72 (2026-08-05), trough 203.24 (2026-09-08), box top 300.68 (2026-10-12)",
   "peak": {
@@ -32,28 +32,28 @@
     "top": 300.68,
     "top_date": "2026-10-12",
     "bottom": 203.24,
-    "period": "2026-09-08 to 2026-10-28"
+    "period": "2026-09-08 to 2026-10-29"
   },
-  "drop_from_peak_pct": 4.9,
-  "recovery_from_crash_pct": 37.0,
+  "drop_from_peak_pct": 9.2,
+  "recovery_from_crash_pct": 30.8,
   "supports": [
     {
-      "level": 272.0,
+      "level": 260.0,
       "label": "S1 KEY",
       "touches": 4,
-      "evidence": "tested 4x in base period; 2.3% below current"
+      "evidence": "tested 4x in base period; 2.2% below current"
     },
     {
-      "level": 268.0,
+      "level": 256.0,
       "label": "S2",
-      "touches": 8,
-      "evidence": "mid-base support, tested 8x"
+      "touches": 10,
+      "evidence": "mid-base support, tested 10x"
     },
     {
-      "level": 260.0,
+      "level": 248.0,
       "label": "S3",
-      "touches": 6,
-      "evidence": "mid-base support, tested 6x"
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
     },
     {
       "level": 203.24,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 285.0,
+      "level": 274.66,
       "label": "R1 today high",
-      "evidence": "rejection at 285.0 (long upper wick, close weak)"
+      "evidence": "today's high 274.6600036621094"
     },
     {
       "level": 300.68,
@@ -75,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 278.41,
-    "in_box_pct": 77.1,
-    "nearest_support": "S1 KEY (272.0)",
-    "nearest_resistance": "R1 today high (285.0)"
+    "current": 265.84,
+    "in_box_pct": 64.2,
+    "nearest_support": "S1 KEY (260.0)",
+    "nearest_resistance": "R1 today high (274.66)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 279.84,
-    "H": 285.0,
-    "L": 275.49,
-    "C": 278.41,
-    "body_pct": 15.0,
-    "upper_wick_pct": 54.3,
-    "lower_wick_pct": 30.7
+    "O": 269.55,
+    "H": 274.66,
+    "L": 260.56,
+    "C": 265.84,
+    "body_pct": 26.3,
+    "upper_wick_pct": 36.2,
+    "lower_wick_pct": 37.4
   },
   "bias": {
     "short": {
@@ -109,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 272.0 (KEY support)",
-      "then": "still range; watch 285.0 for next test"
+      "if": "hold 260.0 (KEY support)",
+      "then": "still range; watch 274.66 for next test"
     },
     {
-      "if": "break 272.0 on close",
-      "then": "target 268.0 → 260.0 (short-term bearish)"
+      "if": "break 260.0 on close",
+      "then": "target 256.0 → 248.0 (short-term bearish)"
     },
     {
       "if": "break 203.24 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 285.0 on close",
+      "if": "reclaim 274.66 on close",
       "then": "short-term bullish; next test 300.68"
     },
     {
@@ -149,23 +149,23 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": false,
+    "phase_match": true,
     "r1": 300.68,
     "s1": 243.63,
     "s2": 203.24,
-    "r2": 292.72,
-    "r3": 289.9,
-    "s3": 185.0,
+    "r2": 280.7,
+    "r3": 292.72,
+    "s3": 193.16,
     "s4": 98.01,
-    "current_position_pct": 61.0,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 300.68）：① 跌到 300.68、收市守住喺 300.68 上面 → 照 BUY 條 plan 做（入場 300.68，止蝕 326.39，目標 272.15）。② 收市跌穿 300.68 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 300.68 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 38.9,
+    "notes": "WAIT_RANGE: in box (244-301), pos 39%, no clear setup"
   },
   "patterns": [
     {
@@ -174,7 +174,7 @@
       "date": "2026-10-21",
       "low": 259.7699890136719,
       "high": 277.260009765625,
-      "i": 194
+      "i": 192
     },
     {
       "name": "烏雲蓋頂",
@@ -182,7 +182,7 @@
       "date": "2026-10-07",
       "low": 270.80999755859375,
       "high": 281.25,
-      "i": 184
+      "i": 182
     },
     {
       "name": "早晨之星",
@@ -190,7 +190,7 @@
       "date": "2026-08-14",
       "low": 248.38999938964844,
       "high": 257.9599914550781,
-      "i": 147
+      "i": 145
     }
   ]
 }

@@ -3,20 +3,20 @@
   "ticker_user": "00836.HK",
   "name": "CHINA RES POWER",
   "data_source": "yfinance",
-  "data_range": "2025-12-24 → 2026-10-20 (200 daily bars)",
+  "data_range": "2026-01-08 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-20",
-    "O": 19.82,
-    "H": 19.97,
-    "L": 19.26,
-    "C": 19.33,
-    "prev_close": 19.83,
-    "chg_pct": -2.52
+    "date": "2026-10-30",
+    "O": 19.5,
+    "H": 20.06,
+    "L": 19.15,
+    "C": 19.92,
+    "prev_close": 19.47,
+    "chg_pct": 2.31
   },
   "phase": "base_building",
-  "adx": 19.27,
-  "plus_di": 18.65,
-  "minus_di": 25.82,
+  "adx": 19.9,
+  "plus_di": 29.63,
+  "minus_di": 20.64,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 22.16 (2026-06-01), trough 16.59 (2026-07-02), box top 20.36 (2026-10-14)",
@@ -32,29 +32,29 @@
     "top": 20.36,
     "top_date": "2026-10-14",
     "bottom": 16.59,
-    "period": "2026-07-02 to 2026-10-20"
+    "period": "2026-07-02 to 2026-10-30"
   },
-  "drop_from_peak_pct": 12.8,
-  "recovery_from_crash_pct": 16.5,
+  "drop_from_peak_pct": 10.1,
+  "recovery_from_crash_pct": 20.1,
   "supports": [
     {
       "level": 20.0,
       "label": "S1 KEY",
-      "touches": 50,
-      "evidence": "tested 50x in base period; -3.5% below current"
+      "touches": 80,
+      "evidence": "tested 80x in base period; -0.4% below current"
     },
     {
-      "level": 16.0,
-      "label": "S2 bottom",
-      "touches": 17,
-      "evidence": "structural bottom, near crash low 16.59"
+      "level": 16.59,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-07-02, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 19.97,
+      "level": 20.06,
       "label": "R1 today high",
-      "evidence": "today's high 19.969999313354492"
+      "evidence": "today's high 20.059999465942383"
     },
     {
       "level": 20.36,
@@ -63,23 +63,23 @@
     }
   ],
   "position": {
-    "current": 19.33,
-    "in_box_pct": 76.4,
+    "current": 19.92,
+    "in_box_pct": 88.3,
     "nearest_support": "S1 KEY (20.0)",
-    "nearest_resistance": "R1 today high (19.97)"
+    "nearest_resistance": "R1 today high (20.06)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": true,
-    "close_position": "lower_half",
-    "O": 19.82,
-    "H": 19.97,
-    "L": 19.26,
-    "C": 19.33,
-    "body_pct": 69.0,
-    "upper_wick_pct": 21.1,
-    "lower_wick_pct": 9.9
+    "close_position": "upper_half",
+    "O": 19.5,
+    "H": 20.06,
+    "L": 19.15,
+    "C": 19.92,
+    "body_pct": 46.2,
+    "upper_wick_pct": 15.4,
+    "lower_wick_pct": 38.5
   },
   "bias": {
     "short": {
@@ -98,18 +98,18 @@
   "scenarios": [
     {
       "if": "hold 20.0 (KEY support)",
-      "then": "still range; watch 19.97 for next test"
+      "then": "still range; watch 20.06 for next test"
     },
     {
       "if": "break 20.0 on close",
-      "then": "target 16.0 → lower (short-term bearish)"
+      "then": "target 16.59 → lower (short-term bearish)"
     },
     {
-      "if": "break 16.0 (crash low)",
+      "if": "break 16.59 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 19.97 on close",
+      "if": "reclaim 20.06 on close",
       "then": "short-term bullish; next test 20.36"
     },
     {
@@ -136,33 +136,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 20.36,
+    "target_price": 19.44,
+    "stop_price": 21.05,
+    "risk_pct": 3.41,
+    "reward_pct": 4.52,
+    "rr_ratio": 1.33,
     "phase_match": true,
     "r1": 20.36,
-    "s1": 18.66,
+    "s1": 18.52,
     "s2": 17.65,
-    "r2": 19.68,
+    "r2": 19.85,
     "r3": 22.16,
     "s3": 16.59,
     "s4": 16.9,
-    "current_position_pct": 39.4,
-    "notes": "WAIT_RANGE: in box (19-20), pos 39%, no clear setup"
+    "current_position_pct": 76.1,
+    "notes": "SELL_R1: in box (19-20), entry at R1 20, target mid 19, stop 21 ｜ 52.2 條規則（SELL plan，resistance 20.36）：① 跌到 20.36、收市守住喺 20.36 上面 → 照 BUY 條 plan 做（入場 20.36，止蝕 21.05，目標 19.44）。② 收市跌穿 20.36 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 20.36 上面』。"
   },
   "patterns": [
+    {
+      "name": "利好吞噬",
+      "bias": "bullish",
+      "date": "2026-10-28",
+      "low": 18.709999084472656,
+      "high": 19.1299991607666,
+      "i": 197
+    },
     {
       "name": "利淡反擊線",
       "bias": "bearish",
       "date": "2026-10-15",
       "low": 19.770000457763672,
       "high": 20.239999771118164,
-      "i": 197
+      "i": 189
     },
     {
       "name": "烏雲蓋頂",
@@ -170,7 +178,7 @@
       "date": "2026-10-02",
       "low": 19.31999969482422,
       "high": 19.670000076293945,
-      "i": 188
+      "i": 180
     },
     {
       "name": "黃昏之星",
@@ -178,7 +186,7 @@
       "date": "2026-09-01",
       "low": 18.459999084472656,
       "high": 18.940000534057617,
-      "i": 166
+      "i": 158
     },
     {
       "name": "利好身懷六甲",
@@ -186,14 +194,6 @@
       "date": "2026-08-17",
       "low": 18.149999618530273,
       "high": 18.40999984741211,
-      "i": 155
-    },
-    {
-      "name": "上升三法",
-      "bias": "bullish",
-      "date": "2026-08-05",
-      "low": 18.639999389648438,
-      "high": 19.149999618530273,
       "i": 147
     }
   ]

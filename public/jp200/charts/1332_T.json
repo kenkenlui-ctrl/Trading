@@ -3,20 +3,20 @@
   "ticker_user": "1332.T",
   "name": "Nissui Corporation",
   "data_source": "yfinance",
-  "data_range": "2025-12-30 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-06 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 1101.0,
-    "H": 1105.5,
-    "L": 1084.0,
-    "C": 1084.0,
-    "prev_close": 1105.5,
-    "chg_pct": -1.9448213478064247
+    "date": "2026-10-30",
+    "O": 1083.5,
+    "H": 1111.0,
+    "L": 1083.5,
+    "C": 1111.0,
+    "prev_close": 1091.0,
+    "chg_pct": 1.8331805682859859
   },
   "phase": "downtrend_active",
-  "adx": 30.08,
-  "plus_di": 18.65,
-  "minus_di": 32.28,
+  "adx": 28.9,
+  "plus_di": 20.09,
+  "minus_di": 27.78,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 1570.0 (2026-03-02), trough 1065.0 (2026-10-08), box top 1125.5 (2026-10-23)",
@@ -32,23 +32,29 @@
     "top": 1125.5,
     "top_date": "2026-10-23",
     "bottom": 1065.0,
-    "period": "2026-10-08 to 2026-10-28"
+    "period": "2026-10-08 to 2026-10-30"
   },
-  "drop_from_peak_pct": 31.0,
-  "recovery_from_crash_pct": 1.8,
+  "drop_from_peak_pct": 29.2,
+  "recovery_from_crash_pct": 4.3,
   "supports": [
     {
-      "level": 1052.0,
-      "label": "S1 bottom",
-      "touches": 0,
+      "level": 1084.0,
+      "label": "S1 KEY",
+      "touches": 8,
+      "evidence": "tested 8x in base period; 2.4% below current"
+    },
+    {
+      "level": 1080.0,
+      "label": "S2 bottom",
+      "touches": 4,
       "evidence": "structural bottom, near crash low 1065.0"
     }
   ],
   "resistances": [
     {
-      "level": 1105.5,
+      "level": 1111.0,
       "label": "R1 today high",
-      "evidence": "today's high 1105.5"
+      "evidence": "today's high 1111.0"
     },
     {
       "level": 1125.5,
@@ -57,28 +63,28 @@
     }
   ],
   "position": {
-    "current": 1084.0,
-    "in_box_pct": 43.5,
-    "nearest_support": "S1 bottom (1052.0)",
-    "nearest_resistance": "R1 today high (1105.5)"
+    "current": 1111.0,
+    "in_box_pct": 68.1,
+    "nearest_support": "S1 KEY (1084.0)",
+    "nearest_resistance": "R3 Oct high (1125.5)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 1101.0,
-    "H": 1105.5,
-    "L": 1084.0,
-    "C": 1084.0,
-    "body_pct": 79.1,
-    "upper_wick_pct": 20.9,
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 1083.5,
+    "H": 1111.0,
+    "L": 1083.5,
+    "C": 1111.0,
+    "body_pct": 100.0,
+    "upper_wick_pct": 0.0,
     "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (44% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -91,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 1052.0 (KEY support)",
-      "then": "still range; watch 1105.5 for next test"
+      "if": "hold 1084.0 (KEY support)",
+      "then": "still range; watch 1111.0 for next test"
     },
     {
-      "if": "break 1052.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 1084.0 on close",
+      "then": "target 1080.0 → lower (short-term bearish)"
     },
     {
-      "if": "break 1052.0 (crash low)",
+      "if": "break 1080.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1105.5 on close",
+      "if": "reclaim 1111.0 on close",
       "then": "short-term bullish; next test 1125.5"
     },
     {
@@ -131,7 +137,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -141,13 +147,13 @@
     "phase_match": false,
     "r1": 1125.5,
     "s1": 1065.0,
-    "s2": 1114.0,
-    "r2": 1342.0,
+    "s2": 1100.0,
+    "r2": 1320.5,
     "r3": 1369.0,
     "s3": 1170.0,
     "s4": 1125.0,
-    "current_position_pct": 31.4,
-    "notes": "WAIT_RANGE: in box (1065-1126), pos 31%, no clear setup"
+    "current_position_pct": 76.0,
+    "notes": "WAIT_RANGE: in box (1065-1126), pos 76%, no clear setup"
   },
   "patterns": [
     {
@@ -156,7 +162,7 @@
       "date": "2026-10-22",
       "low": 1091.5,
       "high": 1104.0,
-      "i": 195
+      "i": 193
     },
     {
       "name": "刺穿線",
@@ -164,7 +170,7 @@
       "date": "2026-10-15",
       "low": 1083.5,
       "high": 1103.0,
-      "i": 190
+      "i": 188
     },
     {
       "name": "利好反擊線",
@@ -172,7 +178,7 @@
       "date": "2026-09-11",
       "low": 1158.5,
       "high": 1173.0,
-      "i": 170
+      "i": 168
     },
     {
       "name": "三隻烏鴉",
@@ -180,7 +186,7 @@
       "date": "2026-08-27",
       "low": 1290.5,
       "high": 1316.0,
-      "i": 159
+      "i": 157
     },
     {
       "name": "利好反擊線",
@@ -188,23 +194,23 @@
       "date": "2026-07-17",
       "low": 1247.5,
       "high": 1278.0,
-      "i": 132
+      "i": 130
     }
   ],
-  "asof": "2026-10-28",
-  "close": 1084.0,
-  "chg_pct": -1.9448213478064247,
+  "asof": "2026-10-30",
+  "close": 1111.0,
+  "chg_pct": 1.8331805682859859,
   "kline": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 1101.0,
-    "H": 1105.5,
-    "L": 1084.0,
-    "C": 1084.0,
-    "body_pct": 79.1,
-    "upper_wick_pct": 20.9,
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 1083.5,
+    "H": 1111.0,
+    "L": 1083.5,
+    "C": 1111.0,
+    "body_pct": 100.0,
+    "upper_wick_pct": 0.0,
     "lower_wick_pct": 0.0
   }
 }

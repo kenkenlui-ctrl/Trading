@@ -3,20 +3,20 @@
   "ticker_user": "9201.T",
   "name": "Japan Airlines Co., Ltd.",
   "data_source": "yfinance",
-  "data_range": "2025-12-30 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-06 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 2991.0,
-    "H": 2998.5,
-    "L": 2945.5,
-    "C": 2945.5,
-    "prev_close": 2956.0,
-    "chg_pct": -0.3552097428958012
+    "date": "2026-10-30",
+    "O": 2999.0,
+    "H": 3090.0,
+    "L": 2996.0,
+    "C": 3090.0,
+    "prev_close": 2973.0,
+    "chg_pct": 3.9354187689202735
   },
   "phase": "base_building",
-  "adx": 9.84,
-  "plus_di": 23.04,
-  "minus_di": 21.15,
+  "adx": 10.61,
+  "plus_di": 33.19,
+  "minus_di": 19.95,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 3272.0 (2026-02-27), trough 2406.5 (2026-04-30), box top 3155.0 (2026-07-07)",
@@ -32,22 +32,28 @@
     "top": 3155.0,
     "top_date": "2026-07-07",
     "bottom": 2406.5,
-    "period": "2026-04-30 to 2026-10-28"
+    "period": "2026-04-30 to 2026-10-30"
   },
-  "drop_from_peak_pct": 10.0,
-  "recovery_from_crash_pct": 22.4,
+  "drop_from_peak_pct": 5.6,
+  "recovery_from_crash_pct": 28.4,
   "supports": [
     {
-      "level": 2876.0,
+      "level": 3020.0,
       "label": "S1 KEY",
-      "touches": 3,
-      "evidence": "tested 3x in base period; 2.4% below current"
+      "touches": 5,
+      "evidence": "tested 5x in base period; 2.3% below current"
     },
     {
-      "level": 2616.0,
+      "level": 3000.0,
       "label": "S2",
-      "touches": 3,
-      "evidence": "mid-base support, tested 3x"
+      "touches": 6,
+      "evidence": "mid-base support, tested 6x"
+    },
+    {
+      "level": 2996.0,
+      "label": "S3",
+      "touches": 7,
+      "evidence": "mid-base support, tested 7x"
     },
     {
       "level": 2406.5,
@@ -58,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 2998.5,
+      "level": 3090.0,
       "label": "R1 today high",
-      "evidence": "today's high 2998.5"
+      "evidence": "today's high 3090.0"
     },
     {
       "level": 3155.0,
@@ -69,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 2945.5,
-    "in_box_pct": 72.0,
-    "nearest_support": "S1 KEY (2876.0)",
-    "nearest_resistance": "R1 today high (2998.5)"
+    "current": 3090.0,
+    "in_box_pct": 91.3,
+    "nearest_support": "S1 KEY (3020.0)",
+    "nearest_resistance": "R3 Jul high (3155.0)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 2991.0,
-    "H": 2998.5,
-    "L": 2945.5,
-    "C": 2945.5,
-    "body_pct": 85.8,
-    "upper_wick_pct": 14.2,
-    "lower_wick_pct": 0.0
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 2999.0,
+    "H": 3090.0,
+    "L": 2996.0,
+    "C": 3090.0,
+    "body_pct": 96.8,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 3.2
   },
   "bias": {
     "short": {
@@ -97,25 +103,25 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 2876.0 (KEY support)",
-      "then": "still range; watch 2998.5 for next test"
+      "if": "hold 3020.0 (KEY support)",
+      "then": "still range; watch 3090.0 for next test"
     },
     {
-      "if": "break 2876.0 on close",
-      "then": "target 2616.0 → 2406.5 (short-term bearish)"
+      "if": "break 3020.0 on close",
+      "then": "target 3000.0 → 2996.0 (short-term bearish)"
     },
     {
       "if": "break 2406.5 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 2998.5 on close",
+      "if": "reclaim 3090.0 on close",
       "then": "short-term bullish; next test 3155.0"
     },
     {
@@ -142,24 +148,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 2905.0,
-    "target_price": 2995.0,
-    "stop_price": 2831.77,
-    "risk_pct": 2.52,
-    "reward_pct": 3.1,
-    "rr_ratio": 1.23,
-    "phase_match": true,
-    "r1": 3085.0,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RR_TOO_THIN",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 3090.0,
     "s1": 2905.0,
     "s2": 2877.0,
     "r2": 3115.0,
     "r3": 3155.0,
-    "s3": 2482.5,
+    "s3": 2496.0,
     "s4": 2406.5,
-    "current_position_pct": 22.5,
-    "notes": "BUY_S1: in box (2905-3085), entry at S1 2905, target mid 2995, stop 2832 ｜ 52.2 條規則（BUY plan，support 2905.00）：① 跌到 2905.00、收市守住喺 2905.00 上面 → 照 BUY 條 plan 做（入場 2905.00，止蝕 2831.77，目標 2995.00）。② 收市跌穿 2905.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2905.00 上面』。"
+    "current_position_pct": 100.0,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 3090.00）：① 跌到 3090.00、收市守住喺 3090.00 上面 → 照 BUY 條 plan 做（入場 3090.00，止蝕 3171.48，目標 2997.50）。② 收市跌穿 3090.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 3090.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
     {
@@ -168,7 +174,7 @@
       "date": "2026-10-15",
       "low": 2905.0,
       "high": 2941.5,
-      "i": 190
+      "i": 188
     },
     {
       "name": "平頭頂",
@@ -176,7 +182,7 @@
       "date": "2026-09-29",
       "low": 3008.0,
       "high": 3075.0,
-      "i": 179
+      "i": 177
     },
     {
       "name": "烏雲蓋頂",
@@ -184,7 +190,7 @@
       "date": "2026-08-27",
       "low": 3039.0,
       "high": 3075.0,
-      "i": 159
+      "i": 157
     },
     {
       "name": "利淡反擊線",
@@ -192,7 +198,7 @@
       "date": "2026-08-12",
       "low": 3030.0,
       "high": 3088.0,
-      "i": 148
+      "i": 146
     },
     {
       "name": "烏雲蓋頂",
@@ -200,23 +206,23 @@
       "date": "2026-06-25",
       "low": 2809.5,
       "high": 2855.0,
-      "i": 116
+      "i": 114
     }
   ],
-  "asof": "2026-10-28",
-  "close": 2945.5,
-  "chg_pct": -0.3552097428958012,
+  "asof": "2026-10-30",
+  "close": 3090.0,
+  "chg_pct": 3.9354187689202735,
   "kline": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 2991.0,
-    "H": 2998.5,
-    "L": 2945.5,
-    "C": 2945.5,
-    "body_pct": 85.8,
-    "upper_wick_pct": 14.2,
-    "lower_wick_pct": 0.0
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 2999.0,
+    "H": 3090.0,
+    "L": 2996.0,
+    "C": 3090.0,
+    "body_pct": 96.8,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 3.2
   }
 }

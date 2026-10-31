@@ -3,23 +3,23 @@
   "ticker_user": "8316.T",
   "name": "Sumitomo Mitsui Financial Group, Inc.",
   "data_source": "yfinance",
-  "data_range": "2025-12-30 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-06 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 3211.0,
-    "H": 3214.0,
-    "L": 3144.0,
-    "C": 3159.0,
-    "prev_close": 3187.0,
-    "chg_pct": -0.8785691873234969
+    "date": "2026-10-30",
+    "O": 3256.0,
+    "H": 3272.0,
+    "L": 3189.0,
+    "C": 3230.0,
+    "prev_close": 3245.0,
+    "chg_pct": -0.46224961479198745
   },
   "phase": "downtrend_active",
-  "adx": 19.18,
-  "plus_di": 18.01,
-  "minus_di": 27.92,
+  "adx": 18.26,
+  "plus_di": 20.03,
+  "minus_di": 24.44,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 3630.0 (2026-07-27), trough 2999.0 (2026-10-23), box top 3524.5 (2026-09-28)",
+  "phase_evidence": "Peak 3630.0 (2026-07-27), trough 2999.0 (2026-10-23), box top 3272.0 (2026-10-30)",
   "peak": {
     "date": "2026-07-27",
     "price": 3630.0
@@ -29,56 +29,57 @@
     "price": 2999.0
   },
   "box": {
-    "top": 3524.5,
-    "top_date": "2026-09-28",
+    "top": 3272.0,
+    "top_date": "2026-10-30",
     "bottom": 2999.0,
-    "period": "2026-10-23 to 2026-10-28"
+    "period": "2026-10-23 to 2026-10-30"
   },
-  "drop_from_peak_pct": 13.0,
-  "recovery_from_crash_pct": 5.3,
+  "drop_from_peak_pct": 11.0,
+  "recovery_from_crash_pct": 7.7,
   "supports": [
     {
-      "level": 3064.0,
-      "label": "S1 bottom",
-      "touches": 0,
-      "evidence": "structural bottom, near crash low 2999.0"
+      "level": 3164.0,
+      "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; 2.0% below current"
+    },
+    {
+      "level": 2999.0,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-10-23, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 3214.0,
+      "level": 3272.0,
       "label": "R1 today high",
-      "evidence": "today's high 3214.0"
-    },
-    {
-      "level": 3524.5,
-      "label": "R3 Sep high",
-      "evidence": "box top 3524.5, base period high"
+      "evidence": "today's high 3272.0"
     }
   ],
   "position": {
-    "current": 3159.0,
-    "in_box_pct": 20.6,
-    "nearest_support": "S1 bottom (3064.0)",
-    "nearest_resistance": "R1 today high (3214.0)"
+    "current": 3230.0,
+    "in_box_pct": 84.6,
+    "nearest_support": "S1 KEY (3164.0)",
+    "nearest_resistance": "R1 today high (3272.0)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 3211.0,
-    "H": 3214.0,
-    "L": 3144.0,
-    "C": 3159.0,
-    "body_pct": 74.3,
-    "upper_wick_pct": 4.3,
-    "lower_wick_pct": 21.4
+    "O": 3256.0,
+    "H": 3272.0,
+    "L": 3189.0,
+    "C": 3230.0,
+    "body_pct": 31.3,
+    "upper_wick_pct": 19.3,
+    "lower_wick_pct": 49.4
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (21% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -91,24 +92,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 3064.0 (KEY support)",
-      "then": "still range; watch 3214.0 for next test"
+      "if": "hold 3164.0 (KEY support)",
+      "then": "still range; watch 3272.0 for next test"
     },
     {
-      "if": "break 3064.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 3164.0 on close",
+      "then": "target 2999.0 → lower (short-term bearish)"
     },
     {
-      "if": "break 3064.0 (crash low)",
+      "if": "break 2999.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 3214.0 on close",
-      "then": "short-term bullish; next test 3524.5"
-    },
-    {
-      "if": "break 3524.5 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 3272.0 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -139,24 +136,32 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 3485.0,
+    "r1": 3473.0,
     "s1": 2999.0,
     "s2": 3210.0,
     "r2": 3590.5,
     "r3": 3630.0,
-    "s3": 2715.5,
+    "s3": 2749.0,
     "s4": 2463.5,
-    "current_position_pct": 32.9,
-    "notes": "WAIT_RANGE: in box (2999-3485), pos 33%, no clear setup"
+    "current_position_pct": 48.7,
+    "notes": "WAIT_RANGE: in box (2999-3473), pos 49%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "利好身懷六甲",
+      "bias": "bullish",
+      "date": "2026-10-29",
+      "low": 3163.0,
+      "high": 3245.0,
+      "i": 198
+    },
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-10-23",
       "low": 2999.0,
       "high": 3114.0,
-      "i": 196
+      "i": 194
     },
     {
       "name": "早晨之星",
@@ -164,7 +169,7 @@
       "date": "2026-10-06",
       "low": 3376.0,
       "high": 3429.0,
-      "i": 184
+      "i": 182
     },
     {
       "name": "上升三法",
@@ -172,7 +177,7 @@
       "date": "2026-09-24",
       "low": 3337.5,
       "high": 3387.5,
-      "i": 176
+      "i": 174
     },
     {
       "name": "利淡反擊線",
@@ -180,31 +185,23 @@
       "date": "2026-09-07",
       "low": 3476.0,
       "high": 3547.0,
-      "i": 166
-    },
-    {
-      "name": "錘頭",
-      "bias": "bullish",
-      "date": "2026-08-05",
-      "low": 3237.0,
-      "high": 3335.0,
-      "i": 144
+      "i": 164
     }
   ],
-  "asof": "2026-10-28",
-  "close": 3159.0,
-  "chg_pct": -0.8785691873234969,
+  "asof": "2026-10-30",
+  "close": 3230.0,
+  "chg_pct": -0.46224961479198745,
   "kline": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 3211.0,
-    "H": 3214.0,
-    "L": 3144.0,
-    "C": 3159.0,
-    "body_pct": 74.3,
-    "upper_wick_pct": 4.3,
-    "lower_wick_pct": 21.4
+    "O": 3256.0,
+    "H": 3272.0,
+    "L": 3189.0,
+    "C": 3230.0,
+    "body_pct": 31.3,
+    "upper_wick_pct": 19.3,
+    "lower_wick_pct": 49.4
   }
 }

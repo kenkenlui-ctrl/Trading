@@ -3,23 +3,23 @@
   "ticker_user": "FLEX",
   "name": "Flex Ltd.",
   "data_source": "yfinance",
-  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 89.5,
-    "H": 93.74,
-    "L": 83.76,
-    "C": 93.03,
-    "prev_close": 83.35,
-    "chg_pct": 11.61
+    "date": "2026-10-29",
+    "O": 90.95,
+    "H": 95.22,
+    "L": 89.02,
+    "C": 93.07,
+    "prev_close": 93.03,
+    "chg_pct": 0.04
   },
   "phase": "downtrend_active",
-  "adx": 28.24,
-  "plus_di": 25.35,
-  "minus_di": 33.78,
+  "adx": 27.01,
+  "plus_di": 25.25,
+  "minus_di": 31.52,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 166.86 (2026-06-03), trough 73.48 (2026-10-23), box top 121.84 (2026-10-06)",
+  "phase_evidence": "Peak 166.86 (2026-06-03), trough 73.48 (2026-10-23), box top 95.22 (2026-10-29)",
   "peak": {
     "date": "2026-06-03",
     "price": 166.86
@@ -29,42 +29,43 @@
     "price": 73.48
   },
   "box": {
-    "top": 121.84,
-    "top_date": "2026-10-06",
+    "top": 95.22,
+    "top_date": "2026-10-29",
     "bottom": 73.48,
-    "period": "2026-10-23 to 2026-10-28"
+    "period": "2026-10-23 to 2026-10-29"
   },
   "drop_from_peak_pct": 44.2,
-  "recovery_from_crash_pct": 26.6,
+  "recovery_from_crash_pct": 26.7,
   "supports": [
     {
-      "level": 84.0,
+      "level": 88.0,
       "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; 5.4% below current"
+    },
+    {
+      "level": 84.0,
+      "label": "S2",
       "touches": 6,
-      "evidence": "tested 6x in base period; 9.7% below current"
+      "evidence": "mid-base support, tested 6x"
     },
     {
       "level": 76.0,
-      "label": "S2 bottom",
+      "label": "S3 bottom",
       "touches": 6,
       "evidence": "structural bottom, near crash low 73.48"
     }
   ],
   "resistances": [
     {
-      "level": 93.74,
+      "level": 95.22,
       "label": "R1 today high",
-      "evidence": "today's high 93.73999786376953"
+      "evidence": "today's high 95.22000122070312"
     },
     {
       "level": 120.0,
-      "label": "R2",
-      "evidence": "mid-box supply, round number 120"
-    },
-    {
-      "level": 121.84,
-      "label": "R3 Oct high",
-      "evidence": "box top 121.84, base period high"
+      "label": "R5",
+      "evidence": "pre-crash supply, top before breakdown"
     },
     {
       "level": 150.0,
@@ -73,28 +74,28 @@
     }
   ],
   "position": {
-    "current": 93.03,
-    "in_box_pct": 37.2,
-    "nearest_support": "S1 KEY (84.0)",
-    "nearest_resistance": "R1 today high (93.74)"
+    "current": 93.07,
+    "in_box_pct": 23.1,
+    "nearest_support": "S1 KEY (88.0)",
+    "nearest_resistance": "R1 today high (95.22)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 89.5,
-    "H": 93.74,
-    "L": 83.76,
-    "C": 93.03,
-    "body_pct": 35.4,
-    "upper_wick_pct": 7.1,
-    "lower_wick_pct": 57.5
+    "O": 90.95,
+    "H": 95.22,
+    "L": 89.02,
+    "C": 93.07,
+    "body_pct": 34.2,
+    "upper_wick_pct": 34.7,
+    "lower_wick_pct": 31.1
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "defensive",
+      "reason": "near box bottom (23% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -107,24 +108,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 84.0 (KEY support)",
-      "then": "still range; watch 93.74 for next test"
+      "if": "hold 88.0 (KEY support)",
+      "then": "still range; watch 95.22 for next test"
     },
     {
-      "if": "break 84.0 on close",
-      "then": "target 76.0 → lower (short-term bearish)"
+      "if": "break 88.0 on close",
+      "then": "target 84.0 → 76.0 (short-term bearish)"
     },
     {
       "if": "break 76.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 93.74 on close",
+      "if": "reclaim 95.22 on close",
       "then": "short-term bullish; next test 120.0"
-    },
-    {
-      "if": "break 121.84 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -162,8 +159,8 @@
     "r3": 166.86,
     "s3": 99.5,
     "s4": 55.16,
-    "current_position_pct": 40.4,
-    "notes": "WAIT_RANGE: in box (73-122), pos 40%, no clear setup"
+    "current_position_pct": 40.5,
+    "notes": "WAIT_RANGE: in box (73-122), pos 41%, no clear setup"
   },
   "patterns": [
     {
@@ -172,7 +169,7 @@
       "date": "2026-10-12",
       "low": 115.48999786376953,
       "high": 121.58999633789062,
-      "i": 187
+      "i": 185
     },
     {
       "name": "烏雲蓋頂",
@@ -180,7 +177,7 @@
       "date": "2026-06-26",
       "low": 144.72000122070312,
       "high": 159.77999877929688,
-      "i": 113
+      "i": 111
     }
   ]
 }

@@ -3,23 +3,23 @@
   "ticker_user": "GD",
   "name": "General Dynamics Corporation",
   "data_source": "yfinance",
-  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 352.73,
-    "H": 355.65,
-    "L": 352.14,
-    "C": 354.35,
-    "prev_close": 354.89,
-    "chg_pct": -0.15
+    "date": "2026-10-29",
+    "O": 360.0,
+    "H": 371.92,
+    "L": 359.72,
+    "C": 370.82,
+    "prev_close": 354.35,
+    "chg_pct": 4.65
   },
-  "phase": "downtrend_active",
-  "adx": 37.87,
-  "plus_di": 23.01,
-  "minus_di": 17.01,
+  "phase": "range",
+  "adx": 38.37,
+  "plus_di": 36.24,
+  "minus_di": 13.78,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 400.0 (2026-07-29), trough 322.0 (2026-10-08), box top 357.46 (2026-10-27)",
+  "phase_evidence": "Peak 400.0 (2026-07-29), trough 322.0 (2026-10-08), box top 371.92 (2026-10-29)",
   "peak": {
     "date": "2026-07-29",
     "price": 400.0
@@ -29,98 +29,95 @@
     "price": 322.0
   },
   "box": {
-    "top": 357.46,
-    "top_date": "2026-10-27",
+    "top": 371.92,
+    "top_date": "2026-10-29",
     "bottom": 322.0,
-    "period": "2026-10-08 to 2026-10-28"
+    "period": "2026-10-08 to 2026-10-29"
   },
-  "drop_from_peak_pct": 11.4,
-  "recovery_from_crash_pct": 10.0,
+  "drop_from_peak_pct": 7.3,
+  "recovery_from_crash_pct": 15.2,
   "supports": [
     {
-      "level": 344.0,
+      "level": 352.0,
       "label": "S1 KEY",
+      "touches": 7,
+      "evidence": "tested 7x in base period; 5.1% below current"
+    },
+    {
+      "level": 344.0,
+      "label": "S2",
       "touches": 8,
-      "evidence": "tested 8x in base period; 2.9% below current"
+      "evidence": "mid-base support, tested 8x"
     },
     {
       "level": 340.0,
-      "label": "S2",
+      "label": "S3",
       "touches": 6,
       "evidence": "mid-base support, tested 6x"
     },
     {
-      "level": 336.0,
-      "label": "S3 bottom",
-      "touches": 4,
-      "evidence": "structural bottom, near crash low 322.0"
+      "level": 322.0,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-10-08, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 355.65,
+      "level": 371.92,
       "label": "R1 today high",
-      "evidence": "today's high 355.6499938964844"
-    },
-    {
-      "level": 357.46,
-      "label": "R3 Oct high",
-      "evidence": "box top 357.46, base period high"
+      "evidence": "today's high 371.9200134277344"
     }
   ],
   "position": {
-    "current": 354.35,
-    "in_box_pct": 85.5,
-    "nearest_support": "S1 KEY (344.0)",
-    "nearest_resistance": "R1 today high (355.65)"
+    "current": 370.82,
+    "in_box_pct": 97.8,
+    "nearest_support": "S1 KEY (352.0)",
+    "nearest_resistance": "R1 today high (371.92)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 352.73,
-    "H": 355.65,
-    "L": 352.14,
-    "C": 354.35,
-    "body_pct": 46.2,
-    "upper_wick_pct": 37.0,
-    "lower_wick_pct": 16.8
+    "O": 360.0,
+    "H": 371.92,
+    "L": 359.72,
+    "C": 370.82,
+    "body_pct": 88.7,
+    "upper_wick_pct": 9.0,
+    "lower_wick_pct": 2.3
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
-      "bias": "bearish_continuation",
-      "reason": "making new lows"
+      "bias": "neutral",
+      "reason": "no clear direction"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 344.0 (KEY support)",
-      "then": "still range; watch 355.65 for next test"
+      "if": "hold 352.0 (KEY support)",
+      "then": "still range; watch 371.92 for next test"
     },
     {
-      "if": "break 344.0 on close",
-      "then": "target 340.0 → 336.0 (short-term bearish)"
+      "if": "break 352.0 on close",
+      "then": "target 344.0 → 340.0 (short-term bearish)"
     },
     {
-      "if": "break 336.0 (crash low)",
+      "if": "break 322.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 355.65 on close",
-      "then": "short-term bullish; next test 357.46"
-    },
-    {
-      "if": "break 357.46 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 371.92 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -151,15 +148,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 357.46,
+    "r1": 371.92,
     "s1": 322.0,
     "s2": 329.41,
     "r2": 397.2,
     "r3": 400.0,
     "s3": 333.29,
     "s4": 306.77,
-    "current_position_pct": 91.2,
-    "notes": "WAIT_RANGE: in box (322-357), pos 91%, no clear setup"
+    "current_position_pct": 97.8,
+    "notes": "WAIT_RANGE: in box (322-372), pos 98%, no clear setup"
   },
   "patterns": [
     {
@@ -168,7 +165,7 @@
       "date": "2026-10-14",
       "low": 333.3599853515625,
       "high": 336.2200012207031,
-      "i": 189
+      "i": 187
     },
     {
       "name": "利好吞噬",
@@ -176,7 +173,7 @@
       "date": "2026-10-01",
       "low": 331.0400085449219,
       "high": 334.3800048828125,
-      "i": 180
+      "i": 178
     },
     {
       "name": "利淡吞噬",
@@ -184,7 +181,7 @@
       "date": "2026-08-17",
       "low": 389.7900085449219,
       "high": 394.5199890136719,
-      "i": 148
+      "i": 146
     },
     {
       "name": "烏雲蓋頂",
@@ -192,7 +189,7 @@
       "date": "2026-08-05",
       "low": 381.3500061035156,
       "high": 389.5,
-      "i": 140
+      "i": 138
     },
     {
       "name": "利好反擊線",
@@ -200,7 +197,7 @@
       "date": "2026-06-26",
       "low": 344.3500061035156,
       "high": 350.5799865722656,
-      "i": 113
+      "i": 111
     }
   ]
 }

@@ -3,20 +3,20 @@
   "ticker_user": "06809.HK",
   "name": "MONTAGE TECH",
   "data_source": "yfinance",
-  "data_range": "2026-02-09 → 2026-10-28 (176 daily bars)",
+  "data_range": "2026-02-09 → 2026-10-30 (178 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 220.6,
-    "H": 234.0,
-    "L": 220.6,
-    "C": 230.2,
-    "prev_close": 210.8,
-    "chg_pct": 9.2
+    "date": "2026-10-30",
+    "O": 210.0,
+    "H": 221.2,
+    "L": 207.2,
+    "C": 207.6,
+    "prev_close": 215.0,
+    "chg_pct": -3.44
   },
   "phase": "downtrend_active",
-  "adx": 23.7,
-  "plus_di": 20.55,
-  "minus_di": 29.09,
+  "adx": 23.71,
+  "plus_di": 18.19,
+  "minus_di": 30.86,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 543.0 (2026-05-14), trough 198.5 (2026-10-15), box top 234.0 (2026-10-28)",
@@ -32,29 +32,28 @@
     "top": 234.0,
     "top_date": "2026-10-28",
     "bottom": 198.5,
-    "period": "2026-10-15 to 2026-10-28"
+    "period": "2026-10-15 to 2026-10-30"
   },
-  "drop_from_peak_pct": 57.6,
-  "recovery_from_crash_pct": 16.0,
+  "drop_from_peak_pct": 61.8,
+  "recovery_from_crash_pct": 4.6,
   "supports": [
     {
-      "level": 208.0,
-      "label": "S1 KEY",
-      "touches": 6,
-      "evidence": "tested 6x in base period; 9.6% below current"
-    },
-    {
       "level": 200.0,
-      "label": "S2 bottom",
+      "label": "S1 bottom",
       "touches": 6,
       "evidence": "structural bottom, near crash low 198.5"
     }
   ],
   "resistances": [
     {
-      "level": 234.0,
+      "level": 221.2,
       "label": "R1 today high",
-      "evidence": "today's high 234.0"
+      "evidence": "rejection at 221.1999969482422 (long upper wick, close weak)"
+    },
+    {
+      "level": 234.0,
+      "label": "R3 Oct high",
+      "evidence": "box top 234.0, base period high"
     },
     {
       "level": 315.0,
@@ -63,28 +62,28 @@
     }
   ],
   "position": {
-    "current": 230.2,
-    "in_box_pct": 26.3,
-    "nearest_support": "S1 KEY (208.0)",
-    "nearest_resistance": "R1 today high (234.0)"
+    "current": 207.6,
+    "in_box_pct": 22.4,
+    "nearest_support": "S1 bottom (200.0)",
+    "nearest_resistance": "R1 today high (221.2)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 220.6,
-    "H": 234.0,
-    "L": 220.6,
-    "C": 230.2,
-    "body_pct": 71.6,
-    "upper_wick_pct": 28.4,
-    "lower_wick_pct": 0.0
+    "close_position": "lower_half",
+    "O": 210.0,
+    "H": 221.2,
+    "L": 207.2,
+    "C": 207.6,
+    "body_pct": 17.1,
+    "upper_wick_pct": 80.0,
+    "lower_wick_pct": 2.9
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (26% of box)"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (22% of box)"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -97,20 +96,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 208.0 (KEY support)",
-      "then": "still range; watch 234.0 for next test"
+      "if": "hold 200.0 (KEY support)",
+      "then": "still range; watch 221.2 for next test"
     },
     {
-      "if": "break 208.0 on close",
-      "then": "target 200.0 → lower (short-term bearish)"
+      "if": "break 200.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
       "if": "break 200.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 234.0 on close",
-      "then": "short-term bullish; next test 315.0"
+      "if": "reclaim 221.2 on close",
+      "then": "short-term bullish; next test 234.0"
+    },
+    {
+      "if": "break 234.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -148,8 +151,8 @@
     "r3": 543.0,
     "s3": 242.8,
     "s4": 152.7,
-    "current_position_pct": 27.1,
-    "notes": "WAIT_RANGE: in box (198-315), pos 27%, no clear setup"
+    "current_position_pct": 7.8,
+    "notes": "WAIT_RANGE: in box (198-315), pos 8%, no clear setup"
   },
   "patterns": [
     {

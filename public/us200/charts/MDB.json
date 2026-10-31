@@ -3,20 +3,20 @@
   "ticker_user": "MDB",
   "name": "MongoDB, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 387.07,
-    "H": 400.88,
-    "L": 387.0,
-    "C": 393.44,
-    "prev_close": 389.84,
-    "chg_pct": 0.92
+    "date": "2026-10-29",
+    "O": 375.96,
+    "H": 395.0,
+    "L": 372.61,
+    "C": 384.95,
+    "prev_close": 393.44,
+    "chg_pct": -2.16
   },
-  "phase": "range",
-  "adx": 13.76,
-  "plus_di": 29.49,
-  "minus_di": 19.42,
+  "phase": "downtrend_active",
+  "adx": 13.47,
+  "plus_di": 27.42,
+  "minus_di": 22.58,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 473.1 (2026-08-14), trough 300.0 (2026-09-28), box top 411.49 (2026-10-13)",
@@ -32,16 +32,16 @@
     "top": 411.49,
     "top_date": "2026-10-13",
     "bottom": 300.0,
-    "period": "2026-09-28 to 2026-10-28"
+    "period": "2026-09-28 to 2026-10-29"
   },
-  "drop_from_peak_pct": 16.8,
-  "recovery_from_crash_pct": 31.1,
+  "drop_from_peak_pct": 18.6,
+  "recovery_from_crash_pct": 28.3,
   "supports": [
     {
       "level": 372.0,
       "label": "S1 KEY",
-      "touches": 5,
-      "evidence": "tested 5x in base period; 5.4% below current"
+      "touches": 6,
+      "evidence": "tested 6x in base period; 3.4% below current"
     },
     {
       "level": 360.0,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 400.88,
+      "level": 395.0,
       "label": "R1 today high",
-      "evidence": "today's high 400.8800048828125"
+      "evidence": "today's high 395.0"
     },
     {
       "level": 411.49,
@@ -75,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 393.44,
-    "in_box_pct": 83.8,
+    "current": 384.95,
+    "in_box_pct": 76.2,
     "nearest_support": "S1 KEY (372.0)",
-    "nearest_resistance": "R1 today high (400.88)"
+    "nearest_resistance": "R1 today high (395.0)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 387.07,
-    "H": 400.88,
-    "L": 387.0,
-    "C": 393.44,
-    "body_pct": 45.9,
-    "upper_wick_pct": 53.6,
-    "lower_wick_pct": 0.5
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 375.96,
+    "H": 395.0,
+    "L": 372.61,
+    "C": 384.95,
+    "body_pct": 40.2,
+    "upper_wick_pct": 44.9,
+    "lower_wick_pct": 15.0
   },
   "bias": {
     "short": {
@@ -99,8 +99,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": "no clear direction"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -110,7 +110,7 @@
   "scenarios": [
     {
       "if": "hold 372.0 (KEY support)",
-      "then": "still range; watch 400.88 for next test"
+      "then": "still range; watch 395.0 for next test"
     },
     {
       "if": "break 372.0 on close",
@@ -121,7 +121,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 400.88 on close",
+      "if": "reclaim 395.0 on close",
       "then": "short-term bullish; next test 411.49"
     },
     {
@@ -149,7 +149,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
+    "strategy": "WAIT_VOLATILE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -162,10 +162,10 @@
     "s2": 300.0,
     "r2": 473.1,
     "r3": 412.0,
-    "s3": 282.05,
+    "s3": 289.72,
     "s4": 215.68,
-    "current_position_pct": 78.3,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 411.49）：① 跌到 411.49、收市守住喺 411.49 上面 → 照 BUY 條 plan 做（入場 411.49，止蝕 447.79，目標 369.82）。② 收市跌穿 411.49 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 411.49 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 68.2,
+    "notes": "WAIT_VOLATILE: ATR14 6.1% / box width 22% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
   },
   "patterns": [
     {
@@ -174,7 +174,7 @@
       "date": "2026-10-21",
       "low": 364.0,
       "high": 392.75,
-      "i": 194
+      "i": 192
     },
     {
       "name": "利淡反擊線",
@@ -182,7 +182,7 @@
       "date": "2026-09-24",
       "low": 416.3900146484375,
       "high": 427.0,
-      "i": 175
+      "i": 173
     },
     {
       "name": "三個白武士",
@@ -190,7 +190,7 @@
       "date": "2026-09-17",
       "low": 372.0,
       "high": 403.0,
-      "i": 170
+      "i": 168
     },
     {
       "name": "平頭底",
@@ -198,7 +198,7 @@
       "date": "2026-09-10",
       "low": 356.010009765625,
       "high": 378.2099914550781,
-      "i": 165
+      "i": 163
     },
     {
       "name": "利淡吞噬",
@@ -206,7 +206,7 @@
       "date": "2026-08-24",
       "low": 401.0,
       "high": 425.3290100097656,
-      "i": 153
+      "i": 151
     }
   ]
 }

@@ -3,20 +3,20 @@
   "ticker_user": "3191.T",
   "name": "Joyful Honda Co.,Ltd.",
   "data_source": "yfinance",
-  "data_range": "2025-12-30 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-06 → 2026-10-30 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 2311.0,
-    "H": 2317.0,
-    "L": 2269.0,
-    "C": 2271.0,
-    "prev_close": 2326.0,
-    "chg_pct": -2.364574376612205
+    "date": "2026-10-30",
+    "O": 2315.0,
+    "H": 2332.0,
+    "L": 2303.0,
+    "C": 2328.0,
+    "prev_close": 2272.0,
+    "chg_pct": 2.464788732394374
   },
   "phase": "downtrend_active",
-  "adx": 19.97,
-  "plus_di": 27.04,
-  "minus_di": 21.13,
+  "adx": 18.9,
+  "plus_di": 32.52,
+  "minus_di": 21.45,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 2545.0 (2026-07-30), trough 2171.0 (2026-08-05), box top 2393.0 (2026-10-23)",
@@ -32,29 +32,35 @@
     "top": 2393.0,
     "top_date": "2026-10-23",
     "bottom": 2171.0,
-    "period": "2026-08-05 to 2026-10-28"
+    "period": "2026-08-05 to 2026-10-30"
   },
-  "drop_from_peak_pct": 10.8,
-  "recovery_from_crash_pct": 4.6,
+  "drop_from_peak_pct": 8.5,
+  "recovery_from_crash_pct": 7.2,
   "supports": [
     {
-      "level": 2216.0,
+      "level": 2268.0,
       "label": "S1 KEY",
-      "touches": 9,
-      "evidence": "tested 9x in base period; 2.4% below current"
+      "touches": 5,
+      "evidence": "tested 5x in base period; 2.6% below current"
     },
     {
-      "level": 2204.0,
-      "label": "S2 bottom",
+      "level": 2248.0,
+      "label": "S2",
+      "touches": 10,
+      "evidence": "mid-base support, tested 10x"
+    },
+    {
+      "level": 2244.0,
+      "label": "S3 bottom",
       "touches": 5,
       "evidence": "structural bottom, near crash low 2171.0"
     }
   ],
   "resistances": [
     {
-      "level": 2317.0,
+      "level": 2332.0,
       "label": "R1 today high",
-      "evidence": "today's high 2317.0"
+      "evidence": "today's high 2332.0"
     },
     {
       "level": 2393.0,
@@ -63,28 +69,28 @@
     }
   ],
   "position": {
-    "current": 2271.0,
-    "in_box_pct": 35.4,
-    "nearest_support": "S1 KEY (2216.0)",
-    "nearest_resistance": "R1 today high (2317.0)"
+    "current": 2328.0,
+    "in_box_pct": 56.4,
+    "nearest_support": "S1 KEY (2268.0)",
+    "nearest_resistance": "R1 today high (2332.0)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 2311.0,
-    "H": 2317.0,
-    "L": 2269.0,
-    "C": 2271.0,
-    "body_pct": 83.3,
-    "upper_wick_pct": 12.5,
-    "lower_wick_pct": 4.2
+    "close_position": "upper_half",
+    "O": 2315.0,
+    "H": 2332.0,
+    "L": 2303.0,
+    "C": 2328.0,
+    "body_pct": 44.8,
+    "upper_wick_pct": 13.8,
+    "lower_wick_pct": 41.4
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (35% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -97,19 +103,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 2216.0 (KEY support)",
-      "then": "still range; watch 2317.0 for next test"
+      "if": "hold 2268.0 (KEY support)",
+      "then": "still range; watch 2332.0 for next test"
     },
     {
-      "if": "break 2216.0 on close",
-      "then": "target 2204.0 → lower (short-term bearish)"
+      "if": "break 2268.0 on close",
+      "then": "target 2248.0 → 2244.0 (short-term bearish)"
     },
     {
-      "if": "break 2204.0 (crash low)",
+      "if": "break 2244.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 2317.0 on close",
+      "if": "reclaim 2332.0 on close",
       "then": "short-term bullish; next test 2393.0"
     },
     {
@@ -136,24 +142,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 2393.0,
+    "target_price": 2289.5,
+    "stop_price": 2457.54,
+    "risk_pct": 2.7,
+    "reward_pct": 4.33,
+    "rr_ratio": 1.6,
+    "phase_match": true,
     "r1": 2393.0,
     "s1": 2186.0,
     "s2": 2171.0,
-    "r2": 2545.0,
-    "r3": 2542.0,
-    "s3": 2031.0,
-    "s4": 2045.0,
-    "current_position_pct": 41.1,
-    "notes": "WAIT_RANGE: in box (2186-2393), pos 41%, no clear setup"
+    "r2": 2542.0,
+    "r3": 2545.0,
+    "s3": 2087.0,
+    "s4": 2031.0,
+    "current_position_pct": 68.6,
+    "notes": "SELL_R1: in box (2186-2393), entry at R1 2393, target mid 2290, stop 2458 ｜ 52.2 條規則（SELL plan，resistance 2393.00）：① 跌到 2393.00、收市守住喺 2393.00 上面 → 照 BUY 條 plan 做（入場 2393.00，止蝕 2457.54，目標 2289.50）。② 收市跌穿 2393.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 2393.00 上面』。"
   },
   "patterns": [
     {
@@ -162,7 +168,7 @@
       "date": "2026-10-21",
       "low": 2297.0,
       "high": 2325.0,
-      "i": 194
+      "i": 192
     },
     {
       "name": "烏雲蓋頂",
@@ -170,7 +176,7 @@
       "date": "2026-09-18",
       "low": 2250.0,
       "high": 2291.0,
-      "i": 175
+      "i": 173
     },
     {
       "name": "平頭底",
@@ -178,7 +184,7 @@
       "date": "2026-09-11",
       "low": 2214.0,
       "high": 2246.0,
-      "i": 170
+      "i": 168
     },
     {
       "name": "利淡反擊線",
@@ -186,7 +192,7 @@
       "date": "2026-07-22",
       "low": 2268.0,
       "high": 2291.0,
-      "i": 134
+      "i": 132
     },
     {
       "name": "三隻烏鴉",
@@ -194,23 +200,23 @@
       "date": "2026-07-06",
       "low": 2213.0,
       "high": 2252.0,
-      "i": 123
+      "i": 121
     }
   ],
-  "asof": "2026-10-28",
-  "close": 2271.0,
-  "chg_pct": -2.364574376612205,
+  "asof": "2026-10-30",
+  "close": 2328.0,
+  "chg_pct": 2.464788732394374,
   "kline": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 2311.0,
-    "H": 2317.0,
-    "L": 2269.0,
-    "C": 2271.0,
-    "body_pct": 83.3,
-    "upper_wick_pct": 12.5,
-    "lower_wick_pct": 4.2
+    "close_position": "upper_half",
+    "O": 2315.0,
+    "H": 2332.0,
+    "L": 2303.0,
+    "C": 2328.0,
+    "body_pct": 44.8,
+    "upper_wick_pct": 13.8,
+    "lower_wick_pct": 41.4
   }
 }

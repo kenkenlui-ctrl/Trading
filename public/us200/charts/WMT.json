@@ -3,20 +3,20 @@
   "ticker_user": "WMT",
   "name": "Walmart Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-13 → 2026-10-28 (200 daily bars)",
+  "data_range": "2026-01-15 → 2026-10-29 (199 daily bars)",
   "last_bar": {
-    "date": "2026-10-28",
-    "O": 118.43,
-    "H": 119.28,
-    "L": 118.11,
-    "C": 118.77,
-    "prev_close": 119.32,
-    "chg_pct": -0.46
+    "date": "2026-10-29",
+    "O": 120.74,
+    "H": 121.72,
+    "L": 119.66,
+    "C": 121.25,
+    "prev_close": 118.77,
+    "chg_pct": 2.09
   },
   "phase": "base_building",
-  "adx": 37.8,
-  "plus_di": 39.0,
-  "minus_di": 13.51,
+  "adx": 39.06,
+  "plus_di": 42.91,
+  "minus_di": 12.3,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 135.16 (2026-05-19), trough 102.15 (2026-08-21), box top 122.4 (2026-10-23)",
@@ -32,34 +32,41 @@
     "top": 122.4,
     "top_date": "2026-10-23",
     "bottom": 102.15,
-    "period": "2026-08-21 to 2026-10-28"
+    "period": "2026-08-21 to 2026-10-29"
   },
-  "drop_from_peak_pct": 12.1,
-  "recovery_from_crash_pct": 16.3,
+  "drop_from_peak_pct": 10.3,
+  "recovery_from_crash_pct": 18.7,
   "supports": [
     {
-      "level": 108.0,
+      "level": 120.0,
       "label": "S1 KEY",
-      "touches": 27,
-      "evidence": "tested 27x in base period; 9.1% below current"
+      "touches": 8,
+      "evidence": "tested 8x in base period; 1.0% below current"
     },
     {
-      "level": 104.0,
-      "label": "S2 bottom",
-      "touches": 25,
-      "evidence": "structural bottom, near crash low 102.15"
+      "level": 116.0,
+      "label": "S2",
+      "touches": 8,
+      "evidence": "mid-base support, tested 8x"
+    },
+    {
+      "level": 108.0,
+      "label": "S3",
+      "touches": 26,
+      "evidence": "mid-base support, tested 26x"
+    },
+    {
+      "level": 102.15,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-08-21, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 119.28,
+      "level": 121.72,
       "label": "R1 today high",
-      "evidence": "today's high 119.27999877929688"
-    },
-    {
-      "level": 120.0,
-      "label": "R2",
-      "evidence": "mid-box supply, round number 120"
+      "evidence": "today's high 121.72000122070312"
     },
     {
       "level": 122.4,
@@ -68,23 +75,23 @@
     }
   ],
   "position": {
-    "current": 118.77,
-    "in_box_pct": 80.3,
-    "nearest_support": "S1 KEY (108.0)",
-    "nearest_resistance": "R1 today high (119.28)"
+    "current": 121.25,
+    "in_box_pct": 94.3,
+    "nearest_support": "S1 KEY (120.0)",
+    "nearest_resistance": "R1 today high (121.72)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_hold",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 118.43,
-    "H": 119.28,
-    "L": 118.11,
-    "C": 118.77,
-    "body_pct": 29.1,
-    "upper_wick_pct": 43.6,
-    "lower_wick_pct": 27.4
+    "O": 120.74,
+    "H": 121.72,
+    "L": 119.66,
+    "C": 121.25,
+    "body_pct": 24.8,
+    "upper_wick_pct": 22.8,
+    "lower_wick_pct": 52.4
   },
   "bias": {
     "short": {
@@ -96,26 +103,26 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 108.0 (KEY support)",
-      "then": "still range; watch 119.28 for next test"
+      "if": "hold 120.0 (KEY support)",
+      "then": "still range; watch 121.72 for next test"
     },
     {
-      "if": "break 108.0 on close",
-      "then": "target 104.0 → lower (short-term bearish)"
+      "if": "break 120.0 on close",
+      "then": "target 116.0 → 108.0 (short-term bearish)"
     },
     {
-      "if": "break 104.0 (crash low)",
+      "if": "break 102.15 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 119.28 on close",
-      "then": "short-term bullish; next test 120.0"
+      "if": "reclaim 121.72 on close",
+      "then": "short-term bullish; next test 122.4"
     },
     {
       "if": "break 122.4 (box top)",
@@ -157,8 +164,8 @@
     "r3": 135.16,
     "s3": 106.79,
     "s4": 115.48,
-    "current_position_pct": 80.9,
-    "notes": "WAIT_RANGE: in box (103-122), pos 81%, no clear setup"
+    "current_position_pct": 94.0,
+    "notes": "WAIT_RANGE: in box (103-122), pos 94%, no clear setup"
   },
   "patterns": [
     {
@@ -167,7 +174,7 @@
       "date": "2026-10-27",
       "low": 118.76000213623047,
       "high": 120.05999755859375,
-      "i": 198
+      "i": 196
     },
     {
       "name": "早晨之星",
@@ -175,7 +182,7 @@
       "date": "2026-09-01",
       "low": 104.66000366210938,
       "high": 106.63999938964844,
-      "i": 159
+      "i": 157
     },
     {
       "name": "利好反擊線",
@@ -183,7 +190,7 @@
       "date": "2026-08-24",
       "low": 104.0,
       "high": 106.5999984741211,
-      "i": 153
+      "i": 151
     },
     {
       "name": "利淡反擊線",
@@ -191,7 +198,7 @@
       "date": "2026-08-14",
       "low": 114.63999938964844,
       "high": 116.44999694824219,
-      "i": 147
+      "i": 145
     }
   ]
 }
