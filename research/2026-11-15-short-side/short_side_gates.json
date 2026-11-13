@@ -1,0 +1,130 @@
+{
+  "frozen_ab_close_hold": {
+    "gate": "frozen_ab_close_hold",
+    "source": "data/ab_close_hold.json",
+    "n_checks": 20,
+    "n_failed": 0,
+    "failed": [],
+    "passed": true
+  },
+  "engine_equivalence_us200": {
+    "gate": "engine_equivalence",
+    "mkt": "us200",
+    "ref_n": 6675,
+    "mine_n": 6675,
+    "same_dates": true,
+    "max_abs_gross_diff": 0.0,
+    "passed": true
+  },
+  "engine_equivalence_jp200": {
+    "gate": "engine_equivalence",
+    "mkt": "jp200",
+    "ref_n": 4576,
+    "mine_n": 4576,
+    "same_dates": true,
+    "max_abs_gross_diff": 0.0,
+    "passed": true
+  },
+  "symmetry_negative_control": {
+    "gate": "symmetry_negative_control",
+    "passed": true,
+    "cells": [
+      {
+        "mkt": "us200",
+        "window": "train",
+        "long_n": 3693,
+        "short_n": 1934,
+        "long_avg%": 1.922,
+        "short_avg%": -0.026,
+        "identical": false
+      },
+      {
+        "mkt": "us200",
+        "window": "test",
+        "long_n": 2982,
+        "short_n": 1241,
+        "long_avg%": 1.772,
+        "short_avg%": -0.265,
+        "identical": false
+      },
+      {
+        "mkt": "us200",
+        "window": "full",
+        "long_n": 6675,
+        "short_n": 3175,
+        "long_avg%": 1.855,
+        "short_avg%": -0.12,
+        "identical": false
+      },
+      {
+        "mkt": "jp200",
+        "window": "train",
+        "long_n": 2389,
+        "short_n": 2329,
+        "long_avg%": 1.058,
+        "short_avg%": 0.227,
+        "identical": false
+      },
+      {
+        "mkt": "jp200",
+        "window": "test",
+        "long_n": 2187,
+        "short_n": 1302,
+        "long_avg%": 2.354,
+        "short_avg%": 0.361,
+        "identical": false
+      },
+      {
+        "mkt": "jp200",
+        "window": "full",
+        "long_n": 4576,
+        "short_n": 3631,
+        "long_avg%": 1.677,
+        "short_avg%": 0.275,
+        "identical": false
+      }
+    ]
+  },
+  "tamper_must_fail": {
+    "gate": "tamper_must_fail",
+    "tamper_target": "copy of data/ab_close_hold.json (temp dir)",
+    "tamper_field": "windows.us200.B_close-hold.train.n",
+    "original_value": 3693,
+    "tampered_value": 3694,
+    "tamper_landed_on_disk": true,
+    "gate_passed_against_tampered_file": false,
+    "n_failed_checks": 1,
+    "original_file_untouched": true,
+    "original_sha256": "6983fe5099b27b73771afba65c905f3e3213ebb9f8462665504797da48997446",
+    "passed": true,
+    "detail": "the gate must FAIL on the tampered copy and the repo's own artifact must be byte-identical before and after"
+  },
+  "no_lookahead": {
+    "gate": "no_lookahead",
+    "symbol": "AAPL",
+    "signal_date": "2021-06-10",
+    "planted_date": "2021-06-17",
+    "features_checked": [
+      "S1",
+      "R1",
+      "ma200",
+      "atr_pct",
+      "box_w",
+      "ma200_slope"
+    ],
+    "features_unchanged": true,
+    "detail": "",
+    "trade_set_unchanged": true,
+    "must_fail_unshifted_feature_detected": true,
+    "passed": true
+  },
+  "no_target_sentinel": {
+    "gate": "no_target_sentinel",
+    "sentinel_long": 1000000000000.0,
+    "sentinel_short": -1000000000000.0,
+    "short_target_hits_with_correct_sentinel": null,
+    "wrong_sentinel_reaches_target": true,
+    "passed": true
+  },
+  "all_passed": true
+}
