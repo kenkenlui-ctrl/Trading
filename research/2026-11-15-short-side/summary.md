@@ -30,7 +30,7 @@
 | 負面控制：篡改凍結檔案 → gate 必須 FAIL | **PASS** | 篡改真實落盤=True，原檔未被改=True |
 | no-look-ahead probe（植入遲到 bar） | **PASS** | S1, R1, ma200, atr_pct, box_w, ma200_slope 全部不變 + 交易集不變 |
 | short 嘅 no-target 哨兵唔可以觸發 | **PASS** | 錯哨兵（1e12）會觸發 = True |
-| production 檔案未被改動 | **FAIL** | `git diff` 對受保護路徑 = 2003 行 |
+| production 檔案未被改動 | **PASS** | `git diff` 對受保護路徑 = 0 行 |
 
 ## 2. A 部分 —— 做空鏡像規則嘅 OOS 表現
 
