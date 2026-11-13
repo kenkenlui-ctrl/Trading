@@ -1,0 +1,212 @@
+{
+ "receipt": {
+  "verdict": "DONE",
+  "ok": true,
+  "layers": {
+   "a_build_succeeded": {
+    "layer": "a_build_succeeded",
+    "evidence": "build exit code + build manifest",
+    "ok": true,
+    "detail": {
+     "status": "pass",
+     "sessions": {
+      "hk200": "2026-10-30",
+      "us200": "2026-10-30",
+      "jp200": "2026-10-30"
+     },
+     "commit": "46144b1f",
+     "error": null
+    }
+   },
+   "b_published": {
+    "layer": "b_published",
+    "evidence": "deploy id + publish timestamp",
+    "ok": true,
+    "detail": {
+     "deploy_url": "https://343e172f.leeks-terminal.pages.dev",
+     "published_at": "2026-10-31T10:03:34+08:00",
+     "note": "the build manifest's own deploy record (layer b)"
+    }
+   },
+   "c_read_back_confirmed": {
+    "layer": "c_read_back_confirmed",
+    "evidence": "the live published page, fetched over the network",
+    "independent_source": "live published HTML, fetched over the network",
+    "ok": true,
+    "detail": {
+     "expected_stamp": "2026-10-30",
+     "live_stamp": "2026-10-30",
+     "stamp_matches": true,
+     "expected_signal_count": 162,
+     "live_signal_count": 162,
+     "signal_count_matches": true,
+     "live_universe_us": 241,
+     "live_universe_jp": 201,
+     "url": "https://www.win9you.com/",
+     "error": null
+    }
+   }
+  },
+  "layer_order": [
+   "a_build_succeeded",
+   "b_published",
+   "c_read_back_confirmed"
+  ],
+  "note": "A run with (a) and (b) but a failed (c) is STALE, not done. STALE blocks exactly as a failed build does."
+ },
+ "live_readback": {
+  "ok": true,
+  "url": "https://www.win9you.com/",
+  "http_status": 200,
+  "bytes": 19348,
+  "stamp": "2026-10-30",
+  "signal_count": 162,
+  "universe_us": 241,
+  "universe_jp": 201,
+  "source": "live published HTML, fetched over the network"
+ },
+ "manifest": {
+  "source": "/Users/kenken/dev/dsa-hk/data/build_state.json",
+  "status": "pass",
+  "sessions": {
+   "hk200": "2026-10-30",
+   "us200": "2026-10-30",
+   "jp200": "2026-10-30"
+  },
+  "deploy_url": "https://343e172f.leeks-terminal.pages.dev",
+  "finished_at": "2026-10-31T10:03:34+08:00",
+  "commit": "46144b1f"
+ },
+ "stale_stamp_fixture": {
+  "fixture": "planted_stale_stamp",
+  "planted_stamp": "2026-01-01",
+  "manifest_stamp": "2026-10-30",
+  "planted_count": 0,
+  "gate_verdict": "STALE",
+  "gate_ok": false,
+  "gate_caught_it": true,
+  "must_fail": true,
+  "passes": true,
+  "receipt": {
+   "verdict": "STALE",
+   "ok": false,
+   "layers": {
+    "a_build_succeeded": {
+     "layer": "a_build_succeeded",
+     "evidence": "build exit code + build manifest",
+     "ok": true,
+     "detail": {
+      "status": "pass",
+      "sessions": {
+       "hk200": "2026-10-30",
+       "us200": "2026-10-30",
+       "jp200": "2026-10-30"
+      },
+      "commit": "46144b1f",
+      "error": null
+     }
+    },
+    "b_published": {
+     "layer": "b_published",
+     "evidence": "deploy id + publish timestamp",
+     "ok": true,
+     "detail": {
+      "deploy_id": "planted-deploy",
+      "published_at": "planted",
+      "note": "fixture"
+     }
+    },
+    "c_read_back_confirmed": {
+     "layer": "c_read_back_confirmed",
+     "evidence": "the live published page, fetched over the network",
+     "independent_source": "planted stale page (negative control)",
+     "ok": false,
+     "detail": {
+      "expected_stamp": "2026-10-30",
+      "live_stamp": "2026-01-01",
+      "stamp_matches": false,
+      "expected_signal_count": 162,
+      "live_signal_count": 0,
+      "signal_count_matches": false,
+      "live_universe_us": null,
+      "live_universe_jp": null,
+      "url": "PLANTED (fixture — not a real fetch)",
+      "error": null
+     }
+    }
+   },
+   "layer_order": [
+    "a_build_succeeded",
+    "b_published",
+    "c_read_back_confirmed"
+   ],
+   "note": "A run with (a) and (b) but a failed (c) is STALE, not done. STALE blocks exactly as a failed build does."
+  }
+ },
+ "hard_gate": {
+  "gate": "hard_gate_entry_count_vs_executed_count",
+  "declared_count": 5,
+  "executed_count": 5,
+  "transitive_modules_reached": 7,
+  "not_executed": [],
+  "failed": [],
+  "mismatch": false,
+  "verdict": "PASS",
+  "denominator": {
+   "source": "the on-disk entry list, recomputed every round",
+   "independent_of_execution": true,
+   "content_addressed": [
+    {
+     "path": "scripts/research/executability.py",
+     "digest": "7b80d285df17280a117bb872e7edb702a5629cc51996705bf478d79bebc48753",
+     "bytes": 20294
+    },
+    {
+     "path": "scripts/research/coverage.py",
+     "digest": "94c6ffc4dcbb5cc77eae83c7f54d150ec6897eeeb93911e200dd0be991bb29c6",
+     "bytes": 18957
+    },
+    {
+     "path": "scripts/research/confirmation_cost.py",
+     "digest": "bc097d54119c4d00c791e139954be4eb43d8c2ccf2e281279bc8e5c64088ab2e",
+     "bytes": 11435
+    },
+    {
+     "path": "scripts/research/failure_criteria.py",
+     "digest": "7c80467c39dcd5479045052cb676e6092c62c296074bb5eadcd288642ed85f2d",
+     "bytes": 13373
+    },
+    {
+     "path": "scripts/research/gate_independence.py",
+     "digest": "10a6097d7a524f2a8e6963d6c42e736a07361ef2b807723d83ecc3a944a68502",
+     "bytes": 21008
+    }
+   ]
+  },
+  "note": "Coverage equals 'reachable by import from an executed entry', not 'a run line was written'. A declared entry that did not execute is a FAIL."
+ },
+ "denominator_independence": {
+  "gate": "denominator_independence",
+  "denominator_source": "/Users/kenken/dev/dsa-hk/scripts/research",
+  "recomputed_from": "disk, every round",
+  "content_addressed": true,
+  "n_entries": 9,
+  "digest_of_digests": "bb5f1deaf2377a220f45e22e0eefe77b1ee9629e6baffdb1431ce0a7eba1aa79",
+  "overlap_with_pipeline": [],
+  "independent": true,
+  "identity_type_ratios": "demoted to descriptive fields; never decision inputs",
+  "decision_inputs": [
+   "scripts/research/__init__.py",
+   "scripts/research/confirmation_cost.py",
+   "scripts/research/coverage.py",
+   "scripts/research/executability.py",
+   "scripts/research/failure_criteria.py",
+   "scripts/research/gate_independence.py",
+   "scripts/research/research_flags.py",
+   "scripts/research/run_all.py",
+   "scripts/research/selftests.py"
+  ],
+  "verdict": "PASS"
+ },
+ "independence_note": "The read-back source is the deployed page fetched over the network. The manifest is the thing being CHECKED, never the checker: a gate that compared the manifest with itself could never fail."
+}
