@@ -3,23 +3,23 @@
   "ticker_user": "01171.HK",
   "name": "YANKUANG ENERGY",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-22 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 10.63,
-    "H": 10.98,
-    "L": 10.53,
-    "C": 10.88,
-    "prev_close": 10.65,
-    "chg_pct": 2.16
+    "date": "2026-11-13",
+    "O": 11.18,
+    "H": 11.38,
+    "L": 10.93,
+    "C": 10.99,
+    "prev_close": 11.12,
+    "chg_pct": -1.17
   },
   "phase": "downtrend_active",
-  "adx": 31.56,
-  "plus_di": 16.13,
-  "minus_di": 24.24,
-  "regime": "trend",
+  "adx": 19.58,
+  "plus_di": 20.13,
+  "minus_di": 19.35,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 17.42 (2026-03-13), trough 10.01 (2026-10-23), box top 10.98 (2026-10-30)",
+  "phase_evidence": "Peak 17.42 (2026-03-13), trough 10.01 (2026-10-23), box top 11.54 (2026-11-09)",
   "peak": {
     "date": "2026-03-13",
     "price": 17.42
@@ -29,19 +29,19 @@
     "price": 10.01
   },
   "box": {
-    "top": 10.98,
-    "top_date": "2026-10-30",
+    "top": 11.54,
+    "top_date": "2026-11-09",
     "bottom": 10.01,
-    "period": "2026-10-23 to 2026-10-30"
+    "period": "2026-10-23 to 2026-11-13"
   },
-  "drop_from_peak_pct": 37.5,
-  "recovery_from_crash_pct": 8.7,
+  "drop_from_peak_pct": 36.9,
+  "recovery_from_crash_pct": 9.8,
   "supports": [
     {
       "level": 12.0,
       "label": "S1 KEY",
-      "touches": 18,
-      "evidence": "tested 18x in base period; -10.3% below current"
+      "touches": 25,
+      "evidence": "tested 25x in base period; -9.2% below current"
     },
     {
       "level": 10.01,
@@ -52,29 +52,34 @@
   ],
   "resistances": [
     {
-      "level": 10.98,
+      "level": 11.38,
       "label": "R1 today high",
-      "evidence": "today's high 10.979999542236328"
+      "evidence": "today's high 11.380000114440918"
+    },
+    {
+      "level": 11.54,
+      "label": "R3 Nov high",
+      "evidence": "box top 11.54, base period high"
     }
   ],
   "position": {
-    "current": 10.88,
-    "in_box_pct": 89.7,
+    "current": 10.99,
+    "in_box_pct": 64.1,
     "nearest_support": "S1 KEY (12.0)",
-    "nearest_resistance": "R1 today high (10.98)"
+    "nearest_resistance": "R1 today high (11.38)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": true,
-    "close_position": "upper_half",
-    "O": 10.63,
-    "H": 10.98,
-    "L": 10.53,
-    "C": 10.88,
-    "body_pct": 55.6,
-    "upper_wick_pct": 22.2,
-    "lower_wick_pct": 22.2
+    "close_position": "lower_half",
+    "O": 11.18,
+    "H": 11.38,
+    "L": 10.93,
+    "C": 10.99,
+    "body_pct": 42.2,
+    "upper_wick_pct": 44.4,
+    "lower_wick_pct": 13.3
   },
   "bias": {
     "short": {
@@ -93,7 +98,7 @@
   "scenarios": [
     {
       "if": "hold 12.0 (KEY support)",
-      "then": "still range; watch 10.98 for next test"
+      "then": "still range; watch 11.38 for next test"
     },
     {
       "if": "break 12.0 on close",
@@ -104,8 +109,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 10.98 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 11.38 on close",
+      "then": "short-term bullish; next test 11.54"
+    },
+    {
+      "if": "break 11.54 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -128,7 +137,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -136,24 +145,32 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 12.18,
+    "r1": 11.54,
     "s1": 10.01,
-    "s2": 11.29,
+    "s2": 10.95,
     "r2": 14.14,
     "r3": 16.23,
     "s3": 10.37,
-    "s4": 10.66,
-    "current_position_pct": 40.1,
-    "notes": "WAIT_RANGE: in box (10-12), pos 40%, no clear setup"
+    "s4": 10.83,
+    "current_position_pct": 64.1,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 11.54）：① 跌到 11.54、收市守住喺 11.54 上面 → 照 BUY 條 plan 做（入場 11.54，止蝕 12.18，目標 10.78）。② 收市跌穿 11.54 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 11.54 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
+    {
+      "name": "利淡吞噬",
+      "bias": "bearish",
+      "date": "2026-11-12",
+      "low": 11.0600004196167,
+      "high": 11.300000190734863,
+      "i": 198
+    },
     {
       "name": "利好吞噬",
       "bias": "bullish",
       "date": "2026-10-29",
       "low": 10.5,
       "high": 10.84000015258789,
-      "i": 198
+      "i": 188
     },
     {
       "name": "早晨之星",
@@ -161,7 +178,7 @@
       "date": "2026-10-09",
       "low": 11.600000381469727,
       "high": 12.0,
-      "i": 185
+      "i": 175
     },
     {
       "name": "刺穿線",
@@ -169,23 +186,15 @@
       "date": "2026-09-28",
       "low": 11.479999542236328,
       "high": 11.760000228881836,
-      "i": 177
-    },
-    {
-      "name": "利淡吞噬",
-      "bias": "bearish",
-      "date": "2026-09-07",
-      "low": 12.649999618530273,
-      "high": 13.430000305175781,
-      "i": 162
+      "i": 167
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-08-19",
-      "low": 12.380000114440918,
-      "high": 12.869999885559082,
-      "i": 149
+      "date": "2026-09-07",
+      "low": 12.649999618530273,
+      "high": 13.430000305175781,
+      "i": 152
     }
   ]
 }

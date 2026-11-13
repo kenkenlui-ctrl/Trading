@@ -3,20 +3,20 @@
   "ticker_user": "CVX",
   "name": "Chevron Corporation",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 234.01,
-    "H": 236.48,
-    "L": 233.22,
-    "C": 235.52,
-    "prev_close": 231.46,
-    "chg_pct": 1.75
+    "date": "2026-11-13",
+    "O": 218.27,
+    "H": 219.89,
+    "L": 216.58,
+    "C": 219.89,
+    "prev_close": 216.35,
+    "chg_pct": 1.64
   },
-  "phase": "uptrend",
-  "adx": 33.68,
-  "plus_di": 30.42,
-  "minus_di": 10.57,
+  "phase": "base_building",
+  "adx": 27.55,
+  "plus_di": 23.9,
+  "minus_di": 28.39,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 236.48 (2026-10-30), trough 201.96 (2026-10-05), box top 236.48 (2026-10-30)",
@@ -32,61 +32,60 @@
     "top": 236.48,
     "top_date": "2026-10-30",
     "bottom": 201.96,
-    "period": "2026-10-05 to 2026-10-30"
+    "period": "2026-10-05 to 2026-11-13"
   },
-  "drop_from_peak_pct": 0.4,
-  "recovery_from_crash_pct": 16.6,
+  "drop_from_peak_pct": 7.0,
+  "recovery_from_crash_pct": 8.9,
   "supports": [
     {
-      "level": 228.0,
+      "level": 216.0,
       "label": "S1 KEY",
-      "touches": 8,
-      "evidence": "tested 8x in base period; 3.2% below current"
+      "touches": 4,
+      "evidence": "tested 4x in base period; 1.8% below current"
     },
     {
-      "level": 224.0,
+      "level": 212.0,
       "label": "S2",
+      "touches": 10,
+      "evidence": "mid-base support, tested 10x"
+    },
+    {
+      "level": 208.0,
+      "label": "S3 bottom",
       "touches": 6,
-      "evidence": "mid-base support, tested 6x"
-    },
-    {
-      "level": 220.0,
-      "label": "S3",
-      "touches": 8,
-      "evidence": "mid-base support, tested 8x"
-    },
-    {
-      "level": 201.96,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-10-05, structural bottom"
+      "evidence": "structural bottom, near crash low 201.96"
     }
   ],
   "resistances": [
     {
-      "level": 236.48,
+      "level": 219.89,
       "label": "R1 today high",
-      "evidence": "today's high 236.47999572753906"
+      "evidence": "today's high 219.88999938964844"
+    },
+    {
+      "level": 236.48,
+      "label": "R3 Oct high",
+      "evidence": "box top 236.48, base period high"
     }
   ],
   "position": {
-    "current": 235.52,
-    "in_box_pct": 97.2,
-    "nearest_support": "S1 KEY (228.0)",
-    "nearest_resistance": "R1 today high (236.48)"
+    "current": 219.89,
+    "in_box_pct": 41.7,
+    "nearest_support": "S1 KEY (216.0)",
+    "nearest_resistance": "R1 today high (219.89)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 234.01,
-    "H": 236.48,
-    "L": 233.22,
-    "C": 235.52,
-    "body_pct": 46.3,
-    "upper_wick_pct": 29.4,
-    "lower_wick_pct": 24.2
+    "O": 218.27,
+    "H": 219.89,
+    "L": 216.58,
+    "C": 219.89,
+    "body_pct": 48.8,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 51.2
   },
   "bias": {
     "short": {
@@ -94,30 +93,34 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bullish_continuation",
-      "reason": "higher highs / higher lows"
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 228.0 (KEY support)",
-      "then": "still range; watch 236.48 for next test"
+      "if": "hold 216.0 (KEY support)",
+      "then": "still range; watch 219.89 for next test"
     },
     {
-      "if": "break 228.0 on close",
-      "then": "target 224.0 → 220.0 (short-term bearish)"
+      "if": "break 216.0 on close",
+      "then": "target 212.0 → 208.0 (short-term bearish)"
     },
     {
-      "if": "break 201.96 (crash low)",
+      "if": "break 208.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 236.48 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 219.89 on close",
+      "then": "short-term bullish; next test 236.48"
+    },
+    {
+      "if": "break 236.48 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -147,33 +150,33 @@
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": false,
+    "phase_match": true,
     "r1": 236.48,
-    "s1": 201.96,
-    "s2": 185.87,
-    "r2": 217.78,
-    "r3": 198.87,
+    "s1": 206.01,
+    "s2": 197.82,
+    "r2": 225.31,
+    "r3": 208.98,
     "s3": 164.78,
-    "s4": 165.1,
-    "current_position_pct": 97.2,
-    "notes": "WAIT_RANGE: in box (202-236), pos 97%, no clear setup"
+    "s4": 171.27,
+    "current_position_pct": 45.6,
+    "notes": "WAIT_RANGE: in box (206-236), pos 46%, no clear setup"
   },
   "patterns": [
     {
-      "name": "利淡吞噬",
-      "bias": "bearish",
-      "date": "2026-10-29",
-      "low": 229.00999450683594,
-      "high": 232.9499969482422,
-      "i": 198
+      "name": "利好反擊線",
+      "bias": "bullish",
+      "date": "2026-11-11",
+      "low": 210.8800048828125,
+      "high": 213.44000244140625,
+      "i": 197
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-10-22",
-      "low": 222.86000061035156,
-      "high": 229.0399932861328,
-      "i": 193
+      "date": "2026-11-02",
+      "low": 227.4199981689453,
+      "high": 233.25,
+      "i": 190
     },
     {
       "name": "烏雲蓋頂",
@@ -181,7 +184,7 @@
       "date": "2026-09-16",
       "low": 210.3699951171875,
       "high": 215.27999877929688,
-      "i": 167
+      "i": 157
     },
     {
       "name": "利淡反擊線",
@@ -189,7 +192,7 @@
       "date": "2026-09-04",
       "low": 207.1199951171875,
       "high": 209.86000061035156,
-      "i": 160
+      "i": 150
     },
     {
       "name": "烏雲蓋頂",
@@ -197,7 +200,7 @@
       "date": "2026-07-17",
       "low": 185.5,
       "high": 188.14999389648438,
-      "i": 125
+      "i": 115
     }
   ]
 }

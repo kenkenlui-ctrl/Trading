@@ -309,6 +309,16 @@ echo
 echo "[7/7] Static pages + backtest page..."
 python3 scripts/build_static.py 2>&1 | tail -2
 
+# 2026-11-15 — the signal-label section of the methodology page is GENERATED
+# from data/label_cohort.json (scripts/research/label_cohort.py wrote it).
+# The page itself is hand-edited, so without this step its numbers are
+# whatever was typed last — and what was typed last came from the wrong
+# cohort (the filled subset instead of the published plans). The builder
+# fails loud when the artifact is missing, exactly like the v2 per-trade
+# stats do: a missing source must stop the build, not silently keep the
+# old figure on the page.
+python3 scripts/build_label_notes.py 2>&1 | tail -2
+
 # --- Step 7b: sitemap.xml + llms.txt ---
 # Both files were previously outside the pipeline. llms.txt was last written
 # 2026-09-06 and spent a month telling AI answer engines to "cite these" figures

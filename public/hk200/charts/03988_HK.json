@@ -3,77 +3,78 @@
   "ticker_user": "03988.HK",
   "name": "BANK OF CHINA",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-22 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 6.18,
-    "H": 6.18,
-    "L": 6.09,
-    "C": 6.14,
-    "prev_close": 6.14,
-    "chg_pct": 0.16
+    "date": "2026-11-13",
+    "O": 6.2,
+    "H": 6.3,
+    "L": 6.2,
+    "C": 6.28,
+    "prev_close": 6.24,
+    "chg_pct": 0.64
   },
   "phase": "range",
-  "adx": 23.51,
-  "plus_di": 22.68,
-  "minus_di": 15.52,
-  "regime": "dead",
+  "adx": 18.21,
+  "plus_di": 24.99,
+  "minus_di": 19.29,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 6.29 (2026-10-13), trough 5.88 (2026-10-23), box top 6.22 (2026-10-29)",
+  "phase_evidence": "Peak 6.3 (2026-11-09), trough 6.09 (2026-11-09), box top 6.3 (2026-11-09)",
   "peak": {
-    "date": "2026-10-13",
-    "price": 6.29
+    "date": "2026-11-09",
+    "price": 6.3
   },
   "trough": {
-    "date": "2026-10-23",
-    "price": 5.88
+    "date": "2026-11-09",
+    "price": 6.09
   },
   "box": {
-    "top": 6.22,
-    "top_date": "2026-10-29",
-    "bottom": 5.88,
-    "period": "2026-10-23 to 2026-10-30"
+    "top": 6.3,
+    "top_date": "2026-11-09",
+    "bottom": 6.09,
+    "period": "2026-11-09 to 2026-11-13"
   },
-  "drop_from_peak_pct": 2.3,
-  "recovery_from_crash_pct": 4.5,
+  "drop_from_peak_pct": 0.4,
+  "recovery_from_crash_pct": 3.0,
   "supports": [
     {
+      "level": 8.0,
+      "label": "S1 KEY",
+      "touches": 24,
+      "evidence": "tested 24x in base period; -27.4% below current"
+    },
+    {
       "level": 4.0,
-      "label": "S1 bottom",
-      "touches": 68,
-      "evidence": "structural bottom, near crash low 5.88"
+      "label": "S2 bottom",
+      "touches": 56,
+      "evidence": "structural bottom, near crash low 6.09"
     }
   ],
   "resistances": [
     {
-      "level": 6.18,
+      "level": 6.3,
       "label": "R1 today high",
-      "evidence": "today's high 6.184999942779541"
-    },
-    {
-      "level": 6.22,
-      "label": "R3 Oct high",
-      "evidence": "box top 6.22, base period high"
+      "evidence": "today's high 6.295000076293945"
     }
   ],
   "position": {
-    "current": 6.14,
-    "in_box_pct": 96.6,
-    "nearest_support": "S1 bottom (4.0)",
-    "nearest_resistance": "R1 today high (6.18)"
+    "current": 6.28,
+    "in_box_pct": 99.1,
+    "nearest_support": "S1 KEY (8.0)",
+    "nearest_resistance": "R1 today high (6.3)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 6.18,
-    "H": 6.18,
-    "L": 6.09,
-    "C": 6.14,
-    "body_pct": 38.9,
-    "upper_wick_pct": 5.6,
-    "lower_wick_pct": 55.6
+    "O": 6.2,
+    "H": 6.3,
+    "L": 6.2,
+    "C": 6.28,
+    "body_pct": 84.2,
+    "upper_wick_pct": 15.8,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
@@ -91,24 +92,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 4.0 (KEY support)",
-      "then": "still range; watch 6.18 for next test"
+      "if": "hold 8.0 (KEY support)",
+      "then": "still range; watch 6.3 for next test"
     },
     {
-      "if": "break 4.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 8.0 on close",
+      "then": "target 4.0 → lower (short-term bearish)"
     },
     {
       "if": "break 4.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 6.18 on close",
-      "then": "short-term bullish; next test 6.22"
-    },
-    {
-      "if": "break 6.22 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 6.3 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -131,32 +128,48 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
-    "r1": 6.29,
-    "s1": 5.86,
-    "s2": 5.18,
-    "r2": 6.14,
+    "phase_match": false,
+    "r1": 6.3,
+    "s1": 5.77,
+    "s2": 5.38,
+    "r2": 6.29,
     "r3": 5.61,
     "s3": 4.75,
-    "s4": 4.35,
-    "current_position_pct": 66.7,
-    "notes": "WAIT_RANGE: in box (6-6), pos 67%, no clear setup"
+    "s4": 4.39,
+    "current_position_pct": 95.3,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 6.30）：① 跌到 6.30、收市守住喺 6.30 上面 → 照 BUY 條 plan 做（入場 6.30，止蝕 6.54，目標 6.04）。② 收市跌穿 6.30 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 6.30 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-11-11",
+      "low": 6.195000171661377,
+      "high": 6.284999847412109,
+      "i": 197
+    },
+    {
+      "name": "早晨之星",
+      "bias": "bullish",
+      "date": "2026-11-05",
+      "low": 5.875,
+      "high": 6.125,
+      "i": 193
+    },
     {
       "name": "黃昏之星",
       "bias": "bearish",
       "date": "2026-10-15",
       "low": 6.085000038146973,
       "high": 6.244999885559082,
-      "i": 189
+      "i": 179
     },
     {
       "name": "烏雲蓋頂",
@@ -164,7 +177,7 @@
       "date": "2026-10-02",
       "low": 5.889999866485596,
       "high": 6.0,
-      "i": 180
+      "i": 170
     },
     {
       "name": "平頭頂",
@@ -172,23 +185,7 @@
       "date": "2026-09-18",
       "low": 5.945000171661377,
       "high": 6.03000020980835,
-      "i": 171
-    },
-    {
-      "name": "利淡反擊線",
-      "bias": "bearish",
-      "date": "2026-08-27",
-      "low": 5.454999923706055,
-      "high": 5.599999904632568,
-      "i": 155
-    },
-    {
-      "name": "平頭底",
-      "bias": "bullish",
-      "date": "2026-07-16",
-      "low": 5.059999942779541,
-      "high": 5.159999847412109,
-      "i": 125
+      "i": 161
     }
   ]
 }

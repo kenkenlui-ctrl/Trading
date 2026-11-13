@@ -444,6 +444,30 @@ def write_report(out_dir: Path, payload, gates, a_summary, mf_rows, ev_rows,
       "甚至 F3/F1 喺 JP 係反方向），但相對強度同「已太貴」嘅標籤有訊息。")
     A("")
 
+    A("### 4.5 2026-11-15 修正：T1a / F5 嘅母體同站上發佈嘅唔同")
+    A("")
+    A("**本報告嘅 T1a / F5 觸發率係「已成交訊號」母體，唔係站上每日發佈嘅母體。**")
+    A("")
+    A("站上發佈嘅係**計劃**（screen 通過就出，鐘面價仲未回踩 S1）；本報告量嘅係"
+      "**已成交訊號**（引擎記低嘅 fill）。兩者唔係同一批嘢，所以：")
+    A("")
+    A("- 本報告嘅 **T1a 觸發率（US 樣本外 1.6%、全期 2.5%）係成交母體**。"
+      "喺計劃母體上，貼近箱頂嘅計劃佔三成以上 —— 因為呢類計劃"
+      "**幾乎成交唔到**（成交率 0.18% vs 對照 4.03%），成交母體自然被篩走。"
+      "之前引用本報告嘅觸發率去描述站上標籤，係錯咗母體。")
+    A("- 本報告嘅 **F5 觸發率（US 20.1%）同一道理**；而且本報告嘅 F5 filter 係"
+      "「XS trend template **AND** 相對強度」，而站上標籤只係相對強度本身 —— "
+      "定義都唔同。")
+    A("- **本報告嘅「成交後每單淨」差距仍然有效**：特徵係喺計劃日讀嘅"
+      "（入場 bar 嘅前一日），同站上標籤嘅讀法一致。"
+      "錯嘅係觸發率同母體描述，唔係差距本身。")
+    A("")
+    A("正確母體嘅重測見 " + CODE + "scripts/research/label_cohort.py" + CODE
+      + "（輸出 " + CODE + "research/2026-11-15-short-side/label_cohort_*.csv" + CODE
+      + "，artifact " + CODE + "data/label_cohort.json" + CODE
+      + "）；站上方法論頁嗰節由 " + CODE + "scripts/build_label_notes.py" + CODE
+      + " 由 artifact 生成，build 唔一致就唔會出街。")
+    A("")
     A("## 5. 負面結果、陷阱同定義選擇（同樣力度）")
     A("")
     A("1. **market filter 喺 frozen engine 入面根本冇施加。** 站上規則寫住有，"

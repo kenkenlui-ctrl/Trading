@@ -3,23 +3,23 @@
   "ticker_user": "LIN",
   "name": "Linde plc",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 509.55,
-    "H": 517.7,
-    "L": 508.73,
-    "C": 514.24,
-    "prev_close": 503.15,
-    "chg_pct": 2.2
+    "date": "2026-11-13",
+    "O": 526.15,
+    "H": 526.78,
+    "L": 521.47,
+    "C": 526.06,
+    "prev_close": 522.49,
+    "chg_pct": 0.68
   },
   "phase": "base_building",
-  "adx": 31.79,
-  "plus_di": 25.4,
-  "minus_di": 13.29,
+  "adx": 32.38,
+  "plus_di": 26.07,
+  "minus_di": 12.37,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 548.2 (2026-07-07), trough 454.19 (2026-09-18), box top 517.7 (2026-10-30)",
+  "phase_evidence": "Peak 548.2 (2026-07-07), trough 454.19 (2026-09-18), box top 533.39 (2026-11-05)",
   "peak": {
     "date": "2026-07-07",
     "price": 548.2
@@ -29,28 +29,28 @@
     "price": 454.19
   },
   "box": {
-    "top": 517.7,
-    "top_date": "2026-10-30",
+    "top": 533.39,
+    "top_date": "2026-11-05",
     "bottom": 454.19,
-    "period": "2026-09-18 to 2026-10-30"
+    "period": "2026-09-18 to 2026-11-13"
   },
-  "drop_from_peak_pct": 6.2,
-  "recovery_from_crash_pct": 13.2,
+  "drop_from_peak_pct": 4.0,
+  "recovery_from_crash_pct": 15.8,
   "supports": [
     {
-      "level": 500.0,
+      "level": 512.0,
       "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 2.8% below current"
+      "touches": 8,
+      "evidence": "tested 8x in base period; 2.7% below current"
     },
     {
-      "level": 496.0,
+      "level": 508.0,
       "label": "S2",
-      "touches": 6,
-      "evidence": "mid-base support, tested 6x"
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
     },
     {
-      "level": 484.0,
+      "level": 504.0,
       "label": "S3",
       "touches": 6,
       "evidence": "mid-base support, tested 6x"
@@ -64,29 +64,34 @@
   ],
   "resistances": [
     {
-      "level": 517.7,
+      "level": 526.78,
       "label": "R1 today high",
-      "evidence": "today's high 517.7000122070312"
+      "evidence": "today's high 526.7750244140625"
+    },
+    {
+      "level": 533.39,
+      "label": "R3 Nov high",
+      "evidence": "box top 533.39, base period high"
     }
   ],
   "position": {
-    "current": 514.24,
-    "in_box_pct": 94.6,
-    "nearest_support": "S1 KEY (500.0)",
-    "nearest_resistance": "R1 today high (517.7)"
+    "current": 526.06,
+    "in_box_pct": 90.7,
+    "nearest_support": "S1 KEY (512.0)",
+    "nearest_resistance": "R1 today high (526.78)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 509.55,
-    "H": 517.7,
-    "L": 508.73,
-    "C": 514.24,
-    "body_pct": 52.3,
-    "upper_wick_pct": 38.6,
-    "lower_wick_pct": 9.1
+    "O": 526.15,
+    "H": 526.78,
+    "L": 521.47,
+    "C": 526.06,
+    "body_pct": 1.7,
+    "upper_wick_pct": 11.8,
+    "lower_wick_pct": 86.5
   },
   "bias": {
     "short": {
@@ -104,20 +109,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 500.0 (KEY support)",
-      "then": "still range; watch 517.7 for next test"
+      "if": "hold 512.0 (KEY support)",
+      "then": "still range; watch 526.78 for next test"
     },
     {
-      "if": "break 500.0 on close",
-      "then": "target 496.0 → 484.0 (short-term bearish)"
+      "if": "break 512.0 on close",
+      "then": "target 508.0 → 504.0 (short-term bearish)"
     },
     {
       "if": "break 454.19 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 517.7 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 526.78 on close",
+      "then": "short-term bullish; next test 533.39"
+    },
+    {
+      "if": "break 533.39 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -148,24 +157,40 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 517.7,
-    "s1": 476.58,
+    "r1": 533.39,
+    "s1": 496.68,
     "s2": 454.19,
-    "r2": 495.96,
+    "r2": 502.14,
     "r3": 548.2,
     "s3": 466.88,
-    "s4": 429.17,
-    "current_position_pct": 91.6,
-    "notes": "WAIT_RANGE: in box (477-518), pos 92%, no clear setup"
+    "s4": 444.02,
+    "current_position_pct": 80.0,
+    "notes": "WAIT_RANGE: in box (497-533), pos 80%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "黃昏之星",
+      "bias": "bearish",
+      "date": "2026-11-13",
+      "low": 521.469970703125,
+      "high": 526.7750244140625,
+      "i": 199
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-11-05",
+      "low": 517.1699829101562,
+      "high": 533.3900146484375,
+      "i": 193
+    },
     {
       "name": "利淡反擊線",
       "bias": "bearish",
       "date": "2026-10-15",
       "low": 492.8800048828125,
       "high": 499.20001220703125,
-      "i": 188
+      "i": 178
     },
     {
       "name": "刺穿線",
@@ -173,7 +198,7 @@
       "date": "2026-09-25",
       "low": 465.75,
       "high": 470.44000244140625,
-      "i": 174
+      "i": 164
     },
     {
       "name": "利好反擊線",
@@ -181,15 +206,7 @@
       "date": "2026-08-10",
       "low": 487.0199890136719,
       "high": 492.5799865722656,
-      "i": 141
-    },
-    {
-      "name": "烏雲蓋頂",
-      "bias": "bearish",
-      "date": "2026-07-13",
-      "low": 521.47998046875,
-      "high": 532.4500122070312,
-      "i": 121
+      "i": 131
     }
   ]
 }

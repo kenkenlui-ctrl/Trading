@@ -84,7 +84,7 @@ def wcsv(path: Path, rows: list, cols=None) -> None:
     data = buf.getvalue().encode("utf-8")
     if len(data) > 1_000_000:
         gz = path.with_suffix(path.suffix + ".gz")
-        with gzip.open(gz, "wb") as fh:
+        with gzip.GzipFile(gz, "wb", mtime=0) as fh:
             fh.write(data)
         print("  -> " + str(gz.relative_to(REPO)) + "  (" + str(len(rows))
               + " rows, gzipped from " + str(round(len(data) / 1e6, 1)) + " MB)")

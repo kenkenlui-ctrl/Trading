@@ -3,20 +3,20 @@
   "ticker_user": "LMT",
   "name": "Lockheed Martin Corporation",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 649.94,
-    "H": 657.0,
-    "L": 636.28,
-    "C": 636.95,
-    "prev_close": 643.59,
-    "chg_pct": -1.03
+    "date": "2026-11-13",
+    "O": 605.0,
+    "H": 605.86,
+    "L": 588.74,
+    "C": 596.04,
+    "prev_close": 604.09,
+    "chg_pct": -1.33
   },
   "phase": "base_building",
-  "adx": 44.59,
-  "plus_di": 41.99,
-  "minus_di": 10.05,
+  "adx": 30.35,
+  "plus_di": 33.47,
+  "minus_di": 26.78,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 692.0 (2026-03-02), trough 487.15 (2026-07-21), box top 657.0 (2026-10-30)",
@@ -32,25 +32,25 @@
     "top": 657.0,
     "top_date": "2026-10-30",
     "bottom": 487.15,
-    "period": "2026-07-21 to 2026-10-30"
+    "period": "2026-07-21 to 2026-11-13"
   },
-  "drop_from_peak_pct": 8.0,
-  "recovery_from_crash_pct": 30.8,
+  "drop_from_peak_pct": 13.9,
+  "recovery_from_crash_pct": 22.4,
   "supports": [
     {
       "level": 576.0,
       "label": "S1 KEY",
-      "touches": 7,
-      "evidence": "tested 7x in base period; 9.6% below current"
-    },
-    {
-      "level": 524.0,
-      "label": "S2",
       "touches": 9,
-      "evidence": "mid-base support, tested 9x"
+      "evidence": "tested 9x in base period; 3.4% below current"
     },
     {
-      "level": 516.0,
+      "level": 568.0,
+      "label": "S2",
+      "touches": 5,
+      "evidence": "mid-base support, tested 5x"
+    },
+    {
+      "level": 560.0,
       "label": "S3",
       "touches": 6,
       "evidence": "mid-base support, tested 6x"
@@ -64,29 +64,34 @@
   ],
   "resistances": [
     {
-      "level": 657.0,
+      "level": 605.86,
       "label": "R1 today high",
-      "evidence": "today's high 657.0"
+      "evidence": "today's high 605.864990234375"
+    },
+    {
+      "level": 657.0,
+      "label": "R3 Oct high",
+      "evidence": "box top 657.0, base period high"
     }
   ],
   "position": {
-    "current": 636.95,
-    "in_box_pct": 88.2,
+    "current": 596.04,
+    "in_box_pct": 64.1,
     "nearest_support": "S1 KEY (576.0)",
-    "nearest_resistance": "R1 today high (657.0)"
+    "nearest_resistance": "R1 today high (605.86)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 649.94,
-    "H": 657.0,
-    "L": 636.28,
-    "C": 636.95,
-    "body_pct": 62.7,
-    "upper_wick_pct": 34.1,
-    "lower_wick_pct": 3.2
+    "O": 605.0,
+    "H": 605.86,
+    "L": 588.74,
+    "C": 596.04,
+    "body_pct": 52.3,
+    "upper_wick_pct": 5.1,
+    "lower_wick_pct": 42.6
   },
   "bias": {
     "short": {
@@ -105,19 +110,23 @@
   "scenarios": [
     {
       "if": "hold 576.0 (KEY support)",
-      "then": "still range; watch 657.0 for next test"
+      "then": "still range; watch 605.86 for next test"
     },
     {
       "if": "break 576.0 on close",
-      "then": "target 524.0 → 516.0 (short-term bearish)"
+      "then": "target 568.0 → 560.0 (short-term bearish)"
     },
     {
       "if": "break 487.15 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 657.0 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 605.86 on close",
+      "then": "short-term bullish; next test 657.0"
+    },
+    {
+      "if": "break 657.0 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -140,32 +149,40 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": false,
+    "phase_match": true,
     "r1": 657.0,
-    "s1": 497.0,
-    "s2": 498.55,
-    "r2": 612.75,
-    "r3": 593.77,
+    "s1": 540.0,
+    "s2": 497.0,
+    "r2": 572.95,
+    "r3": 612.75,
     "s3": 487.15,
     "s4": 500.31,
-    "current_position_pct": 87.5,
-    "notes": "WAIT_RANGE: in box (497-657), pos 87%, no clear setup"
+    "current_position_pct": 47.9,
+    "notes": "WAIT_RANGE: in box (540-657), pos 48%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "黃昏之星",
+      "bias": "bearish",
+      "date": "2026-11-05",
+      "low": 575.7100219726562,
+      "high": 604.4600219726562,
+      "i": 193
+    },
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-10-08",
       "low": 497.0,
       "high": 509.0799865722656,
-      "i": 183
+      "i": 173
     },
     {
       "name": "利好身懷六甲",
@@ -173,7 +190,7 @@
       "date": "2026-09-23",
       "low": 523.2100219726562,
       "high": 534.9299926757812,
-      "i": 172
+      "i": 162
     },
     {
       "name": "烏雲蓋頂",
@@ -181,7 +198,7 @@
       "date": "2026-08-19",
       "low": 589.0399780273438,
       "high": 606.0700073242188,
-      "i": 148
+      "i": 138
     },
     {
       "name": "平頭底",
@@ -189,15 +206,7 @@
       "date": "2026-07-21",
       "low": 487.1499938964844,
       "high": 507.75,
-      "i": 127
-    },
-    {
-      "name": "上升三法",
-      "bias": "bullish",
-      "date": "2026-07-10",
-      "low": 513.8099975585938,
-      "high": 524.0,
-      "i": 120
+      "i": 117
     }
   ]
 }

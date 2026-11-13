@@ -3,82 +3,78 @@
   "ticker_user": "9432.T",
   "name": "NTT, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-06 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-20 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 172.6999969482422,
-    "H": 174.10000610351562,
-    "L": 172.10000610351562,
-    "C": 173.3000030517578,
-    "prev_close": 171.5,
-    "chg_pct": 1.0495644616663524
+    "date": "2026-11-13",
+    "O": 166.60000610351562,
+    "H": 169.0,
+    "L": 165.10000610351562,
+    "C": 168.39999389648438,
+    "prev_close": 167.5,
+    "chg_pct": 0.5373097889459055
   },
   "phase": "downtrend_active",
-  "adx": 23.39,
-  "plus_di": 22.9,
-  "minus_di": 17.46,
-  "regime": "dead",
+  "adx": 27.15,
+  "plus_di": 16.81,
+  "minus_di": 25.53,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 181.3 (2026-10-23), trough 167.2 (2026-10-05), box top 181.3 (2026-10-23)",
+  "phase_evidence": "Peak 181.3 (2026-10-23), trough 159.0 (2026-11-06), box top 169.0 (2026-11-13)",
   "peak": {
     "date": "2026-10-23",
     "price": 181.3
   },
   "trough": {
-    "date": "2026-10-05",
-    "price": 167.2
+    "date": "2026-11-06",
+    "price": 159.0
   },
   "box": {
-    "top": 181.3,
-    "top_date": "2026-10-23",
-    "bottom": 167.2,
-    "period": "2026-10-05 to 2026-10-30"
+    "top": 169.0,
+    "top_date": "2026-11-13",
+    "bottom": 159.0,
+    "period": "2026-11-06 to 2026-11-13"
   },
-  "drop_from_peak_pct": 4.4,
-  "recovery_from_crash_pct": 3.6,
+  "drop_from_peak_pct": 7.1,
+  "recovery_from_crash_pct": 5.9,
   "supports": [
     {
-      "level": 168.0,
-      "label": "S1 bottom",
+      "level": 164.0,
+      "label": "S1 KEY",
       "touches": 11,
-      "evidence": "structural bottom, near crash low 167.2"
+      "evidence": "tested 11x in base period; 2.6% below current"
+    },
+    {
+      "level": 160.0,
+      "label": "S2 bottom",
+      "touches": 9,
+      "evidence": "structural bottom, near crash low 159.0"
     }
   ],
   "resistances": [
     {
-      "level": 174.1,
+      "level": 169.0,
       "label": "R1 today high",
-      "evidence": "today's high 174.10000610351562"
-    },
-    {
-      "level": 175.0,
-      "label": "R2",
-      "evidence": "mid-box supply, round number 175"
-    },
-    {
-      "level": 181.3,
-      "label": "R3 Oct high",
-      "evidence": "box top 181.3, base period high"
+      "evidence": "today's high 169.0"
     }
   ],
   "position": {
-    "current": 173.3,
-    "in_box_pct": 39.8,
-    "nearest_support": "S1 bottom (168.0)",
-    "nearest_resistance": "R1 today high (174.1)"
+    "current": 168.4,
+    "in_box_pct": 93.3,
+    "nearest_support": "S1 KEY (164.0)",
+    "nearest_resistance": "R1 today high (169.0)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 172.7,
-    "H": 174.1,
-    "L": 172.1,
-    "C": 173.3,
-    "body_pct": 30.0,
-    "upper_wick_pct": 40.0,
-    "lower_wick_pct": 30.0
+    "O": 166.6,
+    "H": 169.0,
+    "L": 165.1,
+    "C": 168.4,
+    "body_pct": 46.2,
+    "upper_wick_pct": 15.4,
+    "lower_wick_pct": 38.5
   },
   "bias": {
     "short": {
@@ -90,30 +86,26 @@
       "reason": "making new lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 168.0 (KEY support)",
-      "then": "still range; watch 174.1 for next test"
+      "if": "hold 164.0 (KEY support)",
+      "then": "still range; watch 169.0 for next test"
     },
     {
-      "if": "break 168.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 164.0 on close",
+      "then": "target 160.0 → lower (short-term bearish)"
     },
     {
-      "if": "break 168.0 (crash low)",
+      "if": "break 160.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 174.1 on close",
-      "then": "short-term bullish; next test 175.0"
-    },
-    {
-      "if": "break 181.3 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 169.0 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -145,14 +137,14 @@
     "rr_ratio": 0.0,
     "phase_match": false,
     "r1": 181.3,
-    "s1": 167.2,
-    "s2": 149.7,
+    "s1": 159.0,
+    "s2": 158.8,
     "r2": 180.1,
-    "r3": 161.2,
+    "r3": 162.7,
     "s3": 142.6,
-    "s4": 150.1,
-    "current_position_pct": 43.3,
-    "notes": "WAIT_RANGE: in box (167-181), pos 43%, no clear setup"
+    "s4": 148.1,
+    "current_position_pct": 42.2,
+    "notes": "WAIT_RANGE: in box (159-181), pos 42%, no clear setup"
   },
   "patterns": [
     {
@@ -161,7 +153,7 @@
       "date": "2026-10-07",
       "low": 169.3000030517578,
       "high": 173.10000610351562,
-      "i": 183
+      "i": 174
     },
     {
       "name": "利淡吞噬",
@@ -169,7 +161,7 @@
       "date": "2026-09-28",
       "low": 174.39999389648438,
       "high": 176.8000030517578,
-      "i": 176
+      "i": 167
     },
     {
       "name": "烏雲蓋頂",
@@ -177,7 +169,7 @@
       "date": "2026-09-18",
       "low": 176.1999969482422,
       "high": 180.10000610351562,
-      "i": 173
+      "i": 164
     },
     {
       "name": "利淡反擊線",
@@ -185,31 +177,23 @@
       "date": "2026-07-21",
       "low": 151.5,
       "high": 154.1999969482422,
-      "i": 131
-    },
-    {
-      "name": "利好吞噬",
-      "bias": "bullish",
-      "date": "2026-06-26",
-      "low": 142.60000610351562,
-      "high": 144.39999389648438,
-      "i": 115
+      "i": 122
     }
   ],
-  "asof": "2026-10-30",
-  "close": 173.3000030517578,
-  "chg_pct": 1.0495644616663524,
+  "asof": "2026-11-13",
+  "close": 168.39999389648438,
+  "chg_pct": 0.5373097889459055,
   "kline": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 172.7,
-    "H": 174.1,
-    "L": 172.1,
-    "C": 173.3,
-    "body_pct": 30.0,
-    "upper_wick_pct": 40.0,
-    "lower_wick_pct": 30.0
+    "O": 166.6,
+    "H": 169.0,
+    "L": 165.1,
+    "C": 168.4,
+    "body_pct": 46.2,
+    "upper_wick_pct": 15.4,
+    "lower_wick_pct": 38.5
   }
 }

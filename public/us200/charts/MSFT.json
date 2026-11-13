@@ -3,89 +3,77 @@
   "ticker_user": "MSFT",
   "name": "Microsoft Corporation",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 525.27,
-    "H": 526.0,
-    "L": 514.35,
-    "C": 521.91,
-    "prev_close": 530.14,
-    "chg_pct": -1.55
+    "date": "2026-11-13",
+    "O": 519.91,
+    "H": 526.42,
+    "L": 513.82,
+    "C": 523.88,
+    "prev_close": 523.0,
+    "chg_pct": 0.17
   },
-  "phase": "base_building",
-  "adx": 22.58,
-  "plus_di": 16.86,
-  "minus_di": 21.76,
-  "regime": "dead",
+  "phase": "downtrend_active",
+  "adx": 17.03,
+  "plus_di": 19.72,
+  "minus_di": 26.65,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 551.15 (2026-10-13), trough 491.22 (2026-09-24), box top 551.15 (2026-10-13)",
+  "phase_evidence": "Peak 559.15 (2026-11-04), trough 504.96 (2026-11-02), box top 559.15 (2026-11-04)",
   "peak": {
-    "date": "2026-10-13",
-    "price": 551.15
+    "date": "2026-11-04",
+    "price": 559.15
   },
   "trough": {
-    "date": "2026-09-24",
-    "price": 491.22
+    "date": "2026-11-02",
+    "price": 504.96
   },
   "box": {
-    "top": 551.15,
-    "top_date": "2026-10-13",
-    "bottom": 491.22,
-    "period": "2026-09-24 to 2026-10-30"
+    "top": 559.15,
+    "top_date": "2026-11-04",
+    "bottom": 504.96,
+    "period": "2026-11-02 to 2026-11-13"
   },
-  "drop_from_peak_pct": 5.3,
-  "recovery_from_crash_pct": 6.2,
+  "drop_from_peak_pct": 6.3,
+  "recovery_from_crash_pct": 3.7,
   "supports": [
     {
-      "level": 504.0,
-      "label": "S1 KEY",
-      "touches": 4,
-      "evidence": "tested 4x in base period; 3.4% below current"
-    },
-    {
-      "level": 496.0,
-      "label": "S2",
-      "touches": 3,
-      "evidence": "mid-base support, tested 3x"
-    },
-    {
-      "level": 492.0,
-      "label": "S3 bottom",
-      "touches": 4,
-      "evidence": "structural bottom, near crash low 491.22"
+      "level": 508.0,
+      "label": "S1 bottom",
+      "touches": 0,
+      "evidence": "structural bottom, near crash low 504.96"
     }
   ],
   "resistances": [
     {
-      "level": 526.0,
+      "level": 526.42,
       "label": "R1 today high",
-      "evidence": "today's high 526.0"
+      "evidence": "today's high 526.4199829101562"
     },
     {
-      "level": 551.15,
-      "label": "R3 Oct high",
-      "evidence": "box top 551.15, base period high"
+      "level": 559.15,
+      "label": "R3 Nov high",
+      "evidence": "box top 559.15, base period high"
     }
   ],
   "position": {
-    "current": 521.91,
-    "in_box_pct": 50.6,
-    "nearest_support": "S1 KEY (504.0)",
-    "nearest_resistance": "R1 today high (526.0)"
+    "current": 523.88,
+    "in_box_pct": 31.0,
+    "nearest_support": "S1 bottom (508.0)",
+    "nearest_resistance": "R1 today high (526.42)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 525.27,
-    "H": 526.0,
-    "L": 514.35,
-    "C": 521.91,
-    "body_pct": 28.8,
-    "upper_wick_pct": 6.3,
-    "lower_wick_pct": 64.9
+    "O": 519.91,
+    "H": 526.42,
+    "L": 513.82,
+    "C": 523.88,
+    "body_pct": 31.5,
+    "upper_wick_pct": 20.2,
+    "lower_wick_pct": 48.3
   },
   "bias": {
     "short": {
@@ -93,8 +81,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -103,23 +91,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 504.0 (KEY support)",
-      "then": "still range; watch 526.0 for next test"
+      "if": "hold 508.0 (KEY support)",
+      "then": "still range; watch 526.42 for next test"
     },
     {
-      "if": "break 504.0 on close",
-      "then": "target 496.0 → 492.0 (short-term bearish)"
+      "if": "break 508.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 492.0 (crash low)",
+      "if": "break 508.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 526.0 on close",
-      "then": "short-term bullish; next test 551.15"
+      "if": "reclaim 526.42 on close",
+      "then": "short-term bullish; next test 559.15"
     },
     {
-      "if": "break 551.15 (box top)",
+      "if": "break 559.15 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -143,7 +131,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -151,15 +139,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 551.15,
-    "s1": 514.35,
-    "s2": 477.15,
-    "r2": 522.85,
-    "r3": 501.56,
+    "r1": 559.15,
+    "s1": 504.96,
+    "s2": 478.53,
+    "r2": 551.15,
+    "r3": 513.73,
     "s3": 349.2,
     "s4": 356.28,
-    "current_position_pct": 20.5,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（BUY plan，support 514.35）：① 跌到 514.35、收市守住喺 514.35 上面 → 照 BUY 條 plan 做（入場 514.35，止蝕 497.00，目標 532.75）。② 收市跌穿 514.35 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 514.35 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 34.9,
+    "notes": "WAIT_RANGE: in box (505-559), pos 35%, no clear setup"
   },
   "patterns": [
     {
@@ -168,7 +156,7 @@
       "date": "2026-10-28",
       "low": 526.1400146484375,
       "high": 535.0,
-      "i": 197
+      "i": 187
     },
     {
       "name": "烏雲蓋頂",
@@ -176,7 +164,7 @@
       "date": "2026-10-20",
       "low": 525.8400268554688,
       "high": 534.2100219726562,
-      "i": 191
+      "i": 181
     },
     {
       "name": "烏雲蓋頂",
@@ -184,7 +172,7 @@
       "date": "2026-09-15",
       "low": 495.5400085449219,
       "high": 505.8999938964844,
-      "i": 166
+      "i": 156
     },
     {
       "name": "利淡吞噬",
@@ -192,7 +180,7 @@
       "date": "2026-08-14",
       "low": 493.9200134277344,
       "high": 500.010009765625,
-      "i": 145
+      "i": 135
     },
     {
       "name": "上升三法",
@@ -200,7 +188,7 @@
       "date": "2026-07-27",
       "low": 387.989990234375,
       "high": 394.20001220703125,
-      "i": 131
+      "i": 121
     }
   ]
 }

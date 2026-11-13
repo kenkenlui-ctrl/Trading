@@ -3,91 +3,96 @@
   "ticker_user": "03968.HK",
   "name": "CM BANK",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-22 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 53.6,
-    "H": 54.8,
-    "L": 52.75,
-    "C": 54.55,
-    "prev_close": 52.75,
-    "chg_pct": 3.41
+    "date": "2026-11-13",
+    "O": 53.3,
+    "H": 54.15,
+    "L": 53.3,
+    "C": 53.95,
+    "prev_close": 54.0,
+    "chg_pct": -0.09
   },
-  "phase": "uptrend",
-  "adx": 20.19,
-  "plus_di": 24.77,
-  "minus_di": 13.2,
+  "phase": "range",
+  "adx": 21.99,
+  "plus_di": 20.75,
+  "minus_di": 15.66,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 54.8 (2026-10-30), trough 51.1 (2026-10-23), box top 54.8 (2026-10-30)",
+  "phase_evidence": "Peak 55.6 (2026-11-02), trough 51.55 (2026-11-03), box top 54.9 (2026-11-10)",
   "peak": {
-    "date": "2026-10-30",
-    "price": 54.8
+    "date": "2026-11-02",
+    "price": 55.6
   },
   "trough": {
-    "date": "2026-10-23",
-    "price": 51.1
+    "date": "2026-11-03",
+    "price": 51.55
   },
   "box": {
-    "top": 54.8,
-    "top_date": "2026-10-30",
-    "bottom": 51.1,
-    "period": "2026-10-23 to 2026-10-30"
+    "top": 54.9,
+    "top_date": "2026-11-10",
+    "bottom": 51.55,
+    "period": "2026-11-03 to 2026-11-13"
   },
-  "drop_from_peak_pct": 0.5,
-  "recovery_from_crash_pct": 6.8,
+  "drop_from_peak_pct": 3.0,
+  "recovery_from_crash_pct": 4.7,
   "supports": [
     {
       "level": 52.0,
       "label": "S1 bottom",
-      "touches": 72,
-      "evidence": "structural bottom, near crash low 51.1"
+      "touches": 62,
+      "evidence": "structural bottom, near crash low 51.55"
     }
   ],
   "resistances": [
     {
-      "level": 54.8,
+      "level": 54.15,
       "label": "R1 today high",
-      "evidence": "today's high 54.79999923706055"
+      "evidence": "today's high 54.150001525878906"
+    },
+    {
+      "level": 54.9,
+      "label": "R3 Nov high",
+      "evidence": "box top 54.9, base period high"
     }
   ],
   "position": {
-    "current": 54.55,
-    "in_box_pct": 91.1,
+    "current": 53.95,
+    "in_box_pct": 67.2,
     "nearest_support": "S1 bottom (52.0)",
-    "nearest_resistance": "R1 today high (54.8)"
+    "nearest_resistance": "R1 today high (54.15)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 53.6,
-    "H": 54.8,
-    "L": 52.75,
-    "C": 54.55,
-    "body_pct": 46.3,
-    "upper_wick_pct": 12.2,
-    "lower_wick_pct": 41.5
+    "O": 53.3,
+    "H": 54.15,
+    "L": 53.3,
+    "C": 53.95,
+    "body_pct": 76.5,
+    "upper_wick_pct": 23.5,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
-      "bias": "bullish_continuation",
-      "reason": "higher highs / higher lows"
+      "bias": "neutral",
+      "reason": "no clear direction"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 52.0 (KEY support)",
-      "then": "still range; watch 54.8 for next test"
+      "then": "still range; watch 54.15 for next test"
     },
     {
       "if": "break 52.0 on close",
@@ -98,8 +103,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 54.8 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 54.15 on close",
+      "then": "short-term bullish; next test 54.9"
+    },
+    {
+      "if": "break 54.9 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -129,16 +138,16 @@
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 54.8,
-    "s1": 50.1,
-    "s2": 47.4,
-    "r2": 53.55,
+    "phase_match": true,
+    "r1": 55.6,
+    "s1": 51.1,
+    "s2": 48.1,
+    "r2": 54.25,
     "r3": 51.45,
     "s3": 43.34,
     "s4": 45.92,
-    "current_position_pct": 94.7,
-    "notes": "WAIT_RANGE: in box (50-55), pos 95%, no clear setup"
+    "current_position_pct": 63.3,
+    "notes": "WAIT_RANGE: in box (51-56), pos 63%, no clear setup"
   },
   "patterns": [
     {
@@ -147,7 +156,7 @@
       "date": "2026-10-20",
       "low": 52.900001525878906,
       "high": 54.20000076293945,
-      "i": 191
+      "i": 181
     },
     {
       "name": "烏雲蓋頂",
@@ -155,7 +164,7 @@
       "date": "2026-09-22",
       "low": 51.20000076293945,
       "high": 52.29999923706055,
-      "i": 173
+      "i": 163
     },
     {
       "name": "平頭頂",
@@ -163,7 +172,7 @@
       "date": "2026-09-16",
       "low": 50.95000076293945,
       "high": 51.650001525878906,
-      "i": 169
+      "i": 159
     },
     {
       "name": "三隻烏鴉",
@@ -171,7 +180,7 @@
       "date": "2026-08-28",
       "low": 48.70000076293945,
       "high": 49.79999923706055,
-      "i": 156
+      "i": 146
     },
     {
       "name": "利好身懷六甲",
@@ -179,7 +188,7 @@
       "date": "2026-08-18",
       "low": 47.400001525878906,
       "high": 48.08000183105469,
-      "i": 148
+      "i": 138
     }
   ]
 }

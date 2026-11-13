@@ -3,20 +3,20 @@
   "ticker_user": "03690.HK",
   "name": "MEITUAN-W",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-22 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 69.0,
-    "H": 73.3,
-    "L": 68.85,
-    "C": 71.6,
-    "prev_close": 69.2,
-    "chg_pct": 3.47
+    "date": "2026-11-13",
+    "O": 71.2,
+    "H": 72.65,
+    "L": 69.65,
+    "C": 69.8,
+    "prev_close": 72.1,
+    "chg_pct": -3.19
   },
   "phase": "base_building",
-  "adx": 16.15,
-  "plus_di": 24.15,
-  "minus_di": 23.62,
+  "adx": 15.81,
+  "plus_di": 23.0,
+  "minus_di": 26.23,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 91.55 (2026-03-25), trough 63.65 (2026-06-26), box top 96.45 (2026-08-11)",
@@ -32,22 +32,16 @@
     "top": 96.45,
     "top_date": "2026-08-11",
     "bottom": 63.65,
-    "period": "2026-06-26 to 2026-10-30"
+    "period": "2026-06-26 to 2026-11-13"
   },
-  "drop_from_peak_pct": 21.8,
-  "recovery_from_crash_pct": 12.5,
+  "drop_from_peak_pct": 23.8,
+  "recovery_from_crash_pct": 9.7,
   "supports": [
     {
-      "level": 72.0,
-      "label": "S1 KEY",
-      "touches": 8,
-      "evidence": "tested 8x in base period; -0.6% below current"
-    },
-    {
       "level": 68.0,
-      "label": "S2",
-      "touches": 21,
-      "evidence": "mid-base support, tested 21x"
+      "label": "S1 KEY",
+      "touches": 0,
+      "evidence": "structural level near current; 2.6% below current"
     },
     {
       "level": 63.65,
@@ -58,9 +52,9 @@
   ],
   "resistances": [
     {
-      "level": 73.3,
+      "level": 72.65,
       "label": "R1 today high",
-      "evidence": "today's high 73.30000305175781"
+      "evidence": "today's high 72.6500015258789"
     },
     {
       "level": 96.45,
@@ -69,28 +63,28 @@
     }
   ],
   "position": {
-    "current": 71.6,
-    "in_box_pct": 24.2,
-    "nearest_support": "S1 KEY (72.0)",
-    "nearest_resistance": "R1 today high (73.3)"
+    "current": 69.8,
+    "in_box_pct": 18.8,
+    "nearest_support": "S1 KEY (68.0)",
+    "nearest_resistance": "R1 today high (72.65)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
-    "touched_S1": true,
-    "close_position": "upper_half",
-    "O": 69.0,
-    "H": 73.3,
-    "L": 68.85,
-    "C": 71.6,
-    "body_pct": 58.4,
-    "upper_wick_pct": 38.2,
-    "lower_wick_pct": 3.4
+    "touched_S1": false,
+    "close_position": "lower_half",
+    "O": 71.2,
+    "H": 72.65,
+    "L": 69.65,
+    "C": 69.8,
+    "body_pct": 46.7,
+    "upper_wick_pct": 48.3,
+    "lower_wick_pct": 5.0
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (24% of box)"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (19% of box)"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -103,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 72.0 (KEY support)",
-      "then": "still range; watch 73.3 for next test"
+      "if": "hold 68.0 (KEY support)",
+      "then": "still range; watch 72.65 for next test"
     },
     {
-      "if": "break 72.0 on close",
-      "then": "target 68.0 → 63.65 (short-term bearish)"
+      "if": "break 68.0 on close",
+      "then": "target 63.65 → lower (short-term bearish)"
     },
     {
       "if": "break 63.65 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 73.3 on close",
+      "if": "reclaim 72.65 on close",
       "then": "short-term bullish; next test 96.45"
     },
     {
@@ -142,24 +136,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
+    "verdict": "BUY",
+    "strategy": "BUY_S1",
+    "trigger_price": 68.85,
+    "target_price": 75.92,
+    "stop_price": 63.65,
+    "risk_pct": 7.55,
+    "reward_pct": 10.28,
+    "rr_ratio": 1.36,
     "phase_match": true,
-    "r1": 77.9,
-    "s1": 68.8,
-    "s2": 69.9,
-    "r2": 96.45,
-    "r3": 94.7,
+    "r1": 83.0,
+    "s1": 68.85,
+    "s2": 68.8,
+    "r2": 89.4,
+    "r3": 96.45,
     "s3": 63.65,
     "s4": 73.6,
-    "current_position_pct": 30.8,
-    "notes": "WAIT_RANGE: in box (69-78), pos 31%, no clear setup"
+    "current_position_pct": 6.7,
+    "notes": "BUY_S1: in box (69-83), entry at S1 69, target mid 76, stop 64 ｜ 52.2 條規則（BUY plan，support 68.85）：① 跌到 68.85、收市守住喺 68.85 上面 → 照 BUY 條 plan 做（入場 68.85，止蝕 63.65，目標 75.92）。② 收市跌穿 68.85 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 68.85 上面』。"
   },
   "patterns": [
     {
@@ -168,7 +162,7 @@
       "date": "2026-10-09",
       "low": 69.5999984741211,
       "high": 71.6500015258789,
-      "i": 185
+      "i": 175
     },
     {
       "name": "刺穿線",
@@ -176,7 +170,7 @@
       "date": "2026-09-30",
       "low": 69.9000015258789,
       "high": 72.25,
-      "i": 179
+      "i": 169
     },
     {
       "name": "利好吞噬",
@@ -184,7 +178,7 @@
       "date": "2026-09-08",
       "low": 79.3499984741211,
       "high": 82.4000015258789,
-      "i": 163
+      "i": 153
     },
     {
       "name": "吊頸",
@@ -192,7 +186,7 @@
       "date": "2026-08-14",
       "low": 85.69999694824219,
       "high": 90.1500015258789,
-      "i": 146
+      "i": 136
     },
     {
       "name": "烏雲蓋頂",
@@ -200,7 +194,7 @@
       "date": "2026-07-30",
       "low": 91.05000305175781,
       "high": 94.5,
-      "i": 135
+      "i": 125
     }
   ]
 }

@@ -3,21 +3,21 @@
   "ticker_user": "DVN",
   "name": "Devon Energy Corporation",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 51.8,
-    "H": 52.28,
-    "L": 51.46,
-    "C": 52.15,
-    "prev_close": 51.17,
-    "chg_pct": 1.92
+    "date": "2026-11-13",
+    "O": 46.76,
+    "H": 46.76,
+    "L": 45.99,
+    "C": 46.58,
+    "prev_close": 46.23,
+    "chg_pct": 0.76
   },
-  "phase": "uptrend",
-  "adx": 18.47,
-  "plus_di": 26.31,
-  "minus_di": 17.78,
-  "regime": "range",
+  "phase": "base_building",
+  "adx": 25.72,
+  "plus_di": 26.21,
+  "minus_di": 34.62,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 52.71 (2026-03-30), trough 40.0 (2026-07-02), box top 52.28 (2026-10-30)",
   "peak": {
@@ -32,55 +32,54 @@
     "top": 52.28,
     "top_date": "2026-10-30",
     "bottom": 40.0,
-    "period": "2026-07-02 to 2026-10-30"
+    "period": "2026-07-02 to 2026-11-13"
   },
-  "drop_from_peak_pct": 1.1,
-  "recovery_from_crash_pct": 30.4,
+  "drop_from_peak_pct": 11.6,
+  "recovery_from_crash_pct": 16.5,
   "supports": [
     {
-      "level": 48.0,
-      "label": "S1 KEY",
-      "touches": 64,
-      "evidence": "tested 64x in base period; 8.0% below current"
-    },
-    {
       "level": 44.0,
-      "label": "S2",
-      "touches": 34,
-      "evidence": "mid-base support, tested 34x"
+      "label": "S1 KEY",
+      "touches": 35,
+      "evidence": "tested 35x in base period; 5.5% below current"
     },
     {
       "level": 40.0,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-07-02, structural bottom"
+      "label": "S2 bottom",
+      "touches": 11,
+      "evidence": "structural bottom, near crash low 40.0"
     }
   ],
   "resistances": [
     {
-      "level": 52.28,
+      "level": 46.76,
       "label": "R1 today high",
-      "evidence": "today's high 52.279998779296875"
+      "evidence": "today's high 46.7599983215332"
+    },
+    {
+      "level": 52.28,
+      "label": "R3 Oct high",
+      "evidence": "box top 52.28, base period high"
     }
   ],
   "position": {
-    "current": 52.15,
-    "in_box_pct": 98.9,
-    "nearest_support": "S1 KEY (48.0)",
-    "nearest_resistance": "R1 today high (52.28)"
+    "current": 46.58,
+    "in_box_pct": 53.6,
+    "nearest_support": "S1 KEY (44.0)",
+    "nearest_resistance": "R1 today high (46.76)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 51.8,
-    "H": 52.28,
-    "L": 51.46,
-    "C": 52.15,
-    "body_pct": 42.7,
-    "upper_wick_pct": 15.9,
-    "lower_wick_pct": 41.5
+    "O": 46.76,
+    "H": 46.76,
+    "L": 45.99,
+    "C": 46.58,
+    "body_pct": 23.4,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 76.6
   },
   "bias": {
     "short": {
@@ -88,30 +87,34 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bullish_continuation",
-      "reason": "higher highs / higher lows"
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 48.0 (KEY support)",
-      "then": "still range; watch 52.28 for next test"
+      "if": "hold 44.0 (KEY support)",
+      "then": "still range; watch 46.76 for next test"
     },
     {
-      "if": "break 48.0 on close",
-      "then": "target 44.0 → 40.0 (short-term bearish)"
+      "if": "break 44.0 on close",
+      "then": "target 40.0 → lower (short-term bearish)"
     },
     {
       "if": "break 40.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 52.28 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 46.76 on close",
+      "then": "short-term bullish; next test 52.28"
+    },
+    {
+      "if": "break 52.28 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -141,25 +144,41 @@
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": false,
+    "phase_match": true,
     "r1": 52.28,
-    "s1": 46.81,
-    "s2": 42.42,
+    "s1": 40.6,
+    "s2": 45.56,
     "r2": 51.7,
-    "r3": 50.37,
+    "r3": 49.72,
     "s3": 40.0,
-    "s4": 35.97,
-    "current_position_pct": 97.6,
-    "notes": "WAIT_RANGE: in box (47-52), pos 98%, no clear setup"
+    "s4": 39.13,
+    "current_position_pct": 51.2,
+    "notes": "WAIT_RANGE: in box (41-52), pos 51%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "早晨之星",
+      "bias": "bullish",
+      "date": "2026-11-10",
+      "low": 41.4900016784668,
+      "high": 43.720001220703125,
+      "i": 196
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-11-02",
+      "low": 48.5,
+      "high": 51.459999084472656,
+      "i": 190
+    },
     {
       "name": "利淡反擊線",
       "bias": "bearish",
       "date": "2026-10-08",
       "low": 48.22999954223633,
       "high": 49.439998626708984,
-      "i": 183
+      "i": 173
     },
     {
       "name": "刺穿線",
@@ -167,15 +186,7 @@
       "date": "2026-10-01",
       "low": 45.779998779296875,
       "high": 47.189998626708984,
-      "i": 178
-    },
-    {
-      "name": "烏雲蓋頂",
-      "bias": "bearish",
-      "date": "2026-09-16",
-      "low": 48.2599983215332,
-      "high": 50.470001220703125,
-      "i": 167
+      "i": 168
     },
     {
       "name": "三隻烏鴉",
@@ -183,15 +194,7 @@
       "date": "2026-09-10",
       "low": 48.5,
       "high": 50.04999923706055,
-      "i": 163
-    },
-    {
-      "name": "平頭頂",
-      "bias": "bearish",
-      "date": "2026-09-03",
-      "low": 48.689998626708984,
-      "high": 49.459999084472656,
-      "i": 159
+      "i": 153
     }
   ]
 }

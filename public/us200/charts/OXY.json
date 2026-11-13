@@ -3,21 +3,21 @@
   "ticker_user": "OXY",
   "name": "Occidental Petroleum Corporatio",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 63.9,
-    "H": 64.07,
-    "L": 63.34,
-    "C": 64.0,
-    "prev_close": 63.01,
-    "chg_pct": 1.57
+    "date": "2026-11-13",
+    "O": 59.0,
+    "H": 59.03,
+    "L": 58.15,
+    "C": 58.75,
+    "prev_close": 58.4,
+    "chg_pct": 0.6
   },
   "phase": "base_building",
-  "adx": 21.3,
-  "plus_di": 25.44,
-  "minus_di": 17.27,
-  "regime": "dead",
+  "adx": 28.43,
+  "plus_di": 17.21,
+  "minus_di": 30.66,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 67.45 (2026-03-31), trough 47.77 (2026-07-01), box top 64.96 (2026-10-23)",
   "peak": {
@@ -32,22 +32,16 @@
     "top": 64.96,
     "top_date": "2026-10-23",
     "bottom": 47.77,
-    "period": "2026-07-01 to 2026-10-30"
+    "period": "2026-07-01 to 2026-11-13"
   },
-  "drop_from_peak_pct": 5.1,
-  "recovery_from_crash_pct": 34.0,
+  "drop_from_peak_pct": 12.9,
+  "recovery_from_crash_pct": 23.0,
   "supports": [
     {
-      "level": 60.0,
+      "level": 56.0,
       "label": "S1 KEY",
       "touches": 42,
-      "evidence": "tested 42x in base period; 6.2% below current"
-    },
-    {
-      "level": 56.0,
-      "label": "S2",
-      "touches": 43,
-      "evidence": "mid-base support, tested 43x"
+      "evidence": "tested 42x in base period; 4.7% below current"
     },
     {
       "level": 47.77,
@@ -58,9 +52,9 @@
   ],
   "resistances": [
     {
-      "level": 64.07,
+      "level": 59.03,
       "label": "R1 today high",
-      "evidence": "today's high 64.06999969482422"
+      "evidence": "today's high 59.029998779296875"
     },
     {
       "level": 64.96,
@@ -69,23 +63,23 @@
     }
   ],
   "position": {
-    "current": 64.0,
-    "in_box_pct": 94.4,
-    "nearest_support": "S1 KEY (60.0)",
-    "nearest_resistance": "R1 today high (64.07)"
+    "current": 58.75,
+    "in_box_pct": 63.9,
+    "nearest_support": "S1 KEY (56.0)",
+    "nearest_resistance": "R1 today high (59.03)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 63.9,
-    "H": 64.07,
-    "L": 63.34,
-    "C": 64.0,
-    "body_pct": 13.7,
-    "upper_wick_pct": 9.6,
-    "lower_wick_pct": 76.7
+    "O": 59.0,
+    "H": 59.03,
+    "L": 58.15,
+    "C": 58.75,
+    "body_pct": 28.4,
+    "upper_wick_pct": 3.4,
+    "lower_wick_pct": 68.2
   },
   "bias": {
     "short": {
@@ -97,25 +91,25 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 60.0 (KEY support)",
-      "then": "still range; watch 64.07 for next test"
+      "if": "hold 56.0 (KEY support)",
+      "then": "still range; watch 59.03 for next test"
     },
     {
-      "if": "break 60.0 on close",
-      "then": "target 56.0 → 47.77 (short-term bearish)"
+      "if": "break 56.0 on close",
+      "then": "target 47.77 → lower (short-term bearish)"
     },
     {
       "if": "break 47.77 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 64.07 on close",
+      "if": "reclaim 59.03 on close",
       "then": "short-term bullish; next test 64.96"
     },
     {
@@ -142,33 +136,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 64.96,
-    "target_price": 61.14,
-    "stop_price": 67.24,
-    "risk_pct": 3.51,
-    "reward_pct": 5.89,
-    "rr_ratio": 1.68,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
     "phase_match": true,
     "r1": 64.96,
-    "s1": 57.31,
+    "s1": 53.86,
     "s2": 54.76,
     "r2": 63.77,
-    "r3": 61.24,
+    "r3": 62.15,
     "s3": 47.77,
-    "s4": 42.05,
-    "current_position_pct": 87.5,
-    "notes": "SELL_R1: in box (57-65), entry at R1 65, target mid 61, stop 67 ｜ 52.2 條規則（SELL plan，resistance 64.96）：① 跌到 64.96、收市守住喺 64.96 上面 → 照 BUY 條 plan 做（入場 64.96，止蝕 67.24，目標 61.14）。② 收市跌穿 64.96 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 64.96 上面』。"
+    "s4": 43.31,
+    "current_position_pct": 44.1,
+    "notes": "WAIT_RANGE: in box (54-65), pos 44%, no clear setup"
   },
   "patterns": [
     {
-      "name": "三隻烏鴉",
+      "name": "利好反擊線",
+      "bias": "bullish",
+      "date": "2026-11-09",
+      "low": 54.970001220703125,
+      "high": 56.20000076293945,
+      "i": 195
+    },
+    {
+      "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-10-30",
-      "low": 63.34000015258789,
-      "high": 64.06999969482422,
-      "i": 199
+      "date": "2026-11-02",
+      "low": 60.540000915527344,
+      "high": 62.970001220703125,
+      "i": 190
     },
     {
       "name": "烏雲蓋頂",
@@ -176,7 +178,15 @@
       "date": "2026-09-16",
       "low": 59.310001373291016,
       "high": 62.459999084472656,
-      "i": 167
+      "i": 157
+    },
+    {
+      "name": "三隻烏鴉",
+      "bias": "bearish",
+      "date": "2026-09-10",
+      "low": 60.189998626708984,
+      "high": 62.2400016784668,
+      "i": 153
     },
     {
       "name": "利淡反擊線",
@@ -184,7 +194,7 @@
       "date": "2026-08-31",
       "low": 59.369998931884766,
       "high": 60.95000076293945,
-      "i": 156
+      "i": 146
     }
   ]
 }

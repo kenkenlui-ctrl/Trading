@@ -512,7 +512,8 @@ PROD_SCRIPTS = ["build_static.py", "build_home.py", "build_v2_signals.py",
 A2_WIRED = {"build_v2_signals.py", "refresh.sh", "self_test.py", "deploy_gate.py"}
 KIT_NEEDLES = ("integrity", "sprint2", "deploy_gate_flag",
                "staleness_banner_flag", "crossval_flag", "restatement_flag",
-               "gap_receipt_flag", "fingerprint_flag", "__receipt__")
+               "gap_receipt_flag", "fingerprint_flag", "__receipt__",
+               "signal_context_labels_flag")
 
 
 def _module_level_kit_imports(path: Path) -> list[str]:
@@ -550,7 +551,12 @@ def test_a2_flag_posture_and_production_wiring():
     # approved as well. The guardrail is therefore no longer "exactly one
     # flag" — it is "exactly the flags Kenneth has approved, and no others",
     # which is the property that was actually protecting production.
-    APPROVED = sorted(["deploy_gate_flag", "staleness_banner_flag"])
+    # 2026-11-14: Kenneth approved the v2 context labels (C1) to go live, so
+    # signal_context_labels_flag is approved as well. The guardrail is still
+    # "exactly the flags Kenneth has approved, and no others" — the property
+    # that was actually protecting production.
+    APPROVED = sorted(["deploy_gate_flag", "staleness_banner_flag",
+                        "signal_context_labels_flag"])
     record("the only flags on are the ones Kenneth approved", on == APPROVED,
            json.dumps(cfg))
     record("enabled_flags() agrees with the file",

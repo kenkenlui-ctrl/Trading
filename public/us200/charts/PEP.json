@@ -3,23 +3,23 @@
   "ticker_user": "PEP",
   "name": "Pepsico, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 136.58,
-    "H": 138.59,
-    "L": 135.8,
-    "C": 137.34,
-    "prev_close": 133.79,
-    "chg_pct": 2.65
+    "date": "2026-11-13",
+    "O": 142.8,
+    "H": 145.78,
+    "L": 142.53,
+    "C": 145.44,
+    "prev_close": 142.26,
+    "chg_pct": 2.24
   },
   "phase": "downtrend_active",
-  "adx": 32.78,
-  "plus_di": 35.81,
-  "minus_di": 13.62,
+  "adx": 37.09,
+  "plus_di": 32.15,
+  "minus_di": 13.43,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 171.48 (2026-02-12), trough 123.47 (2026-10-07), box top 139.0 (2026-10-22)",
+  "phase_evidence": "Peak 171.48 (2026-02-12), trough 123.47 (2026-10-07), box top 145.78 (2026-11-13)",
   "peak": {
     "date": "2026-02-12",
     "price": 171.48
@@ -29,63 +29,64 @@
     "price": 123.47
   },
   "box": {
-    "top": 139.0,
-    "top_date": "2026-10-22",
+    "top": 145.78,
+    "top_date": "2026-11-13",
     "bottom": 123.47,
-    "period": "2026-10-07 to 2026-10-30"
+    "period": "2026-10-07 to 2026-11-13"
   },
-  "drop_from_peak_pct": 19.9,
-  "recovery_from_crash_pct": 11.2,
+  "drop_from_peak_pct": 15.2,
+  "recovery_from_crash_pct": 17.8,
   "supports": [
     {
-      "level": 132.0,
+      "level": 144.0,
       "label": "S1 KEY",
-      "touches": 12,
-      "evidence": "tested 12x in base period; 3.9% below current"
+      "touches": 6,
+      "evidence": "tested 6x in base period; 1.0% below current"
     },
     {
-      "level": 128.0,
+      "level": 140.0,
       "label": "S2",
+      "touches": 8,
+      "evidence": "mid-base support, tested 8x"
+    },
+    {
+      "level": 136.0,
+      "label": "S3",
       "touches": 14,
       "evidence": "mid-base support, tested 14x"
     },
     {
-      "level": 124.0,
-      "label": "S3 bottom",
-      "touches": 14,
-      "evidence": "structural bottom, near crash low 123.47"
+      "level": 123.47,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-10-07, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 138.59,
+      "level": 145.78,
       "label": "R1 today high",
-      "evidence": "today's high 138.58999633789062"
-    },
-    {
-      "level": 165.0,
-      "label": "R4",
-      "evidence": "psychological round number, pre-crash zone 165"
+      "evidence": "today's high 145.77999877929688"
     }
   ],
   "position": {
-    "current": 137.34,
-    "in_box_pct": 32.5,
-    "nearest_support": "S1 KEY (132.0)",
-    "nearest_resistance": "R1 today high (138.59)"
+    "current": 145.44,
+    "in_box_pct": 98.5,
+    "nearest_support": "S1 KEY (144.0)",
+    "nearest_resistance": "R1 today high (145.78)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 136.58,
-    "H": 138.59,
-    "L": 135.8,
-    "C": 137.34,
-    "body_pct": 27.2,
-    "upper_wick_pct": 44.8,
-    "lower_wick_pct": 28.0
+    "O": 142.8,
+    "H": 145.78,
+    "L": 142.53,
+    "C": 145.44,
+    "body_pct": 81.2,
+    "upper_wick_pct": 10.5,
+    "lower_wick_pct": 8.3
   },
   "bias": {
     "short": {
@@ -97,26 +98,26 @@
       "reason": "making new lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 132.0 (KEY support)",
-      "then": "still range; watch 138.59 for next test"
+      "if": "hold 144.0 (KEY support)",
+      "then": "still range; watch 145.78 for next test"
     },
     {
-      "if": "break 132.0 on close",
-      "then": "target 128.0 → 124.0 (short-term bearish)"
+      "if": "break 144.0 on close",
+      "then": "target 140.0 → 136.0 (short-term bearish)"
     },
     {
-      "if": "break 124.0 (crash low)",
+      "if": "break 123.47 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 138.59 on close",
-      "then": "short-term bullish; next test 165.0"
+      "if": "reclaim 145.78 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -147,24 +148,32 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 139.0,
-    "s1": 123.47,
-    "s2": 125.16,
+    "r1": 145.78,
+    "s1": 130.27,
+    "s2": 123.47,
     "r2": 145.9,
-    "r3": 153.24,
+    "r3": 149.04,
     "s3": 133.73,
-    "s4": 143.06,
-    "current_position_pct": 89.3,
-    "notes": "WAIT_RANGE: in box (123-139), pos 89%, no clear setup"
+    "s4": 145.5,
+    "current_position_pct": 97.8,
+    "notes": "WAIT_RANGE: in box (130-146), pos 98%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-11-05",
+      "low": 142.36000061035156,
+      "high": 145.5500030517578,
+      "i": 193
+    },
     {
       "name": "平頭底",
       "bias": "bullish",
       "date": "2026-10-14",
       "low": 127.19999694824219,
       "high": 129.36000061035156,
-      "i": 187
+      "i": 177
     },
     {
       "name": "利好身懷六甲",
@@ -172,7 +181,7 @@
       "date": "2026-10-08",
       "low": 124.05000305175781,
       "high": 129.5,
-      "i": 183
+      "i": 173
     },
     {
       "name": "利好吞噬",
@@ -180,7 +189,7 @@
       "date": "2026-08-11",
       "low": 136.89999389648438,
       "high": 138.50999450683594,
-      "i": 142
+      "i": 132
     },
     {
       "name": "利好反擊線",
@@ -188,15 +197,7 @@
       "date": "2026-07-16",
       "low": 136.5,
       "high": 139.6199951171875,
-      "i": 124
-    },
-    {
-      "name": "刺穿線",
-      "bias": "bullish",
-      "date": "2026-06-26",
-      "low": 140.1999969482422,
-      "high": 142.13999938964844,
-      "i": 111
+      "i": 114
     }
   ]
 }

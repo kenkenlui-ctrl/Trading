@@ -3,23 +3,23 @@
   "ticker_user": "NEE",
   "name": "NextEra Energy, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 83.23,
-    "H": 84.4,
-    "L": 82.92,
-    "C": 83.71,
-    "prev_close": 82.14,
-    "chg_pct": 1.91
+    "date": "2026-11-13",
+    "O": 84.98,
+    "H": 85.42,
+    "L": 84.37,
+    "C": 85.12,
+    "prev_close": 85.29,
+    "chg_pct": -0.2
   },
   "phase": "downtrend_active",
-  "adx": 27.8,
-  "plus_di": 29.62,
-  "minus_di": 14.58,
+  "adx": 33.0,
+  "plus_di": 32.34,
+  "minus_di": 20.31,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 98.75 (2026-05-01), trough 74.41 (2026-10-01), box top 84.4 (2026-10-30)",
+  "phase_evidence": "Peak 98.75 (2026-05-01), trough 74.41 (2026-10-01), box top 90.04 (2026-11-05)",
   "peak": {
     "date": "2026-05-01",
     "price": 98.75
@@ -29,52 +29,57 @@
     "price": 74.41
   },
   "box": {
-    "top": 84.4,
-    "top_date": "2026-10-30",
+    "top": 90.04,
+    "top_date": "2026-11-05",
     "bottom": 74.41,
-    "period": "2026-10-01 to 2026-10-30"
+    "period": "2026-10-01 to 2026-11-13"
   },
-  "drop_from_peak_pct": 15.2,
-  "recovery_from_crash_pct": 12.5,
+  "drop_from_peak_pct": 13.8,
+  "recovery_from_crash_pct": 14.4,
   "supports": [
     {
       "level": 80.0,
       "label": "S1 KEY",
-      "touches": 20,
-      "evidence": "tested 20x in base period; 4.4% below current"
+      "touches": 18,
+      "evidence": "tested 18x in base period; 6.0% below current"
     },
     {
       "level": 76.0,
       "label": "S2 bottom",
-      "touches": 30,
+      "touches": 22,
       "evidence": "structural bottom, near crash low 74.41"
     }
   ],
   "resistances": [
     {
-      "level": 84.4,
+      "level": 85.42,
       "label": "R1 today high",
-      "evidence": "today's high 84.4000015258789"
+      "evidence": "today's high 85.41999816894531"
+    },
+    {
+      "level": 90.04,
+      "label": "R3 Nov high",
+      "evidence": "box top 90.04, base period high"
     }
   ],
   "position": {
-    "current": 83.71,
-    "in_box_pct": 91.8,
+    "current": 85.12,
+    "in_box_pct": 65.0,
     "nearest_support": "S1 KEY (80.0)",
-    "nearest_resistance": "R1 today high (84.4)"
+    "nearest_resistance": "R1 today high (85.42)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 83.23,
-    "H": 84.4,
-    "L": 82.92,
-    "C": 83.71,
-    "body_pct": 32.4,
-    "upper_wick_pct": 46.6,
-    "lower_wick_pct": 20.9
+    "O": 84.98,
+    "H": 85.42,
+    "L": 84.37,
+    "C": 85.12,
+    "body_pct": 13.3,
+    "upper_wick_pct": 28.6,
+    "lower_wick_pct": 58.1
   },
   "bias": {
     "short": {
@@ -86,14 +91,14 @@
       "reason": "making new lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 80.0 (KEY support)",
-      "then": "still range; watch 84.4 for next test"
+      "then": "still range; watch 85.42 for next test"
     },
     {
       "if": "break 80.0 on close",
@@ -104,8 +109,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 84.4 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 85.42 on close",
+      "then": "short-term bullish; next test 90.04"
+    },
+    {
+      "if": "break 90.04 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -128,7 +137,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -136,24 +145,24 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 84.4,
-    "s1": 75.89,
+    "r1": 90.04,
+    "s1": 77.93,
     "s2": 74.41,
-    "r2": 87.52,
-    "r3": 95.72,
+    "r2": 85.27,
+    "r3": 90.99,
     "s3": 83.38,
-    "s4": 81.54,
-    "current_position_pct": 91.9,
-    "notes": "WAIT_RANGE: in box (76-84), pos 92%, no clear setup"
+    "s4": 86.16,
+    "current_position_pct": 59.4,
+    "notes": "WAIT_RANGE: in box (78-90), pos 59%, no clear setup"
   },
   "patterns": [
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-10-19",
-      "low": 77.94999694824219,
-      "high": 79.4800033569336,
-      "i": 190
+      "date": "2026-11-05",
+      "low": 87.62000274658203,
+      "high": 90.04000091552734,
+      "i": 193
     },
     {
       "name": "早晨之星",
@@ -161,7 +170,7 @@
       "date": "2026-10-12",
       "low": 77.33000183105469,
       "high": 78.54000091552734,
-      "i": 185
+      "i": 175
     },
     {
       "name": "刺穿線",
@@ -169,7 +178,7 @@
       "date": "2026-10-06",
       "low": 76.33999633789062,
       "high": 78.04000091552734,
-      "i": 181
+      "i": 171
     },
     {
       "name": "利好反擊線",
@@ -177,7 +186,7 @@
       "date": "2026-08-10",
       "low": 83.6500015258789,
       "high": 84.76000213623047,
-      "i": 141
+      "i": 131
     },
     {
       "name": "利淡反擊線",
@@ -185,7 +194,7 @@
       "date": "2026-07-27",
       "low": 88.29000091552734,
       "high": 90.16000366210938,
-      "i": 131
+      "i": 121
     }
   ]
 }

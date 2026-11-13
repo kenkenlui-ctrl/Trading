@@ -45,6 +45,48 @@ from lot_size import floor_to_lot, lot_for  # noqa: E402
 PARAMS = dict(stop_atr=3.0, hold=10, atr_max=0.06, box_max=0.35,
                risk=0.01, max_notional=0.10)
 
+# 2026-11-14 — READ-ONLY CONTEXT LABELS for published v2 signals.
+#
+# A label adds information to a signal; it never removes one, never changes the
+# entry rule, and never touches the win-rate numerator or denominator.
+#
+#   T1a "貼近箱頂" — the stock's close is within 2% of its 20-day box top (R1)
+#   F5  "強過大盤"  — the stock's 250-session return is above the market index's
+#
+# 2026-11-15 — THE NUMBERS AROUND THESE LABELS WERE RE-MEASURED, because the
+# first measurement was on the wrong population and this comment used to
+# publish the wrong cohort's figures.
+#
+# The old study measured the labels on the FILLED subset (plans that had
+# already traded). The site publishes PLANS — every screen-passing stock,
+# filled or not. A plan that fires "貼近箱頂" is one that almost never fills,
+# so the filled cohort understates the label rate by an order of magnitude:
+# the page used to say the label fires on a couple of percent of signals
+# while roughly a third of the published signals actually carry it.
+#
+# The labels are now measured on the PLAN cohort (scripts/research/label_cohort.py),
+# which reproduces the authoritative trade counts trade for trade and
+# re-derives this payload's label fields field for field. What it found:
+#
+#   "貼近箱頂" separates BEFORE the entry, not after it: those plans fill far
+#        less often than the rest of the set, and the few that do fill then
+#        perform worse than the rest.
+#   "強過大盤" separates AFTER the entry: filled plans with the label beat the
+#        rest of the set on the same engine and the same costs.
+#
+# NO FIGURE IS TYPED HERE. The measured numbers live in
+# data/label_cohort.json (written by scripts/research/label_cohort.py) and are
+# rendered onto the methodology page by scripts/build_label_notes.py, which
+# fails the build when the page and the artifact disagree. Do not paste a
+# number into this file: that is how the two copies drifted apart in the
+# first place.
+#
+# The threshold below is a PROPOSAL that Kenneth approved on 2026-11-14. The
+# continuous distance is published for every signal as well, so any other
+# threshold is derivable without a rebuild.
+LABEL_T1A_MAX_PCT = 2.0
+LABEL_RS_WINDOW_DAYS = 250
+
 # Capital each market's share counts are sized against when no override is set.
 # US 100,000 is unchanged from the years this ran hardcoded. JP 5,000,000 is
 # Kenneth's stated book (2026-10-08): at 100,000 every one of the 81 JP signals
@@ -244,18 +286,18 @@ def _cache_read() -> dict:
         return {}
 
 
-def _cache_write(sym: str, up: bool, asof: str) -> None:
+def _cache_write(sym: str, up: bool, asof: str, roc250: float | None = None) -> None:
     d = _cache_read()
-    d[sym] = {"up": up, "asof": asof}
+    d[sym] = {"up": up, "asof": asof, "roc250": roc250}
     INDEX_CACHE.parent.mkdir(parents=True, exist_ok=True)
     INDEX_CACHE.write_text(json.dumps(d, indent=1), encoding="utf-8")
 
 
 def index_up(index_sym: str, fallback: list[str] | None = None
-             ) -> tuple[bool | None, str | None, str | None, bool]:
+             ) -> tuple[bool | None, str | None, float | None, str | None, bool]:
     """Market filter: index T-1 close above its own 200d MA.
 
-    Returns (up, asof, error, from_cache).
+    Returns (up, asof, roc250, error, from_cache).
 
     2026-10-02: this used to return False on ANY exception, so a Yahoo
     rate-limit was indistinguishable from a bearish market and silently zeroed
@@ -275,12 +317,12 @@ def index_up(index_sym: str, fallback: list[str] | None = None
             errors.append(f"{sym}: {type(e).__name__}")
     c = _cache_read().get(index_sym)
     if c:
-        return bool(c["up"]), c["asof"], \
+        return bool(c["up"]), c["asof"], c.get("roc250"), \
             f"全部候選取數失敗（{', '.join(errors)}）；用 {c['asof']} 快取", True
-    return None, None, "全部候選取數失敗：" + ", ".join(errors), False
+    return None, None, None, "全部候選取數失敗：" + ", ".join(errors), False
 
 
-def _read_index(index_sym: str) -> tuple[bool, str, None, bool]:
+def _read_index(index_sym: str) -> tuple[bool, str, float | None, None, bool]:
     """Read one symbol's 200d-MA verdict. Raises on any unusable data."""
     import yfinance as yf
     d = yf.Ticker(index_sym).history(period="2y", auto_adjust=True)
@@ -294,11 +336,21 @@ def _read_index(index_sym: str) -> tuple[bool, str, None, bool]:
     if pd.isna(last_c) or pd.isna(last_ma):
         raise ValueError(f"NaN in series (close={last_c}, 200dMA={last_ma})")
     up, asof = bool(last_c > last_ma), str(d.index[-1].date())
-    _cache_write(index_sym, up, asof)
-    return up, asof, None, False
+    # 2026-11-14 — the index's own 250-day return, for the relative-strength
+    # label (F5). The same 2y history that answers "is the index above its
+    # 200d MA" already carries it: no second fetch, no new vendor, no new
+    # failure mode.
+    roc250 = None
+    if len(c) > LABEL_RS_WINDOW_DAYS:
+        base = c.iloc[-1 - LABEL_RS_WINDOW_DAYS]
+        if base and not pd.isna(base) and base != 0:
+            roc250 = float(c.iloc[-1] / base - 1)
+    _cache_write(index_sym, up, asof, roc250)
+    return up, asof, roc250, None, False
 
 
-def plan(market: str, symbol: str, df: pd.DataFrame, equity: float):
+def plan(market: str, symbol: str, df: pd.DataFrame, equity: float,
+         labels_on: bool = False, idx_roc250: float | None = None):
     nxt = df.index[-1] + pd.offsets.BDay(1)
     bb = pd.concat([df, df.iloc[[-1]].set_index(pd.DatetimeIndex([nxt]))])
     f = features(bb).iloc[-1]
@@ -345,7 +397,24 @@ def plan(market: str, symbol: str, df: pd.DataFrame, equity: float):
         size_note = (f"按 1 手（{lot} 股）計，"
                      + "、".join(binding) + " —— 本日唔落單"
                      if binding else f"按 1 手（{lot} 股）計 —— 本日唔落單")
-    return {
+    # --- read-only context labels (2026-11-14) --------------------------------
+    # Published ALONGSIDE the signal. Neither label removes a signal from the
+    # set, changes the entry rule, or touches the win-rate numerator/denominator.
+    #
+    # The values below are read at the PLAN bar — the same row the plan quotes
+    # its entry level from — because that is the moment the label exists.
+    # They are NOT read at the fill bar: at the fill bar the price has just
+    # come down to S1, so "close within 2% of R1" there means something else
+    # entirely. See the note at LABEL_T1A_MAX_PCT above, and
+    # scripts/research/label_cohort.py for the measurement.
+    ext_to_r1_pct = round((float(f.R1) / float(f.prev_close) - 1) * 100, 2)
+    stock_roc250 = None
+    if len(df) > LABEL_RS_WINDOW_DAYS:
+        _base = float(df["close"].iloc[-1 - LABEL_RS_WINDOW_DAYS])
+        if _base > 0:
+            stock_roc250 = float(df["close"].iloc[-1] / _base - 1)
+
+    row = {
         "market": market,
         "symbol": symbol,
         "asof": str(df.index[-1].date()),
@@ -364,7 +433,19 @@ def plan(market: str, symbol: str, df: pd.DataFrame, equity: float):
         "notional_pct": round(notional_now, 1),
         "size_note": size_note,
         "exit_rule": f"buy fill 後第 {PARAMS['hold']} 個交易日收市離場（無固定目標）",
-    }, "ok"
+    }
+    if labels_on:
+        row["ext_to_r1_pct"] = ext_to_r1_pct
+        row["context_labels"] = {
+            "too_extended": bool(ext_to_r1_pct <= LABEL_T1A_MAX_PCT),
+            "rs_above_index": (None if (stock_roc250 is None or idx_roc250 is None)
+                               else bool(stock_roc250 > idx_roc250)),
+            "stock_roc250_pct": (None if stock_roc250 is None
+                                 else round(stock_roc250 * 100, 1)),
+            "index_roc250_pct": (None if idx_roc250 is None
+                                 else round(idx_roc250 * 100, 1)),
+        }
+    return row, "ok"
 
 
 def bars_freshness(bars: dict[str, pd.DataFrame]) -> tuple[str, int, int]:
@@ -532,9 +613,23 @@ def main() -> None:
     out_rows, screen = [], {}
     market_state = {}
 
+    # 2026-11-14 — the context labels are a product decision, gated by a
+    # production flag like every other sprint2 feature. OFF means the payload
+    # carries no label field at all: a flag in a file is not evidence that OFF
+    # behaves like OFF.
+    labels_on = False
+    try:
+        _flags, _ = _integrity_kit()
+        labels_on = bool(_flags.flag("signal_context_labels_flag"))
+    except Exception:
+        labels_on = False
+    if labels_on:
+        print("  context labels: ON (T1a <= %.1f%% of R1, F5 = 250d ROC vs index)"
+              % LABEL_T1A_MAX_PCT)
+
     for mkt in mkts:
         cfg = MARKETS[mkt]
-        up, idx_date, err, cached = index_up(cfg["index"], cfg.get("fallback"))
+        up, idx_date, idx_roc250, err, cached = index_up(cfg["index"], cfg.get("fallback"))
         market_state[mkt] = {"index": cfg["index"], "index_asof": idx_date,
                              "up": up, "error": err, "from_cache": cached}
         if err:
@@ -590,7 +685,8 @@ def main() -> None:
             if _uni is not None and sym not in _uni:
                 screen["dropped from universe"] = screen.get("dropped from universe", 0) + 1
                 continue
-            p, why = plan(mkt, sym, df, equity_basis(mkt))
+            p, why = plan(mkt, sym, df, equity_basis(mkt),
+                          labels_on=labels_on, idx_roc250=idx_roc250)
             screen[why] = screen.get(why, 0) + 1
             if p:
                 out_rows.append(p)
@@ -627,6 +723,14 @@ def main() -> None:
         "count": len(out_rows),
         "signals": out_rows,
     }
+    if labels_on:
+        payload["rules"]["context_labels"] = {
+            "t1a_max_ext_to_r1_pct": LABEL_T1A_MAX_PCT,
+            "rs_window_days": LABEL_RS_WINDOW_DAYS,
+            "source": "research/2026-11-15-short-side/",
+            "note": ("只讀標籤：唔會移除任何訊號，唔會改入場規則，唔會改勝率分子分母。"
+                     "每單都會同時印出 ext_to_r1_pct，任何其他門檻都可以由呢個數推出。"),
+        }
 
     # A2: stamp the receipt BEFORE the file is written. The receipt describes
     # the inputs this run actually read, so it has to be built here — after

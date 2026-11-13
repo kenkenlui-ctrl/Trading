@@ -845,6 +845,29 @@ def render_v2_action_card(hit: dict | None, market: str) -> str:
         </div>
       </div>"""
 
+    # 2026-11-14 — read-only context labels. The producer decides whether a
+    # signal carries them; when the payload carries no label field there is
+    # nothing to render, and nothing is invented here.
+    _ctx = hit.get("context_labels") or {}
+    _tags, _defs = [], []
+    if _ctx.get("too_extended"):
+        _tags.append("貼近箱頂")
+        _defs.append("貼近箱頂＝收市價距 20 日 box 頂 (R1) 少過 2%")
+    if _ctx.get("rs_above_index"):
+        _tags.append("強過大盤")
+        _defs.append("強過大盤＝250 日漲幅高過市場指數")
+    ctx_html = ""
+    if _tags:
+        # Only the labels this signal actually carries — a legend that names a
+        # label the signal does not have reads as a claim.
+        _tip = ("標籤（只讀，唔會改入場規則、唔會改勝率）：" + "；".join(_defs)
+                + "。詳見 /methodology")
+        _tags_txt = " · ".join(_tags)
+        ctx_html = ('<div class="phase-block" title="' + _tip + '">\n'
+                    '          <span class="name">標籤</span>\n'
+                    '          <span class="value">' + _tags_txt + '</span>\n'
+                    '        </div>')
+
     dist = hit.get("dist_to_entry_pct")
     dist_txt = "已到入場位" if abs(dist or 0) < 0.05 else f"距入場位 {abs(dist):.2f}%"
     return f"""
@@ -857,6 +880,7 @@ def render_v2_action_card(hit: dict | None, market: str) -> str:
           <span class="name">現價距離</span>
           <span class="value text-bull">{dist_txt}</span>
         </div>
+        {ctx_html}
         <div class="phase-block">
           <span class="name">入場（S1 限價）</span>
           <span class="value text-bull">{fmt(hit["entry_s1"])}</span>

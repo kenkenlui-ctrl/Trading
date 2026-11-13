@@ -3,23 +3,23 @@
   "ticker_user": "00006.HK",
   "name": "POWER ASSETS",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-22 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 62.85,
-    "H": 63.9,
-    "L": 62.45,
-    "C": 63.9,
-    "prev_close": 62.15,
-    "chg_pct": 2.82
+    "date": "2026-11-13",
+    "O": 65.15,
+    "H": 65.6,
+    "L": 64.7,
+    "C": 65.5,
+    "prev_close": 65.15,
+    "chg_pct": 0.54
   },
-  "phase": "base_building",
-  "adx": 22.32,
-  "plus_di": 28.52,
-  "minus_di": 9.06,
-  "regime": "dead",
+  "phase": "uptrend",
+  "adx": 41.36,
+  "plus_di": 24.89,
+  "minus_di": 9.09,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 67.05 (2026-05-07), trough 54.85 (2026-06-22), box top 63.9 (2026-10-30)",
+  "phase_evidence": "Peak 67.05 (2026-05-07), trough 54.85 (2026-06-22), box top 66.25 (2026-11-11)",
   "peak": {
     "date": "2026-05-07",
     "price": 67.05
@@ -29,61 +29,66 @@
     "price": 54.85
   },
   "box": {
-    "top": 63.9,
-    "top_date": "2026-10-30",
+    "top": 66.25,
+    "top_date": "2026-11-11",
     "bottom": 54.85,
-    "period": "2026-06-22 to 2026-10-30"
+    "period": "2026-06-22 to 2026-11-13"
   },
-  "drop_from_peak_pct": 4.7,
-  "recovery_from_crash_pct": 16.5,
+  "drop_from_peak_pct": 2.3,
+  "recovery_from_crash_pct": 19.4,
   "supports": [
     {
       "level": 60.0,
       "label": "S1 KEY",
-      "touches": 93,
-      "evidence": "tested 93x in base period; 6.1% below current"
+      "touches": 83,
+      "evidence": "tested 83x in base period; 8.4% below current"
     },
     {
-      "level": 54.85,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-06-22, structural bottom"
+      "level": 56.0,
+      "label": "S2 bottom",
+      "touches": 27,
+      "evidence": "structural bottom, near crash low 54.85"
     }
   ],
   "resistances": [
     {
-      "level": 63.9,
+      "level": 65.6,
       "label": "R1 today high",
-      "evidence": "today's high 63.900001525878906"
+      "evidence": "today's high 65.5999984741211"
+    },
+    {
+      "level": 66.25,
+      "label": "R3 Nov high",
+      "evidence": "box top 66.25, base period high"
     }
   ],
   "position": {
-    "current": 63.9,
-    "in_box_pct": 100.0,
+    "current": 65.5,
+    "in_box_pct": 92.7,
     "nearest_support": "S1 KEY (60.0)",
-    "nearest_resistance": null
+    "nearest_resistance": "R1 today high (65.6)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 62.85,
-    "H": 63.9,
-    "L": 62.45,
-    "C": 63.9,
-    "body_pct": 72.4,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 27.6
+    "O": 65.15,
+    "H": 65.6,
+    "L": 64.7,
+    "C": 65.5,
+    "body_pct": 38.9,
+    "upper_wick_pct": 11.1,
+    "lower_wick_pct": 50.0
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral_consolidation",
-      "reason": "consolidating after big move"
+      "bias": "bullish_continuation",
+      "reason": "higher highs / higher lows"
     },
     "long": {
       "bias": "near_peak",
@@ -93,19 +98,23 @@
   "scenarios": [
     {
       "if": "hold 60.0 (KEY support)",
-      "then": "still range; watch 63.9 for next test"
+      "then": "still range; watch 65.6 for next test"
     },
     {
       "if": "break 60.0 on close",
-      "then": "target 54.85 → lower (short-term bearish)"
+      "then": "target 56.0 → lower (short-term bearish)"
     },
     {
-      "if": "break 54.85 (crash low)",
+      "if": "break 56.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 63.9 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 65.6 on close",
+      "then": "short-term bullish; next test 66.25"
+    },
+    {
+      "if": "break 66.25 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -127,33 +136,33 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 63.9,
-    "target_price": 61.3,
-    "stop_price": 65.47,
-    "risk_pct": 2.46,
-    "reward_pct": 4.07,
-    "rr_ratio": 1.66,
-    "phase_match": true,
-    "r1": 63.9,
-    "s1": 58.7,
-    "s2": 56.9,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 66.25,
+    "s1": 59.7,
+    "s2": 58.7,
     "r2": 62.45,
-    "r3": 65.6,
+    "r3": 63.05,
     "s3": 54.85,
-    "s4": 54.8,
-    "current_position_pct": 100.0,
-    "notes": "SELL_R1: in box (59-64), entry at R1 64, target mid 61, stop 65 ｜ 52.2 條規則（SELL plan，resistance 63.90）：① 跌到 63.90、收市守住喺 63.90 上面 → 照 BUY 條 plan 做（入場 63.90，止蝕 65.47，目標 61.30）。② 收市跌穿 63.90 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 63.90 上面』。"
+    "s4": 58.05,
+    "current_position_pct": 88.5,
+    "notes": "WAIT_RANGE: in box (60-66), pos 89%, no clear setup"
   },
   "patterns": [
     {
-      "name": "平頭頂",
+      "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-10-29",
-      "low": 61.95000076293945,
-      "high": 62.849998474121094,
-      "i": 198
+      "date": "2026-11-02",
+      "low": 63.0,
+      "high": 64.19999694824219,
+      "i": 190
     },
     {
       "name": "利淡吞噬",
@@ -161,15 +170,7 @@
       "date": "2026-10-22",
       "low": 59.70000076293945,
       "high": 60.70000076293945,
-      "i": 193
-    },
-    {
-      "name": "烏雲蓋頂",
-      "bias": "bearish",
-      "date": "2026-10-16",
-      "low": 60.400001525878906,
-      "high": 60.900001525878906,
-      "i": 190
+      "i": 183
     },
     {
       "name": "利好反擊線",
@@ -177,7 +178,7 @@
       "date": "2026-10-09",
       "low": 58.849998474121094,
       "high": 60.650001525878906,
-      "i": 185
+      "i": 175
     },
     {
       "name": "刺穿線",
@@ -185,7 +186,15 @@
       "date": "2026-09-28",
       "low": 59.20000076293945,
       "high": 60.150001525878906,
-      "i": 177
+      "i": 167
+    },
+    {
+      "name": "利淡吞噬",
+      "bias": "bearish",
+      "date": "2026-08-27",
+      "low": 60.099998474121094,
+      "high": 60.70000076293945,
+      "i": 145
     }
   ]
 }

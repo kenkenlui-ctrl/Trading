@@ -3,58 +3,63 @@
   "ticker_user": "01398.HK",
   "name": "ICBC",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-22 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 7.85,
-    "H": 7.91,
+    "date": "2026-11-13",
+    "O": 7.82,
+    "H": 7.92,
     "L": 7.78,
-    "C": 7.89,
-    "prev_close": 7.78,
-    "chg_pct": 1.48
+    "C": 7.92,
+    "prev_close": 7.84,
+    "chg_pct": 1.08
   },
-  "phase": "uptrend",
-  "adx": 17.35,
-  "plus_di": 26.21,
-  "minus_di": 14.26,
-  "regime": "range",
+  "phase": "range",
+  "adx": 24.31,
+  "plus_di": 25.66,
+  "minus_di": 16.28,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 7.91 (2026-10-30), trough 7.16 (2026-10-23), box top 7.91 (2026-10-30)",
+  "phase_evidence": "Peak 8.18 (2026-11-02), trough 7.55 (2026-11-03), box top 8.02 (2026-11-10)",
   "peak": {
-    "date": "2026-10-30",
-    "price": 7.91
+    "date": "2026-11-02",
+    "price": 8.18
   },
   "trough": {
-    "date": "2026-10-23",
-    "price": 7.16
+    "date": "2026-11-03",
+    "price": 7.55
   },
   "box": {
-    "top": 7.91,
-    "top_date": "2026-10-30",
-    "bottom": 7.16,
-    "period": "2026-10-23 to 2026-10-30"
+    "top": 8.02,
+    "top_date": "2026-11-10",
+    "bottom": 7.55,
+    "period": "2026-11-03 to 2026-11-13"
   },
-  "drop_from_peak_pct": 0.3,
-  "recovery_from_crash_pct": 10.2,
+  "drop_from_peak_pct": 3.2,
+  "recovery_from_crash_pct": 5.0,
   "supports": [
     {
       "level": 8.0,
       "label": "S1 KEY",
-      "touches": 88,
-      "evidence": "tested 88x in base period; -1.3% below current"
+      "touches": 76,
+      "evidence": "tested 76x in base period; -1.0% below current"
     },
     {
-      "level": 7.16,
+      "level": 7.55,
       "label": "S4 crash low",
       "touches": 1,
-      "evidence": "crash low 2026-10-23, structural bottom"
+      "evidence": "crash low 2026-11-03, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 7.91,
+      "level": 7.92,
       "label": "R1 today high",
-      "evidence": "today's high 7.914999961853027"
+      "evidence": "today's high 7.920000076293945"
+    },
+    {
+      "level": 8.02,
+      "label": "R3 Nov high",
+      "evidence": "box top 8.02, base period high"
     },
     {
       "level": 10.0,
@@ -63,32 +68,32 @@
     }
   ],
   "position": {
-    "current": 7.89,
-    "in_box_pct": 25.9,
+    "current": 7.92,
+    "in_box_pct": 78.7,
     "nearest_support": "S1 KEY (8.0)",
-    "nearest_resistance": "R1 today high (7.91)"
+    "nearest_resistance": "R3 Nov high (8.02)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": true,
     "close_position": "upper_half",
-    "O": 7.85,
-    "H": 7.91,
+    "O": 7.82,
+    "H": 7.92,
     "L": 7.78,
-    "C": 7.89,
-    "body_pct": 33.3,
-    "upper_wick_pct": 14.8,
-    "lower_wick_pct": 51.9
+    "C": 7.92,
+    "body_pct": 74.1,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 25.9
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (26% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bullish_continuation",
-      "reason": "higher highs / higher lows"
+      "bias": "neutral",
+      "reason": "no clear direction"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -98,19 +103,23 @@
   "scenarios": [
     {
       "if": "hold 8.0 (KEY support)",
-      "then": "still range; watch 7.91 for next test"
+      "then": "still range; watch 7.92 for next test"
     },
     {
       "if": "break 8.0 on close",
-      "then": "target 7.16 → lower (short-term bearish)"
+      "then": "target 7.55 → lower (short-term bearish)"
     },
     {
-      "if": "break 7.16 (crash low)",
+      "if": "break 7.55 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 7.91 on close",
-      "then": "short-term bullish; next test 10.0"
+      "if": "reclaim 7.92 on close",
+      "then": "short-term bullish; next test 8.02"
+    },
+    {
+      "if": "break 8.02 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -132,33 +141,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 7.91,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 8.18,
+    "target_price": 7.67,
+    "stop_price": 8.48,
+    "risk_pct": 3.69,
+    "reward_pct": 6.2,
+    "rr_ratio": 1.68,
+    "phase_match": true,
+    "r1": 8.18,
     "s1": 7.16,
-    "s2": 7.09,
+    "s2": 7.34,
     "r2": 7.77,
     "r3": 7.66,
     "s3": 6.29,
-    "s4": 6.04,
-    "current_position_pct": 97.3,
-    "notes": "WAIT_RANGE: in box (7-8), pos 97%, no clear setup"
+    "s4": 6.12,
+    "current_position_pct": 74.4,
+    "notes": "SELL_R1: in box (7-8), entry at R1 8, target mid 8, stop 8 ｜ 52.2 條規則（SELL plan，resistance 8.18）：① 跌到 8.18、收市守住喺 8.18 上面 → 照 BUY 條 plan 做（入場 8.18，止蝕 8.48，目標 7.67）。② 收市跌穿 8.18 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 8.18 上面』。"
   },
   "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-11-05",
+      "low": 7.739999771118164,
+      "high": 7.954999923706055,
+      "i": 193
+    },
     {
       "name": "吊頸",
       "bias": "bearish",
       "date": "2026-10-20",
       "low": 7.465000152587891,
       "high": 7.675000190734863,
-      "i": 191
+      "i": 181
     },
     {
       "name": "利淡反擊線",
@@ -166,15 +183,7 @@
       "date": "2026-10-14",
       "low": 7.5,
       "high": 7.639999866485596,
-      "i": 188
-    },
-    {
-      "name": "烏雲蓋頂",
-      "bias": "bearish",
-      "date": "2026-10-02",
-      "low": 7.429999828338623,
-      "high": 7.630000114440918,
-      "i": 180
+      "i": 178
     },
     {
       "name": "利淡吞噬",
@@ -182,7 +191,7 @@
       "date": "2026-09-07",
       "low": 7.494999885559082,
       "high": 7.739999771118164,
-      "i": 162
+      "i": 152
     },
     {
       "name": "上升三法",
@@ -190,7 +199,7 @@
       "date": "2026-08-06",
       "low": 7.105000019073486,
       "high": 7.215000152587891,
-      "i": 140
+      "i": 130
     }
   ]
 }

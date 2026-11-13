@@ -3,23 +3,23 @@
   "ticker_user": "PCAR",
   "name": "PACCAR Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 102.72,
-    "H": 103.0,
-    "L": 101.31,
-    "C": 101.91,
-    "prev_close": 102.29,
-    "chg_pct": -0.37
+    "date": "2026-11-13",
+    "O": 107.0,
+    "H": 107.31,
+    "L": 105.62,
+    "C": 106.66,
+    "prev_close": 106.33,
+    "chg_pct": 0.31
   },
   "phase": "downtrend_active",
-  "adx": 53.14,
-  "plus_di": 7.64,
-  "minus_di": 33.69,
+  "adx": 34.65,
+  "plus_di": 20.95,
+  "minus_di": 22.52,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 139.24 (2026-07-28), trough 100.07 (2026-10-27), box top 116.7 (2026-09-21)",
+  "phase_evidence": "Peak 139.24 (2026-07-28), trough 100.07 (2026-10-27), box top 108.85 (2026-11-05)",
   "peak": {
     "date": "2026-07-28",
     "price": 139.24
@@ -29,56 +29,62 @@
     "price": 100.07
   },
   "box": {
-    "top": 116.7,
-    "top_date": "2026-09-21",
+    "top": 108.85,
+    "top_date": "2026-11-05",
     "bottom": 100.07,
-    "period": "2026-10-27 to 2026-10-30"
+    "period": "2026-10-27 to 2026-11-13"
   },
-  "drop_from_peak_pct": 26.8,
-  "recovery_from_crash_pct": 1.8,
+  "drop_from_peak_pct": 23.4,
+  "recovery_from_crash_pct": 6.6,
   "supports": [
     {
+      "level": 104.0,
+      "label": "S1 KEY",
+      "touches": 11,
+      "evidence": "tested 11x in base period; 2.5% below current"
+    },
+    {
       "level": 100.0,
-      "label": "S1 bottom",
-      "touches": 0,
+      "label": "S2 bottom",
+      "touches": 12,
       "evidence": "structural bottom, near crash low 100.07"
     }
   ],
   "resistances": [
     {
-      "level": 103.0,
+      "level": 107.31,
       "label": "R1 today high",
-      "evidence": "today's high 103.0"
+      "evidence": "today's high 107.30500030517578"
     },
     {
-      "level": 116.7,
-      "label": "R3 Sep high",
-      "evidence": "box top 116.7, base period high"
+      "level": 108.85,
+      "label": "R3 Nov high",
+      "evidence": "box top 108.85, base period high"
     }
   ],
   "position": {
-    "current": 101.91,
-    "in_box_pct": 11.4,
-    "nearest_support": "S1 bottom (100.0)",
-    "nearest_resistance": "R1 today high (103.0)"
+    "current": 106.66,
+    "in_box_pct": 75.3,
+    "nearest_support": "S1 KEY (104.0)",
+    "nearest_resistance": "R1 today high (107.31)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 102.72,
-    "H": 103.0,
-    "L": 101.31,
-    "C": 101.91,
-    "body_pct": 47.9,
-    "upper_wick_pct": 16.6,
-    "lower_wick_pct": 35.5
+    "close_position": "upper_half",
+    "O": 107.0,
+    "H": 107.31,
+    "L": 105.62,
+    "C": 106.66,
+    "body_pct": 20.2,
+    "upper_wick_pct": 18.1,
+    "lower_wick_pct": 61.7
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (11% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -91,23 +97,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 100.0 (KEY support)",
-      "then": "still range; watch 103.0 for next test"
+      "if": "hold 104.0 (KEY support)",
+      "then": "still range; watch 107.31 for next test"
     },
     {
-      "if": "break 100.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 104.0 on close",
+      "then": "target 100.0 → lower (short-term bearish)"
     },
     {
       "if": "break 100.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 103.0 on close",
-      "then": "short-term bullish; next test 116.7"
+      "if": "reclaim 107.31 on close",
+      "then": "short-term bullish; next test 108.85"
     },
     {
-      "if": "break 116.7 (box top)",
+      "if": "break 108.85 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -139,15 +145,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 112.71,
+    "r1": 111.4,
     "s1": 100.07,
-    "s2": 108.56,
-    "r2": 133.71,
+    "s2": 105.44,
+    "r2": 132.43,
     "r3": 139.24,
     "s3": 106.77,
-    "s4": 110.36,
-    "current_position_pct": 14.6,
-    "notes": "WAIT_RANGE: in box (100-113), pos 15%, no clear setup"
+    "s4": 107.78,
+    "current_position_pct": 58.2,
+    "notes": "WAIT_RANGE: in box (100-111), pos 58%, no clear setup"
   },
   "patterns": [
     {
@@ -156,7 +162,7 @@
       "date": "2026-10-08",
       "low": 105.44000244140625,
       "high": 109.69000244140625,
-      "i": 183
+      "i": 173
     },
     {
       "name": "烏雲蓋頂",
@@ -164,7 +170,7 @@
       "date": "2026-08-12",
       "low": 129.6999969482422,
       "high": 133.7100067138672,
-      "i": 143
+      "i": 133
     },
     {
       "name": "上升三法",
@@ -172,7 +178,7 @@
       "date": "2026-08-04",
       "low": 129.77999877929688,
       "high": 136.61000061035156,
-      "i": 137
+      "i": 127
     },
     {
       "name": "利淡反擊線",
@@ -180,7 +186,7 @@
       "date": "2026-07-14",
       "low": 122.66000366210938,
       "high": 125.5,
-      "i": 122
+      "i": 112
     }
   ]
 }

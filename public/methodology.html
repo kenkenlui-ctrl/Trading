@@ -152,7 +152,7 @@
   <a class="lang-switch" href="/en/methodology/" title="View in English" aria-label="View in English">EN</a>
   <div class="nav-meta">
     <span class="live-dot"></span>
-    T-1 · 2026-10-30
+    T-1 · 2026-11-13
     <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
       <span class="icon" id="themeIcon">●</span>
       <span id="themeLabel">DARK</span>
@@ -448,6 +448,91 @@ function toggleTheme(){
     每個門檻都係用 2016–2022 選定，再喺 2023–2026 只測一次（樣本外）。
     選出嚟嘅組合（3×ATR 止損、無目標、10 日持有）喺樣本外同時都係最好嗰個。
   </p>
+
+<!-- w9:label-notes:start -->
+  <h2>2.1 訊號標籤：貼近箱頂 / 強過大盤（唯讀 context labels）</h2>
+  <p>
+    每個 v2 訊號除咗入場位、止損、時間離場，仲帶兩個<b>只讀標籤</b>。
+    標籤<b>唔會</b>移除任何訊號、<b>唔會</b>改入場規則、<b>唔會</b>改勝率嘅分子同分母 ——
+    佢哋只係話畀讀者知呢一單嘅背景係咩。
+  </p>
+  <table class="data-table method-prose">
+    <tbody>
+      <tr><td><b>貼近箱頂</b></td><td>收市價距 20 日 box 頂（R1）少過 2%</td></tr>
+      <tr><td><b>強過大盤</b></td><td>250 日漲幅高過市場指數</td></tr>
+    </tbody>
+  </table>
+  <p>
+    <b>母體係「已發佈計劃」，唔係「已成交訊號」。</b>
+    本站每日發佈嘅係計劃（screen 通過就出，鐘面價仲未回踩 S1），所以標籤要喺
+    <b>計劃母體</b>上量：10 年凍結日線（<code>data/bt10y2/</code>）入面每一個
+    screen 通過嘅日子，都當佢係一個已發佈計劃。
+    「成交」嘅定義同引擎一致：<b>下一個交易日</b>以計劃寫明嘅 S1 入場位成交
+    （開市價高過 S1、盤中觸及 S1、收市企穩 S1）。
+  </p>
+  <p>
+    全部數字由 <code>data/label_cohort.json</code> 讀出，由
+    <code>scripts/research/label_cohort.py</code> 生成（重跑約 12 秒）。
+    該模組同時對齊兩個基準：佢重算出嘅成交筆數同權威 A/B 回測<b>逐筆一致</b>（美股 6,675／樣本外 2,982、日股 4,576／樣本外 2,187），而且逐個訊號重現本站已發佈嘅標籤欄位。
+  </p>
+  <table class="data-table method-prose">
+    <thead>
+      <tr>
+        <th>標籤</th><th>市場</th><th>窗口</th><th>計劃母體</th><th>觸發率</th>
+        <th>成交率（觸發 vs 未觸發）</th><th>成交後每單淨（觸發 vs 未觸發）</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>貼近箱頂（≤2%）</td><td>美股</td><td>全期 2016–2026</td><td class="mono">254,223</td><td class="mono">36.52%（92,831）</td><td class="mono">0.18% vs 4.03%（−3.85 pp）</td><td class="mono">1.044% vs 1.876%（−0.832 pp，n=169）</td></tr><tr><td>貼近箱頂（≤2%）</td><td>美股</td><td>樣本外 2023–2026</td><td class="mono">106,679</td><td class="mono">33.36%（35,591）</td><td class="mono">0.14% vs 4.13%（−3.99 pp）</td><td class="mono">0.038% vs 1.801%（−1.763 pp，n=49）</td></tr><tr><td>強過大盤</td><td>美股</td><td>全期 2016–2026</td><td class="mono">254,223</td><td class="mono">72.65%（184,696）</td><td class="mono">2.47% vs 3.07%（−0.60 pp）</td><td class="mono">2.126% vs 1.202%（+0.924 pp，n=4,557）</td></tr><tr><td>強過大盤</td><td>美股</td><td>樣本外 2023–2026</td><td class="mono">106,679</td><td class="mono">71.23%（75,985）</td><td class="mono">2.59% vs 3.31%（−0.72 pp）</td><td class="mono">2.243% vs 0.870%（+1.373 pp，n=1,966）</td></tr><tr><td>貼近箱頂（≤2%）</td><td>日股</td><td>全期 2016–2026</td><td class="mono">204,266</td><td class="mono">31.36%（64,067）</td><td class="mono">0.19% vs 3.18%（−2.99 pp）</td><td class="mono">0.443% vs 1.711%（−1.268 pp，n=121）</td></tr><tr><td>貼近箱頂（≤2%）</td><td>日股</td><td>樣本外 2023–2026</td><td class="mono">98,076</td><td class="mono">31.43%（30,824）</td><td class="mono">0.18% vs 3.17%（−2.99 pp）</td><td class="mono">1.287% vs 2.382%（−1.095 pp，n=55）</td></tr><tr><td>強過大盤</td><td>日股</td><td>全期 2016–2026</td><td class="mono">204,266</td><td class="mono">65.13%（133,038）</td><td class="mono">2.11% vs 2.42%（−0.31 pp）</td><td class="mono">1.903% vs 1.231%（+0.672 pp，n=2,801）</td></tr><tr><td>強過大盤</td><td>日股</td><td>樣本外 2023–2026</td><td class="mono">98,076</td><td class="mono">59.16%（58,020）</td><td class="mono">2.11% vs 2.40%（−0.29 pp）</td><td class="mono">2.819% vs 1.764%（+1.055 pp，n=1,223）</td></tr>
+    </tbody>
+  </table>
+  <p>
+    <b>兩個標籤真正嘅意思唔一樣。</b>
+    「強過大盤」係<b>入場後</b>嘅優勢：觸發組成交後每單淨多過未觸發組。
+    「貼近箱頂」真正嘅分別喺<b>成交之前</b>：觸發組幾乎成交唔到（全期 0.18% vs 4.03%，即係大約 20 幾倍嘅差距），因為收市價貼住箱頂，入場位 S1 就喺下面好遠。少數真係成交咗嗰批，表現仲差過未觸發組。
+  </p>
+  <p>
+    <b>呢個係真嘅增量資訊，唔係裝飾。</b>
+    本站每個訊號都已經印住「入場位距離現價幾多遠」，如果「貼近箱頂」只係
+    呢個數嘅另一種寫法，咁佢就冇存在嘅理由。所以按同一個入場距離分組再量一次：
+  </p>
+  <table class="data-table method-prose">
+    <thead>
+      <tr>
+        <th>市場</th><th>入場位距離（%，現價 − 入場價）</th><th>計劃數</th>
+        <th>觸發組成交率</th><th>未觸發組成交率</th><th>差</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>美股</td><td class="mono">[-99.0,-5.0)</td><td class="mono">156,405</td><td class="mono">0.07%（n=55）</td><td class="mono">0.40%（n=319）</td><td class="mono"><b>−0.33 pp</b></td></tr><tr><td>美股</td><td class="mono">[-5.0,-2.0)</td><td class="mono">67,230</td><td class="mono">0.58%（n=88）</td><td class="mono">3.32%（n=1,735）</td><td class="mono"><b>−2.74 pp</b></td></tr><tr><td>美股</td><td class="mono">[-2.0,0.0)</td><td class="mono">30,529</td><td class="mono">3.16%（n=25）</td><td class="mono">14.93%（n=4,441）</td><td class="mono"><b>−11.77 pp</b></td></tr><tr><td>日股</td><td class="mono">[-99.0,-5.0)</td><td class="mono">117,242</td><td class="mono">0.06%（n=29）</td><td class="mono">0.27%（n=183）</td><td class="mono"><b>−0.21 pp</b></td></tr><tr><td>日股</td><td class="mono">[-5.0,-2.0)</td><td class="mono">58,449</td><td class="mono">0.34%（n=42）</td><td class="mono">2.46%（n=1,136）</td><td class="mono"><b>−2.12 pp</b></td></tr><tr><td>日股</td><td class="mono">[-2.0,0.0)</td><td class="mono">27,604</td><td class="mono">2.87%（n=44）</td><td class="mono">11.46%（n=2,988）</td><td class="mono"><b>−8.59 pp</b></td></tr>
+    </tbody>
+  </table>
+  <p>
+    同一個距離區間入面，觸發組仍然係成交得少好多 ——
+    標籤帶嚟嘅係入場距離本身冇嘅資訊。
+  </p>
+  <div class="callout" style="margin: var(--sp-4) 0; padding: var(--sp-4); border-left: 4px solid var(--amber); background: var(--amber-dim); border-radius: 4px;">
+    <p style="margin: 0 0 var(--sp-2); font-size: var(--text-sm);">
+      <b>限制，唔好跳過</b>
+    </p>
+    <ul style="margin: 0; font-size: var(--text-sm);">
+      <li><b>成交後嗰組樣本細。</b>「貼近箱頂」樣本外只成交咗 49／55 單，差距方向兩個市場一致，但 n 細，只當方向性證據。全期係 169／121 單。<b>成交率嗰個分別就大得多</b>（母體係幾十萬個計劃），唔受樣本細影響。</li>
+      <li><b>「強過大盤」對基準唔敏感</b>：改用另一個指數序列
+        （<code>IDX_GSPC</code>/<code>IDX_N225</code> 而唔係
+        <code>SPY</code>/<code>1306.T</code>），成交後差距最多只差
+        0.153 pp。
+        兩個基準都測過，結論一樣。</li>
+      <li><b>呢個係警示，唔係做空訊號。</b>同一批凍結數據上，v2 嘅做空鏡像規則樣本外係負數
+        （美股 −0.265%/單；日股 +0.361%/單，但 t=1.57 唔顯著），加埋借券費會更差。
+        所以本站<b>冇</b>做空訊號 —— 「到頂」係叫你小心，唔係叫你沽。</li>
+      <li><b>每單都會印出連續值</b> <code>ext_to_r1_pct</code>（收市價距 R1 幾多）同
+        <code>stock_roc250_pct</code> / <code>index_roc250_pct</code>，
+        所以任何其他門檻都可以由呢啲數推出，唔使重跑。</li>
+      <li><b>門檻 2% 係提案</b>（2026-11-14 拍板），唔係天然嘅分界。
+        收市價距 R1 嘅連續值每一單都印咗，任何門檻都可以另量。</li>
+    </ul>
+  </div>
+<!-- w9:label-notes:end -->
 
   <h2>3. S/R ladder（v2 都用）</h2>
   <p>4 層不重疊 rolling pivot，全部用前一日數據計，無 look-ahead：</p>
@@ -1072,7 +1157,7 @@ function toggleTheme(){
   <div class="container">
     <div class="row">
       <div>© 2026 Leeks Terminal · win9you.com · <a href="/methodology">Methodology</a> · <a href="/disclaimer">Disclaimer</a></div>
-      <div class="mono text-dim">T-1 · 2026-10-30</div>
+      <div class="mono text-dim">T-1 · 2026-11-13</div>
     </div>
   </div>
 </footer>

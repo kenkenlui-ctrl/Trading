@@ -3,84 +3,95 @@
   "ticker_user": "TMO",
   "name": "Thermo Fisher Scientific Inc",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 710.69,
-    "H": 711.79,
-    "L": 691.74,
-    "C": 697.0,
-    "prev_close": 709.18,
-    "chg_pct": -1.72
+    "date": "2026-11-13",
+    "O": 701.42,
+    "H": 701.97,
+    "L": 689.79,
+    "C": 700.22,
+    "prev_close": 699.44,
+    "chg_pct": 0.11
   },
-  "phase": "range",
-  "adx": 30.17,
-  "plus_di": 24.94,
-  "minus_di": 16.61,
-  "regime": "trend",
+  "phase": "base_building",
+  "adx": 18.24,
+  "plus_di": 22.13,
+  "minus_di": 26.87,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 711.85 (2026-10-29), trough 635.32 (2026-10-08), box top 711.85 (2026-10-29)",
+  "phase_evidence": "Peak 727.56 (2026-11-11), trough 635.32 (2026-10-08), box top 727.56 (2026-11-11)",
   "peak": {
-    "date": "2026-10-29",
-    "price": 711.85
+    "date": "2026-11-11",
+    "price": 727.56
   },
   "trough": {
     "date": "2026-10-08",
     "price": 635.32
   },
   "box": {
-    "top": 711.85,
-    "top_date": "2026-10-29",
+    "top": 727.56,
+    "top_date": "2026-11-11",
     "bottom": 635.32,
-    "period": "2026-10-08 to 2026-10-30"
+    "period": "2026-10-08 to 2026-11-13"
   },
-  "drop_from_peak_pct": 2.1,
-  "recovery_from_crash_pct": 9.7,
+  "drop_from_peak_pct": 3.8,
+  "recovery_from_crash_pct": 10.2,
   "supports": [
     {
-      "level": 676.0,
+      "level": 680.0,
       "label": "S1 KEY",
-      "touches": 6,
-      "evidence": "tested 6x in base period; 3.0% below current"
+      "touches": 4,
+      "evidence": "tested 4x in base period; 2.9% below current"
+    },
+    {
+      "level": 676.0,
+      "label": "S2",
+      "touches": 8,
+      "evidence": "mid-base support, tested 8x"
     },
     {
       "level": 672.0,
-      "label": "S2",
+      "label": "S3",
       "touches": 6,
       "evidence": "mid-base support, tested 6x"
     },
     {
-      "level": 664.0,
-      "label": "S3 bottom",
-      "touches": 4,
-      "evidence": "structural bottom, near crash low 635.32"
+      "level": 635.32,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-10-08, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 711.79,
+      "level": 701.97,
       "label": "R1 today high",
-      "evidence": "today's high 711.7899780273438"
+      "evidence": "today's high 701.969970703125"
+    },
+    {
+      "level": 727.56,
+      "label": "R3 Nov high",
+      "evidence": "box top 727.56, base period high"
     }
   ],
   "position": {
-    "current": 697.0,
-    "in_box_pct": 69.1,
-    "nearest_support": "S1 KEY (676.0)",
-    "nearest_resistance": "R1 today high (711.79)"
+    "current": 700.22,
+    "in_box_pct": 70.4,
+    "nearest_support": "S1 KEY (680.0)",
+    "nearest_resistance": "R1 today high (701.97)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 710.69,
-    "H": 711.79,
-    "L": 691.74,
-    "C": 697.0,
-    "body_pct": 68.3,
-    "upper_wick_pct": 5.5,
-    "lower_wick_pct": 26.2
+    "close_position": "upper_half",
+    "O": 701.42,
+    "H": 701.97,
+    "L": 689.79,
+    "C": 700.22,
+    "body_pct": 9.9,
+    "upper_wick_pct": 4.5,
+    "lower_wick_pct": 85.6
   },
   "bias": {
     "short": {
@@ -88,8 +99,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": "no clear direction"
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -98,20 +109,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 676.0 (KEY support)",
-      "then": "still range; watch 711.79 for next test"
+      "if": "hold 680.0 (KEY support)",
+      "then": "still range; watch 701.97 for next test"
     },
     {
-      "if": "break 676.0 on close",
-      "then": "target 672.0 → 664.0 (short-term bearish)"
+      "if": "break 680.0 on close",
+      "then": "target 676.0 → 672.0 (short-term bearish)"
     },
     {
-      "if": "break 664.0 (crash low)",
+      "if": "break 635.32 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 711.79 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 701.97 on close",
+      "then": "short-term bullish; next test 727.56"
+    },
+    {
+      "if": "break 727.56 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -134,48 +149,56 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 711.85,
-    "s1": 635.32,
-    "s2": 574.77,
-    "r2": 683.63,
-    "r3": 588.56,
-    "s3": 435.27,
-    "s4": 447.88,
-    "current_position_pct": 80.6,
-    "notes": "WAIT_RANGE: in box (635-712), pos 81%, no clear setup"
+    "phase_match": true,
+    "r1": 727.56,
+    "s1": 661.3,
+    "s2": 594.82,
+    "r2": 704.0,
+    "r3": 634.7,
+    "s3": 447.44,
+    "s4": 435.27,
+    "current_position_pct": 58.7,
+    "notes": "WAIT_RANGE: in box (661-728), pos 59%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "上升三法",
+      "bias": "bullish",
+      "date": "2026-11-13",
+      "low": 689.7899780273438,
+      "high": 701.969970703125,
+      "i": 199
+    },
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-11-04",
+      "low": 691.9600219726562,
+      "high": 712.1699829101562,
+      "i": 192
+    },
     {
       "name": "利淡反擊線",
       "bias": "bearish",
       "date": "2026-08-25",
       "low": 618.030029296875,
       "high": 647.0,
-      "i": 152
+      "i": 142
     },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-07-29",
-      "low": 571.2000122070312,
-      "high": 584.5399780273438,
-      "i": 133
-    },
-    {
-      "name": "吊頸",
-      "bias": "bearish",
-      "date": "2026-07-08",
-      "low": 507.0,
-      "high": 512.9600219726562,
-      "i": 118
+      "date": "2026-07-17",
+      "low": 531.6199951171875,
+      "high": 542.02001953125,
+      "i": 115
     }
   ]
 }

@@ -3,72 +3,77 @@
   "ticker_user": "01658.HK",
   "name": "PSBC",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-22 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 5.51,
-    "H": 5.62,
-    "L": 5.5,
-    "C": 5.61,
-    "prev_close": 5.52,
-    "chg_pct": 1.72
+    "date": "2026-11-13",
+    "O": 5.58,
+    "H": 5.67,
+    "L": 5.55,
+    "C": 5.66,
+    "prev_close": 5.61,
+    "chg_pct": 0.89
   },
-  "phase": "range",
-  "adx": 32.16,
-  "plus_di": 21.22,
-  "minus_di": 11.54,
-  "regime": "trend",
+  "phase": "base_building",
+  "adx": 23.73,
+  "plus_di": 19.59,
+  "minus_di": 15.27,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 5.69 (2026-10-21), trough 5.36 (2026-10-23), box top 5.64 (2026-10-29)",
+  "phase_evidence": "Peak 5.74 (2026-11-10), trough 5.3 (2026-10-05), box top 5.74 (2026-11-10)",
   "peak": {
-    "date": "2026-10-21",
-    "price": 5.69
+    "date": "2026-11-10",
+    "price": 5.74
   },
   "trough": {
-    "date": "2026-10-23",
-    "price": 5.36
+    "date": "2026-10-05",
+    "price": 5.3
   },
   "box": {
-    "top": 5.64,
-    "top_date": "2026-10-29",
-    "bottom": 5.36,
-    "period": "2026-10-23 to 2026-10-30"
+    "top": 5.74,
+    "top_date": "2026-11-10",
+    "bottom": 5.3,
+    "period": "2026-10-05 to 2026-11-13"
   },
-  "drop_from_peak_pct": 1.3,
-  "recovery_from_crash_pct": 4.7,
+  "drop_from_peak_pct": 1.2,
+  "recovery_from_crash_pct": 6.8,
   "supports": [
     {
       "level": 4.0,
       "label": "S1 bottom",
-      "touches": 84,
-      "evidence": "structural bottom, near crash low 5.36"
+      "touches": 49,
+      "evidence": "structural bottom, near crash low 5.3"
     }
   ],
   "resistances": [
     {
-      "level": 5.62,
+      "level": 5.67,
       "label": "R1 today high",
-      "evidence": "today's high 5.619999885559082"
+      "evidence": "today's high 5.670000076293945"
+    },
+    {
+      "level": 5.74,
+      "label": "R3 Nov high",
+      "evidence": "box top 5.74, base period high"
     }
   ],
   "position": {
-    "current": 5.61,
-    "in_box_pct": 99.7,
+    "current": 5.66,
+    "in_box_pct": 95.7,
     "nearest_support": "S1 bottom (4.0)",
-    "nearest_resistance": "R1 today high (5.62)"
+    "nearest_resistance": "R1 today high (5.67)"
   },
   "kline_today": {
     "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 5.51,
-    "H": 5.62,
-    "L": 5.5,
-    "C": 5.61,
-    "body_pct": 83.3,
+    "O": 5.58,
+    "H": 5.67,
+    "L": 5.55,
+    "C": 5.66,
+    "body_pct": 70.8,
     "upper_wick_pct": 4.2,
-    "lower_wick_pct": 12.5
+    "lower_wick_pct": 25.0
   },
   "bias": {
     "short": {
@@ -76,8 +81,8 @@
       "reason": "reclaim above mid-box"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": "no clear direction"
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
       "bias": "near_peak",
@@ -87,7 +92,7 @@
   "scenarios": [
     {
       "if": "hold 4.0 (KEY support)",
-      "then": "still range; watch 5.62 for next test"
+      "then": "still range; watch 5.67 for next test"
     },
     {
       "if": "break 4.0 on close",
@@ -98,8 +103,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 5.62 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 5.67 on close",
+      "then": "short-term bullish; next test 5.74"
+    },
+    {
+      "if": "break 5.74 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -122,7 +131,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -130,15 +139,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 5.69,
-    "s1": 5.3,
-    "s2": 4.76,
-    "r2": 5.57,
+    "r1": 5.74,
+    "s1": 5.36,
+    "s2": 4.86,
+    "r2": 5.65,
     "r3": 5.24,
     "s3": 4.48,
     "s4": 4.78,
-    "current_position_pct": 80.5,
-    "notes": "WAIT_RANGE: in box (5-6), pos 81%, no clear setup"
+    "current_position_pct": 81.3,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 5.74）：① 跌到 5.74、收市守住喺 5.74 上面 → 照 BUY 條 plan 做（入場 5.74，止蝕 5.94，目標 5.55）。② 收市跌穿 5.74 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 5.74 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
     {
@@ -147,7 +156,7 @@
       "date": "2026-10-22",
       "low": 5.485000133514404,
       "high": 5.599999904632568,
-      "i": 193
+      "i": 183
     },
     {
       "name": "平頭頂",
@@ -155,7 +164,7 @@
       "date": "2026-10-16",
       "low": 5.474999904632568,
       "high": 5.585000038146973,
-      "i": 190
+      "i": 180
     },
     {
       "name": "烏雲蓋頂",
@@ -163,7 +172,7 @@
       "date": "2026-10-02",
       "low": 5.364999771118164,
       "high": 5.494999885559082,
-      "i": 180
+      "i": 170
     },
     {
       "name": "利淡吞噬",
@@ -171,7 +180,7 @@
       "date": "2026-09-07",
       "low": 5.34499979019165,
       "high": 5.505000114440918,
-      "i": 162
+      "i": 152
     },
     {
       "name": "利好反擊線",
@@ -179,7 +188,7 @@
       "date": "2026-08-19",
       "low": 4.824999809265137,
       "high": 4.929999828338623,
-      "i": 149
+      "i": 139
     }
   ]
 }

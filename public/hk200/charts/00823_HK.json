@@ -3,23 +3,23 @@
   "ticker_user": "00823.HK",
   "name": "LINK REIT",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-22 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 39.02,
-    "H": 39.82,
-    "L": 39.02,
-    "C": 39.82,
-    "prev_close": 39.26,
-    "chg_pct": 1.43
+    "date": "2026-11-13",
+    "O": 40.8,
+    "H": 41.1,
+    "L": 40.34,
+    "C": 40.96,
+    "prev_close": 41.5,
+    "chg_pct": -1.3
   },
   "phase": "base_building",
-  "adx": 20.58,
-  "plus_di": 29.94,
-  "minus_di": 16.92,
-  "regime": "dead",
+  "adx": 29.97,
+  "plus_di": 28.57,
+  "minus_di": 11.3,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 42.14 (2026-05-14), trough 35.12 (2026-06-24), box top 39.88 (2026-07-21)",
+  "phase_evidence": "Peak 42.14 (2026-05-14), trough 35.12 (2026-06-24), box top 41.78 (2026-11-12)",
   "peak": {
     "date": "2026-05-14",
     "price": 42.14
@@ -29,52 +29,57 @@
     "price": 35.12
   },
   "box": {
-    "top": 39.88,
-    "top_date": "2026-07-21",
+    "top": 41.78,
+    "top_date": "2026-11-12",
     "bottom": 35.12,
-    "period": "2026-06-24 to 2026-10-30"
+    "period": "2026-06-24 to 2026-11-13"
   },
-  "drop_from_peak_pct": 5.5,
-  "recovery_from_crash_pct": 13.4,
+  "drop_from_peak_pct": 2.8,
+  "recovery_from_crash_pct": 16.6,
   "supports": [
     {
       "level": 40.0,
       "label": "S1 KEY",
-      "touches": 44,
-      "evidence": "tested 44x in base period; -0.5% below current"
+      "touches": 63,
+      "evidence": "tested 63x in base period; 2.3% below current"
     },
     {
       "level": 36.0,
       "label": "S2 bottom",
-      "touches": 67,
+      "touches": 57,
       "evidence": "structural bottom, near crash low 35.12"
     }
   ],
   "resistances": [
     {
-      "level": 39.82,
+      "level": 41.1,
       "label": "R1 today high",
-      "evidence": "today's high 39.81999969482422"
+      "evidence": "today's high 41.099998474121094"
+    },
+    {
+      "level": 41.78,
+      "label": "R3 Nov high",
+      "evidence": "box top 41.78, base period high"
     }
   ],
   "position": {
-    "current": 39.82,
-    "in_box_pct": 100.0,
+    "current": 40.96,
+    "in_box_pct": 85.8,
     "nearest_support": "S1 KEY (40.0)",
-    "nearest_resistance": "R1 today high (39.82)"
+    "nearest_resistance": "R1 today high (41.1)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_hold",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 39.02,
-    "H": 39.82,
-    "L": 39.02,
-    "C": 39.82,
-    "body_pct": 100.0,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 0.0
+    "O": 40.8,
+    "H": 41.1,
+    "L": 40.34,
+    "C": 40.96,
+    "body_pct": 21.1,
+    "upper_wick_pct": 18.4,
+    "lower_wick_pct": 60.5
   },
   "bias": {
     "short": {
@@ -86,14 +91,14 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 40.0 (KEY support)",
-      "then": "still range; watch 39.82 for next test"
+      "then": "still range; watch 41.1 for next test"
     },
     {
       "if": "break 40.0 on close",
@@ -104,8 +109,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 39.82 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 41.1 on close",
+      "then": "short-term bullish; next test 41.78"
+    },
+    {
+      "if": "break 41.78 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -127,24 +136,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 39.82,
-    "target_price": 37.97,
-    "stop_price": 40.84,
-    "risk_pct": 2.57,
-    "reward_pct": 4.65,
-    "rr_ratio": 1.81,
-    "phase_match": true,
-    "r1": 39.82,
-    "s1": 36.12,
-    "s2": 36.32,
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 41.78,
+    "s1": 37.2,
+    "s2": 36.12,
     "r2": 39.88,
-    "r3": 42.14,
+    "r3": 41.76,
     "s3": 35.12,
-    "s4": 34.26,
-    "current_position_pct": 100.0,
-    "notes": "SELL_R1: in box (36-40), entry at R1 40, target mid 38, stop 41 ｜ 52.2 條規則（SELL plan，resistance 39.82）：① 跌到 39.82、收市守住喺 39.82 上面 → 照 BUY 條 plan 做（入場 39.82，止蝕 40.84，目標 37.97）。② 收市跌穿 39.82 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 39.82 上面』。"
+    "s4": 34.64,
+    "current_position_pct": 82.1,
+    "notes": "WAIT_RANGE: in box (37-42), pos 82%, no clear setup"
   },
   "patterns": [
     {
@@ -153,7 +162,7 @@
       "date": "2026-10-21",
       "low": 37.86000061035156,
       "high": 38.29999923706055,
-      "i": 192
+      "i": 182
     },
     {
       "name": "利好反擊線",
@@ -161,7 +170,7 @@
       "date": "2026-10-06",
       "low": 36.439998626708984,
       "high": 36.959999084472656,
-      "i": 182
+      "i": 172
     },
     {
       "name": "刺穿線",
@@ -169,7 +178,7 @@
       "date": "2026-09-28",
       "low": 36.84000015258789,
       "high": 37.65999984741211,
-      "i": 177
+      "i": 167
     },
     {
       "name": "利好反擊線",
@@ -177,7 +186,7 @@
       "date": "2026-08-20",
       "low": 38.880001068115234,
       "high": 39.380001068115234,
-      "i": 150
+      "i": 140
     },
     {
       "name": "平頭頂",
@@ -185,7 +194,7 @@
       "date": "2026-08-12",
       "low": 38.220001220703125,
       "high": 38.70000076293945,
-      "i": 144
+      "i": 134
     }
   ]
 }

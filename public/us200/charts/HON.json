@@ -3,23 +3,23 @@
   "ticker_user": "HON",
   "name": "Honeywell International Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 222.45,
-    "H": 222.74,
-    "L": 217.89,
-    "C": 218.33,
-    "prev_close": 222.14,
-    "chg_pct": -1.72
+    "date": "2026-11-13",
+    "O": 222.75,
+    "H": 223.48,
+    "L": 219.68,
+    "C": 222.46,
+    "prev_close": 223.45,
+    "chg_pct": -0.44
   },
   "phase": "base_building",
-  "adx": 10.78,
-  "plus_di": 19.67,
-  "minus_di": 16.72,
+  "adx": 13.23,
+  "plus_di": 24.63,
+  "minus_di": 23.76,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 260.28 (2026-03-02), trough 196.98 (2026-09-14), box top 223.81 (2026-10-26)",
+  "phase_evidence": "Peak 260.28 (2026-03-02), trough 196.98 (2026-09-14), box top 232.58 (2026-11-04)",
   "peak": {
     "date": "2026-03-02",
     "price": 260.28
@@ -29,58 +29,69 @@
     "price": 196.98
   },
   "box": {
-    "top": 223.81,
-    "top_date": "2026-10-26",
+    "top": 232.58,
+    "top_date": "2026-11-04",
     "bottom": 196.98,
-    "period": "2026-09-14 to 2026-10-30"
+    "period": "2026-09-14 to 2026-11-13"
   },
-  "drop_from_peak_pct": 16.1,
-  "recovery_from_crash_pct": 10.8,
+  "drop_from_peak_pct": 14.5,
+  "recovery_from_crash_pct": 12.9,
   "supports": [
     {
-      "level": 212.0,
+      "level": 216.0,
       "label": "S1 KEY",
-      "touches": 16,
-      "evidence": "tested 16x in base period; 2.9% below current"
+      "touches": 12,
+      "evidence": "tested 12x in base period; 2.9% below current"
+    },
+    {
+      "level": 212.0,
+      "label": "S2",
+      "touches": 15,
+      "evidence": "mid-base support, tested 15x"
     },
     {
       "level": 208.0,
-      "label": "S2",
-      "touches": 24,
-      "evidence": "mid-base support, tested 24x"
+      "label": "S3",
+      "touches": 18,
+      "evidence": "mid-base support, tested 18x"
     },
     {
-      "level": 204.0,
-      "label": "S3 bottom",
-      "touches": 13,
-      "evidence": "structural bottom, near crash low 196.98"
+      "level": 196.98,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-09-14, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 222.74,
+      "level": 223.48,
       "label": "R1 today high",
-      "evidence": "today's high 222.74000549316406"
+      "evidence": "today's high 223.47999572753906"
+    },
+    {
+      "level": 232.58,
+      "label": "R3 Nov high",
+      "evidence": "box top 232.58, base period high"
     }
   ],
   "position": {
-    "current": 218.33,
-    "in_box_pct": 76.5,
-    "nearest_support": "S1 KEY (212.0)",
-    "nearest_resistance": "R1 today high (222.74)"
+    "current": 222.46,
+    "in_box_pct": 71.6,
+    "nearest_support": "S1 KEY (216.0)",
+    "nearest_resistance": "R1 today high (223.48)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 222.45,
-    "H": 222.74,
-    "L": 217.89,
-    "C": 218.33,
-    "body_pct": 84.9,
-    "upper_wick_pct": 6.0,
-    "lower_wick_pct": 9.1
+    "close_position": "upper_half",
+    "O": 222.75,
+    "H": 223.48,
+    "L": 219.68,
+    "C": 222.46,
+    "body_pct": 7.6,
+    "upper_wick_pct": 19.2,
+    "lower_wick_pct": 73.2
   },
   "bias": {
     "short": {
@@ -98,20 +109,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 212.0 (KEY support)",
-      "then": "still range; watch 222.74 for next test"
+      "if": "hold 216.0 (KEY support)",
+      "then": "still range; watch 223.48 for next test"
     },
     {
-      "if": "break 212.0 on close",
-      "then": "target 208.0 → 204.0 (short-term bearish)"
+      "if": "break 216.0 on close",
+      "then": "target 212.0 → 208.0 (short-term bearish)"
     },
     {
-      "if": "break 204.0 (crash low)",
+      "if": "break 196.98 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 222.74 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 223.48 on close",
+      "then": "short-term bullish; next test 232.58"
+    },
+    {
+      "if": "break 232.58 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -133,33 +148,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 223.81,
-    "s1": 204.23,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 232.58,
+    "target_price": 218.89,
+    "stop_price": 242.35,
+    "risk_pct": 4.2,
+    "reward_pct": 5.89,
+    "rr_ratio": 1.4,
+    "phase_match": true,
+    "r1": 232.58,
+    "s1": 205.2,
     "s2": 196.98,
-    "r2": 246.73,
+    "r2": 221.45,
     "r3": 252.0,
     "s3": 215.54,
     "s4": 217.97,
-    "current_position_pct": 72.0,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 223.81）：① 跌到 223.81、收市守住喺 223.81 上面 → 照 BUY 條 plan 做（入場 223.81，止蝕 232.55，目標 214.02）。② 收市跌穿 223.81 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 223.81 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 63.0,
+    "notes": "SELL_R1: in box (205-233), entry at R1 233, target mid 219, stop 242 ｜ 52.2 條規則（SELL plan，resistance 232.58）：① 跌到 232.58、收市守住喺 232.58 上面 → 照 BUY 條 plan 做（入場 232.58，止蝕 242.35，目標 218.89）。② 收市跌穿 232.58 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 232.58 上面』。"
   },
   "patterns": [
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-11-12",
+      "low": 223.35000610351562,
+      "high": 228.19000244140625,
+      "i": 198
+    },
     {
       "name": "吊頸",
       "bias": "bearish",
       "date": "2026-10-29",
       "low": 217.3000030517578,
       "high": 222.97999572753906,
-      "i": 198
+      "i": 188
     },
     {
       "name": "利好反擊線",
@@ -167,15 +190,7 @@
       "date": "2026-10-15",
       "low": 206.6199951171875,
       "high": 210.8000030517578,
-      "i": 188
-    },
-    {
-      "name": "利淡反擊線",
-      "bias": "bearish",
-      "date": "2026-10-05",
-      "low": 212.13999938964844,
-      "high": 215.10000610351562,
-      "i": 180
+      "i": 178
     },
     {
       "name": "平頭底",
@@ -183,7 +198,7 @@
       "date": "2026-09-22",
       "low": 206.49000549316406,
       "high": 212.27000427246094,
-      "i": 171
+      "i": 161
     },
     {
       "name": "刺穿線",
@@ -191,7 +206,7 @@
       "date": "2026-08-14",
       "low": 232.38999938964844,
       "high": 234.8000030517578,
-      "i": 145
+      "i": 135
     }
   ]
 }

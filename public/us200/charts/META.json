@@ -3,82 +3,100 @@
   "ticker_user": "META",
   "name": "Meta Platforms, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 614.51,
-    "H": 626.37,
-    "L": 610.13,
-    "C": 614.99,
-    "prev_close": 624.52,
-    "chg_pct": -1.53
+    "date": "2026-11-13",
+    "O": 627.21,
+    "H": 643.91,
+    "L": 624.83,
+    "C": 641.69,
+    "prev_close": 623.61,
+    "chg_pct": 2.9
   },
   "phase": "downtrend_active",
-  "adx": 27.54,
-  "plus_di": 18.51,
-  "minus_di": 32.44,
-  "regime": "trend",
+  "adx": 24.1,
+  "plus_di": 22.29,
+  "minus_di": 29.26,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 779.82 (2026-09-24), trough 609.0 (2026-10-28), box top 779.82 (2026-09-24)",
+  "phase_evidence": "Peak 779.82 (2026-09-24), trough 583.8 (2026-11-05), box top 648.45 (2026-11-11)",
   "peak": {
     "date": "2026-09-24",
     "price": 779.82
   },
   "trough": {
-    "date": "2026-10-28",
-    "price": 609.0
+    "date": "2026-11-05",
+    "price": 583.8
   },
   "box": {
-    "top": 779.82,
-    "top_date": "2026-09-24",
-    "bottom": 609.0,
-    "period": "2026-10-28 to 2026-10-30"
+    "top": 648.45,
+    "top_date": "2026-11-11",
+    "bottom": 583.8,
+    "period": "2026-11-05 to 2026-11-13"
   },
-  "drop_from_peak_pct": 21.1,
-  "recovery_from_crash_pct": 1.0,
+  "drop_from_peak_pct": 17.7,
+  "recovery_from_crash_pct": 9.9,
   "supports": [
     {
-      "level": 596.0,
-      "label": "S1 bottom",
-      "touches": 0,
-      "evidence": "structural bottom, near crash low 609.0"
+      "level": 628.0,
+      "label": "S1 KEY",
+      "touches": 4,
+      "evidence": "tested 4x in base period; 2.1% below current"
+    },
+    {
+      "level": 624.0,
+      "label": "S2",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 620.0,
+      "label": "S3",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 583.8,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-11-05, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 626.37,
+      "level": 643.91,
       "label": "R1 today high",
-      "evidence": "today's high 626.3699951171875"
+      "evidence": "today's high 643.9099731445312"
     },
     {
-      "level": 779.82,
-      "label": "R3 Sep high",
-      "evidence": "box top 779.82, base period high"
+      "level": 648.45,
+      "label": "R3 Nov high",
+      "evidence": "box top 648.45, base period high"
     }
   ],
   "position": {
-    "current": 614.99,
-    "in_box_pct": 10.3,
-    "nearest_support": "S1 bottom (596.0)",
-    "nearest_resistance": "R1 today high (626.37)"
+    "current": 641.69,
+    "in_box_pct": 89.5,
+    "nearest_support": "S1 KEY (628.0)",
+    "nearest_resistance": "R1 today high (643.91)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 614.51,
-    "H": 626.37,
-    "L": 610.13,
-    "C": 614.99,
-    "body_pct": 3.0,
-    "upper_wick_pct": 70.1,
-    "lower_wick_pct": 27.0
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 627.21,
+    "H": 643.91,
+    "L": 624.83,
+    "C": 641.69,
+    "body_pct": 75.9,
+    "upper_wick_pct": 11.6,
+    "lower_wick_pct": 12.5
   },
   "bias": {
     "short": {
-      "bias": "defensive",
-      "reason": "near box bottom (10% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -91,23 +109,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 596.0 (KEY support)",
-      "then": "still range; watch 626.37 for next test"
+      "if": "hold 628.0 (KEY support)",
+      "then": "still range; watch 643.91 for next test"
     },
     {
-      "if": "break 596.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 628.0 on close",
+      "then": "target 624.0 → 620.0 (short-term bearish)"
     },
     {
-      "if": "break 596.0 (crash low)",
+      "if": "break 583.8 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 626.37 on close",
-      "then": "short-term bullish; next test 779.82"
+      "if": "reclaim 643.91 on close",
+      "then": "short-term bullish; next test 648.45"
     },
     {
-      "if": "break 779.82 (box top)",
+      "if": "break 648.45 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -139,24 +157,32 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 771.27,
-    "s1": 609.0,
-    "s2": 537.27,
+    "r1": 713.22,
+    "s1": 583.8,
+    "s2": 543.23,
     "r2": 779.82,
     "r3": 686.08,
     "s3": 524.49,
     "s4": 520.26,
-    "current_position_pct": 3.7,
-    "notes": "WAIT_RANGE: in box (609-771), pos 4%, no clear setup"
+    "current_position_pct": 44.7,
+    "notes": "WAIT_RANGE: in box (584-713), pos 45%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-11-03",
+      "low": 610.0999755859375,
+      "high": 624.8400268554688,
+      "i": 191
+    },
     {
       "name": "上升三法",
       "bias": "bullish",
       "date": "2026-10-12",
       "low": 727.6400146484375,
       "high": 752.239990234375,
-      "i": 185
+      "i": 175
     },
     {
       "name": "烏雲蓋頂",
@@ -164,7 +190,7 @@
       "date": "2026-10-06",
       "low": 736.6900024414062,
       "high": 747.5999755859375,
-      "i": 181
+      "i": 171
     },
     {
       "name": "利淡吞噬",
@@ -172,7 +198,7 @@
       "date": "2026-09-30",
       "low": 721.2999877929688,
       "high": 738.25,
-      "i": 177
+      "i": 167
     },
     {
       "name": "利好反擊線",
@@ -180,7 +206,7 @@
       "date": "2026-08-07",
       "low": 585.6199951171875,
       "high": 598.739990234375,
-      "i": 140
+      "i": 130
     }
   ]
 }

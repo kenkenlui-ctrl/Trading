@@ -3,20 +3,20 @@
   "ticker_user": "3139.T",
   "name": "Lacto Japan Co., Ltd.",
   "data_source": "yfinance",
-  "data_range": "2026-01-06 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-20 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 3420.0,
-    "H": 3470.0,
-    "L": 3420.0,
-    "C": 3465.0,
-    "prev_close": 3400.0,
-    "chg_pct": 1.9117647058823461
+    "date": "2026-11-13",
+    "O": 3515.0,
+    "H": 3525.0,
+    "L": 3485.0,
+    "C": 3510.0,
+    "prev_close": 3515.0,
+    "chg_pct": -0.14224751066855834
   },
   "phase": "base_building",
-  "adx": 15.91,
-  "plus_di": 30.41,
-  "minus_di": 28.72,
+  "adx": 12.24,
+  "plus_di": 26.73,
+  "minus_di": 20.76,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 3830.0 (2026-02-27), trough 3065.0 (2026-06-03), box top 3600.0 (2026-10-15)",
@@ -32,28 +32,28 @@
     "top": 3600.0,
     "top_date": "2026-10-15",
     "bottom": 3065.0,
-    "period": "2026-06-03 to 2026-10-30"
+    "period": "2026-06-03 to 2026-11-13"
   },
-  "drop_from_peak_pct": 9.5,
-  "recovery_from_crash_pct": 13.1,
+  "drop_from_peak_pct": 8.4,
+  "recovery_from_crash_pct": 14.5,
   "supports": [
     {
-      "level": 3396.0,
+      "level": 3432.0,
       "label": "S1 KEY",
-      "touches": 7,
-      "evidence": "tested 7x in base period; 2.0% below current"
+      "touches": 5,
+      "evidence": "tested 5x in base period; 2.2% below current"
     },
     {
-      "level": 3376.0,
+      "level": 3420.0,
       "label": "S2",
+      "touches": 9,
+      "evidence": "mid-base support, tested 9x"
+    },
+    {
+      "level": 3408.0,
+      "label": "S3",
       "touches": 5,
       "evidence": "mid-base support, tested 5x"
-    },
-    {
-      "level": 3368.0,
-      "label": "S3",
-      "touches": 3,
-      "evidence": "mid-base support, tested 3x"
     },
     {
       "level": 3065.0,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 3470.0,
+      "level": 3525.0,
       "label": "R1 today high",
-      "evidence": "today's high 3470.0"
+      "evidence": "today's high 3525.0"
     },
     {
       "level": 3600.0,
@@ -75,28 +75,28 @@
     }
   ],
   "position": {
-    "current": 3465.0,
-    "in_box_pct": 74.8,
-    "nearest_support": "S1 KEY (3396.0)",
-    "nearest_resistance": "R1 today high (3470.0)"
+    "current": 3510.0,
+    "in_box_pct": 83.2,
+    "nearest_support": "S1 KEY (3432.0)",
+    "nearest_resistance": "R1 today high (3525.0)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 3420.0,
-    "H": 3470.0,
-    "L": 3420.0,
-    "C": 3465.0,
-    "body_pct": 90.0,
-    "upper_wick_pct": 10.0,
-    "lower_wick_pct": 0.0
+    "O": 3515.0,
+    "H": 3525.0,
+    "L": 3485.0,
+    "C": 3510.0,
+    "body_pct": 12.5,
+    "upper_wick_pct": 25.0,
+    "lower_wick_pct": 62.5
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -109,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 3396.0 (KEY support)",
-      "then": "still range; watch 3470.0 for next test"
+      "if": "hold 3432.0 (KEY support)",
+      "then": "still range; watch 3525.0 for next test"
     },
     {
-      "if": "break 3396.0 on close",
-      "then": "target 3376.0 → 3368.0 (short-term bearish)"
+      "if": "break 3432.0 on close",
+      "then": "target 3420.0 → 3408.0 (short-term bearish)"
     },
     {
       "if": "break 3065.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 3470.0 on close",
+      "if": "reclaim 3525.0 on close",
       "then": "short-term bullish; next test 3600.0"
     },
     {
@@ -149,23 +149,23 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
-    "r1": 3600.0,
-    "s1": 3360.0,
-    "s2": 3205.0,
-    "r2": 3495.0,
+    "phase_match": false,
+    "r1": 3565.0,
+    "s1": 3365.0,
+    "s2": 3350.0,
+    "r2": 3600.0,
     "r3": 3550.0,
     "s3": 3065.0,
-    "s4": 3275.0,
-    "current_position_pct": 43.8,
-    "notes": "WAIT_RANGE: in box (3360-3600), pos 44%, no clear setup"
+    "s4": 3130.0,
+    "current_position_pct": 72.5,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 3565.00）：① 跌到 3565.00、收市守住喺 3565.00 上面 → 照 BUY 條 plan 做（入場 3565.00，止蝕 3653.15，目標 3465.00）。② 收市跌穿 3565.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 3565.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
     {
@@ -174,7 +174,7 @@
       "date": "2026-10-20",
       "low": 3465.0,
       "high": 3500.0,
-      "i": 191
+      "i": 182
     },
     {
       "name": "倒錘頭",
@@ -182,7 +182,7 @@
       "date": "2026-10-09",
       "low": 3385.0,
       "high": 3440.0,
-      "i": 185
+      "i": 176
     },
     {
       "name": "烏雲蓋頂",
@@ -190,7 +190,7 @@
       "date": "2026-09-02",
       "low": 3440.0,
       "high": 3480.0,
-      "i": 161
+      "i": 152
     },
     {
       "name": "利好吞噬",
@@ -198,31 +198,23 @@
       "date": "2026-08-12",
       "low": 3295.0,
       "high": 3350.0,
-      "i": 146
-    },
-    {
-      "name": "烏雲蓋頂",
-      "bias": "bearish",
-      "date": "2026-06-30",
-      "low": 3280.0,
-      "high": 3320.0,
-      "i": 117
+      "i": 137
     }
   ],
-  "asof": "2026-10-30",
-  "close": 3465.0,
-  "chg_pct": 1.9117647058823461,
+  "asof": "2026-11-13",
+  "close": 3510.0,
+  "chg_pct": -0.14224751066855834,
   "kline": {
-    "type": "bullish_reclaim",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 3420.0,
-    "H": 3470.0,
-    "L": 3420.0,
-    "C": 3465.0,
-    "body_pct": 90.0,
-    "upper_wick_pct": 10.0,
-    "lower_wick_pct": 0.0
+    "O": 3515.0,
+    "H": 3525.0,
+    "L": 3485.0,
+    "C": 3510.0,
+    "body_pct": 12.5,
+    "upper_wick_pct": 25.0,
+    "lower_wick_pct": 62.5
   }
 }

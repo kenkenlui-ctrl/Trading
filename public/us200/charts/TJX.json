@@ -3,21 +3,21 @@
   "ticker_user": "TJX",
   "name": "TJX Companies, Inc. (The)",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 144.25,
-    "H": 144.25,
-    "L": 140.2,
-    "C": 140.31,
-    "prev_close": 141.39,
-    "chg_pct": -0.76
+    "date": "2026-11-13",
+    "O": 134.04,
+    "H": 136.1,
+    "L": 133.34,
+    "C": 134.37,
+    "prev_close": 135.98,
+    "chg_pct": -1.18
   },
   "phase": "base_building",
-  "adx": 28.48,
-  "plus_di": 31.15,
-  "minus_di": 22.7,
-  "regime": "trend",
+  "adx": 16.67,
+  "plus_di": 23.0,
+  "minus_di": 27.49,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 170.0 (2026-06-11), trough 122.78 (2026-09-16), box top 148.57 (2026-10-20)",
   "peak": {
@@ -32,40 +32,34 @@
     "top": 148.57,
     "top_date": "2026-10-20",
     "bottom": 122.78,
-    "period": "2026-09-16 to 2026-10-30"
+    "period": "2026-09-16 to 2026-11-13"
   },
-  "drop_from_peak_pct": 17.5,
-  "recovery_from_crash_pct": 14.3,
+  "drop_from_peak_pct": 21.0,
+  "recovery_from_crash_pct": 9.4,
   "supports": [
     {
-      "level": 136.0,
-      "label": "S1 KEY",
-      "touches": 8,
-      "evidence": "tested 8x in base period; 3.1% below current"
-    },
-    {
       "level": 132.0,
-      "label": "S2",
-      "touches": 12,
-      "evidence": "mid-base support, tested 12x"
+      "label": "S1 KEY",
+      "touches": 3,
+      "evidence": "tested 3x in base period; 1.8% below current"
     },
     {
       "level": 128.0,
-      "label": "S3 bottom",
-      "touches": 11,
+      "label": "S2 bottom",
+      "touches": 6,
       "evidence": "structural bottom, near crash low 122.78"
     }
   ],
   "resistances": [
     {
-      "level": 144.25,
+      "level": 136.1,
       "label": "R1 today high",
-      "evidence": "today's high 144.25"
+      "evidence": "today's high 136.10000610351562"
     },
     {
-      "level": 145.0,
+      "level": 140.0,
       "label": "R2",
-      "evidence": "mid-box supply, round number 145"
+      "evidence": "mid-box supply, round number 140"
     },
     {
       "level": 148.57,
@@ -74,23 +68,23 @@
     }
   ],
   "position": {
-    "current": 140.31,
-    "in_box_pct": 59.8,
-    "nearest_support": "S1 KEY (136.0)",
-    "nearest_resistance": "R1 today high (144.25)"
+    "current": 134.37,
+    "in_box_pct": 31.0,
+    "nearest_support": "S1 KEY (132.0)",
+    "nearest_resistance": "R1 today high (136.1)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 144.25,
-    "H": 144.25,
-    "L": 140.2,
-    "C": 140.31,
-    "body_pct": 97.3,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 2.7
+    "O": 134.04,
+    "H": 136.1,
+    "L": 133.34,
+    "C": 134.37,
+    "body_pct": 12.0,
+    "upper_wick_pct": 62.7,
+    "lower_wick_pct": 25.4
   },
   "bias": {
     "short": {
@@ -108,20 +102,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 136.0 (KEY support)",
-      "then": "still range; watch 144.25 for next test"
+      "if": "hold 132.0 (KEY support)",
+      "then": "still range; watch 136.1 for next test"
     },
     {
-      "if": "break 136.0 on close",
-      "then": "target 132.0 → 128.0 (short-term bearish)"
+      "if": "break 132.0 on close",
+      "then": "target 128.0 → lower (short-term bearish)"
     },
     {
       "if": "break 128.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 144.25 on close",
-      "then": "short-term bullish; next test 145.0"
+      "if": "reclaim 136.1 on close",
+      "then": "short-term bullish; next test 140.0"
     },
     {
       "if": "break 148.57 (box top)",
@@ -147,33 +141,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
+    "verdict": "BUY",
+    "strategy": "BUY_S1",
+    "trigger_price": 133.34,
+    "target_price": 140.96,
+    "stop_price": 127.57,
+    "risk_pct": 4.33,
+    "reward_pct": 5.71,
+    "rr_ratio": 1.32,
     "phase_match": true,
     "r1": 148.57,
     "s1": 133.34,
     "s2": 122.78,
-    "r2": 162.5,
+    "r2": 147.45,
     "r3": 170.0,
-    "s3": 146.14,
-    "s4": 145.83,
-    "current_position_pct": 45.8,
-    "notes": "WAIT_RANGE: in box (133-149), pos 46%, no clear setup"
+    "s3": 139.31,
+    "s4": 146.14,
+    "current_position_pct": 6.8,
+    "notes": "BUY_S1: in box (133-149), entry at S1 133, target mid 141, stop 128 ｜ 52.2 條規則（BUY plan，support 133.34）：① 跌到 133.34、收市守住喺 133.34 上面 → 照 BUY 條 plan 做（入場 133.34，止蝕 127.57，目標 140.96）。② 收市跌穿 133.34 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 133.34 上面』。"
   },
   "patterns": [
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-11-11",
+      "low": 134.86000061035156,
+      "high": 136.77999877929688,
+      "i": 197
+    },
     {
       "name": "上升三法",
       "bias": "bullish",
       "date": "2026-10-29",
       "low": 139.5,
       "high": 141.6300048828125,
-      "i": 198
+      "i": 188
     },
     {
       "name": "烏雲蓋頂",
@@ -181,7 +183,7 @@
       "date": "2026-10-23",
       "low": 144.72999572753906,
       "high": 147.3800048828125,
-      "i": 194
+      "i": 184
     },
     {
       "name": "利好反擊線",
@@ -189,7 +191,7 @@
       "date": "2026-09-29",
       "low": 129.77000427246094,
       "high": 134.35000610351562,
-      "i": 176
+      "i": 166
     },
     {
       "name": "早晨之星",
@@ -197,15 +199,7 @@
       "date": "2026-07-16",
       "low": 151.4499969482422,
       "high": 155.27000427246094,
-      "i": 124
-    },
-    {
-      "name": "刺穿線",
-      "bias": "bullish",
-      "date": "2026-07-07",
-      "low": 152.47000122070312,
-      "high": 155.74000549316406,
-      "i": 117
+      "i": 114
     }
   ]
 }

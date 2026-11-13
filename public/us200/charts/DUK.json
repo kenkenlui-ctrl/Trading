@@ -3,23 +3,23 @@
   "ticker_user": "DUK",
   "name": "Duke Energy Corporation (Holdin",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 127.5,
-    "H": 128.09,
-    "L": 126.54,
-    "C": 127.39,
-    "prev_close": 125.9,
-    "chg_pct": 1.18
+    "date": "2026-11-13",
+    "O": 128.0,
+    "H": 129.77,
+    "L": 127.94,
+    "C": 129.16,
+    "prev_close": 128.59,
+    "chg_pct": 0.44
   },
   "phase": "base_building",
-  "adx": 40.68,
-  "plus_di": 34.95,
-  "minus_di": 8.45,
+  "adx": 46.6,
+  "plus_di": 31.48,
+  "minus_di": 12.58,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 134.49 (2026-03-17), trough 112.4 (2026-09-29), box top 128.09 (2026-10-30)",
+  "phase_evidence": "Peak 134.49 (2026-03-17), trough 112.4 (2026-09-29), box top 132.99 (2026-11-05)",
   "peak": {
     "date": "2026-03-17",
     "price": 134.49
@@ -29,58 +29,69 @@
     "price": 112.4
   },
   "box": {
-    "top": 128.09,
-    "top_date": "2026-10-30",
+    "top": 132.99,
+    "top_date": "2026-11-05",
     "bottom": 112.4,
-    "period": "2026-09-29 to 2026-10-30"
+    "period": "2026-09-29 to 2026-11-13"
   },
-  "drop_from_peak_pct": 5.3,
-  "recovery_from_crash_pct": 13.3,
+  "drop_from_peak_pct": 4.0,
+  "recovery_from_crash_pct": 14.9,
   "supports": [
     {
-      "level": 124.0,
+      "level": 128.0,
       "label": "S1 KEY",
+      "touches": 6,
+      "evidence": "tested 6x in base period; 0.9% below current"
+    },
+    {
+      "level": 124.0,
+      "label": "S2",
       "touches": 10,
-      "evidence": "tested 10x in base period; 2.7% below current"
+      "evidence": "mid-base support, tested 10x"
     },
     {
       "level": 120.0,
-      "label": "S2",
+      "label": "S3",
       "touches": 12,
       "evidence": "mid-base support, tested 12x"
     },
     {
-      "level": 116.0,
-      "label": "S3 bottom",
-      "touches": 17,
-      "evidence": "structural bottom, near crash low 112.4"
+      "level": 112.4,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-09-29, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 128.09,
+      "level": 129.77,
       "label": "R1 today high",
-      "evidence": "today's high 128.08999633789062"
+      "evidence": "today's high 129.77499389648438"
+    },
+    {
+      "level": 132.99,
+      "label": "R3 Nov high",
+      "evidence": "box top 132.99, base period high"
     }
   ],
   "position": {
-    "current": 127.39,
-    "in_box_pct": 94.2,
-    "nearest_support": "S1 KEY (124.0)",
-    "nearest_resistance": "R1 today high (128.09)"
+    "current": 129.16,
+    "in_box_pct": 81.4,
+    "nearest_support": "S1 KEY (128.0)",
+    "nearest_resistance": "R1 today high (129.77)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "upper_half",
-    "O": 127.5,
-    "H": 128.09,
-    "L": 126.54,
-    "C": 127.39,
-    "body_pct": 7.1,
-    "upper_wick_pct": 38.1,
-    "lower_wick_pct": 54.8
+    "O": 128.0,
+    "H": 129.77,
+    "L": 127.94,
+    "C": 129.16,
+    "body_pct": 63.2,
+    "upper_wick_pct": 33.5,
+    "lower_wick_pct": 3.3
   },
   "bias": {
     "short": {
@@ -92,26 +103,30 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 124.0 (KEY support)",
-      "then": "still range; watch 128.09 for next test"
+      "if": "hold 128.0 (KEY support)",
+      "then": "still range; watch 129.77 for next test"
     },
     {
-      "if": "break 124.0 on close",
-      "then": "target 120.0 → 116.0 (short-term bearish)"
+      "if": "break 128.0 on close",
+      "then": "target 124.0 → 120.0 (short-term bearish)"
     },
     {
-      "if": "break 116.0 (crash low)",
+      "if": "break 112.4 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 128.09 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 129.77 on close",
+      "then": "short-term bullish; next test 132.99"
+    },
+    {
+      "if": "break 132.99 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -142,24 +157,24 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 128.09,
-    "s1": 113.29,
+    "r1": 132.99,
+    "s1": 118.95,
     "s2": 112.4,
-    "r2": 125.66,
+    "r2": 123.04,
     "r3": 132.65,
     "s3": 119.76,
-    "s4": 116.25,
-    "current_position_pct": 95.3,
-    "notes": "WAIT_RANGE: in box (113-128), pos 95%, no clear setup"
+    "s4": 119.04,
+    "current_position_pct": 72.7,
+    "notes": "WAIT_RANGE: in box (119-133), pos 73%, no clear setup"
   },
   "patterns": [
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-10-30",
-      "low": 126.54000091552734,
-      "high": 128.08999633789062,
-      "i": 199
+      "date": "2026-11-05",
+      "low": 129.8000030517578,
+      "high": 132.99000549316406,
+      "i": 193
     },
     {
       "name": "利淡吞噬",
@@ -167,7 +182,7 @@
       "date": "2026-10-19",
       "low": 118.94999694824219,
       "high": 121.19999694824219,
-      "i": 190
+      "i": 180
     },
     {
       "name": "刺穿線",
@@ -175,7 +190,7 @@
       "date": "2026-09-08",
       "low": 120.0,
       "high": 121.62000274658203,
-      "i": 161
+      "i": 151
     },
     {
       "name": "利好身懷六甲",
@@ -183,7 +198,7 @@
       "date": "2026-08-31",
       "low": 119.04000091552734,
       "high": 120.5199966430664,
-      "i": 156
+      "i": 146
     },
     {
       "name": "三個白武士",
@@ -191,7 +206,7 @@
       "date": "2026-08-18",
       "low": 123.91000366210938,
       "high": 125.66000366210938,
-      "i": 147
+      "i": 137
     }
   ]
 }

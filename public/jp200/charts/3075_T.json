@@ -3,112 +3,115 @@
   "ticker_user": "3075.T",
   "name": "Choushimaru Co., Ltd.",
   "data_source": "yfinance",
-  "data_range": "2026-01-06 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-20 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 1705.0,
-    "H": 1710.0,
-    "L": 1702.0,
-    "C": 1702.0,
-    "prev_close": 1700.0,
-    "chg_pct": 0.11764705882353343
+    "date": "2026-11-13",
+    "O": 1710.0,
+    "H": 1720.0,
+    "L": 1709.0,
+    "C": 1720.0,
+    "prev_close": 1706.0,
+    "chg_pct": 0.8206330597889888
   },
   "phase": "downtrend_active",
-  "adx": 34.11,
-  "plus_di": 26.53,
-  "minus_di": 13.06,
-  "regime": "trend",
+  "adx": 24.07,
+  "plus_di": 25.3,
+  "minus_di": 23.12,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 1819.0 (2026-09-18), trough 1681.0 (2026-09-30), box top 1720.0 (2026-10-08)",
+  "phase_evidence": "Peak 1819.0 (2026-09-18), trough 1630.0 (2026-11-06), box top 1720.0 (2026-11-13)",
   "peak": {
     "date": "2026-09-18",
     "price": 1819.0
   },
   "trough": {
-    "date": "2026-09-30",
-    "price": 1681.0
+    "date": "2026-11-06",
+    "price": 1630.0
   },
   "box": {
     "top": 1720.0,
-    "top_date": "2026-10-08",
-    "bottom": 1681.0,
-    "period": "2026-09-30 to 2026-10-30"
+    "top_date": "2026-11-13",
+    "bottom": 1630.0,
+    "period": "2026-11-06 to 2026-11-13"
   },
-  "drop_from_peak_pct": 6.4,
-  "recovery_from_crash_pct": 1.2,
+  "drop_from_peak_pct": 5.4,
+  "recovery_from_crash_pct": 5.5,
   "supports": [
     {
-      "level": 1652.0,
-      "label": "S1 bottom",
-      "touches": 0,
-      "evidence": "structural bottom, near crash low 1681.0"
+      "level": 1680.0,
+      "label": "S1 KEY",
+      "touches": 5,
+      "evidence": "tested 5x in base period; 2.3% below current"
+    },
+    {
+      "level": 1648.0,
+      "label": "S2",
+      "touches": 5,
+      "evidence": "mid-base support, tested 5x"
+    },
+    {
+      "level": 1644.0,
+      "label": "S3 bottom",
+      "touches": 3,
+      "evidence": "structural bottom, near crash low 1630.0"
     }
   ],
   "resistances": [
     {
-      "level": 1710.0,
-      "label": "R1 today high",
-      "evidence": "rejection at 1710.0 (long upper wick, close weak)"
-    },
-    {
       "level": 1720.0,
-      "label": "R3 Oct high",
-      "evidence": "box top 1720.0, base period high"
+      "label": "R1 today high",
+      "evidence": "today's high 1720.0"
     }
   ],
   "position": {
-    "current": 1702.0,
-    "in_box_pct": 73.5,
-    "nearest_support": "S1 bottom (1652.0)",
-    "nearest_resistance": "R1 today high (1710.0)"
+    "current": 1720.0,
+    "in_box_pct": 100.0,
+    "nearest_support": "S1 KEY (1680.0)",
+    "nearest_resistance": null
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 1705.0,
-    "H": 1710.0,
-    "L": 1702.0,
-    "C": 1702.0,
-    "body_pct": 37.5,
-    "upper_wick_pct": 62.5,
-    "lower_wick_pct": 0.0
+    "close_position": "upper_half",
+    "O": 1710.0,
+    "H": 1720.0,
+    "L": 1709.0,
+    "C": 1720.0,
+    "body_pct": 90.9,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 9.1
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "bearish_continuation",
       "reason": "making new lows"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 1652.0 (KEY support)",
-      "then": "still range; watch 1710.0 for next test"
+      "if": "hold 1680.0 (KEY support)",
+      "then": "still range; watch 1720.0 for next test"
     },
     {
-      "if": "break 1652.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 1680.0 on close",
+      "then": "target 1648.0 → 1644.0 (short-term bearish)"
     },
     {
-      "if": "break 1652.0 (crash low)",
+      "if": "break 1644.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1710.0 on close",
-      "then": "short-term bullish; next test 1720.0"
-    },
-    {
-      "if": "break 1720.0 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 1720.0 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -130,24 +133,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 1720.0,
+    "target_price": 1675.0,
+    "stop_price": 1754.4,
+    "risk_pct": 2.0,
+    "reward_pct": 2.62,
+    "rr_ratio": 1.31,
+    "phase_match": true,
     "r1": 1720.0,
-    "s1": 1691.0,
+    "s1": 1630.0,
     "s2": 1637.0,
     "r2": 1819.0,
     "r3": 1750.0,
     "s3": 1580.0,
     "s4": 1555.0,
-    "current_position_pct": 37.9,
-    "notes": "WAIT_RANGE: in box (1691-1720), pos 38%, no clear setup"
+    "current_position_pct": 100.0,
+    "notes": "SELL_R1: in box (1630-1720), entry at R1 1720, target mid 1675, stop 1754 ｜ 52.2 條規則（SELL plan，resistance 1720.00）：① 跌到 1720.00、收市守住喺 1720.00 上面 → 照 BUY 條 plan 做（入場 1720.00，止蝕 1754.40，目標 1675.00）。② 收市跌穿 1720.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1720.00 上面』。"
   },
   "patterns": [
     {
@@ -156,7 +159,7 @@
       "date": "2026-10-28",
       "low": 1694.0,
       "high": 1705.0,
-      "i": 197
+      "i": 188
     },
     {
       "name": "射擊之星",
@@ -164,7 +167,7 @@
       "date": "2026-10-21",
       "low": 1701.0,
       "high": 1710.0,
-      "i": 192
+      "i": 183
     },
     {
       "name": "烏雲蓋頂",
@@ -172,7 +175,7 @@
       "date": "2026-10-15",
       "low": 1700.0,
       "high": 1719.0,
-      "i": 188
+      "i": 179
     },
     {
       "name": "平頭頂",
@@ -180,7 +183,7 @@
       "date": "2026-10-06",
       "low": 1701.0,
       "high": 1715.0,
-      "i": 182
+      "i": 173
     },
     {
       "name": "吊頸",
@@ -188,23 +191,23 @@
       "date": "2026-09-24",
       "low": 1693.0,
       "high": 1730.0,
-      "i": 174
+      "i": 165
     }
   ],
-  "asof": "2026-10-30",
-  "close": 1702.0,
-  "chg_pct": 0.11764705882353343,
+  "asof": "2026-11-13",
+  "close": 1720.0,
+  "chg_pct": 0.8206330597889888,
   "kline": {
-    "type": "bearish_rejection",
+    "type": "bullish_reclaim",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 1705.0,
-    "H": 1710.0,
-    "L": 1702.0,
-    "C": 1702.0,
-    "body_pct": 37.5,
-    "upper_wick_pct": 62.5,
-    "lower_wick_pct": 0.0
+    "close_position": "upper_half",
+    "O": 1710.0,
+    "H": 1720.0,
+    "L": 1709.0,
+    "C": 1720.0,
+    "body_pct": 90.9,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 9.1
   }
 }

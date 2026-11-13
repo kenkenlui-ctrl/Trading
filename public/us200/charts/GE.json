@@ -3,23 +3,23 @@
   "ticker_user": "GE",
   "name": "GE Aerospace",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 309.85,
-    "H": 312.94,
-    "L": 299.98,
-    "C": 301.8,
-    "prev_close": 313.05,
-    "chg_pct": -3.59
+    "date": "2026-11-13",
+    "O": 332.38,
+    "H": 333.39,
+    "L": 328.1,
+    "C": 331.81,
+    "prev_close": 330.86,
+    "chg_pct": 0.29
   },
   "phase": "downtrend_active",
-  "adx": 21.95,
-  "plus_di": 25.81,
-  "minus_di": 25.25,
+  "adx": 22.88,
+  "plus_di": 28.39,
+  "minus_di": 18.92,
   "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 388.84 (2026-08-06), trough 278.37 (2026-10-23), box top 314.0 (2026-10-29)",
+  "phase_evidence": "Peak 388.84 (2026-08-06), trough 278.37 (2026-10-23), box top 343.59 (2026-11-12)",
   "peak": {
     "date": "2026-08-06",
     "price": 388.84
@@ -29,46 +29,69 @@
     "price": 278.37
   },
   "box": {
-    "top": 314.0,
-    "top_date": "2026-10-29",
+    "top": 343.59,
+    "top_date": "2026-11-12",
     "bottom": 278.37,
-    "period": "2026-10-23 to 2026-10-30"
+    "period": "2026-10-23 to 2026-11-13"
   },
-  "drop_from_peak_pct": 22.4,
-  "recovery_from_crash_pct": 8.4,
+  "drop_from_peak_pct": 14.7,
+  "recovery_from_crash_pct": 19.2,
   "supports": [
     {
-      "level": 284.0,
-      "label": "S1 bottom",
+      "level": 316.0,
+      "label": "S1 KEY",
       "touches": 4,
-      "evidence": "structural bottom, near crash low 278.37"
+      "evidence": "tested 4x in base period; 4.8% below current"
+    },
+    {
+      "level": 312.0,
+      "label": "S2",
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
+    },
+    {
+      "level": 304.0,
+      "label": "S3",
+      "touches": 7,
+      "evidence": "mid-base support, tested 7x"
+    },
+    {
+      "level": 278.37,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-10-23, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 312.94,
+      "level": 333.39,
       "label": "R1 today high",
-      "evidence": "today's high 312.94000244140625"
+      "evidence": "today's high 333.3949890136719"
+    },
+    {
+      "level": 343.59,
+      "label": "R3 Nov high",
+      "evidence": "box top 343.59, base period high"
     }
   ],
   "position": {
-    "current": 301.8,
-    "in_box_pct": 61.5,
-    "nearest_support": "S1 bottom (284.0)",
-    "nearest_resistance": "R1 today high (312.94)"
+    "current": 331.81,
+    "in_box_pct": 81.9,
+    "nearest_support": "S1 KEY (316.0)",
+    "nearest_resistance": "R1 today high (333.39)"
   },
   "kline_today": {
-    "type": "bearish_pullback",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 309.85,
-    "H": 312.94,
-    "L": 299.98,
-    "C": 301.8,
-    "body_pct": 62.1,
-    "upper_wick_pct": 23.8,
-    "lower_wick_pct": 14.0
+    "close_position": "upper_half",
+    "O": 332.38,
+    "H": 333.39,
+    "L": 328.1,
+    "C": 331.81,
+    "body_pct": 10.8,
+    "upper_wick_pct": 19.2,
+    "lower_wick_pct": 70.1
   },
   "bias": {
     "short": {
@@ -86,20 +109,24 @@
   },
   "scenarios": [
     {
-      "if": "hold 284.0 (KEY support)",
-      "then": "still range; watch 312.94 for next test"
+      "if": "hold 316.0 (KEY support)",
+      "then": "still range; watch 333.39 for next test"
     },
     {
-      "if": "break 284.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 316.0 on close",
+      "then": "target 312.0 → 304.0 (short-term bearish)"
     },
     {
-      "if": "break 284.0 (crash low)",
+      "if": "break 278.37 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 312.94 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 333.39 on close",
+      "then": "short-term bullish; next test 343.59"
+    },
+    {
+      "if": "break 343.59 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -121,24 +148,24 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 321.17,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 343.59,
+    "target_price": 310.98,
+    "stop_price": 361.79,
+    "risk_pct": 5.3,
+    "reward_pct": 9.49,
+    "rr_ratio": 1.79,
+    "phase_match": true,
+    "r1": 343.59,
     "s1": 278.37,
-    "s2": 306.8,
-    "r2": 377.81,
+    "s2": 296.61,
+    "r2": 356.39,
     "r3": 388.84,
-    "s3": 281.31,
+    "s3": 311.0,
     "s4": 268.91,
-    "current_position_pct": 54.7,
-    "notes": "WAIT_RANGE: in box (278-321), pos 55%, no clear setup"
+    "current_position_pct": 81.9,
+    "notes": "SELL_R1: in box (278-344), entry at R1 344, target mid 311, stop 362 ｜ 52.2 條規則（SELL plan，resistance 343.59）：① 跌到 343.59、收市守住喺 343.59 上面 → 照 BUY 條 plan 做（入場 343.59，止蝕 361.79，目標 310.98）。② 收市跌穿 343.59 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 343.59 上面』。"
   },
   "patterns": [
     {
@@ -147,7 +174,7 @@
       "date": "2026-10-08",
       "low": 296.6099853515625,
       "high": 306.55999755859375,
-      "i": 183
+      "i": 173
     },
     {
       "name": "利好反擊線",
@@ -155,7 +182,7 @@
       "date": "2026-09-24",
       "low": 315.4800109863281,
       "high": 323.1700134277344,
-      "i": 173
+      "i": 163
     },
     {
       "name": "利好身懷六甲",
@@ -163,7 +190,7 @@
       "date": "2026-09-16",
       "low": 308.67999267578125,
       "high": 318.5,
-      "i": 167
+      "i": 157
     },
     {
       "name": "平頭底",
@@ -171,7 +198,7 @@
       "date": "2026-09-04",
       "low": 332.239990234375,
       "high": 337.2099914550781,
-      "i": 160
+      "i": 150
     },
     {
       "name": "利淡吞噬",
@@ -179,7 +206,7 @@
       "date": "2026-08-12",
       "low": 363.239990234375,
       "high": 370.20001220703125,
-      "i": 143
+      "i": 133
     }
   ]
 }

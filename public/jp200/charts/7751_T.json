@@ -3,21 +3,21 @@
   "ticker_user": "7751.T",
   "name": "Canon Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-06 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-20 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 4675.0,
-    "H": 4758.0,
-    "L": 4673.0,
-    "C": 4744.0,
-    "prev_close": 4697.0,
-    "chg_pct": 1.0006387055567334
+    "date": "2026-11-13",
+    "O": 4783.0,
+    "H": 4843.0,
+    "L": 4747.0,
+    "C": 4832.0,
+    "prev_close": 4791.0,
+    "chg_pct": 0.8557712377374349
   },
   "phase": "base_building",
-  "adx": 33.19,
-  "plus_di": 22.39,
-  "minus_di": 24.38,
-  "regime": "trend",
+  "adx": 20.07,
+  "plus_di": 24.17,
+  "minus_di": 20.03,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 5033.0 (2026-02-09), trough 3987.0 (2026-05-07), box top 4968.0 (2026-10-26)",
   "peak": {
@@ -32,28 +32,28 @@
     "top": 4968.0,
     "top_date": "2026-10-26",
     "bottom": 3987.0,
-    "period": "2026-05-07 to 2026-10-30"
+    "period": "2026-05-07 to 2026-11-13"
   },
-  "drop_from_peak_pct": 5.7,
-  "recovery_from_crash_pct": 19.0,
+  "drop_from_peak_pct": 4.0,
+  "recovery_from_crash_pct": 21.2,
   "supports": [
     {
-      "level": 4608.0,
+      "level": 4672.0,
       "label": "S1 KEY",
-      "touches": 7,
-      "evidence": "tested 7x in base period; 2.9% below current"
+      "touches": 5,
+      "evidence": "tested 5x in base period; 3.3% below current"
+    },
+    {
+      "level": 4608.0,
+      "label": "S2",
+      "touches": 9,
+      "evidence": "mid-base support, tested 9x"
     },
     {
       "level": 4592.0,
-      "label": "S2",
+      "label": "S3",
       "touches": 4,
       "evidence": "mid-base support, tested 4x"
-    },
-    {
-      "level": 4576.0,
-      "label": "S3",
-      "touches": 5,
-      "evidence": "mid-base support, tested 5x"
     },
     {
       "level": 3987.0,
@@ -64,9 +64,9 @@
   ],
   "resistances": [
     {
-      "level": 4758.0,
+      "level": 4843.0,
       "label": "R1 today high",
-      "evidence": "today's high 4758.0"
+      "evidence": "today's high 4843.0"
     },
     {
       "level": 4968.0,
@@ -75,28 +75,28 @@
     }
   ],
   "position": {
-    "current": 4744.0,
-    "in_box_pct": 77.2,
-    "nearest_support": "S1 KEY (4608.0)",
-    "nearest_resistance": "R1 today high (4758.0)"
+    "current": 4832.0,
+    "in_box_pct": 86.1,
+    "nearest_support": "S1 KEY (4672.0)",
+    "nearest_resistance": "R1 today high (4843.0)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 4675.0,
-    "H": 4758.0,
-    "L": 4673.0,
-    "C": 4744.0,
-    "body_pct": 81.2,
-    "upper_wick_pct": 16.5,
-    "lower_wick_pct": 2.4
+    "O": 4783.0,
+    "H": 4843.0,
+    "L": 4747.0,
+    "C": 4832.0,
+    "body_pct": 51.0,
+    "upper_wick_pct": 11.5,
+    "lower_wick_pct": 37.5
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -109,19 +109,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 4608.0 (KEY support)",
-      "then": "still range; watch 4758.0 for next test"
+      "if": "hold 4672.0 (KEY support)",
+      "then": "still range; watch 4843.0 for next test"
     },
     {
-      "if": "break 4608.0 on close",
-      "then": "target 4592.0 → 4576.0 (short-term bearish)"
+      "if": "break 4672.0 on close",
+      "then": "target 4608.0 → 4592.0 (short-term bearish)"
     },
     {
       "if": "break 3987.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 4758.0 on close",
+      "if": "reclaim 4843.0 on close",
       "then": "short-term bullish; next test 4968.0"
     },
     {
@@ -149,23 +149,23 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_RR_TOO_THIN",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": true,
+    "phase_match": false,
     "r1": 4968.0,
-    "s1": 4578.0,
+    "s1": 4586.0,
     "s2": 4289.0,
-    "r2": 4750.0,
+    "r2": 4795.0,
     "r3": 4750.0,
-    "s3": 4045.0,
+    "s3": 4105.0,
     "s4": 3987.0,
-    "current_position_pct": 42.6,
-    "notes": "WAIT_RANGE: in box (4578-4968), pos 43%, no clear setup"
+    "current_position_pct": 64.4,
+    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 4968.00）：① 跌到 4968.00、收市守住喺 4968.00 上面 → 照 BUY 條 plan 做（入場 4968.00，止蝕 5176.42，目標 4777.00）。② 收市跌穿 4968.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 4968.00 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
   },
   "patterns": [
     {
@@ -174,7 +174,7 @@
       "date": "2026-10-27",
       "low": 4904.0,
       "high": 4967.0,
-      "i": 196
+      "i": 187
     },
     {
       "name": "利淡反擊線",
@@ -182,7 +182,7 @@
       "date": "2026-10-20",
       "low": 4780.0,
       "high": 4831.0,
-      "i": 191
+      "i": 182
     },
     {
       "name": "上升三法",
@@ -190,7 +190,7 @@
       "date": "2026-09-08",
       "low": 4362.0,
       "high": 4486.0,
-      "i": 165
+      "i": 156
     },
     {
       "name": "烏雲蓋頂",
@@ -198,23 +198,23 @@
       "date": "2026-07-15",
       "low": 4384.0,
       "high": 4444.0,
-      "i": 128
+      "i": 119
     }
   ],
-  "asof": "2026-10-30",
-  "close": 4744.0,
-  "chg_pct": 1.0006387055567334,
+  "asof": "2026-11-13",
+  "close": 4832.0,
+  "chg_pct": 0.8557712377374349,
   "kline": {
-    "type": "bullish_reclaim",
+    "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 4675.0,
-    "H": 4758.0,
-    "L": 4673.0,
-    "C": 4744.0,
-    "body_pct": 81.2,
-    "upper_wick_pct": 16.5,
-    "lower_wick_pct": 2.4
+    "O": 4783.0,
+    "H": 4843.0,
+    "L": 4747.0,
+    "C": 4832.0,
+    "body_pct": 51.0,
+    "upper_wick_pct": 11.5,
+    "lower_wick_pct": 37.5
   }
 }

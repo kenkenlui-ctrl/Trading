@@ -224,6 +224,78 @@ predicate that decides, and a rule rejection can never be quarantined as a gap.
 
 ---
 
+## C1 — `signal_context_labels_flag` — **LIVE since 2026-11-14**
+
+**What it does.** Adds two read-only labels to every published v2 signal:
+`貼近箱頂` (T1a: the signal's stock closed within 2% of its 20-day box top
+R1) and `強過大盤` (F5: 250-day return above the market index). Both are
+published in `public/v2-signals.json` under each signal's `context_labels`
+and rendered as a badge on the homepage signal card.
+
+**What it does NOT do.** It does not remove a signal from the published set,
+does not change the entry rule, and does not touch the win-rate numerator or
+denominator. The continuous distance `ext_to_r1_pct` is published for every
+signal, so any other threshold is derivable without a rebuild.
+
+**Where the numbers come from.** The frozen 10-year store
+(`data/bt10y2/`), measured on the **PLAN cohort** — every screen-passing
+session, which is exactly what the site publishes each day — against the
+engine's own entry condition on the next session.
+
+**2026-11-15 — THE COHORT WAS CORRECTED.** The first measurement ran on the
+FILLED subset (plans that had already traded) and the page quoted its figures.
+That was the wrong population for a label that is read at the plan bar: a plan
+that fires `貼近箱頂` is one that almost never fills, so the filled cohort
+understated how often the label fires by an order of magnitude. The page said
+the label fires on a couple of percent of signals while roughly a third of the
+published signals actually carry it.
+
+The measurement was redone on the plan cohort by
+`scripts/research/label_cohort.py`, which is also a gate:
+
+- its filled subset reproduces the authoritative A/B backtest trade counts
+  trade for trade (`data/ab_close_hold.json`), so the two experiments are the
+  same trades;
+- it re-derives this payload's label fields field for field
+  (`--parity`), so the study measures what the site publishes;
+- it measures the labels against **both** index series (production's
+  `SPY`/`1306.T` and the old study's `IDX_GSPC`/`IDX_N225`), so the
+  benchmark choice is a reported sensitivity rather than an assumption.
+
+**No figure is written in this file.** The measured numbers live in
+`data/label_cohort.json` (written by the research script) and are rendered
+onto `public/methodology.html` by `scripts/build_label_notes.py`, which
+fails the build when the page and the artifact disagree. The self-test
+(`t_label_notes_are_derived_from_the_label_cohort_artifact`) checks the same
+thing, plus a MUST-FAIL probe that a tampered artifact must move the
+rendered section. This file used to carry a typed table of these numbers;
+that is how the two copies drifted apart in the first place.
+
+Reproduce the artifact with:
+
+```
+python3 scripts/research/label_cohort.py     # ~12s, writes data/label_cohort.json
+python3 scripts/build_label_notes.py         # renders the page section
+python3 scripts/build_label_notes.py --check # fails if the page is stale
+```
+
+**Caveats that must travel with the number.** The post-fill cohort of
+`貼近箱頂` is small — the label fires often but fills rarely, so the filled
+sample is small in both windows and the sign is consistent across markets
+while the size is not well pinned down. The fill-rate separation is the
+robust part of the finding: it is measured on hundreds of thousands of plans.
+The label also survives a check for redundancy — inside the same
+entry-distance bucket, the triggered group still fills far less often, so it
+carries information the published entry distance does not. And this is a
+WARNING, not a short signal: the short mirror of v2 was measured on the same
+frozen data and was negative out-of-sample (US -0.265%/trade; JP
++0.361%/trade, t=1.57, not significant), so no short signal ships.
+
+**Turning it off.** `signal_context_labels_flag=False` means the payload
+carries no label field at all and the homepage renders no badge.
+
+---
+
 ## Not covered (explicitly parked by the spec)
 
 - **P1 fill-probability percentiles** — gated on FutuOpenD; do not start.

@@ -3,23 +3,23 @@
   "ticker_user": "ACN",
   "name": "Accenture plc",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 251.6,
-    "H": 260.42,
-    "L": 250.85,
-    "C": 258.24,
-    "prev_close": 247.22,
-    "chg_pct": 4.46
+    "date": "2026-11-13",
+    "O": 251.95,
+    "H": 254.71,
+    "L": 249.0,
+    "C": 250.49,
+    "prev_close": 249.95,
+    "chg_pct": 0.22
   },
   "phase": "uptrend",
-  "adx": 39.63,
-  "plus_di": 39.14,
-  "minus_di": 13.57,
+  "adx": 35.16,
+  "plus_di": 28.49,
+  "minus_di": 19.05,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 218.6 (2026-03-06), trough 118.15 (2026-06-22), box top 260.42 (2026-10-30)",
+  "phase_evidence": "Peak 218.6 (2026-03-06), trough 118.15 (2026-06-22), box top 271.76 (2026-11-05)",
   "peak": {
     "date": "2026-03-06",
     "price": 218.6
@@ -29,19 +29,19 @@
     "price": 118.15
   },
   "box": {
-    "top": 260.42,
-    "top_date": "2026-10-30",
+    "top": 271.76,
+    "top_date": "2026-11-05",
     "bottom": 118.15,
-    "period": "2026-06-22 to 2026-10-30"
+    "period": "2026-06-22 to 2026-11-13"
   },
-  "drop_from_peak_pct": -18.1,
-  "recovery_from_crash_pct": 118.6,
+  "drop_from_peak_pct": -14.6,
+  "recovery_from_crash_pct": 112.0,
   "supports": [
     {
       "level": 192.0,
       "label": "S1 KEY",
       "touches": 7,
-      "evidence": "tested 7x in base period; 25.7% below current"
+      "evidence": "tested 7x in base period; 23.4% below current"
     },
     {
       "level": 188.0,
@@ -52,8 +52,8 @@
     {
       "level": 184.0,
       "label": "S3",
-      "touches": 10,
-      "evidence": "mid-base support, tested 10x"
+      "touches": 7,
+      "evidence": "mid-base support, tested 7x"
     },
     {
       "level": 118.15,
@@ -64,48 +64,53 @@
   ],
   "resistances": [
     {
-      "level": 260.42,
+      "level": 254.71,
       "label": "R1 today high",
-      "evidence": "today's high 260.4200134277344"
+      "evidence": "today's high 254.7100067138672"
+    },
+    {
+      "level": 271.76,
+      "label": "R3 Nov high",
+      "evidence": "box top 271.76, base period high"
     }
   ],
   "position": {
-    "current": 258.24,
-    "in_box_pct": 98.5,
+    "current": 250.49,
+    "in_box_pct": 86.2,
     "nearest_support": "S1 KEY (192.0)",
-    "nearest_resistance": "R1 today high (260.42)"
+    "nearest_resistance": "R1 today high (254.71)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bearish_rejection",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 251.6,
-    "H": 260.42,
-    "L": 250.85,
-    "C": 258.24,
-    "body_pct": 69.4,
-    "upper_wick_pct": 22.8,
-    "lower_wick_pct": 7.8
+    "close_position": "lower_half",
+    "O": 251.95,
+    "H": 254.71,
+    "L": 249.0,
+    "C": 250.49,
+    "body_pct": 25.6,
+    "upper_wick_pct": 48.3,
+    "lower_wick_pct": 26.1
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bullish_continuation",
       "reason": "higher highs / higher lows"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 192.0 (KEY support)",
-      "then": "still range; watch 260.42 for next test"
+      "then": "still range; watch 254.71 for next test"
     },
     {
       "if": "break 192.0 on close",
@@ -116,8 +121,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 260.42 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 254.71 on close",
+      "then": "short-term bullish; next test 271.76"
+    },
+    {
+      "if": "break 271.76 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -148,32 +157,32 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 260.42,
-    "s1": 192.58,
-    "s2": 169.75,
-    "r2": 227.63,
+    "r1": 271.76,
+    "s1": 226.45,
+    "s2": 172.11,
+    "r2": 231.36,
     "r3": 198.0,
     "s3": 118.15,
-    "s4": 172.22,
-    "current_position_pct": 96.8,
-    "notes": "WAIT_RANGE: in box (193-260), pos 97%, no clear setup"
+    "s4": 155.82,
+    "current_position_pct": 53.1,
+    "notes": "WAIT_RANGE: in box (226-272), pos 53%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-11-11",
+      "low": 250.97999572753906,
+      "high": 255.9499969482422,
+      "i": 197
+    },
     {
       "name": "吊頸",
       "bias": "bearish",
       "date": "2026-10-13",
       "low": 212.67999267578125,
       "high": 218.5800018310547,
-      "i": 186
-    },
-    {
-      "name": "烏雲蓋頂",
-      "bias": "bearish",
-      "date": "2026-09-18",
-      "low": 180.6999969482422,
-      "high": 189.47999572753906,
-      "i": 169
+      "i": 176
     },
     {
       "name": "烏雲蓋頂",
@@ -181,23 +190,7 @@
       "date": "2026-08-03",
       "low": 165.44000244140625,
       "high": 171.47000122070312,
-      "i": 136
-    },
-    {
-      "name": "刺穿線",
-      "bias": "bullish",
-      "date": "2026-07-09",
-      "low": 129.5,
-      "high": 139.1300048828125,
-      "i": 119
-    },
-    {
-      "name": "早晨之星",
-      "bias": "bullish",
-      "date": "2026-07-02",
-      "low": 132.94000244140625,
-      "high": 138.89999389648438,
-      "i": 115
+      "i": 126
     }
   ]
 }

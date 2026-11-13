@@ -3,23 +3,23 @@
   "ticker_user": "UPS",
   "name": "United Parcel Service, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 107.94,
-    "H": 109.12,
-    "L": 107.71,
-    "C": 108.25,
-    "prev_close": 107.33,
-    "chg_pct": 0.86
+    "date": "2026-11-13",
+    "O": 111.8,
+    "H": 112.58,
+    "L": 111.11,
+    "C": 112.4,
+    "prev_close": 110.38,
+    "chg_pct": 1.83
   },
-  "phase": "range",
-  "adx": 40.44,
-  "plus_di": 37.57,
-  "minus_di": 8.09,
+  "phase": "base_building",
+  "adx": 50.29,
+  "plus_di": 33.6,
+  "minus_di": 11.06,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 122.41 (2026-02-12), trough 91.56 (2026-10-05), box top 109.12 (2026-10-30)",
+  "phase_evidence": "Peak 122.41 (2026-02-12), trough 91.56 (2026-10-05), box top 114.97 (2026-11-05)",
   "peak": {
     "date": "2026-02-12",
     "price": 122.41
@@ -29,58 +29,69 @@
     "price": 91.56
   },
   "box": {
-    "top": 109.12,
-    "top_date": "2026-10-30",
+    "top": 114.97,
+    "top_date": "2026-11-05",
     "bottom": 91.56,
-    "period": "2026-10-05 to 2026-10-30"
+    "period": "2026-10-05 to 2026-11-13"
   },
-  "drop_from_peak_pct": 11.6,
-  "recovery_from_crash_pct": 18.2,
+  "drop_from_peak_pct": 8.2,
+  "recovery_from_crash_pct": 22.8,
   "supports": [
     {
-      "level": 100.0,
+      "level": 108.0,
       "label": "S1 KEY",
-      "touches": 10,
-      "evidence": "tested 10x in base period; 7.6% below current"
+      "touches": 12,
+      "evidence": "tested 12x in base period; 3.9% below current"
     },
     {
-      "level": 96.0,
+      "level": 104.0,
       "label": "S2",
-      "touches": 15,
-      "evidence": "mid-base support, tested 15x"
+      "touches": 4,
+      "evidence": "mid-base support, tested 4x"
     },
     {
-      "level": 92.0,
-      "label": "S3 bottom",
-      "touches": 19,
-      "evidence": "structural bottom, near crash low 91.56"
+      "level": 100.0,
+      "label": "S3",
+      "touches": 10,
+      "evidence": "mid-base support, tested 10x"
+    },
+    {
+      "level": 91.56,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-10-05, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 109.12,
+      "level": 112.58,
       "label": "R1 today high",
-      "evidence": "today's high 109.12000274658203"
+      "evidence": "today's high 112.58000183105469"
+    },
+    {
+      "level": 114.97,
+      "label": "R3 Nov high",
+      "evidence": "box top 114.97, base period high"
     }
   ],
   "position": {
-    "current": 108.25,
-    "in_box_pct": 94.9,
-    "nearest_support": "S1 KEY (100.0)",
-    "nearest_resistance": "R1 today high (109.12)"
+    "current": 112.4,
+    "in_box_pct": 89.0,
+    "nearest_support": "S1 KEY (108.0)",
+    "nearest_resistance": "R1 today high (112.58)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 107.94,
-    "H": 109.12,
-    "L": 107.71,
-    "C": 108.25,
-    "body_pct": 22.0,
-    "upper_wick_pct": 61.7,
-    "lower_wick_pct": 16.3
+    "close_position": "upper_half",
+    "O": 111.8,
+    "H": 112.58,
+    "L": 111.11,
+    "C": 112.4,
+    "body_pct": 40.8,
+    "upper_wick_pct": 12.2,
+    "lower_wick_pct": 46.9
   },
   "bias": {
     "short": {
@@ -88,30 +99,34 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": "no clear direction"
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 100.0 (KEY support)",
-      "then": "still range; watch 109.12 for next test"
+      "if": "hold 108.0 (KEY support)",
+      "then": "still range; watch 112.58 for next test"
     },
     {
-      "if": "break 100.0 on close",
-      "then": "target 96.0 → 92.0 (short-term bearish)"
+      "if": "break 108.0 on close",
+      "then": "target 104.0 → 100.0 (short-term bearish)"
     },
     {
-      "if": "break 92.0 (crash low)",
+      "if": "break 91.56 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 109.12 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 112.58 on close",
+      "then": "short-term bullish; next test 114.97"
+    },
+    {
+      "if": "break 114.97 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -142,24 +157,32 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 109.12,
-    "s1": 91.56,
-    "s2": 91.63,
+    "r1": 114.97,
+    "s1": 96.77,
+    "s2": 91.56,
     "r2": 107.11,
     "r3": 118.42,
-    "s3": 93.86,
-    "s4": 94.06,
-    "current_position_pct": 95.0,
-    "notes": "WAIT_RANGE: in box (92-109), pos 95%, no clear setup"
+    "s3": 101.34,
+    "s4": 93.86,
+    "current_position_pct": 85.9,
+    "notes": "WAIT_RANGE: in box (97-115), pos 86%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-11-05",
+      "low": 110.4800033569336,
+      "high": 114.97000122070312,
+      "i": 193
+    },
     {
       "name": "刺穿線",
       "bias": "bullish",
       "date": "2026-10-14",
       "low": 94.2300033569336,
       "high": 95.81999969482422,
-      "i": 187
+      "i": 177
     },
     {
       "name": "平頭底",
@@ -167,7 +190,7 @@
       "date": "2026-10-01",
       "low": 93.33999633789062,
       "high": 94.44999694824219,
-      "i": 178
+      "i": 168
     },
     {
       "name": "早晨之星",
@@ -175,7 +198,7 @@
       "date": "2026-08-26",
       "low": 104.55000305175781,
       "high": 107.11000061035156,
-      "i": 153
+      "i": 143
     },
     {
       "name": "利好身懷六甲",
@@ -183,15 +206,7 @@
       "date": "2026-08-03",
       "low": 105.05999755859375,
       "high": 107.3499984741211,
-      "i": 136
-    },
-    {
-      "name": "利淡吞噬",
-      "bias": "bearish",
-      "date": "2026-07-27",
-      "low": 112.37000274658203,
-      "high": 114.87000274658203,
-      "i": 131
+      "i": 126
     }
   ]
 }

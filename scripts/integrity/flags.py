@@ -37,6 +37,7 @@ FLAG_MEANING = {
     "crossval_flag": "B1: run the independent second v2 implementation and gate on exact agreement",
     "restatement_flag": "B2: hash vendor bar files per session and log RESTATEMENT on re-issue",
     "gap_receipt_flag": "B3: bind missing T-1 bars to receipts, exclude from candidates AND denominators",
+    "signal_context_labels_flag": "C1: label v2 signals with read-only context — 貼近箱頂 (T1a) + 強過大盤 (F5)",
 }
 
 ALL_FLAGS = tuple(FLAG_MEANING)

@@ -3,23 +3,23 @@
   "ticker_user": "02020.HK",
   "name": "ANTA SPORTS",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-22 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 72.0,
-    "H": 75.25,
-    "L": 71.8,
-    "C": 74.35,
-    "prev_close": 71.45,
-    "chg_pct": 4.06
+    "date": "2026-11-13",
+    "O": 77.95,
+    "H": 79.6,
+    "L": 77.95,
+    "C": 79.1,
+    "prev_close": 79.0,
+    "chg_pct": 0.13
   },
   "phase": "base_building",
-  "adx": 11.07,
-  "plus_di": 24.29,
-  "minus_di": 20.32,
-  "regime": "range",
+  "adx": 20.4,
+  "plus_di": 27.14,
+  "minus_di": 15.75,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 88.8 (2026-02-25), trough 66.85 (2026-06-23), box top 80.9 (2026-07-30)",
+  "phase_evidence": "Peak 88.8 (2026-02-25), trough 66.85 (2026-06-23), box top 81.0 (2026-11-06)",
   "peak": {
     "date": "2026-02-25",
     "price": 88.8
@@ -29,19 +29,25 @@
     "price": 66.85
   },
   "box": {
-    "top": 80.9,
-    "top_date": "2026-07-30",
+    "top": 81.0,
+    "top_date": "2026-11-06",
     "bottom": 66.85,
-    "period": "2026-06-23 to 2026-10-30"
+    "period": "2026-06-23 to 2026-11-13"
   },
-  "drop_from_peak_pct": 16.3,
-  "recovery_from_crash_pct": 11.2,
+  "drop_from_peak_pct": 10.9,
+  "recovery_from_crash_pct": 18.3,
   "supports": [
     {
-      "level": 72.0,
+      "level": 76.0,
       "label": "S1 KEY",
-      "touches": 70,
-      "evidence": "tested 70x in base period; 3.2% below current"
+      "touches": 33,
+      "evidence": "tested 33x in base period; 3.9% below current"
+    },
+    {
+      "level": 72.0,
+      "label": "S2",
+      "touches": 78,
+      "evidence": "mid-base support, tested 78x"
     },
     {
       "level": 66.85,
@@ -52,39 +58,39 @@
   ],
   "resistances": [
     {
-      "level": 75.25,
+      "level": 79.6,
       "label": "R1 today high",
-      "evidence": "today's high 75.25"
+      "evidence": "today's high 79.5999984741211"
     },
     {
-      "level": 80.9,
-      "label": "R3 Jul high",
-      "evidence": "box top 80.9, base period high"
+      "level": 81.0,
+      "label": "R3 Nov high",
+      "evidence": "box top 81.0, base period high"
     }
   ],
   "position": {
-    "current": 74.35,
-    "in_box_pct": 53.4,
-    "nearest_support": "S1 KEY (72.0)",
-    "nearest_resistance": "R1 today high (75.25)"
+    "current": 79.1,
+    "in_box_pct": 86.6,
+    "nearest_support": "S1 KEY (76.0)",
+    "nearest_resistance": "R1 today high (79.6)"
   },
   "kline_today": {
-    "type": "neutral",
+    "type": "bullish_reclaim",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 72.0,
-    "H": 75.25,
-    "L": 71.8,
-    "C": 74.35,
-    "body_pct": 68.1,
-    "upper_wick_pct": 26.1,
-    "lower_wick_pct": 5.8
+    "O": 77.95,
+    "H": 79.6,
+    "L": 77.95,
+    "C": 79.1,
+    "body_pct": 69.7,
+    "upper_wick_pct": 30.3,
+    "lower_wick_pct": 0.0
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "neutral_consolidation",
@@ -97,23 +103,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 72.0 (KEY support)",
-      "then": "still range; watch 75.25 for next test"
+      "if": "hold 76.0 (KEY support)",
+      "then": "still range; watch 79.6 for next test"
     },
     {
-      "if": "break 72.0 on close",
-      "then": "target 66.85 → lower (short-term bearish)"
+      "if": "break 76.0 on close",
+      "then": "target 72.0 → 66.85 (short-term bearish)"
     },
     {
       "if": "break 66.85 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 75.25 on close",
-      "then": "short-term bullish; next test 80.9"
+      "if": "reclaim 79.6 on close",
+      "then": "short-term bullish; next test 81.0"
     },
     {
-      "if": "break 80.9 (box top)",
+      "if": "break 81.0 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -136,33 +142,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 81.0,
+    "target_price": 76.05,
+    "stop_price": 84.18,
+    "risk_pct": 3.92,
+    "reward_pct": 6.11,
+    "rr_ratio": 1.56,
     "phase_match": true,
-    "r1": 78.75,
-    "s1": 70.4,
+    "r1": 81.0,
+    "s1": 71.1,
     "s2": 70.3,
     "r2": 80.75,
     "r3": 80.9,
     "s3": 66.85,
     "s4": 74.2,
-    "current_position_pct": 47.3,
-    "notes": "WAIT_RANGE: in box (70-79), pos 47%, no clear setup"
+    "current_position_pct": 80.8,
+    "notes": "SELL_R1: in box (71-81), entry at R1 81, target mid 76, stop 84 ｜ 52.2 條規則（SELL plan，resistance 81.00）：① 跌到 81.00、收市守住喺 81.00 上面 → 照 BUY 條 plan 做（入場 81.00，止蝕 84.18，目標 76.05）。② 收市跌穿 81.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 81.00 上面』。"
   },
   "patterns": [
+    {
+      "name": "射擊之星",
+      "bias": "bearish",
+      "date": "2026-11-10",
+      "low": 78.0999984741211,
+      "high": 79.80000305175781,
+      "i": 196
+    },
     {
       "name": "倒錘頭",
       "bias": "bullish",
       "date": "2026-10-30",
       "low": 71.80000305175781,
       "high": 75.25,
-      "i": 199
+      "i": 189
     },
     {
       "name": "利好身懷六甲",
@@ -170,7 +184,7 @@
       "date": "2026-10-13",
       "low": 70.4000015258789,
       "high": 72.44999694824219,
-      "i": 187
+      "i": 177
     },
     {
       "name": "平頭頂",
@@ -178,7 +192,7 @@
       "date": "2026-09-09",
       "low": 72.69999694824219,
       "high": 75.94999694824219,
-      "i": 164
+      "i": 154
     },
     {
       "name": "利好吞噬",
@@ -186,15 +200,7 @@
       "date": "2026-08-19",
       "low": 71.80000305175781,
       "high": 74.80000305175781,
-      "i": 149
-    },
-    {
-      "name": "利好反擊線",
-      "bias": "bullish",
-      "date": "2026-08-10",
-      "low": 74.0,
-      "high": 75.5999984741211,
-      "i": 142
+      "i": 139
     }
   ]
 }

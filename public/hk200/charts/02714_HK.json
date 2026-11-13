@@ -1,47 +1,53 @@
 {
   "ticker": "HK.02714",
   "ticker_user": "02714.HK",
-  "name": "牧原股份",
-  "data_source": "futu",
-  "data_range": "2026-02-06 → 2026-10-20 (171 daily bars)",
+  "name": "MUYUAN",
+  "data_source": "yfinance",
+  "data_range": "2026-02-06 → 2026-11-13 (189 daily bars)",
   "last_bar": {
-    "date": "2026-10-20",
-    "O": 35.54,
-    "H": 37.18,
-    "L": 35.54,
-    "C": 35.9,
-    "prev_close": 35.52,
-    "chg_pct": 1.07
+    "date": "2026-11-13",
+    "O": 38.98,
+    "H": 40.4,
+    "L": 38.02,
+    "C": 40.4,
+    "prev_close": 38.64,
+    "chg_pct": 4.55
   },
   "phase": "base_building",
-  "adx": 15.74,
-  "plus_di": 23.66,
-  "minus_di": 25.03,
-  "regime": "range",
+  "adx": 21.13,
+  "plus_di": 28.29,
+  "minus_di": 13.32,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 50.21 (2026-03-09), trough 27.02 (2026-06-25), box top 40.06 (2026-09-07)",
+  "phase_evidence": "Peak 50.7 (2026-03-09), trough 27.02 (2026-06-25), box top 40.4 (2026-11-13)",
   "peak": {
     "date": "2026-03-09",
-    "price": 50.21
+    "price": 50.7
   },
   "trough": {
     "date": "2026-06-25",
     "price": 27.02
   },
   "box": {
-    "top": 40.06,
-    "top_date": "2026-09-07",
+    "top": 40.4,
+    "top_date": "2026-11-13",
     "bottom": 27.02,
-    "period": "2026-06-25 to 2026-10-20"
+    "period": "2026-06-25 to 2026-11-13"
   },
-  "drop_from_peak_pct": 28.5,
-  "recovery_from_crash_pct": 32.9,
+  "drop_from_peak_pct": 20.3,
+  "recovery_from_crash_pct": 49.5,
   "supports": [
     {
-      "level": 32.0,
+      "level": 36.0,
       "label": "S1 KEY",
+      "touches": 65,
+      "evidence": "tested 65x in base period; 10.9% below current"
+    },
+    {
+      "level": 32.0,
+      "label": "S2",
       "touches": 44,
-      "evidence": "tested 44x in base period; 10.9% below current"
+      "evidence": "mid-base support, tested 44x"
     },
     {
       "level": 27.02,
@@ -52,34 +58,29 @@
   ],
   "resistances": [
     {
-      "level": 37.18,
+      "level": 40.4,
       "label": "R1 today high",
-      "evidence": "today's high 37.18"
-    },
-    {
-      "level": 40.06,
-      "label": "R3 Sep high",
-      "evidence": "box top 40.06, base period high"
+      "evidence": "today's high 40.400001525878906"
     }
   ],
   "position": {
-    "current": 35.9,
-    "in_box_pct": 68.1,
-    "nearest_support": "S1 KEY (32.0)",
-    "nearest_resistance": "R1 today high (37.18)"
+    "current": 40.4,
+    "in_box_pct": 100.0,
+    "nearest_support": "S1 KEY (36.0)",
+    "nearest_resistance": null
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 35.54,
-    "H": 37.18,
-    "L": 35.54,
-    "C": 35.9,
-    "body_pct": 22.0,
-    "upper_wick_pct": 78.0,
-    "lower_wick_pct": 0.0
+    "close_position": "upper_half",
+    "O": 38.98,
+    "H": 40.4,
+    "L": 38.02,
+    "C": 40.4,
+    "body_pct": 59.7,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 40.3
   },
   "bias": {
     "short": {
@@ -91,30 +92,26 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 32.0 (KEY support)",
-      "then": "still range; watch 37.18 for next test"
+      "if": "hold 36.0 (KEY support)",
+      "then": "still range; watch 40.4 for next test"
     },
     {
-      "if": "break 32.0 on close",
-      "then": "target 27.02 → lower (short-term bearish)"
+      "if": "break 36.0 on close",
+      "then": "target 32.0 → 27.02 (short-term bearish)"
     },
     {
       "if": "break 27.02 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 37.18 on close",
-      "then": "short-term bullish; next test 40.06"
-    },
-    {
-      "if": "break 40.06 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 40.4 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -136,65 +133,65 @@
     }
   ],
   "action_plan": {
-    "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
-    "trigger_price": null,
-    "target_price": null,
-    "stop_price": null,
-    "risk_pct": 0.0,
-    "reward_pct": 0.0,
-    "rr_ratio": 0.0,
+    "verdict": "SELL",
+    "strategy": "SELL_R1",
+    "trigger_price": 40.4,
+    "target_price": 37.36,
+    "stop_price": 42.53,
+    "risk_pct": 5.28,
+    "reward_pct": 7.52,
+    "rr_ratio": 1.42,
     "phase_match": true,
-    "r1": 38.5,
-    "s1": 33.9,
-    "s2": 30.6,
+    "r1": 40.4,
+    "s1": 34.32,
+    "s2": 32.3,
     "r2": 40.06,
-    "r3": 43.45,
+    "r3": 36.3,
     "s3": 27.02,
-    "s4": 37.09,
-    "current_position_pct": 43.5,
-    "notes": "WAIT_RANGE: in box (34-38), pos 43%, no clear setup"
+    "s4": 34.24,
+    "current_position_pct": 100.0,
+    "notes": "SELL_R1: in box (34-40), entry at R1 40, target mid 37, stop 43 ｜ 52.2 條規則（SELL plan，resistance 40.40）：① 跌到 40.40、收市守住喺 40.40 上面 → 照 BUY 條 plan 做（入場 40.40，止蝕 42.53，目標 37.36）。② 收市跌穿 40.40 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 40.40 上面』。"
   },
   "patterns": [
+    {
+      "name": "烏雲蓋頂",
+      "bias": "bearish",
+      "date": "2026-11-11",
+      "low": 38.13999938964844,
+      "high": 39.2599983215332,
+      "i": 186
+    },
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-10-27",
+      "low": 36.70000076293945,
+      "high": 37.380001068115234,
+      "i": 175
+    },
     {
       "name": "利淡吞噬",
       "bias": "bearish",
       "date": "2026-09-24",
-      "low": 36.02,
-      "high": 37.82,
+      "low": 36.02000045776367,
+      "high": 37.81999969482422,
       "i": 154
-    },
-    {
-      "name": "烏雲蓋頂",
-      "bias": "bearish",
-      "date": "2026-09-18",
-      "low": 37.0,
-      "high": 37.58,
-      "i": 150
     },
     {
       "name": "平頭頂",
       "bias": "bearish",
       "date": "2026-09-10",
-      "low": 37.48,
-      "high": 39.4,
+      "low": 37.47999954223633,
+      "high": 39.400001525878906,
       "i": 144
     },
     {
       "name": "黃昏之星",
       "bias": "bearish",
       "date": "2026-08-17",
-      "low": 33.24,
-      "high": 34.64,
+      "low": 33.2400016784668,
+      "high": 34.63999938964844,
       "i": 126
-    },
-    {
-      "name": "利淡反擊線",
-      "bias": "bearish",
-      "date": "2026-07-22",
-      "low": 32.88,
-      "high": 33.86,
-      "i": 108
     }
   ]
 }

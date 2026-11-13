@@ -3,45 +3,45 @@
   "ticker_user": "09633.HK",
   "name": "NONGFU SPRING",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-22 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 40.38,
-    "H": 42.4,
-    "L": 40.02,
-    "C": 42.34,
-    "prev_close": 39.98,
-    "chg_pct": 5.9
+    "date": "2026-11-13",
+    "O": 45.0,
+    "H": 45.72,
+    "L": 44.86,
+    "C": 45.36,
+    "prev_close": 45.64,
+    "chg_pct": -0.61
   },
-  "phase": "downtrend_active",
-  "adx": 17.87,
-  "plus_di": 25.46,
-  "minus_di": 17.07,
-  "regime": "range",
+  "phase": "base_building",
+  "adx": 31.64,
+  "plus_di": 28.41,
+  "minus_di": 10.79,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 51.85 (2026-01-16), trough 37.9 (2026-09-25), box top 42.56 (2026-10-20)",
+  "phase_evidence": "Peak 51.4 (2026-01-22), trough 37.9 (2026-09-25), box top 46.36 (2026-11-11)",
   "peak": {
-    "date": "2026-01-16",
-    "price": 51.85
+    "date": "2026-01-22",
+    "price": 51.4
   },
   "trough": {
     "date": "2026-09-25",
     "price": 37.9
   },
   "box": {
-    "top": 42.56,
-    "top_date": "2026-10-20",
+    "top": 46.36,
+    "top_date": "2026-11-11",
     "bottom": 37.9,
-    "period": "2026-09-25 to 2026-10-30"
+    "period": "2026-09-25 to 2026-11-13"
   },
-  "drop_from_peak_pct": 18.3,
-  "recovery_from_crash_pct": 11.7,
+  "drop_from_peak_pct": 11.8,
+  "recovery_from_crash_pct": 19.7,
   "supports": [
     {
       "level": 40.0,
       "label": "S1 KEY",
-      "touches": 52,
-      "evidence": "tested 52x in base period; 5.5% below current"
+      "touches": 43,
+      "evidence": "tested 43x in base period; 11.8% below current"
     },
     {
       "level": 37.9,
@@ -52,29 +52,34 @@
   ],
   "resistances": [
     {
-      "level": 42.4,
+      "level": 45.72,
       "label": "R1 today high",
-      "evidence": "today's high 42.400001525878906"
+      "evidence": "today's high 45.720001220703125"
+    },
+    {
+      "level": 46.36,
+      "label": "R3 Nov high",
+      "evidence": "box top 46.36, base period high"
     }
   ],
   "position": {
-    "current": 42.34,
-    "in_box_pct": 98.7,
+    "current": 45.36,
+    "in_box_pct": 88.2,
     "nearest_support": "S1 KEY (40.0)",
-    "nearest_resistance": "R1 today high (42.4)"
+    "nearest_resistance": "R1 today high (45.72)"
   },
   "kline_today": {
     "type": "neutral",
     "touched_R1": true,
-    "touched_S1": true,
+    "touched_S1": false,
     "close_position": "upper_half",
-    "O": 40.38,
-    "H": 42.4,
-    "L": 40.02,
-    "C": 42.34,
-    "body_pct": 82.4,
-    "upper_wick_pct": 2.5,
-    "lower_wick_pct": 15.1
+    "O": 45.0,
+    "H": 45.72,
+    "L": 44.86,
+    "C": 45.36,
+    "body_pct": 41.9,
+    "upper_wick_pct": 41.9,
+    "lower_wick_pct": 16.3
   },
   "bias": {
     "short": {
@@ -82,18 +87,18 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bearish_continuation",
-      "reason": "making new lows"
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 40.0 (KEY support)",
-      "then": "still range; watch 42.4 for next test"
+      "then": "still range; watch 45.72 for next test"
     },
     {
       "if": "break 40.0 on close",
@@ -104,8 +109,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 42.4 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 45.72 on close",
+      "then": "short-term bullish; next test 46.36"
+    },
+    {
+      "if": "break 46.36 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -128,7 +137,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
+    "strategy": "WAIT_REGIME",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -136,15 +145,15 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 42.56,
-    "s1": 38.94,
+    "r1": 46.36,
+    "s1": 39.9,
     "s2": 37.9,
     "r2": 45.18,
-    "r3": 46.3,
+    "r3": 45.98,
     "s3": 39.22,
     "s4": 40.7,
-    "current_position_pct": 93.9,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 42.56）：① 跌到 42.56、收市守住喺 42.56 上面 → 照 BUY 條 plan 做（入場 42.56，止蝕 44.43，目標 40.75）。② 收市跌穿 42.56 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 42.56 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 84.5,
+    "notes": "WAIT_RANGE: in box (40-46), pos 85%, no clear setup"
   },
   "patterns": [
     {
@@ -153,7 +162,7 @@
       "date": "2026-10-27",
       "low": 40.36000061035156,
       "high": 41.7400016784668,
-      "i": 196
+      "i": 186
     },
     {
       "name": "烏雲蓋頂",
@@ -161,7 +170,7 @@
       "date": "2026-10-21",
       "low": 40.79999923706055,
       "high": 42.29999923706055,
-      "i": 192
+      "i": 182
     },
     {
       "name": "吊頸",
@@ -169,7 +178,7 @@
       "date": "2026-10-15",
       "low": 40.65999984741211,
       "high": 41.540000915527344,
-      "i": 189
+      "i": 179
     },
     {
       "name": "刺穿線",
@@ -177,7 +186,7 @@
       "date": "2026-10-05",
       "low": 39.220001220703125,
       "high": 39.97999954223633,
-      "i": 181
+      "i": 171
     },
     {
       "name": "平頭底",
@@ -185,7 +194,7 @@
       "date": "2026-08-24",
       "low": 42.15999984741211,
       "high": 43.380001068115234,
-      "i": 152
+      "i": 142
     }
   ]
 }

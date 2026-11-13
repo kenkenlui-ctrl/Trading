@@ -3,70 +3,62 @@
   "ticker_user": "TEAM",
   "name": "Atlassian Corporation",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 202.5,
-    "H": 202.5,
-    "L": 188.43,
-    "C": 191.72,
-    "prev_close": 204.1,
-    "chg_pct": -6.07
+    "date": "2026-11-13",
+    "O": 154.24,
+    "H": 155.63,
+    "L": 148.59,
+    "C": 149.99,
+    "prev_close": 152.29,
+    "chg_pct": -1.51
   },
-  "phase": "uptrend",
-  "adx": 32.22,
-  "plus_di": 20.96,
-  "minus_di": 28.7,
+  "phase": "downtrend_active",
+  "adx": 37.29,
+  "plus_di": 12.79,
+  "minus_di": 37.72,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 119.38 (2026-06-01), trough 74.41 (2026-06-25), box top 229.96 (2026-10-22)",
+  "phase_evidence": "Peak 229.96 (2026-10-22), trough 144.99 (2026-11-10), box top 229.96 (2026-10-22)",
   "peak": {
-    "date": "2026-06-01",
-    "price": 119.38
+    "date": "2026-10-22",
+    "price": 229.96
   },
   "trough": {
-    "date": "2026-06-25",
-    "price": 74.41
+    "date": "2026-11-10",
+    "price": 144.99
   },
   "box": {
     "top": 229.96,
     "top_date": "2026-10-22",
-    "bottom": 74.41,
-    "period": "2026-06-25 to 2026-10-30"
+    "bottom": 144.99,
+    "period": "2026-11-10 to 2026-11-13"
   },
-  "drop_from_peak_pct": -60.6,
-  "recovery_from_crash_pct": 157.7,
+  "drop_from_peak_pct": 34.8,
+  "recovery_from_crash_pct": 3.4,
   "supports": [
     {
-      "level": 188.0,
-      "label": "S1 KEY",
-      "touches": 9,
-      "evidence": "tested 9x in base period; 1.9% below current"
-    },
-    {
-      "level": 184.0,
-      "label": "S2",
-      "touches": 9,
-      "evidence": "mid-base support, tested 9x"
-    },
-    {
-      "level": 176.0,
-      "label": "S3",
-      "touches": 6,
-      "evidence": "mid-base support, tested 6x"
-    },
-    {
-      "level": 74.41,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-06-25, structural bottom"
+      "level": 144.0,
+      "label": "S1 bottom",
+      "touches": 0,
+      "evidence": "structural bottom, near crash low 144.99"
     }
   ],
   "resistances": [
     {
-      "level": 202.5,
+      "level": 155.63,
       "label": "R1 today high",
-      "evidence": "today's high 202.5"
+      "evidence": "today's high 155.6300048828125"
+    },
+    {
+      "level": 180.0,
+      "label": "R4",
+      "evidence": "psychological round number, pre-crash zone 180"
+    },
+    {
+      "level": 200.0,
+      "label": "R2",
+      "evidence": "mid-box supply, round number 200"
     },
     {
       "level": 229.96,
@@ -75,32 +67,32 @@
     }
   ],
   "position": {
-    "current": 191.72,
-    "in_box_pct": 75.4,
-    "nearest_support": "S1 KEY (188.0)",
-    "nearest_resistance": "R1 today high (202.5)"
+    "current": 149.99,
+    "in_box_pct": 7.0,
+    "nearest_support": "S1 bottom (144.0)",
+    "nearest_resistance": "R1 today high (155.63)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "lower_half",
-    "O": 202.5,
-    "H": 202.5,
-    "L": 188.43,
-    "C": 191.72,
-    "body_pct": 76.6,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 23.4
+    "O": 154.24,
+    "H": 155.63,
+    "L": 148.59,
+    "C": 149.99,
+    "body_pct": 60.4,
+    "upper_wick_pct": 19.7,
+    "lower_wick_pct": 19.9
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bearish_cautious",
+      "reason": "rejection at R1 + near support (7% of box)"
     },
     "mid": {
-      "bias": "bullish_continuation",
-      "reason": "higher highs / higher lows"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -109,20 +101,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 188.0 (KEY support)",
-      "then": "still range; watch 202.5 for next test"
+      "if": "hold 144.0 (KEY support)",
+      "then": "still range; watch 155.63 for next test"
     },
     {
-      "if": "break 188.0 on close",
-      "then": "target 184.0 → 176.0 (short-term bearish)"
+      "if": "break 144.0 on close",
+      "then": "target next S → lower (short-term bearish)"
     },
     {
-      "if": "break 74.41 (crash low)",
+      "if": "break 144.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 202.5 on close",
-      "then": "short-term bullish; next test 229.96"
+      "if": "reclaim 155.63 on close",
+      "then": "short-term bullish; next test 180.0"
     },
     {
       "if": "break 229.96 (box top)",
@@ -149,7 +141,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -158,23 +150,31 @@
     "rr_ratio": 0.0,
     "phase_match": false,
     "r1": 229.96,
-    "s1": 186.5,
-    "s2": 141.51,
-    "r2": 200.0,
-    "r3": 119.38,
+    "s1": 144.99,
+    "s2": 160.96,
+    "r2": 223.7,
+    "r3": 177.88,
     "s3": 74.41,
     "s4": 56.01,
-    "current_position_pct": 12.0,
-    "notes": "WAIT_RANGE: in box (186-230), pos 12%, no clear setup"
+    "current_position_pct": 5.9,
+    "notes": "WAIT_RANGE: in box (145-230), pos 6%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-11-11",
+      "low": 149.1699981689453,
+      "high": 154.19000244140625,
+      "i": 197
+    },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-10-26",
       "low": 219.90499877929688,
       "high": 227.38800048828125,
-      "i": 195
+      "i": 185
     },
     {
       "name": "上升三法",
@@ -182,7 +182,7 @@
       "date": "2026-09-30",
       "low": 175.5,
       "high": 183.8000030517578,
-      "i": 177
+      "i": 167
     },
     {
       "name": "利淡吞噬",
@@ -190,7 +190,7 @@
       "date": "2026-09-24",
       "low": 191.6999969482422,
       "high": 198.0,
-      "i": 173
+      "i": 163
     },
     {
       "name": "黃昏之星",
@@ -198,15 +198,7 @@
       "date": "2026-07-23",
       "low": 80.0,
       "high": 87.69999694824219,
-      "i": 129
-    },
-    {
-      "name": "刺穿線",
-      "bias": "bullish",
-      "date": "2026-06-26",
-      "low": 75.30000305175781,
-      "high": 79.37999725341797,
-      "i": 111
+      "i": 119
     }
   ]
 }

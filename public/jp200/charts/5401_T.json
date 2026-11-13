@@ -3,23 +3,23 @@
   "ticker_user": "5401.T",
   "name": "Nippon Steel Corporation",
   "data_source": "yfinance",
-  "data_range": "2026-01-06 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-20 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 658.4000244140625,
-    "H": 661.9000244140625,
-    "L": 651.5,
-    "C": 656.5,
-    "prev_close": 659.2000122070312,
-    "chg_pct": -0.40958922285081467
+    "date": "2026-11-13",
+    "O": 704.5999755859375,
+    "H": 704.5999755859375,
+    "L": 691.2999877929688,
+    "C": 698.0,
+    "prev_close": 704.5999755859375,
+    "chg_pct": -0.9366982422116976
   },
-  "phase": "downtrend_active",
-  "adx": 17.83,
-  "plus_di": 25.15,
-  "minus_di": 18.11,
-  "regime": "range",
+  "phase": "base_building",
+  "adx": 21.58,
+  "plus_di": 29.37,
+  "minus_di": 14.39,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 718.5 (2026-09-03), trough 626.8 (2026-10-09), box top 672.2 (2026-10-28)",
+  "phase_evidence": "Peak 718.5 (2026-09-03), trough 626.8 (2026-10-09), box top 705.9 (2026-11-12)",
   "peak": {
     "date": "2026-09-03",
     "price": 718.5
@@ -29,57 +29,58 @@
     "price": 626.8
   },
   "box": {
-    "top": 672.2,
-    "top_date": "2026-10-28",
+    "top": 705.9,
+    "top_date": "2026-11-12",
     "bottom": 626.8,
-    "period": "2026-10-09 to 2026-10-30"
+    "period": "2026-10-09 to 2026-11-13"
   },
-  "drop_from_peak_pct": 8.6,
-  "recovery_from_crash_pct": 4.7,
+  "drop_from_peak_pct": 2.9,
+  "recovery_from_crash_pct": 11.4,
   "supports": [
     {
-      "level": 640.0,
+      "level": 660.0,
       "label": "S1 KEY",
-      "touches": 9,
-      "evidence": "tested 9x in base period; 2.5% below current"
+      "touches": 6,
+      "evidence": "tested 6x in base period; 5.4% below current"
     },
     {
-      "level": 628.0,
-      "label": "S2 bottom",
-      "touches": 5,
+      "level": 656.0,
+      "label": "S2",
+      "touches": 10,
+      "evidence": "mid-base support, tested 10x"
+    },
+    {
+      "level": 652.0,
+      "label": "S3 bottom",
+      "touches": 10,
       "evidence": "structural bottom, near crash low 626.8"
     }
   ],
   "resistances": [
     {
-      "level": 661.9,
+      "level": 704.6,
       "label": "R1 today high",
-      "evidence": "today's high 661.9000244140625"
-    },
-    {
-      "level": 672.2,
-      "label": "R3 Oct high",
-      "evidence": "box top 672.2, base period high"
+      "evidence": "today's high 704.5999755859375"
     }
   ],
   "position": {
-    "current": 656.5,
-    "in_box_pct": 64.5,
-    "nearest_support": "S1 KEY (640.0)",
-    "nearest_resistance": "R1 today high (661.9)"
+    "current": 698.0,
+    "in_box_pct": 87.5,
+    "nearest_support": "S1 KEY (660.0)",
+    "nearest_resistance": "R1 today high (704.6)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 658.4,
-    "H": 661.9,
-    "L": 651.5,
-    "C": 656.5,
-    "body_pct": 18.3,
-    "upper_wick_pct": 33.7,
-    "lower_wick_pct": 48.1
+    "close_position": "upper_half",
+    "O": 704.6,
+    "H": 704.6,
+    "L": 691.3,
+    "C": 698.0,
+    "body_pct": 49.6,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 50.4
   },
   "bias": {
     "short": {
@@ -87,8 +88,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "bearish_continuation",
-      "reason": "making new lows"
+      "bias": "neutral_consolidation",
+      "reason": "consolidating after big move"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -97,24 +98,20 @@
   },
   "scenarios": [
     {
-      "if": "hold 640.0 (KEY support)",
-      "then": "still range; watch 661.9 for next test"
+      "if": "hold 660.0 (KEY support)",
+      "then": "still range; watch 704.6 for next test"
     },
     {
-      "if": "break 640.0 on close",
-      "then": "target 628.0 → lower (short-term bearish)"
+      "if": "break 660.0 on close",
+      "then": "target 656.0 → 652.0 (short-term bearish)"
     },
     {
-      "if": "break 628.0 (crash low)",
+      "if": "break 652.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 661.9 on close",
-      "then": "short-term bullish; next test 672.2"
-    },
-    {
-      "if": "break 672.2 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 704.6 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -138,31 +135,39 @@
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
-    "trigger_price": 672.2,
-    "target_price": 649.5,
-    "stop_price": 690.71,
-    "risk_pct": 2.75,
-    "reward_pct": 3.38,
-    "rr_ratio": 1.23,
+    "trigger_price": 705.9,
+    "target_price": 672.05,
+    "stop_price": 725.77,
+    "risk_pct": 2.82,
+    "reward_pct": 4.8,
+    "rr_ratio": 1.7,
     "phase_match": true,
-    "r1": 672.2,
-    "s1": 626.8,
-    "s2": 628.2,
+    "r1": 705.9,
+    "s1": 638.2,
+    "s2": 626.8,
     "r2": 718.5,
-    "r3": 672.8,
+    "r3": 708.0,
     "s3": 530.5,
-    "s4": 566.3,
-    "current_position_pct": 65.4,
-    "notes": "SELL_R1: in box (627-672), entry at R1 672, target mid 650, stop 691 ｜ 52.2 條規則（SELL plan，resistance 672.20）：① 跌到 672.20、收市守住喺 672.20 上面 → 照 BUY 條 plan 做（入場 672.20，止蝕 690.71，目標 649.50）。② 收市跌穿 672.20 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 672.20 上面』。"
+    "s4": 539.0,
+    "current_position_pct": 88.3,
+    "notes": "SELL_R1: in box (638-706), entry at R1 706, target mid 672, stop 726 ｜ 52.2 條規則（SELL plan，resistance 705.90）：① 跌到 705.90、收市守住喺 705.90 上面 → 照 BUY 條 plan 做（入場 705.90，止蝕 725.77，目標 672.05）。② 收市跌穿 705.90 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 705.90 上面』。"
   },
   "patterns": [
+    {
+      "name": "吊頸",
+      "bias": "bearish",
+      "date": "2026-11-06",
+      "low": 652.7000122070312,
+      "high": 675.2000122070312,
+      "i": 194
+    },
     {
       "name": "早晨之星",
       "bias": "bullish",
       "date": "2026-10-20",
       "low": 655.7000122070312,
       "high": 670.2000122070312,
-      "i": 191
+      "i": 182
     },
     {
       "name": "烏雲蓋頂",
@@ -170,7 +175,7 @@
       "date": "2026-08-31",
       "low": 663.7000122070312,
       "high": 672.9000244140625,
-      "i": 159
+      "i": 150
     },
     {
       "name": "上升三法",
@@ -178,7 +183,7 @@
       "date": "2026-08-25",
       "low": 667.4000244140625,
       "high": 677.5,
-      "i": 155
+      "i": 146
     },
     {
       "name": "黃昏之星",
@@ -186,31 +191,23 @@
       "date": "2026-08-12",
       "low": 685.2000122070312,
       "high": 701.0,
-      "i": 146
-    },
-    {
-      "name": "利淡吞噬",
-      "bias": "bearish",
-      "date": "2026-06-19",
-      "low": 558.0,
-      "high": 567.2000122070312,
-      "i": 110
+      "i": 137
     }
   ],
-  "asof": "2026-10-30",
-  "close": 656.5,
-  "chg_pct": -0.40958922285081467,
+  "asof": "2026-11-13",
+  "close": 698.0,
+  "chg_pct": -0.9366982422116976,
   "kline": {
-    "type": "bearish_rejection",
+    "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 658.4,
-    "H": 661.9,
-    "L": 651.5,
-    "C": 656.5,
-    "body_pct": 18.3,
-    "upper_wick_pct": 33.7,
-    "lower_wick_pct": 48.1
+    "close_position": "upper_half",
+    "O": 704.6,
+    "H": 704.6,
+    "L": 691.3,
+    "C": 698.0,
+    "body_pct": 49.6,
+    "upper_wick_pct": 0.0,
+    "lower_wick_pct": 50.4
   }
 }

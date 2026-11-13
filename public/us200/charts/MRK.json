@@ -3,20 +3,20 @@
   "ticker_user": "MRK",
   "name": "Merck & Company, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 149.55,
-    "H": 151.35,
-    "L": 147.4,
-    "C": 149.52,
-    "prev_close": 146.33,
-    "chg_pct": 2.18
+    "date": "2026-11-13",
+    "O": 147.31,
+    "H": 147.99,
+    "L": 145.24,
+    "C": 147.76,
+    "prev_close": 146.95,
+    "chg_pct": 0.55
   },
-  "phase": "range",
-  "adx": 17.34,
-  "plus_di": 30.26,
-  "minus_di": 15.24,
+  "phase": "downtrend_active",
+  "adx": 18.06,
+  "plus_di": 26.54,
+  "minus_di": 20.74,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 156.92 (2026-08-25), trough 138.8 (2026-10-05), box top 154.02 (2026-10-22)",
@@ -32,16 +32,16 @@
     "top": 154.02,
     "top_date": "2026-10-22",
     "bottom": 138.8,
-    "period": "2026-10-05 to 2026-10-30"
+    "period": "2026-10-05 to 2026-11-13"
   },
-  "drop_from_peak_pct": 4.7,
-  "recovery_from_crash_pct": 7.7,
+  "drop_from_peak_pct": 5.8,
+  "recovery_from_crash_pct": 6.5,
   "supports": [
     {
       "level": 144.0,
       "label": "S1 KEY",
-      "touches": 20,
-      "evidence": "tested 20x in base period; 3.7% below current"
+      "touches": 16,
+      "evidence": "tested 16x in base period; 2.5% below current"
     },
     {
       "level": 140.0,
@@ -52,9 +52,14 @@
   ],
   "resistances": [
     {
-      "level": 151.35,
+      "level": 147.99,
       "label": "R1 today high",
-      "evidence": "today's high 151.35000610351562"
+      "evidence": "today's high 147.99000549316406"
+    },
+    {
+      "level": 150.0,
+      "label": "R2",
+      "evidence": "mid-box supply, round number 150"
     },
     {
       "level": 154.02,
@@ -63,23 +68,23 @@
     }
   ],
   "position": {
-    "current": 149.52,
-    "in_box_pct": 67.9,
+    "current": 147.76,
+    "in_box_pct": 55.3,
     "nearest_support": "S1 KEY (144.0)",
-    "nearest_resistance": "R1 today high (151.35)"
+    "nearest_resistance": "R1 today high (147.99)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 149.55,
-    "H": 151.35,
-    "L": 147.4,
-    "C": 149.52,
-    "body_pct": 0.8,
-    "upper_wick_pct": 45.6,
-    "lower_wick_pct": 53.7
+    "O": 147.31,
+    "H": 147.99,
+    "L": 145.24,
+    "C": 147.76,
+    "body_pct": 16.4,
+    "upper_wick_pct": 8.4,
+    "lower_wick_pct": 75.3
   },
   "bias": {
     "short": {
@@ -87,8 +92,8 @@
       "reason": "mid-box, no clear signal"
     },
     "mid": {
-      "bias": "neutral",
-      "reason": "no clear direction"
+      "bias": "bearish_continuation",
+      "reason": "making new lows"
     },
     "long": {
       "bias": "below_peak_recovery",
@@ -98,7 +103,7 @@
   "scenarios": [
     {
       "if": "hold 144.0 (KEY support)",
-      "then": "still range; watch 151.35 for next test"
+      "then": "still range; watch 147.99 for next test"
     },
     {
       "if": "break 144.0 on close",
@@ -109,8 +114,8 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 151.35 on close",
-      "then": "short-term bullish; next test 154.02"
+      "if": "reclaim 147.99 on close",
+      "then": "short-term bullish; next test 150.0"
     },
     {
       "if": "break 154.02 (box top)",
@@ -137,7 +142,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -146,14 +151,14 @@
     "rr_ratio": 0.0,
     "phase_match": false,
     "r1": 154.02,
-    "s1": 138.8,
-    "s2": 126.68,
+    "s1": 139.21,
+    "s2": 138.8,
     "r2": 156.92,
-    "r3": 135.05,
-    "s3": 110.94,
-    "s4": 106.03,
-    "current_position_pct": 70.4,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 154.02）：① 跌到 154.02、收市守住喺 154.02 上面 → 照 BUY 條 plan 做（入場 154.02，止蝕 162.07，目標 146.41）。② 收市跌穿 154.02 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 154.02 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "r3": 153.5,
+    "s3": 111.57,
+    "s4": 107.9,
+    "current_position_pct": 57.7,
+    "notes": "WAIT_RANGE: in box (139-154), pos 58%, no clear setup"
   },
   "patterns": [
     {
@@ -162,7 +167,7 @@
       "date": "2026-10-06",
       "low": 139.74000549316406,
       "high": 142.16000366210938,
-      "i": 181
+      "i": 171
     },
     {
       "name": "烏雲蓋頂",
@@ -170,7 +175,7 @@
       "date": "2026-09-03",
       "low": 148.89999389648438,
       "high": 152.8000030517578,
-      "i": 159
+      "i": 149
     },
     {
       "name": "三隻烏鴉",
@@ -178,7 +183,7 @@
       "date": "2026-08-07",
       "low": 126.68000030517578,
       "high": 128.75,
-      "i": 140
+      "i": 130
     },
     {
       "name": "上升三法",
@@ -186,7 +191,7 @@
       "date": "2026-07-30",
       "low": 127.25,
       "high": 130.2100067138672,
-      "i": 134
+      "i": 124
     },
     {
       "name": "利淡反擊線",
@@ -194,7 +199,7 @@
       "date": "2026-07-20",
       "low": 124.22000122070312,
       "high": 127.88999938964844,
-      "i": 126
+      "i": 116
     }
   ]
 }

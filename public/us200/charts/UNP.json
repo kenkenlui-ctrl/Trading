@@ -3,23 +3,23 @@
   "ticker_user": "UNP",
   "name": "Union Pacific Corporation",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 306.45,
-    "H": 306.45,
-    "L": 301.3,
-    "C": 304.0,
-    "prev_close": 301.93,
-    "chg_pct": 0.69
+    "date": "2026-11-13",
+    "O": 306.39,
+    "H": 307.16,
+    "L": 301.42,
+    "C": 302.44,
+    "prev_close": 304.2,
+    "chg_pct": -0.58
   },
   "phase": "base_building",
-  "adx": 39.82,
-  "plus_di": 29.33,
-  "minus_di": 5.9,
+  "adx": 36.56,
+  "plus_di": 27.18,
+  "minus_di": 14.06,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 315.99 (2026-07-23), trough 268.26 (2026-09-21), box top 306.45 (2026-10-30)",
+  "phase_evidence": "Peak 315.99 (2026-07-23), trough 268.26 (2026-09-21), box top 309.86 (2026-11-04)",
   "peak": {
     "date": "2026-07-23",
     "price": 315.99
@@ -29,58 +29,63 @@
     "price": 268.26
   },
   "box": {
-    "top": 306.45,
-    "top_date": "2026-10-30",
+    "top": 309.86,
+    "top_date": "2026-11-04",
     "bottom": 268.26,
-    "period": "2026-09-21 to 2026-10-30"
+    "period": "2026-09-21 to 2026-11-13"
   },
-  "drop_from_peak_pct": 3.8,
-  "recovery_from_crash_pct": 13.3,
+  "drop_from_peak_pct": 4.3,
+  "recovery_from_crash_pct": 12.7,
   "supports": [
     {
-      "level": 288.0,
+      "level": 296.0,
       "label": "S1 KEY",
-      "touches": 12,
-      "evidence": "tested 12x in base period; 5.3% below current"
+      "touches": 6,
+      "evidence": "tested 6x in base period; 2.1% below current"
+    },
+    {
+      "level": 288.0,
+      "label": "S2",
+      "touches": 14,
+      "evidence": "mid-base support, tested 14x"
     },
     {
       "level": 280.0,
-      "label": "S2",
-      "touches": 6,
-      "evidence": "mid-base support, tested 6x"
-    },
-    {
-      "level": 276.0,
       "label": "S3 bottom",
-      "touches": 12,
+      "touches": 6,
       "evidence": "structural bottom, near crash low 268.26"
     }
   ],
   "resistances": [
     {
-      "level": 306.45,
+      "level": 307.16,
       "label": "R1 today high",
-      "evidence": "today's high 306.45001220703125"
+      "evidence": "today's high 307.1600036621094"
+    },
+    {
+      "level": 309.86,
+      "label": "R3 Nov high",
+      "evidence": "box top 309.86, base period high"
     }
   ],
   "position": {
-    "current": 304.0,
-    "in_box_pct": 92.0,
-    "nearest_support": "S1 KEY (288.0)",
-    "nearest_resistance": "R1 today high (306.45)"
+    "current": 302.44,
+    "in_box_pct": 75.2,
+    "nearest_support": "S1 KEY (296.0)",
+    "nearest_resistance": "R1 today high (307.16)"
   },
   "kline_today": {
     "type": "bearish_pullback",
     "touched_R1": true,
     "touched_S1": false,
-    "close_position": "upper_half",
-    "O": 306.45,
-    "H": 306.45,
-    "L": 301.3,
-    "C": 304.0,
-    "body_pct": 47.6,
-    "upper_wick_pct": 0.0,
-    "lower_wick_pct": 52.4
+    "close_position": "lower_half",
+    "O": 306.39,
+    "H": 307.16,
+    "L": 301.42,
+    "C": 302.44,
+    "body_pct": 68.8,
+    "upper_wick_pct": 13.4,
+    "lower_wick_pct": 17.8
   },
   "bias": {
     "short": {
@@ -92,26 +97,30 @@
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "near_peak",
-      "reason": "near all-time peak"
+      "bias": "below_peak_recovery",
+      "reason": "still well below all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 288.0 (KEY support)",
-      "then": "still range; watch 306.45 for next test"
+      "if": "hold 296.0 (KEY support)",
+      "then": "still range; watch 307.16 for next test"
     },
     {
-      "if": "break 288.0 on close",
-      "then": "target 280.0 → 276.0 (short-term bearish)"
+      "if": "break 296.0 on close",
+      "then": "target 288.0 → 280.0 (short-term bearish)"
     },
     {
-      "if": "break 276.0 (crash low)",
+      "if": "break 280.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 306.45 on close",
-      "then": "short-term bullish; next test next R"
+      "if": "reclaim 307.16 on close",
+      "then": "short-term bullish; next test 309.86"
+    },
+    {
+      "if": "break 309.86 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -142,24 +151,24 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 306.45,
-    "s1": 274.22,
+    "r1": 309.86,
+    "s1": 278.59,
     "s2": 268.26,
     "r2": 314.15,
     "r3": 315.99,
     "s3": 255.22,
-    "s4": 219.98,
-    "current_position_pct": 92.4,
-    "notes": "WAIT_RANGE: in box (274-306), pos 92%, no clear setup"
+    "s4": 230.65,
+    "current_position_pct": 76.3,
+    "notes": "WAIT_RANGE: in box (279-310), pos 76%, no clear setup"
   },
   "patterns": [
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-10-30",
-      "low": 301.29998779296875,
-      "high": 306.45001220703125,
-      "i": 199
+      "date": "2026-11-05",
+      "low": 294.4800109863281,
+      "high": 309.5,
+      "i": 193
     },
     {
       "name": "利好反擊線",
@@ -167,7 +176,7 @@
       "date": "2026-10-02",
       "low": 273.0799865722656,
       "high": 278.6000061035156,
-      "i": 179
+      "i": 169
     },
     {
       "name": "利好吞噬",
@@ -175,7 +184,7 @@
       "date": "2026-09-25",
       "low": 272.3299865722656,
       "high": 275.0,
-      "i": 174
+      "i": 164
     },
     {
       "name": "利好身懷六甲",
@@ -183,7 +192,7 @@
       "date": "2026-09-14",
       "low": 282.8500061035156,
       "high": 285.6400146484375,
-      "i": 165
+      "i": 155
     },
     {
       "name": "利淡反擊線",
@@ -191,7 +200,7 @@
       "date": "2026-08-31",
       "low": 300.010009765625,
       "high": 306.3599853515625,
-      "i": 156
+      "i": 146
     }
   ]
 }

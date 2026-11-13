@@ -3,95 +3,89 @@
   "ticker_user": "ABT",
   "name": "Abbott Laboratories",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 106.15,
-    "H": 106.85,
-    "L": 104.6,
-    "C": 106.2,
-    "prev_close": 104.57,
-    "chg_pct": 1.56
+    "date": "2026-11-13",
+    "O": 108.2,
+    "H": 109.28,
+    "L": 107.03,
+    "C": 108.52,
+    "prev_close": 107.25,
+    "chg_pct": 1.18
   },
   "phase": "base_building",
-  "adx": 17.51,
-  "plus_di": 22.85,
-  "minus_di": 19.97,
-  "regime": "range",
+  "adx": 20.7,
+  "plus_di": 24.2,
+  "minus_di": 20.22,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 124.42 (2026-01-15), trough 81.97 (2026-05-11), box top 117.34 (2026-08-24)",
+  "phase_evidence": "Peak 117.34 (2026-08-24), trough 95.06 (2026-10-02), box top 117.07 (2026-11-05)",
   "peak": {
-    "date": "2026-01-15",
-    "price": 124.42
+    "date": "2026-08-24",
+    "price": 117.34
   },
   "trough": {
-    "date": "2026-05-11",
-    "price": 81.97
+    "date": "2026-10-02",
+    "price": 95.06
   },
   "box": {
-    "top": 117.34,
-    "top_date": "2026-08-24",
-    "bottom": 81.97,
-    "period": "2026-05-11 to 2026-10-30"
+    "top": 117.07,
+    "top_date": "2026-11-05",
+    "bottom": 95.06,
+    "period": "2026-10-02 to 2026-11-13"
   },
-  "drop_from_peak_pct": 14.6,
-  "recovery_from_crash_pct": 29.6,
+  "drop_from_peak_pct": 7.5,
+  "recovery_from_crash_pct": 14.2,
   "supports": [
     {
       "level": 104.0,
       "label": "S1 KEY",
-      "touches": 14,
-      "evidence": "tested 14x in base period; 2.1% below current"
+      "touches": 12,
+      "evidence": "tested 12x in base period; 4.2% below current"
     },
     {
       "level": 100.0,
       "label": "S2",
-      "touches": 41,
-      "evidence": "mid-base support, tested 41x"
+      "touches": 18,
+      "evidence": "mid-base support, tested 18x"
     },
     {
       "level": 96.0,
-      "label": "S3",
-      "touches": 17,
-      "evidence": "mid-base support, tested 17x"
-    },
-    {
-      "level": 81.97,
-      "label": "S4 crash low",
-      "touches": 1,
-      "evidence": "crash low 2026-05-11, structural bottom"
+      "label": "S3 bottom",
+      "touches": 11,
+      "evidence": "structural bottom, near crash low 95.06"
     }
   ],
   "resistances": [
     {
-      "level": 106.85,
+      "level": 109.28,
       "label": "R1 today high",
-      "evidence": "today's high 106.8499984741211"
+      "evidence": "today's high 109.27999877929688"
     },
     {
-      "level": 117.34,
-      "label": "R3 Aug high",
-      "evidence": "box top 117.34, base period high"
+      "level": 117.07,
+      "label": "R3 Nov high",
+      "evidence": "box top 117.07, base period high"
     }
   ],
   "position": {
-    "current": 106.2,
-    "in_box_pct": 68.5,
+    "current": 108.52,
+    "in_box_pct": 59.4,
     "nearest_support": "S1 KEY (104.0)",
-    "nearest_resistance": "R1 today high (106.85)"
+    "nearest_resistance": "R1 today high (109.28)"
   },
   "kline_today": {
     "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 106.15,
-    "H": 106.85,
-    "L": 104.6,
-    "C": 106.2,
-    "body_pct": 2.2,
-    "upper_wick_pct": 28.9,
-    "lower_wick_pct": 68.9
+    "O": 108.2,
+    "H": 109.28,
+    "L": 107.03,
+    "C": 108.52,
+    "body_pct": 14.2,
+    "upper_wick_pct": 33.8,
+    "lower_wick_pct": 52.0
   },
   "bias": {
     "short": {
@@ -110,22 +104,22 @@
   "scenarios": [
     {
       "if": "hold 104.0 (KEY support)",
-      "then": "still range; watch 106.85 for next test"
+      "then": "still range; watch 109.28 for next test"
     },
     {
       "if": "break 104.0 on close",
       "then": "target 100.0 → 96.0 (short-term bearish)"
     },
     {
-      "if": "break 81.97 (crash low)",
+      "if": "break 96.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 106.85 on close",
-      "then": "short-term bullish; next test 117.34"
+      "if": "reclaim 109.28 on close",
+      "then": "short-term bullish; next test 117.07"
     },
     {
-      "if": "break 117.34 (box top)",
+      "if": "break 117.07 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -149,23 +143,23 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RR_TOO_THIN",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 106.85,
-    "s1": 97.2,
+    "phase_match": true,
+    "r1": 117.07,
+    "s1": 97.67,
     "s2": 95.06,
     "r2": 117.34,
-    "r3": 110.04,
-    "s3": 82.69,
+    "r3": 115.67,
+    "s3": 84.96,
     "s4": 81.97,
-    "current_position_pct": 93.3,
-    "notes": "WAIT_RR_TOO_THIN: stop 已加闊到 1.5×ATR 但 R:R 唔夠 — 等更好嘅位置先入場。 ｜ 52.2 條規則（SELL plan，resistance 106.85）：① 跌到 106.85、收市守住喺 106.85 上面 → 照 BUY 條 plan 做（入場 106.85，止蝕 111.34，目標 102.02）。② 收市跌穿 106.85 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 106.85 上面』。 ｜ rr_floor: stop 加闊到 1.5×ATR 後 R:R < 1.2，賠率唔夠，降級 WAIT。等價格更近 trigger 或者波動收窄先再睇。"
+    "current_position_pct": 55.9,
+    "notes": "WAIT_RANGE: in box (98-117), pos 56%, no clear setup"
   },
   "patterns": [
     {
@@ -174,7 +168,7 @@
       "date": "2026-09-29",
       "low": 99.4800033569336,
       "high": 101.06999969482422,
-      "i": 176
+      "i": 166
     },
     {
       "name": "刺穿線",
@@ -182,7 +176,7 @@
       "date": "2026-09-04",
       "low": 107.36000061035156,
       "high": 110.01000213623047,
-      "i": 160
+      "i": 150
     },
     {
       "name": "烏雲蓋頂",
@@ -190,7 +184,7 @@
       "date": "2026-07-23",
       "low": 100.06999969482422,
       "high": 101.9000015258789,
-      "i": 129
+      "i": 119
     },
     {
       "name": "平頭頂",
@@ -198,15 +192,7 @@
       "date": "2026-07-13",
       "low": 91.63999938964844,
       "high": 94.0999984741211,
-      "i": 121
-    },
-    {
-      "name": "黃昏之星",
-      "bias": "bearish",
-      "date": "2026-06-30",
-      "low": 90.61000061035156,
-      "high": 93.29000091552734,
-      "i": 113
+      "i": 111
     }
   ]
 }

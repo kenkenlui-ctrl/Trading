@@ -3,97 +3,97 @@
   "ticker_user": "MDLZ",
   "name": "Mondelez International, Inc.",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 65.0,
-    "H": 65.86,
-    "L": 64.11,
-    "C": 64.94,
-    "prev_close": 62.53,
-    "chg_pct": 3.85
+    "date": "2026-11-13",
+    "O": 66.88,
+    "H": 67.67,
+    "L": 66.77,
+    "C": 67.54,
+    "prev_close": 66.56,
+    "chg_pct": 1.47
   },
   "phase": "range",
-  "adx": 22.81,
-  "plus_di": 38.88,
-  "minus_di": 17.56,
-  "regime": "dead",
+  "adx": 29.94,
+  "plus_di": 32.92,
+  "minus_di": 15.21,
+  "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 66.65 (2026-07-29), trough 57.32 (2026-10-05), box top 65.86 (2026-10-30)",
+  "phase_evidence": "Peak 68.75 (2026-11-05), trough 64.69 (2026-11-06), box top 67.67 (2026-11-13)",
   "peak": {
-    "date": "2026-07-29",
-    "price": 66.65
+    "date": "2026-11-05",
+    "price": 68.75
   },
   "trough": {
-    "date": "2026-10-05",
-    "price": 57.32
+    "date": "2026-11-06",
+    "price": 64.69
   },
   "box": {
-    "top": 65.86,
-    "top_date": "2026-10-30",
-    "bottom": 57.32,
-    "period": "2026-10-05 to 2026-10-30"
+    "top": 67.67,
+    "top_date": "2026-11-13",
+    "bottom": 64.69,
+    "period": "2026-11-06 to 2026-11-13"
   },
-  "drop_from_peak_pct": 2.6,
-  "recovery_from_crash_pct": 13.3,
+  "drop_from_peak_pct": 1.8,
+  "recovery_from_crash_pct": 4.4,
   "supports": [
     {
       "level": 64.0,
       "label": "S1 KEY",
-      "touches": 16,
-      "evidence": "tested 16x in base period; 1.4% below current"
+      "touches": 41,
+      "evidence": "tested 41x in base period; 5.2% below current"
     },
     {
       "level": 60.0,
       "label": "S2 bottom",
-      "touches": 25,
-      "evidence": "structural bottom, near crash low 57.32"
+      "touches": 38,
+      "evidence": "structural bottom, near crash low 64.69"
     }
   ],
   "resistances": [
     {
-      "level": 65.86,
+      "level": 67.67,
       "label": "R1 today high",
-      "evidence": "today's high 65.86000061035156"
+      "evidence": "today's high 67.66999816894531"
     }
   ],
   "position": {
-    "current": 64.94,
-    "in_box_pct": 84.3,
+    "current": 67.54,
+    "in_box_pct": 98.3,
     "nearest_support": "S1 KEY (64.0)",
-    "nearest_resistance": "R1 today high (65.86)"
+    "nearest_resistance": "R1 today high (67.67)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bullish_reclaim",
     "touched_R1": true,
-    "touched_S1": true,
-    "close_position": "lower_half",
-    "O": 65.0,
-    "H": 65.86,
-    "L": 64.11,
-    "C": 64.94,
-    "body_pct": 3.4,
-    "upper_wick_pct": 49.1,
-    "lower_wick_pct": 47.4
+    "touched_S1": false,
+    "close_position": "upper_half",
+    "O": 66.88,
+    "H": 67.67,
+    "L": 66.77,
+    "C": 67.54,
+    "body_pct": 73.3,
+    "upper_wick_pct": 14.4,
+    "lower_wick_pct": 12.2
   },
   "bias": {
     "short": {
-      "bias": "neutral",
-      "reason": "mid-box, no clear signal"
+      "bias": "bullish_trying",
+      "reason": "reclaim above mid-box"
     },
     "mid": {
       "bias": "neutral",
       "reason": "no clear direction"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
       "if": "hold 64.0 (KEY support)",
-      "then": "still range; watch 65.86 for next test"
+      "then": "still range; watch 67.67 for next test"
     },
     {
       "if": "break 64.0 on close",
@@ -104,7 +104,7 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 65.86 on close",
+      "if": "reclaim 67.67 on close",
       "then": "short-term bullish; next test next R"
     }
   ],
@@ -127,33 +127,41 @@
     }
   ],
   "action_plan": {
-    "verdict": "SELL",
-    "strategy": "SELL_R1",
-    "trigger_price": 65.86,
-    "target_price": 61.59,
-    "stop_price": 68.11,
-    "risk_pct": 3.41,
-    "reward_pct": 6.48,
-    "rr_ratio": 1.9,
-    "phase_match": true,
-    "r1": 65.86,
-    "s1": 57.32,
-    "s2": 57.35,
+    "verdict": "WAIT",
+    "strategy": "WAIT_REGIME",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
+    "phase_match": false,
+    "r1": 68.75,
+    "s1": 61.51,
+    "s2": 57.32,
     "r2": 65.55,
     "r3": 66.65,
     "s3": 57.78,
     "s4": 54.31,
-    "current_position_pct": 89.2,
-    "notes": "SELL_R1: in box (57-66), entry at R1 66, target mid 62, stop 68 ｜ 52.2 條規則（SELL plan，resistance 65.86）：① 跌到 65.86、收市守住喺 65.86 上面 → 照 BUY 條 plan 做（入場 65.86，止蝕 68.11，目標 61.59）。② 收市跌穿 65.86 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 65.86 上面』。"
+    "current_position_pct": 83.3,
+    "notes": "WAIT_RANGE: in box (62-69), pos 83%, no clear setup"
   },
   "patterns": [
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
-      "date": "2026-10-23",
-      "low": 63.400001525878906,
-      "high": 65.19999694824219,
-      "i": 194
+      "date": "2026-11-05",
+      "low": 66.62999725341797,
+      "high": 68.75,
+      "i": 193
+    },
+    {
+      "name": "利淡吞噬",
+      "bias": "bearish",
+      "date": "2026-10-19",
+      "low": 63.29999923706055,
+      "high": 63.97999954223633,
+      "i": 180
     },
     {
       "name": "刺穿線",
@@ -161,7 +169,7 @@
       "date": "2026-10-08",
       "low": 59.619998931884766,
       "high": 60.79999923706055,
-      "i": 183
+      "i": 173
     },
     {
       "name": "利好反擊線",
@@ -169,7 +177,7 @@
       "date": "2026-09-29",
       "low": 58.790000915527344,
       "high": 59.65999984741211,
-      "i": 176
+      "i": 166
     },
     {
       "name": "黃昏之星",
@@ -177,15 +185,7 @@
       "date": "2026-08-18",
       "low": 62.599998474121094,
       "high": 63.31999969482422,
-      "i": 147
-    },
-    {
-      "name": "利好反擊線",
-      "bias": "bullish",
-      "date": "2026-07-16",
-      "low": 59.22999954223633,
-      "high": 61.47999954223633,
-      "i": 124
+      "i": 137
     }
   ]
 }

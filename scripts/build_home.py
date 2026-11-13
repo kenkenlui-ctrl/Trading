@@ -563,12 +563,33 @@ def render_v2_card(sig: dict) -> str:
         if sd is not None:
             detail += f" ({sd:.2f}%)"
 
+    # 2026-11-14 — read-only context labels. The producer decides whether a
+    # signal carries them (a flag decides that, not this file); when the
+    # payload has no label field there is nothing to render, and this file
+    # deliberately mentions no flag name so the wiring guardrail stays honest.
+    ctx = sig.get("context_labels") or {}
+    tags, defs = [], []
+    if ctx.get("too_extended"):
+        tags.append("貼近箱頂")
+        defs.append("貼近箱頂＝收市價距 20 日 box 頂 (R1) 少過 2%")
+    if ctx.get("rs_above_index"):
+        tags.append("強過大盤")
+        defs.append("強過大盤＝250 日漲幅高過市場指數")
+    ctx_html = ""
+    if tags:
+        # The tooltip explains ONLY the labels this signal actually carries —
+        # a legend that names a label the signal does not have reads as a claim.
+        tip = ("標籤（只讀，唔會改入場規則、唔會改勝率）：" + "；".join(defs)
+               + "。詳見 /methodology")
+        ctx_html = (' · <span class="text-dim" title="' + tip + '">'
+                    + " · ".join(tags) + "</span>")
+
     return (
         f'      <a href="{link}" class="signal-card bull">\n'
         f'        <div>\n'
         f'          <div class="signal-ticker">{sym} <span class="text-dim" '
         f'style="font-size:0.7em;">{mkt.upper()}</span></div>\n'
-        f'          <div class="signal-name">{dist_txt} · v2 只做多 · 入場要企穩 S1</div>\n'
+        f'          <div class="signal-name">{dist_txt} · v2 只做多 · 入場要企穩 S1{ctx_html}</div>\n'
         f'        </div>\n'
         f'        <span class="signal-action-large buy">BUY</span>\n'
         f'        <div class="signal-detail">{detail}</div>\n'

@@ -3972,6 +3972,63 @@ def t_cost_flip_is_derived_from_the_retest_summary() -> None:
         C.load = orig_load
 
 
+def t_label_notes_are_derived_from_the_label_cohort_artifact() -> None:
+    """Sprint 2 C2: the signal-label section of the methodology page must be
+    GENERATED from data/label_cohort.json, not typed by hand.
+
+    The two read-only labels shipped on 2026-11-14 quoting numbers measured
+    on the wrong cohort: the FILLED subset of plans, instead of the PLANS the
+    site publishes every day. Because a plan that fires "貼近箱頂" almost
+    never fills, the filled cohort understated how often the label fires by an
+    order of magnitude, and the page said so in front of readers. A section
+    typed by hand drifts again the moment the data moves, so the section is
+    now a build artifact: the page must match the artifact exactly, and a
+    tampered artifact must move the rendered section.
+    """
+    import build_label_notes as L
+
+    html = L.PAGE.read_text(encoding="utf-8")
+    m = re.search(re.escape(L.START) + r".*?" + re.escape(L.END), html, re.S)
+    record("the methodology page carries the generated label section",
+           m is not None,
+           "no label-notes markers in public/methodology.html")
+    block = L.render()
+    record("the label section matches the artifact exactly",
+           m is not None and m.group(0) == block,
+           "the page's label section does not match data/label_cohort.json")
+
+    # the study's filled subset must be the authoritative trade set, or every
+    # number in the section is about a different experiment
+    ab = json.loads((L.REPO / "data" / "ab_close_hold.json").read_text(encoding="utf-8"))
+    art = json.loads(L.ARTIFACT.read_text(encoding="utf-8"))
+    counts = {}
+    for r in art["summary"]:
+        if r["label"] == "T1a_near_box_top":
+            counts[(r["market"], r["window"])] = (r["triggered_n_filled"]
+                                                  + r["not_triggered_n_filled"])
+    ok = all(counts.get((mkt, win)) == ab["windows"][mkt]["B_close-hold"][win]["n"]
+             for mkt in ("us200", "jp200") for win in ("train", "test"))
+    record("the label study's filled subset is the authoritative trade set",
+           ok, f"counts={counts}")
+
+    # MUST-FAIL: a tampered artifact must move the rendered section. Without
+    # this the check above would pass on a section that ignores the artifact.
+    orig_load = L.load
+    try:
+        tampered = json.loads(L.ARTIFACT.read_text(encoding="utf-8"))
+        for r in tampered["summary"]:
+            if r["label"] == "T1a_near_box_top" and r["window"] == "full":
+                r["triggered_fill_rate_pct"] = 99.99
+        L.load = lambda: tampered
+        moved = L.render() != block
+    finally:
+        L.load = orig_load
+    record("MUST-FAIL a tampered label artifact moves the rendered section",
+           moved,
+           "the control for this gate does not discriminate: the section does "
+           "not follow the artifact")
+
+
 def t_vix_regime_note_is_a_noindex_research_page() -> None:
     """The VIX-regime negative result (2026-10-08) is published as a research
     note: readable, linked from the failure log, and NOT in the sitemap.
@@ -5691,6 +5748,7 @@ def main() -> int:
                t_methodology_provenance_names_every_source,
                t_staleness_states_are_derived_and_fail_loud,
                t_cost_flip_is_derived_from_the_retest_summary,
+               t_label_notes_are_derived_from_the_label_cohort_artifact,
                t_vix_regime_note_is_a_noindex_research_page,
                t_client_side_freshness_check_is_wired,
                t_build_state_records_and_reports_the_last_run,

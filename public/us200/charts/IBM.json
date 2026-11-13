@@ -3,23 +3,23 @@
   "ticker_user": "IBM",
   "name": "International Business Machines",
   "data_source": "yfinance",
-  "data_range": "2026-01-15 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-30 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 258.28,
-    "H": 259.59,
-    "L": 254.71,
-    "C": 257.81,
-    "prev_close": 258.28,
-    "chg_pct": -0.18
+    "date": "2026-11-13",
+    "O": 246.63,
+    "H": 247.85,
+    "L": 244.83,
+    "C": 247.13,
+    "prev_close": 244.67,
+    "chg_pct": 1.01
   },
   "phase": "base_building",
-  "adx": 27.7,
-  "plus_di": 28.89,
-  "minus_di": 10.47,
-  "regime": "trend",
+  "adx": 17.88,
+  "plus_di": 25.36,
+  "minus_di": 23.35,
+  "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 332.46 (2026-06-02), trough 199.19 (2026-07-23), box top 259.59 (2026-10-30)",
+  "phase_evidence": "Peak 332.46 (2026-06-02), trough 199.19 (2026-07-23), box top 259.87 (2026-11-02)",
   "peak": {
     "date": "2026-06-02",
     "price": 332.46
@@ -29,31 +29,31 @@
     "price": 199.19
   },
   "box": {
-    "top": 259.59,
-    "top_date": "2026-10-30",
+    "top": 259.87,
+    "top_date": "2026-11-02",
     "bottom": 199.19,
-    "period": "2026-07-23 to 2026-10-30"
+    "period": "2026-07-23 to 2026-11-13"
   },
-  "drop_from_peak_pct": 22.5,
-  "recovery_from_crash_pct": 29.4,
+  "drop_from_peak_pct": 25.7,
+  "recovery_from_crash_pct": 24.1,
   "supports": [
     {
-      "level": 248.0,
+      "level": 236.0,
       "label": "S1 KEY",
-      "touches": 9,
-      "evidence": "tested 9x in base period; 3.8% below current"
+      "touches": 8,
+      "evidence": "tested 8x in base period; 4.5% below current"
     },
     {
       "level": 232.0,
       "label": "S2",
-      "touches": 22,
-      "evidence": "mid-base support, tested 22x"
+      "touches": 20,
+      "evidence": "mid-base support, tested 20x"
     },
     {
       "level": 228.0,
       "label": "S3",
-      "touches": 20,
-      "evidence": "mid-base support, tested 20x"
+      "touches": 18,
+      "evidence": "mid-base support, tested 18x"
     },
     {
       "level": 199.19,
@@ -64,9 +64,14 @@
   ],
   "resistances": [
     {
-      "level": 259.59,
+      "level": 247.85,
       "label": "R1 today high",
-      "evidence": "today's high 259.5899963378906"
+      "evidence": "today's high 247.85000610351562"
+    },
+    {
+      "level": 259.87,
+      "label": "R3 Nov high",
+      "evidence": "box top 259.87, base period high"
     },
     {
       "level": 310.0,
@@ -75,23 +80,23 @@
     }
   ],
   "position": {
-    "current": 257.81,
-    "in_box_pct": 52.9,
-    "nearest_support": "S1 KEY (248.0)",
-    "nearest_resistance": "R1 today high (259.59)"
+    "current": 247.13,
+    "in_box_pct": 79.0,
+    "nearest_support": "S1 KEY (236.0)",
+    "nearest_resistance": "R1 today high (247.85)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 258.28,
-    "H": 259.59,
-    "L": 254.71,
-    "C": 257.81,
-    "body_pct": 9.6,
-    "upper_wick_pct": 26.8,
-    "lower_wick_pct": 63.5
+    "O": 246.63,
+    "H": 247.85,
+    "L": 244.83,
+    "C": 247.13,
+    "body_pct": 16.6,
+    "upper_wick_pct": 23.8,
+    "lower_wick_pct": 59.6
   },
   "bias": {
     "short": {
@@ -109,11 +114,11 @@
   },
   "scenarios": [
     {
-      "if": "hold 248.0 (KEY support)",
-      "then": "still range; watch 259.59 for next test"
+      "if": "hold 236.0 (KEY support)",
+      "then": "still range; watch 247.85 for next test"
     },
     {
-      "if": "break 248.0 on close",
+      "if": "break 236.0 on close",
       "then": "target 232.0 → 228.0 (short-term bearish)"
     },
     {
@@ -121,8 +126,12 @@
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 259.59 on close",
-      "then": "short-term bullish; next test 310.0"
+      "if": "reclaim 247.85 on close",
+      "then": "short-term bullish; next test 259.87"
+    },
+    {
+      "if": "break 259.87 (box top)",
+      "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
   "common_misjudgments": [
@@ -145,32 +154,40 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_REGIME",
+    "strategy": "WAIT_RANGE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
     "risk_pct": 0.0,
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
-    "phase_match": false,
-    "r1": 259.59,
-    "s1": 217.8,
-    "s2": 218.6,
+    "phase_match": true,
+    "r1": 259.87,
+    "s1": 229.3,
+    "s2": 217.8,
     "r2": 251.82,
     "r3": 332.46,
     "s3": 199.19,
-    "s4": 220.72,
-    "current_position_pct": 95.7,
-    "notes": "WAIT_RANGE: in box (218-260), pos 96%, no clear setup"
+    "s4": 212.34,
+    "current_position_pct": 58.3,
+    "notes": "WAIT_RANGE: in box (229-260), pos 58%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "利淡反擊線",
+      "bias": "bearish",
+      "date": "2026-11-02",
+      "low": 252.36000061035156,
+      "high": 259.8699951171875,
+      "i": 190
+    },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-10-16",
       "low": 230.25,
       "high": 236.97999572753906,
-      "i": 189
+      "i": 179
     },
     {
       "name": "利好吞噬",
@@ -178,15 +195,7 @@
       "date": "2026-07-20",
       "low": 208.82000732421875,
       "high": 216.27999877929688,
-      "i": 126
-    },
-    {
-      "name": "利好身懷六甲",
-      "bias": "bullish",
-      "date": "2026-06-26",
-      "low": 258.2799987792969,
-      "high": 273.1400146484375,
-      "i": 111
+      "i": 116
     }
   ]
 }

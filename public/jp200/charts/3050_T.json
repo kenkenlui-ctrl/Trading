@@ -3,23 +3,23 @@
   "ticker_user": "3050.T",
   "name": "DCM Holdings Co., Ltd.",
   "data_source": "yfinance",
-  "data_range": "2026-01-06 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-20 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 1587.0,
-    "H": 1615.0,
-    "L": 1587.0,
-    "C": 1610.0,
-    "prev_close": 1582.0,
-    "chg_pct": 1.7699115044247815
+    "date": "2026-11-13",
+    "O": 1686.0,
+    "H": 1703.0,
+    "L": 1671.0,
+    "C": 1694.0,
+    "prev_close": 1690.0,
+    "chg_pct": 0.2366863905325367
   },
   "phase": "base_building",
-  "adx": 18.59,
-  "plus_di": 28.33,
-  "minus_di": 21.38,
-  "regime": "range",
+  "adx": 24.01,
+  "plus_di": 32.63,
+  "minus_di": 13.98,
+  "regime": "dead",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 1746.0 (2026-02-24), trough 1404.0 (2026-06-01), box top 1638.0 (2026-10-23)",
+  "phase_evidence": "Peak 1746.0 (2026-02-24), trough 1404.0 (2026-06-01), box top 1707.0 (2026-11-05)",
   "peak": {
     "date": "2026-02-24",
     "price": 1746.0
@@ -29,31 +29,31 @@
     "price": 1404.0
   },
   "box": {
-    "top": 1638.0,
-    "top_date": "2026-10-23",
+    "top": 1707.0,
+    "top_date": "2026-11-05",
     "bottom": 1404.0,
-    "period": "2026-06-01 to 2026-10-30"
+    "period": "2026-06-01 to 2026-11-13"
   },
-  "drop_from_peak_pct": 7.8,
-  "recovery_from_crash_pct": 14.7,
+  "drop_from_peak_pct": 3.0,
+  "recovery_from_crash_pct": 20.7,
   "supports": [
     {
-      "level": 1512.0,
+      "level": 1612.0,
       "label": "S1 KEY",
+      "touches": 7,
+      "evidence": "tested 7x in base period; 4.8% below current"
+    },
+    {
+      "level": 1512.0,
+      "label": "S2",
       "touches": 9,
-      "evidence": "tested 9x in base period; 6.1% below current"
+      "evidence": "mid-base support, tested 9x"
     },
     {
       "level": 1504.0,
-      "label": "S2",
-      "touches": 11,
-      "evidence": "mid-base support, tested 11x"
-    },
-    {
-      "level": 1496.0,
       "label": "S3",
-      "touches": 8,
-      "evidence": "mid-base support, tested 8x"
+      "touches": 10,
+      "evidence": "mid-base support, tested 10x"
     },
     {
       "level": 1404.0,
@@ -64,69 +64,60 @@
   ],
   "resistances": [
     {
-      "level": 1615.0,
+      "level": 1703.0,
       "label": "R1 today high",
-      "evidence": "today's high 1615.0"
-    },
-    {
-      "level": 1638.0,
-      "label": "R3 Oct high",
-      "evidence": "box top 1638.0, base period high"
+      "evidence": "today's high 1703.0"
     }
   ],
   "position": {
-    "current": 1610.0,
-    "in_box_pct": 88.0,
-    "nearest_support": "S1 KEY (1512.0)",
-    "nearest_resistance": "R1 today high (1615.0)"
+    "current": 1694.0,
+    "in_box_pct": 97.0,
+    "nearest_support": "S1 KEY (1612.0)",
+    "nearest_resistance": "R1 today high (1703.0)"
   },
   "kline_today": {
-    "type": "bullish_reclaim",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 1587.0,
-    "H": 1615.0,
-    "L": 1587.0,
-    "C": 1610.0,
-    "body_pct": 82.1,
-    "upper_wick_pct": 17.9,
-    "lower_wick_pct": 0.0
+    "O": 1686.0,
+    "H": 1703.0,
+    "L": 1671.0,
+    "C": 1694.0,
+    "body_pct": 25.0,
+    "upper_wick_pct": 28.1,
+    "lower_wick_pct": 46.9
   },
   "bias": {
     "short": {
-      "bias": "bullish_trying",
-      "reason": "reclaim above mid-box"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "neutral_consolidation",
       "reason": "consolidating after big move"
     },
     "long": {
-      "bias": "below_peak_recovery",
-      "reason": "still well below all-time peak"
+      "bias": "near_peak",
+      "reason": "near all-time peak"
     }
   },
   "scenarios": [
     {
-      "if": "hold 1512.0 (KEY support)",
-      "then": "still range; watch 1615.0 for next test"
+      "if": "hold 1612.0 (KEY support)",
+      "then": "still range; watch 1703.0 for next test"
     },
     {
-      "if": "break 1512.0 on close",
-      "then": "target 1504.0 → 1496.0 (short-term bearish)"
+      "if": "break 1612.0 on close",
+      "then": "target 1512.0 → 1504.0 (short-term bearish)"
     },
     {
       "if": "break 1404.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 1615.0 on close",
-      "then": "short-term bullish; next test 1638.0"
-    },
-    {
-      "if": "break 1638.0 (box top)",
-      "then": "leave consolidation; mid-term recovery, watch next R"
+      "if": "reclaim 1703.0 on close",
+      "then": "short-term bullish; next test next R"
     }
   ],
   "common_misjudgments": [
@@ -150,31 +141,39 @@
   "action_plan": {
     "verdict": "SELL",
     "strategy": "SELL_R1",
-    "trigger_price": 1638.0,
-    "target_price": 1566.0,
-    "stop_price": 1686.18,
-    "risk_pct": 2.94,
-    "reward_pct": 4.4,
-    "rr_ratio": 1.49,
+    "trigger_price": 1707.0,
+    "target_price": 1627.5,
+    "stop_price": 1771.24,
+    "risk_pct": 3.76,
+    "reward_pct": 4.66,
+    "rr_ratio": 1.24,
     "phase_match": true,
-    "r1": 1638.0,
-    "s1": 1494.0,
-    "s2": 1495.0,
+    "r1": 1707.0,
+    "s1": 1548.0,
+    "s2": 1494.0,
     "r2": 1636.0,
     "r3": 1624.0,
     "s3": 1404.0,
     "s4": 1451.0,
-    "current_position_pct": 80.6,
-    "notes": "SELL_R1: in box (1494-1638), entry at R1 1638, target mid 1566, stop 1686 ｜ 52.2 條規則（SELL plan，resistance 1638.00）：① 跌到 1638.00、收市守住喺 1638.00 上面 → 照 BUY 條 plan 做（入場 1638.00，止蝕 1686.18，目標 1566.00）。② 收市跌穿 1638.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1638.00 上面』。"
+    "current_position_pct": 91.8,
+    "notes": "SELL_R1: in box (1548-1707), entry at R1 1707, target mid 1628, stop 1771 ｜ 52.2 條規則（SELL plan，resistance 1707.00）：① 跌到 1707.00、收市守住喺 1707.00 上面 → 照 BUY 條 plan 做（入場 1707.00，止蝕 1771.24，目標 1627.50）。② 收市跌穿 1707.00 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 1707.00 上面』。"
   },
   "patterns": [
+    {
+      "name": "射擊之星",
+      "bias": "bearish",
+      "date": "2026-11-06",
+      "low": 1604.0,
+      "high": 1699.0,
+      "i": 194
+    },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-10-27",
       "low": 1589.0,
       "high": 1624.0,
-      "i": 196
+      "i": 187
     },
     {
       "name": "利淡吞噬",
@@ -182,7 +181,7 @@
       "date": "2026-10-21",
       "low": 1567.0,
       "high": 1587.0,
-      "i": 192
+      "i": 183
     },
     {
       "name": "刺穿線",
@@ -190,7 +189,7 @@
       "date": "2026-10-15",
       "low": 1527.0,
       "high": 1559.0,
-      "i": 188
+      "i": 179
     },
     {
       "name": "利淡吞噬",
@@ -198,31 +197,23 @@
       "date": "2026-08-27",
       "low": 1614.0,
       "high": 1633.0,
-      "i": 157
-    },
-    {
-      "name": "利淡反擊線",
-      "bias": "bearish",
-      "date": "2026-08-13",
-      "low": 1550.0,
-      "high": 1572.0,
-      "i": 147
+      "i": 148
     }
   ],
-  "asof": "2026-10-30",
-  "close": 1610.0,
-  "chg_pct": 1.7699115044247815,
+  "asof": "2026-11-13",
+  "close": 1694.0,
+  "chg_pct": 0.2366863905325367,
   "kline": {
-    "type": "bullish_reclaim",
+    "type": "bullish_hold",
     "touched_R1": true,
     "touched_S1": false,
     "close_position": "upper_half",
-    "O": 1587.0,
-    "H": 1615.0,
-    "L": 1587.0,
-    "C": 1610.0,
-    "body_pct": 82.1,
-    "upper_wick_pct": 17.9,
-    "lower_wick_pct": 0.0
+    "O": 1686.0,
+    "H": 1703.0,
+    "L": 1671.0,
+    "C": 1694.0,
+    "body_pct": 25.0,
+    "upper_wick_pct": 28.1,
+    "lower_wick_pct": 46.9
   }
 }
