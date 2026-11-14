@@ -363,11 +363,30 @@ def test_production_untouched() -> None:
     record("no production file was modified by this task",
            not changed, f"changed={changed}")
 
-    # the production flag registry is untouched
+    # the production flag registry is untouched.
+    #
+    # 2026-11-15: this compared the ON set against a hand-typed list, which
+    # went stale the moment signal_context_labels_flag was approved - so the
+    # gate went RED on a flag Kenneth had explicitly turned on, which is the
+    # opposite of useful. A registry check must compare the registry against
+    # the COMMITTED registry ("unchanged by this task"), and bound the ON set
+    # with an explicit allow-list so a research task still cannot quietly
+    # switch one on.
     prod_cfg = json.loads((REPO / "config" / "integrity_flags.json").read_text())
     on = sorted(k for k, v in prod_cfg.items() if v)
+    ALLOWED_ON = {"deploy_gate_flag", "staleness_banner_flag",
+                  "signal_context_labels_flag"}
+    extra = [f for f in on if f not in ALLOWED_ON]
+    try:
+        committed = json.loads(subprocess.run(
+            ["git", "-C", str(REPO), "show", "HEAD:config/integrity_flags.json"],
+            capture_output=True, text=True, timeout=60).stdout)
+    except Exception:  # noqa: BLE001
+        committed = {}
     record("the production flag registry is unchanged",
-           on == ["deploy_gate_flag", "staleness_banner_flag"], str(on))
+           committed == prod_cfg and not extra,
+           "on=" + str(on) + " outside_the_allow_list=" + str(extra)
+           + " same_as_committed=" + str(committed == prod_cfg))
 
     # and no public artefact was rewritten
     try:
