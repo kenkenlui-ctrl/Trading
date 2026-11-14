@@ -75,6 +75,7 @@ sys.path.insert(0, str(REPO / "scripts" / "research"))
 
 from core import _simulate, cost_rt, features        # noqa: E402
 import short_side as SS                                # noqa: E402
+from market_filter import verdicts_for                  # noqa: E402
 
 BARS = SS.BARS
 SPLIT = SS.SPLIT
@@ -214,8 +215,18 @@ def summarise(rows: list[dict]) -> dict:
 # --------------------------------------------------------------------------
 # the per-symbol plan pass
 # --------------------------------------------------------------------------
-def plan_rows(symbol: str, mkt: str, roc_maps: dict, mask: set) -> list[dict]:
-    """Every plan row for one symbol, with its labels and its outcome."""
+def plan_rows(symbol: str, mkt: str, roc_maps: dict, mask: set, *,
+              market_ok: dict[str, bool]) -> list[dict]:
+    """Every plan row for one symbol, with its labels and its outcome.
+
+    market_ok = the per-session market verdicts, and it is REQUIRED.
+
+    A plan row on a session the market filter did not pass is not a plan
+    the live product would have published: build_v2_signals skips the whole
+    market when the index is below its 200d MA. So the PLAN cohort has to
+    carry the gate too, or the trigger rate on it is measured on a
+    population the site never publishes (2026-11-14).
+    """
     df = SS.load_bars(BARS / f"{symbol}.json")
     if df is None or len(df) < 60:
         return []
@@ -242,6 +253,11 @@ def plan_rows(symbol: str, mkt: str, roc_maps: dict, mask: set) -> list[dict]:
 
     out = []
     for k, q in enumerate(rows_idx):
+        # THE MARKET GATE, read on the entry session. Row q IS the entry
+        # session (the decision bar is q-1), and the live path reads the
+        # index as of the plan session's T-1 — the same reading.
+        if not market_ok.get(dates[q]):
+            continue
         d = dec[k]
         ext = (r1[q] / prev[q] - 1.0) * 100.0
         stock_roc = (c[d] / c[d - RS_WINDOW] - 1.0) if d >= RS_WINDOW else float("nan")
@@ -427,12 +443,14 @@ def collect(mask_all: dict) -> list[dict]:
     out = []
     for mkt in MARKETS:
         roc_maps = build_roc_maps(mkt)
+        mv = verdicts_for(mkt, BARS)
         syms = symbol_list(mkt)
         print(f"  {mkt}: {len(syms)} symbols, "
               f"index prod={PRODUCTION_INDEX[mkt]} study={STUDY_INDEX[mkt]}",
               flush=True)
         for s in syms:
-            out.extend(plan_rows(s, mkt, roc_maps, mask_all.get(s) or set()))
+            out.extend(plan_rows(s, mkt, roc_maps, mask_all.get(s) or set(),
+                                  market_ok=mv))
     return out
 
 

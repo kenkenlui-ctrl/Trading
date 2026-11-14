@@ -42,6 +42,7 @@ REPO = Path("/Users/kenken/dev/dsa-hk")
 sys.path.insert(0, str(REPO / "scripts" / "v2engine"))
 sys.path.insert(0, str(REPO / "scripts"))
 from core import features, _simulate, cost_rt  # noqa: E402
+from market_filter import verdicts_series  # noqa: E402
 from bt_clean import bars_dir, load as load_clean, _load_mask_cache, filter_candidates  # noqa: E402
 
 OUT = REPO / "data" / "portfolio_test.csv"
@@ -69,10 +70,26 @@ INITIAL = float(os.environ.get("PT_INITIAL_EQUITY", 1_000_000))
 # to be stated on the page rather than buried in a literal.
 MAX_SLOTS = int(os.environ.get("PT_MAX_SLOTS", 10))
 COST = "realistic"
-# Index, not ETF, and not 1306_T: the ETF's own series has an unadjusted 10:1
-# glitch (two sessions at 1/10 scale in March 2026) which shows up as a -91%
-# benchmark drawdown that never happened.
-MARKETS = {"us200": ("IDX_GSPC", "IDX_GSPC"), "jp200": ("IDX_N225", "IDX_N225")}
+# TWO SERIES, TWO JOBS. They used to be the same tuple and that was wrong
+# in both directions.
+#
+# FILTER_PROXY is the market FILTER, and it has to be the LIVE path's
+# proxy: build_v2_signals reads SPY for US and 1306.T for JP, and the
+# frozen baseline has to gate on the same series or the measured rule is
+# not the published rule (2026-11-14). The ETF proxy and the index proxy
+# are not interchangeable - on the store's own history they disagree on
+# 1.4% of US sessions and 11.9% of JP ones.
+#
+# BENCHMARK is the thing the curve is compared against, and it is the
+# INDEX: 1306_T's own series has an unadjusted 10:1 glitch (two sessions
+# at 1/10 scale in March 2026, which Yahoo still serves that way) which
+# shows up as a -91% benchmark drawdown that never happened. The glitch is
+# repaired where the market filter reads the series (market_filter.py);
+# it is NOT repaired here, because a benchmark with a repaired bar is a
+# benchmark nobody can reproduce.
+FILTER_PROXY = {"us200": "SPY", "jp200": "1306_T"}
+BENCHMARK = {"us200": "IDX_GSPC", "jp200": "IDX_N225"}
+MARKETS = {"us200": ("SPY",), "jp200": ("1306_T",)}
 
 
 def load(path: Path) -> pd.DataFrame | None:
@@ -80,26 +97,36 @@ def load(path: Path) -> pd.DataFrame | None:
 
 
 def market_up_series(mkt: str) -> pd.Series | None:
-    for sym in MARKETS[mkt]:
-        p = bars_dir() / f"{sym}.json"
-        if p.exists():
-            b = load(p)
-            if b is not None:
-                f = features(b)
-                return f.prev_close > f.ma200
-    return None
+    """The market filter, from the one module that defines it.
+
+    Same rule, same proxy, same scale-glitch repair as the live path and
+    the frozen baseline.
+    """
+    return verdicts_series(mkt, bars_dir())
 
 
-def candidates_v2(b: pd.DataFrame) -> list[dict]:
+def candidates_v2(b: pd.DataFrame, up: pd.Series | None = None) -> list[dict]:
+    """The v2 candidate rule.
+
+    up = the per-session market verdicts (market_up_series). When given, a
+    session the market filter did not pass is dropped: the live product
+    publishes nothing on such a session, so it cannot be in the baseline the
+    site quotes. Fail-closed on a missing verdict, exactly like the live path
+    refusing to publish when the index cannot be read.
+    """
     f = features(b)
     O, H, L, C = (b[k].to_numpy(float) for k in ("open", "high", "low", "close"))
     a, s1 = f.atr_pct.to_numpy(), f.S1.to_numpy()
     ma200, slope = f.ma200.to_numpy(), f.ma200_slope.to_numpy()
     boxw, r5 = f.box_w.to_numpy(), f.ret_5d.to_numpy()
     ok = (f.prev_close.to_numpy() > ma200) & (slope > 0) & (a < 0.06) & (boxw < 0.35)
+    upa = (up.reindex(b.index).fillna(False).to_numpy(bool)
+           if up is not None else None)
     out = []
     for i in np.where(ok)[0]:
         if np.isnan(s1[i]) or np.isnan(a[i]) or a[i] <= 0:
+            continue
+        if upa is not None and not upa[i]:
             continue
         if not (O[i] > s1[i] and L[i] <= s1[i]):
             continue
@@ -284,14 +311,14 @@ def main() -> int:
             if b is None:
                 continue
             px[s] = b.close
-            for lab, cs in (("v2", candidates_v2(b)),
+            for lab, cs in (("v2", candidates_v2(b, up)),
                             ("control", candidates_control(b, up.reindex(b.index)))):
                 tagged = [dict(c, sym=s) for c in cs]
                 raw_n[lab] += len(tagged)
                 kept, _ = filter_candidates(tagged, mask)
                 acc[lab].extend(kept)
 
-        ib = load(src / f"{MARKETS[mkt][0]}.json")
+        ib = load(src / f"{BENCHMARK[mkt]}.json")
         cal = ib.index
         # B0 index, B1 same-universe equal weight (the benchmark that matters).
         # 2026-10-17 CORRECTION — see hk_retest.ew_bh() for the full note. This
@@ -324,7 +351,7 @@ def main() -> int:
             b1 = (INITIAL * (1 + mm).cumprod()).ffill()
         # the benchmark index gets the same glitch treatment as everything else
         b0 = ib.close.copy()
-        for d in mask.get(MARKETS[mkt][0], set()):
+        for d in mask.get(BENCHMARK[mkt], set()):
             b0 = b0[b0.index != d]
         b0 = b0.reindex(cal).ffill().bfill()
         rows.append({"market": mkt, "arm": "B0 index B&H", **stats(b0), "sharpe": 0.0,

@@ -62,6 +62,7 @@ REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "scripts" / "v2engine"))
 sys.path.insert(0, str(REPO / "scripts"))
 from core import _simulate, cost_rt, features  # noqa: E402
+from market_filter import verdicts_for  # noqa: E402
 from bt_clean import _load_mask_cache, bars_dir, load as load_clean  # noqa: E402
 
 BARS = bars_dir()
@@ -251,6 +252,17 @@ def _excluded_row(mkt: str, sym: str, dstr: str, tier: str, reason: str,
     }
 
 
+def market_verdicts(mkt: str) -> dict[str, bool]:
+    """Per-session market verdicts for one market — the live rule.
+
+    The rule and the session it is read on are documented in
+    scripts/v2engine/market_filter.py. The proxy is the pair the live path
+    prefers and the pair ab_close_hold.py uses, so this mirror and the frozen
+    engine cannot disagree about which sessions the market allowed.
+    """
+    return verdicts_for(mkt, BARS)
+
+
 def rerun_v2(mkt: str, mask_all: dict | None = None,
              collect_candidates: bool = True) -> tuple[list[dict], list[dict], list[dict]]:
     """Re-run the live v2 rule (close-hold) over the frozen store.
@@ -276,6 +288,7 @@ def rerun_v2(mkt: str, mask_all: dict | None = None,
     trades: list[dict] = []
     candidates: list[dict] = []
     excluded: list[dict] = []
+    mv = market_verdicts(mkt)
 
     for sym in symbol_for_market(mkt):
         p = BARS / f"{sym}.json"
@@ -301,6 +314,14 @@ def rerun_v2(mkt: str, mask_all: dict | None = None,
             if np.isnan(s1[i]) or np.isnan(a[i]) or a[i] <= 0:
                 continue
             dstr = idx[i].strftime("%Y-%m-%d")
+            # THE MARKET GATE. A session the market filter did not pass is a
+            # session the live product published nothing on — so it is
+            # neither a plan nor a candidate, and it cannot be in the cohort
+            # this module re-derives (2026-11-14: the frozen engine had no
+            # market gate at all, so this mirror and the baseline it is
+            # supposed to reproduce were measuring different rules).
+            if not mv.get(dstr):
+                continue
             s1v = float(s1[i])
             bar = raw.get(dstr)
             tier, reason = classify_bar(bar, s1v)

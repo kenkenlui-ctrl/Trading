@@ -41,6 +41,7 @@ REPO = Path("/Users/kenken/dev/dsa-hk")
 sys.path.insert(0, str(REPO / "scripts" / "v2engine"))
 from bt_clean import bars_dir, _load_mask_cache  # noqa: E402
 from core import features, _simulate, cost_rt  # noqa: E402
+from market_filter import verdicts_series  # noqa: E402
 
 BARS = bars_dir()   # data/bt10y2 when present: the old cache had 8 corrupt files
 OUT = REPO / "data" / "control_test.csv"
@@ -74,30 +75,34 @@ def market_up_series(mkt: str) -> pd.Series | None:
     Returns a boolean Series indexed by date. Using the SAME index for both
     arms matters: a control that sees more up-days than the signal is not a
     control, it is a looser filter.
+
+    The rule and the market proxy come from scripts/v2engine/market_filter.py,
+    so this module gates on the same series the live product reads and the
+    same series the frozen baseline gates on.
     """
-    for sym in MARKETS[mkt]:
-        p = BARS / f"{sym}.json"
-        if not p.exists():
-            continue
-        b = load(p)
-        if b is None:
-            continue
-        f = features(b)
-        return f.prev_close > f.ma200
-    return None
+    return verdicts_series(mkt, BARS)
 
 
-def arm_v2(df: pd.DataFrame) -> list[tuple]:
-    """Shipped rule: limit at S1, open > S1, close holds S1, 3xATR stop, 10d."""
+def arm_v2(df: pd.DataFrame, up: pd.Series) -> list[tuple]:
+    """Shipped rule: limit at S1, open > S1, close holds S1, 3xATR stop, 10d.
+
+    The market filter applies to this arm too. It always did to the control
+    arm, so a v2 arm that ignored it was measured on a superset of the
+    trades the published rule takes - the same defect the frozen baseline
+    had (2026-11-14).
+    """
     f = features(df)
     O, H, L, C = (df[k].to_numpy(float) for k in ("open", "high", "low", "close"))
     a, s1 = f.atr_pct.to_numpy(), f.S1.to_numpy()
     ma200, slope, boxw = f.ma200.to_numpy(), f.ma200_slope.to_numpy(), f.box_w.to_numpy()
     ok = (f.prev_close.to_numpy() > ma200) & (slope > 0) & (a < 0.06) & (boxw < 0.35)
+    upa = up.reindex(df.index).fillna(False).to_numpy(bool)
     out = []
     for i in np.where(ok)[0]:
         if np.isnan(s1[i]) or np.isnan(a[i]) or a[i] <= 0:
             continue
+        if not upa[i]:
+            continue                                   # the market gate
         if not (O[i] > s1[i] and L[i] <= s1[i]):
             continue
         if C[i] < s1[i]:
@@ -178,7 +183,7 @@ def main() -> int:
             if b is None:
                 continue
             upa = up.reindex(b.index)
-            for label, fn in (("v2", lambda d: arm_v2(d)),
+            for label, fn in (("v2", lambda d: arm_v2(d, upa)),
                               ("control", lambda d: arm_control(d, upa))):
                 try:
                     got = fn(b)

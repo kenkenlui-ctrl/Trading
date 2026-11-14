@@ -208,9 +208,10 @@ def write_report(out_dir: Path, payload, gates, a_summary, mf_rows, ev_rows,
     A("**三個歧義同點解咁揀：**")
     A("")
     A("1. **Market filter 鏡像點做。** 站上個 market filter 係**市場層級**開關"
-      "（指數低過 200MA 就成個市場唔出訊號）；frozen backtest engine "
-      + CODE + "ab_close_hold.trades_for" + CODE + " **根本冇逐筆施加** market filter。"
-      "所以 short 唔可以加，否則兩邊唔同基準；market filter 改為獨立敏感度 arm。")
+      "（指數低過 200MA 就成個市場唔出訊號）。2026-11-14 發現 frozen backtest engine "
+      + CODE + "ab_close_hold.trades_for" + CODE + " **根本冇逐筆施加** market filter，"
+      "而家已經補返：long 逐筆要市場 UP（=live 規則），short 逐筆要市場 DOWN（=鏡像）。"
+      "兩邊各自喺最有利嘅 regime 度量；冇閘嘅版本留咗做獨立敏感度 arm。")
     A("2. **Short 嘅 trend filter 鏡像。** 逐條件反號（價低過 MA200 + MA200 落）。"
       "另外測咗兩個 ablation（淨 slope、淨 level），見下表。")
     A("3. **No target 嘅哨兵值。** " + CODE + "_simulate" + CODE + " 嘅 short 分支測 "
@@ -470,9 +471,11 @@ def write_report(out_dir: Path, payload, gates, a_summary, mf_rows, ev_rows,
     A("")
     A("## 5. 負面結果、陷阱同定義選擇（同樣力度）")
     A("")
-    A("1. **market filter 喺 frozen engine 入面根本冇施加。** 站上規則寫住有，"
-      "但 " + CODE + "ab_close_hold.trades_for" + CODE + " 只係逐筆做個股趨勢 filter。"
-      "所以「long 3,693 筆」呢個數字係**冇市場閘**嘅數字。")
+    A("1. **market filter 喺 frozen engine 本來冇施加，2026-11-14 補咗。** 站上規則一直寫住有，"
+      "但 " + CODE + "ab_close_hold.trades_for" + CODE + " 只係逐筆做個股趨勢 filter，"
+      "所以之前所有 baseline 數字都係**冇市場閘**嘅數字。"
+      "而家市場閘逐筆施加，規則、代理同 scale-glitch 修復全部集中喺 "
+      + CODE + "scripts/v2engine/market_filter.py" + CODE + "，baseline 數字已全部重跑。")
     A("2. **" + CODE + "_simulate" + CODE + " 嘅 no-target 哨兵對 short 係毒藥。** "
       "long 用 " + CODE + "1e12" + CODE + " 冇問題；short 用同一個值會即刻以 1e12 "
       "平倉。自測專門捉呢個。")

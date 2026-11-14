@@ -40,6 +40,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "scripts" / "v2engine"))
 from core import features  # noqa: E402
+from market_filter import live_verdict, repair_scale_glitch  # noqa: E402
 from lot_size import floor_to_lot, lot_for  # noqa: E402
 
 PARAMS = dict(stop_atr=3.0, hold=10, atr_max=0.06, box_max=0.35,
@@ -328,14 +329,21 @@ def _read_index(index_sym: str) -> tuple[bool, str, float | None, None, bool]:
     d = yf.Ticker(index_sym).history(period="2y", auto_adjust=True)
     if d is None or d.empty:
         raise ValueError("no data returned")
-    c = d["Close"]
+    # The rule lives in scripts/v2engine/market_filter.py: one implementation
+    # for the live path and for the frozen engines, so the published verdict
+    # and the measured verdict cannot drift apart. The scale-glitch repair is
+    # applied to the series BEFORE anything is measured off it - Yahoo serves
+    # 1306.T with two sessions at one tenth of the true price, and a 10x
+    # error inside the MA window is a measurement of the typo, not of the
+    # market (2026-11-14).
+    c, _repairs = repair_scale_glitch(d["Close"].astype(float))
     ma = c.rolling(200).mean()
     last_c, last_ma = c.iloc[-1], ma.iloc[-1]
     # NaN compares False in Python, so a missing last bar would read as
     # "index below its 200d MA" and publish a bearish verdict built on nothing.
     if pd.isna(last_c) or pd.isna(last_ma):
         raise ValueError(f"NaN in series (close={last_c}, 200dMA={last_ma})")
-    up, asof = bool(last_c > last_ma), str(d.index[-1].date())
+    up, asof = live_verdict(c), str(d.index[-1].date())
     # 2026-11-14 — the index's own 250-day return, for the relative-strength
     # label (F5). The same 2y history that answers "is the index above its
     # 200d MA" already carries it: no second fetch, no new vendor, no new

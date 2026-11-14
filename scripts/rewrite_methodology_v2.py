@@ -110,6 +110,8 @@ except Exception as _e:  # noqa: BLE001
                      f"scripts/ab_close_hold.py first")
 
 RETEST = REPO / "data" / "hk_retest_summary.json"
+# The random-entry control arm, written by scripts/control_test.py.
+_CONTROL = REPO / "data" / "control_test.csv"
 BARS = REPO / "data" / "bt10y2"
 # The round-trip cost this page's US and JP numbers are quoted at. It must match
 # the cost build_home.py / build_seo.py quote, or the two pages disagree again.
@@ -320,6 +322,90 @@ def _ab_n_range() -> str:
     ns = [AB["windows"][m][AB_RULE][w_]["n"]
           for m in ("us200", "jp200") for w_ in ("train", "test")]
     return f"{min(ns):,}–{max(ns):,}"
+
+
+def _control_figs() -> dict:
+    """The random-entry control arm, READ from data/control_test.csv.
+
+    Same rule as the per-trade table: read the artifact, never type the
+    number. scripts/control_test.py runs the v2 arm and the control arm
+    through the SAME market filter on the SAME bars, so the two are
+    comparable - which is the whole point of the comparison.
+    """
+    import csv as _csv
+    out: dict[str, dict] = {}
+    with _CONTROL.open(encoding="utf-8") as fh:
+        for row in _csv.DictReader(fh):
+            mkt, arm = row["market"], row["arm"]
+            d = out.setdefault(mkt, {}).setdefault(arm, {})
+            for w in ("train", "test"):
+                d[w] = {"n": int(row[f"{w}_n"]),
+                        "avg%": float(row[f"{w}_avg%"]),
+                        "t": float(row[f"{w}_t"])}
+    return out
+
+
+def _ctrl_row(mkt: str, label: str, wlabel: str, win: str) -> tuple:
+    """One row of the control-comparison table.
+
+    The v2 side is the frozen baseline (data/ab_close_hold.json) and the
+    control side is the random-entry arm (data/control_test.csv). Both are
+    read; neither is typed.
+    """
+    ctl = _control_figs()
+    v2 = AB["windows"][mkt][AB_RULE][win]
+    c = ctl[mkt]["control"][win]
+    return (label, wlabel, v2["n"],
+            _num(v2["avg%"], 3) + "%", _num(c["avg%"], 3) + "%",
+            _num(v2["avg%"] - c["avg%"], 3) + "pp")
+
+
+def _v2_vs_control_ratio_range() -> str:
+    """How many times better v2 is per trade than the control, worst to best."""
+    ctl = _control_figs()
+    rs = []
+    for mkt in ("us200", "jp200"):
+        for w in ("train", "test"):
+            v2 = AB["windows"][mkt][AB_RULE][w]["avg%"]
+            c = ctl[mkt]["control"][w]["avg%"]
+            if c:
+                rs.append(v2 / c)
+    if not rs:
+        return "—"
+    return f"{min(rs):.1f} 至 {max(rs):.1f}"
+
+
+def _opportunity_band() -> str:
+    """The share of the control arm's opportunities that v2 actually takes."""
+    ctl = _control_figs()
+    ps = []
+    for mkt in ("us200", "jp200"):
+        for w in ("train", "test"):
+            v2n = AB["windows"][mkt][AB_RULE][w]["n"]
+            cn = ctl[mkt]["control"][w]["n"]
+            if cn:
+                ps.append(v2n / cn * 100)
+    if not ps:
+        return "—"
+    return f"{min(ps):.1f}–{max(ps):.1f}%"
+
+
+def _us_opportunity() -> str:
+    """The US trade-count comparison behind the sentence above it."""
+    ctl = _control_figs()
+    v2n = AB["windows"]["us200"][AB_RULE]["train"]["n"]
+    cn = ctl["us200"]["control"]["train"]["n"]
+    return f"美股 {v2n:,} 對 {cn:,} 單"
+
+
+def _us_test_avg(which: str) -> str:
+    """The US out-of-sample per-trade average, from the artifact."""
+    ctl = _control_figs()
+    if which == "v2":
+        v = AB["windows"]["us200"][AB_RULE]["test"]["avg%"]
+    else:
+        v = ctl["us200"]["control"]["test"]["avg%"]
+    return _num(v, 3) + "%"
 
 
 def _close_hold_control_note() -> str:
@@ -738,12 +824,14 @@ def build_body() -> str:
         <td class="mono">{ac}</td>
         <td class="mono">{d}</td>
       </tr>"""
-        for m, w, n, av, ac, d in [
-            ("US", "訓練 2016–22", 3693, "+1.922%", "+0.535%", "+1.387pp"),
-            ("US", "樣本外 2023–26", 2982, "+1.772%", "+0.696%", "+1.076pp"),
-            ("JP", "訓練 2016–22", 2389, "+1.058%", "+0.112%", "+0.946pp"),
-            ("JP", "樣本外 2023–26", 2187, "+2.354%", "+0.693%", "+1.661pp"),
-        ]
+        # READ, not typed: the v2 side is data/ab_close_hold.json and the
+        # control side is data/control_test.csv. A hand-typed copy of either
+        # is how this table drifted in the first place.
+        for m, w, n, av, ac, d in (
+            _ctrl_row("us200", "US", "訓練 2016–22", "train"),
+            _ctrl_row("us200", "US", "樣本外 2023–26", "test"),
+            _ctrl_row("jp200", "JP", "訓練 2016–22", "train"),
+            _ctrl_row("jp200", "JP", "樣本外 2023–26", "test"))
     )
 
     hk_rows = "\n".join(
@@ -989,6 +1077,16 @@ def build_body() -> str:
     勝率 badge 可能顯示咗相反方向策略嘅成績、n = 1–4 嘅極小樣本勝率照樣顯示出嚟。
     呢啲都係顯示層問題，已一併修正。
   </p>
+  <p style="margin: var(--sp-3) 0; font-size: var(--text-sm);">
+    <b>2026-11-14 — 逐單基準一直冇施加「市場閘」，已修正。</b>
+    站上規則一直寫住有<b>大市過濾</b>（指數 T-1 收市價高過佢自己嘅 200 天線先出訊號），
+    但凍結引擎 <code>scripts/ab_close_hold.py</code> <b>從來冇逐筆施加過</b>個閘 ——
+    即係之前所有逐單數字，都係量度喺一個比規則本身更闊嘅母體上面。
+    而家市場閘逐筆施加：規則、指數代理，同 Yahoo 將 1306.T 兩日印成 1/10 價嗰個壞 bar
+    嘅修復，全部集中喺 <code>scripts/v2engine/market_filter.py</code>，live path 同
+    凍結引擎用同一份規則。基準數字已全部重跑，本頁每單數字亦全部換成新嗰組。
+    修正之後交易筆數變少、每單數字變好 —— 因為之前嗰批交易喺市場弱嗰陣根本唔會入場。
+  </p>
 
   <h2>2. 現行規則：v2</h2>
   <table class="data-table method-prose">
@@ -1009,6 +1107,14 @@ def build_body() -> str:
     每個門檻都係用 2016–2022 選定，再喺 2023–2026 只測一次（樣本外）。
     選出嚟嘅組合（3×ATR 止損、無目標、10 日持有）喺樣本外同時都係最好嗰個。
   </p>
+
+  <!-- 2026-11-14: the signal-label section is generated by
+       scripts/build_label_notes.py from data/label_cohort.json. These markers
+       are what that script replaces, so regenerating THIS page no longer
+       silently deletes the section (it did, until the markers were here).
+       build_label_notes.py runs right after this script in scripts/refresh.sh. -->
+  <!-- w9:label-notes:start -->
+  <!-- w9:label-notes:end -->
 
   <h2>3. S/R ladder（v2 都用）</h2>
   <p>4 層不重疊 rolling pivot，全部用前一日數據計，無 look-ahead：</p>
@@ -1156,21 +1262,21 @@ def build_body() -> str:
     </tbody>
   </table>
   <p>
-    <b>四個格全部：v2 每單收益高過對照組 2.6 至 6.6 倍</b>，兩個市場、訓練同樣本外一致。
+    <b>四個格全部：v2 每單收益高過對照組 {_v2_vs_control_ratio_range()} 倍</b>，兩個市場、訓練同樣本外一致。
     單就「入場方式」呢一項，v2 確實有超過單純追上升趨勢嘅選擇優勢。
   </p>
   <div class="callout" style="margin: var(--sp-4) 0; padding: var(--sp-4); border-left: 4px solid var(--amber); background: var(--amber-dim); border-radius: 4px;">
     <h3 style="margin-top: 0; font-size: var(--text-md);">⚠ 三個限制，唔好跳過</h3>
     <p style="margin: var(--sp-2) 0; font-size: var(--text-sm);">
       <b>一、呢個係「每單」優勢，唔係「總回報」優勢。</b>
-      v2 只做對照組 2–4% 嘅交易機會（美股 3,693 對 132,032 單）。
+      v2 只做對照組 {_opportunity_band()} 嘅交易機會（{_us_opportunity()}）。
       每單贏多啲，唔等於同等資金下賺多啲。呢一項我哋已經喺 <b>§4.7</b> 補做咗組合層面測試，
       答案係：美股零超額。
     </p>
     <p style="margin: var(--sp-2) 0; font-size: var(--text-sm);">
       <b>二、呢個結果同 2026-10-01 第三方審計報告相反。</b>
-      嗰份報告嘅對照組數字（美股樣本外 +0.58%）同我哋（+0.694%）好接近，
-      但佢哋報 v2 只有 +0.45%，我哋量到 +1.77%。
+      嗰份報告嘅對照組數字（美股樣本外 +0.58%）同我哋（{_us_test_avg("control")}）好接近，
+      但佢哋報 v2 只有 +0.45%，我哋量到 {_us_test_avg("v2")}。
       差異喺 v2 嗰邊，而唔係對照組嗰邊 —— 原因未查清，<b>我哋唔會因此聲稱第三方有錯</b>。
     </p>
     <p style="margin: 0; font-size: var(--text-sm);">

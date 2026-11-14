@@ -39,21 +39,29 @@ WHAT "MIRRORED" MEANS HERE (written down, because the spec is ambiguous)
                     [entry - 304 days, exit] (same rule as the long side)
     costs           core.cost_rt(mkt, scenario, stop_exit)
 
-THE MARKET FILTER — the one real asymmetry, and how it was handled
+THE MARKET FILTER — applied per trade, on both sides
     The published rule text lists a market filter ("index T-1 close > its
     200d MA"). In the LIVE product it is a MARKET-LEVEL switch: if the index
-    is below its 200d MA, the whole market publishes nothing. In the FROZEN
-    backtest engine (ab_close_hold.trades_for) there is NO market filter at
-    all — market_up() is only printed to stdout. The frozen long numbers
-    therefore contain no market filter.
+    is below its 200d MA, the whole market publishes nothing.
 
-    Mirroring means the short numbers must contain none either, or the two
-    sides would not be comparable and every delta below would be an
-    artefact of a filter that only one side had. The market filter is
-    therefore reported as a SEPARATE SENSITIVITY arm (market_filter_sens),
-    applied per session with the mirror rule (index below its 200d MA for
-    the short side), on top of the primary numbers. It is never folded into
-    the headline.
+    2026-11-14: the FROZEN engine had NO market filter at all —
+    ab_close_hold.trades_for only printed market_up() to stdout — so the
+    long numbers below were measured on a superset of the trades the
+    published rule would ever take. That is now fixed in the frozen engine
+    itself, and this module mirrors the fix:
+
+      long arm   gated on the market being UP   (the live rule)
+      short arm  gated on the market being DOWN  (the mirror)
+
+    Each side is therefore measured in the regime that favours it, which is
+    the only way the two sides stay comparable — and if the short side
+    still loses after being handed its best regime, the verdict is robust.
+    The ungated engine is kept as a SENSITIVITY arm (market_filter_rows),
+    so the effect of the gate on both sides is visible rather than assumed.
+
+    The rule, the proxy and the scale-glitch repair all live in
+    scripts/v2engine/market_filter.py, so this module, the frozen baseline
+    and the live path cannot drift apart.
 
 NO TARGET, AND WHY -1e12
     core._simulate takes a target price. The long side passes 1e12, which
@@ -105,6 +113,7 @@ sys.path.insert(0, str(REPO / "scripts"))
 sys.path.insert(0, str(REPO / "scripts" / "research"))
 
 from core import _simulate, cost_rt, features          # noqa: E402
+from market_filter import MARKET_PROXY, verdicts_for    # noqa: E402
 from bt_clean import bars_dir, load as load_clean        # noqa: E402
 import executability as E                                # noqa: E402  (load_mask)
 
@@ -112,7 +121,13 @@ BARS = bars_dir()
 SPLIT = pd.Timestamp("2023-01-01")      # train < SPLIT <= test
 HOLD = 10
 MARKETS = ("us200", "jp200")
-INDEX_SYM = {"us200": "IDX_GSPC", "jp200": "IDX_N225"}
+# The market proxy is NOT chosen here. scripts/v2engine/market_filter.py owns
+# it: SPY for US and 1306.T for JP, the same pair the live path reads. The
+# index pair this module used to name (IDX_GSPC / IDX_N225) disagrees with
+# the ETF pair on 1.4% of US sessions and 11.9% of JP ones, so keeping it
+# would have made the short-side study measure a different rule from the
+# one the site publishes.
+INDEX_SYM = MARKET_PROXY
 NO_TARGET_LONG = 1e12
 NO_TARGET_SHORT = -1e12
 GLITCH_LOOKBACK_DAYS = 304              # same as ab_close_hold.trades_for
@@ -123,14 +138,19 @@ STOP_ATR = 3.0
 # The primary short rule and the ablations, all disclosed in the report.
 VARIANTS = {
     "L-long-v2":     dict(side=+1, trend="up_both",     close_hold=True,
+                          market="up",
                           label="live v2 long (authority)"),
     "S-strict":      dict(side=-1, trend="down_both",   close_hold=True,
+                          market="down",
                           label="short mirror, full condition set"),
     "S-nohold":      dict(side=-1, trend="down_both",   close_hold=False,
+                          market="down",
                           label="short mirror without the close-hold"),
     "S-nolevel":     dict(side=-1, trend="slope_down",  close_hold=True,
+                          market="down",
                           label="short mirror, trend = MA200 slope only"),
     "S-levelonly":   dict(side=-1, trend="level_down",  close_hold=True,
+                          market="down",
                           label="short mirror, trend = below MA200 only"),
 }
 PRIMARY_SHORT = "S-strict"
@@ -203,14 +223,25 @@ def _trend_mask(f: pd.DataFrame, trend: str) -> np.ndarray:
 
 
 def trades_for(df: pd.DataFrame, f: pd.DataFrame, mkt: str, spec: dict,
-               mask: set | None) -> list[dict]:
+               mask: set | None, *, market_ok: dict[str, bool]) -> list[dict]:
     """One pass of the rule for one symbol.
 
     For side=+1 this is a line-for-line mirror of
     ab_close_hold.trades_for(..., close_hold=True) and is asserted equal to
     it by the frozen gate. For side=-1 every condition is the mirror image.
+
+    market_ok = the per-session market verdicts, and it is REQUIRED: a
+    caller that forgets it gets a TypeError instead of a number that
+    quietly has no market filter in it.
+
+    spec["market"] is the policy: "up" for the long side (the live rule),
+    "down" for the short side (the mirror), "none" for the ungated
+    sensitivity arm. A session with no verdict gates the trade OFF
+    (fail-closed): the live product refuses to publish when the index
+    cannot be read.
     """
     side = spec["side"]
+    policy = spec.get("market", "none")
     O, H, L, C = (df[k].to_numpy(float) for k in ("open", "high", "low", "close"))
     a = f.atr_pct.to_numpy()
     s1 = f.S1.to_numpy()
@@ -228,6 +259,17 @@ def trades_for(df: pd.DataFrame, f: pd.DataFrame, mkt: str, spec: dict,
         level = s1[i] if side > 0 else r1[i]
         if np.isnan(level) or np.isnan(a[i]) or a[i] <= 0:
             continue
+        # THE MARKET GATE. A session the market filter did not pass is a
+        # session the live product published nothing on, so it cannot be in
+        # the cohort (2026-11-14: the frozen engine had no gate at all).
+        if policy != "none":
+            v = market_ok.get(idx[i].strftime("%Y-%m-%d"))
+            if v is None:
+                continue                      # no verdict -> gate OFF
+            if policy == "up" and not v:
+                continue
+            if policy == "down" and v:
+                continue
         if side > 0:
             # opens above the level, trades down to it
             if not (O[i] > level and L[i] <= level):
@@ -277,11 +319,17 @@ def trades_for(df: pd.DataFrame, f: pd.DataFrame, mkt: str, spec: dict,
     return rows
 
 
-def run_engine(mkt: str, mask_all: dict, variants=None) -> dict[str, list[dict]]:
+def run_engine(mkt: str, mask_all: dict, variants=None,
+                market: bool = True) -> dict[str, list[dict]]:
     """Run every variant over one market's symbols, features computed once
-    per symbol and reused across variants."""
+    per symbol and reused across variants.
+
+    market=False runs the ungated engine — the sensitivity arm that shows
+    what the gate does to each side instead of assuming it.
+    """
     variants = variants or list(VARIANTS)
     out: dict[str, list[dict]] = {v: [] for v in variants}
+    mv = verdicts_for(mkt, BARS)
     for sym in symbols_for(mkt):
         p = BARS / f"{sym}.json"
         df = load_bars(p)
@@ -290,7 +338,10 @@ def run_engine(mkt: str, mask_all: dict, variants=None) -> dict[str, list[dict]]
         f = features(df)
         mask = mask_all.get(sym)
         for v in variants:
-            for row in trades_for(df, f, mkt, VARIANTS[v], mask):
+            spec = dict(VARIANTS[v])
+            if not market:
+                spec["market"] = "none"
+            for row in trades_for(df, f, mkt, spec, mask, market_ok=mv):
                 row["sym"] = sym
                 out[v].append(row)
     return out
@@ -449,12 +500,13 @@ def check_engine_equivalence(long_rows: list[dict], mkt: str) -> dict:
     number to be validated against."""
     import ab_close_hold as AB
     mask_all = load_mask()
+    mv = AB.market_verdicts(mkt)
     ref = []
     for sym in symbols_for(mkt):
         df = load_bars(BARS / f"{sym}.json")
         if df is None:
             continue
-        t = AB.trades_for(df, mkt, True, mask_all.get(sym))
+        t = AB.trades_for(df, mkt, True, mask_all.get(sym), market_ok=mv)
         if t is None:
             continue
         t = t.copy()
@@ -590,8 +642,9 @@ def no_lookahead_probe() -> dict:
     # the trade set behind earlier signals must not move either
     spec = VARIANTS["S-strict"]
     mask = set()
-    t1 = trades_for(df, f1, "us200", spec, mask)
-    t2 = trades_for(df2, f2, "us200", spec, mask)
+    mv = verdicts_for("us200", BARS)
+    t1 = trades_for(df, f1, "us200", spec, mask, market_ok=mv)
+    t2 = trades_for(df2, f2, "us200", spec, mask, market_ok=mv)
     same_trades = len(t1) == len(t2)
     if same_trades:
         for x, y in zip(t1, t2):
@@ -664,27 +717,24 @@ def no_target_probe() -> dict:
 # market filter sensitivity (a separate arm, never folded into the headline)
 # -------------------------------------------------------------------------- #
 def index_verdicts(mkt: str) -> dict:
-    """date string -> True when the index's T-1 close is above its own 200d
-    MA, False when below. Derived from the index series already in the
-    frozen store (IDX_GSPC / IDX_N225)."""
-    sym = INDEX_SYM[mkt]
-    df = load_bars(BARS / f"{sym}.json")
-    if df is None:
-        return {}
-    f = features(df)
-    out = {}
-    for d in df.index:
-        pc = f.prev_close.get(d, np.nan)
-        ma = f.ma200.get(d, np.nan)
-        if pc != pc or ma != ma:
-            continue
-        out[d.strftime("%Y-%m-%d")] = bool(pc > ma)
-    return out
+    """date string -> True when the market's T-1 close is above its own 200d
+    MA, False when below.
+
+    From scripts/v2engine/market_filter.py: the rule, the market proxy
+    (SPY / 1306.T, the live pair) and the scale-glitch repair all live
+    there, so this study cannot gate on a different series from the one
+    the site publishes.
+    """
+    return verdicts_for(mkt, BARS)
 
 
 def apply_market_filter(rows: list[dict], mkt: str, side: int) -> tuple[list[dict], int]:
     """Mirror the market filter PER SESSION. Long: index above its 200d MA.
-    Short: index below it. Returns (kept rows, n dropped for no verdict)."""
+    Short: index below it. Returns (kept rows, n dropped for no verdict).
+
+    Applied to the UNGATED engine rows: the primary arms already carry the
+    gate, so this is the sensitivity arm that shows what the gate did.
+    """
     verdicts = index_verdicts(mkt)
     kept, dropped = [], 0
     for r in rows:
@@ -782,10 +832,15 @@ def _selftest_body() -> bool:
 
     up = fake_frame(99.0, 0.01)       # price above a rising MA200
     down = fake_frame(101.0, -0.01)   # price below a falling MA200
-    long_up = trades_for(df, up, "us200", VARIANTS["L-long-v2"], set())
-    short_up = trades_for(df, up, "us200", VARIANTS["S-strict"], set())
-    long_down = trades_for(df, down, "us200", VARIANTS["L-long-v2"], set())
-    short_down = trades_for(df, down, "us200", VARIANTS["S-strict"], set())
+    # the market gate is part of the rule now, so the fixture has to
+    # supply verdicts too: the long arm needs the market up, the short
+    # arm needs it down.
+    mv_up = {"2020-01-02": True}
+    mv_down = {"2020-01-02": False}
+    long_up = trades_for(df, up, "us200", VARIANTS["L-long-v2"], set(), market_ok=mv_up)
+    short_up = trades_for(df, up, "us200", VARIANTS["S-strict"], set(), market_ok=mv_down)
+    long_down = trades_for(df, down, "us200", VARIANTS["L-long-v2"], set(), market_ok=mv_up)
+    short_down = trades_for(df, down, "us200", VARIANTS["S-strict"], set(), market_ok=mv_down)
     # bar 0: open 100 > S1 99.5, low 99 <= 99.5, close 100 >= 99.5 -> long
     # bar 0: open 100 < R1 100.5, high 101 >= 100.5, close 100 <= 100.5 -> short
     fired_long = any(r["date"] == "2020-01-02" for r in long_up)

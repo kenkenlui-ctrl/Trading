@@ -102,18 +102,25 @@ def run_part_a():
     print("[1/6] the engine - long v2 re-run + the short mirror")
     t0 = time.time()
     mask = SS.load_mask()
-    engine = {}
+    engine, engine_nogate = {}, {}
     for mkt in MARKETS:
         engine[mkt] = SS.run_engine(mkt, mask)
         for v in list(engine[mkt]):
             engine[mkt][v] = SS.add_costs(engine[mkt][v], mkt)
+        # the ungated engine: the sensitivity arm. The primary arms carry
+        # the per-trade market gate, so this one shows what the gate does
+        # to each side instead of assuming it.
+        engine_nogate[mkt] = SS.run_engine(mkt, mask, market=False)
+        for v in list(engine_nogate[mkt]):
+            engine_nogate[mkt][v] = SS.add_costs(engine_nogate[mkt][v], mkt)
         print("      " + mkt + ": " + format(len(engine[mkt][PRIMARY_SHORT]), ",")
               + " short trades (" + PRIMARY_SHORT + "), "
               + format(len(engine[mkt]["L-long-v2"]), ",") + " long trades")
     print("      engine pass: " + format(time.time() - t0, ".1f") + "s")
     long_rows = [r for mkt in MARKETS for r in engine[mkt]["L-long-v2"]]
     short_rows = [r for mkt in MARKETS for r in engine[mkt][PRIMARY_SHORT]]
-    return {"engine": engine, "long": long_rows, "short": short_rows, "mask": mask}
+    return {"engine": engine, "engine_nogate": engine_nogate,
+            "long": long_rows, "short": short_rows, "mask": mask}
 
 
 def run_gates(part_a):
@@ -179,14 +186,21 @@ def build_a_tables(part_a):
 
 
 def market_filter_rows(part_a):
+    """What the per-trade market gate did to each side.
+
+    The primary arm already carries the gate (long: market up, short:
+    market down). This arm is the SAME engine without it, so the delta is
+    the gate and nothing else.
+    """
     out = []
     for mkt in MARKETS:
+        verdicts = SS.index_verdicts(mkt)
         for variant, rows in part_a["engine"][mkt].items():
-            kept, dropped = SS.apply_market_filter(
-                rows, mkt, SS.VARIANTS[variant]["side"])
+            base_rows = part_a["engine_nogate"][mkt][variant]
+            dropped = sum(1 for r in base_rows if r["date"] not in verdicts)
             for win in WINDOWS:
-                st = SS.stats_for(win_rows(kept, win), cost_col="net_site")
-                base = SS.stats_for(win_rows(rows, win), cost_col="net_site")
+                st = SS.stats_for(win_rows(rows, win), cost_col="net_site")
+                base = SS.stats_for(win_rows(base_rows, win), cost_col="net_site")
                 out.append({
                     "market": mkt, "variant": variant, "window": win,
                     "n_without_filter": base["n"],
@@ -194,8 +208,9 @@ def market_filter_rows(part_a):
                     "n_with_filter": st["n"], "avg%_with": st["avg%"],
                     "win%_with": st["win%"], "t_with": st["t"],
                     "n_dropped_no_verdict": dropped,
-                    "note": "the frozen long engine has NO per-trade market "
-                            "filter; this arm adds one on top (mirrored)",
+                    "note": "the primary arm carries the per-trade market "
+                            "gate (long: market up, short: market down); "
+                            "this arm is the same engine without it",
                 })
     return out
 

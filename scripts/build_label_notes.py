@@ -13,8 +13,14 @@ WHY
 
     The numbers now come from data/label_cohort.json, written by
     scripts/research/label_cohort.py (the research module re-derives the
-    authoritative trade counts — 6,675 / 2,982 US, 4,576 / 2,187 JP — and its
-    published-label fields match public/v2-signals.json field for field).
+    authoritative trade counts and its published-label fields match
+    public/v2-signals.json field for field).
+
+    The authoritative counts themselves are READ from
+    data/ab_close_hold.json, never typed here: the label study has to be
+    checked against the same artifact the site quotes, and a hand-typed
+    copy of those numbers is exactly the defect this page was rewritten
+    to remove (2026-11-14).
 
     The whole block is regenerated on every build. --check fails the build
     when the page and the artifact disagree, so a stale page cannot ship.
@@ -272,8 +278,14 @@ def _selftest() -> int:
                 print(f"  {'PASS' if good else 'FAIL'}  the artifact has "
                       f"{mkt}/{win}/{lbl}")
                 ok &= good
-    # the filled subset must reproduce the authoritative trade counts
-    for mkt, want in (("us200", 6675), ("jp200", 4576)):
+    # the filled subset must reproduce the authoritative trade counts, and
+    # those counts are READ, not typed: data/ab_close_hold.json is the
+    # artifact the site quotes, so this check cannot pass by agreeing with
+    # a stale hand-typed copy.
+    ab = json.loads((REPO / "data" / "ab_close_hold.json").read_text(encoding="utf-8"))
+    for mkt in ("us200", "jp200"):
+        w = ab["windows"][mkt]["B_close-hold"]
+        want = w["train"]["n"] + w["test"]["n"]
         r = row(summary, mkt, "full", "T1a_near_box_top")
         got = r["triggered_n_filled"] + r["not_triggered_n_filled"]
         good = got == want

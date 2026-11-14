@@ -73,13 +73,18 @@ def symbols_for(mkt: str, src: Path) -> list[Path]:
 
 def collect(mkt: str, hold: int, src: Path, mask: dict) -> list[dict]:
     PT.HOLD = hold
+    # The market gate, from the same series the live path reads. Without it
+    # the curve's signal denominator is a superset of the trades the
+    # published rule would ever take, and the equity pages would quote a
+    # different denominator from the one the methodology page quotes.
+    up = PT.market_up_series(mkt)
     cands: list[dict] = []
     for p in symbols_for(mkt, src):
         b = PT.load(p)
         if b is None:
             continue
         kept, _ = filter_candidates([dict(c, sym=p.stem)
-                                     for c in PT.candidates_v2(b)], mask)
+                                     for c in PT.candidates_v2(b, up)], mask)
         cands.extend(kept)
     return cands
 

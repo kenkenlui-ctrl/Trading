@@ -80,6 +80,7 @@ REPO = Path("/Users/kenken/dev/dsa-hk")
 sys.path.insert(0, str(REPO / "scripts" / "v2engine"))
 sys.path.insert(0, str(REPO / "scripts"))
 from core import features, _simulate, cost_rt  # noqa: E402
+from market_filter import verdicts_for  # noqa: E402
 from bt_clean import bars_dir, load as load_clean, _load_mask_cache  # noqa: E402
 
 BARS = bars_dir()
@@ -109,9 +110,26 @@ def market_up(mkt: str) -> bool | None:
     return None
 
 
+def market_verdicts(mkt: str) -> dict[str, bool]:
+    """Per-session market verdicts for one market.
+
+    The rule, and the session it has to be read on, are documented in
+    scripts/v2engine/market_filter.py. The proxy is the pair the LIVE path
+    prefers (SPY for US, 1306.T for JP) and the pair executability.py uses;
+    the store's SPY series matches yfinance's auto_adjust=True series to
+    0.000% over 470 overlapping sessions, i.e. the live basis.
+
+    An absent verdict gates the session OFF. The live product refuses to
+    publish when the index cannot be read, so "no verdict" can never mean
+    "market up".
+    """
+    return verdicts_for(mkt, BARS)
+
+
 def trades_for(df: pd.DataFrame, mkt: str, close_hold: bool,
                mask: set | None = None,
-               allow: set | None = None) -> pd.DataFrame | None:
+               allow: set | None = None,
+               *, market_ok: dict[str, bool]) -> pd.DataFrame | None:
     """mask = the glitch dates for THIS symbol. A trade is dropped when any masked
     bar sits in [entry - 210 calendar-ish days, exit], because ma200/S1/atr are
     built from shifted closes and one bad bar poisons the features behind the
@@ -130,6 +148,13 @@ def trades_for(df: pd.DataFrame, mkt: str, close_hold: bool,
     rows = []
     for i in np.where(ok)[0]:
         if np.isnan(s1[i]) or np.isnan(a[i]) or a[i] <= 0:
+            continue
+        # THE MARKET GATE. A session the market filter did not pass is a
+        # session the live product published nothing on, so it cannot be in
+        # the baseline the site quotes (2026-11-14: the frozen engine had no
+        # market gate at all, so the published per-trade numbers were
+        # measured on a superset of the trades the published rule takes).
+        if not market_ok.get(idx[i].strftime("%Y-%m-%d")):
             continue
         # v2 entry: limit buy at S1, valid next session, only if it opens above S1
         if allow is not None and i not in allow:
@@ -199,7 +224,7 @@ def _mean_of(df: pd.DataFrame, n: int, rng: np.random.Generator) -> float:
     return float(df.net.to_numpy(float)[idx].mean() * 100)
 
 
-def candidates_for(df: pd.DataFrame) -> np.ndarray:
+def candidates_for(df: pd.DataFrame, market_ok: dict[str, bool]) -> np.ndarray:
     """Indices that pass the full screen and the opens-above-S1 test.
 
     This is the pool P1 draws from, so a placebo trial still runs the real
@@ -217,6 +242,8 @@ def candidates_for(df: pd.DataFrame) -> np.ndarray:
     for i in np.where(ok)[0]:
         if np.isnan(s1[i]) or np.isnan(a[i]) or a[i] <= 0:
             continue
+        if not market_ok.get(df.index[i].strftime("%Y-%m-%d")):
+            continue                      # the placebo pool obeys the gate too
         if O[i] > s1[i] and L[i] <= s1[i]:
             out.append(int(i))
     return np.array(out, dtype=int)
@@ -233,7 +260,8 @@ def p2_matched_count(a_df: pd.DataFrame, b_n: int, trials: int,
 
 
 def p1_shuffled_sessions(bars: dict, mkt: str, n_b: int, trials: int,
-                         seed: int, mask_all: dict) -> tuple[list[float], float, float]:
+                         seed: int, mask_all: dict,
+                         market_ok: dict[str, bool]) -> tuple[list[float], float, float]:
     """Move signals to different sessions, drawn from the same symbol's pool.
 
     `bars` maps symbol -> (DataFrame, candidate index array). Only sessions
@@ -252,7 +280,8 @@ def p1_shuffled_sessions(bars: dict, mkt: str, n_b: int, trials: int,
                 continue
             allow = set(rng.choice(cand, size=min(per_trial, len(cand)),
                                    replace=False).tolist())
-            tr = trades_for(df, mkt, True, mask_all.get(sym), allow=allow)
+            tr = trades_for(df, mkt, True, mask_all.get(sym), allow=allow,
+                            market_ok=market_ok)
             if tr is not None:
                 picks.append(tr)
         if not picks:
@@ -280,6 +309,9 @@ def main() -> int:
     print(f"glitch-masked symbols: {len(mask_all)}  masked bars: {sum(len(v) for v in mask_all.values())}")
     for mkt in MARKETS:
         up = market_up(mkt)
+        vts = market_verdicts(mkt)
+        print(f"  {mkt}: market gate verdicts for {len(vts)} sessions "
+              f"({'market up at the last one' if up is True else 'market NOT up at the last one'})")
         if up is not True:
             print(f"  {mkt}: market filter currently not 'up' — reporting both windows anyway")
         for variant, ch in (("A_open-hold", False), ("B_close-hold", True)):
@@ -295,7 +327,7 @@ def main() -> int:
                 b = load(p)
                 if b is None:
                     continue
-                t = trades_for(b, mkt, ch, mask_all.get(s))
+                t = trades_for(b, mkt, ch, mask_all.get(s), market_ok=vts)
                 if t is not None:
                     t["sym"] = s
                     parts.append(t)

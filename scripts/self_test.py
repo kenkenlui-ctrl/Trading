@@ -3657,9 +3657,18 @@ def t_per_trade_stats_trace_to_source() -> None:
     # Only the sample COUNTS are unambiguous markers. A bare "60.2%" also
     # occurs legitimately on /backtest and the equity curves (different
     # experiments, different win rates), so flagging the value itself would be
-    # a false positive. n = 2,992 and n = 2,193 name exactly one measurement and
-    # appear nowhere else on the site.
-    wrong_n = {"us200": {2992}, "jp200": {2193}}
+    # a false positive.
+    #
+    # Two kinds of number must never come back:
+    #   - 2,992 / 2,193: the transcription error that shipped on 2026-10-18.
+    #     It was never a measurement at all.
+    #   - 2,982 / 3,693 / 6,675 (US) and 2,187 / 2,389 / 4,576 (JP): the counts
+    #     that were CORRECT until 2026-11-14, when the frozen engine gained
+    #     the market filter it was always supposed to apply. They are
+    #     superseded, not wrong, so a page may still mention them next to a
+    #     withdrawal - but it may not present them as the current number.
+    wrong_n = {"us200": {2992, 2982, 3693, 6675},
+               "jp200": {2193, 2187, 2389, 4576}}
     pages = [p for p in PUBLIC.rglob("*.html")] + [PUBLIC / "llms.txt"]
     leaks = []
     for f in pages:
@@ -3707,6 +3716,114 @@ def t_per_trade_stats_trace_to_source() -> None:
                   for badvals in wrong_n.values() for bv in badvals)
     record("MUST-FAIL the shipped transcription error is flagged", flagged,
            "the scanner did not flag the n = 2,992 copy that was live on 2026-10-18")
+
+
+def t_v2_signals_are_gated_by_the_market_filter() -> None:
+    """Every published v2 signal must come from a market the market filter
+    let through.
+
+    2026-11-14. The published rule carries a market filter ("index T-1 close
+    > its 200d MA"), and in the LIVE product it is a market-level switch:
+    build_v2_signals skips the whole market when the index is below its MA, so
+    that market publishes nothing at all. The FROZEN baseline - the engine the
+    per-trade numbers come from - had no such gate, so the published per-trade
+    numbers were measured on a superset of the trades the published rule would
+    ever take.
+
+    This is the mechanical proof that the published signal set sits on the
+    gated side of the switch, and it is a MUST-FAIL check: a tampered market
+    state has to be rejected by the same predicate.
+    """
+    import json as _json
+
+    p = PUBLIC / "v2-signals.json"
+    record("the v2 signal payload exists", p.exists(),
+           "missing: " + str(p.relative_to(PUBLIC)))
+    if not p.exists():
+        return
+    payload = _json.loads(p.read_text(encoding="utf-8"))
+    ms = payload.get("market_state") or {}
+    sigs = payload.get("signals") or []
+    screen = payload.get("screen") or {}
+
+    record("the payload records a market state for every market it covers",
+           bool(ms), "the payload has no market_state, so nothing can prove "
+           "the filter ran")
+    if not ms:
+        return
+
+    # 1. the payload must be internally consistent: count == len(signals).
+    record("the payload count equals the number of signals it lists",
+           payload.get("count") == len(sigs),
+           "count=" + str(payload.get("count")) + " signals=" + str(len(sigs)))
+
+    # 2. no signal may come from a market the filter switched off.
+    off = sorted(m for m, v in ms.items() if not v.get("up"))
+    leaked = [s for s in sigs if s.get("market") in off]
+    record("no published signal comes from a market the filter switched off",
+           not leaked,
+           str(len(leaked)) + " signal(s) from the filtered-off markets "
+           + str(off))
+
+    # 3. every market that DID publish must have the filter on.
+    contributing = sorted({str(s.get("market")) for s in sigs})
+    bad = [m for m in contributing if not (ms.get(m) or {}).get("up")]
+    record("every market that published a signal had the filter on",
+           not bad, "markets publishing without the filter: " + str(bad))
+
+    # 4. a market the filter switched off must be RECORDED as switched off,
+    #    not silently skipped: that marker is the filter having RUN.
+    unmarked = [m for m in off if (m + ":market-filter-off") not in screen]
+    record("a market the filter switched off is recorded as switched off",
+           not unmarked, "no market-filter-off marker for " + str(unmarked))
+
+    # 5. the rule text must still declare the filter.
+    rules = payload.get("rules") or {}
+    record("the published rule text declares the market filter",
+           "market_filter" in rules,
+           "the payload no longer says what the market filter is")
+
+    # MUST-FAIL: flip the market state and the same predicate must reject it.
+    tampered = _json.loads(p.read_text(encoding="utf-8"))
+    for m in contributing:
+        tampered["market_state"][m]["up"] = False
+    bad_probe = [s for s in tampered["signals"]
+                 if not (tampered["market_state"].get(str(s.get("market")))
+                         or {}).get("up")]
+    record("MUST-FAIL a tampered market state is rejected", bool(bad_probe),
+           "the control for this gate does not discriminate: a payload whose "
+           "market state says the filter is off still passes the check")
+
+
+def t_the_frozen_engine_requires_a_market_gate() -> None:
+    """The frozen baseline must not be able to run without the market gate.
+
+    A parameter with a default is a parameter a caller can forget. The market
+    verdict is keyword-only and REQUIRED in every engine that applies the
+    rule, so a caller that forgets it gets a TypeError rather than a number
+    that quietly has no market filter in it - which is exactly the defect
+    this whole exercise exists to fix.
+    """
+    import inspect
+
+    import ab_close_hold as AB
+
+    sig = inspect.signature(AB.trades_for)
+    p = sig.parameters.get("market_ok")
+    record("the frozen engine requires a market verdict",
+           p is not None and p.kind is inspect.Parameter.KEYWORD_ONLY
+           and p.default is inspect.Parameter.empty,
+           "ab_close_hold.trades_for market_ok: " + str(p))
+
+    # the live path and the frozen engines must read the SAME rule module.
+    import build_v2_signals as BV
+
+    import market_filter as MF
+
+    record("the live path and the frozen engines share one market-filter module",
+           hasattr(BV, "live_verdict") and hasattr(MF, "live_verdict")
+           and hasattr(MF, "session_verdicts"),
+           "the live path and the frozen engine can gate on different rules")
 
 
 def t_methodology_provenance_names_every_source() -> None:
@@ -5745,6 +5862,8 @@ def main() -> int:
                t_equity_curve_stats_are_internally_consistent,
                t_no_withdrawn_figures_are_published,
                t_per_trade_stats_trace_to_source,
+               t_v2_signals_are_gated_by_the_market_filter,
+               t_the_frozen_engine_requires_a_market_gate,
                t_methodology_provenance_names_every_source,
                t_staleness_states_are_derived_and_fail_loud,
                t_cost_flip_is_derived_from_the_retest_summary,

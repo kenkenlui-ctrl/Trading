@@ -296,6 +296,18 @@ python3 scripts/build_static.py 2>&1 | tail -2
 # fails loud when the artifact is missing, exactly like the v2 per-trade
 # stats do: a missing source must stop the build, not silently keep the
 # old figure on the page.
+#
+# 2026-11-15 — the methodology page BODY is generated too, and it has to
+# run BEFORE the label section: rewrite_methodology_v2.py regenerates the
+# whole <main> block (every per-trade table, the control comparison, the
+# FAQ and the correction ledger) from data/ab_close_hold.json,
+# data/control_test.csv and data/hk_retest_summary.json. Until this step
+# existed the page was a hand-edited file whose numbers only moved when
+# somebody remembered to re-run a script — which is how the per-trade
+# figures drifted away from the frozen baseline in the first place.
+# It emits the w9:label-notes markers, so the label section below is
+# re-injected into the regenerated body.
+python3 scripts/rewrite_methodology_v2.py 2>&1 | tail -2
 python3 scripts/build_label_notes.py 2>&1 | tail -2
 
 # --- Step 7b: sitemap.xml + llms.txt ---
