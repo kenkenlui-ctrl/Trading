@@ -3,20 +3,20 @@
   "ticker_user": "03888.HK",
   "name": "KINGSOFT",
   "data_source": "yfinance",
-  "data_range": "2026-01-08 → 2026-10-30 (200 daily bars)",
+  "data_range": "2026-01-22 → 2026-11-13 (200 daily bars)",
   "last_bar": {
-    "date": "2026-10-30",
-    "O": 22.9,
-    "H": 23.58,
-    "L": 22.76,
-    "C": 22.94,
-    "prev_close": 23.0,
-    "chg_pct": -0.26
+    "date": "2026-11-13",
+    "O": 24.32,
+    "H": 24.68,
+    "L": 24.0,
+    "C": 24.06,
+    "prev_close": 24.5,
+    "chg_pct": -1.8
   },
   "phase": "base_building",
-  "adx": 16.33,
-  "plus_di": 16.07,
-  "minus_di": 27.71,
+  "adx": 14.44,
+  "plus_di": 20.18,
+  "minus_di": 20.37,
   "regime": "range",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
   "phase_evidence": "Peak 32.5 (2026-01-29), trough 20.5 (2026-05-26), box top 29.26 (2026-08-05)",
@@ -32,23 +32,29 @@
     "top": 29.26,
     "top_date": "2026-08-05",
     "bottom": 20.5,
-    "period": "2026-05-26 to 2026-10-30"
+    "period": "2026-05-26 to 2026-11-13"
   },
-  "drop_from_peak_pct": 29.4,
-  "recovery_from_crash_pct": 11.9,
+  "drop_from_peak_pct": 26.0,
+  "recovery_from_crash_pct": 17.4,
   "supports": [
     {
+      "level": 24.0,
+      "label": "S1 KEY",
+      "touches": 30,
+      "evidence": "tested 30x in base period; 0.2% below current"
+    },
+    {
       "level": 20.0,
-      "label": "S1 bottom",
+      "label": "S2 bottom",
       "touches": 14,
       "evidence": "structural bottom, near crash low 20.5"
     }
   ],
   "resistances": [
     {
-      "level": 23.58,
+      "level": 24.68,
       "label": "R1 today high",
-      "evidence": "today's high 23.579999923706055"
+      "evidence": "rejection at 24.68 (long upper wick, close weak)"
     },
     {
       "level": 29.26,
@@ -57,23 +63,23 @@
     }
   ],
   "position": {
-    "current": 22.94,
-    "in_box_pct": 31.7,
-    "nearest_support": "S1 bottom (20.0)",
-    "nearest_resistance": "R1 today high (23.58)"
+    "current": 24.06,
+    "in_box_pct": 43.8,
+    "nearest_support": "S1 KEY (24.0)",
+    "nearest_resistance": "R1 today high (24.68)"
   },
   "kline_today": {
-    "type": "bullish_hold",
+    "type": "neutral",
     "touched_R1": true,
-    "touched_S1": false,
+    "touched_S1": true,
     "close_position": "lower_half",
-    "O": 22.9,
-    "H": 23.58,
-    "L": 22.76,
-    "C": 22.94,
-    "body_pct": 4.9,
-    "upper_wick_pct": 78.0,
-    "lower_wick_pct": 17.1
+    "O": 24.32,
+    "H": 24.68,
+    "L": 24.0,
+    "C": 24.06,
+    "body_pct": 38.2,
+    "upper_wick_pct": 52.9,
+    "lower_wick_pct": 8.8
   },
   "bias": {
     "short": {
@@ -91,19 +97,19 @@
   },
   "scenarios": [
     {
-      "if": "hold 20.0 (KEY support)",
-      "then": "still range; watch 23.58 for next test"
+      "if": "hold 24.0 (KEY support)",
+      "then": "still range; watch 24.68 for next test"
     },
     {
-      "if": "break 20.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 24.0 on close",
+      "then": "target 20.0 → lower (short-term bearish)"
     },
     {
       "if": "break 20.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 23.58 on close",
+      "if": "reclaim 24.68 on close",
       "then": "short-term bullish; next test 29.26"
     },
     {
@@ -130,65 +136,65 @@
     }
   ],
   "action_plan": {
-    "verdict": "BUY",
-    "strategy": "BUY_S1",
-    "trigger_price": 22.76,
-    "target_price": 25.08,
-    "stop_price": 21.31,
-    "risk_pct": 6.36,
-    "reward_pct": 10.19,
-    "rr_ratio": 1.6,
+    "verdict": "WAIT",
+    "strategy": "WAIT_RANGE",
+    "trigger_price": null,
+    "target_price": null,
+    "stop_price": null,
+    "risk_pct": 0.0,
+    "reward_pct": 0.0,
+    "rr_ratio": 0.0,
     "phase_match": true,
-    "r1": 27.4,
+    "r1": 26.4,
     "s1": 22.76,
     "s2": 23.36,
-    "r2": 29.0,
+    "r2": 27.4,
     "r3": 29.26,
     "s3": 20.5,
-    "s4": 22.06,
-    "current_position_pct": 3.9,
-    "notes": "BUY_S1: in box (23-27), entry at S1 23, target mid 25, stop 21 ｜ 52.2 條規則（BUY plan，support 22.76）：① 跌到 22.76、收市守住喺 22.76 上面 → 照 BUY 條 plan 做（入場 22.76，止蝕 21.31，目標 25.08）。② 收市跌穿 22.76 → 支持失效，本 BUY 單作廢，唔好接；呢個先係下面『SHORT』情境成立嘅時刻，但 SHORT 係另一套 plan，唔係自動開倉。③ 一句講晒：唔係睇『有冇觸及』，係睇『收市喺唔喺 22.76 上面』。"
+    "s4": 21.06,
+    "current_position_pct": 35.7,
+    "notes": "WAIT_RANGE: in box (23-26), pos 36%, no clear setup"
   },
   "patterns": [
+    {
+      "name": "上升三法",
+      "bias": "bullish",
+      "date": "2026-11-13",
+      "low": 24.0,
+      "high": 24.68,
+      "i": 199
+    },
+    {
+      "name": "刺穿線",
+      "bias": "bullish",
+      "date": "2026-11-04",
+      "low": 23.52,
+      "high": 24.48,
+      "i": 192
+    },
     {
       "name": "烏雲蓋頂",
       "bias": "bearish",
       "date": "2026-10-21",
-      "low": 25.260000228881836,
-      "high": 26.200000762939453,
-      "i": 192
+      "low": 25.26,
+      "high": 26.2,
+      "i": 182
     },
     {
       "name": "利淡反擊線",
       "bias": "bearish",
       "date": "2026-10-08",
-      "low": 24.540000915527344,
-      "high": 25.440000534057617,
-      "i": 184
+      "low": 24.54,
+      "high": 25.44,
+      "i": 174
     },
     {
       "name": "早晨之星",
       "bias": "bullish",
       "date": "2026-09-11",
-      "low": 23.81999969482422,
-      "high": 24.399999618530273,
-      "i": 166
-    },
-    {
-      "name": "利好反擊線",
-      "bias": "bullish",
-      "date": "2026-09-04",
-      "low": 24.700000762939453,
-      "high": 26.059999465942383,
-      "i": 161
-    },
-    {
-      "name": "刺穿線",
-      "bias": "bullish",
-      "date": "2026-08-25",
-      "low": 23.65999984741211,
-      "high": 24.399999618530273,
-      "i": 153
+      "low": 23.82,
+      "high": 24.4,
+      "i": 156
     }
   ]
 }

@@ -2,88 +2,101 @@
   "ticker": "HK.02272",
   "ticker_user": "02272.HK",
   "name": "科拓股份",
-  "data_source": "futu",
-  "data_range": "2026-06-26 → 2026-10-20 (80 daily bars)",
+  "data_source": "yfinance",
+  "data_range": "2026-06-26 → 2026-11-13 (98 daily bars)",
   "last_bar": {
-    "date": "2026-10-20",
-    "O": 50.25,
-    "H": 52.3,
-    "L": 49.88,
-    "C": 50.0,
-    "prev_close": 51.6,
-    "chg_pct": -3.1
+    "date": "2026-11-13",
+    "O": 57.75,
+    "H": 60.15,
+    "L": 54.95,
+    "C": 59.1,
+    "prev_close": 57.75,
+    "chg_pct": 2.34
   },
   "phase": "downtrend_active",
-  "adx": 31.82,
-  "plus_di": 14.99,
-  "minus_di": 24.5,
+  "adx": 29.54,
+  "plus_di": 27.71,
+  "minus_di": 14.29,
   "regime": "trend",
   "adx_threshold_note": "ADX<20=range, 20-25=dead, >25=trend (Wilder 14)",
-  "phase_evidence": "Peak 127.5 (2026-08-18), trough 49.84 (2026-10-16), box top 102.0 (2026-09-07)",
+  "phase_evidence": "Peak 127.5 (2026-08-18), trough 40.0 (2026-10-30), box top 68.5 (2026-11-03)",
   "peak": {
     "date": "2026-08-18",
     "price": 127.5
   },
   "trough": {
-    "date": "2026-10-16",
-    "price": 49.84
+    "date": "2026-10-30",
+    "price": 40.0
   },
   "box": {
-    "top": 102.0,
-    "top_date": "2026-09-07",
-    "bottom": 49.84,
-    "period": "2026-10-16 to 2026-10-20"
+    "top": 68.5,
+    "top_date": "2026-11-03",
+    "bottom": 40.0,
+    "period": "2026-10-30 to 2026-11-13"
   },
-  "drop_from_peak_pct": 60.8,
-  "recovery_from_crash_pct": 0.3,
+  "drop_from_peak_pct": 53.6,
+  "recovery_from_crash_pct": 47.8,
   "supports": [
     {
+      "level": 56.0,
+      "label": "S1 KEY",
+      "touches": 18,
+      "evidence": "tested 18x in base period; 5.2% below current"
+    },
+    {
+      "level": 52.0,
+      "label": "S2",
+      "touches": 9,
+      "evidence": "mid-base support, tested 9x"
+    },
+    {
       "level": 48.0,
-      "label": "S1 bottom",
-      "touches": 0,
-      "evidence": "structural bottom, near crash low 49.84"
+      "label": "S3",
+      "touches": 7,
+      "evidence": "mid-base support, tested 7x"
+    },
+    {
+      "level": 40.0,
+      "label": "S4 crash low",
+      "touches": 1,
+      "evidence": "crash low 2026-10-30, structural bottom"
     }
   ],
   "resistances": [
     {
-      "level": 52.3,
+      "level": 60.15,
       "label": "R1 today high",
-      "evidence": "rejection at 52.3 (long upper wick, close weak)"
+      "evidence": "today's high 60.15"
     },
     {
-      "level": 60.0,
-      "label": "R5",
-      "evidence": "pre-crash supply, top before breakdown"
-    },
-    {
-      "level": 102.0,
-      "label": "R3 Sep high",
-      "evidence": "box top 102.0, base period high"
+      "level": 68.5,
+      "label": "R3 Nov high",
+      "evidence": "box top 68.5, base period high"
     }
   ],
   "position": {
-    "current": 50.0,
-    "in_box_pct": 3.7,
-    "nearest_support": "S1 bottom (48.0)",
-    "nearest_resistance": "R1 today high (52.3)"
+    "current": 59.1,
+    "in_box_pct": 67.0,
+    "nearest_support": "S1 KEY (56.0)",
+    "nearest_resistance": "R1 today high (60.15)"
   },
   "kline_today": {
-    "type": "bearish_rejection",
+    "type": "bullish_hold",
     "touched_R1": true,
-    "touched_S1": false,
-    "close_position": "lower_half",
-    "O": 50.25,
-    "H": 52.3,
-    "L": 49.88,
-    "C": 50.0,
-    "body_pct": 10.3,
-    "upper_wick_pct": 84.7,
-    "lower_wick_pct": 5.0
+    "touched_S1": true,
+    "close_position": "upper_half",
+    "O": 57.75,
+    "H": 60.15,
+    "L": 54.95,
+    "C": 59.1,
+    "body_pct": 26.0,
+    "upper_wick_pct": 20.2,
+    "lower_wick_pct": 53.8
   },
   "bias": {
     "short": {
-      "bias": "bearish_cautious",
-      "reason": "rejection at R1 + near support (4% of box)"
+      "bias": "neutral",
+      "reason": "mid-box, no clear signal"
     },
     "mid": {
       "bias": "bearish_continuation",
@@ -96,23 +109,23 @@
   },
   "scenarios": [
     {
-      "if": "hold 48.0 (KEY support)",
-      "then": "still range; watch 52.3 for next test"
+      "if": "hold 56.0 (KEY support)",
+      "then": "still range; watch 60.15 for next test"
     },
     {
-      "if": "break 48.0 on close",
-      "then": "target next S → lower (short-term bearish)"
+      "if": "break 56.0 on close",
+      "then": "target 52.0 → 48.0 (short-term bearish)"
     },
     {
-      "if": "break 48.0 (crash low)",
+      "if": "break 40.0 (crash low)",
       "then": "base invalidation; mid-term bearish"
     },
     {
-      "if": "reclaim 52.3 on close",
-      "then": "short-term bullish; next test 60.0"
+      "if": "reclaim 60.15 on close",
+      "then": "short-term bullish; next test 68.5"
     },
     {
-      "if": "break 102.0 (box top)",
+      "if": "break 68.5 (box top)",
       "then": "leave consolidation; mid-term recovery, watch next R"
     }
   ],
@@ -136,7 +149,7 @@
   ],
   "action_plan": {
     "verdict": "WAIT",
-    "strategy": "WAIT_RANGE",
+    "strategy": "WAIT_VOLATILE",
     "trigger_price": null,
     "target_price": null,
     "stop_price": null,
@@ -144,17 +157,25 @@
     "reward_pct": 0.0,
     "rr_ratio": 0.0,
     "phase_match": false,
-    "r1": 84.2,
-    "s1": 49.84,
-    "s2": 68.15,
-    "r2": 127.5,
-    "r3": 122.8,
-    "s3": 105.1,
-    "s4": 105.1,
-    "current_position_pct": 0.5,
-    "notes": "WAIT_RANGE: in box (50-84), pos 0%, no clear setup"
+    "r1": 68.5,
+    "s1": 40.0,
+    "s2": 51.1,
+    "r2": 121.5,
+    "r3": 127.5,
+    "s3": 96.85,
+    "s4": 96.85,
+    "current_position_pct": 67.0,
+    "notes": "WAIT_VOLATILE: ATR14 12.4% / box width 48% — 波動太大（thresholds: ATR≥6% 或 box≥35%），range mean-reversion 暫停，等波動收窄先再睇。"
   },
   "patterns": [
+    {
+      "name": "利淡吞噬",
+      "bias": "bearish",
+      "date": "2026-11-11",
+      "low": 55.4,
+      "high": 66.0,
+      "i": 95
+    },
     {
       "name": "刺穿線",
       "bias": "bullish",

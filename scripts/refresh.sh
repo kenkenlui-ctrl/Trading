@@ -153,6 +153,26 @@ python3 scripts/update_ohlc.py \
   --asof "$DATA_DATE" --asof-hk "$ASOF_HK" --asof-us "$ASOF_US" --asof-jp "$ASOF_JP" \
   --markets hk,us,jp --workers 4 2>&1 | tail -12
 
+# --- Step 1b2: fill a missing tail session from Futu -------------------------
+# 2026-11-14. Yahoo answers some HK ETFs with a ROW for the newest session
+# and a NULL close (2800.HK on 2026-11-13: volume 392,049,779, close null).
+# update_ohlc.py drops a bar with no price — correctly, a bar without a price
+# is not a bar — so those names simply stayed one session behind: the market
+# closed, the site did not, and NOTHING failed. Futu has the settled close
+# for the same session (its volume matches Yahoo's own to 0.0001%).
+#
+# This step appends ONLY the sessions the series is missing, starting from
+# the stored series' last date, using Futu's raw (autype=NONE) prices — the
+# same basis as the stored Yahoo series, and verified per ticker BEFORE
+# anything is written. A full re-fetch would replace months of raw prices
+# with Futu's dividend-adjusted ones and quietly move every level on the
+# page, which is exactly the bug this repository just spent a day undoing.
+echo
+echo "[1b2/7] Filling any missing tail session from Futu..."
+python3 scripts/fill_ohlc_tail_futu.py \
+  --asof "$DATA_DATE" --asof-hk "$ASOF_HK" --asof-us "$ASOF_US" --asof-jp "$ASOF_JP" \
+  --markets hk,us,jp 2>&1 | tail -8
+
 # --- Step 1c: record what each market has most recently closed ---------------
 # 2026-10-25. The site's staleness banner (Sprint 2 A1) needs to know the
 # market's latest CLOSED session, measured independently of the 200 names we
@@ -179,70 +199,29 @@ python3 scripts/market_sessions.py 2>&1 | tail -5
 # build. regen_all.py remains the entry point for whoever runs it on cloud —
 # do NOT re-wire it into this script.
 
-# --- Step 2: Generate per-ticker charts + action_plan JSON (daily-sr-chart skill) ---
+# --- Step 2: Rebuild the per-ticker analysis from the stored series --------
+# 2026-11-14. This used to shell out to daily_sr.py per ticker with
+# --source auto, which PREFERS Futu's qfq series, while the stored series is
+# Yahoo RAW. On a dividend payer those are two different price bases — up to
+# 6.16% apart over a year on 00005 (HSBC) — so the S/R levels on the page
+# were computed on one basis while the candles were drawn from another.
+#
+# Worse, the snapshot and the series came from different steps on different
+# days. On 2026-11-14 that had left 77 of the 245 HK names carrying an
+# OCTOBER snapshot beside a 2026-11-13 series: a fresh chart next to levels
+# computed from a month-old window. The self-test missed it because those
+# pages were carrying the "數據未更新" banner, and the chart-vs-analysis
+# gate skips a page that already discloses its own staleness.
+#
+# The snapshot is a pure function of the series, so it is now recomputed FROM
+# the stored series (scripts/rebuild_snapshots.py). The chart and the levels
+# are then the same series by construction: no vendor call to disagree with,
+# no second fetch to land on another day, and a name whose series did not
+# advance keeps its own levels instead of being handed a foreign price
+# basis. The PNG is rewritten alongside it.
 echo
-echo "[2/6] Generating per-ticker charts (HK)..."
-mkdir -p /tmp/chart_logs
-python3 -c "
-import sys, json
-from pathlib import Path
-
-# 2026-10-31. This block opened a Futu OpenD connection and never used it:
-# the loop below shells out to daily_sr.py with --source auto, and daily_sr
-# picks its own source. The connection was dead code that cost a HANG — with
-# OpenD closed, OpenQuoteContext() does not raise, it blocks — so the whole
-# refresh stalled at step 2 on any machine without Futu OpenD running, which
-# is most of the time. The futu backtest below is the step that genuinely
-# needs OpenD, and it now says so instead of stalling the pipeline.
-try:
-    universe = json.load(open('hk_universe_200.json'))
-    out = Path('/Users/kenken/dev/dsa-hk/charts/hk200')
-    for i, tk in enumerate(universe):
-        safe = tk.replace('.', '_')
-        png = out / f'{safe}.png'
-        js = out / f'{safe}.json'
-        # 2026-10-05: this guard used to compare png.st_mtime against a
-        # hard-coded epoch equal to 2025-05-20. Every chart drawn after that
-        # date counted as recent, so a 200/200 skip fired on every run and
-        # refresh.sh silently became a no-op: no chart, no action_plan JSON, no
-        # data change. Skip only when this ticker is ALREADY at the target
-        # session, which is the only question the guard was meant to ask.
-        #
-        # 2026-10-14: that sentence was WRITTEN WITH BACKTICKS AND DOUBLE
-        # QUOTES inside this double-quoted shell string. Bash performs command
-        # substitution on backticks even inside double quotes, so it tried to
-        # run png.st_mtime as a command with stdout redirected into a file
-        # literally named 1747700000 — printing command-not-found on every run
-        # and truncating the python program at the next double quote. The stray
-        # redirect also left a 0-byte file of that name in the repo root, which
-        # got committed. Keep this heredoc free of backticks and double quotes.
-        if js.exists():
-            try:
-                _have = (json.load(open(js)).get('last_bar') or {}).get('date')
-            except Exception:
-                _have = None
-            if _have == '$ASOF_HK' and png.exists():
-                continue
-        try:
-            # Dead call — df/src/name are never read below. It used to pass
-            # \$DATA_DATE, so on a per-market run it could raise for a ticker
-            # that was fine and be reported as a chart failure.
-            import subprocess
-            # 2026-10-14: --json was missing here. Step 1 writes the snapshot
-            # via batch_hk200_fresh.py, so this loop is a no-op for a ticker
-            # Step 1 got right; for a ticker Step 1 MISSED it redrew the PNG and
-            # left the snapshot at the old session — a fresh chart beside a
-            # stale date label, which is the exact mismatch this step is
-            # supposed to close. Any redraw must move the snapshot with it.
-            subprocess.run(['python3', '/Users/kenken/.minimax/skills/daily-sr-chart/scripts/daily_sr.py',
-                            '-t', tk, '-o', str(png), '--json', str(js),
-                            '--source', 'auto', '--asof', '$ASOF_HK'], check=True)
-            print(f'  {i+1}/{len(universe)} {tk} ✓')
-        except Exception as e:
-            print(f'  {i+1}/{len(universe)} {tk} ✗ {e}')
-finally:
-    pass
-" 2>&1 | tail -5
+echo "[2/7] Rebuilding the HK analysis snapshots from the stored series..."
+python3 scripts/rebuild_snapshots.py --markets hk --days 200 2>&1 | tail -8
 
 # --- Step 3: Backtest per ticker (futu) ---
 echo
