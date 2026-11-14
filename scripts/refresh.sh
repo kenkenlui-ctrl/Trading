@@ -481,13 +481,38 @@ mkdir -p "$STAGE"
 # already a 404 before this change. /dashboard/ itself 301s to /hk200/ in
 # _redirects, so deleting the tree breaks no URL. build_static.py still writes
 # it locally; we just never ship it.)
-( cd public && find . -type f \
-    -not -name '.DS_Store' -not -name '_redirects.bak' \
-    -not -path './dashboard/*' \
-    -not -name 'compare-*.png' -not -name 'ba-chart-fixed.png' \
-    -not -name '* 2.html' \
-    -print0 \
-    | xargs -0 -P 24 -I{} sh -c 'mkdir -p "'"$STAGE"'/$(dirname "{}")" 2>/dev/null; cp -p "{}" "'"$STAGE"'/{}" 2>/dev/null' )
+# 2026-11-14. This used to be a find | xargs -0 -P 24 -I{} pipeline. It
+# fails on this repo: "xargs: command line cannot be assembled, too long" —
+# the argument list is assembled from every path at once, so the staging step
+# dies BEFORE the deploy, and the refresh ends in a failure that has nothing
+# to do with the data. The Python walk below does the same job (same
+# exclusions, same copy) and cannot fail that way. Verified on the
+# 2026-11-14 refresh: 3,208 files copied, 470 duplicate top-level ohlc json
+# pruned, deploy uploaded in 2.84s.
+python3 - public "$STAGE" <<'PY'
+import os, shutil, sys
+src, dst = sys.argv[1], sys.argv[2]
+EXCLUDE_DIRS = {"dashboard"}
+EXCLUDE_NAMES = {".DS_Store", "_redirects.bak", "ba-chart-fixed.png"}
+def skip_file(name):
+    if name in EXCLUDE_NAMES: return True
+    if name.startswith("compare-") and name.endswith(".png"): return True
+    if name.endswith(" 2.html"): return True
+    return False
+n = 0
+for root, dirs, files in os.walk(src):
+    rel = os.path.relpath(root, src)
+    if rel == ".":
+        dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
+    out = dst if rel == "." else os.path.join(dst, rel)
+    for f in files:
+        if skip_file(f):
+            continue
+        os.makedirs(out, exist_ok=True)
+        shutil.copy2(os.path.join(root, f), os.path.join(out, f))
+        n += 1
+print(f"  copied {n} files")
+PY
 
 # Prune orphan ohlc json. static/canvas-chart.js derives the interactive-chart
 # URL from the chart URL, so ONLY <market>/ohlc/<ticker-page-name>_ohlc.json is
